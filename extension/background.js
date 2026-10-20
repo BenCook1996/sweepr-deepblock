@@ -113,12 +113,16 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
 });
 
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  if (!msg || typeof msg !== 'object') return false;
+  if (sender && sender.id && sender.id !== chrome.runtime.id) return false;
+
   if (msg.type === 'INCREMENT_DIAGNOSTIC') {
     chrome.storage.local.get(['stats'], (res) => {
       const stats = res.stats || DEFAULT_STATE.stats;
       const key = msg.metric;
-      if (key && typeof stats[key] === 'number') {
-        stats[key] += msg.amount || 1;
+      const safeAmount = Math.min(20, Math.max(1, Number(msg.amount) || 1));
+      if (key && Object.prototype.hasOwnProperty.call(DEFAULT_STATE.stats, key) && typeof stats[key] === 'number') {
+        stats[key] += safeAmount;
       }
       chrome.storage.local.set({ stats }, () => {
         updateActionBadge(stats);
@@ -138,6 +142,11 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     return true;
   }
 
+  // Privileged extension UI actions (reject calls from content-script tabs)
+  if (sender && sender.tab) {
+    return false;
+  }
+
   if (msg.type === 'HIBERNATE_TABS_NOW') {
     hibernateInactiveTabs().then(async (result) => {
       const ramMetrics = await getRamSpeedometerMetrics();
@@ -147,12 +156,17 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   }
 
   if (msg.type === 'ACTIVATE_LICENSE') {
+    const key = String(msg.licenseKey || '').trim();
+    if (!key) {
+      sendResponse({ ok: false, error: 'missing_license_key' });
+      return true;
+    }
     const isRamIncluded = Boolean(msg.ramTamerActive);
     chrome.storage.local.set(
       {
         proActive: true,
         ramTamerActive: isRamIncluded,
-        licenseKey: msg.licenseKey || 'SWEEPR-DB-2026-ACTIVE',
+        licenseKey: key,
         encryptedDnsEnabled: true
       },
       () => sendResponse({ ok: true })

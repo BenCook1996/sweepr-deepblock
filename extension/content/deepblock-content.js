@@ -321,6 +321,7 @@
   }
 
   window.addEventListener('message', (event) => {
+    if (event.source !== window) return;
     if (event.data && event.data.source === 'sweepr-deepstealth' && event.data.type === 'STEALTH_BYPASS_TRIGGERED') {
       reportMetric('antiAdblockBypassed', 1);
     }

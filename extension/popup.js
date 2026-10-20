@@ -54,6 +54,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   upgradeCtaBtn.addEventListener('click', () => {
-    chrome.tabs.create({ url: 'http://localhost:3000/order?plan=annual&addon=ram_tamer' });
+    chrome.tabs.create({ url: 'https://sweeprdeepblock.com/order?plan=annual&addon=ram_tamer' });
   });
 });
