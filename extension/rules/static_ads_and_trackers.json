@@ -45,6 +45,33 @@
     }
   },
   {
+    "id": 7,
+    "priority": 2,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||youtube.com/api/stats/ads",
+      "resourceTypes": ["xmlhttprequest", "ping", "image"]
+    }
+  },
+  {
+    "id": 8,
+    "priority": 2,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||youtube.com/pagead/",
+      "resourceTypes": ["script", "xmlhttprequest", "sub_frame", "image"]
+    }
+  },
+  {
+    "id": 9,
+    "priority": 2,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||static.doubleclick.net/instream/ad_status.js",
+      "resourceTypes": ["script"]
+    }
+  },
+  {
     "id": 6,
     "priority": 2,
     "action": {

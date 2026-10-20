@@ -159,11 +159,102 @@
     }
   }
 
+  // 5. YouTube Ad-Pod Shield (Pre-Roll/Mid-Roll Instant Fast-Forward + Cosmetic Feed Cleanser)
+  function initYouTubeAdShield() {
+    if (!/(^|\.)youtube\.com$/i.test(location.hostname)) return;
+
+    // Inject cosmetic rules to hide home-feed, sidebar, masthead & overlay ad slots
+    if (!document.getElementById('deepblock-yt-cosmetic')) {
+      const style = document.createElement('style');
+      style.id = 'deepblock-yt-cosmetic';
+      style.textContent = `
+        ytd-ad-slot-renderer,
+        ytd-in-feed-ad-layout-renderer,
+        ytd-banner-promo-renderer,
+        ytd-statement-banner-renderer,
+        ytd-Display-ad-renderer,
+        ytd-promoted-sparkles-web-renderer,
+        ytd-compact-promoted-video-renderer,
+        #masthead-ad,
+        #player-ads,
+        .ytp-ad-overlay-container,
+        .ytp-ad-message-container,
+        ytd-engagement-panel-section-list-renderer[target-id="engagement-panel-ads"] {
+          display: none !important;
+        }
+      `;
+      (document.head || document.documentElement).appendChild(style);
+    }
+
+    let wasMutedBeforeAd = false;
+
+    function neutralizeYouTubeVideoAd() {
+      const player = document.querySelector('#movie_player, .html5-video-player');
+      if (!player) return;
+
+      const isAdShowing =
+        player.classList.contains('ad-showing') ||
+        player.classList.contains('ad-interrupting');
+
+      const video = player.querySelector('video.html5-main-video');
+
+      if (isAdShowing && video) {
+        if (!video.dataset.deepblockAdMuted) {
+          wasMutedBeforeAd = video.muted;
+          video.muted = true;
+          video.dataset.deepblockAdMuted = '1';
+          reportMetric('adsBlocked', 1);
+        }
+
+        // Fast-forward ad stream to final millisecond to bypass anti-adblock detection
+        if (Number.isFinite(video.duration) && video.duration > 0.5 && video.currentTime < video.duration - 0.1) {
+          try {
+            video.currentTime = video.duration;
+          } catch (e) {
+            video.playbackRate = 16;
+          }
+        } else {
+          video.playbackRate = 16;
+        }
+
+        // Click any visible Skip Ad button immediately
+        const skipSelectors = [
+          '.ytp-skip-ad-button',
+          '.ytp-ad-skip-button',
+          '.ytp-ad-skip-button-modern',
+          '.ytp-ad-skip-button-slot button',
+          '.ytp-ad-overlay-close-button'
+        ];
+        for (const sel of skipSelectors) {
+          const btn = document.querySelector(sel);
+          if (btn) {
+            btn.click();
+          }
+        }
+      } else if (video && video.dataset.deepblockAdMuted) {
+        // Restore user's original mute & playback rate once main video resumes
+        video.muted = wasMutedBeforeAd;
+        video.playbackRate = 1;
+        delete video.dataset.deepblockAdMuted;
+      }
+    }
+
+    neutralizeYouTubeVideoAd();
+    const obs = new MutationObserver(neutralizeYouTubeVideoAd);
+    obs.observe(document.documentElement, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['class', 'src']
+    });
+  }
+
   chrome.storage.local.get(['proActive'], (res) => {
     const proActive = Boolean(res && res.proActive);
     processCookieBanners(proActive);
     processSearchResults(proActive);
     processRecipeAndNewsClutter(proActive);
     processEcommerceStore(proActive);
+    initYouTubeAdShield();
   });
 })();
