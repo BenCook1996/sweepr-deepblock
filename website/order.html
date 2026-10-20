@@ -120,7 +120,7 @@
   <header class="bg-[#232931] text-white py-5 px-6 sm:px-8 border-b border-gray-800/80 shadow-md">
     <div class="max-w-6xl mx-auto flex items-center justify-between">
       <a href="/?home=1" class="inline-flex items-center gap-2.5 text-inherit no-underline group">
-        <div class="logo-box" style="width:32px;height:32px;font-size:16px;">S</div>
+        <div class="logo-box" style="width:32px;height:32px;" aria-hidden="true"></div>
         <span class="font-black text-xl tracking-tight text-white">SWEEPR <span class="text-emerald-400">Deepblock</span></span>
       </a>
       <button type="button" onclick="showDiscountModal()" class="text-xs px-3 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-400/30 text-emerald-300 font-bold cursor-pointer">
@@ -165,7 +165,7 @@
             <div>
               <div id="productTag" class="mb-1.5">
                 <span id="productTagContent" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[11px] font-bold text-emerald-800 bg-emerald-100 border border-emerald-300">
-                  Save 58% vs monthly billing
+                  Save 50% vs monthly billing
                 </span>
               </div>
               <h2 class="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">SWEEPR Deepblock Pro All-Access</h2>
@@ -181,8 +181,8 @@
           </div>
 
           <div class="text-right shrink-0">
-            <div id="productPriceTop" class="text-2xl font-black text-gray-900 tracking-tight">£49.99</div>
-            <div id="productPriceSub" class="text-[11px] text-gray-500 font-medium">per year (£4.16/mo)</div>
+            <div id="productPriceTop" class="text-2xl font-black text-gray-900 tracking-tight">£59.99</div>
+            <div id="productPriceSub" class="text-[11px] text-gray-500 font-medium">per year (£4.99/mo)</div>
           </div>
         </div>
 
@@ -239,7 +239,7 @@
             </div>
             <div class="text-right shrink-0">
               <div id="ramAddonPriceLabel" class="text-sm font-black text-emerald-700">+£14.99/yr</div>
-              <div class="text-[10px] text-gray-400 line-through">Reg £49.99</div>
+              <div class="text-[10px] text-gray-400 line-through">Reg £29.99</div>
             </div>
           </label>
         </div>
@@ -248,7 +248,7 @@
         <div class="bg-white rounded-xl p-5 border border-gray-200/80 shadow-sm space-y-3 text-sm">
           <div class="flex items-center justify-between text-gray-700">
             <span id="summaryPlanTitle">SWEEPR Deepblock Pro (Annual Plan)</span>
-            <span id="summaryPlanPrice" class="font-semibold text-gray-900">£49.99/year</span>
+            <span id="summaryPlanPrice" class="font-semibold text-gray-900">£59.99/year</span>
           </div>
 
           <div id="ramAddonSummaryRow" class="hidden flex items-center justify-between text-emerald-800 font-semibold border-t border-dashed border-gray-200 pt-2">
@@ -259,8 +259,8 @@
           <!-- Savings Line -->
           <div id="savingsSummaryRow" class="flex flex-col gap-1 text-emerald-600 font-medium border-t border-dashed border-gray-200 pt-2">
             <div class="flex items-center justify-between">
-              <span id="savingsSummaryLabel">Annual Plan Savings (Save 58%)</span>
-              <span id="savingsSummaryAmount" class="font-bold">- £69.89</span>
+              <span id="savingsSummaryLabel">Annual Plan Savings (Save 50%)</span>
+              <span id="savingsSummaryAmount" class="font-bold">- £59.89</span>
             </div>
             <div id="savingsSummaryNote" class="text-[11px] text-gray-500 font-normal">
               Includes Fake E-Commerce Store Detector &amp; Encrypted DNS Proxy FREE.
@@ -280,7 +280,7 @@
 
           <div class="pt-3 border-t border-gray-200 flex items-center justify-between">
             <span class="font-bold text-gray-900 text-base">Total Today (GBP)</span>
-            <span id="totalTodayText" class="font-black text-2xl text-gray-900">£49.99</span>
+            <span id="totalTodayText" class="font-black text-2xl text-gray-900">£59.99</span>
           </div>
         </div>
 
@@ -435,7 +435,7 @@
     let discountModalShown = false;
 
     function calculateTotalPence() {
-      let base = selectedPlan === 'annual' ? 4999 : selectedPlan === 'six_month' ? 3899 : (isDiscountApplied ? 199 : 999);
+      let base = selectedPlan === 'annual' ? 5999 : selectedPlan === 'six_month' ? 4499 : (isDiscountApplied ? 199 : 999);
       let addon = isRamTamerAdded ? (selectedPlan === 'monthly' ? 199 : 1499) : 0;
       return base + addon;
     }
@@ -462,17 +462,23 @@
       }
 
       if (selectedPlan === 'annual') {
-        document.getElementById('productPriceTop').textContent = '£49.99';
-        document.getElementById('productPriceSub').textContent = 'per year (£4.16/mo)';
+        document.getElementById('productTagContent').textContent = 'Save 50% vs monthly billing';
+        document.getElementById('productPriceTop').textContent = '£59.99';
+        document.getElementById('productPriceSub').textContent = 'per year (£4.99/mo)';
         document.getElementById('summaryPlanTitle').textContent = 'SWEEPR Deepblock Pro (Annual Plan)';
-        document.getElementById('summaryPlanPrice').textContent = '£49.99/year';
+        document.getElementById('summaryPlanPrice').textContent = '£59.99/year';
+        document.getElementById('savingsSummaryLabel').textContent = 'Annual Plan Savings (Save 50%)';
+        document.getElementById('savingsSummaryAmount').textContent = '- £59.89';
         document.getElementById('savingsSummaryRow').classList.remove('hidden');
         document.getElementById('discountSummaryRow').classList.add('hidden');
       } else if (selectedPlan === 'six_month') {
-        document.getElementById('productPriceTop').textContent = '£38.99';
-        document.getElementById('productPriceSub').textContent = 'every 6 months (£6.50/mo)';
+        document.getElementById('productTagContent').textContent = 'Save 25% vs monthly billing';
+        document.getElementById('productPriceTop').textContent = '£44.99';
+        document.getElementById('productPriceSub').textContent = 'every 6 months (£7.49/mo)';
         document.getElementById('summaryPlanTitle').textContent = 'SWEEPR Deepblock Pro (6-Month Plan)';
-        document.getElementById('summaryPlanPrice').textContent = '£38.99/6 months';
+        document.getElementById('summaryPlanPrice').textContent = '£44.99/6 months';
+        document.getElementById('savingsSummaryLabel').textContent = '6-Month Plan Savings (Save 25%)';
+        document.getElementById('savingsSummaryAmount').textContent = '- £14.95';
         document.getElementById('savingsSummaryRow').classList.remove('hidden');
         document.getElementById('discountSummaryRow').classList.add('hidden');
       } else {

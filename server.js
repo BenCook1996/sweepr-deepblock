@@ -47,8 +47,8 @@ const server = http.createServer((req, res) => {
     return sendJson(res, 200, {
       elementsEnabled: false,
       plans: {
-        annual: { amountPence: 4999, label: 'Annual Plan (£49.99/yr)' },
-        six_month: { amountPence: 3899, label: '6-Month Plan (£38.99/6mo)' },
+        annual: { amountPence: 5999, label: 'Annual Plan (£59.99/yr — £4.99/mo, Save 50%)' },
+        six_month: { amountPence: 4499, label: '6-Month Plan (£44.99/6mo — £7.49/mo, Save 25%)' },
         monthly: { amountPence: 999, introPence: 199, label: 'Monthly Plan (£9.99/mo)' }
       },
       addons: {
@@ -80,7 +80,7 @@ const server = http.createServer((req, res) => {
           email: data.email || 'customer@example.com',
           plan: data.plan || 'annual',
           ramTamerAddon: Boolean(data.ramTamerAddon),
-          amountPence: data.amountPence || 4999,
+          amountPence: data.amountPence || 5999,
           entitlements,
           status: 'active',
           createdAt: new Date().toISOString()
