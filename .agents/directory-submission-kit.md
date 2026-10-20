@@ -71,7 +71,7 @@ Tag **SWEEPR Deepblock** as an alternative to:
 - **Submission URL:** [https://sourceforge.net/software/vendors/new](https://sourceforge.net/software/vendors/new)
 - **Product Name:** `SWEEPR Deepblock`
 - **Company Name:** `SWEEPR Technologies`
-- **Work Email:** `support@sweepr.uk`
+- **Work Email:** `support@sweeprdeepblock.com`
 - **Website URL:** `https://sweeprdeepblock.com`
 - **Category:** `Security / Privacy / Ad Blockers & Browser Extensions`
 - **Download URL:** `https://sweeprdeepblock.com/download`
