@@ -64,10 +64,43 @@
   },
   {
     "id": 9,
-    "priority": 2,
-    "action": { "type": "block" },
+    "priority": 10,
+    "action": {
+      "type": "redirect",
+      "redirect": {
+        "url": "data:application/javascript;base64,d2luZG93LmNhblJ1bkFkcz10cnVlO3dpbmRvdy5pc0FkQmxvY2tBY3RpdmU9ZmFsc2U7d2luZG93Lmdvb2dsZV9hZF9zdGF0dXM9MTt3aW5kb3cuYWRzYnlnb29nbGU9d2luZG93LmFkc2J5Z29vZ2xlfHx7bG9hZGVkOnRydWUsYWRzYnlnb29nbGU6dHJ1ZSxwdXNoOmZ1bmN0aW9uKCl7fX07"
+      }
+    },
     "condition": {
       "urlFilter": "||static.doubleclick.net/instream/ad_status.js",
+      "resourceTypes": ["script"]
+    }
+  },
+  {
+    "id": 10,
+    "priority": 10,
+    "action": {
+      "type": "redirect",
+      "redirect": {
+        "url": "data:application/javascript;base64,d2luZG93LmNhblJ1bkFkcz10cnVlO3dpbmRvdy5pc0FkQmxvY2tBY3RpdmU9ZmFsc2U7d2luZG93Lmdvb2dsZV9hZF9zdGF0dXM9MTt3aW5kb3cuYWRzYnlnb29nbGU9d2luZG93LmFkc2J5Z29vZ2xlfHx7bG9hZGVkOnRydWUsYWRzYnlnb29nbGU6dHJ1ZSxwdXNoOmZ1bmN0aW9uKCl7fX07"
+      }
+    },
+    "condition": {
+      "urlFilter": "||pagead2.googlesyndication.com/pagead/js/adsbygoogle.js",
+      "resourceTypes": ["script"]
+    }
+  },
+  {
+    "id": 11,
+    "priority": 10,
+    "action": {
+      "type": "redirect",
+      "redirect": {
+        "url": "data:application/javascript;base64,d2luZG93LmNhblJ1bkFkcz10cnVlO3dpbmRvdy5pc0FkQmxvY2tBY3RpdmU9ZmFsc2U7d2luZG93Lmdvb2dsZV9hZF9zdGF0dXM9MTt3aW5kb3cuYWRzYnlnb29nbGU9d2luZG93LmFkc2J5Z29vZ2xlfHx7bG9hZGVkOnRydWUsYWRzYnlnb29nbGU6dHJ1ZSxwdXNoOmZ1bmN0aW9uKCl7fX07"
+      }
+    },
+    "condition": {
+      "urlFilter": "||securepubads.g.doubleclick.net/tag/js/gpt.js",
       "resourceTypes": ["script"]
     }
   },

@@ -249,6 +249,83 @@
     });
   }
 
+  // 6. DeepStealth Layer 5: Active Anti-Adblock Wall Neutralizer & Bait Visual Cloaker
+  const ANTI_ADBLOCK_WALL_SELECTORS = [
+    '.fc-ab-root',
+    '.fc-dialog-container',
+    '[id*="admiral" i]',
+    '[class*="admiral" i]',
+    '#babasbmsgx',
+    '[id*="blockadblock" i]',
+    '[class*="adblock-modal" i]',
+    '[class*="adblock-overlay" i]',
+    '[id*="adblock-notice" i]',
+    '[class*="adblocker-modal" i]',
+    'tp-yt-paper-dialog:has(ytd-enforcement-message-view-model)',
+    'ytd-enforcement-message-view-model'
+  ];
+
+  const BAIT_SELECTORS = [
+    '.adsbox',
+    '.pub_300x250',
+    '.pub_300x250m',
+    '.pub_728x90',
+    '.text-ad',
+    '.textAd',
+    '.text_ad',
+    '.text_ads',
+    '.text-ads',
+    '.text-ad-links',
+    '#ad-tester',
+    '#ad_tester'
+  ];
+
+  function processAntiAdblockStealth() {
+    // Visually cloak bait elements WITHOUT setting display:none so offsetHeight stays > 0
+    const baits = document.querySelectorAll(BAIT_SELECTORS.join(','));
+    baits.forEach((bait) => {
+      if (!bait.dataset.deepstealthCloaked) {
+        bait.dataset.deepstealthCloaked = '1';
+        Object.assign(bait.style, {
+          opacity: '0.001',
+          pointerEvents: 'none',
+          position: 'fixed',
+          left: '-9999px',
+          top: '-9999px',
+          width: '300px',
+          height: '250px',
+          display: 'block',
+          visibility: 'visible'
+        });
+      }
+    });
+
+    // Strip active anti-adblock walls & restore document scrolling
+    let wallRemoved = false;
+    for (const sel of ANTI_ADBLOCK_WALL_SELECTORS) {
+      try {
+        const nodes = document.querySelectorAll(sel);
+        nodes.forEach((node) => {
+          node.remove();
+          wallRemoved = true;
+        });
+      } catch (e) {}
+    }
+
+    if (wallRemoved) {
+      document.documentElement.style.setProperty('overflow', 'auto', 'important');
+      document.body.style.setProperty('overflow', 'auto', 'important');
+      document.body.style.setProperty('pointer-events', 'auto', 'important');
+      reportMetric('antiAdblockBypassed', 1);
+    }
+  }
+
+  window.addEventListener('message', (event) => {
+    if (event.data && event.data.source === 'sweepr-deepstealth' && event.data.type === 'STEALTH_BYPASS_TRIGGERED') {
+      reportMetric('antiAdblockBypassed', 1);
+    }
+  });
+
   chrome.storage.local.get(['proActive'], (res) => {
     const proActive = Boolean(res && res.proActive);
     processCookieBanners(proActive);
@@ -256,5 +333,9 @@
     processRecipeAndNewsClutter(proActive);
     processEcommerceStore(proActive);
     initYouTubeAdShield();
+    processAntiAdblockStealth();
+
+    const stealthObs = new MutationObserver(() => processAntiAdblockStealth());
+    stealthObs.observe(document.documentElement, { childList: true, subtree: true });
   });
 })();

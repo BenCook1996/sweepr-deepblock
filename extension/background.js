@@ -11,6 +11,7 @@ const DEFAULT_STATE = {
     aiSlopDetected: 11,
     fakeStoresDetected: 4,
     clutterStripped: 27,
+    antiAdblockBypassed: 9,
     tabsHibernated: 0,
     ramSavedGb: 0
   },
