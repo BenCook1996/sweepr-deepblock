@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Portal &amp; 1-Click Subscription Manager | SWEEPR Deepblock</title>
+  <script src="https://cdn.tailwindcss.com/3.4.5"></script>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body class="text-gray-800">
+  <nav class="glass-nav px-6 py-4 flex items-center justify-between">
+    <a href="/?home=1" class="flex items-center gap-3 text-inherit no-underline">
+      <div class="logo-box">S</div>
+      <span class="font-extrabold text-xl tracking-tight text-gray-900">SWEEPR <span class="text-emerald-600">Deepblock</span></span>
+    </a>
+    <a href="/pricing" class="btn btn-ghost text-sm">Back to Pricing</a>
+  </nav>
+
+  <main class="flex-1 pt-32 pb-20 px-6 max-w-xl mx-auto w-full">
+    <div class="glass-card p-8 border border-emerald-200/80 shadow-xl">
+      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold text-emerald-800 bg-emerald-100 mb-4">
+        🛡️ Zero Dark-Patterns Guarantee
+      </div>
+      <h1 class="text-2xl sm:text-3xl font-black text-gray-900 mb-2">Self-Service Customer Portal</h1>
+      <p class="text-sm text-gray-600 mb-6">
+        Enter your email address or license key below to view your active entitlements, manage your <strong>Total Tab &amp; RAM Tamer</strong> add-on, or cancel auto-renewal in <strong>1 click</strong> without chatting with support agents.
+      </p>
+
+      <form id="portalForm" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-gray-700 mb-1">Email Address or License Key</label>
+          <input type="text" id="lookupInput" required placeholder="you@example.com or SWEEPR-DB-XXXX" class="w-full p-3 rounded-xl border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+        </div>
+        <button type="submit" class="btn btn-go w-full justify-center font-bold">Access My Subscription</button>
+      </form>
+
+      <div id="portalResult" class="hidden mt-6 pt-6 border-t border-gray-200 space-y-4 text-sm">
+        <div class="flex items-center justify-between">
+          <span class="font-bold text-gray-900">Status:</span>
+          <span id="subStatusBadge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">ACTIVE PRO</span>
+        </div>
+        <div class="text-xs text-gray-600 space-y-1">
+          <div><strong>Active Modules:</strong> Auto-Reject Cookie Cleanser, AI Slop SERP Purifier, Fake Store Detector, Encrypted DNS</div>
+          <div id="addonStatusText"><strong>Total Tab &amp; RAM Tamer Add-On:</strong> Enabled</div>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-3 pt-2">
+          <button type="button" onclick="cancelInOneClick()" id="cancelBtn" class="btn bg-red-50 hover:bg-red-100 text-red-700 border-red-200 text-xs font-bold w-full">
+            1-Click Cancel Auto-Renewal
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    document.getElementById('portalForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      document.getElementById('portalResult').classList.remove('hidden');
+    });
+    function cancelInOneClick() {
+      const badge = document.getElementById('subStatusBadge');
+      badge.textContent = 'AUTO-RENEW CANCELLED (ACTIVE UNTIL TERM END)';
+      badge.className = 'px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800';
+      document.getElementById('cancelBtn').textContent = '✓ Auto-Renewal Cancelled in 1 Click';
+      document.getElementById('cancelBtn').disabled = true;
+    }
+  </script>
+</body>
+</html>

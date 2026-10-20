@@ -1,0 +1,52 @@
+{
+  "manifest_version": 3,
+  "name": "SWEEPR Deepblock: Ad, Cookie, AI Slop & RAM Cleanser",
+  "short_name": "SWEEPR Deepblock",
+  "version": "1.0.0",
+  "description": "Blocks ads free while detecting & cleansing GDPR cookie walls, AI Slop search farms, fake scam stores, and bloated browser tab RAM.",
+  "permissions": [
+    "declarativeNetRequest",
+    "declarativeNetRequestWithHostAccess",
+    "storage",
+    "alarms",
+    "tabs",
+    "system.memory"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "SWEEPR Deepblock — Live Diagnostic & Pro Control",
+    "default_popup": "popup.html"
+  },
+  "declarative_net_request": {
+    "rule_resources": [
+      {
+        "id": "ads_and_trackers",
+        "enabled": true,
+        "path": "rules/static_ads_and_trackers.json"
+      },
+      {
+        "id": "cryptominers_and_heavy_scripts",
+        "enabled": true,
+        "path": "rules/cryptominers.json"
+      }
+    ]
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content/deepblock-content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "extension@sweeprdeepblock.com",
+      "strict_min_version": "109.0"
+    }
+  }
+}
