@@ -463,10 +463,14 @@ const MIME_TYPES = {
   '.css': 'text/css; charset=utf-8',
   '.js': 'application/javascript; charset=utf-8',
   '.json': 'application/json; charset=utf-8',
+  '.webmanifest': 'application/manifest+json; charset=utf-8',
   '.xml': 'application/xml; charset=utf-8',
   '.txt': 'text/plain; charset=utf-8',
   '.svg': 'image/svg+xml',
   '.png': 'image/png',
+  '.webp': 'image/webp',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
   '.ico': 'image/x-icon'
 };
 
@@ -477,6 +481,7 @@ const CLEAN_ROUTES = {
   '/checkout': 'order.html',
   '/login': 'login.html',
   '/download': 'download.html',
+  '/test-lab': 'test-lab.html',
   '/vs/total-adblock': path.join('vs', 'total-adblock.html')
 };
 
@@ -1275,7 +1280,12 @@ const server = http.createServer(async (req, res) => {
       return res.end('404 Not Found');
     }
     const ext = path.extname(fullPath).toLowerCase();
-    res.writeHead(200, { 'Content-Type': MIME_TYPES[ext] || 'application/octet-stream' });
+    const isStaticAsset = ['.svg', '.png', '.webp', '.jpg', '.jpeg', '.ico', '.css', '.js'].includes(ext);
+    res.writeHead(200, {
+      'Content-Type': MIME_TYPES[ext] || 'application/octet-stream',
+      'X-Content-Type-Options': 'nosniff',
+      'Cache-Control': isStaticAsset ? 'public, max-age=86400' : 'public, max-age=300'
+    });
     fs.createReadStream(fullPath).pipe(res);
   });
 });
