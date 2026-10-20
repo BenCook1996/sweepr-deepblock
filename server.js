@@ -6,6 +6,23 @@ const crypto = require('crypto');
 
 const PORT = process.env.PORT || 3000;
 const WEBSITE_DIR = path.join(__dirname, 'website');
+const SWEEPR_CRM_URL = (process.env.SWEEPR_CRM_URL || 'http://localhost:8787').replace(/\/+$/, '');
+const SWEEPR_CRM_API_KEY = process.env.SWEEPR_CRM_API_KEY || '';
+const BOT_UA_RE = /googlebot|bingbot|gptbot|oai-searchbot|chatgpt-user|claudebot|anthropic-ai|perplexitybot|applebot|duckduckbot|yandexbot/i;
+
+function reportToSweeprCrm(pathAndQuery, body) {
+  try {
+    fetch(`${SWEEPR_CRM_URL}${pathAndQuery}`, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'x-sweepr-project': 'deepblock',
+        ...(SWEEPR_CRM_API_KEY ? { 'x-sweepr-api-key': SWEEPR_CRM_API_KEY } : {})
+      },
+      body: JSON.stringify({ project_id: 'deepblock', ...body })
+    }).catch(() => {});
+  } catch {}
+}
 
 // In-memory store for active subscriptions & entitlements
 const licenses = new Map();
@@ -41,6 +58,10 @@ function sendJson(res, statusCode, payload) {
 const server = http.createServer((req, res) => {
   const parsedUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
   const pathname = parsedUrl.pathname.replace(/\/+$/, '') || '/';
+  const ua = req.headers['user-agent'] || '';
+  if (req.method === 'GET' && BOT_UA_RE.test(ua) && !pathname.startsWith('/api/')) {
+    reportToSweeprCrm('/api/crm/seo/bot-hit?project=deepblock', { user_agent: ua, path: pathname, status: 200 });
+  }
 
   // API 1: Checkout Configuration
   if (req.method === 'GET' && pathname === '/api/checkout-config') {
@@ -87,6 +108,16 @@ const server = http.createServer((req, res) => {
         };
         licenses.set(licenseKey, record);
         licenses.set(record.email.toLowerCase(), record);
+        reportToSweeprCrm('/api/crm/subscriptions?project=deepblock', {
+          project_id: 'deepblock',
+          email: record.email,
+          plan: record.plan,
+          status: 'active',
+          amount_cents: record.amountPence,
+          addons: record.ramTamerAddon ? ['ram_tamer'] : [],
+          activate_local_app: false,
+          notes: `Synced from SWEEPR Deepblock checkout (${licenseKey})`
+        });
         return sendJson(res, 200, { ok: true, ...record });
       } catch (e) {
         return sendJson(res, 400, { ok: false, error: 'Invalid checkout request' });
