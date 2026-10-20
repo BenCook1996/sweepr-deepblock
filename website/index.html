@@ -4,11 +4,15 @@
   <meta name="color-scheme" content="light">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SWEEPR Deepblock — Zero Ads. Zero Pop-Ups. Browse in Peace.</title>
+  <title>SWEEPR Deepblock — Zero Ads. Zero Pop-Ups. Clean Web.</title>
   <link rel="icon" type="image/svg+xml" href="/logo.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.tailwindcss.com">
   <script>
     (function() {
       try {
+        if (/bot|crawl|spider|slurp|google|bing|duckduck|baidu|yandex|teoma|openai|chatgpt|perplexity|claude|applebot|facebookexternalhit|twitterbot/i.test(navigator.userAgent || '')) return;
         var params = new URLSearchParams(window.location.search);
         if (params.get('home') === '1' || params.get('noredirect') === '1') return;
         var ref = document.referrer || '';
@@ -25,7 +29,7 @@
       } catch (e) {}
     })();
   </script>
-  <meta name="description" content="Block video ads on YouTube &amp; Twitch, automatically say &quot;No&quot; to annoying cookie pop-ups, hide junk search results, and shop safely online. Try SWEEPR Deepblock for £1.99.">
+  <meta name="description" content="Block YouTube &amp; banner ads, automatically say &quot;No&quot; to cookie pop-ups, hide junk search results, and spot fake online shops. Try SWEEPR Deepblock for £1.99.">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
   <meta name="author" content="SWEEPR">
   <meta name="theme-color" content="#0F172A">
@@ -42,15 +46,17 @@
   <meta property="og:locale:alternate" content="fr_FR">
   <meta property="og:locale:alternate" content="es_ES">
   <meta property="og:url" content="https://sweeprdeepblock.com/">
-  <meta property="og:title" content="SWEEPR Deepblock — Zero Ads. Zero Pop-Ups. Browse in Peace.">
-  <meta property="og:description" content="Block video ads on YouTube &amp; Twitch, automatically say &quot;No&quot; to annoying cookie pop-ups, hide junk search results, and shop safely online.">
-  <meta property="og:image" content="https://sweeprdeepblock.com/logo.svg">
+  <meta property="og:title" content="SWEEPR Deepblock — Zero Ads. Zero Pop-Ups. Clean Web.">
+  <meta property="og:description" content="Block YouTube &amp; banner ads, automatically say &quot;No&quot; to cookie pop-ups, hide junk search results, and spot fake online shops.">
+  <meta property="og:image" content="https://sweeprdeepblock.com/og-image.png">
+  <meta property="og:image:alt" content="SWEEPR Deepblock — Zero Ads. Zero Pop-Ups. Browse in Peace.">
 
   <!-- Twitter / X Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="SWEEPR Deepblock — Zero Ads. Zero Pop-Ups. Browse in Peace.">
-  <meta name="twitter:description" content="Block video ads on YouTube &amp; Twitch, automatically say &quot;No&quot; to annoying cookie pop-ups, hide junk search results, and shop safely online.">
-  <meta name="twitter:image" content="https://sweeprdeepblock.com/logo.svg">
+  <meta name="twitter:url" content="https://sweeprdeepblock.com/">
+  <meta name="twitter:title" content="SWEEPR Deepblock — Zero Ads. Zero Pop-Ups. Clean Web.">
+  <meta name="twitter:description" content="Block YouTube &amp; banner ads, automatically say &quot;No&quot; to cookie pop-ups, hide junk search results, and spot fake online shops.">
+  <meta name="twitter:image" content="https://sweeprdeepblock.com/og-image.png">
 
   <!-- Structured Data (JSON-LD) for Search Rich Snippets & AI Engines -->
   <script type="application/ld+json">
@@ -290,7 +296,7 @@
               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
             </div>
             <div class="text-left">
-              <h3 class="font-bold text-gray-900 text-base">Live Browser Check</h3>
+              <h2 class="font-bold text-gray-900 text-base">Live Browser Check</h2>
               <p class="text-xs text-gray-500">Found 84 pop-ups, spam links &amp; trackers on screen</p>
             </div>
           </div>

@@ -2,6 +2,7 @@ User-agent: *
 Allow: /
 Disallow: /api/
 Disallow: /checkout/
+Disallow: /login
 Disallow: /logos.html
 
 # Explicitly permit AI Search and Answer Engines for LLM citations (GEO/AEO)

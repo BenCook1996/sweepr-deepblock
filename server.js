@@ -1269,6 +1269,22 @@ const server = http.createServer(async (req, res) => {
     return sendJson(res, 200, crmRes.data);
   }
 
+  // 301 Redirect .html Suffixes on Public Pages to Clean Canonical URLs
+  const HTML_CANONICAL_REDIRECTS = {
+    '/index.html': '/',
+    '/pricing.html': '/pricing',
+    '/download.html': '/download',
+    '/test-lab.html': '/test-lab',
+    '/order.html': '/order',
+    '/login.html': '/login',
+    '/vs/total-adblock.html': '/vs/total-adblock'
+  };
+  if ((req.method === 'GET' || req.method === 'HEAD') && HTML_CANONICAL_REDIRECTS[pathname]) {
+    const targetUrl = HTML_CANONICAL_REDIRECTS[pathname] + (parsedUrl.search || '');
+    res.writeHead(301, { Location: targetUrl });
+    return res.end();
+  }
+
   // Static Website Serving
   const mappedRelative = CLEAN_ROUTES[pathname] || pathname.slice(1);
   const safePath = path.normalize(mappedRelative).replace(/^(\.\.(\/|\\|$))+/, '');
