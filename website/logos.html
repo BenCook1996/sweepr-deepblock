@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SWEEPR Deepblock — Vector Logo &amp; App Icon Concepts</title>
+  <link rel="icon" type="image/svg+xml" href="/logo.svg">
+  <script src="https://cdn.tailwindcss.com/3.4.5"></script>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body class="text-gray-800 pb-20">
+
+  <!-- Interactive Live Preview Navbar -->
+  <nav class="glass-nav px-6 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <img id="liveNavLogo" src="/logos/logo-1-deep-aegis.svg" alt="SWEEPR Deepblock" class="w-10 h-10 rounded-xl shadow-md transition-all" />
+      <span class="font-extrabold text-xl tracking-tight text-gray-900">SWEEPR <span class="text-emerald-600">Deepblock</span></span>
+      <span id="liveSelectedBadge" class="ml-2 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+        Previewing Option 1 in Navbar
+      </span>
+    </div>
+    <div class="flex items-center gap-3">
+      <a href="/?home=1" class="btn btn-ghost text-sm">Back to Homepage</a>
+      <a href="/order" class="btn btn-go text-sm">View Checkout</a>
+    </div>
+  </nav>
+
+  <main class="max-w-6xl mx-auto px-6 pt-28">
+    <div class="text-center max-w-2xl mx-auto mb-12">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100 border border-emerald-200 mb-3">
+        🎨 Bespoke Vector SVG Icon Concepts
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-black text-gray-900 tracking-tight mb-3">
+        Choose Your Vector Icon
+      </h1>
+      <p class="text-gray-600 text-base">
+        Click <strong>"Preview in Navbar"</strong> on any card below to test how it looks live in the header. Every icon is a scalable, resolution-independent SVG designed for the Website (`40px`), Chrome Web Store (`128px`), and Extension Toolbar (`16px`).
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7" id="logoGrid"></div>
+  </main>
+
+  <script>
+    const LOGOS = [
+      {
+        id: 1,
+        file: '/logos/logo-1-deep-aegis.svg',
+        name: 'Option 1: Deep Aegis Shield & Sweep',
+        tag: 'Recommended • Best Brand Fit',
+        desc: '3D multi-contoured emerald shield with a high-velocity check-sweep and the signature SWEEPR 4-point sparkle.'
+      },
+      {
+        id: 2,
+        file: '/logos/logo-2-prism-filter.svg',
+        name: 'Option 2: Layered Prism Filter',
+        tag: 'Deep Multi-Layer Concept',
+        desc: 'Three stacked isometric glass filter planes representing Deepblock’s 3 layers: Ad Shield, Cookie/AI Slop Cleanser, and Scam/DNS Guard.'
+      },
+      {
+        id: 3,
+        file: '/logos/logo-3-octa-pulse.svg',
+        tag: 'Total Adblock Challenger',
+        name: 'Option 3: Octa-Shield & Pulse Bolt',
+        desc: 'Precision emerald octagon stop-frame paired with a high-voltage lightning bolt symbolizing <50ms cookie rejection & RAM boost.'
+      },
+      {
+        id: 4,
+        file: '/logos/logo-4-radar-sweep.svg',
+        tag: 'Diagnostic Scanner Concept',
+        name: 'Option 4: Cyber Radar & DeepScan',
+        desc: 'Active sonar sweep neutralizing threat nodes inside a dark emerald squircle—highlighting the Live DeepScan Diagnostic Hook.'
+      },
+      {
+        id: 5,
+        file: '/logos/logo-5-vault-crest.svg',
+        tag: 'Ultra-Crisp at 16×16px',
+        name: 'Option 5: Fortress Vault Crest',
+        desc: 'Split-wing heraldic privacy shield with a negative-space vault keyhole cutout for maximum legibility in tiny browser toolbars.'
+      },
+      {
+        id: 6,
+        file: '/logos/logo-6-vortex-blade.svg',
+        tag: 'SWEEPR Sparkle Core',
+        name: 'Option 6: Hex Aperture & Sparkle',
+        desc: 'Six interlocking hexagonal aperture blades converging around a glowing white purification star.'
+      }
+    ];
+
+    function previewLogo(id, file, name) {
+      document.getElementById('liveNavLogo').src = file;
+      document.getElementById('liveSelectedBadge').textContent = `Previewing Option ${id} in Navbar`;
+    }
+
+    const grid = document.getElementById('logoGrid');
+    grid.innerHTML = LOGOS.map((item) => `
+      <div class="glass-card p-6 flex flex-col justify-between border border-gray-200/80 hover:border-emerald-400 transition-all shadow-lg">
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <span class="text-xs font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800">${item.tag}</span>
+            <span class="text-xs font-mono text-gray-400">SVG Vector</span>
+          </div>
+
+          <!-- Multi-Size Preview Stage (128px, 40px Light, 32px Dark, 16px Toolbar) -->
+          <div class="bg-gradient-to-br from-gray-50 to-emerald-50/50 border border-gray-200/70 rounded-2xl p-5 mb-5 flex items-center justify-around">
+            <div class="text-center">
+              <img src="${item.file}" class="w-20 h-20 mx-auto drop-shadow-md" alt="${item.name}">
+              <span class="text-[10px] text-gray-500 font-semibold mt-2 block">App / Store (80px)</span>
+            </div>
+            <div class="space-y-3">
+              <div class="bg-white border border-gray-200 rounded-xl px-3 py-2 flex items-center gap-2 shadow-xs">
+                <img src="${item.file}" class="w-8 h-8" alt="">
+                <span class="text-xs font-extrabold text-gray-900">SWEEPR <span class="text-emerald-600">Deepblock</span></span>
+              </div>
+              <div class="bg-[#232931] rounded-xl px-3 py-2 flex items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <img src="${item.file}" class="w-6 h-6" alt="">
+                  <span class="text-[11px] font-bold text-white">Dark Header</span>
+                </div>
+                <div class="flex items-center gap-1 bg-white/10 px-2 py-0.5 rounded text-[10px] text-gray-300">
+                  <img src="${item.file}" class="w-4 h-4" alt="">
+                  <span>16px</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <h3 class="text-lg font-black text-gray-900 mb-1.5">${item.name}</h3>
+          <p class="text-xs text-gray-600 leading-relaxed mb-5">${item.desc}</p>
+        </div>
+
+        <button type="button" onclick="previewLogo(${item.id}, '${item.file}', '${item.name}')" class="btn btn-go w-full justify-center text-xs font-bold py-2.5">
+          Preview Option ${item.id} in Navbar
+        </button>
+      </div>
+    `).join('');
+  </script>
+</body>
+</html>

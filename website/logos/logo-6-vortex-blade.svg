@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="bg6" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#10b981"/>
+      <stop offset="100%" stop-color="#065f46"/>
+    </linearGradient>
+    <linearGradient id="blade" x1="12" y1="12" x2="52" y2="52" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#a7f3d0"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="16" fill="url(#bg6)"/>
+  <rect x="1" y="1" width="62" height="62" rx="15" stroke="white" stroke-opacity="0.28" stroke-width="1.5"/>
+  <!-- Hexagonal Sweeping Aperture Blades -->
+  <path d="M32 11L49 20.8V40.2L32 50L15 40.2V20.8L32 11Z" stroke="url(#blade)" stroke-width="2.6" fill="#064e3b" fill-opacity="0.35" stroke-linejoin="round"/>
+  <path d="M32 11L40.5 26M49 20.8L32 30.5M49 40.2L32 30.5M32 50L23.5 35M15 40.2L32 30.5M15 20.8L32 30.5" stroke="#6ee7b7" stroke-width="2" stroke-opacity="0.55" stroke-linecap="round"/>
+  <!-- Clean Sparkle Core -->
+  <path d="M32 19L35.2 27.3L43.5 30.5L35.2 33.7L32 42L28.8 33.7L20.5 30.5L28.8 27.3L32 19Z" fill="#ffffff"/>
+</svg>

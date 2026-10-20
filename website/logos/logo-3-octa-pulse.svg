@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="bg3" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#10b981"/>
+      <stop offset="100%" stop-color="#047857"/>
+    </linearGradient>
+    <linearGradient id="octaGrad" x1="12" y1="12" x2="52" y2="52" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#d1fae5"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="16" fill="url(#bg3)"/>
+  <rect x="1" y="1" width="62" height="62" rx="15" stroke="white" stroke-opacity="0.3" stroke-width="1.5"/>
+  <!-- Precision Octagon Stop-Frame -->
+  <polygon points="24,11 40,11 53,24 53,40 40,53 24,53 11,40 11,24" fill="#064e3b" fill-opacity="0.4" stroke="url(#octaGrad)" stroke-width="2.8" stroke-linejoin="round"/>
+  <!-- High-Speed Pulse Lightning Bolt (<50ms Instant Block & RAM Boost) -->
+  <path d="M34.5 17L21.5 34H31.5L29.5 47L42.5 30H32.5L34.5 17Z" fill="#ffffff"/>
+</svg>

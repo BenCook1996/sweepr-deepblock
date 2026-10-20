@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="bg2" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="50%" stop-color="#064e3b"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+    <linearGradient id="topLayer" x1="14" y1="14" x2="50" y2="30" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#6ee7b7"/>
+    </linearGradient>
+    <linearGradient id="midLayer" x1="14" y1="26" x2="50" y2="42" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#34d399"/>
+      <stop offset="100%" stop-color="#10b981"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="16" fill="url(#bg2)"/>
+  <rect x="1" y="1" width="62" height="62" rx="15" stroke="#34d399" stroke-opacity="0.35" stroke-width="1.5"/>
+  <!-- Bottom Deep Layer (DNS & Scam Shield) -->
+  <path d="M14 41L32 50L50 41" stroke="#10b981" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity="0.65"/>
+  <!-- Middle Filter Layer (AI Slop & Cookie Cleanser) -->
+  <path d="M14 33L32 42L50 33" stroke="url(#midLayer)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Top Diamond Shield Plane -->
+  <path d="M32 13L50 22.5L32 32L14 22.5L32 13Z" fill="url(#topLayer)" stroke="#ffffff" stroke-width="1.5" stroke-linejoin="round"/>
+  <!-- Core Block Mark inside Top Plane -->
+  <circle cx="32" cy="22.5" r="3.5" fill="#064e3b"/>
+</svg>

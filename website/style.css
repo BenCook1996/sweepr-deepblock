@@ -223,16 +223,17 @@ button.btn-ghost:hover:not(:disabled),
 .logo-box {
   width: 40px;
   height: 40px;
-  background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+  background-image: url("/logo.svg");
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
   border-radius: 10px;
-  display: inline-grid;
-  place-items: center;
-  font-weight: 900;
-  font-size: 20px;
-  color: #ffffff;
+  display: inline-block;
+  font-size: 0;
+  color: transparent;
   overflow: hidden;
   flex-shrink: 0;
-  box-shadow: 0 3px 10px rgba(16, 185, 129, 0.3);
+  box-shadow: 0 3px 10px rgba(16, 185, 129, 0.25);
 }
 
 .badge {
