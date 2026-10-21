@@ -249,7 +249,7 @@
       </div>
       <a href="/login" class="btn btn-ghost text-sm">Login</a>
       <a href="/download" class="hidden md:inline-flex btn btn-go gap-2">
-        <span>Add to Browser — Free</span>
+        <span>Add to Browser</span>
         <svg class="arrow-icon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
       </a>
     </div>
@@ -287,59 +287,86 @@
       </div>
     </div>
 
-    <!-- Right Column: Interactive Dual Diagnostic Hook Card (Web Blight Counter + RAM Speedometer) -->
-    <div class="flex-1 relative w-full max-w-lg">
-      <div class="glass-card p-6 flex flex-col gap-4 transform rotate-1 hover:rotate-0 transition-transform duration-500 border border-emerald-200/80 shadow-2xl">
-        <div class="flex items-center justify-between border-b border-gray-200/70 pb-3">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-full flex items-center justify-center bg-emerald-100 text-emerald-600">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+    <!-- Right Column: Live App Hovercard Preview (Inspired by Current Extension UI) -->
+    <div class="flex-1 relative w-full max-w-md">
+      <div class="glass-card p-5 sm:p-6 flex flex-col gap-3.5 transform rotate-1 hover:rotate-0 transition-transform duration-500 border border-emerald-200/80 shadow-2xl text-left">
+        <!-- App Header -->
+        <div class="flex items-center justify-between pb-1">
+          <div class="flex items-center gap-2.5">
+            <div class="logo-box !w-7 !h-7 !rounded-lg shrink-0" aria-hidden="true"></div>
+            <h2 class="font-black text-gray-900 text-base tracking-tight">SWEEPR <span class="text-emerald-600">Deepblock</span></h2>
+          </div>
+          <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-200">Quiet Mode</span>
+        </div>
+
+        <!-- Current Website Protection Switch Card -->
+        <div class="bg-white border border-emerald-200/90 rounded-2xl p-3.5 flex items-center justify-between shadow-sm">
+          <div>
+            <div class="text-sm font-extrabold text-gray-900">🌐 youtube.com</div>
+            <div class="text-xs font-semibold text-emerald-600 mt-0.5">Protection is ON for this site</div>
+          </div>
+          <div class="w-11 h-6 bg-emerald-500 rounded-full relative shrink-0 shadow-inner" aria-label="Protection On">
+            <span class="w-4 h-4 bg-white rounded-full absolute top-1 right-1 shadow"></span>
+          </div>
+        </div>
+
+        <!-- Blocked Quietly in Background (2x2 App Counter Grid) -->
+        <div class="bg-white/95 border border-emerald-100 rounded-2xl p-3.5 shadow-sm">
+          <div class="flex items-center justify-between text-xs font-bold text-gray-700 pb-2.5 border-b border-gray-100">
+            <span>Blocked quietly in background</span>
+            <span class="text-emerald-600 font-black">176 items ✓</span>
+          </div>
+          <div class="grid grid-cols-2 gap-2 mt-2.5">
+            <div class="bg-gray-50 border border-gray-200/80 rounded-xl px-3 py-2 flex items-center justify-between">
+              <span class="text-xs font-bold text-gray-600">📺 Ads</span>
+              <span class="text-base font-black text-emerald-600" id="liveAdsCount">142</span>
             </div>
-            <div class="text-left">
-              <h2 class="font-bold text-gray-900 text-base">Live Browser Check</h2>
-              <p class="text-xs text-gray-500">Found 84 pop-ups, spam links &amp; trackers on screen</p>
+            <div class="bg-gray-50 border border-gray-200/80 rounded-xl px-3 py-2 flex items-center justify-between">
+              <span class="text-xs font-bold text-gray-600">🍪 Cookies</span>
+              <span class="text-base font-black text-emerald-600" id="liveCookieCount">19</span>
+            </div>
+            <div class="bg-gray-50 border border-gray-200/80 rounded-xl px-3 py-2 flex items-center justify-between">
+              <span class="text-xs font-bold text-gray-600">🤖 Spam</span>
+              <span class="text-base font-black text-emerald-600" id="liveSlopCount">11</span>
+            </div>
+            <div class="bg-gray-50 border border-gray-200/80 rounded-xl px-3 py-2 flex items-center justify-between">
+              <span class="text-xs font-bold text-gray-600">🛒 Scams</span>
+              <span class="text-base font-black text-emerald-600" id="liveScamCount">4</span>
             </div>
           </div>
-          <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-amber-100 text-amber-800 border border-amber-300">Action Needed</span>
         </div>
 
-        <!-- Diagnostic Hook 1: Cookie Prompts, Fake Review Sites & AI Slop Counter -->
-        <div class="grid grid-cols-3 gap-2.5 text-left">
-          <div class="bg-white/90 border border-gray-200/80 rounded-xl p-3">
-            <div class="text-[11px] font-semibold text-gray-500">🍪 Cookie Pop-Ups</div>
-            <div class="text-2xl font-black text-gray-900 mt-0.5" id="liveCookieCount">42</div>
-            <div class="text-[10px] text-emerald-700 font-semibold">Ready to Close</div>
+        <!-- Automatic Tab Sleeping & 100% Silent Mode Row -->
+        <div class="bg-white/95 border border-emerald-100 rounded-2xl p-3.5 shadow-sm space-y-2.5">
+          <div>
+            <div class="flex items-center justify-between text-xs font-extrabold mb-1.5">
+              <span class="text-emerald-800">⚡ Automatic Tab Sleeping</span>
+              <span class="text-emerald-600">⚡ 4 Sleeping</span>
+            </div>
+            <div class="h-1.5 w-full bg-gray-200 rounded-full overflow-hidden">
+              <div class="h-full bg-gradient-to-r from-emerald-500 to-teal-600 w-1/3 rounded-full"></div>
+            </div>
           </div>
-          <div class="bg-white/90 border border-gray-200/80 rounded-xl p-3">
-            <div class="text-[11px] font-semibold text-gray-500">🤖 Spam Sites</div>
-            <div class="text-2xl font-black text-gray-900 mt-0.5" id="liveSlopCount">29</div>
-            <div class="text-[10px] text-amber-700 font-semibold">In Search Results</div>
-          </div>
-          <div class="bg-white/90 border border-gray-200/80 rounded-xl p-3">
-            <div class="text-[11px] font-semibold text-gray-500">🛒 Fake Shops</div>
-            <div class="text-2xl font-black text-red-600 mt-0.5" id="liveScamCount">13</div>
-            <div class="text-[10px] text-red-600 font-semibold">Scam Warnings</div>
+          <div class="bg-emerald-50/90 border border-emerald-200/70 rounded-xl px-3 py-2 flex items-center justify-between">
+            <div>
+              <div class="text-xs font-extrabold text-emerald-950">🤫 100% Silent Mode</div>
+              <div class="text-[10px] font-medium text-emerald-700">Hide all on-page badges &amp; toasts</div>
+            </div>
+            <div class="w-9 h-5 bg-emerald-500 rounded-full relative shrink-0">
+              <span class="w-3.5 h-3.5 bg-white rounded-full absolute top-[3px] right-[3px] shadow"></span>
+            </div>
           </div>
         </div>
 
-        <!-- Diagnostic Hook 2: Total Tab & RAM Tamer Live Speedometer -->
-        <div class="bg-gray-900 text-white rounded-xl p-4 text-left border border-gray-800">
-          <div class="flex items-center justify-between mb-1.5">
-            <span class="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
-              <span>🚀</span> Browser Speed &amp; Memory Meter
-            </span>
-            <span class="text-xs font-mono font-bold text-amber-400">6.8 GB Used (42% Slowdown)</span>
-          </div>
-          <div class="h-2.5 w-full bg-gray-800 rounded-full overflow-hidden mb-2">
-            <div class="h-full bg-gradient-to-r from-emerald-400 via-amber-400 to-red-500 w-3/4 rounded-full"></div>
-          </div>
-          <p class="text-[11px] text-gray-300 leading-snug">
-            Your open tabs are using <strong>6.8 GB of memory</strong> and slowing down your computer. Upgrade to pause unused background tabs and speed up your browser instantly.
-          </p>
+        <!-- 3-Tab App Switcher Bar -->
+        <div class="grid grid-cols-3 gap-1 bg-gray-100 p-1 rounded-xl text-center text-xs font-extrabold">
+          <div class="bg-white text-emerald-700 py-1.5 rounded-lg shadow-sm">🛡️ Status</div>
+          <div class="text-gray-600 py-1.5">⚡ Speed</div>
+          <div class="text-gray-600 py-1.5">⚙️ Controls</div>
         </div>
 
-        <a href="/order?plan=annual" class="btn btn-go w-full mt-1 gap-2">
-          <span>Clean Up &amp; Speed Up My Browser Now</span>
+        <a href="/download" class="btn btn-go w-full justify-center mt-0.5 gap-2">
+          <span>Install</span>
           <svg class="arrow-icon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
         </a>
       </div>
