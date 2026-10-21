@@ -1,6 +1,7 @@
-// SWEEPR Deepblock — Manifest V3 Background Service Worker (With Enforced Paid Subscription Verification)
+// SWEEPR Deepblock — Manifest V3 Background Service Worker (With Central SWEEPR CRM Subscription Verification)
 const LICENSE_VERIFY_ENDPOINTS = [
   'https://sweeprdeepblock.com/api/license-verify',
+  'http://localhost:8787/v1/license/verify-key?project=deepblock',
   'http://localhost:3000/api/license-verify'
 ];
 
@@ -10,6 +11,8 @@ const DEFAULT_STATE = {
   proActive: false,
   ramTamerActive: false,
   licenseKey: '',
+  licenseToken: '',
+  crmAccountId: '',
   subscriptionStatus: 'free',
   licenseVerifiedAt: 0,
   entitlements: [],
@@ -37,10 +40,10 @@ const DEFAULT_STATE = {
   cloudTabSessions: []
 };
 
-// Verify license key against live SWEEPR Deepblock Licensing & Stripe Subscription API
+// Verify license key against Central SWEEPR CRM & SWEEPR Deepblock Licensing API
 async function verifyLicenseWithServer(rawKey) {
   const key = String(rawKey || '').trim();
-  if (!key || key.length < 6 || key.length > 64 || key.includes('@')) {
+  if (!key || key.length < 6 || key.length > 512 || key.includes('@')) {
     await revokeProState('invalid_key_format');
     return { ok: false, valid: false, error: 'Invalid license key format.' };
   }
@@ -48,9 +51,10 @@ async function verifyLicenseWithServer(rawKey) {
   let lastNetworkError = false;
   for (const baseUrl of LICENSE_VERIFY_ENDPOINTS) {
     try {
-      const res = await fetch(`${baseUrl}?key=${encodeURIComponent(key)}`, {
+      const sep = baseUrl.includes('?') ? '&' : '?';
+      const res = await fetch(`${baseUrl}${sep}key=${encodeURIComponent(key)}`, {
         method: 'GET',
-        headers: { Accept: 'application/json' },
+        headers: { Accept: 'application/json', 'x-sweepr-project': 'deepblock' },
         signal: AbortSignal.timeout(5000)
       });
       const data = await res.json().catch(() => ({}));
@@ -58,12 +62,29 @@ async function verifyLicenseWithServer(rawKey) {
       if (res.ok && data && data.valid === true) {
         const subStatus = String(data.status || 'active').toLowerCase();
         if (subStatus === 'active' || subStatus === 'trialing') {
-          const ramTamerActive = Boolean(data.ramTamerAddon !== false);
-          const entitlements = Array.isArray(data.entitlements) ? data.entitlements : [];
+          const addonsList = Array.isArray(data.addons) ? data.addons : [];
+          const ramTamerActive = Boolean(
+            data.ramTamerAddon === true ||
+              addonsList.includes('ram_tamer') ||
+              addonsList.includes('sweepr_secure_bundle')
+          );
+          const entitlements = Array.isArray(data.entitlements)
+            ? data.entitlements
+            : [
+                'pro_cookie_autoreject',
+                'pro_ai_slop_purifier',
+                'pro_clutter_stripper',
+                'bundle_fake_store_detector',
+                'bundle_encrypted_dns_proxy',
+                ...(ramTamerActive ? ['addon_total_tab_and_ram_tamer'] : [])
+              ];
+          const canonicalKey = data.licenseKey || data.license_key || key;
           await chrome.storage.local.set({
             proActive: true,
             ramTamerActive,
-            licenseKey: data.licenseKey || key,
+            licenseKey: canonicalKey,
+            licenseToken: data.token || data.license_token || '',
+            crmAccountId: data.account_id || '',
             subscriptionStatus: subStatus,
             licenseVerifiedAt: Date.now(),
             entitlements,
@@ -73,7 +94,7 @@ async function verifyLicenseWithServer(rawKey) {
             ok: true,
             valid: true,
             status: subStatus,
-            licenseKey: data.licenseKey || key,
+            licenseKey: canonicalKey,
             ramTamerActive,
             entitlements
           };
