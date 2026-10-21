@@ -82,25 +82,46 @@
     gtag('config', 'G-01MNBQSL9K');
   </script>
 </head>
-<body class="grid place-items-center min-h-screen p-6">
-  <div class="glass-card p-8 max-w-md w-full text-center border border-emerald-200/80 shadow-2xl">
+<body class="grid place-items-center min-h-screen p-4 sm:p-6">
+  <div class="glass-card p-5 sm:p-8 max-w-md w-full text-center border border-emerald-200/80 shadow-2xl">
     <div class="logo-box mx-auto mb-4" aria-hidden="true"></div>
-    <h1 class="text-2xl font-black text-gray-900 mb-2">Install SWEEPR Deepblock</h1>
-    <p class="text-sm text-gray-600 mb-6">
+    <h1 class="text-xl sm:text-2xl font-black text-gray-900 mb-2">Install SWEEPR Deepblock</h1>
+    <p id="downloadSubtitle" class="text-xs sm:text-sm text-gray-600 mb-6">
       Choose your browser below to install the free extension and start blocking ads, closing cookie pop-ups, and checking for fake online shops:
     </p>
-    <div class="space-y-3">
-      <a href="/order?plan=annual" class="btn btn-go w-full justify-center py-3 font-bold">🌐 Add to Google Chrome / Brave</a>
-      <a href="/order?plan=annual" class="btn w-full justify-center py-3 font-bold bg-white border border-gray-300">🧭 Add to Apple Safari (Mac, iPhone &amp; iPad)</a>
-      <a href="/order?plan=annual" class="btn w-full justify-center py-3 font-bold bg-white border border-gray-300">🌊 Add to Microsoft Edge</a>
-      <a href="/order?plan=annual" class="btn w-full justify-center py-3 font-bold bg-white border border-gray-300">🦊 Add to Mozilla Firefox</a>
+    <div id="browserButtonsList" class="space-y-3">
+      <a id="btnChrome" href="/order?plan=annual" class="btn btn-go w-full justify-center py-3 font-bold text-xs sm:text-sm">🌐 Add to Google Chrome / Brave</a>
+      <a id="btnSafari" href="/order?plan=annual" class="btn w-full justify-center py-3 font-bold bg-white border border-gray-300 text-xs sm:text-sm">🧭 Add to Apple Safari (Mac, iPhone &amp; iPad)</a>
+      <a id="btnEdge" href="/order?plan=annual" class="btn w-full justify-center py-3 font-bold bg-white border border-gray-300 text-xs sm:text-sm">🌊 Add to Microsoft Edge</a>
+      <a id="btnFirefox" href="/order?plan=annual" class="btn w-full justify-center py-3 font-bold bg-white border border-gray-300 text-xs sm:text-sm">🦊 Add to Mozilla Firefox</a>
     </div>
     <div class="mt-6 pt-5 border-t border-gray-200 text-left space-y-2 text-xs text-gray-600">
       <div class="font-bold text-gray-900 text-center mb-2">How It Works in 3 Easy Steps:</div>
-      <div><strong>1. Click your browser above</strong> to add SWEEPR Deepblock in seconds.</div>
-      <div><strong>2. Pin the green shield icon 📌</strong> in the top-right corner of your browser.</div>
-      <div><strong>3. Browse normally</strong> — ads, cookie pop-ups, and scam shops are handled automatically!</div>
+      <div id="step1Text"><strong>1. Click your browser above</strong> to add SWEEPR Deepblock in seconds.</div>
+      <div id="step2Text"><strong>2. Pin the green shield icon 📌</strong> in the top-right corner of your browser.</div>
+      <div id="step3Text"><strong>3. Browse normally</strong> — ads, cookie pop-ups, and scam shops are handled automatically!</div>
     </div>
   </div>
+  <script>
+    (function() {
+      var ua = navigator.userAgent || '';
+      var isIOS = /iPhone|iPad|iPod/i.test(ua);
+      var isAndroid = /Android/i.test(ua);
+      var list = document.getElementById('browserButtonsList');
+      var btnChrome = document.getElementById('btnChrome');
+      var btnSafari = document.getElementById('btnSafari');
+      var step2 = document.getElementById('step2Text');
+      if (isIOS && list && btnSafari && btnChrome) {
+        btnChrome.className = 'btn w-full justify-center py-3 font-bold bg-white border border-gray-300 text-xs sm:text-sm';
+        btnSafari.className = 'btn btn-go w-full justify-center py-3 font-bold text-xs sm:text-sm';
+        list.insertBefore(btnSafari, list.firstChild);
+        if (step2) {
+          step2.innerHTML = '<strong>2. Enable in Safari Settings ⚙️</strong> (Settings &rarr; Apps &rarr; Safari &rarr; Extensions &rarr; SWEEPR Deepblock).';
+        }
+      } else if (isAndroid && step2) {
+        step2.innerHTML = '<strong>2. Enable mobile protection 🛡️</strong> in your browser menu or SWEEPR mobile app.';
+      }
+    })();
+  </script>
 </body>
 </html>

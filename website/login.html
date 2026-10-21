@@ -14,6 +14,7 @@
   <link rel="icon" type="image/svg+xml" href="/logo.svg">
   <script src="https://cdn.tailwindcss.com/3.4.5"></script>
   <link rel="stylesheet" href="/style.css">
+  <script src="/nav.js" defer></script>
   <!-- Google tag (gtag.js) - Sweepr Deepblock -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-01MNBQSL9K"></script>
   <script>
@@ -24,16 +25,18 @@
   </script>
 </head>
 <body class="text-gray-800">
-  <nav class="glass-nav px-6 py-4 flex items-center justify-between">
-    <a href="/?home=1" class="flex items-center gap-3 text-inherit no-underline">
-      <div class="logo-box" aria-hidden="true"></div>
-      <span class="font-extrabold text-xl tracking-tight text-gray-900">SWEEPR <span class="text-emerald-600">Deepblock</span></span>
+  <nav class="glass-nav px-4 md:px-6 py-3.5 md:py-4 flex items-center justify-between">
+    <a href="/?home=1" class="flex items-center gap-2.5 sm:gap-3 text-inherit no-underline min-w-0">
+      <div class="logo-box !w-9 !h-9 sm:!w-10 sm:!h-10" aria-hidden="true"></div>
+      <span class="font-extrabold text-base sm:text-xl tracking-tight text-gray-900 truncate">SWEEPR <span class="text-emerald-600">Deepblock</span></span>
     </a>
-    <a href="/pricing" class="btn btn-ghost text-sm">Back to Pricing</a>
+    <div class="flex items-center gap-2">
+      <a href="/pricing" class="btn btn-ghost text-xs sm:text-sm !px-2.5 sm:!px-4">Back to Pricing</a>
+    </div>
   </nav>
 
-  <main class="flex-1 pt-32 pb-20 px-6 max-w-xl mx-auto w-full">
-    <div class="glass-card p-8 border border-emerald-200/80 shadow-xl">
+  <main class="flex-1 pt-24 sm:pt-32 pb-14 sm:pb-20 px-4 sm:px-6 max-w-xl mx-auto w-full">
+    <div class="glass-card p-5 sm:p-8 border border-emerald-200/80 shadow-xl">
       <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold text-emerald-800 bg-emerald-100 mb-4">
         🛡️ Easy 1-Click Cancellation Guarantee
       </div>

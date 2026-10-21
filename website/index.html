@@ -169,11 +169,11 @@
 <body class="text-gray-800">
 
   <!-- Navigation (SweeprCleaner Holographic Pearl Layout) -->
-  <nav class="glass-nav px-4 md:px-6 py-4 flex items-center justify-between">
-    <div class="flex items-center gap-3 md:gap-8">
-      <a href="/?home=1" class="flex items-center gap-3 text-inherit no-underline">
-        <div class="logo-box" aria-hidden="true"></div>
-        <span class="font-extrabold text-xl tracking-tight text-gray-900">SWEEPR <span class="text-emerald-600">Deepblock</span></span>
+  <nav class="glass-nav px-4 md:px-6 py-3.5 md:py-4 flex items-center justify-between">
+    <div class="flex items-center gap-2.5 md:gap-8 min-w-0">
+      <a href="/?home=1" class="flex items-center gap-2.5 sm:gap-3 text-inherit no-underline min-w-0">
+        <div class="logo-box !w-9 !h-9 sm:!w-10 sm:!h-10" aria-hidden="true"></div>
+        <span class="font-extrabold text-base sm:text-xl tracking-tight text-gray-900 truncate">SWEEPR <span class="text-emerald-600">Deepblock</span></span>
       </a>
       <div class="hidden md:flex items-center gap-2">
         <a href="/#features" class="btn btn-ghost text-sm">Features</a>
@@ -247,7 +247,7 @@
           </div>
         </div>
       </div>
-      <a href="/login" class="btn btn-ghost text-sm">Login</a>
+      <a href="/login" class="btn btn-ghost text-xs sm:text-sm !px-2.5 sm:!px-4">Login</a>
       <a href="/download" class="hidden md:inline-flex btn btn-go gap-2">
         <span>Add to Browser</span>
         <svg class="arrow-icon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
@@ -256,40 +256,40 @@
   </nav>
 
   <!-- Hero Section (SweeprCleaner Split Layout + Dual Live Diagnostic Card) -->
-  <main class="flex-1 pt-32 pb-20 px-6 max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-12 text-center lg:text-left">
-    <div class="flex-1">
-      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100/80 border border-emerald-200 mb-6">
-        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-        All-in-One Ad, Pop-Up &amp; Safe Shopping Blocker
+  <main class="flex-1 pt-24 sm:pt-32 pb-14 sm:pb-20 px-4 sm:px-6 max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-8 sm:gap-12 text-center lg:text-left">
+    <div class="flex-1 w-full">
+      <div class="inline-flex items-center justify-center gap-2 px-3 sm:px-3.5 py-1.5 rounded-full text-[11px] sm:text-xs font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100/80 border border-emerald-200 mb-5 sm:mb-6">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
+        <span>All-in-One Ad, Pop-Up &amp; Safe Shopping Blocker</span>
       </div>
-      <h1 class="text-4xl sm:text-5xl md:text-6xl font-black mb-6 leading-tight tracking-tight text-gray-900">
+      <h1 class="text-3xl sm:text-5xl md:text-6xl font-black mb-5 sm:mb-6 leading-tight tracking-tight text-gray-900">
         SWEEPR Deepblock <br>
         <span style="color: var(--accent);">Zero Ads <br>Zero Pop-Ups</span>
       </h1>
-      <p class="text-lg md:text-xl text-gray-600 mb-9 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+      <p class="text-base sm:text-lg md:text-xl text-gray-600 mb-7 sm:mb-9 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
         Browse the web without interruptions. <strong>SWEEPR Deepblock</strong> blocks YouTube and banner ads, automatically says "No" to annoying cookie pop-ups, hides spam websites in search results, warns you about fake online shops, and stops open tabs from slowing down your computer.
       </p>
-      <div class="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
-        <a href="/download" id="downloadBtn" class="btn btn-go btn-big pulse-glow gap-2.5">
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 sm:gap-4 justify-center lg:justify-start">
+        <a href="/download" id="downloadBtn" class="btn btn-go btn-big pulse-glow gap-2.5 w-full sm:w-auto justify-center">
           <span>Install Free Extension</span>
           <svg class="arrow-icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
         </a>
-        <a href="/order?plan=annual" onclick="try{sessionStorage.setItem('deepblock_selected_plan','annual')}catch(e){}" class="btn btn-big bg-white border border-gray-300 hover:border-gray-400 text-gray-800 font-semibold">
+        <a href="/order?plan=annual" onclick="try{sessionStorage.setItem('deepblock_selected_plan','annual')}catch(e){}" class="btn btn-big bg-white border border-gray-300 hover:border-gray-400 text-gray-800 font-semibold w-full sm:w-auto justify-center">
           Get Deepblock Pro Now
         </a>
       </div>
-      <div class="flex flex-wrap items-center gap-3 justify-center lg:justify-start mt-5 text-xs text-gray-500 font-medium">
+      <div class="flex flex-wrap items-center gap-x-3 gap-y-1.5 justify-center lg:justify-start mt-5 text-xs text-gray-500 font-medium">
         <span>⚡ Closes Cookie Pop-Ups Automatically</span>
-        <span>•</span>
+        <span class="hidden sm:inline">•</span>
         <span>🛡️ 14-Day Money-Back Guarantee</span>
-        <span>•</span>
+        <span class="hidden sm:inline">•</span>
         <span>🔒 Never Sells Your Data</span>
       </div>
     </div>
 
     <!-- Right Column: Live App Hovercard Preview (Inspired by Current Extension UI) -->
     <div class="flex-1 relative w-full max-w-md">
-      <div class="glass-card p-5 sm:p-6 flex flex-col gap-3.5 transform rotate-1 hover:rotate-0 transition-transform duration-500 border border-emerald-200/80 shadow-2xl text-left">
+      <div class="glass-card p-4 sm:p-6 flex flex-col gap-3.5 transform sm:rotate-1 hover:rotate-0 transition-transform duration-500 border border-emerald-200/80 shadow-2xl text-left">
         <!-- App Header -->
         <div class="flex items-center justify-between pb-1">
           <div class="flex items-center gap-2.5">
@@ -374,10 +374,10 @@
   </main>
 
   <!-- 5-Column Core Deepblock Pillars -->
-  <section id="features" class="py-14 px-6">
+  <section id="features" class="py-10 sm:py-14 px-4 sm:px-6">
     <div class="max-w-6xl mx-auto text-center">
-      <h2 class="text-3xl sm:text-4xl font-black text-gray-900 mb-3">Everything You Need for a Clean, Safe Browser</h2>
-      <p class="text-gray-600 max-w-2xl mx-auto mb-12">Instead of installing five separate add-ons, SWEEPR Deepblock blocks video and banner ads, closes cookie pop-ups, hides junk search results, spots fake online shops, and protects your privacy in one simple app.</p>
+      <h2 class="text-2xl sm:text-4xl font-black text-gray-900 mb-3">Everything You Need for a Clean, Safe Browser</h2>
+      <p class="text-sm sm:text-base text-gray-600 max-w-2xl mx-auto mb-8 sm:mb-12">Instead of installing five separate add-ons, SWEEPR Deepblock blocks video and banner ads, closes cookie pop-ups, hides junk search results, spots fake online shops, and protects your privacy in one simple app.</p>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5 mb-14 text-left">
         <div class="glass-card p-6">
@@ -416,43 +416,43 @@
   </section>
 
   <!-- Paid Add-On Showcase: "Total Tab & RAM Tamer" Browser Memory Optimizer -->
-  <section id="ram-tamer" class="py-12 px-6">
+  <section id="ram-tamer" class="py-8 sm:py-12 px-4 sm:px-6">
     <div class="max-w-6xl mx-auto">
-      <div class="bg-gradient-to-br from-gray-900 via-gray-900 to-emerald-950 text-white rounded-3xl p-8 md:p-12 shadow-2xl border border-emerald-500/30 flex flex-col lg:flex-row items-center gap-10">
-        <div class="flex-1 text-left">
-          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider text-emerald-300 bg-emerald-500/15 border border-emerald-500/30 mb-4">
+      <div class="bg-gradient-to-br from-gray-900 via-gray-900 to-emerald-950 text-white rounded-3xl p-6 sm:p-8 md:p-12 shadow-2xl border border-emerald-500/30 flex flex-col lg:flex-row items-center gap-8 sm:gap-10">
+        <div class="flex-1 text-left w-full">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] sm:text-xs font-bold uppercase tracking-wider text-emerald-300 bg-emerald-500/15 border border-emerald-500/30 mb-4">
             <span>🚀 Optional Speed Booster Add-On</span>
           </div>
-          <h2 class="text-3xl sm:text-4xl font-black mb-4 tracking-tight">
+          <h2 class="text-2xl sm:text-4xl font-black mb-4 tracking-tight">
             Total Tab &amp; RAM Tamer — <span class="text-emerald-400">Speed Up Your Browser</span>
           </h2>
-          <p class="text-gray-300 text-base leading-relaxed mb-6">
+          <p class="text-gray-300 text-sm sm:text-base leading-relaxed mb-6">
             Most computers today aren't slow because of old files—they're slow because keeping <strong>dozens of browser tabs open eats up your computer's memory</strong>, making your laptop fan roar and video calls freeze.
           </p>
           <div class="space-y-3 text-sm text-gray-200 mb-8">
-            <div class="flex items-center gap-3">
-              <span class="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">✓</span>
+            <div class="flex items-start gap-3">
+              <span class="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold shrink-0 mt-0.5">✓</span>
               <span><strong>Pause Unused Background Tabs:</strong> Automatically puts inactive tabs to sleep so they stop using memory—and wakes them up the instant you click them.</span>
             </div>
-            <div class="flex items-center gap-3">
-              <span class="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">✓</span>
+            <div class="flex items-start gap-3">
+              <span class="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold shrink-0 mt-0.5">✓</span>
               <span><strong>Stop Battery-Draining Scripts:</strong> Blocks hidden background trackers and heavy scripts that overheat your laptop and drain your battery.</span>
             </div>
-            <div class="flex items-center gap-3">
-              <span class="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">✓</span>
+            <div class="flex items-start gap-3">
+              <span class="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold shrink-0 mt-0.5">✓</span>
               <span><strong>Automatic Tab Crash Recovery:</strong> Saves your open tabs automatically so you never lose your work if your browser or computer restarts.</span>
             </div>
           </div>
-          <div class="flex flex-wrap items-center gap-4">
-            <a href="/order?plan=annual&addon=ram_tamer" class="btn btn-go btn-big gap-2">
+          <div class="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 sm:gap-4">
+            <a href="/order?plan=annual&addon=ram_tamer" class="btn btn-go btn-big gap-2 w-full sm:w-auto justify-center">
               <span>Bundle Pro + Tab &amp; RAM Tamer</span>
               <svg class="arrow-icon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
             </a>
-            <span class="text-xs text-emerald-300 font-semibold">Add at checkout for just +£14.99/yr (£1.25/mo)</span>
+            <span class="text-xs text-emerald-300 font-semibold text-center sm:text-left">Add at checkout for just +£14.99/yr (£1.25/mo)</span>
           </div>
         </div>
 
-        <div class="w-full lg:w-[380px] bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 text-left">
+        <div class="w-full lg:w-[380px] bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-5 sm:p-6 text-left">
           <div class="flex items-center justify-between mb-4">
             <span class="text-xs uppercase font-bold tracking-wider text-gray-400">Live Speedometer Preview</span>
             <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300">RECLAIMED 5.9 GB</span>
