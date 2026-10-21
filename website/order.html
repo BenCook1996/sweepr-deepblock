@@ -164,10 +164,21 @@
       visibility: visible;
       pointer-events: auto;
     }
+    #discountModal .modal-card {
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+    }
+    #discountModal.hidden-modal .modal-card {
+      transform: scale(0.92) translateY(20px);
+      opacity: 0;
+    }
+    #discountModal.visible-modal .modal-card {
+      transform: scale(1) translateY(0);
+      opacity: 1;
+    }
     .laptop-frame {
       position: relative;
       width: 100%;
-      max-width: 360px;
+      max-width: 380px;
       margin: 0 auto;
     }
     .laptop-screen {
@@ -175,15 +186,38 @@
       border: 3px solid #27272a;
       border-bottom: none;
       border-radius: 12px 12px 0 0;
-      padding: 8px;
+      padding: 6px;
+      position: relative;
       box-shadow: 0 16px 36px rgba(0,0,0,0.25);
+    }
+    .laptop-notch {
+      width: 4px;
+      height: 4px;
+      background: #52525b;
+      border-radius: 50%;
+      margin: 0 auto 4px auto;
     }
     .laptop-base {
       height: 10px;
       background: linear-gradient(180deg, #71717a 0%, #3f3f46 100%);
       border-radius: 0 0 10px 10px;
+      position: relative;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.2);
+    }
+    .laptop-base::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 50px;
+      height: 4px;
+      background: #27272a;
+      border-radius: 0 0 4px 4px;
     }
   </style>
+  <script src="/nav.js" defer></script>
+  <script src="/i18n.js" defer></script>
   <script>
     try {
       localStorage.setItem('deepblock_visited_order', '1');
@@ -201,16 +235,47 @@
 </head>
 <body class="bg-[#f8fafc] text-gray-800 min-h-screen flex flex-col font-sans antialiased">
 
-  <!-- TOP DARK BANNER (SweeprCleaner Checkout Header Layout) -->
+  <!-- TOP DARK BANNER (Matching sweeprcleaner.com/order & sweeprvpn.com/order Header Layout) -->
   <header class="bg-[#232931] text-white py-5 px-6 sm:px-8 border-b border-gray-800/80 shadow-md">
     <div class="max-w-6xl mx-auto flex items-center justify-between">
       <a href="/?home=1" class="inline-flex items-center gap-2.5 text-inherit no-underline group">
-        <div class="logo-box" style="width:32px;height:32px;" aria-hidden="true"></div>
-        <span class="font-black text-xl tracking-tight text-white">SWEEPR <span class="text-emerald-400">Deepblock</span></span>
+        <img src="/logo.svg" alt="SWEEPR Deepblock" class="w-8 h-8 rounded-lg drop-shadow transition-transform group-hover:scale-105" />
+        <div class="flex items-baseline gap-1.5">
+          <span class="font-black text-xl tracking-tight text-white">SWEEPR <span class="text-emerald-400">Deepblock</span></span>
+        </div>
       </a>
-      <button type="button" onclick="showDiscountModal(true)" class="text-xs px-3 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-400/30 text-emerald-300 font-bold cursor-pointer">
-        ⚡ Preview £1.99 Intro Offer
-      </button>
+
+      <!-- Right Language Selector Dropdown -->
+      <div class="relative inline-block text-left" id="langDropdownContainer">
+        <button type="button" id="langDropdownBtn" class="text-xs flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/15 border border-white/15 cursor-pointer font-medium text-white transition-colors" aria-expanded="false" aria-label="Select Language">
+          <span class="text-sm" id="currentLangFlag">🇬🇧</span>
+          <span class="text-xs font-bold tracking-wide" id="currentLangCode">EN</span>
+          <svg id="langDropdownChevron" class="w-3 h-3 text-gray-300 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+          </svg>
+        </button>
+
+        <div id="langDropdownMenu" class="hidden absolute right-0 mt-2 w-44 bg-white/95 backdrop-blur-xl border border-gray-200/90 rounded-2xl shadow-xl p-1.5 z-50 transition-all text-gray-800">
+          <div class="space-y-0.5 text-xs">
+            <button type="button" onclick="setLanguage('en')" class="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-emerald-50 text-gray-800 hover:text-emerald-700 transition-colors font-medium cursor-pointer">
+              <span class="flex items-center gap-2"><span>🇬🇧</span> <span>English</span></span>
+              <span class="text-[10px] text-gray-400 font-mono">EN</span>
+            </button>
+            <button type="button" onclick="setLanguage('de')" class="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-emerald-50 text-gray-800 hover:text-emerald-700 transition-colors font-medium cursor-pointer">
+              <span class="flex items-center gap-2"><span>🇩🇪</span> <span>Deutsch</span></span>
+              <span class="text-[10px] text-gray-400 font-mono">DE</span>
+            </button>
+            <button type="button" onclick="setLanguage('fr')" class="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-emerald-50 text-gray-800 hover:text-emerald-700 transition-colors font-medium cursor-pointer">
+              <span class="flex items-center gap-2"><span>🇫🇷</span> <span>Français</span></span>
+              <span class="text-[10px] text-gray-400 font-mono">FR</span>
+            </button>
+            <button type="button" onclick="setLanguage('es')" class="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-emerald-50 text-gray-800 hover:text-emerald-700 transition-colors font-medium cursor-pointer">
+              <span class="flex items-center gap-2"><span>🇪🇸</span> <span>Español</span></span>
+              <span class="text-[10px] text-gray-400 font-mono">ES</span>
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="max-w-4xl mx-auto text-center pt-5 pb-3">
       <h1 id="bannerTitle" class="text-2xl sm:text-3xl md:text-4xl font-black text-white tracking-tight">
@@ -227,7 +292,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
 
       <!-- LEFT COLUMN: Product Overview, 2 Free Bundles, Paid RAM Tamer Add-On & Breakdown -->
-      <div class="lg:col-span-6 space-y-5">
+      <div class="lg:col-span-6 space-y-6">
 
         <!-- Main Product Item Card -->
         <div class="bg-white rounded-2xl p-5 sm:p-6 border border-gray-200/80 shadow-sm flex items-start justify-between gap-4">
@@ -243,13 +308,14 @@
                   <div class="box-title">SWEEPR DEEPBLOCK</div>
                   <div class="box-year">PRO EDITION</div>
                 </div>
-                <div style="font-size: 6.5px; color: #a7f3d0; font-weight: 700;">AD &amp; POP-UP SHIELD</div>
+                <div style="font-size: 6.5px; color: #a7f3d0; font-weight: 700;">ALL-IN-ONE</div>
               </div>
             </div>
 
             <div>
               <div id="productTag" class="mb-1.5">
                 <span id="productTagContent" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[11px] font-bold text-emerald-800 bg-emerald-100 border border-emerald-300">
+                  <svg class="w-3 h-3 text-emerald-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M17.707 9.293a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-7-7A.997.997 0 012 10V5a3 3 0 013-3h5c.256 0 .512.098.707.293l7 7zM5 6a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/></svg>
                   Save 50% vs monthly billing
                 </span>
               </div>
@@ -258,9 +324,12 @@
                 Blocks YouTube &amp; Banner Ads, Closes Cookie Pop-Ups, Hides Spam Search Results &amp; Cleans Up Messy Pages
               </p>
               <div class="flex items-center gap-2 mt-2 text-xs text-gray-600">
-                <span class="text-emerald-600 font-semibold">✓ Covers Up to 5 Devices</span>
+                <span class="inline-flex items-center gap-1 text-emerald-600 font-semibold">
+                  <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                  Covers Up to 5 Devices
+                </span>
                 <span>•</span>
-                <span>Instant Activation</span>
+                <span>Instant License Key</span>
               </div>
             </div>
           </div>
@@ -274,7 +343,9 @@
         <!-- Included Bundle Item 1: Fake E-Commerce Store & Review Detector -->
         <div class="bg-white rounded-xl p-4 border border-gray-200/80 shadow-sm flex items-center justify-between gap-4">
           <div class="flex items-start gap-3.5">
-            <div class="w-9 h-9 rounded-full border border-emerald-200 flex items-center justify-center shrink-0 mt-0.5 bg-emerald-50 text-emerald-600 font-bold">🛒</div>
+            <div class="w-9 h-9 rounded-full border border-gray-200 flex items-center justify-center shrink-0 mt-0.5 text-gray-600 bg-gray-50">
+              <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+            </div>
             <div>
               <h3 class="font-bold text-gray-900 text-sm">Fake Online Shop &amp; Fake Review Detector</h3>
               <p class="text-xs text-gray-500 mt-0.5 leading-relaxed">
@@ -292,7 +363,9 @@
         <!-- Included Bundle Item 2: Tracker-Free Search Engine & Encrypted DNS Proxy -->
         <div class="bg-white rounded-xl p-4 border border-gray-200/80 shadow-sm flex items-center justify-between gap-4">
           <div class="flex items-start gap-3.5">
-            <div class="w-9 h-9 rounded-full border border-emerald-200 flex items-center justify-center shrink-0 mt-0.5 bg-emerald-50 text-emerald-600 font-bold">🔒</div>
+            <div class="w-9 h-9 rounded-full border border-gray-200 flex items-center justify-center shrink-0 mt-0.5 text-gray-600 bg-gray-50">
+              <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+            </div>
             <div>
               <h3 class="font-bold text-gray-900 text-sm">Private, Tracker-Free Search &amp; Browsing Protection</h3>
               <p class="text-xs text-gray-500 mt-0.5 leading-relaxed">
@@ -308,23 +381,26 @@
         </div>
 
         <!-- 1-CLICK PAID ORDER BUMP: Total Tab & RAM Tamer (Browser Memory Optimizer) -->
-        <div id="ramTamerBumpCard" class="bg-gradient-to-r from-amber-50/90 via-white to-emerald-50/60 rounded-xl p-4 border-2 border-amber-300 shadow-sm transition-all">
-          <label class="flex items-start justify-between gap-4 cursor-pointer select-none">
+        <div id="ramTamerBumpCard" class="bg-gradient-to-br from-amber-50/90 via-white to-emerald-50/60 rounded-xl p-4 sm:p-5 border-2 border-amber-300/90 hover:border-emerald-500 shadow-sm transition-all">
+          <label class="flex items-start justify-between gap-3 cursor-pointer select-none">
             <div class="flex items-start gap-3.5">
-              <input type="checkbox" id="ramTamerAddonCheckbox" onchange="toggleRamTamerAddon(this.checked)" class="mt-1 w-5 h-5 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer">
+              <input type="checkbox" id="ramTamerAddonCheckbox" onchange="toggleRamTamerAddon(this.checked)" class="mt-1 w-5 h-5 rounded border-amber-400 text-emerald-600 focus:ring-emerald-500 cursor-pointer shrink-0">
               <div>
-                <div class="flex flex-wrap items-center gap-2">
-                  <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-amber-200 text-amber-900">⚡ 1-CLICK SPEED ADD-ON</span>
-                  <h3 class="font-extrabold text-gray-900 text-sm">Total Tab &amp; RAM Tamer — Speed Up Your Browser</h3>
+                <div class="flex flex-wrap items-center gap-2 mb-1">
+                  <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-extrabold uppercase tracking-wider bg-amber-100 text-amber-900 border border-amber-300">
+                    ⚡ 1-CLICK SPEED ADD-ON
+                  </span>
+                  <span id="ramAddonPriceLabel" class="text-xs font-extrabold text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded border border-emerald-300">
+                    + £14.99/yr (£1.24/mo eq.)
+                  </span>
                 </div>
+                <h3 class="font-extrabold text-gray-900 text-sm sm:text-base leading-snug">
+                  Add “Total Tab &amp; RAM Tamer” — Browser Speed &amp; Memory Optimizer
+                </h3>
                 <p class="text-xs text-gray-600 mt-1 leading-relaxed">
                   <strong>Stop open tabs from slowing down your computer:</strong> Automatically pauses unused background tabs until you click them, stops battery-draining background scripts, and saves your open tabs in case your browser crashes.
                 </p>
               </div>
-            </div>
-            <div class="text-right shrink-0">
-              <div id="ramAddonPriceLabel" class="text-sm font-black text-emerald-700">+£14.99/yr</div>
-              <div class="text-[10px] text-gray-400 line-through">Reg £29.99</div>
             </div>
           </label>
         </div>
@@ -336,9 +412,12 @@
             <span id="summaryPlanPrice" class="font-semibold text-gray-900">£59.99/year</span>
           </div>
 
-          <div id="ramAddonSummaryRow" class="hidden flex items-center justify-between text-emerald-800 font-semibold border-t border-dashed border-gray-200 pt-2">
-            <span>+ Total Tab &amp; RAM Tamer Add-On</span>
-            <span id="ramAddonSummaryAmount">+ £14.99/year</span>
+          <div id="ramAddonSummaryRow" class="hidden flex items-center justify-between text-emerald-800 bg-emerald-50/70 px-3 py-2 rounded-lg border border-emerald-200/80">
+            <span class="flex items-center gap-1.5 font-semibold text-xs sm:text-sm">
+              <span>⚡</span>
+              <span>Total Tab &amp; RAM Tamer Add-On</span>
+            </span>
+            <span id="ramAddonSummaryAmount" class="font-bold text-gray-900">+ £14.99/year</span>
           </div>
 
           <!-- Savings Line -->
@@ -348,7 +427,7 @@
               <span id="savingsSummaryAmount" class="font-bold">- £59.89</span>
             </div>
             <div id="savingsSummaryNote" class="text-[11px] text-gray-500 font-normal">
-              Includes Fake Online Shop Detector &amp; Private Browsing Protection FREE.
+              Billed annually at £59.99/year (£4.99/month equivalent) instead of standard £119.88/year.
             </div>
           </div>
 
@@ -359,7 +438,7 @@
               <span id="discountAmountMinus" class="font-bold">- £8.00</span>
             </div>
             <div id="discountNoteText" class="text-[11px] text-gray-500 font-normal">
-              Discount applies strictly to month 1. Future monthly renewals are billed at £9.99/mo unless cancelled in 1 click.
+              Discount applies strictly to month 1. All future monthly renewals are billed at the standard rate of £9.99/month unless cancelled.
             </div>
           </div>
 
@@ -369,17 +448,17 @@
           </div>
         </div>
 
-        <!-- Trust Badges -->
-        <div class="pt-1 flex flex-wrap items-center justify-center gap-6 opacity-90 py-2">
+        <!-- Authentic Trust Badges -->
+        <div class="pt-2 flex flex-wrap items-center justify-center gap-6 opacity-90 py-2">
           <div class="flex items-center gap-2 border border-gray-200 bg-white px-3.5 py-2 rounded-lg shadow-xs">
-            <span class="text-emerald-600 font-bold">🛡️</span>
+            <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
             <div class="text-left">
               <div class="text-[9px] font-bold text-gray-500 uppercase leading-none">14-DAY REFUND</div>
               <div class="text-[10px] font-extrabold text-gray-900 leading-tight">100% RISK-FREE</div>
             </div>
           </div>
           <div class="flex items-center gap-2 border border-gray-200 bg-white px-3.5 py-2 rounded-lg shadow-xs">
-            <span class="text-emerald-600 font-bold">🔒</span>
+            <svg class="w-5 h-5 text-emerald-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/></svg>
             <div class="text-left">
               <div class="text-[9px] font-bold text-gray-500 uppercase leading-none">BANK-GRADE SECURITY</div>
               <div class="text-[10px] font-extrabold text-gray-900 leading-tight">256-BIT SSL ENCRYPTED</div>
@@ -388,12 +467,12 @@
         </div>
       </div>
 
-      <!-- RIGHT COLUMN: Payment Form (SweeprCleaner Stripe Elements + Google Pay + Apple Pay Layout) -->
+      <!-- RIGHT COLUMN: Payment Form (Matched to sweeprcleaner.com/order & sweeprvpn.com/order) -->
       <div id="checkoutBox" class="lg:col-span-6 bg-white p-6 sm:p-8 rounded-2xl border border-gray-200/90 shadow-md">
         <div class="bg-[#f0fdf4] border border-[#bbf7d0] rounded-xl p-4 mb-6 text-xs text-gray-700 leading-relaxed flex items-start gap-2.5">
-          <span class="text-emerald-600 font-bold text-sm">✓</span>
+          <svg class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
           <div>
-            You are eligible for a full refund within 14 days of any charges. You can cancel anytime in 1 click via our self-service <a href="/login" class="text-emerald-700 font-bold underline">Customer Portal</a>—no phone calls or live chat needed.
+            You are eligible for a full refund within 14 days of any charges under our <a href="/pricing" class="text-emerald-700 font-bold underline hover:text-emerald-800">Refund Policy</a>. You can cancel anytime in 1 click via our self-service <a href="/login" class="text-emerald-700 font-semibold underline hover:text-emerald-800">Customer Portal</a>.
           </div>
         </div>
 
@@ -403,14 +482,14 @@
             <label class="flex items-start gap-2.5 cursor-pointer select-none">
               <input type="checkbox" id="termsConsent" required checked class="mt-0.5 w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer">
               <span id="termsConsentLabel" class="leading-snug">
-                I agree to pay £59.99 today which will auto renew at £59.99 annually unless I cancel before my next renewal. I can cancel anytime in 1 click via my online portal.
+                I agree to pay £59.99 today which will auto renew at £59.99 annually unless I cancel before my next renewal. I can cancel anytime via my online portal. Prices may change with notice.
               </span>
             </label>
 
             <label class="flex items-start gap-2.5 cursor-pointer select-none">
               <input type="checkbox" id="legalConsent" required checked class="mt-0.5 w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer">
               <span class="leading-snug">
-                I agree to the <a href="/pricing" class="text-blue-600 underline font-medium">Terms of Service</a>, <a href="/pricing" class="text-blue-600 underline font-medium">Privacy Policy</a>, and <a href="/pricing" class="text-blue-600 underline font-medium">14-Day Refund Policy</a>.
+                I agree to the <a href="/pricing" class="text-blue-600 underline font-medium">Terms of Service</a>, <a href="/pricing" class="text-blue-600 underline font-medium">Privacy Policy</a>, and <a href="/pricing" class="text-blue-600 underline font-medium">Refund Policy</a>.
               </span>
             </label>
           </div>
@@ -441,7 +520,7 @@
           <!-- Divider OR & Card Logos -->
           <div class="relative flex py-2 items-center">
             <div class="flex-grow border-t border-gray-200"></div>
-            <span class="flex-shrink mx-4 text-xs uppercase font-bold text-gray-400 tracking-wider">OR PAY WITH CARD</span>
+            <span class="flex-shrink mx-4 text-xs uppercase font-bold text-gray-400 tracking-wider">OR</span>
             <div class="flex-grow border-t border-gray-200"></div>
           </div>
 
@@ -451,7 +530,7 @@
             <img src="https://api.iconify.design/logos:amex.svg" alt="American Express" class="h-4 sm:h-5 rounded-xs">
           </div>
 
-          <!-- CARD INPUT FIELDS (SweeprCleaner Stripe Elements Layout) -->
+          <!-- CARD INPUT FIELDS (Matched to sweeprcleaner.com/order) -->
           <div class="space-y-3 pt-1">
             <!-- 1. Name On Card -->
             <div>
@@ -514,7 +593,7 @@
 
             <!-- 5. Email Address -->
             <div>
-              <label for="email" class="block text-xs font-bold text-gray-700 mb-1">Email Address (For Instant Extension License Key)</label>
+              <label for="email" class="block text-xs font-bold text-gray-700 mb-1">Email Address</label>
               <input type="email" id="email" required placeholder="you@example.com" autocomplete="email"
                 class="w-full p-2.5 sm:p-3 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
             </div>
@@ -524,9 +603,9 @@
           <div id="checkoutError" class="hidden bg-red-50 border border-red-200 text-red-700 text-xs p-3 rounded-lg"></div>
           <div id="checkoutSuccessBox" class="hidden bg-emerald-50 border border-emerald-300 text-emerald-900 text-xs p-4 rounded-xl space-y-1"></div>
 
-          <!-- COMPLETE ORDER GREEN BUTTON -->
+          <!-- COMPLETE ORDER GREEN BUTTON WITH PADLOCK VECTOR ICON -->
           <div class="pt-3">
-            <button type="submit" id="submitBtn" class="btn-purchase w-full py-3.5 px-6 rounded-full text-white font-black text-base sm:text-lg tracking-wide flex items-center justify-center gap-2.5 cursor-pointer shadow-lg">
+            <button type="submit" id="submitBtn" class="btn-purchase w-full h-13 py-3.5 px-6 rounded-full text-white font-black text-base sm:text-lg tracking-wide flex items-center justify-center gap-2.5 cursor-pointer shadow-lg">
               <svg class="w-5 h-5 text-white fill-current shrink-0" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
               </svg>
@@ -534,8 +613,12 @@
             </button>
           </div>
 
+          <!-- Trust Subtext -->
           <div class="flex items-center justify-center gap-3 text-[11px] text-gray-500 pt-1 font-medium">
-            <span>🔒 256-Bit Bank-Grade SSL</span>
+            <span class="inline-flex items-center gap-1">
+              <svg class="w-3.5 h-3.5 text-emerald-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/></svg>
+              256-Bit Bank-Grade SSL
+            </span>
             <span>•</span>
             <span>Instant Activation</span>
             <span>•</span>
@@ -546,49 +629,122 @@
     </div>
   </main>
 
-  <!-- 30-SECOND INACTIVITY & EXIT-INTENT INTRODUCTORY OFFER POPUP MODAL -->
+  <!-- CLEAN FOOTER WITH LEGAL LINKS (Matched to sweeprcleaner.com/order & sweeprvpn.com/order) -->
+  <footer class="py-8 bg-white border-t border-gray-200 text-center text-xs text-gray-500 mt-auto">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="flex flex-wrap justify-center gap-4 sm:gap-6 mb-3 font-medium">
+        <a href="/pricing" class="text-gray-600 hover:text-emerald-700 transition-colors">Refund Policy</a>
+        <a href="/pricing" class="text-gray-600 hover:text-emerald-700 transition-colors">Terms of Service</a>
+        <a href="/pricing" class="text-gray-600 hover:text-emerald-700 transition-colors">Privacy Policy</a>
+        <a href="/login" class="text-gray-600 hover:text-emerald-700 transition-colors">Customer Portal</a>
+      </div>
+      <p class="text-gray-400">&copy; 2026 SWEEPR Deepblock Inc. All rights reserved. SWEEPR Deepblock is an independent ad-blocking &amp; browser privacy software.</p>
+    </div>
+  </footer>
+
+  <!-- 30-SECOND INACTIVITY & EXIT-INTENT INTRODUCTORY OFFER POPUP MODAL (Matched to sweeprcleaner.com/order) -->
   <div id="discountModal" class="hidden-modal fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md">
     <div class="modal-card bg-[#141820] text-white rounded-2xl max-w-2xl sm:max-w-3xl w-full p-6 sm:p-8 relative shadow-2xl border border-emerald-500/25 overflow-hidden">
-      <button type="button" onclick="closeDiscountModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white p-1.5 rounded-lg cursor-pointer z-20">✕</button>
+      <!-- Ambient emerald decorative glow -->
+      <div class="absolute -top-24 -left-24 w-56 h-56 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute -bottom-24 -right-24 w-56 h-56 bg-teal-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+      <!-- Close Button 'X' -->
+      <button type="button" onclick="closeDiscountModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white p-1.5 rounded-lg transition-colors cursor-pointer z-20" aria-label="Close dialog">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+
       <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center relative z-10">
         <div class="md:col-span-7 space-y-4 text-left">
           <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold text-emerald-400 bg-emerald-500/15 border border-emerald-500/30">
-            <span>⚡ SPECIAL INTRODUCTORY OFFER</span>
+            <span>⚡</span>
+            <span>SPECIAL INTRODUCTORY OFFER</span>
           </div>
           <h2 class="text-2xl sm:text-3xl font-black text-white tracking-tight leading-tight">
-            Get 1st Month of <span class="text-emerald-400">SWEEPR Deepblock Pro</span> for Just <span>£1.99</span>
+            Get 1st Month of <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">SWEEPR Deepblock</span> for Just <span>£1.99</span>
           </h2>
-          <ul class="space-y-2 text-xs sm:text-sm text-gray-300 font-medium">
-            <li>✓ Blocks YouTube Ads &amp; Automatically Closes Cookie Pop-Ups</li>
-            <li>✓ Includes Fake Online Shop Detector &amp; Private Browsing</li>
-            <li>✓ 14-Day Money-Back Guarantee &amp; Easy 1-Click Cancel</li>
+          <ul class="space-y-2.5 text-xs sm:text-sm text-gray-300 font-medium">
+            <li class="flex items-center gap-2.5">
+              <div class="w-4 h-4 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+              </div>
+              <span>Blocks YouTube Ads &amp; Automatically Closes Cookie Pop-Ups</span>
+            </li>
+            <li class="flex items-center gap-2.5">
+              <div class="w-4 h-4 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+              </div>
+              <span>Includes Fake Online Shop Detector &amp; Private Browsing</span>
+            </li>
+            <li class="flex items-center gap-2.5">
+              <div class="w-4 h-4 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+              </div>
+              <span>100% Risk-Free 14-Day Money-Back Guarantee</span>
+            </li>
           </ul>
           <div class="bg-white/5 border border-white/10 rounded-xl p-3 flex items-baseline justify-between">
             <div>
               <span class="text-xs text-gray-400 block">1st Month Only</span>
-              <span class="text-2xl sm:text-3xl font-black text-emerald-400">£1.99</span>
-              <span class="text-xs text-gray-400 line-through ml-1">Regular £9.99</span>
+              <div class="flex items-baseline gap-2">
+                <span class="text-2xl sm:text-3xl font-black text-emerald-400">£1.99</span>
+                <span class="text-xs text-gray-400 line-through">Regular £9.99</span>
+              </div>
             </div>
             <div class="text-right">
               <span class="text-[11px] text-gray-400 block">Renews at</span>
               <span class="text-xs font-bold text-gray-200">£9.99/month</span>
             </div>
           </div>
-          <button type="button" onclick="activateDiscountOffer()" class="w-full py-3.5 px-6 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white font-black text-sm sm:text-base cursor-pointer shadow-lg">
-            🔒 CLAIM £1.99 INTRO OFFER
-          </button>
+          <div>
+            <button type="button" onclick="activateDiscountOffer()" class="w-full py-3.5 px-6 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white font-black text-sm sm:text-base tracking-wide flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-emerald-500/25 transition-all transform hover:-translate-y-0.5">
+              <svg class="w-4 h-4 text-white fill-current shrink-0" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+              </svg>
+              <span>CLAIM DISCOUNT</span>
+            </button>
+          </div>
+          <div class="space-y-1.5 pt-0.5 text-center">
+            <p class="text-[11px] text-gray-400 leading-snug">
+              Introductory £8.00 savings applies strictly to month 1. Auto-renews at standard £9.99/month unless cancelled.
+            </p>
+            <div class="flex items-center justify-between gap-2 text-[10px] sm:text-[11px] text-emerald-400/90 font-medium pt-1 px-1">
+              <span class="whitespace-nowrap flex items-center gap-1">🔒 256-Bit SSL</span>
+              <span class="text-gray-600">•</span>
+              <span class="whitespace-nowrap flex items-center gap-1">⚡ Instant Delivery</span>
+              <span class="text-gray-600">•</span>
+              <span class="whitespace-nowrap flex items-center gap-1">🛡️ 14-Day Refund</span>
+            </div>
+          </div>
         </div>
         <div class="hidden md:block md:col-span-5">
           <div class="laptop-frame">
             <div class="laptop-screen">
-              <div class="bg-gray-900 rounded-lg p-3 text-white text-left">
+              <div class="laptop-notch"></div>
+              <div class="bg-gray-900 rounded-lg p-3 text-white text-left font-sans">
                 <div class="flex items-center justify-between border-b border-gray-800 pb-2 mb-2">
-                  <span class="text-[9px] font-bold">SWEEPR DEEPBLOCK PRO</span>
-                  <span class="text-[8px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-semibold">ACTIVE</span>
+                  <div class="flex items-center gap-1.5">
+                    <img src="/logo.svg" class="w-3.5 h-3.5 rounded" alt="SWEEPR Deepblock">
+                    <span class="text-[9px] font-bold tracking-tight">SWEEPR DEEPBLOCK PRO</span>
+                  </div>
+                  <span class="text-[8px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-semibold">ACTIVATED</span>
                 </div>
                 <div class="text-center py-2">
-                  <div class="text-xs font-bold text-emerald-400">✓ Browser 100% Cleansed</div>
-                  <div class="text-[9px] text-gray-400 mt-0.5">42 Cookie Pop-Ups Closed • 29 Spam Results Hidden</div>
+                  <div class="w-12 h-12 mx-auto rounded-full bg-emerald-500/10 border-2 border-emerald-500 flex items-center justify-center text-emerald-400 mb-1 shadow-inner">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                  </div>
+                  <div class="text-[10px] font-bold text-white">100% Cleansed &amp; Protected</div>
+                  <div class="text-[8px] text-gray-400">Zero Ads • Cookie Pop-Ups Blocked</div>
+                </div>
+                <div class="grid grid-cols-2 gap-1.5 pt-1 text-[8px]">
+                  <div class="bg-gray-800/80 p-1.5 rounded">
+                    <div class="text-gray-400">Cookie Pop-Ups</div>
+                    <div class="text-emerald-400 font-bold">42 Closed</div>
+                  </div>
+                  <div class="bg-gray-800/80 p-1.5 rounded">
+                    <div class="text-gray-400">Shop Shield</div>
+                    <div class="text-emerald-400 font-bold">Active</div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -679,18 +835,22 @@
       const ramRow = document.getElementById('ramAddonSummaryRow');
       const ramAmount = document.getElementById('ramAddonSummaryAmount');
       const ramPriceLabel = document.getElementById('ramAddonPriceLabel');
+      const ramTitle = document.getElementById('ramAddonSummaryTitle');
       if (selectedPlan === 'monthly') {
         const moFmt = p?.ramTamerMonthlyFormatted ?? '£1.99';
-        ramPriceLabel.textContent = `+${moFmt}/mo`;
+        ramPriceLabel.textContent = `+ ${moFmt}/month`;
         ramAmount.textContent = `+ ${moFmt}/month`;
+        if (ramTitle) ramTitle.textContent = 'Total Tab & RAM Tamer Add-On (Monthly)';
       } else if (selectedPlan === 'six_month') {
         const sixFmt = p?.ramTamerSixMonthFormatted ?? '£9.99';
-        ramPriceLabel.textContent = `+${sixFmt}/6mo`;
+        ramPriceLabel.textContent = `+ ${sixFmt}/6mo (£1.66/mo eq.)`;
         ramAmount.textContent = `+ ${sixFmt}/6 months`;
+        if (ramTitle) ramTitle.textContent = 'Total Tab & RAM Tamer Add-On (6-Month)';
       } else {
         const yrFmt = p?.ramTamerAnnualFormatted ?? '£14.99';
-        ramPriceLabel.textContent = `+${yrFmt}/yr`;
+        ramPriceLabel.textContent = `+ ${yrFmt}/yr (£1.24/mo eq.)`;
         ramAmount.textContent = `+ ${yrFmt}/year`;
+        if (ramTitle) ramTitle.textContent = 'Total Tab & RAM Tamer Add-On (Annual)';
       }
       if (isRamTamerAdded) {
         ramRow.classList.remove('hidden');
@@ -708,26 +868,31 @@
       const introFmt = p?.introMonthlyFormatted ?? '£1.99';
       const introSave = p?.introSavingsFormatted ?? '£8.00';
 
+      const tagSvg = '<svg class="w-3.5 h-3.5 text-brand-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg> ';
+      const savingsNoteEl = document.getElementById('savingsSummaryNote');
+
       if (selectedPlan === 'annual') {
-        document.getElementById('productTagContent').textContent = 'Save 50% vs monthly billing';
+        document.getElementById('productTagContent').innerHTML = `${tagSvg}Save 50% vs monthly billing`;
         document.getElementById('productPriceTop').textContent = annualFmt;
         document.getElementById('productPriceSub').textContent = `per year (${annualMoEq}/mo)`;
         document.getElementById('summaryPlanTitle').textContent = 'SWEEPR Deepblock Pro (Annual Plan)';
         document.getElementById('summaryPlanPrice').textContent = `${annualFmt}/year`;
         document.getElementById('savingsSummaryLabel').textContent = 'Annual Plan Savings (Save 50%)';
         document.getElementById('savingsSummaryAmount').textContent = `- ${annualSave}`;
+        if (savingsNoteEl) savingsNoteEl.textContent = `(Included in ${annualFmt}/yr rate vs 12 × ${monthlyFmt}/mo)`;
         document.getElementById('savingsSummaryRow').classList.remove('hidden');
         document.getElementById('discountSummaryRow').classList.add('hidden');
         document.getElementById('termsConsentLabel').textContent =
           `I agree to pay ${totalFormatted} today which will auto renew at ${totalFormatted} annually unless I cancel before my next renewal. I can cancel anytime in 1 click via my online Customer Portal.`;
       } else if (selectedPlan === 'six_month') {
-        document.getElementById('productTagContent').textContent = 'Save 25% vs monthly billing';
+        document.getElementById('productTagContent').innerHTML = `${tagSvg}Save 25% vs monthly billing`;
         document.getElementById('productPriceTop').textContent = sixFmt;
         document.getElementById('productPriceSub').textContent = `every 6 months (${sixMoEq}/mo)`;
         document.getElementById('summaryPlanTitle').textContent = 'SWEEPR Deepblock Pro (6-Month Plan)';
         document.getElementById('summaryPlanPrice').textContent = `${sixFmt}/6 months`;
         document.getElementById('savingsSummaryLabel').textContent = '6-Month Plan Savings (Save 25%)';
         document.getElementById('savingsSummaryAmount').textContent = `- ${sixSave}`;
+        if (savingsNoteEl) savingsNoteEl.textContent = `(Included in ${sixFmt}/6mo rate vs 6 × ${monthlyFmt}/mo)`;
         document.getElementById('savingsSummaryRow').classList.remove('hidden');
         document.getElementById('discountSummaryRow').classList.add('hidden');
         document.getElementById('termsConsentLabel').textContent =
@@ -737,7 +902,7 @@
         document.getElementById('summaryPlanTitle').textContent = 'SWEEPR Deepblock Pro (Monthly Plan)';
         document.getElementById('summaryPlanPrice').textContent = `${monthlyFmt}/month`;
         if (isDiscountApplied) {
-          document.getElementById('productTagContent').textContent = `Save ${introSave} off 1st month`;
+          document.getElementById('productTagContent').innerHTML = `${tagSvg}Save ${introSave} off 1st month`;
           document.getElementById('productPriceTop').textContent = introFmt;
           document.getElementById('productPriceSub').textContent = `1st month (renews ${monthlyFmt}/mo)`;
           document.getElementById('discountSummaryRow').classList.remove('hidden');
@@ -781,7 +946,8 @@
       setupExitIntent();
 
       const params = new URLSearchParams(window.location.search);
-      const p = params.get('plan');
+      const savedPlan = sessionStorage.getItem('deepblock_selected_plan');
+      const p = params.get('plan') || savedPlan;
       const offerParam = params.get('offer');
       const discountParam = params.get('discount');
       const errorParam = params.get('error');
