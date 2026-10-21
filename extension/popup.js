@@ -52,16 +52,37 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  function openProRequiredPrompt(customMsg) {
+    if (qrDrawerEl) qrDrawerEl.classList.remove('open');
+    licenseDrawerEl.classList.add('open');
+    licenseFeedbackEl.style.display = 'block';
+    licenseFeedbackEl.style.color = '#b45309';
+    licenseFeedbackEl.textContent =
+      customMsg ||
+      '🔒 Active paid subscription required to use SWEEPR Deepblock features. Paste your license key below or click Unlock Full Pro above.';
+    licenseKeyInput.focus();
+  }
+
   function updateSiteBarState() {
-    if (!currentHostname) return;
-    const isPaused = Array.isArray(currentState.pausedSites) && currentState.pausedSites.includes(currentHostname);
+    if (!currentState.proActive) {
+      siteBarEl.classList.add('paused');
+      sitePauseBtn.className = 'switch-btn pro-lock';
+      sitePauseBtn.textContent = '🔒 PRO';
+      currentSiteSubEl.textContent = 'Paid subscription required to activate protection';
+      return;
+    }
+    sitePauseBtn.textContent = '';
+    const isPaused =
+      currentHostname &&
+      Array.isArray(currentState.pausedSites) &&
+      currentState.pausedSites.includes(currentHostname);
     if (isPaused) {
       siteBarEl.classList.add('paused');
-      sitePauseBtn.classList.add('off');
+      sitePauseBtn.className = 'switch-btn off';
       currentSiteSubEl.textContent = 'Protection is paused on this site';
     } else {
       siteBarEl.classList.remove('paused');
-      sitePauseBtn.classList.remove('off');
+      sitePauseBtn.className = 'switch-btn';
       currentSiteSubEl.textContent = 'Protection is ON for this site';
     }
   }
@@ -122,47 +143,53 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function renderState(state) {
     currentState = state || currentState;
+    const isPro = Boolean(state.proActive);
     const stats = state.stats || {};
-    const ads = Number(stats.adsBlocked) || 142;
-    const cookies = Number(stats.cookiePromptsDetected) || 19;
-    const slop = Number(stats.aiSlopDetected) || 11;
-    const scams = Number(stats.fakeStoresDetected) || 4;
+    const ads = isPro ? Number(stats.adsBlocked) || 142 : 0;
+    const cookies = isPro ? Number(stats.cookiePromptsDetected) || 19 : 0;
+    const slop = isPro ? Number(stats.aiSlopDetected) || 11 : 0;
+    const scams = isPro ? Number(stats.fakeStoresDetected) || 4 : 0;
 
     adsCountEl.textContent = String(ads);
     cookieCountEl.textContent = String(cookies);
     slopCountEl.textContent = String(slop);
     scamCountEl.textContent = String(scams);
     if (adsBlockedTextEl) {
-      adsBlockedTextEl.textContent = `${ads + cookies + slop} items`;
+      adsBlockedTextEl.textContent = isPro ? `${ads + cookies + slop} items ✓` : '🔒 Pro Required';
+      adsBlockedTextEl.style.color = isPro ? '#059669' : '#b45309';
     }
 
     if (state.ramMetrics) {
       const totalTabs = Number(state.ramMetrics.totalTabs) || 1;
       const discardedCount = Number(state.ramMetrics.discardedCount) || 0;
-      ramHeadlineEl.textContent =
-        discardedCount > 0 ? `⚡ ${discardedCount} Sleeping` : `${totalTabs} Tabs Open`;
-      ramBarFillEl.style.width = `${Math.min(85, Math.max(22, totalTabs * 4))}%`;
+      ramHeadlineEl.textContent = !isPro
+        ? '🔒 Pro Required'
+        : discardedCount > 0
+        ? `⚡ ${discardedCount} Sleeping`
+        : `${totalTabs} Tabs Open`;
+      ramBarFillEl.style.width = isPro ? `${Math.min(85, Math.max(22, totalTabs * 4))}%` : '0%';
 
-      ramDescEl.textContent =
-        discardedCount > 0
-          ? `${discardedCount} background tab${discardedCount > 1 ? 's are' : ' is'} quietly sleeping to keep your browser fast.`
-          : `You have ${totalTabs} open tabs. Unused background tabs snooze automatically.`;
+      ramDescEl.textContent = !isPro
+        ? 'An active paid Pro subscription is required to use Automatic Tab Sleeping and browser speed optimization.'
+        : discardedCount > 0
+        ? `${discardedCount} background tab${discardedCount > 1 ? 's are' : ' is'} quietly sleeping to keep your browser fast.`
+        : `You have ${totalTabs} open tabs. Unused background tabs snooze automatically.`;
     }
 
-    if (state.proActive) {
+    if (isPro) {
       tierBadgeEl.textContent = '✓ Pro Quiet';
       tierBadgeEl.classList.add('pro');
       upgradeCtaBtn.style.display = 'none';
       toggleLicenseDrawerBtn.textContent = '✓ Pro Active';
     } else {
-      tierBadgeEl.textContent = 'Quiet Mode';
+      tierBadgeEl.textContent = '🔒 Locked';
       tierBadgeEl.classList.remove('pro');
       upgradeCtaBtn.style.display = 'block';
-      upgradeCtaBtn.textContent = '⭐ Unlock Full Pro Protection (From £1.99) →';
+      upgradeCtaBtn.textContent = '⭐ Unlock Full Pro Protection →';
     }
 
     updateSiteBarState();
-    renderSettingsToggles(Boolean(state.proActive), state.settings);
+    renderSettingsToggles(isPro, state.settings);
     renderSavedSessions(state.cloudTabSessions);
   }
 
@@ -170,16 +197,33 @@ document.addEventListener('DOMContentLoaded', () => {
     if (response) renderState(response);
   });
 
-  // Pause / Resume protection on current website
+  // Pause / Resume protection on current website (Requires Active Paid Subscription)
   sitePauseBtn.addEventListener('click', () => {
+    if (!currentState.proActive) {
+      openProRequiredPrompt();
+      return;
+    }
     if (!currentHostname) return;
     chrome.runtime.sendMessage({ type: 'TOGGLE_SITE_PAUSE', hostname: currentHostname }, (res) => {
+      if (res && res.requiresPro) {
+        currentState.proActive = false;
+        renderState(currentState);
+        openProRequiredPrompt(res.error);
+        return;
+      }
       if (res && res.ok) {
         currentState.pausedSites = res.pausedSites;
         updateSiteBarState();
       }
     });
   });
+
+  // Upgrade CTA Button opens order page
+  if (upgradeCtaBtn) {
+    upgradeCtaBtn.addEventListener('click', () => {
+      chrome.tabs.create({ url: 'https://sweeprdeepblock.com/order?plan=annual' });
+    });
+  }
 
   // Speed up browser & save open tabs (Requires Active Paid Pro Subscription)
   reclaimRamBtn.addEventListener('click', () => {

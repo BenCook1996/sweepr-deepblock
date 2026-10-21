@@ -154,54 +154,54 @@
 <body>
   <div class="container">
     <div class="hero-card">
-      <div class="badge">🎉 Installation Complete — Protection is Active</div>
+      <div class="badge" id="welcomeStatusBadge">🧩 Extension Installed — Activate Subscription to Unlock Protection</div>
       <h1>Welcome to SWEEPR <span style="color:#059669">Deepblock</span></h1>
       <p class="subtitle">
-        You're all set! SWEEPR Deepblock is now running quietly in the background to block ads, warn you about fake online shops, and keep your browsing private.
+        SWEEPR Deepblock is installed in your browser! To unlock YouTube &amp; banner ad blocking, automatic cookie pop-up closing, scam shop alerts, and tab speed optimization, activate your paid subscription below.
       </p>
+
+      <div class="key-section" style="margin-top:0;margin-bottom:26px;padding:18px 20px;background:#ecfdf5;border:1.5px solid #6ee7b7;border-radius:16px;">
+        <div style="font-size:14px;font-weight:800;color:#065f46;">🔑 Have a Paid Subscription? Enter Your License Key or 6-Digit Code:</div>
+        <div class="key-row">
+          <input type="text" id="welcomeLicenseInput" class="key-input" placeholder="e.g. SWEEPR-DB-XXXX-XXXX-XXXX or 6-digit code" />
+          <button type="button" id="welcomeActivateBtn" class="key-btn" style="background:#059669;">Activate Pro</button>
+        </div>
+        <div id="welcomeKeyFeedback" style="font-size:12px;font-weight:700;margin-top:6px;display:none;"></div>
+      </div>
 
       <div class="steps-grid">
         <div class="step-card">
-          <span class="step-num">Step 1 · Recommended</span>
+          <span class="step-num">Step 1 · Pin Icon</span>
           <div class="step-title">📌 Pin the Shield Icon</div>
           <div class="step-desc">
-            Click the <strong>puzzle piece icon 🧩</strong> in the top-right corner of your browser, then click the <strong>Pin 📌</strong> next to SWEEPR Deepblock so you can see what it blocks anytime.
+            Click the <strong>puzzle piece icon 🧩</strong> in the top-right corner of your browser, then click the <strong>Pin 📌</strong> next to SWEEPR Deepblock.
           </div>
         </div>
 
         <div class="step-card">
-          <span class="step-num">Step 2 · Automatic</span>
-          <div class="step-title">📺 Browse Ad-Free</div>
+          <span class="step-num">Step 2 · Activate Pro</span>
+          <div class="step-title">🔑 Unlock All Features</div>
           <div class="step-desc">
-            Open YouTube, news sites, or online shops. Video ads, banner ads, hidden trackers, and fake shop countdown timers are checked automatically.
+            Enter your paid subscription license key above (or inside the extension popup) to turn on all protection modules.
           </div>
         </div>
 
         <div class="step-card">
-          <span class="step-num">Step 3 · Optional Upgrade</span>
-          <div class="step-title">🍪 Auto-Close Cookie Boxes</div>
+          <span class="step-num">Step 3 · Browse Quietly</span>
+          <div class="step-title">📺 Zero Ads &amp; Pop-Ups</div>
           <div class="step-desc">
-            Want cookie pop-ups declined automatically, junk search results hidden, and unused tabs paused to speed up your computer? Upgrade to Pro from <strong>£1.99</strong>.
+            Once activated, YouTube ads, cookie pop-ups, spam search results, and scam online stores are blocked automatically.
           </div>
         </div>
       </div>
 
       <div class="cta-row">
-        <a href="https://sweeprdeepblock.com/test-lab" target="_blank" rel="noopener" class="btn-primary">
-          ▶ See My Protection in Action (8 Live Checks)
+        <a href="https://sweeprdeepblock.com/order?plan=annual" target="_blank" rel="noopener" class="btn-primary">
+          ⭐ Get a Paid Pro Subscription &rarr;
         </a>
-        <a href="https://sweeprdeepblock.com/order?plan=annual&addon=ram_tamer" target="_blank" rel="noopener" class="btn-outline">
-          ⭐ Unlock Full Pro Protection (From £1.99)
+        <a href="https://sweeprdeepblock.com/login" target="_blank" rel="noopener" class="btn-outline">
+          🔑 Find My Key in Customer Portal
         </a>
-      </div>
-
-      <div class="key-section">
-        <div style="font-size:13px;font-weight:800;color:#111827;">🔑 Already purchased Pro? Enter your license key below:</div>
-        <div class="key-row">
-          <input type="text" id="welcomeLicenseInput" class="key-input" placeholder="Paste your key (e.g. DB-PRO-2026-XXXX)" />
-          <button type="button" id="welcomeActivateBtn" class="key-btn">Activate Pro</button>
-        </div>
-        <div id="welcomeKeyFeedback" style="font-size:12px;font-weight:700;margin-top:6px;display:none;"></div>
       </div>
     </div>
   </div>

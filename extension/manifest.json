@@ -38,12 +38,12 @@
     "rule_resources": [
       {
         "id": "ads_and_trackers",
-        "enabled": true,
+        "enabled": false,
         "path": "rules/static_ads_and_trackers.json"
       },
       {
         "id": "cryptominers_and_heavy_scripts",
-        "enabled": true,
+        "enabled": false,
         "path": "rules/cryptominers.json"
       }
     ]

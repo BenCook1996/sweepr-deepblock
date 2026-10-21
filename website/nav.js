@@ -42,10 +42,6 @@ document.addEventListener('DOMContentLoaded', () => {
             <span>🛡️ Features &amp; Protection</span>
             <span class="text-xs text-gray-400">&rarr;</span>
           </a>
-          <a href="/?home=1#ram-tamer" class="mobile-nav-link flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-emerald-50 hover:text-emerald-700 transition-colors no-underline text-gray-800">
-            <span>⚡ Tab &amp; RAM Tamer</span>
-            <span class="text-xs text-emerald-600 font-bold">Speed Add-On</span>
-          </a>
           <a href="/pricing" class="mobile-nav-link flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-emerald-50 hover:text-emerald-700 transition-colors no-underline text-gray-800">
             <span>💎 Pricing &amp; Plans</span>
             <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">Save 50%</span>
@@ -60,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
           </a>
         </div>
         <div class="pt-2 border-t border-gray-100 flex flex-col gap-2">
-          <a href="/download" class="btn btn-go w-full justify-center gap-2 text-sm">
+          <a href="/download?install=1" class="btn btn-go w-full justify-center gap-2 text-sm">
             <span>Add to Browser</span>
             <svg class="arrow-icon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
           </a>

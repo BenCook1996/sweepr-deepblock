@@ -18,7 +18,20 @@
     writable: false
   });
 
+  function isProEntitled() {
+    try {
+      return Boolean(
+        document.documentElement &&
+          document.documentElement.dataset &&
+          document.documentElement.dataset.sweeprProActive === '1'
+      );
+    } catch (e) {
+      return false;
+    }
+  }
+
   function notifyStealthBypass(detail) {
+    if (!isProEntitled()) return;
     try {
       const targetOrigin =
         window.location && window.location.origin && window.location.origin !== 'null'
@@ -386,6 +399,7 @@
     /^(ad-tester|ad_tester|adtester|adsbox|ad-bait|carbonads-test|ad_iframe|ad-banner|google_ads_frame)$/i;
 
   function isBaitElement(el) {
+    if (!isProEntitled()) return false;
     if (!el || el.nodeType !== 1) return false;
     const cls = typeof el.className === 'string' ? el.className : '';
     const id = el.id || '';
@@ -504,7 +518,7 @@
   if (typeof origFetch === 'function') {
     window.fetch = async function (input, init) {
       const url = typeof input === 'string' ? input : input && input.url ? input.url : '';
-      if (AD_PROBE_URL_REGEX.test(url)) {
+      if (isProEntitled() && AD_PROBE_URL_REGEX.test(url)) {
         notifyStealthBypass('fetch-probe-spoofed:' + url);
         return new Response('/* deepstealth ok */\nwindow.canRunAds=true;window.google_ad_status=1;\n', {
           status: 200,
@@ -515,7 +529,7 @@
       try {
         return await origFetch.apply(this, arguments);
       } catch (err) {
-        if (AD_PROBE_URL_REGEX.test(url)) {
+        if (isProEntitled() && AD_PROBE_URL_REGEX.test(url)) {
           notifyStealthBypass('fetch-error-recovered:' + url);
           return new Response('/* deepstealth fallback ok */', { status: 200, statusText: 'OK' });
         }
@@ -533,7 +547,7 @@
   };
 
   XMLHttpRequest.prototype.send = function () {
-    if (this.__deepstealthUrl && AD_PROBE_URL_REGEX.test(this.__deepstealthUrl)) {
+    if (isProEntitled() && this.__deepstealthUrl && AD_PROBE_URL_REGEX.test(this.__deepstealthUrl)) {
       notifyStealthBypass('xhr-probe-spoofed:' + this.__deepstealthUrl);
       const xhr = this;
       setTimeout(() => {
@@ -559,7 +573,8 @@
   // BEFORE the player schedules pre-roll or mid-roll ads, avoiding enforcement triggers.
   // ============================================================================
   if (/(^|\.)youtube\.com$/i.test(location.hostname)) {
-    const stripYtAdsFromObject = (obj) => {
+    function stripYtAdsFromObject(obj) {
+      if (!isProEntitled()) return obj;
       if (!obj || typeof obj !== 'object') return obj;
       if (Array.isArray(obj.adPlacements)) {
         obj.adPlacements = [];

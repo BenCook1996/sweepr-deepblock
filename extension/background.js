@@ -5,7 +5,31 @@ const LICENSE_VERIFY_ENDPOINTS = [
   'http://localhost:3000/api/license-verify'
 ];
 
-const PRO_ONLY_SETTINGS = new Set(['cookieAutoClose', 'hideSearchSpam']);
+const PRO_ONLY_SETTINGS = new Set([
+  'adBlocking',
+  'cookieAutoClose',
+  'hideSearchSpam',
+  'fakeShopAlerts',
+  'trackerProtection',
+  'silentMode'
+]);
+
+async function syncExtensionProtectionRules(enablePro) {
+  try {
+    if (!chrome.declarativeNetRequest || !chrome.declarativeNetRequest.updateEnabledRulesets) return;
+    if (enablePro) {
+      await chrome.declarativeNetRequest.updateEnabledRulesets({
+        enableRulesetIds: ['ads_and_trackers', 'cryptominers_and_heavy_scripts'],
+        disableRulesetIds: []
+      });
+    } else {
+      await chrome.declarativeNetRequest.updateEnabledRulesets({
+        enableRulesetIds: [],
+        disableRulesetIds: ['ads_and_trackers', 'cryptominers_and_heavy_scripts']
+      });
+    }
+  } catch (e) {}
+}
 
 // In-memory anti-tamper session guard inside service worker closure
 let verifiedSession = {
@@ -42,24 +66,24 @@ const DEFAULT_STATE = {
   subscriptionStatus: 'free',
   licenseVerifiedAt: 0,
   entitlements: [],
-  encryptedDnsEnabled: true,
+  encryptedDnsEnabled: false,
   pausedSites: [],
   settings: {
-    cookieAutoClose: true,
-    hideSearchSpam: true,
-    fakeShopAlerts: true,
-    trackerProtection: true,
-    adBlocking: true,
-    silentMode: true
+    cookieAutoClose: false,
+    hideSearchSpam: false,
+    fakeShopAlerts: false,
+    trackerProtection: false,
+    adBlocking: false,
+    silentMode: false
   },
   stats: {
-    adsBlocked: 142,
-    cookiePromptsDetected: 19,
+    adsBlocked: 0,
+    cookiePromptsDetected: 0,
     cookiePromptsRejected: 0,
-    aiSlopDetected: 11,
-    fakeStoresDetected: 4,
-    clutterStripped: 27,
-    antiAdblockBypassed: 9,
+    aiSlopDetected: 0,
+    fakeStoresDetected: 0,
+    clutterStripped: 0,
+    antiAdblockBypassed: 0,
     tabsHibernated: 0,
     ramSavedGb: 0
   },
@@ -119,9 +143,18 @@ async function verifyLicenseWithServer(rawKey) {
             subscriptionStatus: subStatus,
             licenseVerifiedAt: Date.now(),
             entitlements,
-            encryptedDnsEnabled: true
+            encryptedDnsEnabled: true,
+            settings: {
+              cookieAutoClose: true,
+              hideSearchSpam: true,
+              fakeShopAlerts: true,
+              trackerProtection: true,
+              adBlocking: true,
+              silentMode: true
+            }
           });
           verifiedSession.internalWriteInProgress = false;
+          await syncExtensionProtectionRules(true);
           return {
             ok: true,
             valid: true,
@@ -176,9 +209,19 @@ async function revokeProState(reason = 'inactive') {
     licenseKey: '',
     subscriptionStatus: String(reason),
     licenseVerifiedAt: Date.now(),
-    entitlements: []
+    entitlements: [],
+    encryptedDnsEnabled: false,
+    settings: {
+      cookieAutoClose: false,
+      hideSearchSpam: false,
+      fakeShopAlerts: false,
+      trackerProtection: false,
+      adBlocking: false,
+      silentMode: false
+    }
   });
   verifiedSession.internalWriteInProgress = false;
+  await syncExtensionProtectionRules(false);
 }
 
 // Guard against manual DevTools tampering with chrome.storage.local
@@ -197,9 +240,7 @@ async function enforceStoredSubscriptionIntegrity() {
   const store = await chrome.storage.local.get(['proActive', 'ramTamerActive', 'licenseKey']);
   const key = String(store.licenseKey || '').trim();
   if (!key) {
-    if (store.proActive || store.ramTamerActive) {
-      await revokeProState('free');
-    }
+    await revokeProState('free');
     verifiedSession.coldChecked = true;
     return { proActive: false, ramTamerActive: false };
   }
@@ -209,6 +250,7 @@ async function enforceStoredSubscriptionIntegrity() {
     verifiedSession.proActive = Boolean(store.proActive && key);
     verifiedSession.ramTamerActive = Boolean(store.proActive && store.ramTamerActive && key);
     verifiedSession.licenseKey = key;
+    await syncExtensionProtectionRules(verifiedSession.proActive);
     return { proActive: verifiedSession.proActive, ramTamerActive: verifiedSession.ramTamerActive };
   }
   return {
@@ -418,7 +460,15 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       sendResponse({ ok: false });
       return true;
     }
-    chrome.storage.local.get(['pausedSites'], (res) => {
+    Promise.all([ensureVerifiedProSession(), chrome.storage.local.get(['pausedSites'])]).then(([auth, res]) => {
+      if (!auth.proActive || !auth.licenseKey) {
+        sendResponse({
+          ok: false,
+          requiresPro: true,
+          error: 'Active paid Pro subscription required to enable website protection.'
+        });
+        return;
+      }
       const current = Array.isArray(res.pausedSites) ? res.pausedSites : [];
       const isPaused = current.includes(host);
       const updated = isPaused ? current.filter((h) => h !== host) : [...current, host];
@@ -435,7 +485,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       sendResponse({ ok: false });
       return true;
     }
-    Promise.all([ensureVerifiedProSession(), chrome.storage.local.get(['settings'])]).then(([auth, res]) => {
+    Promise.all([ensureVerifiedProSession(), chrome.storage.local.get(['settings'])]).then(async ([auth, res]) => {
       const hasPaidPro = Boolean(auth.proActive && auth.licenseKey);
       if (PRO_ONLY_SETTINGS.has(key) && !hasPaidPro) {
         sendResponse({
@@ -447,9 +497,11 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       }
       const current = { ...DEFAULT_STATE.settings, ...(res.settings || {}) };
       current[key] = !current[key];
-      chrome.storage.local.set({ settings: current }, () => {
-        sendResponse({ ok: true, settings: current });
-      });
+      await chrome.storage.local.set({ settings: current });
+      if (key === 'adBlocking') {
+        await syncExtensionProtectionRules(Boolean(current.adBlocking));
+      }
+      sendResponse({ ok: true, settings: current });
     });
     return true;
   }

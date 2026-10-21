@@ -177,7 +177,6 @@
       </a>
       <div class="hidden md:flex items-center gap-2">
         <a href="/#features" class="btn btn-ghost text-sm">Features</a>
-        <a href="/#ram-tamer" class="btn btn-ghost text-sm">Tab &amp; RAM Tamer</a>
         <a href="/pricing" class="btn btn-ghost text-sm">Pricing</a>
         <!-- Consolidated Compare & Guides Menu -->
         <div class="relative inline-block text-left" id="navDropdownContainer">
@@ -248,7 +247,7 @@
         </div>
       </div>
       <a href="/login" class="btn btn-ghost text-xs sm:text-sm !px-2.5 sm:!px-4">Login</a>
-      <a href="/download" class="hidden md:inline-flex btn btn-go gap-2">
+      <a href="/download?install=1" class="hidden md:inline-flex btn btn-go gap-2">
         <span>Add to Browser</span>
         <svg class="arrow-icon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
       </a>
@@ -270,7 +269,7 @@
         Browse the web without interruptions. <strong>SWEEPR Deepblock</strong> blocks YouTube and banner ads, automatically says "No" to annoying cookie pop-ups, hides spam websites in search results, warns you about fake online shops, and stops open tabs from slowing down your computer.
       </p>
       <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 sm:gap-4 justify-center lg:justify-start">
-        <a href="/download" id="downloadBtn" class="btn btn-go btn-big pulse-glow gap-2.5 w-full sm:w-auto justify-center">
+        <a href="/download?install=1" id="downloadBtn" class="btn btn-go btn-big pulse-glow gap-2.5 w-full sm:w-auto justify-center">
           <span>Install Free Extension</span>
           <svg class="arrow-icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
         </a>
@@ -287,89 +286,166 @@
       </div>
     </div>
 
-    <!-- Right Column: Live App Hovercard Preview (Inspired by Current Extension UI) -->
-    <div class="flex-1 relative w-full max-w-md">
-      <div class="glass-card p-4 sm:p-6 flex flex-col gap-3.5 transform sm:rotate-1 hover:rotate-0 transition-transform duration-500 border border-emerald-200/80 shadow-2xl text-left">
-        <!-- App Header -->
-        <div class="flex items-center justify-between pb-1">
-          <div class="flex items-center gap-2.5">
-            <div class="logo-box !w-7 !h-7 !rounded-lg shrink-0" aria-hidden="true"></div>
-            <h2 class="font-black text-gray-900 text-base tracking-tight">SWEEPR <span class="text-emerald-600">Deepblock</span></h2>
+    <!-- Right Column: Live App Hovercard Preview (1:1 Faithful Replica of Current Extension Popup UI) -->
+    <div class="flex-1 relative w-full max-w-[365px] mx-auto lg:mx-0">
+      <div class="glass-card p-4 sm:p-5 flex flex-col gap-2.5 transform sm:rotate-1 hover:rotate-0 transition-transform duration-500 border border-emerald-200/80 shadow-2xl text-left">
+        <!-- App Header (Matches extension/popup.html .header) -->
+        <div class="flex items-center justify-between mb-0.5">
+          <div class="flex items-center gap-2">
+            <div class="logo-box !w-6 !h-6 !rounded-md shrink-0" aria-hidden="true"></div>
+            <h2 class="font-black text-gray-900 text-sm tracking-tight">SWEEPR <span class="text-emerald-600">Deepblock</span></h2>
           </div>
-          <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-200">Quiet Mode</span>
+          <span class="px-2.5 py-0.5 rounded-full text-[9.5px] font-extrabold uppercase tracking-wider bg-[#064e3b] text-[#ecfdf5] border border-[#059669]">✓ Pro Quiet</span>
         </div>
 
-        <!-- Current Website Protection Switch Card -->
-        <div class="bg-white border border-emerald-200/90 rounded-2xl p-3.5 flex items-center justify-between shadow-sm">
-          <div>
-            <div class="text-sm font-extrabold text-gray-900">🌐 youtube.com</div>
-            <div class="text-xs font-semibold text-emerald-600 mt-0.5">Protection is ON for this site</div>
+        <!-- TAB 1: STATUS (Matches extension/popup.html #tabStatus) -->
+        <div id="hcTabStatus" class="space-y-2">
+          <!-- Current Site Card with Sliding Switch (.site-bar) -->
+          <div class="bg-white border border-emerald-500/30 rounded-[13px] px-3 py-2.5 flex items-center justify-between shadow-xs">
+            <div>
+              <div class="text-[12.5px] font-extrabold text-gray-900">🌐 All Websites</div>
+              <div class="text-[10.5px] font-semibold text-emerald-600 mt-0.5">Protection is ON for this site</div>
+            </div>
+            <div class="w-10 h-[22px] bg-emerald-500 rounded-full relative shrink-0" aria-label="Protection On">
+              <span class="w-4 h-4 bg-white rounded-full absolute top-[3px] right-[3px] shadow-xs"></span>
+            </div>
           </div>
-          <div class="w-11 h-6 bg-emerald-500 rounded-full relative shrink-0 shadow-inner" aria-label="Protection On">
-            <span class="w-4 h-4 bg-white rounded-full absolute top-1 right-1 shadow"></span>
+
+          <!-- Blocked Quietly in Background 2x2 Grid (.card > .quiet-summary-row + .grid-4) -->
+          <div class="bg-white/95 border border-emerald-500/15 rounded-[13px] p-2.5 shadow-xs">
+            <div class="flex items-center justify-between text-[11.5px] font-bold text-gray-700 pb-2 border-b border-gray-100">
+              <span>Blocked quietly in background</span>
+              <span class="text-emerald-600 font-black">176 items ✓</span>
+            </div>
+            <div class="grid grid-cols-2 gap-1.5 mt-2">
+              <div class="bg-gray-50 border border-gray-200 rounded-[9px] px-2.5 py-1.5 flex items-center justify-between">
+                <span class="text-[10.5px] font-bold text-gray-600">📺 Ads</span>
+                <span class="text-[13.5px] font-black text-emerald-600" id="liveAdsCount">142</span>
+              </div>
+              <div class="bg-gray-50 border border-gray-200 rounded-[9px] px-2.5 py-1.5 flex items-center justify-between">
+                <span class="text-[10.5px] font-bold text-gray-600">🍪 Cookies</span>
+                <span class="text-[13.5px] font-black text-emerald-600" id="liveCookieCount">19</span>
+              </div>
+              <div class="bg-gray-50 border border-gray-200 rounded-[9px] px-2.5 py-1.5 flex items-center justify-between">
+                <span class="text-[10.5px] font-bold text-gray-600">🤖 Spam</span>
+                <span class="text-[13.5px] font-black text-emerald-600" id="liveSlopCount">11</span>
+              </div>
+              <div class="bg-gray-50 border border-gray-200 rounded-[9px] px-2.5 py-1.5 flex items-center justify-between">
+                <span class="text-[10.5px] font-bold text-gray-600">🛒 Scams</span>
+                <span class="text-[13.5px] font-black text-emerald-600" id="liveScamCount">4</span>
+              </div>
+            </div>
           </div>
         </div>
 
-        <!-- Blocked Quietly in Background (2x2 App Counter Grid) -->
-        <div class="bg-white/95 border border-emerald-100 rounded-2xl p-3.5 shadow-sm">
-          <div class="flex items-center justify-between text-xs font-bold text-gray-700 pb-2.5 border-b border-gray-100">
-            <span>Blocked quietly in background</span>
-            <span class="text-emerald-600 font-black">176 items ✓</span>
-          </div>
-          <div class="grid grid-cols-2 gap-2 mt-2.5">
-            <div class="bg-gray-50 border border-gray-200/80 rounded-xl px-3 py-2 flex items-center justify-between">
-              <span class="text-xs font-bold text-gray-600">📺 Ads</span>
-              <span class="text-base font-black text-emerald-600" id="liveAdsCount">142</span>
-            </div>
-            <div class="bg-gray-50 border border-gray-200/80 rounded-xl px-3 py-2 flex items-center justify-between">
-              <span class="text-xs font-bold text-gray-600">🍪 Cookies</span>
-              <span class="text-base font-black text-emerald-600" id="liveCookieCount">19</span>
-            </div>
-            <div class="bg-gray-50 border border-gray-200/80 rounded-xl px-3 py-2 flex items-center justify-between">
-              <span class="text-xs font-bold text-gray-600">🤖 Spam</span>
-              <span class="text-base font-black text-emerald-600" id="liveSlopCount">11</span>
-            </div>
-            <div class="bg-gray-50 border border-gray-200/80 rounded-xl px-3 py-2 flex items-center justify-between">
-              <span class="text-xs font-bold text-gray-600">🛒 Scams</span>
-              <span class="text-base font-black text-emerald-600" id="liveScamCount">4</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Automatic Tab Sleeping & 100% Silent Mode Row -->
-        <div class="bg-white/95 border border-emerald-100 rounded-2xl p-3.5 shadow-sm space-y-2.5">
-          <div>
-            <div class="flex items-center justify-between text-xs font-extrabold mb-1.5">
+        <!-- TAB 2: SPEED & SLEEPING TABS (Matches extension/popup.html #tabSpeed) -->
+        <div id="hcTabSpeed" class="hidden space-y-2">
+          <div class="bg-white/95 border border-emerald-500/15 rounded-[13px] p-2.5 shadow-xs">
+            <div class="flex items-center justify-between text-[11.5px] font-extrabold">
               <span class="text-emerald-800">⚡ Automatic Tab Sleeping</span>
               <span class="text-emerald-600">⚡ 4 Sleeping</span>
             </div>
-            <div class="h-1.5 w-full bg-gray-200 rounded-full overflow-hidden">
-              <div class="h-full bg-gradient-to-r from-emerald-500 to-teal-600 w-1/3 rounded-full"></div>
+            <div class="h-1.5 w-full bg-gray-200 rounded-full overflow-hidden my-1.5">
+              <div class="h-full bg-gradient-to-r from-emerald-500 to-emerald-600 w-1/3 rounded-full"></div>
+            </div>
+            <div class="text-[10px] text-gray-600 leading-snug">
+              4 background tabs are quietly sleeping to keep your browser fast.
+            </div>
+            <div class="w-full mt-2 py-1.5 px-2.5 rounded-[9px] bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-extrabold text-[10.5px] text-center shadow-xs">
+              ⚡ Put Unused Background Tabs to Sleep Now
             </div>
           </div>
-          <div class="bg-emerald-50/90 border border-emerald-200/70 rounded-xl px-3 py-2 flex items-center justify-between">
-            <div>
-              <div class="text-xs font-extrabold text-emerald-950">🤫 100% Silent Mode</div>
-              <div class="text-[10px] font-medium text-emerald-700">Hide all on-page badges &amp; toasts</div>
-            </div>
-            <div class="w-9 h-5 bg-emerald-500 rounded-full relative shrink-0">
-              <span class="w-3.5 h-3.5 bg-white rounded-full absolute top-[3px] right-[3px] shadow"></span>
+          <div class="bg-white/95 border border-emerald-500/15 rounded-[13px] p-2.5 shadow-xs">
+            <div class="text-[10.5px] font-extrabold text-gray-700">📂 Recently Saved Tab Groups (1)</div>
+            <div class="flex items-center justify-between px-2 py-1.5 bg-gray-50 border border-gray-200 rounded-lg mt-1.5 text-[10px] text-gray-700">
+              <span>Saved 14:20 (6 tabs)</span>
+              <span class="bg-emerald-50 text-emerald-700 border border-emerald-200 rounded px-2 py-0.5 text-[9.5px] font-extrabold">Reopen</span>
             </div>
           </div>
         </div>
 
-        <!-- 3-Tab App Switcher Bar -->
-        <div class="grid grid-cols-3 gap-1 bg-gray-100 p-1 rounded-xl text-center text-xs font-extrabold">
-          <div class="bg-white text-emerald-700 py-1.5 rounded-lg shadow-sm">🛡️ Status</div>
-          <div class="text-gray-600 py-1.5">⚡ Speed</div>
-          <div class="text-gray-600 py-1.5">⚙️ Controls</div>
+        <!-- TAB 3: CONTROLS (Matches extension/popup.html #tabControls) -->
+        <div id="hcTabControls" class="hidden">
+          <div class="bg-white/95 border border-emerald-500/15 rounded-[13px] px-3 py-2 shadow-xs divide-y divide-gray-100">
+            <div class="flex items-center justify-between py-1.5">
+              <div>
+                <div class="text-[11px] font-extrabold text-gray-900">📺 Block Video &amp; Page Ads</div>
+                <div class="text-[9.5px] text-gray-500">YouTube &amp; news websites</div>
+              </div>
+              <div class="w-9 h-5 bg-emerald-500 rounded-full relative shrink-0"><span class="w-3.5 h-3.5 bg-white rounded-full absolute top-[3px] right-[3px] shadow-xs"></span></div>
+            </div>
+            <div class="flex items-center justify-between py-1.5">
+              <div>
+                <div class="text-[11px] font-extrabold text-gray-900">🍪 Auto-Close Cookie Boxes</div>
+                <div class="text-[9.5px] text-gray-500">Says "No" to cookie pop-ups silently</div>
+              </div>
+              <div class="w-9 h-5 bg-emerald-500 rounded-full relative shrink-0"><span class="w-3.5 h-3.5 bg-white rounded-full absolute top-[3px] right-[3px] shadow-xs"></span></div>
+            </div>
+            <div class="flex items-center justify-between py-1.5">
+              <div>
+                <div class="text-[11px] font-extrabold text-gray-900">🤖 Hide Search Spam Sites</div>
+                <div class="text-[9.5px] text-gray-500">Cleans Google &amp; Bing results</div>
+              </div>
+              <div class="w-9 h-5 bg-emerald-500 rounded-full relative shrink-0"><span class="w-3.5 h-3.5 bg-white rounded-full absolute top-[3px] right-[3px] shadow-xs"></span></div>
+            </div>
+            <div class="flex items-center justify-between py-1.5">
+              <div>
+                <div class="text-[11px] font-extrabold text-gray-900">🛒 Scam Online Shop Alerts</div>
+                <div class="text-[9.5px] text-gray-500">Only warns when a store looks risky</div>
+              </div>
+              <div class="w-9 h-5 bg-emerald-500 rounded-full relative shrink-0"><span class="w-3.5 h-3.5 bg-white rounded-full absolute top-[3px] right-[3px] shadow-xs"></span></div>
+            </div>
+            <div class="flex items-center justify-between py-1.5">
+              <div>
+                <div class="text-[11px] font-extrabold text-gray-900">🔒 Private Tracker-Free Links</div>
+                <div class="text-[9.5px] text-gray-500">Strips hidden tracking tags on click</div>
+              </div>
+              <div class="w-9 h-5 bg-emerald-500 rounded-full relative shrink-0"><span class="w-3.5 h-3.5 bg-white rounded-full absolute top-[3px] right-[3px] shadow-xs"></span></div>
+            </div>
+            <div class="flex items-center justify-between py-1.5 px-2 -mx-1.5 mt-1 bg-emerald-50 rounded-lg border-none">
+              <div>
+                <div class="text-[11px] font-extrabold text-emerald-950">🤫 100% Silent Mode</div>
+                <div class="text-[9.5px] text-emerald-700">Hide all on-page badges &amp; toasts</div>
+              </div>
+              <div class="w-9 h-5 bg-emerald-500 rounded-full relative shrink-0"><span class="w-3.5 h-3.5 bg-white rounded-full absolute top-[3px] right-[3px] shadow-xs"></span></div>
+            </div>
+          </div>
         </div>
 
-        <a href="/download" class="btn btn-go w-full justify-center mt-0.5 gap-2">
-          <span>Install</span>
+        <!-- 3-Tab App Switcher Bar (Interactive — Matches extension/popup.html .tab-switcher) -->
+        <div class="grid grid-cols-3 gap-1 bg-gray-100 p-1 rounded-[10px] text-center text-[10.5px] font-extrabold">
+          <button type="button" onclick="switchHovercardTab('hcTabStatus', this)" class="hc-tab-btn bg-white text-emerald-700 py-1.5 rounded-[7px] shadow-xs cursor-pointer transition-all">🛡️ Status</button>
+          <button type="button" onclick="switchHovercardTab('hcTabSpeed', this)" class="hc-tab-btn text-gray-600 hover:text-gray-900 py-1.5 rounded-[7px] cursor-pointer transition-all">⚡ Speed</button>
+          <button type="button" onclick="switchHovercardTab('hcTabControls', this)" class="hc-tab-btn text-gray-600 hover:text-gray-900 py-1.5 rounded-[7px] cursor-pointer transition-all">⚙️ Controls</button>
+        </div>
+
+        <a href="/download?install=1" class="btn btn-go w-full justify-center gap-2 !py-2.5 !rounded-[10px] text-xs sm:text-sm">
+          <span>Install Now</span>
           <svg class="arrow-icon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
         </a>
+
+        <!-- Footer Links Row (Matches extension/popup.html .footer-links) -->
+        <div class="flex items-center justify-between pt-0.5 text-[10px] font-bold text-emerald-700">
+          <a href="/download" class="hover:underline text-emerald-700">📱 Link Phone (QR)</a>
+          <a href="/login" class="hover:underline text-emerald-700">🔑 Enter Pro Key</a>
+          <a href="/test-lab" class="hover:underline text-emerald-700">▶ Check</a>
+        </div>
       </div>
+      <script>
+        function switchHovercardTab(panelId, btnEl) {
+          ['hcTabStatus', 'hcTabSpeed', 'hcTabControls'].forEach(function(id) {
+            var el = document.getElementById(id);
+            if (el) el.classList.toggle('hidden', id !== panelId);
+          });
+          document.querySelectorAll('.hc-tab-btn').forEach(function(b) {
+            if (b === btnEl) {
+              b.className = 'hc-tab-btn bg-white text-emerald-700 py-1.5 rounded-[7px] shadow-xs cursor-pointer transition-all';
+            } else {
+              b.className = 'hc-tab-btn text-gray-600 hover:text-gray-900 py-1.5 rounded-[7px] cursor-pointer transition-all';
+            }
+          });
+        }
+      </script>
     </div>
   </main>
 

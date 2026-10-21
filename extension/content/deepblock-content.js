@@ -546,18 +546,30 @@
   });
 
   chrome.storage.local.get(['proActive', 'licenseKey', 'pausedSites', 'settings'], (res) => {
+    const proActive = Boolean(res && res.proActive && res.licenseKey);
+    // Strict Paid Subscription Gate: no blocking, auto-closing, search filtering, or alerts run unless paid subscription is active
+    if (!proActive) {
+      try {
+        delete document.documentElement.dataset.sweeprProActive;
+      } catch (e) {}
+      return;
+    }
+
     const host = (location.hostname || '').replace(/^www\./i, '').toLowerCase();
     const pausedSites = Array.isArray(res && res.pausedSites) ? res.pausedSites : [];
     if (host && pausedSites.includes(host)) return;
 
-    const proActive = Boolean(res && res.proActive && res.licenseKey);
+    try {
+      document.documentElement.dataset.sweeprProActive = '1';
+    } catch (e) {}
+
     const settings = (res && res.settings) || {};
     const silentMode = settings.silentMode !== false;
 
-    if (settings.cookieAutoClose !== false) processCookieBanners(proActive, silentMode);
-    if (settings.hideSearchSpam !== false) processSearchResults(proActive, silentMode);
-    processRecipeAndNewsClutter(proActive, silentMode);
-    if (settings.fakeShopAlerts !== false) processEcommerceStore(proActive);
+    if (settings.cookieAutoClose !== false) processCookieBanners(true, silentMode);
+    if (settings.hideSearchSpam !== false) processSearchResults(true, silentMode);
+    processRecipeAndNewsClutter(true, silentMode);
+    if (settings.fakeShopAlerts !== false) processEcommerceStore(true);
     if (settings.adBlocking !== false) {
       initYouTubeAdShield();
       processAntiAdblockStealth();
