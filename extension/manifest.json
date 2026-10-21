@@ -1,9 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "SWEEPR Deepblock: Ad, Cookie, AI Slop & RAM Cleanser",
+  "name": "SWEEPR Deepblock — Block Ads, Cookie Pop-Ups & Fake Shops",
   "short_name": "SWEEPR Deepblock",
   "version": "1.0.0",
-  "description": "Blocks ads free while detecting & cleansing GDPR cookie walls, AI Slop search farms, fake scam stores, and bloated browser tab RAM.",
+  "description": "Block YouTube & banner ads, automatically say No to cookie pop-ups, hide junk search results, and spot fake online shops.",
   "permissions": [
     "declarativeNetRequest",
     "declarativeNetRequestWithHostAccess",
@@ -25,7 +25,7 @@
     "128": "icons/icon-128.png"
   },
   "action": {
-    "default_title": "SWEEPR Deepblock — Live Diagnostic & Pro Control",
+    "default_title": "SWEEPR Deepblock — Ad, Pop-Up & Fake Shop Protection",
     "default_popup": "popup.html",
     "default_icon": {
       "16": "icons/icon-16.png",

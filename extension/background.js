@@ -3,7 +3,15 @@ const DEFAULT_STATE = {
   proActive: false,
   ramTamerActive: false,
   licenseKey: '',
-  encryptedDnsEnabled: false,
+  encryptedDnsEnabled: true,
+  pausedSites: [],
+  settings: {
+    cookieAutoClose: true,
+    hideSearchSpam: true,
+    fakeShopAlerts: true,
+    trackerProtection: true,
+    adBlocking: true
+  },
   stats: {
     adsBlocked: 142,
     cookiePromptsDetected: 19,
@@ -20,7 +28,12 @@ const DEFAULT_STATE = {
 
 chrome.runtime.onInstalled.addListener(async (details) => {
   const existing = await chrome.storage.local.get(Object.keys(DEFAULT_STATE));
-  const merged = { ...DEFAULT_STATE, ...existing, stats: { ...DEFAULT_STATE.stats, ...(existing.stats || {}) } };
+  const merged = {
+    ...DEFAULT_STATE,
+    ...existing,
+    settings: { ...DEFAULT_STATE.settings, ...(existing.settings || {}) },
+    stats: { ...DEFAULT_STATE.stats, ...(existing.stats || {}) }
+  };
   await chrome.storage.local.set(merged);
   updateActionBadge(merged.stats);
 
@@ -81,7 +94,10 @@ async function hibernateInactiveTabs() {
     id: 'session-' + Date.now(),
     savedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     tabCount: tabs.length,
-    tabs: tabs.slice(0, 30).map((t) => ({ title: t.title || 'Tab', url: t.url || '' }))
+    tabs: tabs
+      .filter((t) => t.url && /^https?:\/\//i.test(t.url))
+      .slice(0, 30)
+      .map((t) => ({ title: t.title || 'Saved Page', url: t.url || '' }))
   };
   const sessions = [snapshot, ...(data.cloudTabSessions || [])].slice(0, 5);
 
@@ -137,7 +153,13 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       chrome.storage.local.get(Object.keys(DEFAULT_STATE)),
       getRamSpeedometerMetrics()
     ]).then(([store, ramMetrics]) => {
-      sendResponse({ ...DEFAULT_STATE, ...store, ramMetrics });
+      sendResponse({
+        ...DEFAULT_STATE,
+        ...store,
+        settings: { ...DEFAULT_STATE.settings, ...(store.settings || {}) },
+        stats: { ...DEFAULT_STATE.stats, ...(store.stats || {}) },
+        ramMetrics
+      });
     });
     return true;
   }
@@ -151,6 +173,60 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     hibernateInactiveTabs().then(async (result) => {
       const ramMetrics = await getRamSpeedometerMetrics();
       sendResponse({ ok: true, ...result, ramMetrics });
+    });
+    return true;
+  }
+
+  if (msg.type === 'TOGGLE_SITE_PAUSE') {
+    const host = String(msg.hostname || '').trim().toLowerCase();
+    if (!host) {
+      sendResponse({ ok: false });
+      return true;
+    }
+    chrome.storage.local.get(['pausedSites'], (res) => {
+      const current = Array.isArray(res.pausedSites) ? res.pausedSites : [];
+      const isPaused = current.includes(host);
+      const updated = isPaused ? current.filter((h) => h !== host) : [...current, host];
+      chrome.storage.local.set({ pausedSites: updated }, () => {
+        sendResponse({ ok: true, pausedSites: updated, paused: !isPaused });
+      });
+    });
+    return true;
+  }
+
+  if (msg.type === 'TOGGLE_SETTING') {
+    const key = String(msg.settingKey || '').trim();
+    if (!Object.prototype.hasOwnProperty.call(DEFAULT_STATE.settings, key)) {
+      sendResponse({ ok: false });
+      return true;
+    }
+    chrome.storage.local.get(['settings'], (res) => {
+      const current = { ...DEFAULT_STATE.settings, ...(res.settings || {}) };
+      current[key] = !current[key];
+      chrome.storage.local.set({ settings: current }, () => {
+        sendResponse({ ok: true, settings: current });
+      });
+    });
+    return true;
+  }
+
+  if (msg.type === 'RESTORE_SAVED_SESSION') {
+    const sessionId = String(msg.sessionId || '');
+    chrome.storage.local.get(['cloudTabSessions'], async (res) => {
+      const sessions = Array.isArray(res.cloudTabSessions) ? res.cloudTabSessions : [];
+      const found = sessions.find((s) => s.id === sessionId) || sessions[0];
+      let restoredCount = 0;
+      if (found && Array.isArray(found.tabs)) {
+        for (const t of found.tabs.slice(0, 15)) {
+          if (t.url && /^https?:\/\//i.test(t.url)) {
+            try {
+              await chrome.tabs.create({ url: t.url, active: false });
+              restoredCount++;
+            } catch (e) {}
+          }
+        }
+      }
+      sendResponse({ ok: true, restoredCount });
     });
     return true;
   }

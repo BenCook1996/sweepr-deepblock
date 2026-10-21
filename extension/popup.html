@@ -12,19 +12,19 @@
     }
     * { box-sizing: border-box; }
     body {
-      width: 380px;
-      min-height: 530px;
+      width: 390px;
+      min-height: 560px;
       margin: 0;
-      padding: 16px;
+      padding: 14px 16px 16px;
       font-family: "Segoe UI Variable", -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
       color: var(--text);
-      background: radial-gradient(circle at 10% 15%, rgba(209, 250, 229, 0.55) 0%, #ffffff 50%);
+      background: radial-gradient(circle at 10% 15%, rgba(209, 250, 229, 0.55) 0%, #ffffff 55%);
     }
     .header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding-bottom: 12px;
+      padding-bottom: 10px;
       border-bottom: 1px solid rgba(0,0,0,0.06);
     }
     .brand {
@@ -38,17 +38,13 @@
       width: 28px;
       height: 28px;
       border-radius: 8px;
-      background: linear-gradient(135deg, #10b981, #047857);
-      color: #fff;
       display: grid;
       place-items: center;
-      font-weight: 900;
-      font-size: 14px;
     }
     .status-pill {
       font-size: 10px;
       font-weight: 800;
-      padding: 3px 8px;
+      padding: 3px 9px;
       border-radius: 999px;
       background: #fef3c7;
       color: #92400e;
@@ -60,70 +56,205 @@
       color: #065f46;
       border-color: #6ee7b7;
     }
+    .site-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 12px;
+      padding: 9px 12px;
+      margin-top: 10px;
+      transition: all 0.2s ease;
+    }
+    .site-bar.paused {
+      background: #fef2f2;
+      border-color: #fecaca;
+    }
+    .site-domain {
+      font-size: 13px;
+      font-weight: 800;
+      color: #111827;
+    }
+    .site-status-sub {
+      font-size: 10.5px;
+      color: #047857;
+      font-weight: 600;
+      margin-top: 1px;
+    }
+    .site-bar.paused .site-status-sub {
+      color: #b91c1c;
+    }
+    .site-toggle-btn {
+      border: 1px solid #10b981;
+      background: #10b981;
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 5px 10px;
+      border-radius: 999px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .site-bar.paused .site-toggle-btn {
+      background: #ffffff;
+      color: #b91c1c;
+      border-color: #fca5a5;
+    }
     .card {
-      background: rgba(255,255,255,0.88);
-      border: 1px solid rgba(0,0,0,0.06);
+      background: rgba(255,255,255,0.94);
+      border: 1px solid rgba(0,0,0,0.07);
       border-radius: 14px;
-      padding: 12px;
-      margin-top: 12px;
+      padding: 11px 12px;
+      margin-top: 10px;
       box-shadow: 0 4px 16px rgba(0,0,0,0.03);
     }
-    .grid-3 {
+    .grid-4 {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
       margin-top: 8px;
     }
     .stat-box {
       background: #f9fafb;
       border: 1px solid #e5e7eb;
       border-radius: 10px;
-      padding: 8px;
+      padding: 6px 4px;
       text-align: center;
     }
     .stat-num {
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 900;
       color: #111827;
     }
     .stat-label {
-      font-size: 10px;
+      font-size: 9.5px;
       color: var(--muted);
-      font-weight: 600;
+      font-weight: 700;
+      line-height: 1.15;
+      margin-top: 2px;
     }
     .ram-card {
       background: #111827;
       color: #ffffff;
       border-radius: 14px;
-      padding: 12px;
-      margin-top: 12px;
+      padding: 11px 12px;
+      margin-top: 10px;
     }
     .bar-bg {
-      height: 8px;
+      height: 7px;
       background: #374151;
       border-radius: 999px;
       overflow: hidden;
-      margin: 8px 0;
+      margin: 7px 0;
     }
     .bar-fill {
       height: 100%;
       background: linear-gradient(90deg, #10b981, #f59e0b, #ef4444);
-      width: 72%;
+      width: 65%;
       transition: width 0.3s ease;
+    }
+    .ram-btn-row {
+      display: flex;
+      gap: 6px;
+      margin-top: 7px;
+    }
+    .btn-secondary {
+      flex: 1;
+      padding: 7px 10px;
+      border-radius: 9px;
+      border: 1px solid #10b981;
+      background: rgba(16, 185, 129, 0.16);
+      color: #6ee7b7;
+      font-weight: 800;
+      font-size: 11px;
+      cursor: pointer;
+    }
+    .btn-secondary:hover {
+      background: rgba(16, 185, 129, 0.26);
+    }
+    .btn-tabs-saved {
+      padding: 7px 9px;
+      border-radius: 9px;
+      border: 1px solid #4b5563;
+      background: #1f2937;
+      color: #e5e7eb;
+      font-weight: 700;
+      font-size: 10.5px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .drawer {
+      display: none;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(255,255,255,0.12);
+      font-size: 11px;
+    }
+    .drawer.open {
+      display: block;
+    }
+    .saved-session-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 0;
+      color: #d1d5db;
+    }
+    .restore-btn {
+      background: #10b981;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 3px 8px;
+      font-size: 10px;
+      font-weight: 800;
+      cursor: pointer;
     }
     .module-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 8px;
       padding: 7px 0;
       border-bottom: 1px solid #f3f4f6;
-      font-size: 12px;
-      font-weight: 600;
     }
     .module-row:last-child { border-bottom: none; }
+    .module-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #111827;
+    }
+    .module-sub {
+      font-size: 10px;
+      color: #6b7280;
+      margin-top: 1px;
+    }
+    .toggle-pill {
+      border: 1px solid #a7f3d0;
+      background: #ecfdf5;
+      color: #047857;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 4px 9px;
+      border-radius: 999px;
+      cursor: pointer;
+      white-space: nowrap;
+      shrink: 0;
+    }
+    .toggle-pill.off {
+      background: #f3f4f6;
+      color: #6b7280;
+      border-color: #d1d5db;
+    }
+    .toggle-pill.pro-lock {
+      background: #fffbeb;
+      color: #b45309;
+      border-color: #fde68a;
+    }
     .btn-go {
       width: 100%;
-      margin-top: 12px;
+      margin-top: 10px;
       padding: 11px 14px;
       border: none;
       border-radius: 12px;
@@ -134,16 +265,54 @@
       cursor: pointer;
       box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
     }
-    .btn-secondary {
-      width: 100%;
-      margin-top: 6px;
-      padding: 8px 12px;
-      border-radius: 10px;
-      border: 1px solid #10b981;
-      background: rgba(16, 185, 129, 0.12);
-      color: #34d399;
+    .footer-links {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 8px;
+      font-size: 11px;
+    }
+    .link-btn {
+      background: none;
+      border: none;
+      color: #047857;
       font-weight: 700;
       font-size: 11px;
+      cursor: pointer;
+      padding: 2px 0;
+      text-decoration: underline;
+    }
+    .license-box {
+      display: none;
+      background: #ffffff;
+      border: 1px solid #a7f3d0;
+      border-radius: 12px;
+      padding: 10px;
+      margin-top: 8px;
+    }
+    .license-box.open {
+      display: block;
+    }
+    .license-input-row {
+      display: flex;
+      gap: 6px;
+      margin-top: 6px;
+    }
+    .license-input {
+      flex: 1;
+      padding: 6px 8px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 11px;
+    }
+    .license-submit {
+      background: #059669;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 11px;
+      font-weight: 800;
       cursor: pointer;
     }
   </style>
@@ -151,7 +320,7 @@
 <body>
   <div class="header">
     <div class="brand">
-      <div class="logo" style="padding:0;overflow:hidden;background:none;">
+      <div class="logo">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="28" height="28" fill="none">
           <defs>
             <linearGradient id="bg1" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
@@ -178,75 +347,135 @@
       </div>
       <span>SWEEPR <span style="color:#059669">Deepblock</span></span>
     </div>
-    <span id="tierBadge" class="status-pill">Free Diagnostic</span>
+    <span id="tierBadge" class="status-pill">Free Version</span>
   </div>
 
-  <!-- Hook 1: Cookie Prompts, AI Slop & Fake Stores Counter -->
+  <!-- 1-Click Current Website Pause Switch -->
+  <div id="siteBar" class="site-bar">
+    <div>
+      <div class="site-domain" id="currentSiteLabel">🌐 All Websites</div>
+      <div class="site-status-sub" id="currentSiteSub">Protection is ON for this website</div>
+    </div>
+    <button type="button" id="sitePauseBtn" class="site-toggle-btn">🟢 ON (Pause)</button>
+  </div>
+
+  <!-- What We've Blocked For You -->
   <div class="card">
     <div style="display:flex;justify-content:space-between;align-items:center;">
-      <span style="font-size:12px;font-weight:800;">🛡️ Pop-Ups &amp; Spam Found</span>
-      <span style="font-size:11px;color:#059669;font-weight:700;" id="adsBlockedText">142 Ads Blocked Free</span>
+      <span style="font-size:12px;font-weight:800;">✨ What We've Blocked For You</span>
+      <span style="font-size:10.5px;color:#059669;font-weight:700;" id="adsBlockedText">Working Automatically</span>
     </div>
-    <div class="grid-3">
+    <div class="grid-4">
+      <div class="stat-box">
+        <div class="stat-num" id="adsCount">142</div>
+        <div class="stat-label">📺 Ads Stopped</div>
+      </div>
       <div class="stat-box">
         <div class="stat-num" id="cookieCount">19</div>
         <div class="stat-label">🍪 Cookie Pop-Ups</div>
       </div>
       <div class="stat-box">
         <div class="stat-num" id="slopCount">11</div>
-        <div class="stat-label">🤖 Spam Sites</div>
+        <div class="stat-label">🤖 Junk Results</div>
       </div>
       <div class="stat-box">
         <div class="stat-num" id="scamCount" style="color:#dc2626;">4</div>
-        <div class="stat-label">🛒 Fake Shops</div>
+        <div class="stat-label">🛒 Scam Warnings</div>
       </div>
     </div>
   </div>
 
-  <!-- Hook 2: Total Tab & RAM Tamer Live Speedometer -->
+  <!-- Browser Speed Booster -->
   <div class="ram-card">
-    <div style="display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:800;">
-      <span style="color:#34d399;">🚀 Browser Speed &amp; Memory</span>
-      <span id="ramHeadlineMetric" style="color:#fbbf24;">6.8 GB Used (42% Slowdown)</span>
+    <div style="display:flex;justify-content:space-between;align-items:center;font-size:11.5px;font-weight:800;">
+      <span style="color:#34d399;">🚀 Make My Browser Faster</span>
+      <span id="ramHeadlineMetric" style="color:#fbbf24;">Checking Open Tabs...</span>
     </div>
     <div class="bar-bg">
       <div id="ramBarFill" class="bar-fill"></div>
     </div>
     <div id="ramDescriptionText" style="font-size:11px;color:#d1d5db;line-height:1.35;">
-      Your open tabs are using <strong>6.8 GB of memory</strong>. Click below to pause unused background tabs without losing your place.
+      Unused tabs in the background can slow down your computer. Put them to sleep without losing your place:
     </div>
-    <button type="button" id="reclaimRamBtn" class="btn-secondary">
-      ⚡ Speed Up Browser &amp; Save Open Tabs
-    </button>
+    <div class="ram-btn-row">
+      <button type="button" id="reclaimRamBtn" class="btn-secondary">
+        ⚡ Speed Up My Browser Now
+      </button>
+      <button type="button" id="toggleSavedTabsBtn" class="btn-tabs-saved">
+        📂 Saved Tabs (<span id="savedTabsCount">0</span>)
+      </button>
+    </div>
+    <div id="savedTabsDrawer" class="drawer">
+      <div style="font-weight:700;color:#a7f3d0;margin-bottom:4px;">Your Saved Tab Groups:</div>
+      <div id="savedTabsList">No paused tab groups yet. Click "Speed Up My Browser Now" above to save and pause unused tabs.</div>
+    </div>
   </div>
 
-  <!-- Deepblock Pro Modules Status -->
+  <!-- Self-Explanatory Protection Controls -->
   <div class="card">
-    <div class="module-row">
-      <span>🍪 Auto-Close Cookie Pop-Ups</span>
-      <span id="modCookie" style="color:#d97706;font-size:11px;">PRO</span>
+    <div style="font-size:11px;font-weight:800;color:#4b5563;text-transform:uppercase;letter-spacing:0.03em;margin-bottom:4px;">
+      🛠️ Your Protection Controls (Click to Turn On/Off)
     </div>
+
     <div class="module-row">
-      <span>🤖 Hide Spam Websites in Search</span>
-      <span id="modSlop" style="color:#d97706;font-size:11px;">PRO</span>
+      <div>
+        <div class="module-title">🍪 Say "No" to Cookie Pop-Ups</div>
+        <div class="module-sub">Closes annoying cookie boxes automatically</div>
+      </div>
+      <button type="button" id="modCookie" data-setting="cookieAutoClose" data-pro="1" class="toggle-pill pro-lock">🔒 PRO</button>
     </div>
+
     <div class="module-row">
-      <span>🛒 Fake Online Shop &amp; Review Checker</span>
-      <span id="modShop" style="color:#059669;font-size:11px;">FREE BONUS</span>
+      <div>
+        <div class="module-title">🤖 Hide Junk Search Results</div>
+        <div class="module-sub">Hides low-quality spam sites on Google &amp; Bing</div>
+      </div>
+      <button type="button" id="modSlop" data-setting="hideSearchSpam" data-pro="1" class="toggle-pill pro-lock">🔒 PRO</button>
     </div>
+
     <div class="module-row">
-      <span>🔒 Private, Tracker-Free Browsing</span>
-      <span id="modDns" style="color:#059669;font-size:11px;">FREE BONUS</span>
+      <div>
+        <div class="module-title">🛒 Warn Me About Fake Shops</div>
+        <div class="module-sub">Alerts you on scam stores &amp; fake reviews</div>
+      </div>
+      <button type="button" id="modShop" data-setting="fakeShopAlerts" class="toggle-pill">🟢 ON</button>
     </div>
+
     <div class="module-row">
-      <span>🕵️ Undetectable on YouTube &amp; News Sites</span>
-      <span id="modStealth" style="color:#059669;font-size:11px;">✓ ACTIVE</span>
+      <div>
+        <div class="module-title">🔒 Stop Trackers Following Me</div>
+        <div class="module-sub">Removes hidden tracking links when you click</div>
+      </div>
+      <button type="button" id="modDns" data-setting="trackerProtection" class="toggle-pill">🟢 ON</button>
+    </div>
+
+    <div class="module-row">
+      <div>
+        <div class="module-title">📺 Block YouTube &amp; Website Ads</div>
+        <div class="module-sub">Stops video &amp; banner ads with no warnings</div>
+      </div>
+      <button type="button" id="modStealth" data-setting="adBlocking" class="toggle-pill">🟢 ON</button>
     </div>
   </div>
 
   <button type="button" id="upgradeCtaBtn" class="btn-go">
-    Unlock Deepblock Pro + RAM Tamer &rarr;
+    ⭐ Upgrade to Full Protection (From £1.99) &rarr;
   </button>
+
+  <div class="footer-links">
+    <button type="button" id="toggleLicenseDrawerBtn" class="link-btn">🔑 Already bought Pro? Enter key</button>
+    <button type="button" id="openTestLabBtn" class="link-btn">▶ Test My Protection</button>
+  </div>
+
+  <div id="licenseDrawer" class="license-box">
+    <div style="font-size:11px;font-weight:800;color:#111827;">🔑 Activate Your Pro License Key</div>
+    <div style="font-size:10px;color:#6b7280;margin-top:2px;">Paste the key from your receipt email to unlock all features:</div>
+    <div class="license-input-row">
+      <input type="text" id="licenseKeyInput" class="license-input" placeholder="e.g. DB-PRO-2026-XXXX" />
+      <button type="button" id="activateKeyBtn" class="license-submit">Unlock</button>
+    </div>
+    <div id="licenseFeedback" style="font-size:10px;color:#059669;font-weight:700;margin-top:4px;display:none;"></div>
+  </div>
 
   <script src="popup.js"></script>
 </body>
