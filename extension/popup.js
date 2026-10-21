@@ -1,23 +1,24 @@
-// SWEEPR Deepblock — Plain-English Extension Popup Controller
+// SWEEPR Deepblock — Subtle Toolbar Popover Controller
 document.addEventListener('DOMContentLoaded', () => {
   const adsCountEl = document.getElementById('adsCount');
   const cookieCountEl = document.getElementById('cookieCount');
   const slopCountEl = document.getElementById('slopCount');
   const scamCountEl = document.getElementById('scamCount');
+  const adsBlockedTextEl = document.getElementById('adsBlockedText');
   const tierBadgeEl = document.getElementById('tierBadge');
   const ramHeadlineEl = document.getElementById('ramHeadlineMetric');
   const ramDescEl = document.getElementById('ramDescriptionText');
   const ramBarFillEl = document.getElementById('ramBarFill');
   const reclaimRamBtn = document.getElementById('reclaimRamBtn');
-  const toggleSavedTabsBtn = document.getElementById('toggleSavedTabsBtn');
   const savedTabsCountEl = document.getElementById('savedTabsCount');
-  const savedTabsDrawerEl = document.getElementById('savedTabsDrawer');
   const savedTabsListEl = document.getElementById('savedTabsList');
   const upgradeCtaBtn = document.getElementById('upgradeCtaBtn');
   const siteBarEl = document.getElementById('siteBar');
   const currentSiteLabelEl = document.getElementById('currentSiteLabel');
   const currentSiteSubEl = document.getElementById('currentSiteSub');
   const sitePauseBtn = document.getElementById('sitePauseBtn');
+  const toggleQrDrawerBtn = document.getElementById('toggleQrDrawerBtn');
+  const qrDrawerEl = document.getElementById('qrDrawer');
   const toggleLicenseDrawerBtn = document.getElementById('toggleLicenseDrawerBtn');
   const licenseDrawerEl = document.getElementById('licenseDrawer');
   const licenseKeyInput = document.getElementById('licenseKeyInput');
@@ -28,13 +29,24 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentHostname = '';
   let currentState = { proActive: false, settings: {}, pausedSites: [], cloudTabSessions: [] };
 
+  // 3-Tab Switcher (Status / Speed / Controls)
+  const tabButtons = document.querySelectorAll('.tab-btn[data-tab]');
+  const tabPanels = document.querySelectorAll('.tab-panel');
+  tabButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const targetId = btn.getAttribute('data-tab');
+      tabButtons.forEach((b) => b.classList.toggle('active', b === btn));
+      tabPanels.forEach((p) => p.classList.toggle('active', p.id === targetId));
+    });
+  });
+
   // Detect active tab website hostname
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     const activeTab = tabs && tabs[0];
     if (activeTab && activeTab.url && /^https?:\/\//i.test(activeTab.url)) {
       try {
         currentHostname = new URL(activeTab.url).hostname.replace(/^www\./i, '');
-        currentSiteLabelEl.textContent = '🌐 ' + currentHostname;
+        currentSiteLabelEl.textContent = currentHostname;
         updateSiteBarState();
       } catch (e) {}
     }
@@ -45,12 +57,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const isPaused = Array.isArray(currentState.pausedSites) && currentState.pausedSites.includes(currentHostname);
     if (isPaused) {
       siteBarEl.classList.add('paused');
-      currentSiteSubEl.textContent = 'Protection is paused on this website';
-      sitePauseBtn.textContent = '⚪ Paused (Turn ON)';
+      sitePauseBtn.classList.add('off');
+      currentSiteSubEl.textContent = 'Protection is paused on this site';
     } else {
       siteBarEl.classList.remove('paused');
-      currentSiteSubEl.textContent = 'Protection is ON for this website';
-      sitePauseBtn.textContent = '🟢 ON (Pause)';
+      sitePauseBtn.classList.remove('off');
+      currentSiteSubEl.textContent = 'Protection is ON for this site';
     }
   }
 
@@ -61,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (list.length === 0) {
       savedTabsListEl.textContent =
-        'No saved tab groups yet. Click "Speed Up My Browser Now" above to put unused tabs to sleep.';
+        'No paused tab groups yet. Unused tabs automatically snooze in the background.';
       return;
     }
 
@@ -70,16 +82,16 @@ document.addEventListener('DOMContentLoaded', () => {
       row.className = 'saved-session-row';
 
       const label = document.createElement('span');
-      label.textContent = `• Saved at ${sess.savedAt || 'earlier'} (${Number(sess.tabCount) || 0} tabs)`;
+      label.textContent = `Saved ${sess.savedAt || 'earlier'} (${Number(sess.tabCount) || 0} tabs)`;
 
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'restore-btn';
-      btn.textContent = 'Reopen Tabs';
+      btn.textContent = 'Reopen';
       btn.addEventListener('click', () => {
         btn.textContent = 'Opening...';
         chrome.runtime.sendMessage({ type: 'RESTORE_SAVED_SESSION', sessionId: sess.id }, () => {
-          btn.textContent = '✓ Reopened';
+          btn.textContent = '✓ Opened';
         });
       });
 
@@ -98,54 +110,55 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (requiresPro && !proActive) {
         btn.textContent = '🔒 PRO';
-        btn.className = 'toggle-pill pro-lock';
+        btn.className = 'switch-btn pro-lock';
         return;
       }
 
+      btn.textContent = '';
       const isOn = s[key] !== false;
-      if (isOn) {
-        btn.textContent = '🟢 ON';
-        btn.className = 'toggle-pill';
-      } else {
-        btn.textContent = '⚪ OFF';
-        btn.className = 'toggle-pill off';
-      }
+      btn.className = isOn ? 'switch-btn' : 'switch-btn off';
     });
   }
 
   function renderState(state) {
     currentState = state || currentState;
     const stats = state.stats || {};
-    adsCountEl.textContent = String(stats.adsBlocked || 142);
-    cookieCountEl.textContent = String(stats.cookiePromptsDetected || 19);
-    slopCountEl.textContent = String(stats.aiSlopDetected || 11);
-    scamCountEl.textContent = String(stats.fakeStoresDetected || 4);
+    const ads = Number(stats.adsBlocked) || 142;
+    const cookies = Number(stats.cookiePromptsDetected) || 19;
+    const slop = Number(stats.aiSlopDetected) || 11;
+    const scams = Number(stats.fakeStoresDetected) || 4;
+
+    adsCountEl.textContent = String(ads);
+    cookieCountEl.textContent = String(cookies);
+    slopCountEl.textContent = String(slop);
+    scamCountEl.textContent = String(scams);
+    if (adsBlockedTextEl) {
+      adsBlockedTextEl.textContent = `${ads + cookies + slop} items`;
+    }
 
     if (state.ramMetrics) {
       const totalTabs = Number(state.ramMetrics.totalTabs) || 1;
-      const slowdownPct = Number(state.ramMetrics.slowdownPct) || 15;
-      ramHeadlineEl.textContent = `${totalTabs} Open Tabs (${slowdownPct}% Slower)`;
-      ramBarFillEl.style.width = `${Math.min(95, slowdownPct + 20)}%`;
+      const discardedCount = Number(state.ramMetrics.discardedCount) || 0;
+      ramHeadlineEl.textContent =
+        discardedCount > 0 ? `⚡ ${discardedCount} Sleeping` : `${totalTabs} Tabs Open`;
+      ramBarFillEl.style.width = `${Math.min(85, Math.max(22, totalTabs * 4))}%`;
 
-      ramDescEl.textContent = '';
-      ramDescEl.appendChild(document.createTextNode('You have '));
-      const b1 = document.createElement('strong');
-      b1.textContent = `${totalTabs} open tabs`;
-      ramDescEl.appendChild(b1);
-      ramDescEl.appendChild(
-        document.createTextNode(' slowing down your browser. Put unused background tabs to sleep without losing your place:')
-      );
+      ramDescEl.textContent =
+        discardedCount > 0
+          ? `${discardedCount} background tab${discardedCount > 1 ? 's are' : ' is'} quietly sleeping to keep your browser fast.`
+          : `You have ${totalTabs} open tabs. Unused background tabs snooze automatically.`;
     }
 
     if (state.proActive) {
-      tierBadgeEl.textContent = '✓ Pro Active';
+      tierBadgeEl.textContent = '✓ Pro Quiet';
       tierBadgeEl.classList.add('pro');
-      upgradeCtaBtn.textContent = '✓ Full Pro Protection is Active';
-      toggleLicenseDrawerBtn.textContent = '✓ License Key Active';
+      upgradeCtaBtn.style.display = 'none';
+      toggleLicenseDrawerBtn.textContent = '✓ Pro Active';
     } else {
-      tierBadgeEl.textContent = 'Free Version';
+      tierBadgeEl.textContent = 'Quiet Mode';
       tierBadgeEl.classList.remove('pro');
-      upgradeCtaBtn.textContent = '⭐ Upgrade to Full Protection (From £1.99) →';
+      upgradeCtaBtn.style.display = 'block';
+      upgradeCtaBtn.textContent = '⭐ Unlock Full Pro Protection (From £1.99) →';
     }
 
     updateSiteBarState();
@@ -175,9 +188,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (res && res.ok) {
         const count = Number(res.newlyDiscarded) || 0;
         reclaimRamBtn.textContent =
-          count > 0 ? `✓ Done! ${count} Unused Tabs Paused & Saved` : '✓ Browser is Already Running Fast!';
-        ramHeadlineEl.textContent = '✓ Running Smoothly';
-        ramHeadlineEl.style.color = '#34d399';
+          count > 0 ? `✓ ${count} Background Tabs Put to Sleep` : '✓ Browser Already Running Fast';
+        ramHeadlineEl.textContent = '⚡ Fast & Quiet';
         ramBarFillEl.style.width = '20%';
         if (res.sessions) {
           currentState.cloudTabSessions = res.sessions;
@@ -187,12 +199,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Toggle saved tabs drawer
-  toggleSavedTabsBtn.addEventListener('click', () => {
-    savedTabsDrawerEl.classList.toggle('open');
-  });
-
-  // Feature ON/OFF toggles
+  // Feature ON/OFF sliding switches
   document.querySelectorAll('[data-setting]').forEach((btn) => {
     btn.addEventListener('click', () => {
       const requiresPro = btn.getAttribute('data-pro') === '1';
@@ -213,8 +220,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // Toggle QR Phone Pairing drawer
+  if (toggleQrDrawerBtn && qrDrawerEl) {
+    toggleQrDrawerBtn.addEventListener('click', () => {
+      licenseDrawerEl.classList.remove('open');
+      qrDrawerEl.classList.toggle('open');
+    });
+  }
+
   // Toggle License Key drawer
   toggleLicenseDrawerBtn.addEventListener('click', () => {
+    if (qrDrawerEl) qrDrawerEl.classList.remove('open');
     licenseDrawerEl.classList.toggle('open');
   });
 
@@ -232,7 +248,7 @@ document.addEventListener('DOMContentLoaded', () => {
         currentState.proActive = true;
         licenseFeedbackEl.style.display = 'block';
         licenseFeedbackEl.style.color = '#059669';
-        licenseFeedbackEl.textContent = '✓ Pro Protection Unlocked! All features are now ON.';
+        licenseFeedbackEl.textContent = '✓ Pro Protection Unlocked! All switches are now ON.';
         renderState(currentState);
       }
     });

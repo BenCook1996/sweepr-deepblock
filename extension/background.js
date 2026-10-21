@@ -1,7 +1,7 @@
 // SWEEPR Deepblock — Manifest V3 Background Service Worker
 const DEFAULT_STATE = {
   proActive: false,
-  ramTamerActive: false,
+  ramTamerActive: true,
   licenseKey: '',
   encryptedDnsEnabled: true,
   pausedSites: [],
@@ -10,7 +10,8 @@ const DEFAULT_STATE = {
     hideSearchSpam: true,
     fakeShopAlerts: true,
     trackerProtection: true,
-    adBlocking: true
+    adBlocking: true,
+    silentMode: true
   },
   stats: {
     adsBlocked: 142,

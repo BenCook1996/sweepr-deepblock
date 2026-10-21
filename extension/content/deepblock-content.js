@@ -37,8 +37,8 @@
     } catch (e) {}
   }
 
-  // 1. GDPR Cookie Banner Handling
-  function processCookieBanners(proActive) {
+  // 1. GDPR Cookie Banner Handling (Silent <50ms Rejector + Optional 2s Whisper Toast)
+  function processCookieBanners(proActive, silentMode = true) {
     const foundBanner = document.querySelector(CMP_SELECTORS.join(','));
     if (!foundBanner) return;
 
@@ -72,11 +72,37 @@
       document.documentElement.style.setProperty('overflow', 'auto', 'important');
       document.body.style.setProperty('overflow', 'auto', 'important');
       reportMetric('cookiePromptsRejected', 1);
+
+      if (clicked && !silentMode && !document.getElementById('deepblockCookieWhisper')) {
+        const toast = document.createElement('div');
+        toast.id = 'deepblockCookieWhisper';
+        toast.textContent = '🍪 Cookie pop-up auto-declined';
+        Object.assign(toast.style, {
+          position: 'fixed',
+          bottom: '14px',
+          left: '14px',
+          zIndex: '2147483647',
+          background: 'rgba(255, 255, 255, 0.94)',
+          color: '#065f46',
+          border: '1px solid #a7f3d0',
+          borderRadius: '999px',
+          padding: '4px 11px',
+          fontSize: '11px',
+          fontWeight: '600',
+          fontFamily: 'system-ui, -apple-system, sans-serif',
+          boxShadow: '0 4px 12px rgba(6, 78, 59, 0.08)',
+          pointerEvents: 'none',
+          transition: 'opacity 0.4s ease'
+        });
+        document.body.appendChild(toast);
+        setTimeout(() => { toast.style.opacity = '0'; }, 1800);
+        setTimeout(() => { toast.remove(); }, 2250);
+      }
     }
   }
 
   // 2. AI Slop & SEO Content-Farm SERP Purifier (Google / Bing / DuckDuckGo)
-  function processSearchResults(proActive) {
+  function processSearchResults(proActive, silentMode = true) {
     if (!/(google\.|bing\.com|duckduckgo\.com)/i.test(location.hostname)) return;
 
     const results = document.querySelectorAll('div.g, li.b_algo, article[data-testid="result"]');
@@ -99,20 +125,18 @@
         if (proActive) {
           item.style.display = 'none';
           hiddenItems.push(item);
-        } else {
-          item.style.border = '1px solid #f59e0b';
-          item.style.borderRadius = '10px';
-          item.style.padding = '8px';
+        } else if (!silentMode) {
           const badge = document.createElement('div');
           badge.textContent = '⚠️ Flagged by SWEEPR: Likely low-quality or spam article';
           Object.assign(badge.style, {
             fontSize: '11px',
-            fontWeight: '700',
+            fontWeight: '600',
             color: '#92400e',
-            background: '#fef3c7',
-            padding: '3px 8px',
-            borderRadius: '6px',
-            marginBottom: '6px',
+            background: '#fffbeb',
+            border: '1px solid #fde68a',
+            padding: '2px 8px',
+            borderRadius: '999px',
+            marginBottom: '4px',
             display: 'inline-block'
           });
           item.prepend(badge);
@@ -123,37 +147,35 @@
     if (slopCount > 0) {
       reportMetric('aiSlopDetected', slopCount);
       if (proActive && hiddenItems.length > 0 && !document.getElementById('deepblockSlopNotice')) {
-        const notice = document.createElement('div');
+        const notice = document.createElement('span');
         notice.id = 'deepblockSlopNotice';
         Object.assign(notice.style, {
-          position: 'fixed',
-          bottom: '16px',
-          left: '16px',
-          zIndex: '2147483647',
-          background: '#064e3b',
-          color: '#ffffff',
-          padding: '8px 14px',
-          borderRadius: '999px',
-          fontSize: '12px',
-          fontWeight: '700',
-          boxShadow: '0 4px 14px rgba(0,0,0,0.2)',
-          display: 'flex',
+          display: 'inline-flex',
           alignItems: 'center',
-          gap: '8px'
+          gap: '6px',
+          background: '#ecfdf5',
+          color: '#047857',
+          border: '1px solid #a7f3d0',
+          padding: '2px 9px',
+          borderRadius: '999px',
+          fontSize: '11px',
+          fontWeight: '700',
+          marginLeft: '8px',
+          fontFamily: 'system-ui, -apple-system, sans-serif'
         });
         const label = document.createElement('span');
-        label.textContent = `🛡️ SWEEPR hid ${hiddenItems.length} junk search result${hiddenItems.length > 1 ? 's' : ''}`;
+        label.textContent = `🛡️ ${hiddenItems.length} spam copycat site${hiddenItems.length > 1 ? 's' : ''} quietly hidden`;
         const showBtn = document.createElement('button');
         showBtn.type = 'button';
-        showBtn.textContent = 'Show them';
+        showBtn.textContent = 'Show';
         Object.assign(showBtn.style, {
-          background: 'rgba(255,255,255,0.16)',
-          color: '#a7f3d0',
+          background: 'none',
+          color: '#065f46',
           border: 'none',
-          borderRadius: '999px',
-          padding: '2px 8px',
+          padding: '0',
           fontSize: '11px',
           fontWeight: '800',
+          textDecoration: 'underline',
           cursor: 'pointer'
         });
         showBtn.onclick = () => {
@@ -162,13 +184,23 @@
         };
         notice.appendChild(label);
         notice.appendChild(showBtn);
-        document.body.appendChild(notice);
+
+        const statsHost =
+          document.querySelector('#result-stats, #b_tween, #react-layout') ||
+          document.querySelector('#search, #b_results');
+        if (statsHost && statsHost.parentNode) {
+          if (statsHost.id === 'result-stats' || statsHost.id === 'b_tween') {
+            statsHost.appendChild(notice);
+          } else {
+            statsHost.parentNode.insertBefore(notice, statsHost);
+          }
+        }
       }
     }
   }
 
-  // 3. Recipe & News Clutter Stripper
-  function processRecipeAndNewsClutter(proActive) {
+  // 3. Recipe & News Clutter Helper (Subtle Native Inline Jump Link Under Heading)
+  function processRecipeAndNewsClutter(proActive, silentMode = true) {
     const recipeEl = document.querySelector(
       '[itemtype*="schema.org/Recipe"], .wprm-recipe-container, .tasty-recipes, .mv-create-card'
     );
@@ -177,64 +209,88 @@
       const wrap = document.createElement('div');
       wrap.id = 'deepblockPureViewBtn';
       Object.assign(wrap.style, {
-        position: 'fixed',
-        bottom: '20px',
-        right: '20px',
-        zIndex: '2147483647',
-        background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-        color: '#fff',
-        borderRadius: '999px',
-        padding: '6px 10px 6px 16px',
-        display: 'flex',
+        display: 'inline-flex',
         alignItems: 'center',
-        gap: '8px',
-        boxShadow: '0 6px 20px rgba(16, 185, 129, 0.4)',
+        gap: '7px',
+        background: '#ecfdf5',
+        color: '#065f46',
+        border: '1px solid #a7f3d0',
+        borderRadius: '999px',
+        padding: '4px 11px',
+        margin: '6px 0 12px',
+        fontSize: '12px',
+        fontWeight: '700',
         fontFamily: 'system-ui, -apple-system, sans-serif'
+      });
+
+      const dot = document.createElement('span');
+      Object.assign(dot.style, {
+        width: '7px',
+        height: '7px',
+        borderRadius: '50%',
+        background: '#10b981',
+        flexShrink: '0'
       });
 
       const jumpBtn = document.createElement('button');
       jumpBtn.type = 'button';
-      jumpBtn.textContent = '📖 Skip Story & Jump to Recipe';
+      jumpBtn.textContent = '📖 Skip story & jump to ingredients ↓';
       Object.assign(jumpBtn.style, {
         background: 'none',
         border: 'none',
-        color: '#fff',
+        color: '#065f46',
         fontWeight: '800',
-        fontSize: '13px',
+        fontSize: '12px',
         cursor: 'pointer',
-        padding: '4px 0'
+        padding: '0'
       });
       jumpBtn.onclick = () => recipeEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
       const closeBtn = document.createElement('button');
       closeBtn.type = 'button';
       closeBtn.textContent = '✕';
-      closeBtn.title = 'Hide button';
+      closeBtn.title = 'Hide';
       Object.assign(closeBtn.style, {
-        background: 'rgba(0,0,0,0.18)',
+        background: 'none',
         border: 'none',
-        color: '#fff',
-        borderRadius: '999px',
-        width: '22px',
-        height: '22px',
+        color: '#047857',
         fontSize: '11px',
         fontWeight: '800',
-        cursor: 'pointer'
+        cursor: 'pointer',
+        padding: '0 2px'
       });
       closeBtn.onclick = () => wrap.remove();
 
+      wrap.appendChild(dot);
       wrap.appendChild(jumpBtn);
       wrap.appendChild(closeBtn);
-      document.body.appendChild(wrap);
+
+      const mainHeading = document.querySelector('article h1, main h1, h1');
+      if (mainHeading && mainHeading.parentNode) {
+        mainHeading.parentNode.insertBefore(wrap, mainHeading.nextSibling);
+      } else if (!silentMode) {
+        Object.assign(wrap.style, {
+          position: 'fixed',
+          bottom: '16px',
+          right: '16px',
+          zIndex: '2147483647',
+          boxShadow: '0 4px 14px rgba(6, 78, 59, 0.14)'
+        });
+        document.body.appendChild(wrap);
+      }
     }
   }
 
-  // 4. Fake E-Commerce Store & Review Detector (Bundle Module #1)
+  // 4. Fake E-Commerce Store & Review Detector (100% Invisible on Safe Stores, Slim Top Infobar on Scam Sites)
   function processEcommerceStore(proActive) {
+    // Never interrupt trusted everyday retailers
+    if (/(^|\.)(amazon\.|ebay\.|argos\.co\.uk|johnlewis\.com|currys\.co\.uk|tesco\.com)/i.test(location.hostname)) {
+      return;
+    }
+
     const isShopifyOrStore =
       Boolean(window.Shopify) ||
-      document.querySelector('meta[name="shopify-checkout-api-token"]') ||
-      /amazon\./i.test(location.hostname);
+      document.querySelector('meta[name="shopify-checkout-api-token"]');
 
     if (!isShopifyOrStore) return;
 
@@ -252,39 +308,67 @@
           left: '0',
           right: '0',
           zIndex: '2147483647',
-          background: '#fef3c7',
-          color: '#78350f',
-          borderBottom: '2px solid #f59e0b',
-          padding: '10px 16px',
-          fontSize: '13px',
+          background: '#fffbeb',
+          color: '#92400e',
+          borderBottom: '1px solid #fde68a',
+          padding: '6px 14px',
+          fontSize: '12px',
           fontWeight: '700',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          gap: '12px',
+          gap: '10px',
           fontFamily: 'system-ui, -apple-system, sans-serif',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.08)'
+          boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
         });
         const msg = document.createElement('span');
         msg.textContent =
-          '⚠️ Heads Up from SWEEPR Deepblock: This shop uses "Hurry! Time Running Out" countdown timers often used by scam stores. Double-check reviews before buying.';
-        const dismiss = document.createElement('button');
-        dismiss.type = 'button';
-        dismiss.textContent = 'Got It, Hide ✕';
-        Object.assign(dismiss.style, {
-          background: '#d97706',
+          '⚠️ SWEEPR Caution: This online shop uses fake countdown timers often seen on scam stores.';
+
+        const actions = document.createElement('div');
+        Object.assign(actions.style, { display: 'flex', alignItems: 'center', gap: '6px' });
+
+        const leaveBtn = document.createElement('button');
+        leaveBtn.type = 'button';
+        leaveBtn.textContent = '← Leave Safely';
+        Object.assign(leaveBtn.style, {
+          background: '#059669',
           color: '#ffffff',
           border: 'none',
-          borderRadius: '8px',
-          padding: '5px 10px',
+          borderRadius: '6px',
+          padding: '3px 9px',
           fontSize: '11px',
           fontWeight: '800',
           cursor: 'pointer',
           whiteSpace: 'nowrap'
         });
+        leaveBtn.onclick = () => {
+          if (window.history.length > 1) {
+            window.history.back();
+          } else {
+            window.location.href = 'https://www.google.com';
+          }
+        };
+
+        const dismiss = document.createElement('button');
+        dismiss.type = 'button';
+        dismiss.textContent = '✕';
+        dismiss.title = 'Dismiss';
+        Object.assign(dismiss.style, {
+          background: 'none',
+          color: '#78350f',
+          border: 'none',
+          padding: '2px 6px',
+          fontSize: '12px',
+          fontWeight: '800',
+          cursor: 'pointer'
+        });
         dismiss.onclick = () => bar.remove();
+
+        actions.appendChild(leaveBtn);
+        actions.appendChild(dismiss);
         bar.appendChild(msg);
-        bar.appendChild(dismiss);
+        bar.appendChild(actions);
         document.body.appendChild(bar);
       }
     }
@@ -465,10 +549,11 @@
 
     const proActive = Boolean(res && res.proActive);
     const settings = (res && res.settings) || {};
+    const silentMode = settings.silentMode !== false;
 
-    if (settings.cookieAutoClose !== false) processCookieBanners(proActive);
-    if (settings.hideSearchSpam !== false) processSearchResults(proActive);
-    processRecipeAndNewsClutter(proActive);
+    if (settings.cookieAutoClose !== false) processCookieBanners(proActive, silentMode);
+    if (settings.hideSearchSpam !== false) processSearchResults(proActive, silentMode);
+    processRecipeAndNewsClutter(proActive, silentMode);
     if (settings.fakeShopAlerts !== false) processEcommerceStore(proActive);
     if (settings.adBlocking !== false) {
       initYouTubeAdShield();
