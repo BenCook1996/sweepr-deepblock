@@ -181,10 +181,27 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Speed up browser & save open tabs
+  // Speed up browser & save open tabs (Requires Active Paid Pro Subscription)
   reclaimRamBtn.addEventListener('click', () => {
+    if (!currentState.proActive) {
+      if (qrDrawerEl) qrDrawerEl.classList.remove('open');
+      licenseDrawerEl.classList.add('open');
+      licenseFeedbackEl.style.display = 'block';
+      licenseFeedbackEl.style.color = '#b45309';
+      licenseFeedbackEl.textContent =
+        '🔒 Browser Speed & Tab Sleeping requires an active Pro subscription. Paste your key or click Unlock Full Pro above.';
+      licenseKeyInput.focus();
+      return;
+    }
+
     reclaimRamBtn.textContent = 'Putting unused tabs to sleep...';
     chrome.runtime.sendMessage({ type: 'HIBERNATE_TABS_NOW' }, (res) => {
+      if (res && res.requiresPro) {
+        currentState.proActive = false;
+        renderState(currentState);
+        licenseDrawerEl.classList.add('open');
+        return;
+      }
       if (res && res.ok) {
         const count = Number(res.newlyDiscarded) || 0;
         reclaimRamBtn.textContent =
@@ -206,12 +223,22 @@ document.addEventListener('DOMContentLoaded', () => {
       const settingKey = btn.getAttribute('data-setting');
 
       if (requiresPro && !currentState.proActive) {
+        if (qrDrawerEl) qrDrawerEl.classList.remove('open');
         licenseDrawerEl.classList.add('open');
+        licenseFeedbackEl.style.display = 'block';
+        licenseFeedbackEl.style.color = '#b45309';
+        licenseFeedbackEl.textContent =
+          '🔒 Active paid Pro subscription required for this feature. Paste your key below or upgrade above.';
         licenseKeyInput.focus();
         return;
       }
 
       chrome.runtime.sendMessage({ type: 'TOGGLE_SETTING', settingKey }, (res) => {
+        if (res && res.requiresPro) {
+          licenseDrawerEl.classList.add('open');
+          licenseKeyInput.focus();
+          return;
+        }
         if (res && res.ok) {
           currentState.settings = res.settings;
           renderSettingsToggles(Boolean(currentState.proActive), currentState.settings);
@@ -234,7 +261,7 @@ document.addEventListener('DOMContentLoaded', () => {
     licenseDrawerEl.classList.toggle('open');
   });
 
-  // Activate Pro License Key
+  // Activate Pro License Key (Verified Against Live Server & Stripe Subscription)
   activateKeyBtn.addEventListener('click', () => {
     const key = (licenseKeyInput.value || '').trim();
     if (!key) {
@@ -243,12 +270,27 @@ document.addEventListener('DOMContentLoaded', () => {
       licenseFeedbackEl.textContent = 'Please paste your license key first.';
       return;
     }
-    chrome.runtime.sendMessage({ type: 'ACTIVATE_LICENSE', licenseKey: key, ramTamerActive: true }, (res) => {
-      if (res && res.ok) {
+    activateKeyBtn.textContent = 'Verifying...';
+    activateKeyBtn.disabled = true;
+    licenseFeedbackEl.style.display = 'block';
+    licenseFeedbackEl.style.color = '#6b7280';
+    licenseFeedbackEl.textContent = 'Checking active subscription status...';
+
+    chrome.runtime.sendMessage({ type: 'ACTIVATE_LICENSE', licenseKey: key }, (res) => {
+      activateKeyBtn.textContent = 'Unlock';
+      activateKeyBtn.disabled = false;
+      if (res && res.ok && res.valid) {
         currentState.proActive = true;
         licenseFeedbackEl.style.display = 'block';
         licenseFeedbackEl.style.color = '#059669';
-        licenseFeedbackEl.textContent = '✓ Pro Protection Unlocked! All switches are now ON.';
+        licenseFeedbackEl.textContent = '✓ Paid Pro Subscription Verified! All features are now ON.';
+        renderState(currentState);
+      } else {
+        currentState.proActive = false;
+        licenseFeedbackEl.style.display = 'block';
+        licenseFeedbackEl.style.color = '#dc2626';
+        licenseFeedbackEl.textContent =
+          (res && res.error) || '✗ Invalid or unpaid license key. Please complete checkout first.';
         renderState(currentState);
       }
     });

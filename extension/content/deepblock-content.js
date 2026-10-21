@@ -199,8 +199,9 @@
     }
   }
 
-  // 3. Recipe & News Clutter Helper (Subtle Native Inline Jump Link Under Heading)
+  // 3. Recipe & News Clutter Helper (Subtle Native Inline Jump Link Under Heading — Pro Entitlement)
   function processRecipeAndNewsClutter(proActive, silentMode = true) {
+    if (!proActive) return;
     const recipeEl = document.querySelector(
       '[itemtype*="schema.org/Recipe"], .wprm-recipe-container, .tasty-recipes, .mv-create-card'
     );
@@ -542,12 +543,12 @@
     }
   });
 
-  chrome.storage.local.get(['proActive', 'pausedSites', 'settings'], (res) => {
+  chrome.storage.local.get(['proActive', 'licenseKey', 'pausedSites', 'settings'], (res) => {
     const host = (location.hostname || '').replace(/^www\./i, '').toLowerCase();
     const pausedSites = Array.isArray(res && res.pausedSites) ? res.pausedSites : [];
     if (host && pausedSites.includes(host)) return;
 
-    const proActive = Boolean(res && res.proActive);
+    const proActive = Boolean(res && res.proActive && res.licenseKey);
     const settings = (res && res.settings) || {};
     const silentMode = settings.silentMode !== false;
 

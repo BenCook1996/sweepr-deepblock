@@ -50,12 +50,15 @@
         <button type="submit" class="btn btn-go w-full justify-center font-bold">Access My Subscription</button>
       </form>
 
+      <div id="portalError" class="hidden mt-4 p-3 rounded-xl bg-red-50 border border-red-200 text-xs font-bold text-red-700"></div>
+
       <div id="portalResult" class="hidden mt-6 pt-6 border-t border-gray-200 space-y-4 text-sm">
         <div class="flex items-center justify-between">
           <span class="font-bold text-gray-900">Status:</span>
           <span id="subStatusBadge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">ACTIVE PRO</span>
         </div>
         <div class="text-xs text-gray-600 space-y-1">
+          <div><strong>License Key:</strong> <span id="portalLicenseKey" class="font-mono font-bold text-emerald-700"></span></div>
           <div><strong>Active Modules:</strong> Auto-Reject Cookie Cleanser, AI Slop SERP Purifier, Fake Store Detector, Encrypted DNS</div>
           <div id="addonStatusText"><strong>Total Tab &amp; RAM Tamer Add-On:</strong> Enabled</div>
         </div>
@@ -69,16 +72,76 @@
   </main>
 
   <script>
+    let currentLookupValue = '';
     document.getElementById('portalForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      document.getElementById('portalResult').classList.remove('hidden');
+      const lookup = (document.getElementById('lookupInput').value || '').trim();
+      const errEl = document.getElementById('portalError');
+      const resEl = document.getElementById('portalResult');
+      errEl.classList.add('hidden');
+      resEl.classList.add('hidden');
+
+      try {
+        const resp = await fetch('/api/portal/lookup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ lookup })
+        });
+        const data = await resp.json().catch(() => ({}));
+        if (!resp.ok || !data.ok) {
+          errEl.textContent = data.error || 'No active paid Pro subscription found for that email or license key.';
+          errEl.classList.remove('hidden');
+          return;
+        }
+        currentLookupValue = lookup;
+        document.getElementById('portalLicenseKey').textContent = data.licenseKey || 'Active';
+        document.getElementById('addonStatusText').innerHTML =
+          '<strong>Total Tab &amp; RAM Tamer Add-On:</strong> ' + (data.ramTamerAddon ? 'Enabled' : 'Not Included');
+        const badge = document.getElementById('subStatusBadge');
+        const cancelBtn = document.getElementById('cancelBtn');
+        if (data.cancelAtPeriodEnd) {
+          badge.textContent = 'AUTO-RENEW CANCELLED (ACTIVE UNTIL TERM END)';
+          badge.className = 'px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800';
+          cancelBtn.textContent = '✓ Auto-Renewal Cancelled';
+          cancelBtn.disabled = true;
+        } else {
+          badge.textContent = 'ACTIVE PRO (' + String(data.plan || 'annual').toUpperCase() + ')';
+          badge.className = 'px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800';
+          cancelBtn.textContent = '1-Click Cancel Auto-Renewal';
+          cancelBtn.disabled = false;
+        }
+        resEl.classList.remove('hidden');
+      } catch (err) {
+        errEl.textContent = 'Unable to verify subscription right now. Please try again.';
+        errEl.classList.remove('hidden');
+      }
     });
-    function cancelInOneClick() {
-      const badge = document.getElementById('subStatusBadge');
-      badge.textContent = 'AUTO-RENEW CANCELLED (ACTIVE UNTIL TERM END)';
-      badge.className = 'px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800';
-      document.getElementById('cancelBtn').textContent = '✓ Auto-Renewal Cancelled in 1 Click';
-      document.getElementById('cancelBtn').disabled = true;
+
+    async function cancelInOneClick() {
+      if (!currentLookupValue) return;
+      const cancelBtn = document.getElementById('cancelBtn');
+      cancelBtn.textContent = 'Cancelling...';
+      cancelBtn.disabled = true;
+      try {
+        const resp = await fetch('/api/portal/cancel', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ lookup: currentLookupValue })
+        });
+        const data = await resp.json().catch(() => ({}));
+        if (resp.ok && data.ok) {
+          const badge = document.getElementById('subStatusBadge');
+          badge.textContent = 'AUTO-RENEW CANCELLED (ACTIVE UNTIL TERM END)';
+          badge.className = 'px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800';
+          cancelBtn.textContent = '✓ Auto-Renewal Cancelled in 1 Click';
+        } else {
+          cancelBtn.textContent = '1-Click Cancel Auto-Renewal';
+          cancelBtn.disabled = false;
+        }
+      } catch (e) {
+        cancelBtn.textContent = '1-Click Cancel Auto-Renewal';
+        cancelBtn.disabled = false;
+      }
     }
   </script>
 </body>

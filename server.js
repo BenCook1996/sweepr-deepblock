@@ -901,6 +901,8 @@ const server = http.createServer(async (req, res) => {
         project_id: 'deepblock',
         account_id: acc.id,
         email,
+        license_key: acc.licenseKey,
+        activation_code: acc.activation_code,
         plan,
         ram_tamer: includeRamTamer ? 'true' : 'false',
         addons: includeRamTamer ? 'ram_tamer' : '',
@@ -1327,7 +1329,7 @@ const server = http.createServer(async (req, res) => {
     return sendHtml(res, 200, renderCheckoutSuccessPage(null, true));
   }
 
-  // API 3: Extension License Verification (Checks central sweepr-crm first, then local fallback cache)
+  // API 3: Extension License Verification (Checks central sweepr-crm first, then local + live Stripe subscription status)
   if (req.method === 'GET' && pathname === '/api/license-verify') {
     if (!checkRateLimit(req, 'license_verify', 30, 60000)) {
       return sendJson(res, 429, { valid: false, error: 'rate_limit_exceeded' });
@@ -1339,7 +1341,8 @@ const server = http.createServer(async (req, res) => {
 
     const crmVerify = await requestSweeprCrm(`/v1/license/verify-key?project=deepblock&key=${encodeURIComponent(key)}`);
     if (crmVerify.ok && crmVerify.data && typeof crmVerify.data.valid === 'boolean') {
-      if (crmVerify.data.valid) {
+      const crmStatus = String(crmVerify.data.status || 'active').toLowerCase();
+      if (crmVerify.data.valid && (crmStatus === 'active' || crmStatus === 'trialing')) {
         const hasRamTamer = Array.isArray(crmVerify.data.addons) && crmVerify.data.addons.includes('ram_tamer');
         return sendJson(res, 200, {
           valid: true,
@@ -1347,27 +1350,163 @@ const server = http.createServer(async (req, res) => {
           plan: crmVerify.data.plan,
           ramTamerAddon: hasRamTamer,
           entitlements: buildDeepblockEntitlements(hasRamTamer),
-          status: crmVerify.data.status,
+          status: crmStatus,
           expiresAt: crmVerify.data.expiresAt
         });
       }
-      if (crmVerify.data.status === 'canceled' || crmVerify.data.status === 'expired') {
-        return sendJson(res, 403, { valid: false, status: crmVerify.data.status });
+      if (crmStatus === 'canceled' || crmStatus === 'expired' || crmStatus === 'unpaid' || crmStatus === 'past_due') {
+        return sendJson(res, 403, { valid: false, status: crmStatus, error: 'subscription_inactive' });
       }
     }
 
-    const record = licenses.get(key) || licenses.get(key.toUpperCase());
-    if (record && record.status === 'active') {
-      return sendJson(res, 200, {
-        valid: true,
-        licenseKey: record.licenseKey,
-        plan: record.plan,
-        ramTamerAddon: Boolean(record.ramTamerAddon),
-        entitlements: record.entitlements,
-        status: record.status
+    let record = licenses.get(key) || licenses.get(key.toUpperCase());
+
+    // Stateless live Stripe fallback if server restarted and in-memory cache was cleared
+    if (!record && STRIPE_SECRET_KEY) {
+      try {
+        const activeSubs = await stripeRequest('GET', 'subscriptions', { status: 'active', limit: 100 });
+        const matchedSub = (activeSubs.data || []).find(
+          (s) =>
+            (s.metadata?.license_key && s.metadata.license_key.toUpperCase() === key.toUpperCase()) ||
+            (s.metadata?.activation_code && s.metadata.activation_code === key)
+        );
+        if (matchedSub) {
+          record = upsertLocalAccount({
+            email: matchedSub.metadata?.email || `${matchedSub.id}@stripe.sweeprdeepblock.com`,
+            stripeCustomerId: typeof matchedSub.customer === 'string' ? matchedSub.customer : matchedSub.customer?.id,
+            subscriptionId: matchedSub.id,
+            plan: matchedSub.metadata?.plan || 'annual',
+            ramTamerAddon: matchedSub.metadata?.ram_tamer === 'true',
+            status: 'active'
+          });
+          if (matchedSub.metadata?.license_key) {
+            record.licenseKey = matchedSub.metadata.license_key;
+            licenses.set(record.licenseKey, record);
+          }
+        }
+      } catch {}
+    }
+
+    if (record) {
+      // If tied to a Stripe subscription, verify live that the subscription is still active/paid
+      if (record.stripe_subscription_id && STRIPE_SECRET_KEY) {
+        try {
+          const liveSub = await stripeRequest('GET', `subscriptions/${encodeURIComponent(record.stripe_subscription_id)}`);
+          if (liveSub.status !== 'active' && liveSub.status !== 'trialing') {
+            record.status = liveSub.status || 'canceled';
+            return sendJson(res, 403, {
+              valid: false,
+              status: record.status,
+              error: 'subscription_inactive'
+            });
+          }
+          record.status = 'active';
+        } catch {}
+      }
+
+      if (record.status === 'active' || record.status === 'trialing') {
+        return sendJson(res, 200, {
+          valid: true,
+          licenseKey: record.licenseKey,
+          plan: record.plan,
+          ramTamerAddon: Boolean(record.ramTamerAddon),
+          entitlements: record.entitlements,
+          status: record.status
+        });
+      }
+      return sendJson(res, 403, { valid: false, status: record.status, error: 'subscription_inactive' });
+    }
+    return sendJson(res, 404, { valid: false, error: 'license_not_found' });
+  }
+
+  // API 3b: Customer Portal Subscription Lookup & 1-Click Auto-Renewal Cancellation
+  if (req.method === 'POST' && pathname === '/api/portal/lookup') {
+    if (!checkRateLimit(req, 'portal_lookup', 20, 60000)) {
+      return sendJson(res, 429, { ok: false, error: 'rate_limit_exceeded' });
+    }
+    const body = await readBody(req);
+    if (body && body.__tooLarge) return sendJson(res, 413, { ok: false, error: 'payload_too_large' });
+    const rawLookup = String(body?.lookup || '').trim();
+    if (!rawLookup || rawLookup.length > 254) {
+      return sendJson(res, 400, { ok: false, error: 'lookup_required' });
+    }
+
+    const isEmail = rawLookup.includes('@');
+    let record = isEmail
+      ? accountsByEmail.get(rawLookup.toLowerCase())
+      : licenses.get(rawLookup) || licenses.get(rawLookup.toUpperCase());
+
+    if ((!record || record.status !== 'active') && STRIPE_SECRET_KEY) {
+      try {
+        const activeSubs = await stripeRequest('GET', 'subscriptions', { status: 'active', limit: 100 });
+        const matchedSub = (activeSubs.data || []).find((s) =>
+          isEmail
+            ? (s.metadata?.email || '').toLowerCase() === rawLookup.toLowerCase()
+            : (s.metadata?.license_key || '').toUpperCase() === rawLookup.toUpperCase() ||
+              s.metadata?.activation_code === rawLookup
+        );
+        if (matchedSub) {
+          record = upsertLocalAccount({
+            email: matchedSub.metadata?.email || (isEmail ? rawLookup.toLowerCase() : 'customer@sweeprdeepblock.com'),
+            stripeCustomerId: typeof matchedSub.customer === 'string' ? matchedSub.customer : matchedSub.customer?.id,
+            subscriptionId: matchedSub.id,
+            plan: matchedSub.metadata?.plan || 'annual',
+            ramTamerAddon: matchedSub.metadata?.ram_tamer === 'true',
+            status: 'active'
+          });
+          if (matchedSub.metadata?.license_key) {
+            record.licenseKey = matchedSub.metadata.license_key;
+            licenses.set(record.licenseKey, record);
+          }
+        }
+      } catch {}
+    }
+
+    if (!record || (record.status !== 'active' && record.status !== 'trialing')) {
+      return sendJson(res, 404, {
+        ok: false,
+        error: 'No active paid Pro subscription found for that email or license key.'
       });
     }
-    return sendJson(res, 404, { valid: false });
+
+    return sendJson(res, 200, {
+      ok: true,
+      status: record.status,
+      plan: record.plan,
+      licenseKey: record.licenseKey,
+      ramTamerAddon: Boolean(record.ramTamerAddon),
+      entitlements: record.entitlements,
+      cancelAtPeriodEnd: Boolean(record.cancelAtPeriodEnd)
+    });
+  }
+
+  if (req.method === 'POST' && pathname === '/api/portal/cancel') {
+    if (!checkRateLimit(req, 'portal_cancel', 10, 60000)) {
+      return sendJson(res, 429, { ok: false, error: 'rate_limit_exceeded' });
+    }
+    const body = await readBody(req);
+    if (body && body.__tooLarge) return sendJson(res, 413, { ok: false, error: 'payload_too_large' });
+    const rawLookup = String(body?.lookup || '').trim();
+    if (!rawLookup) return sendJson(res, 400, { ok: false, error: 'lookup_required' });
+
+    const isEmail = rawLookup.includes('@');
+    const record = isEmail
+      ? accountsByEmail.get(rawLookup.toLowerCase())
+      : licenses.get(rawLookup) || licenses.get(rawLookup.toUpperCase());
+
+    if (!record || (record.status !== 'active' && record.status !== 'trialing')) {
+      return sendJson(res, 404, { ok: false, error: 'subscription_not_found' });
+    }
+
+    if (record.stripe_subscription_id && STRIPE_SECRET_KEY) {
+      try {
+        await stripeRequest('POST', `subscriptions/${encodeURIComponent(record.stripe_subscription_id)}`, {
+          cancel_at_period_end: 'true'
+        });
+      } catch {}
+    }
+    record.cancelAtPeriodEnd = true;
+    return sendJson(res, 200, { ok: true, cancelAtPeriodEnd: true, status: record.status });
   }
 
   // API 4: Customer Support Ticket Submission -> Central CRM
