@@ -48,17 +48,39 @@ function resolveTrustedOrigin(req) {
   return PUBLIC_URL;
 }
 
-const rateLimitBuckets = new Map();
-function checkRateLimit(req, bucketName, maxRequests = 30, windowMs = 60000) {
-  const ip =
-    String(req.headers['cf-connecting-ip'] || req.headers['x-real-ip'] || req.socket?.remoteAddress || 'unknown')
+const TRUST_PROXY =
+  process.env.TRUST_PROXY === '1' ||
+  Boolean(process.env.RAILWAY_ENVIRONMENT || process.env.RAILWAY_PROJECT_ID || process.env.RENDER);
+
+function getClientIp(req) {
+  if (TRUST_PROXY) {
+    const forwarded = String(
+      req.headers['cf-connecting-ip'] || req.headers['x-real-ip'] || req.headers['x-forwarded-for'] || ''
+    )
       .split(',')[0]
       .trim();
+    if (forwarded) return forwarded;
+  }
+  return String(req.socket?.remoteAddress || '127.0.0.1').replace(/^::ffff:/, '');
+}
+
+const rateLimitBuckets = new Map();
+function checkRateLimit(req, bucketName, maxRequests = 30, windowMs = 60000) {
+  const ip = getClientIp(req);
   const key = `${bucketName}:${ip}`;
   const now = Date.now();
   let entry = rateLimitBuckets.get(key);
   if (!entry || now > entry.resetAt) {
-    if (rateLimitBuckets.size > 10000) rateLimitBuckets.clear();
+    if (rateLimitBuckets.size > 10000) {
+      let deleted = 0;
+      for (const [k, v] of rateLimitBuckets.entries()) {
+        if (now > v.resetAt || deleted < 1000) {
+          rateLimitBuckets.delete(k);
+          deleted += 1;
+          if (deleted >= 2000) break;
+        }
+      }
+    }
     entry = { count: 0, resetAt: now + windowMs };
     rateLimitBuckets.set(key, entry);
   }
@@ -458,10 +480,12 @@ async function syncSubscriptionWithSweeprCrm(acc, { amountCents, currency = 'gbp
         acc.crm_account_id = crmRes.data.account_id;
         accountsById.set(crmRes.data.account_id, acc);
       }
-      licenses.set(acc.licenseKey, acc);
-      licenses.set(acc.activation_code, acc);
-      licenses.set(`SWEEPR-DB-${acc.activation_code}`, acc);
-      licenses.set(`DEEPBLOCK-${acc.activation_code}`, acc);
+      if (acc.status === 'active' || acc.status === 'trialing') {
+        licenses.set(acc.licenseKey, acc);
+        licenses.set(acc.activation_code, acc);
+        licenses.set(`SWEEPR-DB-${acc.activation_code}`, acc);
+        licenses.set(`DEEPBLOCK-${acc.activation_code}`, acc);
+      }
     }
   } catch {}
   return acc;
@@ -471,6 +495,33 @@ const licenses = new Map();
 const accountsById = new Map();
 const accountsByEmail = new Map();
 const accountsBySubscriptionId = new Map();
+const usedIntroDiscountEmails = new Set();
+const MAX_DEVICES_PER_LICENSE = 5;
+
+function verifyLocalAccountKeyOrCode(acc, rawKeyOrCode) {
+  if (!acc || !rawKeyOrCode) return false;
+  const k = String(rawKeyOrCode).trim().toUpperCase();
+  if (!k || k.includes('@')) return false;
+  const code = String(acc.activation_code || '').trim().toUpperCase();
+  const lkey = String(acc.licenseKey || '').trim().toUpperCase();
+  if (lkey && k === lkey) return true;
+  if (code && (k === code || k === `SWEEPR-DB-${code}` || k === `DEEPBLOCK-${code}`)) return true;
+  return false;
+}
+
+function registerLocalDeviceForAccount(acc, deviceId) {
+  const cleanId = String(deviceId || '').trim().slice(0, 128);
+  if (!cleanId) return { ok: true };
+  if (!acc.devices || !(acc.devices instanceof Set)) {
+    acc.devices = new Set();
+  }
+  if (acc.devices.has(cleanId)) return { ok: true };
+  if (acc.devices.size >= MAX_DEVICES_PER_LICENSE) {
+    return { ok: false, max: MAX_DEVICES_PER_LICENSE };
+  }
+  acc.devices.add(cleanId);
+  return { ok: true };
+}
 
 function buildDeepblockEntitlements(ramTamerAddon) {
   const list = [
@@ -526,11 +577,12 @@ function upsertLocalAccount({ email, name, country, stripeCustomerId, plan, ramT
       ramTamerAddon: Boolean(ramTamerAddon),
       entitlements: buildDeepblockEntitlements(Boolean(ramTamerAddon)),
       status,
+      devices: new Set(),
       createdAt: new Date().toISOString()
     };
   } else {
-    const isAlreadyActive = acc.status === 'active';
-    const isUnpaidTransition = status === 'lead' || status === 'pending';
+    const isAlreadyActive = acc.status === 'active' || acc.status === 'trialing';
+    const isUnpaidTransition = status === 'lead' || status === 'pending' || status === 'incomplete' || status === 'incomplete_expired';
     if (!isAlreadyActive || !isUnpaidTransition) {
       if (name) acc.name = name;
       if (country) acc.country = country;
@@ -549,10 +601,19 @@ function upsertLocalAccount({ email, name, country, stripeCustomerId, plan, ramT
   if (normEmail) {
     accountsByEmail.set(normEmail, acc);
   }
-  licenses.set(acc.licenseKey, acc);
-  licenses.set(acc.activation_code, acc);
-  licenses.set(`SWEEPR-DB-${acc.activation_code}`, acc);
-  licenses.set(`DEEPBLOCK-${acc.activation_code}`, acc);
+  if (acc.status === 'active' || acc.status === 'trialing') {
+    if (normEmail) usedIntroDiscountEmails.add(normEmail);
+    acc.introDiscountUsed = true;
+    licenses.set(acc.licenseKey, acc);
+    licenses.set(acc.activation_code, acc);
+    licenses.set(`SWEEPR-DB-${acc.activation_code}`, acc);
+    licenses.set(`DEEPBLOCK-${acc.activation_code}`, acc);
+  } else {
+    licenses.delete(acc.licenseKey);
+    licenses.delete(acc.activation_code);
+    licenses.delete(`SWEEPR-DB-${acc.activation_code}`);
+    licenses.delete(`DEEPBLOCK-${acc.activation_code}`);
+  }
   if (subscriptionId) accountsBySubscriptionId.set(subscriptionId, acc);
   return acc;
 }
@@ -562,6 +623,24 @@ function signSessionCookie(accountId, email) {
   const payload = Buffer.from(JSON.stringify({ sub: accountId, email, exp })).toString('base64url');
   const sig = crypto.createHmac('sha256', SESSION_SECRET).update(payload).digest('base64url');
   return `${payload}.${sig}`;
+}
+
+function verifySessionCookie(req) {
+  const cookieHeader = String(req?.headers?.cookie || '');
+  const match = cookieHeader.match(/(?:^|;\s*)sweepr_session=([^;]+)/);
+  if (!match) return null;
+  const parts = match[1].trim().split('.');
+  if (parts.length !== 2) return null;
+  const [payload, sig] = parts;
+  const expected = crypto.createHmac('sha256', SESSION_SECRET).update(payload).digest('base64url');
+  try {
+    if (!crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expected))) return null;
+    const data = JSON.parse(Buffer.from(payload, 'base64url').toString('utf8'));
+    if (!data?.sub || !data?.exp || Math.floor(Date.now() / 1000) > data.exp) return null;
+    return data;
+  } catch {
+    return null;
+  }
 }
 
 function hasRamTamerInBody(body) {
@@ -601,9 +680,11 @@ const CLEAN_ROUTES = {
 };
 
 function sendJson(res, statusCode, payload, extraHeaders = {}) {
+  const hasSetCookie = Boolean(extraHeaders['Set-Cookie'] || extraHeaders['set-cookie']);
   res.writeHead(statusCode, {
     'Content-Type': 'application/json; charset=utf-8',
-    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Origin': hasSetCookie ? PUBLIC_URL : '*',
+    'X-Content-Type-Options': 'nosniff',
     ...extraHeaders
   });
   res.end(JSON.stringify(payload));
@@ -917,7 +998,9 @@ const server = http.createServer(async (req, res) => {
 
     const localizedPricing = resolvePricingForRequest(req, parsedUrl, body);
     const existingAcc = accountsByEmail.get(email);
-    const wasAlreadyActive = Boolean(existingAcc && existingAcc.status === 'active');
+    const wasAlreadyActive = Boolean(existingAcc && (existingAcc.status === 'active' || existingAcc.status === 'trialing'));
+    const eligibleForIntroDiscount =
+      applyDiscount && !wasAlreadyActive && !existingAcc?.introDiscountUsed && !usedIntroDiscountEmails.has(email);
     const acc = upsertLocalAccount({
       email,
       name,
@@ -1025,7 +1108,7 @@ const server = http.createServer(async (req, res) => {
       }
 
       const introCouponId =
-        !isAnnual && !isSixMonth && applyDiscount
+        !isAnnual && !isSixMonth && eligibleForIntroDiscount
           ? await getOrCreateIntroCoupon(localizedPricing.currency, localizedPricing.introSavingsAmount)
           : '';
 
@@ -1076,7 +1159,7 @@ const server = http.createServer(async (req, res) => {
             customer_acceptance: {
               type: 'online',
               online: {
-                ip_address: '127.0.0.1',
+                ip_address: getClientIp(req),
                 user_agent: req.headers['user-agent'] || 'Mozilla/5.0'
               }
             }
@@ -1163,7 +1246,11 @@ const server = http.createServer(async (req, res) => {
         });
       }
 
-      const metaAccountId = sub.metadata?.account_id || accountId;
+      const metaAccountId = sub.metadata?.account_id || '';
+      const sessionData = verifySessionCookie(req);
+      if (metaAccountId && accountId !== metaAccountId && sessionData?.sub !== metaAccountId) {
+        return sendJson(res, 403, { error: 'subscription_ownership_mismatch' });
+      }
       const metaEmail = sub.metadata?.email || '';
       const metaPlan = sub.metadata?.plan || 'annual';
       const hasRamTamer = sub.metadata?.ram_tamer === 'true' || (sub.metadata?.addons || '').includes('ram_tamer');
@@ -1274,7 +1361,10 @@ const server = http.createServer(async (req, res) => {
       return sendJson(res, 413, { error: 'payload_too_large' });
     }
     const sig = req.headers['stripe-signature'] || '';
-    if ((IS_LIVE_STRIPE || STRIPE_WEBHOOK_SECRET) && !verifyStripeWebhookSignature(rawBody, sig, STRIPE_WEBHOOK_SECRET)) {
+    if (!STRIPE_WEBHOOK_SECRET) {
+      return sendJson(res, 503, { error: 'webhook_secret_not_configured' });
+    }
+    if (!verifyStripeWebhookSignature(rawBody, sig, STRIPE_WEBHOOK_SECRET)) {
       return sendJson(res, 400, { error: 'invalid_signature' });
     }
 
@@ -1292,24 +1382,26 @@ const server = http.createServer(async (req, res) => {
         event.type === 'customer.subscription.updated' ||
         event.type === 'customer.subscription.deleted'
       ) {
-        const subStatus = obj.status === 'active' || obj.status === 'trialing' ? 'active' : obj.status || 'canceled';
-        const metaEmail = obj.metadata?.email || '';
-        const metaPlan = obj.metadata?.plan || 'annual';
-        const hasRamTamer = obj.metadata?.ram_tamer === 'true' || (obj.metadata?.addons || '').includes('ram_tamer');
-        if (metaEmail || obj.id) {
-          const syncedAcc = upsertLocalAccount({
-            email: metaEmail || `${obj.id}@stripe.sweeprdeepblock.com`,
-            stripeCustomerId: typeof obj.customer === 'string' ? obj.customer : obj.customer?.id,
-            subscriptionId: obj.id,
-            plan: metaPlan,
-            ramTamerAddon: hasRamTamer,
-            status: subStatus
-          });
-          syncedAcc.cancelAtPeriodEnd = Boolean(obj.cancel_at_period_end);
-          await syncSubscriptionWithSweeprCrm(syncedAcc, {
-            currency: obj.currency || 'gbp',
-            notes: `Stripe Webhook (${event.type}) ${obj.id}`
-          });
+        if (obj.status !== 'incomplete' && obj.status !== 'incomplete_expired') {
+          const subStatus = obj.status === 'active' || obj.status === 'trialing' ? 'active' : obj.status || 'canceled';
+          const metaEmail = obj.metadata?.email || '';
+          const metaPlan = obj.metadata?.plan || 'annual';
+          const hasRamTamer = obj.metadata?.ram_tamer === 'true' || (obj.metadata?.addons || '').includes('ram_tamer');
+          if (metaEmail || obj.id) {
+            const syncedAcc = upsertLocalAccount({
+              email: metaEmail || `${obj.id}@stripe.sweeprdeepblock.com`,
+              stripeCustomerId: typeof obj.customer === 'string' ? obj.customer : obj.customer?.id,
+              subscriptionId: obj.id,
+              plan: metaPlan,
+              ramTamerAddon: hasRamTamer,
+              status: subStatus
+            });
+            syncedAcc.cancelAtPeriodEnd = Boolean(obj.cancel_at_period_end);
+            await syncSubscriptionWithSweeprCrm(syncedAcc, {
+              currency: obj.currency || 'gbp',
+              notes: `Stripe Webhook (${event.type}) ${obj.id}`
+            });
+          }
         }
       }
       // Forward raw webhook to central sweepr-crm if reachable
@@ -1333,18 +1425,24 @@ const server = http.createServer(async (req, res) => {
     const subscriptionId = (parsedUrl.searchParams.get('subscription_id') || '').trim();
     const accountId = (parsedUrl.searchParams.get('account_id') || '').trim();
     const redirectStatus = (parsedUrl.searchParams.get('redirect_status') || '').trim();
+    const sessionData = verifySessionCookie(req);
 
     if (redirectStatus === 'failed' || redirectStatus === 'canceled') {
       res.writeHead(302, { Location: '/order?error=payment_cancelled' });
       return res.end();
     }
 
-    let acc = accountsById.get(accountId) || accountsBySubscriptionId.get(subscriptionId) || null;
+    let acc = (accountId ? accountsById.get(accountId) : null) || null;
     if (subscriptionId && STRIPE_SECRET_KEY) {
       try {
         const sub = await stripeRequest('GET', `subscriptions/${encodeURIComponent(subscriptionId)}`);
-        if (sub.status === 'incomplete' || sub.status === 'incomplete_expired' || sub.status === 'canceled') {
+        if (sub.status !== 'active' && sub.status !== 'trialing') {
           res.writeHead(302, { Location: '/order?error=payment_cancelled' });
+          return res.end();
+        }
+        const metaAccountId = sub.metadata?.account_id || '';
+        if (metaAccountId && accountId !== metaAccountId && sessionData?.sub !== metaAccountId) {
+          res.writeHead(302, { Location: '/login?error=verify_required' });
           return res.end();
         }
         acc = upsertLocalAccount({
@@ -1359,8 +1457,10 @@ const server = http.createServer(async (req, res) => {
           notes: `Checkout Success Verified ${sub.id} (${acc.licenseKey})`
         });
       } catch {}
-    } else if (acc && acc.status === 'active') {
+    } else if (acc && acc.status === 'active' && (accountId === acc.id || sessionData?.sub === acc.id)) {
       await syncSubscriptionWithSweeprCrm(acc);
+    } else {
+      acc = null;
     }
 
     if (!acc || acc.status !== 'active') {
@@ -1417,13 +1517,14 @@ const server = http.createServer(async (req, res) => {
     const body = req.method === 'POST' ? await readBody(req) : {};
     if (body && body.__tooLarge) return sendJson(res, 413, { valid: false, error: 'payload_too_large' });
     const key = String(body?.key || parsedUrl.searchParams.get('key') || '').trim();
-    if (!key || key.length < 6 || key.length > 512 || key.includes('@')) {
+    const deviceId = String(body?.device_id || parsedUrl.searchParams.get('device_id') || '').trim().slice(0, 128);
+    if (!key || key.length < 6 || key.length > 512 || key.includes('@') || key.startsWith('acc_') || key.startsWith('sub_') || key.startsWith('cus_')) {
       return sendJson(res, 400, { valid: false, error: 'invalid_key_format' });
     }
 
     // 1. Offline Ed25519 JWS token verification if key is a compact JWS token
     if (key.split('.').length === 3 && crm.publicKeySpki) {
-      const offline = crm.verifyLicenseTokenOffline(key);
+      const offline = crm.verifyLicenseTokenOffline(key, deviceId || undefined);
       if (offline.valid && offline.claims) {
         const hasRamTamer =
           Array.isArray(offline.claims.addons) &&
@@ -1441,7 +1542,14 @@ const server = http.createServer(async (req, res) => {
     }
 
     // 2. Central SWEEPR CRM authoritative verification (supports 6-digit activation_code, DEEPBLOCK-xxxxxx, SWEEPR-DB-...)
-    const crmVerify = await crm.verifyKey(key);
+    const crmVerify = await crm.verifyKey(key, deviceId);
+    if (crmVerify.status === 403 && crmVerify.data?.error === 'device_limit_reached') {
+      return sendJson(res, 403, {
+        valid: false,
+        error: 'device_limit_reached',
+        message: crmVerify.data.message || 'Device limit reached for this license key.'
+      });
+    }
     if (crmVerify.ok && crmVerify.data && typeof crmVerify.data.valid === 'boolean') {
       const crmStatus = String(crmVerify.data.status || 'active').toLowerCase();
       if (crmVerify.data.valid && (crmStatus === 'active' || crmStatus === 'trialing')) {
@@ -1526,6 +1634,14 @@ const server = http.createServer(async (req, res) => {
       }
 
       if (record.status === 'active' || record.status === 'trialing') {
+        const seatCheck = registerLocalDeviceForAccount(record, deviceId);
+        if (!seatCheck.ok) {
+          return sendJson(res, 403, {
+            valid: false,
+            error: 'device_limit_reached',
+            message: `Device limit reached (${seatCheck.max} devices max).`
+          });
+        }
         return sendJson(res, 200, {
           valid: true,
           project_id: 'deepblock',
@@ -1549,13 +1665,25 @@ const server = http.createServer(async (req, res) => {
     }
     const body = await readBody(req);
     if (body && body.__tooLarge) return sendJson(res, 413, { ok: false, error: 'payload_too_large' });
-    const rawLookup = String(body?.lookup || '').trim();
-    if (!rawLookup || rawLookup.length > 254) {
+    const rawLookup = String(body?.lookup || body?.email || '').trim();
+    const keyOrCode = String(body?.key || body?.code || body?.otp || '').trim();
+    const effectiveLookup = rawLookup || keyOrCode;
+    if (!effectiveLookup || effectiveLookup.length > 254) {
       return sendJson(res, 400, { ok: false, error: 'lookup_required' });
+    }
+    if (!checkRateLimit(req, `portal_target:${effectiveLookup.toLowerCase()}`, 8, 900000)) {
+      return sendJson(res, 429, { ok: false, error: 'Too many attempts for this account. Please wait 15 minutes.' });
+    }
+    const isEmail = effectiveLookup.includes('@');
+    if (isEmail && (!keyOrCode || keyOrCode.includes('@'))) {
+      return sendJson(res, 401, {
+        ok: false,
+        error: 'Please enter your License Key (SWEEPR-DB-...) or 6-digit Activation Code to access your subscription.'
+      });
     }
 
     // 1. Check Central SWEEPR CRM first
-    const crmLookup = await crm.portalLookup(rawLookup);
+    const crmLookup = await crm.portalLookup(effectiveLookup, keyOrCode);
     if (crmLookup.ok && crmLookup.data && crmLookup.data.ok) {
       const d = crmLookup.data;
       const hasRamTamer = Boolean(d.ramTamerAddon);
@@ -1574,23 +1702,33 @@ const server = http.createServer(async (req, res) => {
       });
     }
 
-    const isEmail = rawLookup.includes('@');
+    const lookupKey = isEmail ? keyOrCode : effectiveLookup;
     let record = isEmail
-      ? accountsByEmail.get(rawLookup.toLowerCase())
-      : licenses.get(rawLookup) || licenses.get(rawLookup.toUpperCase());
+      ? accountsByEmail.get(effectiveLookup.toLowerCase())
+      : licenses.get(lookupKey) || licenses.get(lookupKey.toUpperCase());
+
+    if (isEmail && record && !verifyLocalAccountKeyOrCode(record, keyOrCode)) {
+      record = null;
+    }
 
     if ((!record || record.status !== 'active') && STRIPE_SECRET_KEY) {
       try {
         const activeSubs = await stripeRequest('GET', 'subscriptions', { status: 'active', limit: 100 });
-        const matchedSub = (activeSubs.data || []).find((s) =>
-          isEmail
-            ? (s.metadata?.email || '').toLowerCase() === rawLookup.toLowerCase()
-            : (s.metadata?.license_key || '').toUpperCase() === rawLookup.toUpperCase() ||
-              s.metadata?.activation_code === rawLookup
-        );
+        const matchedSub = (activeSubs.data || []).find((s) => {
+          const metaKey = (s.metadata?.license_key || '').toUpperCase();
+          const metaCode = String(s.metadata?.activation_code || '').trim();
+          const targetKey = lookupKey.toUpperCase();
+          const keyMatches =
+            (metaKey && metaKey === targetKey) ||
+            (metaCode && (metaCode === lookupKey || targetKey === `SWEEPR-DB-${metaCode}` || targetKey === `DEEPBLOCK-${metaCode}`));
+          if (isEmail) {
+            return (s.metadata?.email || '').toLowerCase() === effectiveLookup.toLowerCase() && keyMatches;
+          }
+          return keyMatches;
+        });
         if (matchedSub) {
           record = upsertLocalAccount({
-            email: matchedSub.metadata?.email || (isEmail ? rawLookup.toLowerCase() : 'customer@sweeprdeepblock.com'),
+            email: matchedSub.metadata?.email || (isEmail ? effectiveLookup.toLowerCase() : 'customer@sweeprdeepblock.com'),
             stripeCustomerId: typeof matchedSub.customer === 'string' ? matchedSub.customer : matchedSub.customer?.id,
             subscriptionId: matchedSub.id,
             plan: matchedSub.metadata?.plan || 'annual',
@@ -1609,7 +1747,7 @@ const server = http.createServer(async (req, res) => {
     if (!record || (record.status !== 'active' && record.status !== 'trialing')) {
       return sendJson(res, 404, {
         ok: false,
-        error: 'No active paid Pro subscription found for that email or license key.'
+        error: 'No active paid Pro subscription found for that license key.'
       });
     }
 
@@ -1631,13 +1769,31 @@ const server = http.createServer(async (req, res) => {
     }
     const body = await readBody(req);
     if (body && body.__tooLarge) return sendJson(res, 413, { ok: false, error: 'payload_too_large' });
-    const rawLookup = String(body?.lookup || '').trim();
-    if (!rawLookup) return sendJson(res, 400, { ok: false, error: 'lookup_required' });
+    const rawLookup = String(body?.lookup || body?.email || '').trim();
+    const keyOrCode = String(body?.key || body?.code || body?.otp || '').trim();
+    const effectiveLookup = rawLookup || keyOrCode;
+    if (!effectiveLookup) return sendJson(res, 400, { ok: false, error: 'lookup_required' });
+    if (!checkRateLimit(req, `portal_target:${effectiveLookup.toLowerCase()}`, 8, 900000)) {
+      return sendJson(res, 429, { ok: false, error: 'rate_limit_exceeded' });
+    }
 
-    const isEmail = rawLookup.includes('@');
-    const record = isEmail
-      ? accountsByEmail.get(rawLookup.toLowerCase())
-      : licenses.get(rawLookup) || licenses.get(rawLookup.toUpperCase());
+    const isEmail = effectiveLookup.includes('@');
+    if (isEmail && (!keyOrCode || keyOrCode.includes('@'))) {
+      return sendJson(res, 401, {
+        ok: false,
+        error: 'license_key_or_code_required',
+        message: 'A valid License Key or 6-digit Activation Code is required to cancel a subscription.'
+      });
+    }
+
+    const lookupKey = isEmail ? keyOrCode : effectiveLookup;
+    let record = isEmail
+      ? accountsByEmail.get(effectiveLookup.toLowerCase())
+      : licenses.get(lookupKey) || licenses.get(lookupKey.toUpperCase());
+
+    if (isEmail && record && !verifyLocalAccountKeyOrCode(record, keyOrCode)) {
+      return sendJson(res, 401, { ok: false, error: 'invalid_credentials' });
+    }
 
     if (record && record.stripe_subscription_id && STRIPE_SECRET_KEY) {
       try {
@@ -1650,7 +1806,7 @@ const server = http.createServer(async (req, res) => {
       record.cancelAtPeriodEnd = true;
     }
 
-    const crmCancel = await crm.portalCancel(rawLookup);
+    const crmCancel = await crm.portalCancel(effectiveLookup, false, keyOrCode);
     if (crmCancel.ok && crmCancel.data && crmCancel.data.ok) {
       return sendJson(res, 200, {
         ok: true,

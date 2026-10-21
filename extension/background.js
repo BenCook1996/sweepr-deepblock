@@ -7,6 +7,32 @@ const LICENSE_VERIFY_ENDPOINTS = [
 
 const PRO_ONLY_SETTINGS = new Set(['cookieAutoClose', 'hideSearchSpam']);
 
+// In-memory anti-tamper session guard inside service worker closure
+let verifiedSession = {
+  proActive: false,
+  ramTamerActive: false,
+  licenseKey: '',
+  deviceId: '',
+  internalWriteInProgress: false
+};
+
+async function getOrCreateDeviceId() {
+  if (verifiedSession.deviceId) return verifiedSession.deviceId;
+  const stored = await chrome.storage.local.get(['deviceId']);
+  if (stored && typeof stored.deviceId === 'string' && stored.deviceId.startsWith('ext_db_')) {
+    verifiedSession.deviceId = stored.deviceId;
+    return stored.deviceId;
+  }
+  const randomPart =
+    typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+      ? crypto.randomUUID().replace(/-/g, '').slice(0, 16)
+      : Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+  const newId = `ext_db_${randomPart}`;
+  verifiedSession.deviceId = newId;
+  await chrome.storage.local.set({ deviceId: newId });
+  return newId;
+}
+
 const DEFAULT_STATE = {
   proActive: false,
   ramTamerActive: false,
@@ -48,11 +74,12 @@ async function verifyLicenseWithServer(rawKey) {
     return { ok: false, valid: false, error: 'Invalid license key format.' };
   }
 
+  const deviceId = await getOrCreateDeviceId();
   let lastNetworkError = false;
   for (const baseUrl of LICENSE_VERIFY_ENDPOINTS) {
     try {
       const sep = baseUrl.includes('?') ? '&' : '?';
-      const res = await fetch(`${baseUrl}${sep}key=${encodeURIComponent(key)}`, {
+      const res = await fetch(`${baseUrl}${sep}key=${encodeURIComponent(key)}&device_id=${encodeURIComponent(deviceId)}`, {
         method: 'GET',
         headers: { Accept: 'application/json', 'x-sweepr-project': 'deepblock' },
         signal: AbortSignal.timeout(5000)
@@ -79,6 +106,10 @@ async function verifyLicenseWithServer(rawKey) {
                 ...(ramTamerActive ? ['addon_total_tab_and_ram_tamer'] : [])
               ];
           const canonicalKey = data.licenseKey || data.license_key || key;
+          verifiedSession.proActive = true;
+          verifiedSession.ramTamerActive = ramTamerActive;
+          verifiedSession.licenseKey = canonicalKey;
+          verifiedSession.internalWriteInProgress = true;
           await chrome.storage.local.set({
             proActive: true,
             ramTamerActive,
@@ -90,6 +121,7 @@ async function verifyLicenseWithServer(rawKey) {
             entitlements,
             encryptedDnsEnabled: true
           });
+          verifiedSession.internalWriteInProgress = false;
           return {
             ok: true,
             valid: true,
@@ -134,6 +166,10 @@ async function verifyLicenseWithServer(rawKey) {
 }
 
 async function revokeProState(reason = 'inactive') {
+  verifiedSession.proActive = false;
+  verifiedSession.ramTamerActive = false;
+  verifiedSession.licenseKey = '';
+  verifiedSession.internalWriteInProgress = true;
   await chrome.storage.local.set({
     proActive: false,
     ramTamerActive: false,
@@ -141,6 +177,19 @@ async function revokeProState(reason = 'inactive') {
     subscriptionStatus: String(reason),
     licenseVerifiedAt: Date.now(),
     entitlements: []
+  });
+  verifiedSession.internalWriteInProgress = false;
+}
+
+// Guard against manual DevTools tampering with chrome.storage.local
+if (chrome.storage && chrome.storage.onChanged) {
+  chrome.storage.onChanged.addListener((changes, areaName) => {
+    if (areaName !== 'local' || verifiedSession.internalWriteInProgress) return;
+    const tamperedPro = changes.proActive && changes.proActive.newValue === true && !verifiedSession.proActive;
+    const tamperedRam = changes.ramTamerActive && changes.ramTamerActive.newValue === true && !verifiedSession.ramTamerActive;
+    if (tamperedPro || tamperedRam) {
+      enforceStoredSubscriptionIntegrity();
+    }
   });
 }
 

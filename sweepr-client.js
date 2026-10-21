@@ -117,8 +117,9 @@ class SweeprCrmClient {
     return { ok: res.ok, status: res.status, data: await res.json().catch(() => ({})) };
   }
 
-  async verifyKey(key) {
+  async verifyKey(key, deviceId = '') {
     const qs = new URLSearchParams({ project: this.projectId, key: String(key || '').trim() });
+    if (deviceId) qs.set('device_id', String(deviceId).trim().slice(0, 128));
     const res = await fetch(`${this.crmUrl}/v1/license/verify-key?${qs.toString()}`, {
       headers: this.headers(),
       signal: AbortSignal.timeout(4000)
@@ -153,21 +154,30 @@ class SweeprCrmClient {
     return { ok: res.ok, status: res.status, data: await res.json().catch(() => ({})) };
   }
 
-  async portalLookup(lookup) {
+  async portalLookup(lookup, keyOrCode = '') {
     const res = await fetch(`${this.crmUrl}/v1/license/portal-lookup`, {
       method: 'POST',
       headers: this.headers(),
-      body: JSON.stringify({ project_id: this.projectId, lookup }),
+      body: JSON.stringify({
+        project_id: this.projectId,
+        lookup,
+        ...(keyOrCode ? { key: keyOrCode } : {})
+      }),
       signal: AbortSignal.timeout(4000)
     });
     return { ok: res.ok, status: res.status, data: await res.json().catch(() => ({})) };
   }
 
-  async portalCancel(lookup, immediate = false) {
+  async portalCancel(lookup, immediate = false, keyOrCode = '') {
     const res = await fetch(`${this.crmUrl}/v1/license/portal-cancel`, {
       method: 'POST',
       headers: this.headers(),
-      body: JSON.stringify({ project_id: this.projectId, lookup, immediate }),
+      body: JSON.stringify({
+        project_id: this.projectId,
+        lookup,
+        immediate,
+        ...(keyOrCode ? { key: keyOrCode } : {})
+      }),
       signal: AbortSignal.timeout(4000)
     });
     return { ok: res.ok, status: res.status, data: await res.json().catch(() => ({})) };
