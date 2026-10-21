@@ -20,9 +20,13 @@
 
   function notifyStealthBypass(detail) {
     try {
+      const targetOrigin =
+        window.location && window.location.origin && window.location.origin !== 'null'
+          ? window.location.origin
+          : '*';
       window.postMessage(
         { source: 'sweepr-deepstealth', type: 'STEALTH_BYPASS_TRIGGERED', detail: detail || '' },
-        '*'
+        targetOrigin
       );
     } catch (e) {}
   }

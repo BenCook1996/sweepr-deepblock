@@ -200,12 +200,31 @@ async function enforceStoredSubscriptionIntegrity() {
     if (store.proActive || store.ramTamerActive) {
       await revokeProState('free');
     }
+    verifiedSession.coldChecked = true;
     return { proActive: false, ramTamerActive: false };
   }
   const verified = await verifyLicenseWithServer(key);
+  verifiedSession.coldChecked = true;
+  if (verified.networkError) {
+    verifiedSession.proActive = Boolean(store.proActive && key);
+    verifiedSession.ramTamerActive = Boolean(store.proActive && store.ramTamerActive && key);
+    verifiedSession.licenseKey = key;
+    return { proActive: verifiedSession.proActive, ramTamerActive: verifiedSession.ramTamerActive };
+  }
   return {
     proActive: Boolean(verified.valid),
     ramTamerActive: Boolean(verified.valid && verified.ramTamerActive)
+  };
+}
+
+async function ensureVerifiedProSession() {
+  if (!verifiedSession.coldChecked) {
+    await enforceStoredSubscriptionIntegrity();
+  }
+  return {
+    proActive: Boolean(verifiedSession.proActive && verifiedSession.licenseKey),
+    ramTamerActive: Boolean(verifiedSession.proActive && verifiedSession.ramTamerActive && verifiedSession.licenseKey),
+    licenseKey: verifiedSession.licenseKey
   };
 }
 
@@ -273,10 +292,11 @@ async function getRamSpeedometerMetrics() {
 
 // Hibernate inactive background tabs & snapshot session to Cloud Vault (Requires Active Paid Subscription)
 async function hibernateInactiveTabs() {
-  const data = await chrome.storage.local.get(['proActive', 'licenseKey', 'stats', 'cloudTabSessions']);
-  if (!data.proActive || !data.licenseKey) {
+  const verified = await ensureVerifiedProSession();
+  if (!verified.proActive || !verified.licenseKey) {
     return { ok: false, requiresPro: true, error: 'Active paid Pro subscription required.' };
   }
+  const data = await chrome.storage.local.get(['stats', 'cloudTabSessions']);
 
   const stats = data.stats || DEFAULT_STATE.stats;
   const tabs = await chrome.tabs.query({});
@@ -376,7 +396,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   }
 
   if (msg.type === 'HIBERNATE_TABS_NOW') {
-    chrome.storage.local.get(['proActive', 'licenseKey'], async (auth) => {
+    ensureVerifiedProSession().then(async (auth) => {
       if (!auth.proActive || !auth.licenseKey) {
         sendResponse({
           ok: false,
@@ -415,8 +435,8 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       sendResponse({ ok: false });
       return true;
     }
-    chrome.storage.local.get(['proActive', 'licenseKey', 'settings'], (res) => {
-      const hasPaidPro = Boolean(res.proActive && res.licenseKey);
+    Promise.all([ensureVerifiedProSession(), chrome.storage.local.get(['settings'])]).then(([auth, res]) => {
+      const hasPaidPro = Boolean(auth.proActive && auth.licenseKey);
       if (PRO_ONLY_SETTINGS.has(key) && !hasPaidPro) {
         sendResponse({
           ok: false,
@@ -436,8 +456,8 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 
   if (msg.type === 'RESTORE_SAVED_SESSION') {
     const sessionId = String(msg.sessionId || '');
-    chrome.storage.local.get(['proActive', 'licenseKey', 'cloudTabSessions'], async (res) => {
-      if (!res.proActive || !res.licenseKey) {
+    Promise.all([ensureVerifiedProSession(), chrome.storage.local.get(['cloudTabSessions'])]).then(async ([auth, res]) => {
+      if (!auth.proActive || !auth.licenseKey) {
         sendResponse({ ok: false, requiresPro: true, error: 'Active paid Pro subscription required.' });
         return;
       }

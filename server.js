@@ -16,7 +16,11 @@ const WEBSITE_DIR = path.join(__dirname, 'website');
 const SWEEPR_CRM_URL = (process.env.SWEEPR_CRM_URL || 'http://localhost:8787').replace(/\/+$/, '');
 const SWEEPR_CRM_API_KEY = (process.env.SWEEPR_CRM_API_KEY || '').trim();
 const CRM_ADMIN_PASSWORD = (process.env.CRM_ADMIN_PASSWORD || '').trim();
-const SESSION_SECRET = (process.env.SESSION_SECRET || '').trim() || crypto.randomBytes(32).toString('hex');
+const SESSION_SECRET =
+  (process.env.SESSION_SECRET || '').trim() ||
+  (SWEEPR_CRM_API_KEY || CRM_ADMIN_PASSWORD
+    ? crypto.createHmac('sha256', 'sweepr-deepblock-session').update(SWEEPR_CRM_API_KEY || CRM_ADMIN_PASSWORD).digest('hex')
+    : crypto.randomBytes(32).toString('hex'));
 const ALLOW_DEV_MOCK_CHECKOUT = process.env.ALLOW_DEV_MOCK_CHECKOUT === '1';
 const MAX_BODY_BYTES = 64 * 1024;
 const MAX_LOCAL_ACCOUNTS = 10000;
@@ -51,15 +55,23 @@ function resolveTrustedOrigin(req) {
 const TRUST_PROXY =
   process.env.TRUST_PROXY === '1' ||
   Boolean(process.env.RAILWAY_ENVIRONMENT || process.env.RAILWAY_PROJECT_ID || process.env.RENDER);
+const TRUST_CLOUDFLARE = process.env.TRUST_CLOUDFLARE === '1';
 
 function getClientIp(req) {
   if (TRUST_PROXY) {
-    const forwarded = String(
-      req.headers['cf-connecting-ip'] || req.headers['x-real-ip'] || req.headers['x-forwarded-for'] || ''
-    )
-      .split(',')[0]
-      .trim();
-    if (forwarded) return forwarded;
+    if (TRUST_CLOUDFLARE) {
+      const cfIp = String(req.headers['cf-connecting-ip'] || '').trim();
+      if (cfIp) return cfIp;
+    }
+    const xff = String(req.headers['x-forwarded-for'] || '').trim();
+    if (xff) {
+      const hops = xff
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean);
+      const rightmost = hops[hops.length - 1];
+      if (rightmost) return rightmost;
+    }
   }
   return String(req.socket?.remoteAddress || '127.0.0.1').replace(/^::ffff:/, '');
 }
@@ -72,12 +84,17 @@ function checkRateLimit(req, bucketName, maxRequests = 30, windowMs = 60000) {
   let entry = rateLimitBuckets.get(key);
   if (!entry || now > entry.resetAt) {
     if (rateLimitBuckets.size > 10000) {
-      let deleted = 0;
       for (const [k, v] of rateLimitBuckets.entries()) {
-        if (now > v.resetAt || deleted < 1000) {
-          rateLimitBuckets.delete(k);
-          deleted += 1;
-          if (deleted >= 2000) break;
+        if (now > v.resetAt) rateLimitBuckets.delete(k);
+      }
+      if (rateLimitBuckets.size > 10000) {
+        let excess = rateLimitBuckets.size - 10000;
+        for (const [k, v] of rateLimitBuckets.entries()) {
+          if (excess <= 0) break;
+          if (v.count < maxRequests) {
+            rateLimitBuckets.delete(k);
+            excess -= 1;
+          }
         }
       }
     }
@@ -88,36 +105,16 @@ function checkRateLimit(req, bucketName, maxRequests = 30, windowMs = 60000) {
   return entry.count <= maxRequests;
 }
 
-// AES-256-GCM encrypted live Stripe credentials for SWEEPR Deepblock (acct_1USkPH12f60YC3Bg)
-const ENCRYPTED_LIVE_SK =
-  '492a9cabae1f9a6f77a54f50:ab3ecf80d38719ae999b66ab67866c56:4570b1e222c50e73a7aea683bdf757f33961779dabaa852e7ad3e05618542c3091d1df70db9131b4022f3769d8f82857ea796fba47fa38a789ddba6171ddf2efa361f48638bd346665ae6769e1167e27fba0a50f1abb6ceec0faa7432be71b4e15db00d310d6699667d9d3';
-const ENCRYPTED_LIVE_WHSEC =
-  '6e82e1c9bbdc611d2700ab86:ed08e4e79a17a6c3086463f02ad460bf:b8a9f0b630803f8d2daefd8f5bbb9af28d2716ff54570eae301f1ee4b59aa41ae5f557715273';
-
-function decryptWithAdminKey(payload) {
-  if (!payload) return '';
-  const candidates = [
-    CRM_ADMIN_PASSWORD,
-    Buffer.from('QjNuamFtaW4xMjMh', 'base64').toString('utf8')
-  ].filter(Boolean);
-  for (const seed of candidates) {
-    try {
-      const [ivHex, tagHex, encHex] = payload.split(':');
-      const key = crypto.createHash('sha256').update(seed).digest();
-      const decipher = crypto.createDecipheriv('aes-256-gcm', key, Buffer.from(ivHex, 'hex'));
-      decipher.setAuthTag(Buffer.from(tagHex, 'hex'));
-      const out = Buffer.concat([decipher.update(Buffer.from(encHex, 'hex')), decipher.final()]).toString('utf8');
-      if (out) return out;
-    } catch {}
-  }
-  return '';
-}
-
 function resolveStripeSecretKey() {
   const envKey = (process.env.STRIPE_SECRET_KEY || process.env.DEEPBLOCK_STRIPE_SECRET_KEY || '').trim();
-  if (envKey.startsWith('sk_live_') || envKey.startsWith('rk_live_') || envKey.startsWith('sk_test_') || envKey.startsWith('rk_test_')) return envKey;
-  const dec = decryptWithAdminKey(ENCRYPTED_LIVE_SK);
-  if (dec.startsWith('sk_live_') || dec.startsWith('rk_live_')) return dec;
+  if (
+    envKey.startsWith('sk_live_') ||
+    envKey.startsWith('rk_live_') ||
+    envKey.startsWith('sk_test_') ||
+    envKey.startsWith('rk_test_')
+  ) {
+    return envKey;
+  }
   return envKey;
 }
 
@@ -127,10 +124,6 @@ const IS_LIVE_STRIPE = STRIPE_SECRET_KEY.startsWith('sk_live_') || STRIPE_SECRET
 function resolveStripeWebhookSecret() {
   const envWh = (process.env.STRIPE_WEBHOOK_SECRET || process.env.DEEPBLOCK_STRIPE_WEBHOOK_SECRET || '').trim();
   if (envWh.startsWith('whsec_')) return envWh;
-  if (IS_LIVE_STRIPE) {
-    const dec = decryptWithAdminKey(ENCRYPTED_LIVE_WHSEC);
-    if (dec.startsWith('whsec_')) return dec;
-  }
   return envWh;
 }
 
@@ -502,7 +495,32 @@ const accountsById = new Map();
 const accountsByEmail = new Map();
 const accountsBySubscriptionId = new Map();
 const usedIntroDiscountEmails = new Set();
+const processedWebhookEventIds = new Set();
 const MAX_DEVICES_PER_LICENSE = 5;
+const HIGH_ENTROPY_LICENSE_KEY_RE = /^SWEEPR-[A-Z0-9]{2,8}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/i;
+
+let stripeActiveSubsCache = { fetchedAt: 0, data: [], inflight: null };
+async function getCachedActiveStripeSubs() {
+  if (!STRIPE_SECRET_KEY) return [];
+  const now = Date.now();
+  if (now - stripeActiveSubsCache.fetchedAt < 60000) {
+    return stripeActiveSubsCache.data;
+  }
+  if (stripeActiveSubsCache.inflight) {
+    return stripeActiveSubsCache.inflight;
+  }
+  stripeActiveSubsCache.inflight = stripeRequest('GET', 'subscriptions', { status: 'active', limit: 100 })
+    .then((res) => {
+      const list = Array.isArray(res?.data) ? res.data : [];
+      stripeActiveSubsCache = { fetchedAt: Date.now(), data: list, inflight: null };
+      return list;
+    })
+    .catch(() => {
+      stripeActiveSubsCache = { fetchedAt: Date.now(), data: stripeActiveSubsCache.data || [], inflight: null };
+      return stripeActiveSubsCache.data;
+    });
+  return stripeActiveSubsCache.inflight;
+}
 
 function verifyLocalAccountKeyOrCode(acc, rawKeyOrCode) {
   if (!acc || !rawKeyOrCode) return false;
@@ -685,11 +703,33 @@ const CLEAN_ROUTES = {
   '/vs/total-adblock': path.join('vs', 'total-adblock.html')
 };
 
-function sendJson(res, statusCode, payload, extraHeaders = {}) {
-  const hasSetCookie = Boolean(extraHeaders['Set-Cookie'] || extraHeaders['set-cookie']);
+function isSameOriginWriteRequest(req) {
+  const fetchSite = String(req.headers['sec-fetch-site'] || '').toLowerCase();
+  if (fetchSite === 'cross-site') return false;
+  const origin = String(req.headers.origin || '').trim().replace(/\/+$/, '');
+  if (origin === 'null') return false;
+  if (origin) {
+    if (origin.startsWith('chrome-extension://') || origin.startsWith('moz-extension://')) return true;
+    return resolveTrustedOrigin(req) === origin;
+  }
+  const ct = String(req.headers['content-type'] || '').toLowerCase();
+  return ct.startsWith('application/json') || Boolean(req.headers['x-requested-with']);
+}
+
+function sendJson(res, statusCode, payload, extraHeaders = {}, req = null) {
+  let corsOrigin = PUBLIC_URL;
+  if (req) {
+    const rawOrigin = String(req.headers?.origin || '').trim().replace(/\/+$/, '');
+    if (rawOrigin.startsWith('chrome-extension://') || rawOrigin.startsWith('moz-extension://')) {
+      corsOrigin = rawOrigin;
+    } else {
+      corsOrigin = resolveTrustedOrigin(req);
+    }
+  }
   res.writeHead(statusCode, {
     'Content-Type': 'application/json; charset=utf-8',
-    'Access-Control-Allow-Origin': hasSetCookie ? PUBLIC_URL : '*',
+    'Access-Control-Allow-Origin': corsOrigin,
+    'Vary': 'Origin',
     'X-Content-Type-Options': 'nosniff',
     ...extraHeaders
   });
@@ -702,6 +742,8 @@ function sendHtml(res, statusCode, html, extraHeaders = {}) {
     'X-Content-Type-Options': 'nosniff',
     'X-Frame-Options': 'SAMEORIGIN',
     'Referrer-Policy': 'strict-origin-when-cross-origin',
+    'Content-Security-Policy':
+      "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://js.stripe.com https://pay.google.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https://api.stripe.com https://www.google-analytics.com https://api.country.is https://get.geojs.io; frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://pay.google.com; frame-ancestors 'self'; base-uri 'self'; object-src 'none'",
     ...extraHeaders
   });
   res.end(html);
@@ -754,7 +796,7 @@ function renderCheckoutSuccessPage(acc, isCancelled = false) {
   <meta name="robots" content="noindex, nofollow">
   <title>Checkout Cancelled — SWEEPR Deepblock</title>
   <link rel="icon" type="image/svg+xml" href="/logo.svg">
-  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.tailwindcss.com/3.4.5"></script>
 </head>
 <body class="bg-slate-950 text-white min-h-screen flex items-center justify-center p-6 font-sans">
   <div class="max-w-md w-full bg-slate-900 border border-slate-800 rounded-2xl p-8 text-center space-y-4 shadow-2xl">
@@ -782,7 +824,7 @@ function renderCheckoutSuccessPage(acc, isCancelled = false) {
   <meta name="robots" content="noindex, nofollow">
   <title>You're Activated 🎉 — SWEEPR Deepblock Pro</title>
   <link rel="icon" type="image/svg+xml" href="/logo.svg">
-  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.tailwindcss.com/3.4.5"></script>
   <script>
     try {
       localStorage.removeItem('deepblock_visited_order');
@@ -1381,8 +1423,20 @@ const server = http.createServer(async (req, res) => {
       return sendJson(res, 400, { error: 'invalid_json' });
     }
 
+    if (event.id) {
+      if (processedWebhookEventIds.has(event.id)) {
+        return sendJson(res, 200, { received: true, deduplicated: true });
+      }
+      if (processedWebhookEventIds.size >= 5000) {
+        const oldest = processedWebhookEventIds.values().next().value;
+        if (oldest) processedWebhookEventIds.delete(oldest);
+      }
+      processedWebhookEventIds.add(event.id);
+    }
+
     try {
       const obj = event?.data?.object || {};
+      let syncedViaApi = false;
       if (
         event.type === 'customer.subscription.created' ||
         event.type === 'customer.subscription.updated' ||
@@ -1407,18 +1461,21 @@ const server = http.createServer(async (req, res) => {
               currency: obj.currency || 'gbp',
               notes: `Stripe Webhook (${event.type}) ${obj.id}`
             });
+            syncedViaApi = true;
           }
         }
       }
-      // Forward raw webhook to central sweepr-crm if reachable
-      fetch(`${SWEEPR_CRM_URL}/api/webhooks/stripe/deepblock`, {
-        method: 'POST',
-        headers: {
-          'content-type': 'application/json',
-          ...(sig ? { 'stripe-signature': sig } : {})
-        },
-        body: rawBody
-      }).catch(() => {});
+      // Forward raw webhook to central sweepr-crm only for event types not already synced via syncSubscriptionWithSweeprCrm
+      if (!syncedViaApi) {
+        fetch(`${SWEEPR_CRM_URL}/api/webhooks/stripe/deepblock`, {
+          method: 'POST',
+          headers: {
+            'content-type': 'application/json',
+            ...(sig ? { 'stripe-signature': sig } : {})
+          },
+          body: rawBody
+        }).catch(() => {});
+      }
     } catch (err) {
       console.error('[webhooks/stripe] handler error:', err.message);
     }
@@ -1587,11 +1644,11 @@ const server = http.createServer(async (req, res) => {
 
     let record = licenses.get(key) || licenses.get(key.toUpperCase());
 
-    // 3. Stateless live Stripe fallback if server restarted and CRM was unreachable during checkout
-    if (!record && STRIPE_SECRET_KEY) {
+    // 3. Stateless live Stripe fallback if server restarted and CRM was unreachable during checkout (60s rate-guarded cache)
+    if (!record && STRIPE_SECRET_KEY && /^(?:\d{6}|[A-Z0-9-]{8,64})$/i.test(key)) {
       try {
-        const activeSubs = await stripeRequest('GET', 'subscriptions', { status: 'active', limit: 100 });
-        const matchedSub = (activeSubs.data || []).find(
+        const activeSubs = await getCachedActiveStripeSubs();
+        const matchedSub = activeSubs.find(
           (s) =>
             (s.metadata?.license_key && s.metadata.license_key.toUpperCase() === key.toUpperCase()) ||
             (s.metadata?.activation_code && (s.metadata.activation_code === key || key.toUpperCase().endsWith(s.metadata.activation_code)))
@@ -1687,6 +1744,13 @@ const server = http.createServer(async (req, res) => {
         error: 'Please enter your License Key (SWEEPR-DB-...) or 6-digit Activation Code to access your subscription.'
       });
     }
+    const lookupKey = isEmail ? keyOrCode : effectiveLookup;
+    if (!isEmail && !HIGH_ENTROPY_LICENSE_KEY_RE.test(lookupKey)) {
+      return sendJson(res, 401, {
+        ok: false,
+        error: 'Please enter your Account Email along with your 6-digit Activation Code (or enter your full SWEEPR-DB-XXXX-XXXX-XXXX License Key).'
+      });
+    }
 
     // 1. Check Central SWEEPR CRM first
     const crmLookup = await crm.portalLookup(effectiveLookup, keyOrCode);
@@ -1708,7 +1772,6 @@ const server = http.createServer(async (req, res) => {
       });
     }
 
-    const lookupKey = isEmail ? keyOrCode : effectiveLookup;
     let record = isEmail
       ? accountsByEmail.get(effectiveLookup.toLowerCase())
       : licenses.get(lookupKey) || licenses.get(lookupKey.toUpperCase());
@@ -1719,8 +1782,8 @@ const server = http.createServer(async (req, res) => {
 
     if ((!record || record.status !== 'active') && STRIPE_SECRET_KEY) {
       try {
-        const activeSubs = await stripeRequest('GET', 'subscriptions', { status: 'active', limit: 100 });
-        const matchedSub = (activeSubs.data || []).find((s) => {
+        const activeSubs = await getCachedActiveStripeSubs();
+        const matchedSub = activeSubs.find((s) => {
           const metaKey = (s.metadata?.license_key || '').toUpperCase();
           const metaCode = String(s.metadata?.activation_code || '').trim();
           const targetKey = lookupKey.toUpperCase();
@@ -1770,6 +1833,9 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (req.method === 'POST' && pathname === '/api/portal/cancel') {
+    if (!isSameOriginWriteRequest(req)) {
+      return sendJson(res, 403, { ok: false, error: 'cross_origin_forbidden' });
+    }
     if (!checkRateLimit(req, 'portal_cancel', 10, 60000)) {
       return sendJson(res, 429, { ok: false, error: 'rate_limit_exceeded' });
     }
@@ -1793,6 +1859,13 @@ const server = http.createServer(async (req, res) => {
     }
 
     const lookupKey = isEmail ? keyOrCode : effectiveLookup;
+    if (!isEmail && !HIGH_ENTROPY_LICENSE_KEY_RE.test(lookupKey)) {
+      return sendJson(res, 401, {
+        ok: false,
+        error: 'email_required_for_short_code',
+        message: 'Please enter your Account Email along with your 6-digit Activation Code (or enter your full SWEEPR-DB-XXXX-XXXX-XXXX License Key).'
+      });
+    }
     let record = isEmail
       ? accountsByEmail.get(effectiveLookup.toLowerCase())
       : licenses.get(lookupKey) || licenses.get(lookupKey.toUpperCase());
