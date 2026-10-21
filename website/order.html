@@ -933,7 +933,7 @@
         const res = await fetch('/api/checkout-config');
         if (res.ok) {
           checkoutConfig = await res.json();
-          if (checkoutConfig.elementsEnabled && window.Stripe && checkoutConfig.publishableKey) {
+          if (window.Stripe && checkoutConfig.publishableKey) {
             setupStripeElements(checkoutConfig.publishableKey);
           }
         }
