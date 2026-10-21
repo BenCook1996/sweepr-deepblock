@@ -579,14 +579,14 @@ function evictStaleLeadAccountsIfNeeded() {
   }
 }
 
-function upsertLocalAccount({ email, name, country, stripeCustomerId, plan, ramTamerAddon, subscriptionId, status = 'active' }) {
+function upsertLocalAccount({ email, name, country, stripeCustomerId, plan, ramTamerAddon, subscriptionId, status = 'active', activationCode: customCode, licenseKey: customKey }) {
   const normEmail = (email || '').trim().toLowerCase();
   let acc = (normEmail && accountsByEmail.get(normEmail)) || null;
   if (!acc) {
     evictStaleLeadAccountsIfNeeded();
-    const activationCode = String(crypto.randomInt(100000, 1000000));
+    const activationCode = customCode || String(crypto.randomInt(100000, 1000000));
     const accountId = `acc_db_${crypto.randomBytes(6).toString('hex')}`;
-    const licenseKey = generateHighEntropyLicenseKey();
+    const licenseKey = customKey || generateHighEntropyLicenseKey();
     acc = {
       id: accountId,
       account_id: accountId,
@@ -617,6 +617,8 @@ function upsertLocalAccount({ email, name, country, stripeCustomerId, plan, ramT
       }
       if (status) acc.status = status;
     }
+    if (customCode) acc.activation_code = customCode;
+    if (customKey) acc.licenseKey = customKey;
     if (stripeCustomerId) acc.stripe_customer_id = stripeCustomerId;
     if (subscriptionId) acc.stripe_subscription_id = subscriptionId;
   }
@@ -641,6 +643,18 @@ function upsertLocalAccount({ email, name, country, stripeCustomerId, plan, ramT
   if (subscriptionId) accountsBySubscriptionId.set(subscriptionId, acc);
   return acc;
 }
+
+// Seed founder account for end-to-end testing across all products
+upsertLocalAccount({
+  email: (process.env.FOUNDER_EMAIL || 'cookbenjamin1996@gmail.com').trim().toLowerCase(),
+  name: 'Benjamin Cook',
+  country: 'GB',
+  plan: 'annual',
+  ramTamerAddon: true,
+  status: 'active',
+  activationCode: '817797',
+  licenseKey: 'SWEEPR-DB-8177-9700-2026'
+});
 
 function signSessionCookie(accountId, email) {
   const exp = Math.floor(Date.now() / 1000) + 86400 * 30;
