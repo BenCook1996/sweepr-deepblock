@@ -4,6 +4,8 @@
   "description": "SWEEPR Deepblock (SWEEPR Deepblock) — Website, Multi-SKU Checkout API, Customer Portal & Manifest V3 Browser Extension",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "seo:drip": "node scripts/deepblock-seo-drip.mjs 300",
+    "seo:audit": "node scripts/technical-seo-audit.mjs"
   }
 }
