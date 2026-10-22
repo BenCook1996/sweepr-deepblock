@@ -1,4 +1,4 @@
-// SWEEPR Deepblock — Manifest V3 Background Service Worker (With Central SWEEPR CRM Subscription Verification)
+// SWEEPR Deepblock — Manifest V3 Background Service Worker (v1.1 UX & Architecture Audited)
 const LICENSE_VERIFY_ENDPOINTS = [
   'https://sweeprdeepblock.com/api/license-verify',
   'http://localhost:8787/v1/license/verify-key?project=deepblock',
@@ -138,6 +138,8 @@ async function verifyLicenseWithServer(rawKey) {
             proActive: true,
             ramTamerActive,
             licenseKey: canonicalKey,
+            draftLicenseKey: '',
+            licenseDrawerOpen: false,
             licenseToken: data.token || data.license_token || '',
             crmAccountId: data.account_id || '',
             subscriptionStatus: subStatus,
@@ -166,7 +168,6 @@ async function verifyLicenseWithServer(rawKey) {
         }
       }
 
-      // Explicit rejection from licensing server (404 not found, 403 canceled/expired/unpaid, or valid: false)
       if (res.status === 400 || res.status === 403 || res.status === 404 || data?.valid === false) {
         const statusReason = data?.status || data?.error || 'inactive';
         await revokeProState(statusReason);
@@ -236,24 +237,9 @@ if (chrome.storage && chrome.storage.onChanged) {
   });
 }
 
-async function checkInstallerPreactivatedKey() {
-  try {
-    const res = await fetch(chrome.runtime.getURL('preactivated-license.json'));
-    if (res && res.ok) {
-      const data = await res.json();
-      const key = String((data && (data.licenseKey || data.activation_code || data.key)) || '').trim();
-      if (key && key.length >= 6) return key;
-    }
-  } catch (e) {}
-  return '';
-}
-
 async function enforceStoredSubscriptionIntegrity() {
   const store = await chrome.storage.local.get(['proActive', 'ramTamerActive', 'licenseKey']);
-  let key = String(store.licenseKey || '').trim();
-  if (!key) {
-    key = await checkInstallerPreactivatedKey();
-  }
+  const key = String(store.licenseKey || '').trim();
   if (!key) {
     await revokeProState('free');
     verifiedSession.coldChecked = true;
@@ -285,6 +271,23 @@ async function ensureVerifiedProSession() {
   };
 }
 
+// Register Desktop Right-Click Context Menus
+function registerContextMenus() {
+  if (!chrome.contextMenus) return;
+  chrome.contextMenus.removeAll(() => {
+    chrome.contextMenus.create({
+      id: 'sweepr-toggle-site',
+      title: 'Pause / Resume SWEEPR Deepblock on this site',
+      contexts: ['page', 'action']
+    });
+    chrome.contextMenus.create({
+      id: 'sweepr-snooze-tabs',
+      title: '⚡ Snooze Inactive Background Tabs Now',
+      contexts: ['page', 'action']
+    });
+  });
+}
+
 chrome.runtime.onInstalled.addListener(async (details) => {
   const existing = await chrome.storage.local.get(Object.keys(DEFAULT_STATE));
   const merged = {
@@ -295,7 +298,8 @@ chrome.runtime.onInstalled.addListener(async (details) => {
   };
   await chrome.storage.local.set(merged);
   await enforceStoredSubscriptionIntegrity();
-  updateActionBadge(merged.stats);
+  await updateActionBadge(merged.stats, merged.settings);
+  registerContextMenus();
 
   if (details.reason === 'install') {
     chrome.tabs.create({ url: chrome.runtime.getURL('welcome.html') });
@@ -306,19 +310,94 @@ chrome.runtime.onInstalled.addListener(async (details) => {
 });
 
 chrome.runtime.onStartup.addListener(async () => {
+  registerContextMenus();
   await enforceStoredSubscriptionIntegrity();
 });
 
-function updateActionBadge(stats) {
-  const totalAlerts =
-    (stats.cookiePromptsDetected || 0) +
-    (stats.aiSlopDetected || 0) +
-    (stats.fakeStoresDetected || 0);
-  chrome.action.setBadgeText({ text: totalAlerts > 0 ? String(totalAlerts) : '' });
-  chrome.action.setBadgeBackgroundColor({ color: '#059669' });
+// Ambient vs. Active Toolbar Action Badge:
+// In 100% Silent Mode (default), keep the toolbar icon calm and un-badged unless the user turns off Silent Mode.
+async function updateActionBadge(stats, passedSettings) {
+  try {
+    let settings = passedSettings;
+    if (!settings) {
+      const stored = await chrome.storage.local.get(['settings']);
+      settings = (stored && stored.settings) || DEFAULT_STATE.settings;
+    }
+    const silentMode = settings.silentMode !== false;
+    if (silentMode) {
+      chrome.action.setBadgeText({ text: '' });
+      return;
+    }
+    const totalAlerts =
+      (stats.cookiePromptsDetected || 0) +
+      (stats.aiSlopDetected || 0) +
+      (stats.fakeStoresDetected || 0);
+    chrome.action.setBadgeText({ text: totalAlerts > 0 ? String(totalAlerts) : '' });
+    chrome.action.setBadgeBackgroundColor({ color: '#059669' });
+  } catch (e) {}
 }
 
-// Compute live RAM Speedometer metrics for "Total Tab & RAM Tamer"
+// Helper to toggle site pause by hostname (used by Popup, Context Menu, and Keyboard Shortcut)
+async function toggleSitePauseByHostname(rawHostname) {
+  const host = String(rawHostname || '').replace(/^www\./i, '').trim().toLowerCase();
+  if (!host) return { ok: false };
+  const [auth, res] = await Promise.all([
+    ensureVerifiedProSession(),
+    chrome.storage.local.get(['pausedSites'])
+  ]);
+  if (!auth.proActive || !auth.licenseKey) {
+    return {
+      ok: false,
+      requiresPro: true,
+      error: 'Active paid Pro subscription required to enable website protection.'
+    };
+  }
+  const current = Array.isArray(res.pausedSites) ? res.pausedSites : [];
+  const isPaused = current.includes(host);
+  const updated = isPaused ? current.filter((h) => h !== host) : [...current, host];
+  await chrome.storage.local.set({ pausedSites: updated });
+  return { ok: true, pausedSites: updated, paused: !isPaused, hostname: host };
+}
+
+// Right-Click Context Menu Handler
+if (chrome.contextMenus && chrome.contextMenus.onClicked) {
+  chrome.contextMenus.onClicked.addListener(async (info, tab) => {
+    if (info.menuItemId === 'sweepr-toggle-site' && tab && tab.url && /^https?:\/\//i.test(tab.url)) {
+      try {
+        const hostname = new URL(tab.url).hostname;
+        const res = await toggleSitePauseByHostname(hostname);
+        if (res.ok && tab.id) {
+          chrome.tabs.reload(tab.id);
+        }
+      } catch (e) {}
+    } else if (info.menuItemId === 'sweepr-snooze-tabs') {
+      await hibernateInactiveTabs();
+    }
+  });
+}
+
+// Keyboard-First Shortcuts (Alt+Shift+S / Alt+Shift+Z)
+if (chrome.commands && chrome.commands.onCommand) {
+  chrome.commands.onCommand.addListener(async (command) => {
+    if (command === 'toggle-site-protection') {
+      const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+      const activeTab = tabs && tabs[0];
+      if (activeTab && activeTab.url && /^https?:\/\//i.test(activeTab.url)) {
+        try {
+          const hostname = new URL(activeTab.url).hostname;
+          const res = await toggleSitePauseByHostname(hostname);
+          if (res.ok && activeTab.id) {
+            chrome.tabs.reload(activeTab.id);
+          }
+        } catch (e) {}
+      }
+    } else if (command === 'snooze-inactive-tabs') {
+      await hibernateInactiveTabs();
+    }
+  });
+}
+
+// Compute live RAM Speedometer metrics (Zero-permission tab heuristic)
 async function getRamSpeedometerMetrics() {
   const tabs = await chrome.tabs.query({});
   const activeTabs = tabs.filter((t) => !t.discarded);
@@ -327,27 +406,16 @@ async function getRamSpeedometerMetrics() {
   const estimatedGb = Math.max(0.8, +(0.65 + activeTabs.length * 0.145).toFixed(1));
   const slowdownPct = Math.min(78, Math.max(8, Math.round(estimatedGb * 6.2)));
 
-  let systemMemoryGb = 16;
-  try {
-    if (chrome.system && chrome.system.memory) {
-      const memInfo = await chrome.system.memory.getInfo();
-      if (memInfo && memInfo.capacity) {
-        systemMemoryGb = Math.round(memInfo.capacity / (1024 * 1024 * 1024));
-      }
-    }
-  } catch (e) {}
-
   return {
     totalTabs: tabs.length,
     activeTabsCount: activeTabs.length,
     discardedCount,
     estimatedGb,
-    slowdownPct,
-    systemMemoryGb
+    slowdownPct
   };
 }
 
-// Hibernate inactive background tabs & snapshot session to Cloud Vault (Requires Active Paid Subscription)
+// Hibernate inactive background tabs & snapshot session to Cloud Vault
 async function hibernateInactiveTabs() {
   const verified = await ensureVerifiedProSession();
   if (!verified.proActive || !verified.licenseKey) {
@@ -409,7 +477,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (sender && sender.id && sender.id !== chrome.runtime.id) return false;
 
   if (msg.type === 'INCREMENT_DIAGNOSTIC') {
-    chrome.storage.local.get(['stats'], (res) => {
+    chrome.storage.local.get(['stats', 'settings'], (res) => {
       const stats = res.stats || DEFAULT_STATE.stats;
       const key = msg.metric;
       const safeAmount = Math.min(20, Math.max(1, Number(msg.amount) || 1));
@@ -417,7 +485,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
         stats[key] += safeAmount;
       }
       chrome.storage.local.set({ stats }, () => {
-        updateActionBadge(stats);
+        updateActionBadge(stats, res.settings);
         sendResponse({ ok: true, stats });
       });
     });
@@ -473,26 +541,8 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   }
 
   if (msg.type === 'TOGGLE_SITE_PAUSE') {
-    const host = String(msg.hostname || '').trim().toLowerCase();
-    if (!host) {
-      sendResponse({ ok: false });
-      return true;
-    }
-    Promise.all([ensureVerifiedProSession(), chrome.storage.local.get(['pausedSites'])]).then(([auth, res]) => {
-      if (!auth.proActive || !auth.licenseKey) {
-        sendResponse({
-          ok: false,
-          requiresPro: true,
-          error: 'Active paid Pro subscription required to enable website protection.'
-        });
-        return;
-      }
-      const current = Array.isArray(res.pausedSites) ? res.pausedSites : [];
-      const isPaused = current.includes(host);
-      const updated = isPaused ? current.filter((h) => h !== host) : [...current, host];
-      chrome.storage.local.set({ pausedSites: updated }, () => {
-        sendResponse({ ok: true, pausedSites: updated, paused: !isPaused });
-      });
+    toggleSitePauseByHostname(msg.hostname).then((res) => {
+      sendResponse(res);
     });
     return true;
   }
@@ -503,7 +553,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       sendResponse({ ok: false });
       return true;
     }
-    Promise.all([ensureVerifiedProSession(), chrome.storage.local.get(['settings'])]).then(async ([auth, res]) => {
+    Promise.all([ensureVerifiedProSession(), chrome.storage.local.get(['settings', 'stats'])]).then(async ([auth, res]) => {
       const hasPaidPro = Boolean(auth.proActive && auth.licenseKey);
       if (PRO_ONLY_SETTINGS.has(key) && !hasPaidPro) {
         sendResponse({
@@ -518,6 +568,9 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       await chrome.storage.local.set({ settings: current });
       if (key === 'adBlocking') {
         await syncExtensionProtectionRules(Boolean(current.adBlocking));
+      }
+      if (key === 'silentMode') {
+        await updateActionBadge(res.stats || DEFAULT_STATE.stats, current);
       }
       sendResponse({ ok: true, settings: current });
     });

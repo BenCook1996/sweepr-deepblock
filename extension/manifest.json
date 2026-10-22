@@ -10,7 +10,7 @@
     "storage",
     "alarms",
     "tabs",
-    "system.memory"
+    "contextMenus"
   ],
   "host_permissions": [
     "<all_urls>"
@@ -18,10 +18,31 @@
   "background": {
     "service_worker": "background.js"
   },
+  "options_ui": {
+    "page": "welcome.html",
+    "open_in_tab": true
+  },
+  "commands": {
+    "toggle-site-protection": {
+      "suggested_key": {
+        "default": "Alt+Shift+S",
+        "mac": "MacCtrl+Shift+S"
+      },
+      "description": "Pause or resume SWEEPR Deepblock on the current website"
+    },
+    "snooze-inactive-tabs": {
+      "suggested_key": {
+        "default": "Alt+Shift+Z",
+        "mac": "MacCtrl+Shift+Z"
+      },
+      "description": "Snooze unused background tabs to free memory"
+    }
+  },
   "icons": {
     "16": "icons/icon-16.png",
     "32": "icons/icon-32.png",
     "48": "icons/icon-48.png",
+    "64": "icons/icon-64.png",
     "128": "icons/icon-128.png"
   },
   "action": {

@@ -1,8 +1,9 @@
-// SWEEPR Deepblock — Real-Time Content Script
-// 1. GDPR Cookie Banner Detector & Auto-Rejector
+// SWEEPR Deepblock — Real-Time Content Script (v1.1 UX & Ergonomics Audited)
+// 1. GDPR Cookie Banner Detector & Auto-Rejector (Safe Scroll-Unlock)
 // 2. AI Slop & SEO Content-Farm SERP Purifier
 // 3. Recipe & News Clutter Stripper (PureView)
-// 4. Fake E-Commerce Store & Amazon Review Authenticity Detector
+// 4. Fake E-Commerce Store & Review Detector (Shadow-DOM Non-Blocking Corner Pill)
+// 5. Throttled MutationObservers for Zero Main-Thread Jank
 
 (function () {
   const CMP_SELECTORS = [
@@ -31,13 +32,40 @@
     /top10-affiliate-spam/i
   ];
 
+  function createThrottle(fn, waitMs) {
+    let scheduled = false;
+    return function () {
+      if (scheduled) return;
+      scheduled = true;
+      setTimeout(() => {
+        scheduled = false;
+        try {
+          fn();
+        } catch (e) {}
+      }, waitMs);
+    };
+  }
+
   function reportMetric(metric, amount = 1) {
     try {
       chrome.runtime.sendMessage({ type: 'INCREMENT_DIAGNOSTIC', metric, amount });
     } catch (e) {}
   }
 
-  // 1. GDPR Cookie Banner Handling (Silent <50ms Rejector + Optional 2s Whisper Toast)
+  function unlockScrollIfFrozenByModal() {
+    try {
+      const htmlOverflow = window.getComputedStyle(document.documentElement).overflow;
+      const bodyOverflow = document.body ? window.getComputedStyle(document.body).overflow : '';
+      if (htmlOverflow === 'hidden') {
+        document.documentElement.style.setProperty('overflow', 'auto', 'important');
+      }
+      if (bodyOverflow === 'hidden' && document.body) {
+        document.body.style.setProperty('overflow', 'auto', 'important');
+      }
+    } catch (e) {}
+  }
+
+  // 1. GDPR Cookie Banner Handling (Silent <50ms Rejector + Safe Scroll Unlock)
   function processCookieBanners(proActive, silentMode = true) {
     const foundBanner = document.querySelector(CMP_SELECTORS.join(','));
     if (!foundBanner) return;
@@ -68,21 +96,21 @@
         }
       }
 
-      // Unlock page scroll if frozen by CMP modal
-      document.documentElement.style.setProperty('overflow', 'auto', 'important');
-      document.body.style.setProperty('overflow', 'auto', 'important');
-      reportMetric('cookiePromptsRejected', 1);
+      if (clicked) {
+        unlockScrollIfFrozenByModal();
+        reportMetric('cookiePromptsRejected', 1);
+      }
 
       if (clicked && !silentMode && !document.getElementById('deepblockCookieWhisper')) {
         const toast = document.createElement('div');
         toast.id = 'deepblockCookieWhisper';
-        toast.textContent = '🍪 Cookie pop-up auto-declined';
+        toast.textContent = '🍪 Cookie pop-up declined';
         Object.assign(toast.style, {
           position: 'fixed',
           bottom: '14px',
           left: '14px',
           zIndex: '2147483647',
-          background: 'rgba(255, 255, 255, 0.94)',
+          background: 'rgba(255, 255, 255, 0.96)',
           color: '#065f46',
           border: '1px solid #a7f3d0',
           borderRadius: '999px',
@@ -95,8 +123,8 @@
           transition: 'opacity 0.4s ease'
         });
         document.body.appendChild(toast);
-        setTimeout(() => { toast.style.opacity = '0'; }, 1800);
-        setTimeout(() => { toast.remove(); }, 2250);
+        setTimeout(() => { toast.style.opacity = '0'; }, 1600);
+        setTimeout(() => { toast.remove(); }, 2050);
       }
     }
   }
@@ -127,7 +155,7 @@
           hiddenItems.push(item);
         } else if (!silentMode) {
           const badge = document.createElement('div');
-          badge.textContent = '⚠️ Flagged by SWEEPR: Likely low-quality or spam article';
+          badge.textContent = '⚠️ Low-quality spam result flagged';
           Object.assign(badge.style, {
             fontSize: '11px',
             fontWeight: '600',
@@ -164,10 +192,10 @@
           fontFamily: 'system-ui, -apple-system, sans-serif'
         });
         const label = document.createElement('span');
-        label.textContent = `🛡️ ${hiddenItems.length} spam copycat site${hiddenItems.length > 1 ? 's' : ''} quietly hidden`;
+        label.textContent = `🛡️ ${hiddenItems.length} spam result${hiddenItems.length > 1 ? 's' : ''} hidden`;
         const showBtn = document.createElement('button');
         showBtn.type = 'button';
-        showBtn.textContent = 'Show';
+        showBtn.textContent = 'Undo';
         Object.assign(showBtn.style, {
           background: 'none',
           color: '#065f46',
@@ -199,7 +227,7 @@
     }
   }
 
-  // 3. Recipe & News Clutter Helper (Subtle Native Inline Jump Link Under Heading — Pro Entitlement)
+  // 3. Recipe & News Clutter Helper (Subtle Native Inline Jump Pill Under Heading)
   function processRecipeAndNewsClutter(proActive, silentMode = true) {
     if (!proActive) return;
     const recipeEl = document.querySelector(
@@ -235,7 +263,7 @@
 
       const jumpBtn = document.createElement('button');
       jumpBtn.type = 'button';
-      jumpBtn.textContent = '📖 Skip story & jump to ingredients ↓';
+      jumpBtn.textContent = 'Jump to Recipe ↓';
       Object.assign(jumpBtn.style, {
         background: 'none',
         border: 'none',
@@ -250,7 +278,7 @@
       const closeBtn = document.createElement('button');
       closeBtn.type = 'button';
       closeBtn.textContent = '✕';
-      closeBtn.title = 'Hide';
+      closeBtn.title = 'Dismiss';
       Object.assign(closeBtn.style, {
         background: 'none',
         border: 'none',
@@ -282,9 +310,9 @@
     }
   }
 
-  // 4. Fake E-Commerce Store & Review Detector (100% Invisible on Safe Stores, Slim Top Infobar on Scam Sites)
+  // 4. Fake E-Commerce Store Detector (Non-Blocking Shadow-DOM Corner Pill — Never Covers Sticky Headers)
   function processEcommerceStore(proActive) {
-    // Never interrupt trusted everyday retailers
+    if (!proActive) return;
     if (/(^|\.)(amazon\.|ebay\.|argos\.co\.uk|johnlewis\.com|currys\.co\.uk|tesco\.com)/i.test(location.hostname)) {
       return;
     }
@@ -301,47 +329,59 @@
     if (hasFakeUrgency) {
       reportMetric('fakeStoresDetected', 1);
       if (!document.getElementById('deepblockShopWarningBar')) {
-        const bar = document.createElement('div');
-        bar.id = 'deepblockShopWarningBar';
-        Object.assign(bar.style, {
+        const host = document.createElement('div');
+        host.id = 'deepblockShopWarningBar';
+        Object.assign(host.style, {
           position: 'fixed',
-          top: '0',
-          left: '0',
-          right: '0',
+          bottom: '16px',
+          right: '16px',
           zIndex: '2147483647',
-          background: '#fffbeb',
+          maxWidth: '340px',
+          width: 'calc(100vw - 32px)'
+        });
+
+        const root = host.attachShadow ? host.attachShadow({ mode: 'open' }) : host;
+        const card = document.createElement('div');
+        Object.assign(card.style, {
+          background: 'rgba(255, 251, 235, 0.98)',
           color: '#92400e',
-          borderBottom: '1px solid #fde68a',
-          padding: '6px 14px',
+          border: '1px solid #f59e0b',
+          borderRadius: '14px',
+          padding: '10px 12px',
           fontSize: '12px',
           fontWeight: '700',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: '10px',
           fontFamily: 'system-ui, -apple-system, sans-serif',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
+          boxShadow: '0 10px 25px rgba(0, 0, 0, 0.12)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '8px'
         });
-        const msg = document.createElement('span');
+
+        const msg = document.createElement('div');
+        msg.style.lineHeight = '1.35';
         msg.textContent =
-          '⚠️ SWEEPR Caution: This online shop uses fake countdown timers often seen on scam stores.';
+          '⚠️ Caution: Fake urgency timer detected on this store.';
 
         const actions = document.createElement('div');
-        Object.assign(actions.style, { display: 'flex', alignItems: 'center', gap: '6px' });
+        Object.assign(actions.style, {
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'flex-end',
+          gap: '6px'
+        });
 
         const leaveBtn = document.createElement('button');
         leaveBtn.type = 'button';
-        leaveBtn.textContent = '← Leave Safely';
+        leaveBtn.textContent = '← Leave Site';
         Object.assign(leaveBtn.style, {
           background: '#059669',
           color: '#ffffff',
           border: 'none',
-          borderRadius: '6px',
-          padding: '3px 9px',
+          borderRadius: '8px',
+          padding: '5px 10px',
           fontSize: '11px',
           fontWeight: '800',
-          cursor: 'pointer',
-          whiteSpace: 'nowrap'
+          cursor: 'pointer'
         });
         leaveBtn.onclick = () => {
           if (window.history.length > 1) {
@@ -353,24 +393,25 @@
 
         const dismiss = document.createElement('button');
         dismiss.type = 'button';
-        dismiss.textContent = '✕';
-        dismiss.title = 'Dismiss';
+        dismiss.textContent = 'Dismiss';
         Object.assign(dismiss.style, {
-          background: 'none',
+          background: 'transparent',
           color: '#78350f',
-          border: 'none',
-          padding: '2px 6px',
-          fontSize: '12px',
-          fontWeight: '800',
+          border: '1px solid #fcd34d',
+          borderRadius: '8px',
+          padding: '5px 9px',
+          fontSize: '11px',
+          fontWeight: '700',
           cursor: 'pointer'
         });
-        dismiss.onclick = () => bar.remove();
+        dismiss.onclick = () => host.remove();
 
-        actions.appendChild(leaveBtn);
         actions.appendChild(dismiss);
-        bar.appendChild(msg);
-        bar.appendChild(actions);
-        document.body.appendChild(bar);
+        actions.appendChild(leaveBtn);
+        card.appendChild(msg);
+        card.appendChild(actions);
+        root.appendChild(card);
+        document.body.appendChild(host);
       }
     }
   }
@@ -379,7 +420,6 @@
   function initYouTubeAdShield() {
     if (!/(^|\.)youtube\.com$/i.test(location.hostname)) return;
 
-    // Inject cosmetic rules to hide home-feed, sidebar, masthead & overlay ad slots
     if (!document.getElementById('deepblock-yt-cosmetic')) {
       const style = document.createElement('style');
       style.id = 'deepblock-yt-cosmetic';
@@ -422,7 +462,6 @@
           reportMetric('adsBlocked', 1);
         }
 
-        // Fast-forward ad stream to final millisecond to bypass anti-adblock detection
         if (Number.isFinite(video.duration) && video.duration > 0.5 && video.currentTime < video.duration - 0.1) {
           try {
             video.currentTime = video.duration;
@@ -433,7 +472,6 @@
           video.playbackRate = 16;
         }
 
-        // Click any visible Skip Ad button immediately
         const skipSelectors = [
           '.ytp-skip-ad-button',
           '.ytp-ad-skip-button',
@@ -448,7 +486,6 @@
           }
         }
       } else if (video && video.dataset.deepblockAdMuted) {
-        // Restore user's original mute & playback rate once main video resumes
         video.muted = wasMutedBeforeAd;
         video.playbackRate = 1;
         delete video.dataset.deepblockAdMuted;
@@ -456,7 +493,8 @@
     }
 
     neutralizeYouTubeVideoAd();
-    const obs = new MutationObserver(neutralizeYouTubeVideoAd);
+    const throttledYtCheck = createThrottle(neutralizeYouTubeVideoAd, 120);
+    const obs = new MutationObserver(throttledYtCheck);
     obs.observe(document.documentElement, {
       childList: true,
       subtree: true,
@@ -497,7 +535,6 @@
   ];
 
   function processAntiAdblockStealth() {
-    // Visually cloak bait elements WITHOUT setting display:none so offsetHeight stays > 0
     const baits = document.querySelectorAll(BAIT_SELECTORS.join(','));
     baits.forEach((bait) => {
       if (!bait.dataset.deepstealthCloaked) {
@@ -516,7 +553,6 @@
       }
     });
 
-    // Strip active anti-adblock walls & restore document scrolling
     let wallRemoved = false;
     for (const sel of ANTI_ADBLOCK_WALL_SELECTORS) {
       try {
@@ -529,9 +565,10 @@
     }
 
     if (wallRemoved) {
-      document.documentElement.style.setProperty('overflow', 'auto', 'important');
-      document.body.style.setProperty('overflow', 'auto', 'important');
-      document.body.style.setProperty('pointer-events', 'auto', 'important');
+      unlockScrollIfFrozenByModal();
+      if (document.body) {
+        document.body.style.setProperty('pointer-events', 'auto', 'important');
+      }
       reportMetric('antiAdblockBypassed', 1);
     }
   }
@@ -547,7 +584,6 @@
 
   chrome.storage.local.get(['proActive', 'licenseKey', 'pausedSites', 'settings'], (res) => {
     const proActive = Boolean(res && res.proActive && res.licenseKey);
-    // Strict Paid Subscription Gate: no blocking, auto-closing, search filtering, or alerts run unless paid subscription is active
     if (!proActive) {
       try {
         delete document.documentElement.dataset.sweeprProActive;
@@ -573,7 +609,8 @@
     if (settings.adBlocking !== false) {
       initYouTubeAdShield();
       processAntiAdblockStealth();
-      const stealthObs = new MutationObserver(() => processAntiAdblockStealth());
+      const throttledStealth = createThrottle(processAntiAdblockStealth, 150);
+      const stealthObs = new MutationObserver(throttledStealth);
       stealthObs.observe(document.documentElement, { childList: true, subtree: true });
     }
   });

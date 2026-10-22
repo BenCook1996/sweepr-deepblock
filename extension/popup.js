@@ -1,4 +1,4 @@
-// SWEEPR Deepblock — Subtle Toolbar Popover Controller
+// SWEEPR Deepblock — Subtle Toolbar Popover Controller (v1.1 UX Audited)
 document.addEventListener('DOMContentLoaded', () => {
   const adsCountEl = document.getElementById('adsCount');
   const cookieCountEl = document.getElementById('cookieCount');
@@ -17,28 +17,59 @@ document.addEventListener('DOMContentLoaded', () => {
   const currentSiteLabelEl = document.getElementById('currentSiteLabel');
   const currentSiteSubEl = document.getElementById('currentSiteSub');
   const sitePauseBtn = document.getElementById('sitePauseBtn');
-  const toggleQrDrawerBtn = document.getElementById('toggleQrDrawerBtn');
-  const qrDrawerEl = document.getElementById('qrDrawer');
   const toggleLicenseDrawerBtn = document.getElementById('toggleLicenseDrawerBtn');
   const licenseDrawerEl = document.getElementById('licenseDrawer');
   const licenseKeyInput = document.getElementById('licenseKeyInput');
   const activateKeyBtn = document.getElementById('activateKeyBtn');
   const licenseFeedbackEl = document.getElementById('licenseFeedback');
   const openTestLabBtn = document.getElementById('openTestLabBtn');
+  const openDashboardBtn = document.getElementById('openDashboardBtn');
+  const openFullSessionsBtn = document.getElementById('openFullSessionsBtn');
 
   let currentHostname = '';
   let currentState = { proActive: false, settings: {}, pausedSites: [], cloudTabSessions: [] };
 
-  // 3-Tab Switcher (Status / Speed / Controls)
+  // 3-Tab Switcher with State Persistence (Status / Speed / Controls)
   const tabButtons = document.querySelectorAll('.tab-btn[data-tab]');
   const tabPanels = document.querySelectorAll('.tab-panel');
+
+  function activateTab(targetId, persist = true) {
+    if (!targetId) return;
+    tabButtons.forEach((b) => b.classList.toggle('active', b.getAttribute('data-tab') === targetId));
+    tabPanels.forEach((p) => p.classList.toggle('active', p.id === targetId));
+    if (persist) {
+      chrome.storage.local.set({ lastActivePopupTab: targetId });
+    }
+  }
+
   tabButtons.forEach((btn) => {
     btn.addEventListener('click', () => {
-      const targetId = btn.getAttribute('data-tab');
-      tabButtons.forEach((b) => b.classList.toggle('active', b === btn));
-      tabPanels.forEach((p) => p.classList.toggle('active', p.id === targetId));
+      activateTab(btn.getAttribute('data-tab'), true);
     });
   });
+
+  // Restore persisted popup UI state (active tab, draft license key, open drawer)
+  chrome.storage.local.get(['lastActivePopupTab', 'draftLicenseKey', 'licenseDrawerOpen', 'proActive'], (uiState) => {
+    if (uiState && uiState.lastActivePopupTab) {
+      activateTab(uiState.lastActivePopupTab, false);
+    }
+    if (uiState && typeof uiState.draftLicenseKey === 'string' && uiState.draftLicenseKey && licenseKeyInput) {
+      licenseKeyInput.value = uiState.draftLicenseKey;
+    }
+    if (uiState && !uiState.proActive && (uiState.licenseDrawerOpen || uiState.draftLicenseKey)) {
+      licenseDrawerEl.classList.add('open');
+    }
+  });
+
+  // Persist draft license key on every keystroke so closing the popup never wipes user input
+  if (licenseKeyInput) {
+    licenseKeyInput.addEventListener('input', () => {
+      chrome.storage.local.set({
+        draftLicenseKey: licenseKeyInput.value,
+        licenseDrawerOpen: true
+      });
+    });
+  }
 
   // Detect active tab website hostname
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -53,13 +84,13 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   function openProRequiredPrompt(customMsg) {
-    if (qrDrawerEl) qrDrawerEl.classList.remove('open');
     licenseDrawerEl.classList.add('open');
+    chrome.storage.local.set({ licenseDrawerOpen: true });
     licenseFeedbackEl.style.display = 'block';
     licenseFeedbackEl.style.color = '#b45309';
     licenseFeedbackEl.textContent =
       customMsg ||
-      '🔒 Active paid subscription required to use SWEEPR Deepblock features. Paste your license key below or click Unlock Full Pro above.';
+      '🔒 Active Pro subscription required. Paste your key or 6-digit code below.';
     licenseKeyInput.focus();
   }
 
@@ -68,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
       siteBarEl.classList.add('paused');
       sitePauseBtn.className = 'switch-btn pro-lock';
       sitePauseBtn.textContent = '🔒 PRO';
-      currentSiteSubEl.textContent = 'Paid subscription required to activate protection';
+      currentSiteSubEl.textContent = 'Activate Pro key below to enable protection';
       return;
     }
     sitePauseBtn.textContent = '';
@@ -79,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (isPaused) {
       siteBarEl.classList.add('paused');
       sitePauseBtn.className = 'switch-btn off';
-      currentSiteSubEl.textContent = 'Protection is paused on this site';
+      currentSiteSubEl.textContent = 'Protection paused on this site';
     } else {
       siteBarEl.classList.remove('paused');
       sitePauseBtn.className = 'switch-btn';
@@ -98,7 +129,8 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    list.forEach((sess) => {
+    // Cap to top 2 snapshots inside the micro-viewport popup to prevent vertical scroll bloat
+    list.slice(0, 2).forEach((sess) => {
       const row = document.createElement('div');
       row.className = 'saved-session-row';
 
@@ -145,17 +177,17 @@ document.addEventListener('DOMContentLoaded', () => {
     currentState = state || currentState;
     const isPro = Boolean(state.proActive);
     const stats = state.stats || {};
-    const ads = isPro ? Number(stats.adsBlocked) || 142 : 0;
-    const cookies = isPro ? Number(stats.cookiePromptsDetected) || 19 : 0;
-    const slop = isPro ? Number(stats.aiSlopDetected) || 11 : 0;
-    const scams = isPro ? Number(stats.fakeStoresDetected) || 4 : 0;
+    const ads = isPro ? Number(stats.adsBlocked) || 0 : 0;
+    const cookies = isPro ? Number(stats.cookiePromptsDetected) || 0 : 0;
+    const slop = isPro ? Number(stats.aiSlopDetected) || 0 : 0;
+    const scams = isPro ? Number(stats.fakeStoresDetected) || 0 : 0;
 
     adsCountEl.textContent = String(ads);
     cookieCountEl.textContent = String(cookies);
     slopCountEl.textContent = String(slop);
     scamCountEl.textContent = String(scams);
     if (adsBlockedTextEl) {
-      adsBlockedTextEl.textContent = isPro ? `${ads + cookies + slop} items ✓` : '🔒 Pro Required';
+      adsBlockedTextEl.textContent = isPro ? `${ads + cookies + slop} blocked ✓` : '🔒 Locked';
       adsBlockedTextEl.style.color = isPro ? '#059669' : '#b45309';
     }
 
@@ -163,29 +195,31 @@ document.addEventListener('DOMContentLoaded', () => {
       const totalTabs = Number(state.ramMetrics.totalTabs) || 1;
       const discardedCount = Number(state.ramMetrics.discardedCount) || 0;
       ramHeadlineEl.textContent = !isPro
-        ? '🔒 Pro Required'
+        ? '🔒 Locked'
         : discardedCount > 0
         ? `⚡ ${discardedCount} Sleeping`
         : `${totalTabs} Tabs Open`;
-      ramBarFillEl.style.width = isPro ? `${Math.min(85, Math.max(22, totalTabs * 4))}%` : '0%';
+      ramBarFillEl.style.width = isPro ? `${Math.min(85, Math.max(20, totalTabs * 4))}%` : '0%';
 
       ramDescEl.textContent = !isPro
-        ? 'An active paid Pro subscription is required to use Automatic Tab Sleeping and browser speed optimization.'
+        ? 'Activate Pro to snooze inactive background tabs and speed up your browser.'
         : discardedCount > 0
-        ? `${discardedCount} background tab${discardedCount > 1 ? 's are' : ' is'} quietly sleeping to keep your browser fast.`
-        : `You have ${totalTabs} open tabs. Unused background tabs snooze automatically.`;
+        ? `${discardedCount} background tab${discardedCount > 1 ? 's are' : ' is'} quietly sleeping.`
+        : `${totalTabs} open tabs. Unused background tabs snooze automatically.`;
     }
 
     if (isPro) {
-      tierBadgeEl.textContent = '✓ Pro Quiet';
+      tierBadgeEl.textContent = 'Active';
       tierBadgeEl.classList.add('pro');
       upgradeCtaBtn.style.display = 'none';
-      toggleLicenseDrawerBtn.textContent = '✓ Pro Active';
+      toggleLicenseDrawerBtn.style.display = 'none';
+      licenseDrawerEl.classList.remove('open');
     } else {
-      tierBadgeEl.textContent = '🔒 Locked';
+      tierBadgeEl.textContent = 'Locked';
       tierBadgeEl.classList.remove('pro');
       upgradeCtaBtn.style.display = 'block';
-      upgradeCtaBtn.textContent = '⭐ Unlock Full Pro Protection →';
+      toggleLicenseDrawerBtn.style.display = 'inline-flex';
+      toggleLicenseDrawerBtn.textContent = '🔑 Enter Pro Key';
     }
 
     updateSiteBarState();
@@ -197,7 +231,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (response) renderState(response);
   });
 
-  // Pause / Resume protection on current website (Requires Active Paid Subscription)
+  // Pause / Resume protection on current website
   sitePauseBtn.addEventListener('click', () => {
     if (!currentState.proActive) {
       openProRequiredPrompt();
@@ -218,38 +252,32 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Upgrade CTA Button opens order page
+  // Single Upgrade CTA Button Listener (Fixed duplicate tab bug)
   if (upgradeCtaBtn) {
     upgradeCtaBtn.addEventListener('click', () => {
       chrome.tabs.create({ url: 'https://sweeprdeepblock.com/order?plan=annual' });
     });
   }
 
-  // Speed up browser & save open tabs (Requires Active Paid Pro Subscription)
+  // Snooze inactive background tabs
   reclaimRamBtn.addEventListener('click', () => {
     if (!currentState.proActive) {
-      if (qrDrawerEl) qrDrawerEl.classList.remove('open');
-      licenseDrawerEl.classList.add('open');
-      licenseFeedbackEl.style.display = 'block';
-      licenseFeedbackEl.style.color = '#b45309';
-      licenseFeedbackEl.textContent =
-        '🔒 Browser Speed & Tab Sleeping requires an active Pro subscription. Paste your key or click Unlock Full Pro above.';
-      licenseKeyInput.focus();
+      openProRequiredPrompt('🔒 Tab Memory Saver requires an active Pro subscription.');
       return;
     }
 
-    reclaimRamBtn.textContent = 'Putting unused tabs to sleep...';
+    reclaimRamBtn.textContent = 'Snoozing inactive tabs...';
     chrome.runtime.sendMessage({ type: 'HIBERNATE_TABS_NOW' }, (res) => {
       if (res && res.requiresPro) {
         currentState.proActive = false;
         renderState(currentState);
-        licenseDrawerEl.classList.add('open');
+        openProRequiredPrompt(res.error);
         return;
       }
       if (res && res.ok) {
         const count = Number(res.newlyDiscarded) || 0;
         reclaimRamBtn.textContent =
-          count > 0 ? `✓ ${count} Background Tabs Put to Sleep` : '✓ Browser Already Running Fast';
+          count > 0 ? `✓ ${count} Tabs Put to Sleep` : '✓ Already Running Fast';
         ramHeadlineEl.textContent = '⚡ Fast & Quiet';
         ramBarFillEl.style.width = '20%';
         if (res.sessions) {
@@ -267,20 +295,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const settingKey = btn.getAttribute('data-setting');
 
       if (requiresPro && !currentState.proActive) {
-        if (qrDrawerEl) qrDrawerEl.classList.remove('open');
-        licenseDrawerEl.classList.add('open');
-        licenseFeedbackEl.style.display = 'block';
-        licenseFeedbackEl.style.color = '#b45309';
-        licenseFeedbackEl.textContent =
-          '🔒 Active paid Pro subscription required for this feature. Paste your key below or upgrade above.';
-        licenseKeyInput.focus();
+        openProRequiredPrompt();
         return;
       }
 
       chrome.runtime.sendMessage({ type: 'TOGGLE_SETTING', settingKey }, (res) => {
         if (res && res.requiresPro) {
-          licenseDrawerEl.classList.add('open');
-          licenseKeyInput.focus();
+          openProRequiredPrompt(res.error);
           return;
         }
         if (res && res.ok) {
@@ -291,19 +312,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Toggle QR Phone Pairing drawer
-  if (toggleQrDrawerBtn && qrDrawerEl) {
-    toggleQrDrawerBtn.addEventListener('click', () => {
-      licenseDrawerEl.classList.remove('open');
-      qrDrawerEl.classList.toggle('open');
+  // Toggle License Key drawer and persist open state
+  if (toggleLicenseDrawerBtn) {
+    toggleLicenseDrawerBtn.addEventListener('click', () => {
+      const isOpen = licenseDrawerEl.classList.toggle('open');
+      chrome.storage.local.set({ licenseDrawerOpen: isOpen });
+      if (isOpen) licenseKeyInput.focus();
     });
   }
-
-  // Toggle License Key drawer
-  toggleLicenseDrawerBtn.addEventListener('click', () => {
-    if (qrDrawerEl) qrDrawerEl.classList.remove('open');
-    licenseDrawerEl.classList.toggle('open');
-  });
 
   async function directVerifyFromPopup(rawKey) {
     const key = String(rawKey || '').trim();
@@ -352,6 +368,8 @@ document.addEventListener('DOMContentLoaded', () => {
               proActive: true,
               ramTamerActive,
               licenseKey: canonicalKey,
+              draftLicenseKey: '',
+              licenseDrawerOpen: false,
               licenseToken: data.token || data.license_token || '',
               crmAccountId: data.account_id || '',
               subscriptionStatus: subStatus,
@@ -386,20 +404,20 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
-  // Activate Pro License Key (Verified Against Live Server & Stripe Subscription)
+  // Activate Pro License Key
   async function handlePopupActivate() {
     const key = (licenseKeyInput.value || '').trim();
     if (!key) {
       licenseFeedbackEl.style.display = 'block';
       licenseFeedbackEl.style.color = '#dc2626';
-      licenseFeedbackEl.textContent = 'Please paste your license key first.';
+      licenseFeedbackEl.textContent = 'Please paste your license key or 6-digit code first.';
       return;
     }
-    activateKeyBtn.textContent = 'Verifying...';
+    activateKeyBtn.textContent = '...';
     activateKeyBtn.disabled = true;
     licenseFeedbackEl.style.display = 'block';
     licenseFeedbackEl.style.color = '#6b7280';
-    licenseFeedbackEl.textContent = 'Checking active subscription status...';
+    licenseFeedbackEl.textContent = 'Verifying subscription...';
 
     chrome.runtime.sendMessage({ type: 'ACTIVATE_LICENSE', licenseKey: key }, async (res) => {
       const finalRes =
@@ -407,6 +425,7 @@ document.addEventListener('DOMContentLoaded', () => {
       activateKeyBtn.textContent = 'Unlock';
       activateKeyBtn.disabled = false;
       if (finalRes && finalRes.ok && finalRes.valid) {
+        await chrome.storage.local.set({ draftLicenseKey: '', licenseDrawerOpen: false });
         currentState.proActive = true;
         currentState.settings = {
           cookieAutoClose: true,
@@ -418,14 +437,14 @@ document.addEventListener('DOMContentLoaded', () => {
         };
         licenseFeedbackEl.style.display = 'block';
         licenseFeedbackEl.style.color = '#059669';
-        licenseFeedbackEl.textContent = '✓ Paid Pro Subscription Verified! All features are now ON.';
+        licenseFeedbackEl.textContent = '✓ Pro Activated! All protection features are ON.';
         renderState(currentState);
       } else {
         currentState.proActive = false;
         licenseFeedbackEl.style.display = 'block';
         licenseFeedbackEl.style.color = '#dc2626';
         licenseFeedbackEl.textContent =
-          (finalRes && finalRes.error) || '✗ Invalid or unpaid license key. Please complete checkout first.';
+          (finalRes && finalRes.error) || '✗ Invalid or unpaid license key.';
         renderState(currentState);
       }
     });
@@ -439,13 +458,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Open Test Lab
-  openTestLabBtn.addEventListener('click', () => {
-    chrome.tabs.create({ url: 'https://sweeprdeepblock.com/test-lab' });
-  });
+  // Open Full Options / Welcome Dashboard
+  function openFullDashboard() {
+    if (chrome.runtime && typeof chrome.runtime.openOptionsPage === 'function') {
+      chrome.runtime.openOptionsPage();
+    } else {
+      chrome.tabs.create({ url: chrome.runtime.getURL('welcome.html') });
+    }
+  }
 
-  // Upgrade CTA
-  upgradeCtaBtn.addEventListener('click', () => {
-    chrome.tabs.create({ url: 'https://sweeprdeepblock.com/order?plan=annual&addon=ram_tamer' });
-  });
+  if (openDashboardBtn) openDashboardBtn.addEventListener('click', openFullDashboard);
+  if (openFullSessionsBtn) openFullSessionsBtn.addEventListener('click', openFullDashboard);
+
+  // Open Test Lab
+  if (openTestLabBtn) {
+    openTestLabBtn.addEventListener('click', () => {
+      chrome.tabs.create({ url: 'https://sweeprdeepblock.com/test-lab' });
+    });
+  }
 });
