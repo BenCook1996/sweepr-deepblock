@@ -1849,6 +1849,255 @@ const server = http.createServer(async (req, res) => {
     return sendJson(res, 404, { valid: false, error: 'license_not_found' });
   }
 
+  // API 3b-0: Customer Portal Login & 6-Digit OTP Send (Checks that email is already signed up before sending 6-digit OTP)
+  if (
+    req.method === 'POST' &&
+    (pathname === '/api/portal-login' || pathname === '/api/auth/send-otp' || pathname === '/v1/account/send-otp')
+  ) {
+    if (!checkRateLimit(req, 'portal_login', 10, 60000)) {
+      return sendJson(res, 429, {
+        ok: false,
+        otpSent: false,
+        error: 'Too many login attempts. Please wait a minute and try again.'
+      });
+    }
+    const body = await readBody(req);
+    if (body && body.__tooLarge) return sendJson(res, 413, { ok: false, otpSent: false, error: 'payload_too_large' });
+    const email = String(body?.email || '').trim().toLowerCase();
+    if (!isValidEmail(email)) {
+      return sendJson(res, 400, {
+        ok: false,
+        otpSent: false,
+        error: 'Please enter a valid email address.'
+      });
+    }
+    if (!checkRateLimit(req, `portal_login_email:${email}`, 5, 900000)) {
+      return sendJson(res, 429, {
+        ok: false,
+        otpSent: false,
+        error: 'Too many codes requested for this email. Please wait 15 minutes.'
+      });
+    }
+
+    // 1. Check if the email is already signed up locally (active/trialing subscription, NOT an unpaid checkout lead/pending draft)
+    let localAcc = accountsByEmail.get(email) || null;
+    let isSignedUp = Boolean(localAcc && (localAcc.status === 'active' || localAcc.status === 'trialing'));
+
+    // 2. If not active in local cache, check live Stripe subscriptions for this email before requesting OTP
+    if (!isSignedUp && STRIPE_SECRET_KEY) {
+      try {
+        const activeSubs = await getCachedActiveStripeSubs();
+        let matchedSub = activeSubs.find((s) => (s.metadata?.email || '').trim().toLowerCase() === email);
+        if (!matchedSub) {
+          const custList = await stripeRequest('GET', 'customers', { email, limit: 5 });
+          for (const cust of custList.data || []) {
+            if (cust.deleted) continue;
+            const subs = await stripeRequest('GET', 'subscriptions', { customer: cust.id, status: 'all', limit: 5 });
+            const activeSub = (subs.data || []).find(
+              (s) => s.status === 'active' || s.status === 'trialing' || s.status === 'past_due'
+            );
+            if (activeSub) {
+              matchedSub = activeSub;
+              break;
+            }
+          }
+        }
+        if (matchedSub) {
+          localAcc = upsertLocalAccount({
+            email,
+            stripeCustomerId: typeof matchedSub.customer === 'string' ? matchedSub.customer : matchedSub.customer?.id,
+            subscriptionId: matchedSub.id,
+            plan: matchedSub.metadata?.plan || 'annual',
+            ramTamerAddon: matchedSub.metadata?.ram_tamer === 'true',
+            status: 'active',
+            ...(matchedSub.metadata?.activation_code ? { activationCode: matchedSub.metadata.activation_code } : {}),
+            ...(matchedSub.metadata?.license_key ? { licenseKey: matchedSub.metadata.license_key } : {})
+          });
+          isSignedUp = true;
+        }
+      } catch {}
+    }
+
+    // 3. Request OTP from central sweepr_crm (which also verifies the email is already signed up before sending a 6-digit OTP)
+    let crmOtpSent = false;
+    let crmReachable = false;
+    try {
+      const crmRes = await crm.sendOtp(email);
+      if (crmRes && crmRes.status && crmRes.status < 500) {
+        crmReachable = true;
+        if (crmRes.ok && (crmRes.data?.otpSent || crmRes.data?.ok)) {
+          crmOtpSent = true;
+        } else if (crmRes.status === 404 && isSignedUp && localAcc) {
+          // Sync local active subscription to CRM and retry OTP send
+          await syncSubscriptionWithSweeprCrm(localAcc);
+          const retryRes = await crm.sendOtp(email);
+          if (retryRes && retryRes.ok && (retryRes.data?.otpSent || retryRes.data?.ok)) {
+            crmOtpSent = true;
+          }
+        }
+      }
+    } catch {}
+
+    if (!crmOtpSent && (!isSignedUp || crmReachable)) {
+      return sendJson(res, 404, {
+        ok: false,
+        otpSent: false,
+        error: 'No account found for this email address. Please sign up first or check your email.'
+      });
+    }
+
+    return sendJson(res, 200, { ok: true, otpSent: true });
+  }
+
+  // API 3b-1: Customer Portal 6-Digit Login Code / OTP Verification
+  if (
+    req.method === 'POST' &&
+    (pathname === '/api/verify-otp' || pathname === '/api/auth/verify-otp' || pathname === '/v1/account/verify-otp')
+  ) {
+    if (!checkRateLimit(req, 'verify_otp', 10, 60000)) {
+      return sendJson(res, 429, {
+        ok: false,
+        error: 'Too many verification attempts. Please wait a minute and try again.'
+      });
+    }
+    const body = await readBody(req);
+    if (body && body.__tooLarge) return sendJson(res, 413, { ok: false, error: 'payload_too_large' });
+    const email = String(body?.email || '').trim().toLowerCase();
+    const code = String(body?.code || body?.otp || body?.key || '').trim();
+    if (!isValidEmail(email) || (!/^\d{6}$/.test(code) && !HIGH_ENTROPY_LICENSE_KEY_RE.test(code))) {
+      return sendJson(res, 400, {
+        ok: false,
+        error: 'Invalid or expired 6-digit login code.'
+      });
+    }
+    if (!checkRateLimit(req, `verify_otp_email:${email}`, 8, 900000)) {
+      return sendJson(res, 429, {
+        ok: false,
+        error: 'Too many verification attempts for this email. Please wait 15 minutes.'
+      });
+    }
+
+    const portalDeviceId = `portal_db_${crypto.createHash('sha256').update(email).digest('hex').slice(0, 12)}`;
+    let localAcc = accountsByEmail.get(email) || null;
+    let crmReachable = false;
+    let verifiedData = null;
+
+    // 1. Verify against central SWEEPR CRM (supports 6-digit email OTP, 6-digit activation_code, or license key)
+    try {
+      const otpVerify = await crm.verifyOtp({
+        email,
+        code,
+        deviceId: portalDeviceId,
+        platform: 'web',
+        deviceLabel: 'SWEEPR Deepblock Portal'
+      });
+      if (otpVerify && otpVerify.status && otpVerify.status < 500) {
+        crmReachable = true;
+        if (otpVerify.ok && otpVerify.data?.ok) {
+          const d = otpVerify.data;
+          const addonsList = Array.isArray(d.addons) ? d.addons : [];
+          const hasRamTamer =
+            Boolean(d.ramTamerAddon) ||
+            addonsList.includes('ram_tamer') ||
+            addonsList.includes('sweepr_secure_bundle');
+          localAcc = upsertLocalAccount({
+            email,
+            plan: d.plan || localAcc?.plan || 'annual',
+            ramTamerAddon: hasRamTamer,
+            status: d.active || d.status === 'active' || d.status === 'trialing' ? 'active' : d.status || 'active'
+          });
+          verifiedData = {
+            ok: true,
+            account_id: d.account_id || localAcc.id,
+            email,
+            status: localAcc.status,
+            plan: localAcc.plan,
+            activation_code: localAcc.activation_code,
+            licenseKey: localAcc.licenseKey,
+            ramTamerAddon: Boolean(localAcc.ramTamerAddon),
+            entitlements: localAcc.entitlements,
+            cancelAtPeriodEnd: Boolean(localAcc.cancelAtPeriodEnd)
+          };
+        }
+      }
+
+      if (!verifiedData) {
+        const crmLookup = await crm.portalLookup(email, code);
+        if (crmLookup && crmLookup.status && crmLookup.status < 500) {
+          crmReachable = true;
+          if (crmLookup.ok && crmLookup.data?.ok) {
+            const d = crmLookup.data;
+            const hasRamTamer = Boolean(d.ramTamerAddon);
+            localAcc = upsertLocalAccount({
+              email,
+              plan: d.plan || localAcc?.plan || 'annual',
+              ramTamerAddon: hasRamTamer,
+              status: d.status || 'active',
+              ...(d.activation_code ? { activationCode: String(d.activation_code) } : {}),
+              ...(d.licenseKey || d.license_key ? { licenseKey: String(d.licenseKey || d.license_key) } : {})
+            });
+            localAcc.cancelAtPeriodEnd = Boolean(d.cancelAtPeriodEnd || d.cancel_at_period_end);
+            verifiedData = {
+              ok: true,
+              account_id: d.account_id || localAcc.id,
+              email,
+              status: localAcc.status,
+              plan: localAcc.plan,
+              activation_code: localAcc.activation_code,
+              licenseKey: localAcc.licenseKey,
+              ramTamerAddon: hasRamTamer,
+              entitlements: buildDeepblockEntitlements(hasRamTamer),
+              cancelAtPeriodEnd: localAcc.cancelAtPeriodEnd,
+              expiresAt: d.expiresAt
+            };
+          }
+        }
+      }
+    } catch {}
+
+    // 2. Fallback to local active account verification when CRM is unreachable or matches local activation key
+    if (
+      !verifiedData &&
+      localAcc &&
+      (localAcc.status === 'active' || localAcc.status === 'trialing') &&
+      verifyLocalAccountKeyOrCode(localAcc, code)
+    ) {
+      verifiedData = {
+        ok: true,
+        account_id: localAcc.id,
+        email: localAcc.email,
+        status: localAcc.status,
+        plan: localAcc.plan,
+        activation_code: localAcc.activation_code,
+        licenseKey: localAcc.licenseKey,
+        ramTamerAddon: Boolean(localAcc.ramTamerAddon),
+        entitlements: localAcc.entitlements,
+        cancelAtPeriodEnd: Boolean(localAcc.cancelAtPeriodEnd)
+      };
+    }
+
+    if (!verifiedData) {
+      return sendJson(res, 401, {
+        ok: false,
+        error: 'Invalid or expired 6-digit login code.'
+      });
+    }
+
+    const sessionToken = signSessionCookie(verifiedData.account_id, email);
+    const isHttps = PUBLIC_URL.startsWith('https://') || req.headers['x-forwarded-proto'] === 'https';
+    return sendJson(
+      res,
+      200,
+      {
+        ...verifiedData,
+        redirect: '/login?verified=1'
+      },
+      {
+        'Set-Cookie': `sweepr_session=${sessionToken}; Path=/; HttpOnly; SameSite=Lax${isHttps ? '; Secure' : ''}; Max-Age=${86400 * 30}`
+      }
+    );
+  }
+
   // API 3b: Customer Portal Subscription Lookup & 1-Click Auto-Renewal Cancellation (Delegated to Central SWEEPR CRM)
   if (req.method === 'POST' && pathname === '/api/portal/lookup') {
     if (!checkRateLimit(req, 'portal_lookup', 20, 60000)) {
