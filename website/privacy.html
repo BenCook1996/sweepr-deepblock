@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy — SWEEPR Deepblock Browser Extension</title>
+  <meta name="description" content="Official Privacy Policy and Chrome Web Store / Edge / Firefox Limited Use Data Disclosure for SWEEPR Deepblock.">
+  <link rel="canonical" href="https://sweeprdeepblock.com/privacy">
+  <link rel="icon" type="image/svg+xml" href="/logo.svg">
+  <script src="https://cdn.tailwindcss.com/3.4.5"></script>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen py-10 px-4 sm:px-6">
+  <main class="max-w-3xl mx-auto bg-white rounded-3xl border border-emerald-200/80 shadow-xl p-6 sm:p-10 space-y-6">
+    <div class="flex items-center justify-between border-b border-slate-100 pb-5">
+      <a href="/" class="inline-flex items-center gap-2 font-black text-slate-900 text-lg no-underline">
+        <span class="w-3.5 h-3.5 rounded-full bg-emerald-500 inline-block"></span>
+        <span>SWEEPR <span class="text-emerald-600">Deepblock</span></span>
+      </a>
+      <span class="text-xs font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">
+        Last Updated: October 2026
+      </span>
+    </div>
+
+    <h1 class="text-2xl sm:text-3xl font-black text-slate-900">Privacy Policy &amp; Browser Extension Data Disclosure</h1>
+    <p class="text-sm text-slate-600 leading-relaxed">
+      <strong>SWEEPR Technologies</strong> ("we", "our", or "us") operates the <strong>SWEEPR Deepblock</strong> browser extension and website (<a href="https://sweeprdeepblock.com" class="text-emerald-700 underline">https://sweeprdeepblock.com</a>). We built SWEEPR Deepblock on a strict local-first privacy architecture: <strong>we never log, collect, transmit, or sell your browsing history, search queries, or web page contents.</strong>
+    </p>
+
+    <section class="space-y-2">
+      <h2 class="text-lg font-extrabold text-slate-900">1. Single Purpose &amp; Local Browser Processing</h2>
+      <p class="text-sm text-slate-600 leading-relaxed">
+        All ad blocking, tracker filtering, automatic GDPR/CCPA cookie consent rejection, search result spam filtering, and fake online shop heuristics execute <strong>100% locally inside your browser</strong> using Manifest V3 <code class="font-mono bg-slate-100 px-1.5 py-0.5 rounded text-xs">declarativeNetRequest</code> rules and local DOM scripts. No URLs you visit are ever sent to our servers.
+      </p>
+    </section>
+
+    <section class="space-y-2">
+      <h2 class="text-lg font-extrabold text-slate-900">2. Browser Extension Permissions Justification</h2>
+      <ul class="list-disc pl-5 text-sm text-slate-600 space-y-1.5 leading-relaxed">
+        <li><strong><code class="font-mono text-xs">declarativeNetRequest</code> &amp; <code class="font-mono text-xs">declarativeNetRequestWithHostAccess</code>:</strong> Used exclusively to block third-party ad networks, tracking pixels, cryptominers, and URL tracking parameters locally inside the browser.</li>
+        <li><strong><code class="font-mono text-xs">storage</code> &amp; <code class="font-mono text-xs">alarms</code>:</strong> Used to store your local feature toggles, paused-site whitelist, local block counters, and periodic subscription status checks in <code class="font-mono text-xs">chrome.storage.local</code>.</li>
+        <li><strong><code class="font-mono text-xs">tabs</code> &amp; <code class="font-mono text-xs">system.memory</code>:</strong> Used strictly by the optional Browser Speed &amp; Tab Hibernation feature (<code class="font-mono text-xs">chrome.tabs.discard</code>) to snooze inactive background tabs and save local crash-recovery tab snapshots.</li>
+        <li><strong><code class="font-mono text-xs">host_permissions (&lt;all_urls&gt;)</code>:</strong> Required so the extension can block ads, auto-reject cookie banners, and display fake-shop safety warnings on the websites you visit.</li>
+      </ul>
+    </section>
+
+    <section class="space-y-2">
+      <h2 class="text-lg font-extrabold text-slate-900">3. Subscription Licensing &amp; Payment Data</h2>
+      <p class="text-sm text-slate-600 leading-relaxed">
+        When you purchase or activate a paid SWEEPR Deepblock Pro subscription:
+      </p>
+      <ul class="list-disc pl-5 text-sm text-slate-600 space-y-1.5 leading-relaxed">
+        <li><strong>Payments:</strong> Processed directly by <strong>Stripe</strong> using PCI-DSS Level 1 encryption. SWEEPR Technologies never sees or stores your full credit/debit card number.</li>
+        <li><strong>License Verification:</strong> When you enter a License Key or 6-digit Activation Code in the extension, the extension sends only your license key and an anonymous random installation identifier (<code class="font-mono text-xs">ext_db_...</code>) to <code class="font-mono text-xs">https://sweeprdeepblock.com/api/license-verify</code> to confirm that your subscription is active.</li>
+      </ul>
+    </section>
+
+    <section class="space-y-2">
+      <h2 class="text-lg font-extrabold text-slate-900">4. Chrome Web Store Limited Use Compliance</h2>
+      <p class="text-sm text-slate-600 leading-relaxed">
+        The use of information received from Google APIs and browser extension APIs adheres strictly to the <strong>Chrome Web Store User Data Policy</strong>, including the <strong>Limited Use</strong> requirements. We do not transfer user data to third parties for advertising, creditworthiness, or data brokering.
+      </p>
+    </section>
+
+    <section class="space-y-2 border-t border-slate-100 pt-5">
+      <h2 class="text-lg font-extrabold text-slate-900">5. Contact &amp; Data Deletion Requests</h2>
+      <p class="text-sm text-slate-600 leading-relaxed">
+        For any privacy inquiries, subscription cancellation, or account deletion requests, contact us at <a href="mailto:support@sweeprdeepblock.com" class="text-emerald-700 font-bold underline">support@sweeprdeepblock.com</a> or manage your subscription anytime in the <a href="/login" class="text-emerald-700 font-bold underline">Customer Portal</a>.
+      </p>
+    </section>
+  </main>
+</body>
+</html>

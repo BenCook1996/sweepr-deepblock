@@ -725,6 +725,7 @@ const CLEAN_ROUTES = {
   '/order': 'order.html',
   '/checkout': 'order.html',
   '/login': 'login.html',
+  '/privacy': 'privacy.html',
   '/download': 'download.html',
   '/download/sweepr-deepblock-extension.zip': 'sweepr-deepblock-extension.zip',
   '/download/SWEEPRDeepblockSetup.exe': 'SWEEPRDeepblockSetup.exe',
