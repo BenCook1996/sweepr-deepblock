@@ -3,6 +3,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const zlib = require('zlib');
 const { SweeprCrmClient } = require('./sweepr-client.js');
 
 const envPath = path.join(__dirname, '.env');
@@ -145,7 +146,8 @@ const STRIPE_PRICE_SIX_MONTH = (process.env.STRIPE_PRICE_SIX_MONTH || 'price_1US
 const STRIPE_PRICE_MONTHLY = (process.env.STRIPE_PRICE_MONTHLY || 'price_1USkjM12f60YC3BgGgzH91v5').trim();
 const STRIPE_COUPON = (process.env.STRIPE_COUPON || 'sweepr_intro_gbp_800').trim();
 
-const BOT_UA_RE = /googlebot|bingbot|gptbot|oai-searchbot|chatgpt-user|claudebot|anthropic-ai|perplexitybot|applebot|duckduckbot|yandexbot/i;
+const BOT_UA_RE =
+  /googlebot|bingbot|gptbot|oai-searchbot|chatgpt-user|claudebot|anthropic-ai|perplexitybot|applebot|duckduckbot|yandexbot|baiduspider|cohere-ai|facebookexternalhit|twitterbot|linkedinbot|meta-externalagent|bytespider|amazonbot|diffbot/i;
 
 // ============================================================================
 // Multi-Currency Geo-Pricing Engine (50% Annual Savings & .99 Charm Pricing)
@@ -764,11 +766,114 @@ function sendHtml(res, statusCode, html, extraHeaders = {}) {
     'X-Content-Type-Options': 'nosniff',
     'X-Frame-Options': 'SAMEORIGIN',
     'Referrer-Policy': 'strict-origin-when-cross-origin',
+    'Link': '<https://fonts.googleapis.com>; rel=preconnect, <https://fonts.gstatic.com>; rel=preconnect; crossorigin, <https://cdn.tailwindcss.com>; rel=preconnect',
     'Content-Security-Policy':
       "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://js.stripe.com https://pay.google.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https://api.stripe.com https://www.google-analytics.com https://api.country.is https://get.geojs.io; frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://pay.google.com; frame-ancestors 'self'; base-uri 'self'; object-src 'none'",
     ...extraHeaders
   });
   res.end(html);
+}
+
+const COMPRESSIBLE_EXTS = new Set([
+  '.html',
+  '.css',
+  '.js',
+  '.json',
+  '.xml',
+  '.txt',
+  '.svg',
+  '.webmanifest'
+]);
+
+function serveStaticOptimized(req, res, fullPath) {
+  fs.stat(fullPath, (err, stats) => {
+    if (err || !stats.isFile()) {
+      res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
+      return res.end('404 Not Found');
+    }
+
+    const ext = path.extname(fullPath).toLowerCase();
+    const isHtml = ext === '.html';
+    const isStaticAsset = ['.svg', '.png', '.webp', '.jpg', '.jpeg', '.ico', '.css', '.js', '.zip'].includes(ext);
+    const isSeoMetaFile = ['.xml', '.txt'].includes(ext);
+
+    // ETag & 304 Not Modified conditional cache verification
+    const etag = `W/"${stats.size.toString(16)}-${Math.floor(stats.mtimeMs).toString(16)}"`;
+    const lastModified = stats.mtime.toUTCString();
+
+    const ifNoneMatch = req.headers['if-none-match'];
+    const ifModifiedSince = req.headers['if-modified-since'];
+
+    if (
+      (ifNoneMatch && ifNoneMatch === etag) ||
+      (ifModifiedSince && new Date(ifModifiedSince) >= stats.mtime)
+    ) {
+      res.writeHead(304, {
+        'ETag': etag,
+        'Last-Modified': lastModified,
+        'Cache-Control': isHtml
+          ? 'public, max-age=300, stale-while-revalidate=86400'
+          : isSeoMetaFile
+          ? 'public, max-age=3600, stale-while-revalidate=86400'
+          : 'public, max-age=86400, stale-while-revalidate=604800'
+      });
+      return res.end();
+    }
+
+    // Cache-Control strategy
+    let cacheControl = 'public, max-age=300, stale-while-revalidate=86400';
+    if (isSeoMetaFile) {
+      cacheControl = 'public, max-age=3600, stale-while-revalidate=86400';
+    } else if (isStaticAsset) {
+      cacheControl = 'public, max-age=86400, stale-while-revalidate=604800';
+    }
+
+    const headers = {
+      'Content-Type': MIME_TYPES[ext] || 'application/octet-stream',
+      'ETag': etag,
+      'Last-Modified': lastModified,
+      'Cache-Control': cacheControl,
+      'X-Content-Type-Options': 'nosniff',
+      'X-Frame-Options': 'SAMEORIGIN',
+      'Referrer-Policy': 'strict-origin-when-cross-origin',
+      'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
+      'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',
+      'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
+      'Content-Security-Policy': "frame-ancestors 'self'; base-uri 'self'; object-src 'none'"
+    };
+
+    if (isHtml) {
+      headers['Link'] =
+        '<https://fonts.googleapis.com>; rel=preconnect, <https://fonts.gstatic.com>; rel=preconnect; crossorigin, <https://cdn.tailwindcss.com>; rel=preconnect';
+    }
+
+    if (ext === '.zip') {
+      headers['Content-Disposition'] = `attachment; filename="${path.basename(fullPath)}"`;
+    }
+
+    if (req.method === 'HEAD') {
+      res.writeHead(200, headers);
+      return res.end();
+    }
+
+    // Native Gzip / Deflate Compression for text & vector assets
+    const acceptEncoding = String(req.headers['accept-encoding'] || '');
+    if (COMPRESSIBLE_EXTS.has(ext)) {
+      headers['Vary'] = 'Accept-Encoding';
+      if (/\bgzip\b/i.test(acceptEncoding)) {
+        headers['Content-Encoding'] = 'gzip';
+        res.writeHead(200, headers);
+        return fs.createReadStream(fullPath).pipe(zlib.createGzip({ level: 6 })).pipe(res);
+      } else if (/\bdeflate\b/i.test(acceptEncoding)) {
+        headers['Content-Encoding'] = 'deflate';
+        res.writeHead(200, headers);
+        return fs.createReadStream(fullPath).pipe(zlib.createDeflate()).pipe(res);
+      }
+    }
+
+    res.writeHead(200, headers);
+    fs.createReadStream(fullPath).pipe(res);
+  });
 }
 
 function readRawBody(req, maxBytes = MAX_BODY_BYTES) {
@@ -1978,40 +2083,31 @@ const server = http.createServer(async (req, res) => {
     return sendJson(res, 200, crmRes.data);
   }
 
-  // 301 Redirect .html Suffixes on Public Pages to Clean Canonical URLs
-  const HTML_CANONICAL_REDIRECTS = {
-    '/index.html': '/',
-    '/pricing.html': '/pricing',
-    '/download.html': '/download',
-    '/test-lab.html': '/test-lab',
-    '/order.html': '/order',
-    '/login.html': '/login',
-    '/vs/total-adblock.html': '/vs/total-adblock'
-  };
-  if ((req.method === 'GET' || req.method === 'HEAD') && HTML_CANONICAL_REDIRECTS[pathname]) {
-    const targetUrl = HTML_CANONICAL_REDIRECTS[pathname] + (parsedUrl.search || '');
-    res.writeHead(301, { Location: targetUrl });
+  // 301 Canonical Redirect 1: Trailing slash normalization (e.g. /pricing/ -> /pricing)
+  if ((req.method === 'GET' || req.method === 'HEAD') && parsedUrl.pathname.length > 1 && parsedUrl.pathname.endsWith('/')) {
+    const cleanPath = parsedUrl.pathname.replace(/\/+$/, '') + (parsedUrl.search || '');
+    res.writeHead(301, { Location: cleanPath });
     return res.end();
   }
-  if ((req.method === 'GET' || req.method === 'HEAD') && /^\/(solutions|setup|vs|guides)\/[a-z0-9-]+$/i.test(pathname)) {
-    const candidateHtml = path.resolve(WEBSITE_DIR, pathname.slice(1) + '.html');
-    if (fs.existsSync(candidateHtml)) {
-      res.writeHead(200, {
-        'Content-Type': 'text/html; charset=utf-8',
-        'X-Content-Type-Options': 'nosniff',
-        'X-Frame-Options': 'SAMEORIGIN',
-        'Referrer-Policy': 'strict-origin-when-cross-origin',
-        'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
-        'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',
-        'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
-        'Content-Security-Policy': "frame-ancestors 'self'; base-uri 'self'; object-src 'none'",
-        'Cache-Control': 'public, max-age=300'
-      });
-      return fs.createReadStream(candidateHtml).pipe(res);
-    }
+
+  // 301 Canonical Redirect 2: .html extension stripping to canonical clean URLs
+  if ((req.method === 'GET' || req.method === 'HEAD') && parsedUrl.pathname.endsWith('.html')) {
+    const cleanPath = (parsedUrl.pathname === '/index.html' ? '/' : parsedUrl.pathname.slice(0, -5)) + (parsedUrl.search || '');
+    res.writeHead(301, { Location: cleanPath });
+    return res.end();
   }
 
-  // Static Website Serving with Internal File Blocklist
+  // Resolve target file for static assets and programmatic SEO landing pages
+  let candidateRel = CLEAN_ROUTES[pathname];
+  if (!candidateRel && /^\/(solutions|setup|vs|guides)\/[a-z0-9-]+$/i.test(pathname)) {
+    candidateRel = pathname.slice(1) + '.html';
+  }
+  const mappedRelative = candidateRel || pathname.slice(1);
+  const safePath = path.normalize(mappedRelative).replace(/^(\.\.(\/|\\|$))+/, '');
+  const fullPath = path.resolve(WEBSITE_DIR, safePath);
+  const resolvedRoot = path.resolve(WEBSITE_DIR);
+
+  // Security checks: directory traversal and blocked internal files
   const BLOCKED_STATIC_FILES = new Set([
     'server.js',
     'sweepr-client.js',
@@ -2020,10 +2116,6 @@ const server = http.createServer(async (req, res) => {
     'daily-seo-pages-state.json',
     'outreach-seed-deepblock.json'
   ]);
-  const mappedRelative = CLEAN_ROUTES[pathname] || pathname.slice(1);
-  const safePath = path.normalize(mappedRelative).replace(/^(\.\.(\/|\\|$))+/, '');
-  const fullPath = path.resolve(WEBSITE_DIR, safePath);
-  const resolvedRoot = path.resolve(WEBSITE_DIR);
   if (
     (fullPath !== resolvedRoot && !fullPath.startsWith(resolvedRoot + path.sep)) ||
     BLOCKED_STATIC_FILES.has(path.basename(fullPath).toLowerCase())
@@ -2032,30 +2124,7 @@ const server = http.createServer(async (req, res) => {
     return res.end('403 Forbidden');
   }
 
-  fs.stat(fullPath, (err, stats) => {
-    if (err || !stats.isFile()) {
-      res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
-      return res.end('404 Not Found');
-    }
-    const ext = path.extname(fullPath).toLowerCase();
-    const isStaticAsset = ['.svg', '.png', '.webp', '.jpg', '.jpeg', '.ico', '.css', '.js', '.zip'].includes(ext);
-    const headers = {
-      'Content-Type': MIME_TYPES[ext] || 'application/octet-stream',
-      'X-Content-Type-Options': 'nosniff',
-      'X-Frame-Options': 'SAMEORIGIN',
-      'Referrer-Policy': 'strict-origin-when-cross-origin',
-      'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
-      'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',
-      'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
-      'Content-Security-Policy': "frame-ancestors 'self'; base-uri 'self'; object-src 'none'",
-      'Cache-Control': isStaticAsset ? 'public, max-age=86400' : 'public, max-age=300'
-    };
-    if (ext === '.zip') {
-      headers['Content-Disposition'] = `attachment; filename="${path.basename(fullPath)}"`;
-    }
-    res.writeHead(200, headers);
-    fs.createReadStream(fullPath).pipe(res);
-  });
+  return serveStaticOptimized(req, res, fullPath);
 });
 
 if (require.main === module) {
