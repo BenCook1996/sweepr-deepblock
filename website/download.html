@@ -86,22 +86,29 @@
   <div class="glass-card p-5 sm:p-8 max-w-lg w-full text-center border border-emerald-200/80 shadow-2xl">
     <div class="logo-box mx-auto mb-4" aria-hidden="true"></div>
     <h1 class="text-xl sm:text-2xl font-black text-gray-900 mb-2">Install SWEEPR Deepblock</h1>
-    <p id="downloadSubtitle" class="text-xs sm:text-sm text-gray-600 mb-5">
-      Choose your browser below to download &amp; install the extension. <span class="font-semibold text-gray-800">All protection features require an active paid Pro subscription to unlock inside the extension.</span>
+    <p id="downloadSubtitle" class="text-xs sm:text-sm text-gray-600 mb-5 leading-relaxed">
+      Click <strong>Add to Browser</strong> below — we automatically detect your current browser and install the extension for it. <span class="font-semibold text-gray-800">All protection features require an active paid Pro subscription to unlock.</span>
     </p>
 
-    <div id="installStartedBanner" class="hidden mb-5 bg-emerald-50 border border-emerald-300 text-emerald-900 rounded-2xl p-4 text-left text-xs space-y-2 shadow-xs">
+    <!-- Consolidated Single Add to Browser CTA -->
+    <div class="space-y-2.5">
+      <a id="addToBrowserBtn" href="/download/sweepr-deepblock-extension.zip" download="sweepr-deepblock-extension.zip" onclick="handleAutoBrowserInstall()" class="btn btn-go btn-big pulse-glow w-full justify-center py-3.5 font-extrabold text-sm sm:text-base gap-2">
+        <span>Add to Browser</span>
+        <svg class="arrow-icon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+      </a>
+      <div id="detectedBrowserBadge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-[11px] font-bold text-emerald-800">
+        <span id="detectedBrowserIcon">🌐</span>
+        <span id="detectedBrowserText">Auto-detected for your browser</span>
+      </div>
+    </div>
+
+    <div id="installStartedBanner" class="hidden mt-4 bg-emerald-50 border border-emerald-300 text-emerald-900 rounded-2xl p-4 text-left text-xs space-y-2 shadow-xs">
       <div class="flex items-center justify-between">
-        <span class="font-extrabold text-emerald-800 text-sm">✓ Extension Package Downloading...</span>
+        <span id="downloadBannerTitle" class="font-extrabold text-emerald-800 text-sm">✓ Downloading for Your Browser...</span>
         <a href="/download/sweepr-deepblock-extension.zip" download="sweepr-deepblock-extension.zip" class="underline font-bold text-emerald-700">Download again</a>
       </div>
-      <div class="text-gray-700 leading-relaxed">
-        <strong>1.</strong> Unzip <code class="font-mono bg-white px-1.5 py-0.5 rounded border border-emerald-200">sweepr-deepblock-extension.zip</code> on your computer.<br>
-        <strong>2.</strong> Open <code id="extUrlCode" class="font-mono bg-white px-1.5 py-0.5 rounded border border-emerald-200">chrome://extensions</code> in your browser, turn on <strong>Developer mode</strong> (top right), and click <strong>Load unpacked</strong> to select the unzipped folder.<br>
-        <strong>3.</strong> Click the SWEEPR Deepblock shield icon and enter your <strong>paid Pro License Key</strong> to unlock all features.
-      </div>
       <div class="pt-1 flex flex-wrap gap-2">
-        <button type="button" onclick="copyExtensionsUrl(this)" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs cursor-pointer">
+        <button type="button" id="copyExtUrlBtn" onclick="copyExtensionsUrl(this)" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs cursor-pointer">
           📋 Copy chrome://extensions URL
         </button>
         <a href="/order?plan=annual" class="px-3 py-1.5 rounded-lg bg-white border border-emerald-300 text-emerald-800 font-bold text-xs no-underline hover:bg-emerald-100">
@@ -110,18 +117,17 @@
       </div>
     </div>
 
-    <div id="browserButtonsList" class="space-y-3">
-      <a id="btnChrome" href="/download/sweepr-deepblock-extension.zip" download="sweepr-deepblock-extension.zip" onclick="handleBrowserInstallClick('chrome')" class="btn btn-go w-full justify-center py-3 font-bold text-xs sm:text-sm">🌐 Add to Google Chrome / Brave</a>
-      <a id="btnEdge" href="/download/sweepr-deepblock-extension.zip" download="sweepr-deepblock-extension.zip" onclick="handleBrowserInstallClick('edge')" class="btn w-full justify-center py-3 font-bold bg-white border border-gray-300 text-xs sm:text-sm">🌊 Add to Microsoft Edge</a>
-      <a id="btnFirefox" href="/download/sweepr-deepblock-extension.zip" download="sweepr-deepblock-extension.zip" onclick="handleBrowserInstallClick('firefox')" class="btn w-full justify-center py-3 font-bold bg-white border border-gray-300 text-xs sm:text-sm">🦊 Add to Mozilla Firefox</a>
-      <a id="btnSafari" href="/download/sweepr-deepblock-extension.zip" download="sweepr-deepblock-extension.zip" onclick="handleBrowserInstallClick('safari')" class="btn w-full justify-center py-3 font-bold bg-white border border-gray-300 text-xs sm:text-sm">🧭 Add to Apple Safari (Mac, iPhone &amp; iPad)</a>
-    </div>
-
-    <div class="mt-6 pt-5 border-t border-gray-200 text-left space-y-2 text-xs text-gray-600">
+    <div class="mt-6 pt-5 border-t border-gray-200 text-left space-y-2.5 text-xs text-gray-600 leading-relaxed">
       <div class="font-bold text-gray-900 text-center mb-2">How It Works in 3 Easy Steps:</div>
-      <div id="step1Text"><strong>1. Click your browser above</strong> to download &amp; install the SWEEPR Deepblock extension.</div>
-      <div id="step2Text"><strong>2. Pin the green shield icon 📌</strong> in the top-right corner of your browser.</div>
-      <div id="step3Text"><strong>3. Activate with your Pro key 🔑</strong> — enter your paid subscription license key inside the extension to unlock all features!</div>
+      <div id="step1Text">
+        <strong>1. Click "Add to Browser" above</strong> to download <code class="font-mono bg-gray-100 px-1 py-0.5 rounded text-gray-800">sweepr-deepblock-extension.zip</code>, unzip it, and load it in <code id="extUrlCode" class="font-mono bg-emerald-50 text-emerald-800 px-1.5 py-0.5 rounded border border-emerald-200">chrome://extensions</code> (turn on <strong>Developer mode</strong> &rarr; <strong>Load unpacked</strong>).
+      </div>
+      <div id="step2Text">
+        <strong>2. Pin the green shield icon 📌</strong> in the top-right toolbar of your browser so SWEEPR Deepblock is always 1 click away.
+      </div>
+      <div id="step3Text">
+        <strong>3. Unlock with your paid Pro key 🔑</strong> — click the shield icon, open <strong>🔑 Activate Key</strong>, and enter your paid subscription license key to unlock ad blocking, cookie pop-up closing, and scam shop alerts.
+      </div>
     </div>
 
     <div class="mt-5 pt-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs">
@@ -130,45 +136,101 @@
     </div>
   </div>
   <script>
-    function handleBrowserInstallClick(browser) {
-      var banner = document.getElementById('installStartedBanner');
-      var codeEl = document.getElementById('extUrlCode');
-      if (banner) banner.classList.remove('hidden');
-      if (codeEl) {
-        if (browser === 'edge') codeEl.textContent = 'edge://extensions';
-        else if (browser === 'firefox') codeEl.textContent = 'about:debugging#/runtime/this-firefox';
-        else codeEl.textContent = 'chrome://extensions';
+    var currentDetectedBrowser = {
+      id: 'chrome',
+      name: 'Google Chrome',
+      icon: '🌐',
+      extUrl: 'chrome://extensions'
+    };
+
+    function detectCurrentBrowser() {
+      var ua = navigator.userAgent || '';
+      var isIOS = /iPhone|iPad|iPod/i.test(ua);
+      var isAndroid = /Android/i.test(ua);
+
+      if (isIOS) {
+        return { id: 'safari-ios', name: 'Apple Safari (iPhone / iPad)', icon: '🧭', extUrl: 'Settings > Apps > Safari > Extensions' };
+      }
+      if (/Edg\//i.test(ua)) {
+        return { id: 'edge', name: 'Microsoft Edge', icon: '🌊', extUrl: 'edge://extensions' };
+      }
+      if (/OPR\/|Opera/i.test(ua)) {
+        return { id: 'opera', name: 'Opera', icon: '🔴', extUrl: 'opera://extensions' };
+      }
+      if (/Firefox\//i.test(ua)) {
+        return { id: 'firefox', name: 'Mozilla Firefox', icon: '🦊', extUrl: 'about:debugging#/runtime/this-firefox' };
+      }
+      if (/Safari\//i.test(ua) && !/Chrome|Chromium|Edg|OPR/i.test(ua)) {
+        return { id: 'safari', name: 'Apple Safari', icon: '🧭', extUrl: 'Safari > Settings > Extensions' };
+      }
+      if (isAndroid) {
+        return { id: 'android', name: 'Android Browser', icon: '📱', extUrl: 'chrome://extensions' };
+      }
+      return { id: 'chrome', name: 'Google Chrome', icon: '🌐', extUrl: 'chrome://extensions' };
+    }
+
+    function applyBrowserInstructions(info) {
+      currentDetectedBrowser = info;
+      var iconEl = document.getElementById('detectedBrowserIcon');
+      var textEl = document.getElementById('detectedBrowserText');
+      var step1El = document.getElementById('step1Text');
+      var step2El = document.getElementById('step2Text');
+      var copyBtn = document.getElementById('copyExtUrlBtn');
+
+      if (iconEl) iconEl.textContent = info.icon;
+      if (textEl) textEl.textContent = 'Detected browser: ' + info.name;
+      if (copyBtn) copyBtn.textContent = '📋 Copy ' + info.extUrl + ' URL';
+
+      if (info.id === 'firefox') {
+        if (step1El) {
+          step1El.innerHTML = '<strong>1. Click "Add to Browser" above</strong> to download <code class="font-mono bg-gray-100 px-1 py-0.5 rounded text-gray-800">sweepr-deepblock-extension.zip</code>, open <code id="extUrlCode" class="font-mono bg-emerald-50 text-emerald-800 px-1.5 py-0.5 rounded border border-emerald-200">' + info.extUrl + '</code> in Firefox, and click <strong>Load Temporary Add-on</strong> to select the downloaded package.';
+        }
+      } else if (info.id === 'safari' || info.id === 'safari-ios') {
+        if (step1El) {
+          step1El.innerHTML = '<strong>1. Click "Add to Browser" above</strong> to download the SWEEPR Deepblock extension package for <strong>' + info.name + '</strong>.';
+        }
+        if (step2El) {
+          step2El.innerHTML = '<strong>2. Enable in Safari Settings ⚙️</strong> — open <code id="extUrlCode" class="font-mono bg-emerald-50 text-emerald-800 px-1.5 py-0.5 rounded border border-emerald-200">' + info.extUrl + '</code> and turn on <strong>SWEEPR Deepblock</strong>.';
+        }
+      } else {
+        if (step1El) {
+          step1El.innerHTML = '<strong>1. Click "Add to Browser" above</strong> to download <code class="font-mono bg-gray-100 px-1 py-0.5 rounded text-gray-800">sweepr-deepblock-extension.zip</code> for <strong>' + info.name + '</strong>, unzip it, open <code id="extUrlCode" class="font-mono bg-emerald-50 text-emerald-800 px-1.5 py-0.5 rounded border border-emerald-200">' + info.extUrl + '</code>, turn on <strong>Developer mode</strong>, and click <strong>Load unpacked</strong>.';
+        }
       }
     }
+
+    function handleAutoBrowserInstall() {
+      var banner = document.getElementById('installStartedBanner');
+      var titleEl = document.getElementById('downloadBannerTitle');
+      if (banner) banner.classList.remove('hidden');
+      if (titleEl) {
+        titleEl.textContent = '✓ Downloading SWEEPR Deepblock for ' + currentDetectedBrowser.name + '...';
+      }
+    }
+
     function copyExtensionsUrl(btn) {
-      var codeEl = document.getElementById('extUrlCode');
-      var text = codeEl ? codeEl.textContent : 'chrome://extensions';
+      var text = currentDetectedBrowser.extUrl || 'chrome://extensions';
       if (navigator.clipboard) {
         navigator.clipboard.writeText(text);
         btn.textContent = '✓ Copied ' + text + '!';
       }
     }
+
     (function() {
-      var ua = navigator.userAgent || '';
-      var isIOS = /iPhone|iPad|iPod/i.test(ua);
-      var isAndroid = /Android/i.test(ua);
-      var list = document.getElementById('browserButtonsList');
-      var btnChrome = document.getElementById('btnChrome');
-      var btnSafari = document.getElementById('btnSafari');
-      var step2 = document.getElementById('step2Text');
-      if (isIOS && list && btnSafari && btnChrome) {
-        btnChrome.className = 'btn w-full justify-center py-3 font-bold bg-white border border-gray-300 text-xs sm:text-sm';
-        btnSafari.className = 'btn btn-go w-full justify-center py-3 font-bold text-xs sm:text-sm';
-        list.insertBefore(btnSafari, list.firstChild);
-        if (step2) {
-          step2.innerHTML = '<strong>2. Enable in Safari Settings ⚙️</strong> (Settings &rarr; Apps &rarr; Safari &rarr; Extensions &rarr; SWEEPR Deepblock).';
-        }
-      } else if (isAndroid && step2) {
-        step2.innerHTML = '<strong>2. Enable mobile protection 🛡️</strong> in your browser menu or SWEEPR mobile app.';
+      var detected = detectCurrentBrowser();
+      applyBrowserInstructions(detected);
+
+      if (navigator.brave && typeof navigator.brave.isBrave === 'function') {
+        navigator.brave.isBrave().then(function(isBrave) {
+          if (isBrave) {
+            applyBrowserInstructions({ id: 'brave', name: 'Brave Browser', icon: '🦁', extUrl: 'brave://extensions' });
+          }
+        }).catch(function() {});
       }
+
       var params = new URLSearchParams(window.location.search);
       if (params.get('install') === '1') {
-        handleBrowserInstallClick(/Edg\//i.test(ua) ? 'edge' : /Firefox\//i.test(ua) ? 'firefox' : 'chrome');
+        handleAutoBrowserInstall();
         setTimeout(function() {
           var a = document.createElement('a');
           a.href = '/download/sweepr-deepblock-extension.zip';
