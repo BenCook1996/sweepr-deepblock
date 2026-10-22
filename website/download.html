@@ -90,53 +90,63 @@
       Click <strong>Add to Browser</strong> below — we automatically detect your current browser and install the extension for it. <span class="font-semibold text-gray-800">All protection features require an active paid Pro subscription to unlock.</span>
     </p>
 
-    <div id="installedSuccessBanner" class="hidden mb-4 bg-emerald-600 text-white rounded-2xl p-4 text-left text-xs space-y-1.5 shadow-lg">
-      <div class="font-extrabold text-sm">✓ SWEEPR Deepblock Is Installed in Your Browser!</div>
-      <p class="text-emerald-50 leading-relaxed">
-        Click the <strong>puzzle piece 🧩</strong> in your browser's top-right corner to pin the green shield icon, then enter your <strong>6-digit activation code</strong> or <strong>Pro license key</strong> to unlock all protection features.
-      </p>
-    </div>
-
     <!-- Consolidated Single Add to Browser CTA -->
     <div class="space-y-2.5">
       <a id="addToBrowserBtn" href="/download/SWEEPRDeepblockSetup.exe" download="SWEEPRDeepblockSetup.exe" onclick="handleAutoBrowserInstall()" class="btn btn-go btn-big pulse-glow w-full justify-center py-3.5 font-extrabold text-sm sm:text-base gap-2">
         <span id="addToBrowserBtnLabel">Add to Browser</span>
         <svg class="arrow-icon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
       </a>
-      <div id="detectedBrowserBadge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-[11px] font-bold text-emerald-800">
-        <span id="detectedBrowserIcon">🌐</span>
-        <span id="detectedBrowserText">Auto-detected for your browser</span>
+      <div class="flex flex-wrap items-center justify-center gap-2">
+        <div id="detectedBrowserBadge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-[11px] font-bold text-emerald-800">
+          <span id="detectedBrowserIcon">🌐</span>
+          <span id="detectedBrowserText">1-Click Auto-Installer for your browser</span>
+        </div>
+        <a href="/download/sweepr-deepblock-extension.zip" download="sweepr-deepblock-extension.zip" class="text-[11px] font-semibold text-gray-500 hover:text-emerald-700 underline">
+          Manual ZIP package
+        </a>
       </div>
     </div>
 
     <div id="installStartedBanner" class="hidden mt-4 bg-emerald-50 border border-emerald-300 text-emerald-900 rounded-2xl p-4 text-left text-xs space-y-2 shadow-xs">
       <div class="flex items-center justify-between">
-        <span id="downloadBannerTitle" class="font-extrabold text-emerald-800 text-sm">✓ Starting 1-Click Setup for Your Browser...</span>
+        <span id="downloadBannerTitle" class="font-extrabold text-emerald-800 text-sm">✓ 1-Click Installer Downloading...</span>
         <a id="downloadAgainLink" href="/download/SWEEPRDeepblockSetup.exe" download="SWEEPRDeepblockSetup.exe" class="underline font-bold text-emerald-700">Download again</a>
       </div>
-      <p id="downloadBannerHint" class="text-[11px] text-emerald-800 leading-relaxed">
-        Open <strong>SWEEPRDeepblockSetup.exe</strong> at the bottom/top of your browser downloads — it automatically installs SWEEPR Deepblock into your browser in 1 click (no unzipping or manual folder uploading).
+      <p id="downloadBannerDesc" class="text-emerald-900/90 leading-relaxed">
+        Click <strong>SWEEPRDeepblockSetup.exe</strong> in your browser's downloads bar — it automatically installs and activates SWEEPR Deepblock in 1 click (restoring all your open tabs, with zero manual unzipping or uploading!).
       </p>
       <div class="pt-1 flex flex-wrap gap-2">
-        <a href="/order?plan=annual" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs no-underline">
-          ⭐ Need a Pro Subscription? Subscribe Here &rarr;
+        <a href="/login" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs no-underline">
+          🔑 Open Customer Portal (Get 6-Digit Code)
         </a>
-        <a href="/download/sweepr-deepblock-extension.zip" download="sweepr-deepblock-extension.zip" class="px-3 py-1.5 rounded-lg bg-white border border-emerald-300 text-emerald-800 font-bold text-xs no-underline hover:bg-emerald-100">
-          📦 Manual .zip (Optional)
+        <a href="/order?plan=annual" class="px-3 py-1.5 rounded-lg bg-white border border-emerald-300 text-emerald-800 font-bold text-xs no-underline hover:bg-emerald-100">
+          ⭐ Need a Pro Subscription? Subscribe Here &rarr;
         </a>
       </div>
     </div>
 
+    <!-- Android 1-Tap Private DNS Helper (Shown automatically on Android devices) -->
+    <div id="androidDnsCard" class="hidden mt-4 bg-slate-900 text-white rounded-2xl p-4 text-left text-xs space-y-2.5">
+      <div class="font-extrabold text-emerald-400 text-sm">📱 1-Tap Android System-Wide Ad &amp; Tracker Shield</div>
+      <p class="text-slate-300 leading-relaxed">
+        On Android, go to <strong>Settings &rarr; Network &amp; Internet &rarr; Private DNS</strong>, select <strong>Private DNS provider hostname</strong>, and paste:
+      </p>
+      <div class="flex items-center gap-2">
+        <code class="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 font-mono text-emerald-300 text-xs">dns.adguard-dns.com</code>
+        <button type="button" onclick="navigator.clipboard.writeText('dns.adguard-dns.com');this.textContent='✓ Copied!'" class="px-3 py-2 rounded-lg bg-emerald-600 font-bold text-white text-xs cursor-pointer">Copy DNS</button>
+      </div>
+    </div>
+
     <div class="mt-6 pt-5 border-t border-gray-200 text-left space-y-2.5 text-xs text-gray-600 leading-relaxed">
-      <div class="font-bold text-gray-900 text-center mb-2">How 1-Click Automatic Setup Works:</div>
+      <div class="font-bold text-gray-900 text-center mb-2">How 1-Click Auto-Setup Works:</div>
       <div id="step1Text">
-        <strong>1. Click "Add to Browser" above</strong> to run <code class="font-mono bg-emerald-50 text-emerald-800 px-1.5 py-0.5 rounded border border-emerald-200">SWEEPRDeepblockSetup.exe</code> — it automatically installs and launches SWEEPR Deepblock in your browser with <strong>zero manual unzipping or folder uploading</strong>.
+        <strong>1. Click "Add to Browser" above</strong> and open <code id="installerFileCode" class="font-mono bg-emerald-50 text-emerald-800 px-1.5 py-0.5 rounded border border-emerald-200">SWEEPRDeepblockSetup.exe</code> — it automatically unpacks and activates the extension in your browser with <strong>zero manual unzipping or folder uploading</strong>.
       </div>
       <div id="step2Text">
         <strong>2. Pin the green shield icon 📌</strong> in the top-right toolbar of your browser so SWEEPR Deepblock is always 1 click away.
       </div>
       <div id="step3Text">
-        <strong>3. Unlock with your paid Pro key 🔑</strong> — enter your 6-digit activation code or license key right inside the 1-Click Installer (or inside the extension) to unlock ad blocking, cookie pop-up closing, and scam shop alerts automatically.
+        <strong>3. Unlock with your 6-digit code or license key 🔑</strong> — enter your paid subscription code on the welcome screen (or inside the extension popup) to unlock YouTube ad blocking, cookie pop-up closing, and scam shop alerts.
       </div>
     </div>
 
@@ -146,13 +156,21 @@
     </div>
   </div>
   <script>
+    // Official Store URLs (automatically used once each store listing is live; falls back to 1-Click Auto-Installer)
+    var OFFICIAL_STORE_URLS = {
+      chrome: '',
+      edge: '',
+      firefox: '',
+      safari: ''
+    };
+
     var currentDetectedBrowser = {
       id: 'chrome',
       os: 'windows',
-      name: 'Google Chrome (Windows)',
+      name: 'Google Chrome',
       icon: '🌐',
-      downloadUrl: '/download/SWEEPRDeepblockSetup.exe',
-      downloadFilename: 'SWEEPRDeepblockSetup.exe',
+      downloadHref: '/download/SWEEPRDeepblockSetup.exe',
+      downloadName: 'SWEEPRDeepblockSetup.exe',
       extUrl: 'chrome://extensions'
     };
 
@@ -161,17 +179,17 @@
       var isIOS = /iPhone|iPad|iPod/i.test(ua);
       var isAndroid = /Android/i.test(ua);
       var isMac = /Macintosh|Mac OS X/i.test(ua) && !isIOS;
-      var isWin = /Windows/i.test(ua);
-      var osType = isIOS ? 'ios' : isAndroid ? 'android' : isMac ? 'mac' : isWin ? 'windows' : 'linux';
+      var isWindows = /Windows/i.test(ua);
+      var os = isIOS ? 'ios' : isAndroid ? 'android' : isMac ? 'mac' : isWindows ? 'windows' : 'other';
 
       if (isIOS) {
         return {
           id: 'safari-ios',
           os: 'ios',
-          name: 'iPhone / iPad (1-Tap Apple Profile)',
-          icon: '📱',
-          downloadUrl: '/download/sweepr-deepblock.mobileconfig',
-          downloadFilename: '',
+          name: 'iPhone / iPad (iOS Safari)',
+          icon: '🧭',
+          downloadHref: '/download/sweepr-deepblock.mobileconfig',
+          downloadName: '',
           extUrl: 'Settings > General > VPN & Device Management'
         };
       }
@@ -182,29 +200,29 @@
             os: 'android',
             name: 'Firefox for Android',
             icon: '🦊',
-            downloadUrl: '/download/sweepr-deepblock.xpi',
-            downloadFilename: '',
-            extUrl: 'Firefox Add-ons'
+            downloadHref: OFFICIAL_STORE_URLS.firefox || '/download/sweepr-deepblock-firefox.xpi',
+            downloadName: '',
+            extUrl: 'Add-ons Menu'
           };
         }
         return {
           id: 'android',
           os: 'android',
-          name: 'Android (1-Tap Shield Profile)',
+          name: 'Android Device',
           icon: '📱',
-          downloadUrl: '/download/sweepr-deepblock.mobileconfig',
-          downloadFilename: '',
+          downloadHref: '#androidDnsCard',
+          downloadName: '',
           extUrl: 'Settings > Network & Internet > Private DNS'
         };
       }
       if (/Firefox\//i.test(ua)) {
         return {
           id: 'firefox',
-          os: osType,
+          os: os,
           name: 'Mozilla Firefox',
           icon: '🦊',
-          downloadUrl: isWin ? '/download/SWEEPRDeepblockSetup.exe' : '/download/sweepr-deepblock.xpi',
-          downloadFilename: isWin ? 'SWEEPRDeepblockSetup.exe' : '',
+          downloadHref: OFFICIAL_STORE_URLS.firefox || '/download/sweepr-deepblock-firefox.xpi',
+          downloadName: 'sweepr-deepblock-firefox.xpi',
           extUrl: 'about:addons'
         };
       }
@@ -214,58 +232,53 @@
           os: 'mac',
           name: 'Apple Safari (macOS)',
           icon: '🧭',
-          downloadUrl: '/download/sweepr-deepblock.mobileconfig',
-          downloadFilename: '',
+          downloadHref: OFFICIAL_STORE_URLS.safari || '/download/sweepr-deepblock.mobileconfig',
+          downloadName: '',
           extUrl: 'System Settings > Privacy & Security > Profiles'
         };
       }
 
-      var browserLabel = 'Google Chrome';
-      var browserId = 'chrome';
-      var browserIcon = '🌐';
-      var extUrl = 'chrome://extensions';
-      if (/Edg\//i.test(ua)) {
-        browserLabel = 'Microsoft Edge';
-        browserId = 'edge';
-        browserIcon = '🌊';
-        extUrl = 'edge://extensions';
-      } else if (/OPR\/|Opera/i.test(ua)) {
-        browserLabel = 'Opera';
-        browserId = 'opera';
-        browserIcon = '🔴';
-        extUrl = 'opera://extensions';
-      }
+      var desktopInstallerHref = isMac
+        ? '/download/SWEEPR-Deepblock-Installer.command'
+        : isWindows
+        ? '/download/SWEEPRDeepblockSetup.exe'
+        : '/download/sweepr-deepblock-extension.zip';
+      var desktopInstallerName = isMac
+        ? 'SWEEPR-Deepblock-Installer.command'
+        : isWindows
+        ? 'SWEEPRDeepblockSetup.exe'
+        : 'sweepr-deepblock-extension.zip';
 
-      if (isMac) {
+      if (/Edg\//i.test(ua)) {
         return {
-          id: browserId,
-          os: 'mac',
-          name: browserLabel + ' (macOS 1-Click Installer)',
-          icon: browserIcon,
-          downloadUrl: '/download/SWEEPRDeepblockSetup.command',
-          downloadFilename: 'SWEEPRDeepblockSetup.command',
-          extUrl: extUrl
+          id: 'edge',
+          os: os,
+          name: 'Microsoft Edge',
+          icon: '🌊',
+          downloadHref: OFFICIAL_STORE_URLS.edge || desktopInstallerHref,
+          downloadName: OFFICIAL_STORE_URLS.edge ? '' : desktopInstallerName,
+          extUrl: 'edge://extensions'
         };
       }
-      if (isWin) {
+      if (/OPR\/|Opera/i.test(ua)) {
         return {
-          id: browserId,
-          os: 'windows',
-          name: browserLabel + ' (1-Click Auto-Installer)',
-          icon: browserIcon,
-          downloadUrl: '/download/SWEEPRDeepblockSetup.exe',
-          downloadFilename: 'SWEEPRDeepblockSetup.exe',
-          extUrl: extUrl
+          id: 'opera',
+          os: os,
+          name: 'Opera',
+          icon: '🔴',
+          downloadHref: OFFICIAL_STORE_URLS.chrome || desktopInstallerHref,
+          downloadName: OFFICIAL_STORE_URLS.chrome ? '' : desktopInstallerName,
+          extUrl: 'opera://extensions'
         };
       }
       return {
-        id: browserId,
-        os: 'linux',
-        name: browserLabel,
-        icon: browserIcon,
-        downloadUrl: '/download/sweepr-deepblock-extension.zip',
-        downloadFilename: 'sweepr-deepblock-extension.zip',
-        extUrl: extUrl
+        id: 'chrome',
+        os: os,
+        name: 'Google Chrome',
+        icon: '🌐',
+        downloadHref: OFFICIAL_STORE_URLS.chrome || desktopInstallerHref,
+        downloadName: OFFICIAL_STORE_URLS.chrome ? '' : desktopInstallerName,
+        extUrl: 'chrome://extensions'
       };
     }
 
@@ -273,27 +286,27 @@
       currentDetectedBrowser = info;
       var iconEl = document.getElementById('detectedBrowserIcon');
       var textEl = document.getElementById('detectedBrowserText');
-      var step1El = document.getElementById('step1Text');
-      var step2El = document.getElementById('step2Text');
       var btnEl = document.getElementById('addToBrowserBtn');
       var againEl = document.getElementById('downloadAgainLink');
-      var hintEl = document.getElementById('downloadBannerHint');
+      var step1El = document.getElementById('step1Text');
+      var step2El = document.getElementById('step2Text');
+      var androidCard = document.getElementById('androidDnsCard');
 
       if (iconEl) iconEl.textContent = info.icon;
-      if (textEl) textEl.textContent = 'Auto-detected: ' + info.name;
+      if (textEl) textEl.textContent = '1-Click Auto-Setup for ' + info.name;
 
-      if (btnEl) {
-        btnEl.href = info.downloadUrl;
-        if (info.downloadFilename) {
-          btnEl.setAttribute('download', info.downloadFilename);
+      if (btnEl && info.downloadHref) {
+        btnEl.href = info.downloadHref;
+        if (info.downloadName) {
+          btnEl.setAttribute('download', info.downloadName);
         } else {
           btnEl.removeAttribute('download');
         }
       }
-      if (againEl) {
-        againEl.href = info.downloadUrl;
-        if (info.downloadFilename) {
-          againEl.setAttribute('download', info.downloadFilename);
+      if (againEl && info.downloadHref) {
+        againEl.href = info.downloadHref;
+        if (info.downloadName) {
+          againEl.setAttribute('download', info.downloadName);
         } else {
           againEl.removeAttribute('download');
         }
@@ -301,47 +314,49 @@
 
       if (info.os === 'ios' || info.id === 'safari') {
         if (step1El) {
-          step1El.innerHTML = '<strong>1. Tap "Add to Browser" above</strong> and tap <strong>Allow</strong> when Apple asks to download the SWEEPR Deepblock protection profile.';
+          step1El.innerHTML = '<strong>1. Tap "Add to Browser" above</strong> and tap <strong>Allow</strong> when Apple asks to download the SWEEPR Deepblock Protection Profile.';
         }
         if (step2El) {
-          step2El.innerHTML = '<strong>2. Tap "Install" in Settings ⚙️</strong> — open <code class="font-mono bg-emerald-50 text-emerald-800 px-1.5 py-0.5 rounded border border-emerald-200">' + info.extUrl + '</code> and tap <strong>Install</strong> to activate system-wide ad &amp; tracker blocking.';
-        }
-        if (hintEl) {
-          hintEl.innerHTML = 'Tap <strong>Allow</strong> on the prompt, then open <strong>' + info.extUrl + '</strong> to complete 1-tap activation.';
+          step2El.innerHTML = '<strong>2. Tap "Install" in Settings ⚙️</strong> — open <code class="font-mono bg-emerald-50 text-emerald-800 px-1.5 py-0.5 rounded border border-emerald-200">' + info.extUrl + '</code> and tap <strong>Install</strong> to activate Encrypted Ad &amp; Tracker Blocking.';
         }
       } else if (info.os === 'android') {
+        if (androidCard) androidCard.classList.remove('hidden');
         if (step1El) {
-          step1El.innerHTML = '<strong>1. Tap "Add to Browser" above</strong> — on Android, open <strong>Settings &rarr; Network &amp; Internet &rarr; Private DNS</strong> and enter <code class="font-mono bg-emerald-50 text-emerald-800 px-1.5 py-0.5 rounded border border-emerald-200">dns.adguard-dns.com</code> for instant system-wide ad blocking.';
+          step1El.innerHTML = '<strong>1. Tap "Copy DNS" above</strong> to copy <code class="font-mono bg-emerald-50 text-emerald-800 px-1.5 py-0.5 rounded border border-emerald-200">dns.adguard-dns.com</code>.';
         }
-        if (hintEl) {
-          hintEl.innerHTML = 'Copied SWEEPR Android Shield DNS (<code class="font-mono">dns.adguard-dns.com</code>) to your clipboard! Paste it into <strong>Settings &rarr; Connections / Network &rarr; Private DNS</strong>.';
+        if (step2El) {
+          step2El.innerHTML = '<strong>2. Paste in Android Private DNS ⚙️</strong> — open <code class="font-mono bg-emerald-50 text-emerald-800 px-1.5 py-0.5 rounded border border-emerald-200">' + info.extUrl + '</code> and save to block ads &amp; trackers across all apps.';
         }
-      } else if (info.os === 'mac') {
+      } else if (info.id === 'firefox') {
         if (step1El) {
-          step1El.innerHTML = '<strong>1. Click "Add to Browser" above</strong> to download and open <code class="font-mono bg-emerald-50 text-emerald-800 px-1.5 py-0.5 rounded border border-emerald-200">SWEEPRDeepblockSetup.command</code> — it automatically installs and launches SWEEPR Deepblock in your Mac browser.';
+          step1El.innerHTML = '<strong>1. Click "Add to Browser" above</strong> to install the SWEEPR Deepblock Firefox add-on package (<code class="font-mono bg-emerald-50 text-emerald-800 px-1.5 py-0.5 rounded border border-emerald-200">sweepr-deepblock-firefox.xpi</code>).';
         }
-        if (hintEl) {
-          hintEl.innerHTML = 'Open <strong>SWEEPRDeepblockSetup.command</strong> in your Downloads folder to automatically configure your browser.';
-        }
-      } else if (info.os === 'windows') {
+      } else {
+        var fileLabel = info.downloadName || 'SWEEPRDeepblockSetup.exe';
         if (step1El) {
-          step1El.innerHTML = '<strong>1. Click "Add to Browser" above</strong> and open <code class="font-mono bg-emerald-50 text-emerald-800 px-1.5 py-0.5 rounded border border-emerald-200">SWEEPRDeepblockSetup.exe</code> — our 1-Click Auto-Installer automatically unpacks and enables SWEEPR Deepblock in <strong>' + info.name.replace(' (1-Click Auto-Installer)', '') + '</strong> (no manual unzipping or folder uploading needed).';
-        }
-        if (hintEl) {
-          hintEl.innerHTML = 'Click <strong>Open</strong> on <strong>SWEEPRDeepblockSetup.exe</strong> in your browser downloads bar — it installs SWEEPR Deepblock into your browser in 1 click.';
+          step1El.innerHTML = '<strong>1. Click "Add to Browser" above</strong> and open <code class="font-mono bg-emerald-50 text-emerald-800 px-1.5 py-0.5 rounded border border-emerald-200">' + fileLabel + '</code> — it automatically unpacks and activates SWEEPR Deepblock in <strong>' + info.name + '</strong> (restoring your open tabs with zero manual unzipping or folder uploading).';
         }
       }
     }
 
     function handleAutoBrowserInstall() {
+      if (currentDetectedBrowser.os === 'android' && currentDetectedBrowser.id === 'android') {
+        var androidCard = document.getElementById('androidDnsCard');
+        if (androidCard) androidCard.classList.remove('hidden');
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText('dns.adguard-dns.com').catch(function() {});
+        }
+        return;
+      }
       var banner = document.getElementById('installStartedBanner');
       var titleEl = document.getElementById('downloadBannerTitle');
+      var descEl = document.getElementById('downloadBannerDesc');
       if (banner) banner.classList.remove('hidden');
       if (titleEl) {
         titleEl.textContent = '✓ Starting 1-Click Setup for ' + currentDetectedBrowser.name + '...';
       }
-      if (currentDetectedBrowser.os === 'android' && navigator.clipboard) {
-        try { navigator.clipboard.writeText('dns.adguard-dns.com'); } catch (e) {}
+      if (descEl && currentDetectedBrowser.downloadName) {
+        descEl.innerHTML = 'Open <strong>' + currentDetectedBrowser.downloadName + '</strong> in your browser downloads bar — it automatically installs and activates SWEEPR Deepblock in 1 click (restoring all your open tabs, with zero manual unzipping or uploading!).';
       }
     }
 
@@ -351,52 +366,33 @@
 
       if (navigator.brave && typeof navigator.brave.isBrave === 'function') {
         navigator.brave.isBrave().then(function(isBrave) {
-          if (isBrave && (detected.os === 'windows' || detected.os === 'mac')) {
-            detected.id = 'brave';
-            detected.name = 'Brave Browser (' + (detected.os === 'windows' ? '1-Click Auto-Installer' : 'macOS 1-Click Installer') + ')';
-            detected.icon = '🦁';
-            detected.extUrl = 'brave://extensions';
-            applyBrowserInstructions(detected);
+          if (isBrave) {
+            var braveInfo = Object.assign({}, detected, {
+              id: 'brave',
+              name: 'Brave Browser',
+              icon: '🦁',
+              extUrl: 'brave://extensions'
+            });
+            applyBrowserInstructions(braveInfo);
           }
         }).catch(function() {});
       }
 
-      // Check if an official 1-click Browser Store URL is live yet
-      fetch('/api/store-config').then(function(r) { return r.json(); }).then(function(cfg) {
-        if (!cfg || !cfg.stores) return;
-        var storeUrl = '';
-        if ((detected.id === 'chrome' || detected.id === 'brave' || detected.id === 'opera') && cfg.stores.chrome) {
-          storeUrl = cfg.stores.chrome;
-        } else if (detected.id === 'edge' && cfg.stores.edge) {
-          storeUrl = cfg.stores.edge;
-        } else if (detected.id === 'firefox' && cfg.stores.firefox) {
-          storeUrl = cfg.stores.firefox;
-        } else if ((detected.id === 'safari' || detected.id === 'safari-ios') && cfg.stores.safari) {
-          storeUrl = cfg.stores.safari;
-        }
-        if (storeUrl) {
-          detected.downloadUrl = storeUrl;
-          detected.downloadFilename = '';
-          applyBrowserInstructions(detected);
-        }
-      }).catch(function() {});
-
       var params = new URLSearchParams(window.location.search);
-      if (params.get('installed') === '1') {
-        var successEl = document.getElementById('installedSuccessBanner');
-        if (successEl) successEl.classList.remove('hidden');
-      } else if (params.get('install') === '1') {
+      if (params.get('install') === '1') {
         handleAutoBrowserInstall();
-        setTimeout(function() {
-          var a = document.createElement('a');
-          a.href = currentDetectedBrowser.downloadUrl;
-          if (currentDetectedBrowser.downloadFilename) {
-            a.download = currentDetectedBrowser.downloadFilename;
-          }
-          document.body.appendChild(a);
-          a.click();
-          a.remove();
-        }, 250);
+        if (currentDetectedBrowser.downloadHref && currentDetectedBrowser.downloadHref.indexOf('#') !== 0) {
+          setTimeout(function() {
+            var a = document.createElement('a');
+            a.href = currentDetectedBrowser.downloadHref;
+            if (currentDetectedBrowser.downloadName) {
+              a.download = currentDetectedBrowser.downloadName;
+            }
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+          }, 250);
+        }
       }
     })();
   </script>
