@@ -107,12 +107,23 @@ function loadSitemapItems() {
   });
 }
 
+let cachedTelegraphToken = null;
+async function getTelegraphToken() {
+  if (cachedTelegraphToken) return cachedTelegraphToken;
+  try {
+    const accRes = await fetch('https://api.telegra.ph/createAccount?short_name=DeepBlock&author_name=SWEEPR+DeepBlock+Lab&author_url=https://sweeprdeepblock.com', {
+      signal: AbortSignal.timeout(15000)
+    });
+    const acc = await accRes.json();
+    cachedTelegraphToken = acc?.result?.access_token || null;
+  } catch {
+    cachedTelegraphToken = null;
+  }
+  return cachedTelegraphToken;
+}
+
 async function publishTelegraph(item, lang, runTag) {
-  const accRes = await fetch('https://api.telegra.ph/createAccount?short_name=DeepBlock&author_name=SWEEPR+DeepBlock+Lab&author_url=https://sweeprdeepblock.com', {
-    signal: AbortSignal.timeout(15000)
-  });
-  const acc = await accRes.json();
-  const token = acc?.result?.access_token;
+  let token = await getTelegraphToken();
   if (!token) throw new Error('Telegraph token error');
   const title = `[${lang.code}] ${lang.prefix} ${item.name} (${runTag})`;
   const content = [
@@ -140,7 +151,10 @@ async function publishTelegraph(item, lang, runTag) {
     signal: AbortSignal.timeout(15000)
   });
   const j = await r.json();
-  if (!j.ok || !j.result?.url) throw new Error('Telegraph createPage error');
+  if (!j.ok || !j.result?.url) {
+    cachedTelegraphToken = null;
+    throw new Error('Telegraph createPage error: ' + (j?.error || 'unknown'));
+  }
   const slug = j.result.url.split('/').pop() || runTag;
   return {
     url: j.result.url,
@@ -156,8 +170,9 @@ async function publishDpaste(item, lang, runTag) {
   const md = `# ${title}\n\n- **Primary Guide:** [${item.name}](${item.url})\n- **Official Extension:** [${lang.cta}](https://sweeprdeepblock.com)\n- **8/8 Anti-Detection Test Lab:** [https://sweeprdeepblock.com/test-lab](https://sweeprdeepblock.com/test-lab)\n- **PAD 4.0 XML Feed:** [https://sweeprdeepblock.com/pad.xml](https://sweeprdeepblock.com/pad.xml)\n- **Pricing & Trial:** [https://sweeprdeepblock.com/pricing](https://sweeprdeepblock.com/pricing)\n`;
   const body = new URLSearchParams({ content: md, lexer: '_markdown', format: 'url', expires: '31536000' });
   const r = await fetch('https://dpaste.org/api/', { method: 'POST', body, signal: AbortSignal.timeout(15000) });
+  if (!r.ok) throw new Error(`dpaste HTTP ${r.status}`);
   const url = (await r.text()).trim();
-  if (!url.startsWith('https://dpaste.org/')) throw new Error('dpaste error');
+  if (!url.startsWith('https://dpaste.org/')) throw new Error('dpaste returned unexpected body');
   const pasteId = url.split('/').filter(Boolean).pop() || runTag;
   return {
     url,
@@ -248,19 +263,20 @@ async function runBacklinksWorkflow(targetCount = 300) {
     unpostedQueue.push({ platform, lang, item, comboKey: `${platform}|${lang.code}|${item.url}#c${fallbackCursor}` });
     fallbackCursor++;
   }
-  const selectedQueue = unpostedQueue.slice(0, targetCount);
-
   const runTag = new Date().toISOString().slice(0, 13).replace('T', '-');
   let completed = 0;
   const BATCH_SIZE = 10;
-  const totalBatches = Math.ceil(selectedQueue.length / BATCH_SIZE);
+  let queueCursor = 0;
+  let batchNum = 0;
 
-  for (let i = 0; i < selectedQueue.length; i += BATCH_SIZE) {
-    const batch = selectedQueue.slice(i, i + BATCH_SIZE);
-    const currentBatch = Math.floor(i / BATCH_SIZE) + 1;
+  while (completed < targetCount && queueCursor < unpostedQueue.length) {
+    const batch = unpostedQueue.slice(queueCursor, queueCursor + BATCH_SIZE);
+    queueCursor += batch.length;
+    batchNum++;
+
     const results = await Promise.all(
       batch.map(async (task, offset) => {
-        const idx = i + offset;
+        const idx = queueCursor - batch.length + offset;
         const { platform, item, lang, comboKey } = task;
         try {
           const res = platform === 'telegra.ph' ? await publishTelegraph(item, lang, `${runTag}-${idx}`) : await publishDpaste(item, lang, `${runTag}-${idx}`);
@@ -289,7 +305,7 @@ async function runBacklinksWorkflow(targetCount = 300) {
           how: res.how,
           category: res.category,
           status: 'listed',
-          message_id: `deepblock-drip-${runTag}-${i + j}-${Date.now()}`,
+          message_id: `deepblock-drip-${runTag}-${queueCursor + j}-${Date.now()}`,
           reached_out_at: Math.floor(Date.now() / 1000)
         };
         seed.push(entry);
@@ -298,8 +314,12 @@ async function runBacklinksWorkflow(targetCount = 300) {
       })
     );
 
-    if (currentBatch % 5 === 0 || currentBatch === totalBatches) {
-      console.log(`[Batch ${currentBatch}/${totalBatches}] Progress: ${completed}/${targetCount} published (${((completed / targetCount) * 100).toFixed(1)}%)`);
+    if (batchNum % 5 === 0 || completed >= targetCount) {
+      console.log(`[Batch ${batchNum}] Progress: ${completed}/${targetCount} published (${Math.min(100, ((completed / targetCount) * 100)).toFixed(1)}%)`);
+    }
+
+    if (completed < targetCount) {
+      await new Promise((resolve) => setTimeout(resolve, 400));
     }
   }
 
