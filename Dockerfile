@@ -7,9 +7,7 @@ COPY server.js sweepr-client.js outreach-seed-deepblock.json ./
 COPY website ./website
 
 ENV NODE_ENV=production
-ENV PORT=8080
-EXPOSE 8080
-
-USER node
+ENV PORT=3000
+EXPOSE 3000 8080
 
 CMD ["node", "server.js"]

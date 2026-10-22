@@ -2059,9 +2059,15 @@ const server = http.createServer(async (req, res) => {
 });
 
 if (require.main === module) {
-  server.listen(PORT, () => {
+  server.listen(PORT, '0.0.0.0', () => {
     console.log(`SWEEPR Deepblock Server running at http://localhost:${PORT}/?home=1 (Stripe Live: ${IS_LIVE_STRIPE})`);
   });
+  if (process.env.NODE_ENV === 'production') {
+    const altPort = PORT === 3000 ? 8080 : 3000;
+    const altServer = http.createServer((req, res) => server.emit('request', req, res));
+    altServer.on('error', () => {});
+    altServer.listen(altPort, '0.0.0.0');
+  }
 }
 
 module.exports = server;
