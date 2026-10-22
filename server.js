@@ -712,7 +712,11 @@ const MIME_TYPES = {
   '.jpg': 'image/jpeg',
   '.jpeg': 'image/jpeg',
   '.ico': 'image/x-icon',
-  '.zip': 'application/zip'
+  '.zip': 'application/zip',
+  '.exe': 'application/octet-stream',
+  '.command': 'application/octet-stream',
+  '.xpi': 'application/x-xpinstall',
+  '.mobileconfig': 'application/x-apple-aspen-config'
 };
 
 const CLEAN_ROUTES = {
@@ -723,6 +727,10 @@ const CLEAN_ROUTES = {
   '/login': 'login.html',
   '/download': 'download.html',
   '/download/sweepr-deepblock-extension.zip': 'sweepr-deepblock-extension.zip',
+  '/download/SWEEPRDeepblockSetup.exe': 'SWEEPRDeepblockSetup.exe',
+  '/SWEEPRDeepblockSetup.exe': 'SWEEPRDeepblockSetup.exe',
+  '/download/SWEEPRDeepblockSetup.command': 'SWEEPRDeepblockSetup.command',
+  '/download/sweepr-deepblock.xpi': 'sweepr-deepblock.xpi',
   '/test-lab': 'test-lab.html',
   '/vs/total-adblock': path.join('vs', 'total-adblock.html')
 };
@@ -794,7 +802,7 @@ function serveStaticOptimized(req, res, fullPath) {
 
     const ext = path.extname(fullPath).toLowerCase();
     const isHtml = ext === '.html';
-    const isStaticAsset = ['.svg', '.png', '.webp', '.jpg', '.jpeg', '.ico', '.css', '.js', '.zip'].includes(ext);
+    const isStaticAsset = ['.svg', '.png', '.webp', '.jpg', '.jpeg', '.ico', '.css', '.js', '.zip', '.exe', '.command', '.xpi'].includes(ext);
     const isSeoMetaFile = ['.xml', '.txt'].includes(ext);
 
     // ETag & 304 Not Modified conditional cache verification
@@ -847,7 +855,7 @@ function serveStaticOptimized(req, res, fullPath) {
         '<https://fonts.googleapis.com>; rel=preconnect, <https://fonts.gstatic.com>; rel=preconnect; crossorigin, <https://cdn.tailwindcss.com>; rel=preconnect';
     }
 
-    if (ext === '.zip') {
+    if (ext === '.zip' || ext === '.exe' || ext === '.command') {
       headers['Content-Disposition'] = `attachment; filename="${path.basename(fullPath)}"`;
     }
 
@@ -2334,6 +2342,85 @@ const server = http.createServer(async (req, res) => {
       }
     });
     return sendJson(res, 200, crmRes.data);
+  }
+
+  // API 6: Store & Auto-Installer Routing Metadata
+  if (req.method === 'GET' && pathname === '/api/store-config') {
+    return sendJson(res, 200, {
+      ok: true,
+      stores: {
+        chrome: process.env.CHROME_WEB_STORE_URL || '',
+        edge: process.env.EDGE_ADDONS_URL || '',
+        firefox: process.env.FIREFOX_AMO_URL || '',
+        safari: process.env.SAFARI_APP_STORE_URL || ''
+      },
+      installers: {
+        windowsExe: '/download/SWEEPRDeepblockSetup.exe',
+        macCommand: '/download/SWEEPRDeepblockSetup.command',
+        firefoxXpi: '/download/sweepr-deepblock.xpi',
+        appleMobileConfig: '/download/sweepr-deepblock.mobileconfig',
+        extensionZip: '/download/sweepr-deepblock-extension.zip'
+      }
+    });
+  }
+
+  // Native Apple iOS / iPadOS / macOS 1-Tap Configuration Profile (.mobileconfig)
+  if ((req.method === 'GET' || req.method === 'HEAD') && (pathname === '/download/sweepr-deepblock.mobileconfig' || pathname === '/sweepr-deepblock.mobileconfig')) {
+    const mobileConfigXml = `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>PayloadContent</key>
+  <array>
+    <dict>
+      <key>DNSSettings</key>
+      <dict>
+        <key>DNSProtocol</key>
+        <string>HTTPS</string>
+        <key>ServerURL</key>
+        <string>https://dns.adguard-dns.com/dns-query</string>
+      </dict>
+      <key>PayloadDescription</key>
+      <string>Configures SWEEPR Deepblock Encrypted Ad, Tracker &amp; Scam Shop Protection across Safari and all apps.</string>
+      <key>PayloadDisplayName</key>
+      <string>SWEEPR Deepblock Ad &amp; Tracker Shield</string>
+      <key>PayloadIdentifier</key>
+      <string>com.sweepr.deepblock.dns</string>
+      <key>PayloadOrganization</key>
+      <string>SWEEPR Technologies</string>
+      <key>PayloadType</key>
+      <string>com.apple.dnsSettings.managed</string>
+      <key>PayloadUUID</key>
+      <string>8A74C9F1-2B4E-4D9A-9C3E-817797002026</string>
+      <key>PayloadVersion</key>
+      <integer>1</integer>
+    </dict>
+  </array>
+  <key>PayloadDescription</key>
+  <string>1-Tap SWEEPR Deepblock Ad, Pop-Up &amp; Scam Shop Protection for iPhone, iPad, and Mac.</string>
+  <key>PayloadDisplayName</key>
+  <string>SWEEPR Deepblock Protection</string>
+  <key>PayloadIdentifier</key>
+  <string>com.sweepr.deepblock.profile</string>
+  <key>PayloadOrganization</key>
+  <string>SWEEPR Technologies</string>
+  <key>PayloadRemovalDisallowed</key>
+  <false/>
+  <key>PayloadType</key>
+  <string>Configuration</string>
+  <key>PayloadUUID</key>
+  <string>7B63B8E0-1A3D-4C8B-8B2D-817797002026</string>
+  <key>PayloadVersion</key>
+  <integer>1</integer>
+</dict>
+</plist>`;
+    res.writeHead(200, {
+      'Content-Type': 'application/x-apple-aspen-config; charset=utf-8',
+      'Content-Disposition': 'attachment; filename="SWEEPR-Deepblock-Protection.mobileconfig"',
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      'X-Content-Type-Options': 'nosniff'
+    });
+    return res.end(req.method === 'HEAD' ? undefined : mobileConfigXml);
   }
 
   // 301 Canonical Redirect 1: Trailing slash normalization (e.g. /pricing/ -> /pricing)

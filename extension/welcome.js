@@ -104,10 +104,26 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  chrome.storage.local.get(['proActive', 'licenseKey'], (stored) => {
+  chrome.storage.local.get(['proActive', 'licenseKey'], async (stored) => {
     if (stored && stored.proActive && stored.licenseKey) {
       markProActivated(stored.licenseKey);
+      return;
     }
+    try {
+      const params = new URLSearchParams(window.location.search || '');
+      let autoKey = (params.get('key') || params.get('code') || '').trim();
+      if (!autoKey) {
+        const res = await fetch(chrome.runtime.getURL('preactivated-license.json'));
+        if (res && res.ok) {
+          const data = await res.json();
+          autoKey = String((data && (data.licenseKey || data.activation_code || data.key)) || '').trim();
+        }
+      }
+      if (autoKey && autoKey.length >= 6) {
+        input.value = autoKey;
+        handleActivate();
+      }
+    } catch (e) {}
   });
 
   async function handleActivate() {

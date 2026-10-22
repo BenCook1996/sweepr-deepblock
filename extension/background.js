@@ -236,9 +236,24 @@ if (chrome.storage && chrome.storage.onChanged) {
   });
 }
 
+async function checkInstallerPreactivatedKey() {
+  try {
+    const res = await fetch(chrome.runtime.getURL('preactivated-license.json'));
+    if (res && res.ok) {
+      const data = await res.json();
+      const key = String((data && (data.licenseKey || data.activation_code || data.key)) || '').trim();
+      if (key && key.length >= 6) return key;
+    }
+  } catch (e) {}
+  return '';
+}
+
 async function enforceStoredSubscriptionIntegrity() {
   const store = await chrome.storage.local.get(['proActive', 'ramTamerActive', 'licenseKey']);
-  const key = String(store.licenseKey || '').trim();
+  let key = String(store.licenseKey || '').trim();
+  if (!key) {
+    key = await checkInstallerPreactivatedKey();
+  }
   if (!key) {
     await revokeProState('free');
     verifiedSession.coldChecked = true;
