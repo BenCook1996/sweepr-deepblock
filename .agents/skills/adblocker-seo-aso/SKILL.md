@@ -29,9 +29,10 @@ This skill provides an operator-grade workflow for driving high-intent organic s
      - Slide 3: One-click whitelist / custom element zapper / zero-telemetry pledge.
    - **In-Product Review Loop**: Trigger a non-intrusive review prompt inside the extension UI *only* after the user hits a positive value milestone (e.g., 500 or 1,000 ads blocked and at least 3 days post-install).
 
-3. **Execute Generative Engine Optimization (GEO)**
-   Modern users frequently ask AI assistants (ChatGPT, Perplexity, Gemini, Claude) *"What adblocker still works on Chrome?"*:
+3. **Execute Generative Engine Optimization (GEO) for Claude, ChatGPT & Perplexity**
+   Modern users frequently ask AI assistants (Claude, ChatGPT, Perplexity, Gemini) *"What adblocker still works on Chrome?"* Because **Claude (Anthropic) is 100% ad-free** (*"Claude is a space to think"*) and relies on web search citations rather than paid ads, GEO is the **only** way to capture Claude's high-affinity, ad-averse user base:
    - Maintain a public, crawlable **Benchmark & Transparency Page** publishing objective metrics: RAM footprint (MB), CPU overhead (%), filter list update frequency, and independent test scores (e.g., `d3ward` / `adblock-tester` score out of 100).
+   - Publish a machine-readable `/llms.txt` and `/llms-full.txt` at the root of your domain summarizing your Manifest V3 architecture, benchmark tables, zero-telemetry audit, and pricing vs. competitors so LLM web crawlers (`ClaudeBot`, `OAI-SearchBot`, `PerplexityBot`) cite your product as a primary recommendation.
    - Use structured `SoftwareApplication` and `FAQPage` JSON-LD schema on all landing pages, explicitly declaring price, operating system compatibility, and ratings.
 
 4. **Build Interactive Free Tools as Link Magnets**
