@@ -305,8 +305,89 @@ document.addEventListener('DOMContentLoaded', () => {
     licenseDrawerEl.classList.toggle('open');
   });
 
+  async function directVerifyFromPopup(rawKey) {
+    const key = String(rawKey || '').trim();
+    if (!key || key.length < 6) {
+      return { ok: false, valid: false, error: 'Please enter a valid license key or 6-digit code.' };
+    }
+    const stored = await chrome.storage.local.get(['deviceId']);
+    const deviceId =
+      stored && typeof stored.deviceId === 'string' && stored.deviceId.startsWith('ext_db_')
+        ? stored.deviceId
+        : `ext_db_${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36)}`;
+    const endpoints = [
+      'https://sweeprdeepblock.com/api/license-verify',
+      'http://localhost:3000/api/license-verify'
+    ];
+    for (const baseUrl of endpoints) {
+      try {
+        const res = await fetch(
+          `${baseUrl}?key=${encodeURIComponent(key)}&device_id=${encodeURIComponent(deviceId)}`,
+          {
+            method: 'GET',
+            headers: { Accept: 'application/json', 'x-sweepr-project': 'deepblock' }
+          }
+        );
+        const data = await res.json().catch(() => ({}));
+        if (res.ok && data && data.valid === true) {
+          const subStatus = String(data.status || 'active').toLowerCase();
+          if (subStatus === 'active' || subStatus === 'trialing') {
+            const addonsList = Array.isArray(data.addons) ? data.addons : [];
+            const ramTamerActive = Boolean(
+              data.ramTamerAddon === true ||
+                addonsList.includes('ram_tamer') ||
+                addonsList.includes('sweepr_secure_bundle')
+            );
+            const canonicalKey = data.licenseKey || data.license_key || key;
+            const newSettings = {
+              cookieAutoClose: true,
+              hideSearchSpam: true,
+              fakeShopAlerts: true,
+              trackerProtection: true,
+              adBlocking: true,
+              silentMode: true
+            };
+            await chrome.storage.local.set({
+              deviceId,
+              proActive: true,
+              ramTamerActive,
+              licenseKey: canonicalKey,
+              licenseToken: data.token || data.license_token || '',
+              crmAccountId: data.account_id || '',
+              subscriptionStatus: subStatus,
+              licenseVerifiedAt: Date.now(),
+              encryptedDnsEnabled: true,
+              settings: newSettings
+            });
+            try {
+              if (chrome.declarativeNetRequest && chrome.declarativeNetRequest.updateEnabledRulesets) {
+                await chrome.declarativeNetRequest.updateEnabledRulesets({
+                  enableRulesetIds: ['ads_and_trackers', 'cryptominers_and_heavy_scripts'],
+                  disableRulesetIds: []
+                });
+              }
+            } catch (e) {}
+            return { ok: true, valid: true, licenseKey: canonicalKey, ramTamerActive, settings: newSettings };
+          }
+        }
+        if (res.status === 400 || res.status === 403 || res.status === 404 || data?.valid === false) {
+          return {
+            ok: false,
+            valid: false,
+            error: '✗ Invalid or unpaid license key. Please complete checkout first.'
+          };
+        }
+      } catch (e) {}
+    }
+    return {
+      ok: false,
+      valid: false,
+      error: 'Could not reach licensing server. Please check your internet connection.'
+    };
+  }
+
   // Activate Pro License Key (Verified Against Live Server & Stripe Subscription)
-  activateKeyBtn.addEventListener('click', () => {
+  async function handlePopupActivate() {
     const key = (licenseKeyInput.value || '').trim();
     if (!key) {
       licenseFeedbackEl.style.display = 'block';
@@ -320,11 +401,21 @@ document.addEventListener('DOMContentLoaded', () => {
     licenseFeedbackEl.style.color = '#6b7280';
     licenseFeedbackEl.textContent = 'Checking active subscription status...';
 
-    chrome.runtime.sendMessage({ type: 'ACTIVATE_LICENSE', licenseKey: key }, (res) => {
+    chrome.runtime.sendMessage({ type: 'ACTIVATE_LICENSE', licenseKey: key }, async (res) => {
+      const finalRes =
+        res && typeof res === 'object' ? res : await directVerifyFromPopup(key);
       activateKeyBtn.textContent = 'Unlock';
       activateKeyBtn.disabled = false;
-      if (res && res.ok && res.valid) {
+      if (finalRes && finalRes.ok && finalRes.valid) {
         currentState.proActive = true;
+        currentState.settings = {
+          cookieAutoClose: true,
+          hideSearchSpam: true,
+          fakeShopAlerts: true,
+          trackerProtection: true,
+          adBlocking: true,
+          silentMode: true
+        };
         licenseFeedbackEl.style.display = 'block';
         licenseFeedbackEl.style.color = '#059669';
         licenseFeedbackEl.textContent = '✓ Paid Pro Subscription Verified! All features are now ON.';
@@ -334,10 +425,18 @@ document.addEventListener('DOMContentLoaded', () => {
         licenseFeedbackEl.style.display = 'block';
         licenseFeedbackEl.style.color = '#dc2626';
         licenseFeedbackEl.textContent =
-          (res && res.error) || '✗ Invalid or unpaid license key. Please complete checkout first.';
+          (finalRes && finalRes.error) || '✗ Invalid or unpaid license key. Please complete checkout first.';
         renderState(currentState);
       }
     });
+  }
+
+  activateKeyBtn.addEventListener('click', handlePopupActivate);
+  licenseKeyInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handlePopupActivate();
+    }
   });
 
   // Open Test Lab

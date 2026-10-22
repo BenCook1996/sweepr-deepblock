@@ -2004,8 +2004,12 @@ const server = http.createServer(async (req, res) => {
             email,
             plan: d.plan || localAcc?.plan || 'annual',
             ramTamerAddon: hasRamTamer,
-            status: d.active || d.status === 'active' || d.status === 'trialing' ? 'active' : d.status || 'active'
+            status: d.active || d.status === 'active' || d.status === 'trialing' ? 'active' : d.status || 'active',
+            ...(d.activation_code ? { activationCode: String(d.activation_code) } : {}),
+            ...(d.licenseKey || d.license_key ? { licenseKey: String(d.licenseKey || d.license_key) } : {})
           });
+          if (localAcc.activation_code) licenses.set(localAcc.activation_code, localAcc);
+          if (localAcc.licenseKey) licenses.set(localAcc.licenseKey, localAcc);
           verifiedData = {
             ok: true,
             account_id: d.account_id || localAcc.id,

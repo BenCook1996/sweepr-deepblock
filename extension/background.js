@@ -432,8 +432,11 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     return true;
   }
 
-  // Privileged extension UI actions (reject calls from content-script tabs)
-  if (sender && sender.tab) {
+  // Privileged extension UI actions (allow extension popup & extension pages like welcome.html; reject content-script web pages)
+  const extBaseUrl = chrome.runtime.getURL('');
+  const senderUrl = String((sender && sender.url) || (sender && sender.tab && sender.tab.url) || '');
+  const isPrivilegedExtensionPage = !sender || !sender.tab || (extBaseUrl && senderUrl.startsWith(extBaseUrl));
+  if (!isPrivilegedExtensionPage) {
     return false;
   }
 
