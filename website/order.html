@@ -449,7 +449,7 @@
         <div id="ramTamerBumpCard" class="bg-gradient-to-br from-amber-50/90 via-white to-emerald-50/60 rounded-xl p-4 sm:p-5 border-2 border-amber-300/90 hover:border-emerald-500 shadow-sm transition-all">
           <label class="flex items-start justify-between gap-3 cursor-pointer select-none">
             <div class="flex items-start gap-3.5">
-              <input type="checkbox" id="ramTamerAddonCheckbox" onchange="toggleRamTamerAddon(this.checked)" class="mt-1 w-5 h-5 rounded border-amber-400 text-emerald-600 focus:ring-emerald-500 cursor-pointer shrink-0">
+              <input type="checkbox" id="ramTamerAddonCheckbox" checked onchange="toggleRamTamerAddon(this.checked)" class="mt-1 w-5 h-5 rounded border-amber-400 text-emerald-600 focus:ring-emerald-500 cursor-pointer shrink-0">
               <div>
                 <div class="flex flex-wrap items-center gap-2 mb-1">
                   <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-extrabold uppercase tracking-wider bg-amber-100 text-amber-900 border border-amber-300">
@@ -477,7 +477,7 @@
             <span id="summaryPlanPrice" class="font-semibold text-gray-900">£59.99/year</span>
           </div>
 
-          <div id="ramAddonSummaryRow" class="hidden flex items-center justify-between text-emerald-800 bg-emerald-50/70 px-3 py-2 rounded-lg border border-emerald-200/80">
+          <div id="ramAddonSummaryRow" class="flex items-center justify-between text-emerald-800 bg-emerald-50/70 px-3 py-2 rounded-lg border border-emerald-200/80">
             <span class="flex items-center gap-1.5 font-semibold text-xs sm:text-sm">
               <span>⚡</span>
               <span>Total Tab &amp; RAM Tamer Add-On</span>
@@ -509,7 +509,7 @@
 
           <div class="pt-3 border-t border-gray-200 flex items-center justify-between">
             <span id="totalTodayLabel" class="font-bold text-gray-900 text-base">Total Today (GBP)</span>
-            <span id="totalTodayText" class="font-black text-2xl text-gray-900">£59.99</span>
+            <span id="totalTodayText" class="font-black text-2xl text-gray-900">£74.98</span>
           </div>
         </div>
 
@@ -843,7 +843,7 @@
   <script>
     let selectedPlan = 'annual'; // 'annual' | 'six_month' | 'monthly'
     let isDiscountApplied = false;
-    let isRamTamerAdded = false;
+    let isRamTamerAdded = true;
     let stripe = null;
     let elements = null;
     let cardElements = null;
@@ -1042,11 +1042,13 @@
         if (emailEl && !emailEl.value) emailEl.value = emailParam;
       }
 
-      if (params.get('addon') === 'ram_tamer' || params.get('ram_tamer') === '1') {
+      if (params.get('addon') === 'none' || params.get('ram_tamer') === '0') {
+        isRamTamerAdded = false;
+      } else {
         isRamTamerAdded = true;
-        const cb = document.getElementById('ramTamerAddonCheckbox');
-        if (cb) cb.checked = true;
       }
+      const cb = document.getElementById('ramTamerAddonCheckbox');
+      if (cb) cb.checked = isRamTamerAdded;
 
       if (errorParam === 'payment_cancelled' || errorParam === 'payment_incomplete') {
         showError('Your payment was cancelled or not completed. No charge was made — please try again below.');
