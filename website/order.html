@@ -344,14 +344,14 @@
   <!-- MAIN 2-COLUMN CHECKOUT LAYOUT — Concept C: 1-Screen Express Checkout -->
   <main class="max-w-6xl mx-auto px-4 sm:px-6 py-5 sm:py-8 w-full flex-1">
     <!-- Top Segmented Plan Switcher Bar (Instant 1-Click Plan Switching on /order) -->
-    <div class="bg-white rounded-2xl p-1.5 sm:p-2 border border-gray-200/90 shadow-xs mb-5 grid grid-cols-3 gap-1.5 sm:gap-2">
-      <button type="button" id="planTabAnnual" onclick="selectCheckoutPlan('annual')" class="py-2 sm:py-2.5 px-2 sm:px-3 rounded-xl bg-emerald-600 text-white font-extrabold text-[11px] sm:text-xs md:text-sm shadow-xs cursor-pointer transition-all truncate">
+    <div class="bg-white rounded-2xl p-1.5 sm:p-2 border border-gray-200/90 shadow-xs mb-5 grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-2">
+      <button type="button" id="planTabAnnual" onclick="selectCheckoutPlan('annual')" class="py-2 sm:py-2.5 px-3 rounded-xl bg-emerald-600 text-white font-extrabold text-xs sm:text-sm shadow-xs cursor-pointer transition-all">
         ★ Annual — £4.99/mo (Save 50%)
       </button>
-      <button type="button" id="planTabSixMonth" onclick="selectCheckoutPlan('six_month')" class="py-2 sm:py-2.5 px-2 sm:px-3 rounded-xl bg-gray-50 hover:bg-gray-100 text-gray-700 font-bold text-[11px] sm:text-xs md:text-sm cursor-pointer transition-all truncate">
+      <button type="button" id="planTabSixMonth" onclick="selectCheckoutPlan('six_month')" class="py-2 sm:py-2.5 px-3 rounded-xl bg-gray-50 hover:bg-gray-100 text-gray-700 font-bold text-xs sm:text-sm cursor-pointer transition-all">
         6-Month — £7.49/mo (Save 25%)
       </button>
-      <button type="button" id="planTabMonthly" onclick="selectCheckoutPlan('monthly')" class="py-2 sm:py-2.5 px-2 sm:px-3 rounded-xl bg-gray-50 hover:bg-gray-100 text-gray-700 font-bold text-[11px] sm:text-xs md:text-sm cursor-pointer transition-all truncate">
+      <button type="button" id="planTabMonthly" onclick="selectCheckoutPlan('monthly')" class="py-2 sm:py-2.5 px-3 rounded-xl bg-gray-50 hover:bg-gray-100 text-gray-700 font-bold text-xs sm:text-sm cursor-pointer transition-all">
         Monthly — £9.99/mo
       </button>
     </div>
@@ -418,28 +418,28 @@
           </div>
         </div>
 
-        <!-- 2. Compact 2-Column Included Free Bonuses -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-          <div class="bg-emerald-50/60 border border-emerald-200/80 rounded-xl p-2.5 flex items-center justify-between gap-2">
-            <div class="flex items-center gap-2 min-w-0">
-              <span class="text-sm shrink-0">🎁</span>
-              <div class="min-w-0">
-                <div class="font-bold text-gray-900 text-xs truncate">Fake Online Shop Detector</div>
-                <div class="text-[10px] text-gray-500 truncate">Warns you about scam stores</div>
+        <!-- 2. Included Free Bonuses (Full-Width Compact Rows — Zero Text Truncation) -->
+        <div class="grid grid-cols-1 gap-2">
+          <div class="bg-emerald-50/60 border border-emerald-200/80 rounded-xl px-3.5 py-2.5 flex items-center justify-between gap-3">
+            <div class="flex items-center gap-2.5">
+              <span class="text-base shrink-0">🎁</span>
+              <div>
+                <div class="font-bold text-gray-900 text-xs sm:text-sm">Fake Online Shop Detector</div>
+                <div class="text-[11px] text-gray-500">Warns you before buying from suspicious scam stores</div>
               </div>
             </div>
-            <span class="px-2 py-0.5 rounded text-[10px] font-extrabold text-emerald-800 bg-white border border-emerald-200 uppercase shrink-0">FREE</span>
+            <span class="px-2.5 py-0.5 rounded-md text-[10px] font-extrabold text-emerald-800 bg-white border border-emerald-200 uppercase shrink-0">INCLUDED FREE</span>
           </div>
 
-          <div class="bg-emerald-50/60 border border-emerald-200/80 rounded-xl p-2.5 flex items-center justify-between gap-2">
-            <div class="flex items-center gap-2 min-w-0">
-              <span class="text-sm shrink-0">🎁</span>
-              <div class="min-w-0">
-                <div class="font-bold text-gray-900 text-xs truncate">Private Browsing Protection</div>
-                <div class="text-[10px] text-gray-500 truncate">Stops hidden search tracking</div>
+          <div class="bg-emerald-50/60 border border-emerald-200/80 rounded-xl px-3.5 py-2.5 flex items-center justify-between gap-3">
+            <div class="flex items-center gap-2.5">
+              <span class="text-base shrink-0">🎁</span>
+              <div>
+                <div class="font-bold text-gray-900 text-xs sm:text-sm">Private Browsing Protection</div>
+                <div class="text-[11px] text-gray-500">Stops hidden companies from tracking what you search</div>
               </div>
             </div>
-            <span class="px-2 py-0.5 rounded text-[10px] font-extrabold text-emerald-800 bg-white border border-emerald-200 uppercase shrink-0">FREE</span>
+            <span class="px-2.5 py-0.5 rounded-md text-[10px] font-extrabold text-emerald-800 bg-white border border-emerald-200 uppercase shrink-0">INCLUDED FREE</span>
           </div>
         </div>
 
@@ -1002,8 +1002,8 @@
       const tabAnnual = document.getElementById('planTabAnnual');
       const tabSix = document.getElementById('planTabSixMonth');
       const tabMonthly = document.getElementById('planTabMonthly');
-      const activeTabCls = 'py-2 sm:py-2.5 px-2 sm:px-3 rounded-xl bg-emerald-600 text-white font-extrabold text-[11px] sm:text-xs md:text-sm shadow-xs cursor-pointer transition-all truncate';
-      const inactiveTabCls = 'py-2 sm:py-2.5 px-2 sm:px-3 rounded-xl bg-gray-50 hover:bg-gray-100 text-gray-700 font-bold text-[11px] sm:text-xs md:text-sm cursor-pointer transition-all truncate';
+      const activeTabCls = 'py-2 sm:py-2.5 px-3 rounded-xl bg-emerald-600 text-white font-extrabold text-xs sm:text-sm shadow-xs cursor-pointer transition-all';
+      const inactiveTabCls = 'py-2 sm:py-2.5 px-3 rounded-xl bg-gray-50 hover:bg-gray-100 text-gray-700 font-bold text-xs sm:text-sm cursor-pointer transition-all';
       if (tabAnnual) {
         tabAnnual.className = selectedPlan === 'annual' ? activeTabCls : inactiveTabCls;
         tabAnnual.textContent = `★ Annual — ${annualMoEq}/mo (Save 50%)`;
