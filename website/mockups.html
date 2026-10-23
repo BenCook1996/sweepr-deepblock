@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>SWEEPR Deepblock — Interactive UX/CRO Redesign Mockups</title>
+  <link rel="icon" type="image/svg+xml" href="/logo.svg">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI Variable", "Segoe UI", Inter, Roboto, sans-serif;
+      background: #f8fafc;
+    }
+    .btn-go {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: #ffffff;
+      box-shadow: 0 8px 24px -4px rgba(5, 150, 105, 0.4), 0 0 0 1px rgba(16, 185, 129, 0.2);
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
+    }
+    .btn-go:hover {
+      background: linear-gradient(135deg, #059669 0%, #047857 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 12px 28px -4px rgba(5, 150, 105, 0.52), 0 0 0 2px rgba(16, 185, 129, 0.3);
+    }
+  </style>
+</head>
+<body class="text-slate-900 antialiased min-h-screen flex flex-col">
+
+  <!-- TOP MOCKUP CONCEPT SWITCHER BAR -->
+  <div class="sticky top-0 z-50 bg-slate-900 text-white border-b border-slate-800 px-4 py-3 shadow-lg">
+    <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-2.5">
+        <span class="px-2.5 py-1 rounded-md text-[11px] font-black uppercase tracking-wider bg-emerald-500 text-slate-950">UX / CRO LAB</span>
+        <span class="text-sm font-bold text-slate-200">Select a Redesign Concept to Preview Live:</span>
+      </div>
+      <div class="flex flex-wrap items-center gap-2">
+        <button type="button" id="tabBtnA" onclick="switchConcept('A')" class="px-3.5 py-1.5 rounded-lg text-xs font-extrabold bg-emerald-500 text-slate-950 cursor-pointer transition-all">
+          Concept A: Interactive Before/After Slider Hero
+        </button>
+        <button type="button" id="tabBtnB" onclick="switchConcept('B')" class="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 hover:bg-slate-700 cursor-pointer transition-all">
+          Concept B: Ultra-Minimal 1-Click Toggle Hero
+        </button>
+        <button type="button" id="tabBtnC" onclick="switchConcept('C')" class="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 hover:bg-slate-700 cursor-pointer transition-all">
+          Concept C: 1-Screen Express Checkout (/order)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       CONCEPT A: INTERACTIVE BEFORE/AFTER SLIDER HERO
+       ========================================================================= -->
+  <section id="conceptA" class="flex-1 bg-white">
+    <header class="border-b border-slate-200/80 bg-white/90 backdrop-blur-md">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+        <div class="flex items-center gap-3 font-black text-lg tracking-tight">
+          <img src="/logo.svg" class="w-8 h-8 rounded-lg" alt="SWEEPR">
+          <span>SWEEPR <span class="text-emerald-600">Deepblock</span></span>
+        </div>
+        <div class="flex items-center gap-3">
+          <a href="/pricing" class="text-sm font-semibold text-slate-600 hover:text-slate-900 px-3 py-2">Pricing</a>
+          <a href="/login" class="text-sm font-semibold text-slate-600 hover:text-slate-900 px-3 py-2">Login</a>
+          <a href="/download?install=1" class="btn-go text-sm font-bold px-4 py-2 rounded-xl inline-flex items-center gap-1.5">
+            <span>Add to Browser</span>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-16 grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+      <!-- Left Column: Plain-English Value Prop -->
+      <div class="lg:col-span-6 space-y-5">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-900 border border-emerald-200">
+          <span>✓ Works on Chrome, Safari, Edge, Firefox &amp; Brave</span>
+        </div>
+        <h1 class="text-3xl sm:text-5xl font-black tracking-tight text-slate-900 leading-[1.08]">
+          Watch YouTube &amp; Browse <span class="text-emerald-600">Without Ads or Cookie Pop-Ups.</span>
+        </h1>
+        <p class="text-base sm:text-lg text-slate-600 leading-relaxed">
+          Enjoy a cleaner, faster internet. One simple tool that blocks annoying video ads, closes cookie pop-ups for you, and warns you about fake shopping websites.
+        </p>
+        <ul class="space-y-3 text-sm sm:text-base text-slate-800 font-medium pt-1">
+          <li class="flex items-start gap-3">
+            <span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">✓</span>
+            <span><strong>Watch Videos Without Ads:</strong> Blocks annoying video ads and flashing banners on YouTube, news sites, and everywhere you browse.</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">✓</span>
+            <span><strong>No More Cookie Pop-Ups:</strong> Automatically says "No thanks" to cookie banners so you can read websites right away.</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">✓</span>
+            <span><strong>Safer Online Shopping:</strong> Warns you before you buy from fake or scam online shops and hides junk search results.</span>
+          </li>
+        </ul>
+        <div class="flex flex-col sm:flex-row sm:items-center gap-4 pt-2">
+          <a href="/download?install=1" class="btn-go font-extrabold text-base px-7 py-4 rounded-2xl inline-flex items-center justify-center gap-2.5">
+            <span>Install Free Extension</span>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+          </a>
+          <a href="/order?plan=annual" class="text-sm font-bold text-slate-700 hover:text-emerald-700 underline underline-offset-4 py-2 text-center sm:text-left">
+            Get Pro Access
+          </a>
+        </div>
+        <div class="pt-3 border-t border-slate-200/80 flex flex-wrap items-center gap-4 text-xs font-semibold text-slate-500">
+          <span>🛡️ 30-Day Money-Back Guarantee</span>
+          <span>•</span>
+          <span>🔒 Zero Browsing Data Collected</span>
+          <span>•</span>
+          <span>⚡ Cancel Anytime in 1-Click</span>
+        </div>
+      </div>
+
+      <!-- Right Column: Interactive Before/After Drag Slider -->
+      <div class="lg:col-span-6">
+        <div class="bg-slate-900 rounded-3xl p-4 sm:p-5 shadow-2xl border border-slate-800 text-white">
+          <div class="flex items-center justify-between mb-3 px-1">
+            <span class="text-xs font-bold text-slate-300">Drag the slider to compare:</span>
+            <span id="sliderStatusBadge" class="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+              SWEEPR Deepblock Active
+            </span>
+          </div>
+
+          <!-- Visual Comparison Stage -->
+          <div class="relative rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 h-72 select-none">
+            <!-- AFTER LAYER (Clean Page - Full Width Underneath) -->
+            <div class="absolute inset-0 bg-gradient-to-br from-emerald-950/90 to-slate-900 p-5 flex flex-col justify-between">
+              <div class="flex items-center justify-between">
+                <span class="px-2.5 py-1 rounded-md text-[10px] font-black uppercase bg-emerald-500 text-slate-950">✓ WITH SWEEPR DEEPBLOCK</span>
+                <span class="text-xs font-bold text-emerald-300">0 Ads • 0 Pop-Ups</span>
+              </div>
+              <div class="bg-white/10 border border-emerald-500/30 rounded-xl p-4 text-center my-auto">
+                <div class="w-10 h-10 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto mb-2 font-black">▶</div>
+                <div class="text-sm font-extrabold text-white">Video Plays Immediately — No Ads</div>
+                <div class="text-xs text-emerald-300 mt-1">Cookie Banner Closed Automatically • Page Scrolls Smoothly</div>
+              </div>
+              <div class="grid grid-cols-3 gap-2 text-center text-[11px]">
+                <div class="bg-white/5 rounded-lg p-2"><div class="text-emerald-400 font-black">0 Ads</div><div class="text-slate-400">On YouTube</div></div>
+                <div class="bg-white/5 rounded-lg p-2"><div class="text-emerald-400 font-black">Auto-Closed</div><div class="text-slate-400">Cookie Boxes</div></div>
+                <div class="bg-white/5 rounded-lg p-2"><div class="text-emerald-400 font-black">Protected</div><div class="text-slate-400">Safe Shopping</div></div>
+              </div>
+            </div>
+
+            <!-- BEFORE LAYER (Cluttered Page - Clipped by Slider Value) -->
+            <div id="beforeLayer" style="width: 45%;" class="absolute inset-y-0 left-0 overflow-hidden border-r-2 border-emerald-400 bg-rose-950/95">
+              <div class="w-[520px] h-full p-5 flex flex-col justify-between">
+                <div class="flex items-center justify-between">
+                  <span class="px-2.5 py-1 rounded-md text-[10px] font-black uppercase bg-rose-600 text-white">✗ WITHOUT DEEPBLOCK</span>
+                </div>
+                <div class="bg-rose-900/80 border border-rose-500/50 rounded-xl p-3 space-y-2 my-auto">
+                  <div class="bg-rose-600 text-white text-xs font-extrabold px-2.5 py-1.5 rounded">⚠ Ad 1 of 2 (0:30 — Cannot Skip)</div>
+                  <div class="bg-white text-slate-900 text-xs font-bold p-2.5 rounded shadow">
+                    🍪 "We &amp; 842 partners use cookies — Accept All to continue reading"
+                  </div>
+                </div>
+                <div class="text-[11px] text-rose-300 font-semibold">Page frozen by pop-ups &amp; video ads</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Interactive Range Slider Control -->
+          <div class="mt-4 px-2">
+            <input type="range" min="5" max="95" value="45" oninput="document.getElementById('beforeLayer').style.width = this.value + '%'" class="w-full accent-emerald-500 cursor-pointer" aria-label="Compare Before and After SWEEPR Deepblock">
+            <div class="flex justify-between text-[11px] font-bold text-slate-400 mt-1">
+              <span>← Slide Left for 100% Clean View</span>
+              <span>Slide Right to See Clutter →</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       CONCEPT B: ULTRA-MINIMAL 1-CLICK TOGGLE HERO
+       ========================================================================= -->
+  <section id="conceptB" class="hidden flex-1 bg-gradient-to-b from-emerald-50/50 via-white to-white">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 py-14 sm:py-20 text-center">
+      <!-- Auto-Detected Browser Pill -->
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold bg-white text-slate-800 border border-slate-200 shadow-xs mb-6">
+        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+        <span>Ready for Your Browser • Installs in 1 Click • Covers 5 Devices</span>
+      </div>
+
+      <h1 class="text-4xl sm:text-6xl font-black tracking-tight text-slate-900 leading-[1.06] mb-5">
+        A Cleaner, Safer Internet <span class="text-emerald-600">in One Click.</span>
+      </h1>
+      <p class="text-base sm:text-xl text-slate-600 max-w-2xl mx-auto mb-8 leading-relaxed">
+        No complicated settings. SWEEPR Deepblock quietly stops video ads, closes annoying cookie pop-ups for you, and warns you about fake online shops.
+      </p>
+
+      <!-- Centered Primary CTA + Get Pro Access -->
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10">
+        <a href="/download?install=1" class="btn-go font-extrabold text-lg px-8 py-4 rounded-2xl inline-flex items-center gap-3">
+          <span>Install Free Extension</span>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+        </a>
+        <a href="/order?plan=annual" class="text-sm font-bold text-slate-700 hover:text-emerald-700 underline underline-offset-4 px-3 py-2">
+          Get Pro Access
+        </a>
+      </div>
+
+      <!-- 3 Interactive Visual Toggle Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-left">
+        <div class="bg-white rounded-2xl p-5 border-2 border-emerald-500/80 shadow-md">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-extrabold uppercase tracking-wider text-emerald-700">Protection #1</span>
+            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-emerald-500 text-white">ON</span>
+          </div>
+          <h3 class="font-extrabold text-base text-slate-900 mb-1">Watch Videos Without Ads</h3>
+          <p class="text-xs text-slate-600 leading-relaxed">Stops video ads and flashing banners on YouTube and news websites automatically.</p>
+        </div>
+
+        <div class="bg-white rounded-2xl p-5 border-2 border-emerald-500/80 shadow-md">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-extrabold uppercase tracking-wider text-emerald-700">Protection #2</span>
+            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-emerald-500 text-white">ON</span>
+          </div>
+          <h3 class="font-extrabold text-base text-slate-900 mb-1">No More Cookie Pop-Ups</h3>
+          <p class="text-xs text-slate-600 leading-relaxed">Automatically says "No thanks" to cookie boxes so you can read pages right away.</p>
+        </div>
+
+        <div class="bg-white rounded-2xl p-5 border-2 border-emerald-500/80 shadow-md">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-extrabold uppercase tracking-wider text-emerald-700">Protection #3</span>
+            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-emerald-500 text-white">ON</span>
+          </div>
+          <h3 class="font-extrabold text-base text-slate-900 mb-1">Fake Online Shop Alerts</h3>
+          <p class="text-xs text-slate-600 leading-relaxed">Warns you before you buy from suspicious scam stores and hides junk search results.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       CONCEPT C: 1-SCREEN EXPRESS CHECKOUT (/order REDESIGN)
+       ========================================================================= -->
+  <section id="conceptC" class="hidden flex-1 bg-slate-50 py-8 px-4 sm:px-6">
+    <div class="max-w-5xl mx-auto">
+      <!-- Top Segmented Plan Bar (Allows instant plan switching right on /order) -->
+      <div class="bg-white rounded-2xl p-2 border border-slate-200 shadow-xs mb-6 grid grid-cols-3 gap-2">
+        <button type="button" class="py-2.5 px-3 rounded-xl bg-emerald-600 text-white font-extrabold text-xs sm:text-sm shadow-xs cursor-pointer">
+          ★ Annual Plan — £4.99/mo (Save 50%)
+        </button>
+        <button type="button" class="py-2.5 px-3 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs sm:text-sm cursor-pointer">
+          6-Month Plan — £7.49/mo (Save 25%)
+        </button>
+        <button type="button" class="py-2.5 px-3 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs sm:text-sm cursor-pointer">
+          Monthly Plan — £9.99/mo
+        </button>
+      </div>
+
+      <!-- 1-Screen 2-Column Checkout Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <!-- Left Column: Compact Unified Summary + Pre-Ticked Speed Add-On -->
+        <div class="lg:col-span-6 bg-white rounded-2xl p-6 border border-slate-200 shadow-xs space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+            <div>
+              <span class="text-[11px] font-extrabold uppercase text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full">Save 50% • Covers 5 Devices</span>
+              <h2 class="text-xl font-black text-slate-900 mt-1">SWEEPR Deepblock Pro</h2>
+              <p class="text-xs text-slate-500">Stops video ads, closes cookie pop-ups &amp; blocks scam shops</p>
+            </div>
+            <div class="text-right">
+              <div class="text-2xl font-black text-slate-900">£59.99</div>
+              <div class="text-[11px] text-slate-500">per year (£4.99/mo)</div>
+            </div>
+          </div>
+
+          <!-- Compact Included Free Pills -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <div class="bg-emerald-50/60 border border-emerald-200/80 rounded-xl p-2.5 flex items-center justify-between text-xs">
+              <span class="font-bold text-slate-800">🎁 Fake Shop Detector</span>
+              <span class="font-extrabold text-emerald-700 text-[10px] uppercase">FREE</span>
+            </div>
+            <div class="bg-emerald-50/60 border border-emerald-200/80 rounded-xl p-2.5 flex items-center justify-between text-xs">
+              <span class="font-bold text-slate-800">🎁 Private Browsing</span>
+              <span class="font-extrabold text-emerald-700 text-[10px] uppercase">FREE</span>
+            </div>
+          </div>
+
+          <!-- Pre-Ticked Speed Add-On -->
+          <label class="block bg-amber-50/70 border-2 border-amber-300 rounded-xl p-3.5 cursor-pointer">
+            <div class="flex items-start gap-3">
+              <input type="checkbox" checked class="mt-0.5 w-4 h-4 rounded text-emerald-600">
+              <div class="flex-1">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-extrabold text-slate-900">⚡ Total Tab &amp; RAM Tamer Add-On</span>
+                  <span class="text-xs font-extrabold text-emerald-700">+£14.99/yr</span>
+                </div>
+                <p class="text-[11px] text-slate-600 mt-0.5">Pauses unused background tabs so your computer stays fast and quiet.</p>
+              </div>
+            </div>
+          </label>
+
+          <!-- Clean Total Row -->
+          <div class="pt-3 border-t border-slate-200 flex items-center justify-between">
+            <div>
+              <div class="text-sm font-bold text-slate-900">Total Today (GBP)</div>
+              <div class="text-[11px] text-emerald-700 font-semibold">🛡️ 30-Day Money-Back Guarantee • 1-Click Cancel</div>
+            </div>
+            <div class="text-2xl font-black text-slate-900">£74.98</div>
+          </div>
+        </div>
+
+        <!-- Right Column: Compact Express Checkout -->
+        <div class="lg:col-span-6 bg-white rounded-2xl p-6 border border-slate-200 shadow-md space-y-4">
+          <div class="grid grid-cols-2 gap-2.5">
+            <button type="button" class="h-11 rounded-xl bg-black text-white font-bold text-sm flex items-center justify-center">Google Pay</button>
+            <button type="button" class="h-11 rounded-xl bg-[#ffc439] text-[#003087] font-black italic text-base flex items-center justify-center">PayPal</button>
+          </div>
+          <div class="relative flex py-1 items-center">
+            <div class="flex-grow border-t border-slate-200"></div>
+            <span class="flex-shrink mx-3 text-[11px] uppercase font-bold text-slate-400">OR PAY BY CARD</span>
+            <div class="flex-grow border-t border-slate-200"></div>
+          </div>
+          <div class="space-y-2.5 text-xs">
+            <input type="email" placeholder="Email Address (for instant license delivery)" class="w-full p-2.5 rounded-lg border border-slate-300">
+            <input type="text" placeholder="Name on Card" class="w-full p-2.5 rounded-lg border border-slate-300">
+            <input type="text" placeholder="Card Number (4000 1234 5678 9010)" class="w-full p-2.5 rounded-lg border border-slate-300 font-mono">
+            <div class="grid grid-cols-3 gap-2">
+              <input type="text" placeholder="MM/YY" class="p-2.5 rounded-lg border border-slate-300 font-mono">
+              <input type="text" placeholder="CVV" class="p-2.5 rounded-lg border border-slate-300 font-mono">
+              <input type="text" placeholder="Postcode" class="p-2.5 rounded-lg border border-slate-300 uppercase">
+            </div>
+          </div>
+          <button type="button" class="btn-go w-full py-3.5 rounded-full font-black text-base tracking-wide uppercase flex items-center justify-center gap-2">
+            <span>🔒 PURCHASE SECURELY</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    function switchConcept(which) {
+      ['A', 'B', 'C'].forEach((id) => {
+        const sec = document.getElementById('concept' + id);
+        const btn = document.getElementById('tabBtn' + id);
+        if (id === which) {
+          sec.classList.remove('hidden');
+          btn.className = 'px-3.5 py-1.5 rounded-lg text-xs font-extrabold bg-emerald-500 text-slate-950 cursor-pointer transition-all';
+        } else {
+          sec.classList.add('hidden');
+          btn.className = 'px-3.5 py-1.5 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 hover:bg-slate-700 cursor-pointer transition-all';
+        }
+      });
+    }
+  </script>
+</body>
+</html>
