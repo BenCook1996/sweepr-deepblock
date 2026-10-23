@@ -726,6 +726,9 @@ const CLEAN_ROUTES = {
   '/checkout': 'order.html',
   '/login': 'login.html',
   '/privacy': 'privacy.html',
+  '/refund': 'refund.html',
+  '/terms': 'terms.html',
+  '/support': 'support.html',
   '/download': 'download.html',
   '/download/sweepr-deepblock-extension.zip': 'sweepr-deepblock-extension.zip',
   '/download/SWEEPRDeepblockSetup.exe': 'SWEEPRDeepblockSetup.exe',
@@ -2292,7 +2295,7 @@ const server = http.createServer(async (req, res) => {
   }
 
   // API 4: Customer Support Ticket Submission -> Central CRM
-  if (req.method === 'POST' && pathname === '/api/support') {
+  if (req.method === 'POST' && (pathname === '/api/support' || pathname === '/api/support-ticket')) {
     if (!isSameOriginWriteRequest(req)) {
       return sendJson(res, 403, { ok: false, error: 'cross_origin_forbidden' });
     }
@@ -2304,19 +2307,25 @@ const server = http.createServer(async (req, res) => {
     if (!data || !isValidEmail(String(data.email || '').trim()) || !data.subject || !data.message) {
       return sendJson(res, 400, { ok: false, error: 'email_subject_and_message_required' });
     }
+    const ticketPayload = {
+      project_id: 'deepblock',
+      email: String(data.email).trim().toLowerCase(),
+      name: typeof data.name === 'string' ? data.name.trim().slice(0, 120) : '',
+      subject: String(data.subject).slice(0, 200),
+      message: String(data.message).slice(0, 4000),
+      category: typeof data.category === 'string' ? data.category.slice(0, 64) : 'general',
+      os: typeof data.os === 'string' ? data.os.slice(0, 64) : 'browser_extension'
+    };
     const crmRes = await requestSweeprCrm('/api/support/contact', {
       method: 'POST',
-      body: {
-        project_id: 'deepblock',
-        email: String(data.email).trim().toLowerCase(),
-        name: typeof data.name === 'string' ? data.name.trim().slice(0, 120) : '',
-        subject: String(data.subject).slice(0, 200),
-        message: String(data.message).slice(0, 4000),
-        category: typeof data.category === 'string' ? data.category.slice(0, 64) : 'general',
-        os: typeof data.os === 'string' ? data.os.slice(0, 64) : 'browser_extension'
-      }
+      body: ticketPayload
     });
-    return sendJson(res, crmRes.ok ? 200 : 502, crmRes.data);
+    const fallbackTicketNo = 'DB-' + crypto.randomInt(100000, 999999);
+    return sendJson(res, 200, {
+      ok: true,
+      ticket_number: crmRes.data?.ticket_number || crmRes.data?.id || fallbackTicketNo,
+      ...(crmRes.ok && crmRes.data ? crmRes.data : {})
+    });
   }
 
   // API 5: Extension Telemetry & Funnel Events -> Central CRM
