@@ -215,6 +215,11 @@
     }
     #discountModal .modal-card {
       transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    #discountModal .modal-card::-webkit-scrollbar {
+      display: none;
     }
     #discountModal.hidden-modal .modal-card {
       transform: scale(0.92) translateY(20px);
@@ -723,7 +728,7 @@
 
   <!-- 30-SECOND INACTIVITY & EXIT-INTENT INTRODUCTORY OFFER POPUP MODAL (Matched to sweeprcleaner.com/order) -->
   <div id="discountModal" class="hidden-modal fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/75 backdrop-blur-md">
-    <div class="modal-card bg-[#141820] text-white rounded-2xl max-w-2xl sm:max-w-3xl w-full max-h-[92vh] overflow-y-auto p-5 sm:p-8 relative shadow-2xl border border-emerald-500/25">
+    <div class="modal-card bg-[#141820] text-white rounded-2xl max-w-2xl sm:max-w-3xl w-full overflow-hidden p-5 sm:p-8 relative shadow-2xl border border-emerald-500/25">
       <!-- Ambient emerald decorative glow -->
       <div class="absolute -top-24 -left-24 w-56 h-56 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
       <div class="absolute -bottom-24 -right-24 w-56 h-56 bg-teal-500/10 rounded-full blur-3xl pointer-events-none"></div>
