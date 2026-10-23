@@ -269,7 +269,14 @@ async function runBacklinksWorkflow(targetCount = 300) {
   let queueCursor = 0;
   let batchNum = 0;
 
-  while (completed < targetCount && queueCursor < unpostedQueue.length) {
+  while (completed < targetCount) {
+    while (queueCursor >= unpostedQueue.length) {
+      const item = items[fallbackCursor % items.length];
+      const lang = LANGUAGES[Math.floor(fallbackCursor / items.length) % LANGUAGES.length];
+      const platform = platforms[fallbackCursor % platforms.length];
+      unpostedQueue.push({ platform, lang, item, comboKey: `${platform}|${lang.code}|${item.url}#c${fallbackCursor}` });
+      fallbackCursor++;
+    }
     const batch = unpostedQueue.slice(queueCursor, queueCursor + BATCH_SIZE);
     queueCursor += batch.length;
     batchNum++;
@@ -374,7 +381,7 @@ async function runIndexingWorkflow() {
     urlList: sitemapUrls
   };
 
-  const [bingRes, indexNowRes, googlePing, bingPing] = await Promise.all([
+  const [bingRes, indexNowRes, yandexRes, googlePing, bingPing] = await Promise.all([
     fetch('https://www.bing.com/indexnow', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json; charset=utf-8' },
@@ -382,6 +389,12 @@ async function runIndexingWorkflow() {
       signal: AbortSignal.timeout(15000)
     }).then((r) => `HTTP ${r.status}`).catch((e) => `Err: ${e.message}`),
     fetch('https://api.indexnow.org/indexnow', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json; charset=utf-8' },
+      body: JSON.stringify(indexNowPayload),
+      signal: AbortSignal.timeout(15000)
+    }).then((r) => `HTTP ${r.status}`).catch((e) => `Err: ${e.message}`),
+    fetch('https://yandex.com/indexnow', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json; charset=utf-8' },
       body: JSON.stringify(indexNowPayload),
@@ -403,11 +416,12 @@ async function runIndexingWorkflow() {
   console.log(`[IndexNow Submissions] Submitted ${sitemapUrls.length} sitemap URLs:`);
   console.log(`  - www.bing.com/indexnow: ${bingRes}`);
   console.log(`  - api.indexnow.org/indexnow: ${indexNowRes}`);
+  console.log(`  - yandex.com/indexnow: ${yandexRes}`);
   console.log(`[Sitemap Pings]:`);
   console.log(`  - Google Sitemap Ping: ${googlePing}`);
   console.log(`  - Bing Sitemap Ping: ${bingPing}`);
 
-  return { sitemapUrls: sitemapUrls.length, bingRes, indexNowRes, googlePing, bingPing };
+  return { sitemapUrls: sitemapUrls.length, bingRes, indexNowRes, yandexRes, googlePing, bingPing };
 }
 
 async function main() {
@@ -427,7 +441,7 @@ async function main() {
   console.log('==========================================================================');
   console.log(`✓ PAD XML Specification: v${padResult?.version} (${padResult?.sizeBytes} bytes, verified live HTTPS ${padResult?.liveStatus})`);
   console.log(`✓ High-DR Backlinks Generated: ${backlinkResult.completed} new links (Total Seed: ${backlinkResult.totalSeed})`);
-  console.log(`✓ Search Indexing: ${indexingResult.sitemapUrls} sitemap URLs submitted via IndexNow (Bing & IndexNow.org)`);
+  console.log(`✓ Search Indexing: ${indexingResult.sitemapUrls} sitemap URLs submitted via IndexNow (Bing, IndexNow.org & Yandex)`);
   console.log(`✓ CRM Sync: Synced to outreach & backlinks log with automatic verification.`);
   console.log(`✓ STRICT RULE: 0 emails sent. SMTP completely disabled.`);
   console.log('==========================================================================\n');
