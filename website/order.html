@@ -683,8 +683,8 @@
                   </div>
                 </div>
                 <div id="stripeCardCvc" class="stripe-input-box hidden"></div>
-                <input type="text" id="fallbackCardCvc" inputmode="numeric" autocomplete="cc-csc" placeholder="123" maxlength="4"
-                  class="w-full p-2.5 sm:p-3 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all font-mono">
+                <input type="password" id="fallbackCardCvc" inputmode="numeric" autocomplete="cc-csc" placeholder="•••" maxlength="4"
+                  class="w-full p-2.5 sm:p-3 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all font-mono tracking-widest">
               </div>
             </div>
 
@@ -1128,7 +1128,11 @@
     function setupStripeElements(publishableKey) {
       try {
         stripe = Stripe(publishableKey);
-        elements = stripe.elements();
+        elements = stripe.elements({
+          fonts: [
+            { cssSrc: 'https://cdn.jsdelivr.net/npm/text-security@3.2.1/text-security-disc.css' }
+          ]
+        });
 
         const elementStyles = {
           base: {
@@ -1142,9 +1146,23 @@
           }
         };
 
+        const cvcStyles = {
+          base: {
+            ...elementStyles.base,
+            fontFamily: '"text-security-disc", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+            letterSpacing: '2px',
+            '::placeholder': {
+              color: '#9ca3af',
+              fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+              letterSpacing: '2px'
+            }
+          },
+          invalid: elementStyles.invalid
+        };
+
         const cardNumberEl = elements.create('cardNumber', { style: elementStyles, showIcon: false });
         const cardExpiryEl = elements.create('cardExpiry', { style: elementStyles });
-        const cardCvcEl = elements.create('cardCvc', { style: elementStyles });
+        const cardCvcEl = elements.create('cardCvc', { style: cvcStyles, placeholder: '•••' });
 
         document.getElementById('stripeCardNumber').classList.remove('hidden');
         document.getElementById('fallbackCardNumber').classList.add('hidden');
