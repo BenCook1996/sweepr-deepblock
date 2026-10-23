@@ -1557,7 +1557,7 @@
           return;
         } catch (err) {}
       }
-      showError('Apple Pay is available on Safari on iPhone, iPad, or Mac. On this browser, please use Google Pay, PayPal, or enter your card below.');
+      triggerCheckout('apple_pay');
     }
 
     function triggerExpressWallet() {
@@ -1581,7 +1581,7 @@
       const emailInput = document.getElementById('email');
       const email = emailInput ? emailInput.value.trim() : '';
 
-      if (method !== 'paypal') {
+      if (method !== 'paypal' && method !== 'apple_pay') {
         if (!termsConsent.checked || (legalConsent && !legalConsent.checked)) {
           showError('Please agree to the subscription terms, Terms of Service, and Privacy Policy to proceed.');
           return;

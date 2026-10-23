@@ -1027,6 +1027,19 @@ const server = http.createServer(async (req, res) => {
   const pathname = parsedUrl.pathname.replace(/\/+$/, '') || '/';
   const ua = req.headers['user-agent'] || '';
 
+  // Apple Pay Domain Verification File (/.well-known/apple-developer-merchantid-domain-association)
+  if ((req.method === 'GET' || req.method === 'HEAD') && pathname === '/.well-known/apple-developer-merchantid-domain-association') {
+    const assocPath = path.join(WEBSITE_DIR, '.well-known', 'apple-developer-merchantid-domain-association');
+    if (fs.existsSync(assocPath)) {
+      const content = fs.readFileSync(assocPath, 'utf8');
+      res.writeHead(200, {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Cache-Control': 'public, max-age=86400'
+      });
+      return res.end(req.method === 'HEAD' ? undefined : content);
+    }
+  }
+
   if (req.method === 'GET' && BOT_UA_RE.test(ua) && !pathname.startsWith('/api/')) {
     reportToSweeprCrm('/api/crm/seo/bot-hit?project=deepblock', { user_agent: ua, path: pathname, status: 200 });
   }
@@ -1155,7 +1168,8 @@ const server = http.createServer(async (req, res) => {
 
     const paymentMethod = typeof body.paymentMethod === 'string' ? body.paymentMethod.toLowerCase() : 'card';
     const isPayPal = paymentMethod === 'paypal';
-    const isWallet = paymentMethod === 'wallet' || paymentMethod === 'google_pay';
+    const isApplePayCheckout = paymentMethod === 'apple_pay';
+    const isWallet = paymentMethod === 'wallet' || paymentMethod === 'google_pay' || isApplePayCheckout;
     const isPopup = Boolean(body.popup);
     const providedEmail = (body.email || '').trim().toLowerCase();
     if (providedEmail && !isValidEmail(providedEmail)) {
@@ -1164,7 +1178,7 @@ const server = http.createServer(async (req, res) => {
     const email =
       (providedEmail ? providedEmail : null) ||
       (isPayPal || isWallet
-        ? `${isPayPal ? 'paypal' : 'wallet'}_${crypto.randomBytes(4).toString('hex')}@pending.sweeprdeepblock.com`
+        ? `${isPayPal ? 'paypal' : isApplePayCheckout ? 'applepay' : 'wallet'}_${crypto.randomBytes(4).toString('hex')}@pending.sweeprdeepblock.com`
         : null);
 
     if (!email) {
@@ -1300,6 +1314,39 @@ const server = http.createServer(async (req, res) => {
           ? await getOrCreateIntroCoupon(localizedPricing.currency, localizedPricing.introSavingsAmount)
           : '';
 
+      const hostOrigin = resolveTrustedOrigin(req);
+
+      // Apple Pay cross-browser fallback via Stripe Hosted Checkout (supports iOS 18 Apple Pay QR scan on Windows/Chrome & native Apple Pay on iOS/macOS)
+      if (isApplePayCheckout) {
+        const lineItems = subItems.map((it) => ({
+          price_data: it.price_data,
+          quantity: 1
+        }));
+        const sessionParams = {
+          mode: 'subscription',
+          customer: customerId,
+          payment_method_types: ['card'],
+          line_items: lineItems,
+          ...(introCouponId ? { discounts: [{ coupon: introCouponId }] } : {}),
+          subscription_data: {
+            metadata
+          },
+          metadata,
+          success_url: `${hostOrigin}/checkout/success?web=1&session_id={CHECKOUT_SESSION_ID}&account_id=${encodeURIComponent(acc.id)}${isPopup ? '&popup=1' : ''}`,
+          cancel_url: `${hostOrigin}/order`
+        };
+        const checkoutSession = await stripeRequest('POST', 'checkout/sessions', sessionParams);
+        if (!checkoutSession?.url) {
+          return sendJson(res, 500, { error: 'Could not initialize Apple Pay checkout session.' });
+        }
+        return sendJson(res, 200, {
+          redirectUrl: checkoutSession.url,
+          accountId: acc.id,
+          plan,
+          livemode: Boolean(checkoutSession.livemode)
+        });
+      }
+
       const subParams = {
         customer: customerId,
         items: subItems,
@@ -1327,7 +1374,6 @@ const server = http.createServer(async (req, res) => {
         return sendJson(res, 500, { error: 'Could not initialize payment intent.' });
       }
 
-      const hostOrigin = resolveTrustedOrigin(req);
       const returnUrl = `${hostOrigin}/checkout/success?web=1&subscription_id=${encodeURIComponent(subscription.id)}&account_id=${encodeURIComponent(acc.id)}${isPopup ? '&popup=1' : ''}`;
 
       if (isPayPal) {
@@ -1625,7 +1671,8 @@ const server = http.createServer(async (req, res) => {
 
   // Checkout Success & Cancel Pages
   if (req.method === 'GET' && pathname === '/checkout/success') {
-    const subscriptionId = (parsedUrl.searchParams.get('subscription_id') || '').trim();
+    let subscriptionId = (parsedUrl.searchParams.get('subscription_id') || '').trim();
+    const checkoutSessionId = (parsedUrl.searchParams.get('session_id') || '').trim();
     const accountId = (parsedUrl.searchParams.get('account_id') || '').trim();
     const redirectStatus = (parsedUrl.searchParams.get('redirect_status') || '').trim();
     const sessionData = verifySessionCookie(req);
@@ -1633,6 +1680,15 @@ const server = http.createServer(async (req, res) => {
     if (redirectStatus === 'failed' || redirectStatus === 'canceled') {
       res.writeHead(302, { Location: '/order?error=payment_cancelled' });
       return res.end();
+    }
+
+    if (!subscriptionId && checkoutSessionId && STRIPE_SECRET_KEY) {
+      try {
+        const cs = await stripeRequest('GET', `checkout/sessions/${encodeURIComponent(checkoutSessionId)}`);
+        if (cs && cs.subscription) {
+          subscriptionId = typeof cs.subscription === 'string' ? cs.subscription : cs.subscription.id;
+        }
+      } catch {}
     }
 
     let acc = (accountId ? accountsById.get(accountId) : null) || null;
