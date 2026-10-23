@@ -153,23 +153,11 @@ button.btn-go,
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Subliminal animated sheen reflecting across button */
-.btn-go::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -120%;
-  width: 70%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.28), transparent);
-  transform: skewX(-22deg);
-  animation: go-sheen 4.5s infinite ease-in-out;
-  pointer-events: none;
-}
-
-@keyframes go-sheen {
-  0%, 65% { left: -120%; }
-  100% { left: 220%; }
+/* Subtle highlight border & focus accessibility for primary CTA */
+.btn-go:focus-visible,
+.btn:focus-visible {
+  outline: 3px solid rgba(5, 150, 105, 0.45);
+  outline-offset: 2px;
 }
 
 .btn-go:hover:not(:disabled),
@@ -178,7 +166,7 @@ button.btn-go:hover:not(:disabled),
 [type="button"].btn-go:hover:not(:disabled) {
   background: linear-gradient(135deg, #059669 0%, #047857 100%);
   box-shadow: 0 8px 30px rgba(16, 185, 129, 0.55), 0 0 0 2px rgba(16, 185, 129, 0.3);
-  transform: translateY(-2px) scale(1.03);
+  transform: translateY(-2px) scale(1.02);
 }
 
 .btn-go:active:not(:disabled) {
@@ -193,22 +181,9 @@ button.btn-go:hover:not(:disabled),
   transform: translateX(4px);
 }
 
-/* Subtle ambient pulse ring for the main checkout CTA */
+/* Crisp static elevation for main checkout/hero CTA (no distracting infinite loop) */
 .pulse-glow {
-  box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5), 0 6px 24px rgba(16, 185, 129, 0.35);
-  animation: pulse-ring 2.5s infinite;
-}
-
-@keyframes pulse-ring {
-  0% {
-    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.45), 0 6px 24px rgba(16, 185, 129, 0.35);
-  }
-  70% {
-    box-shadow: 0 0 0 12px rgba(16, 185, 129, 0), 0 8px 28px rgba(16, 185, 129, 0.45);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0), 0 6px 24px rgba(16, 185, 129, 0.35);
-  }
+  box-shadow: 0 8px 26px -4px rgba(5, 150, 105, 0.45), 0 0 0 1px rgba(16, 185, 129, 0.25);
 }
 
 .btn-ghost,

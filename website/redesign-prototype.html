@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SWEEPR Deepblock — Stop YouTube Ads &amp; Auto-Reject Cookie Pop-Ups</title>
+  <link rel="icon" type="image/svg+xml" href="/logo.svg">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              200: '#a7f3d0',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              900: '#064e3b'
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI Variable", "Segoe UI", Inter, Roboto, sans-serif;
+      background:
+        radial-gradient(circle at 12% 18%, rgba(209, 250, 229, 0.45) 0%, rgba(255, 255, 255, 0) 42%),
+        radial-gradient(circle at 88% 75%, rgba(236, 253, 245, 0.6) 0%, rgba(255, 255, 255, 0) 45%),
+        #ffffff;
+    }
+    .cta-primary {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      box-shadow: 0 10px 28px -6px rgba(5, 150, 105, 0.45), 0 0 0 1px rgba(16, 185, 129, 0.2);
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
+    }
+    .cta-primary:hover {
+      background: linear-gradient(135deg, #059669 0%, #047857 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 14px 34px -6px rgba(5, 150, 105, 0.55), 0 0 0 2px rgba(16, 185, 129, 0.3);
+    }
+    .cta-primary:focus-visible {
+      outline: 3px solid #059669;
+      outline-offset: 2px;
+    }
+  </style>
+</head>
+<body class="text-slate-900 antialiased pb-20 md:pb-0">
+
+  <!-- 1. STREAMLINED STICKY NAVBAR (Max 4 top-level items + Mobile Drawer Toggle) -->
+  <header class="sticky top-0 z-50 bg-white/85 backdrop-blur-xl border-b border-slate-200/80">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <!-- Brand + Inline Social Proof Pill -->
+      <div class="flex items-center gap-6">
+        <a href="/?home=1" class="flex items-center gap-2.5 font-black text-lg sm:text-xl tracking-tight text-slate-900">
+          <span class="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center shadow-sm text-sm font-black">S</span>
+          <span>SWEEPR <span class="text-emerald-600">Deepblock</span></span>
+        </a>
+        <nav aria-label="Primary" class="hidden md:flex items-center gap-6 text-sm font-semibold text-slate-600">
+          <a href="#features" class="hover:text-slate-900 transition-colors">Features</a>
+          <a href="#pricing-preview" class="hover:text-slate-900 transition-colors">Pricing</a>
+          <a href="/vs/total-adblock" class="hover:text-slate-900 transition-colors">vs. Total Adblock</a>
+        </nav>
+      </div>
+
+      <!-- Right Actions: Login + Single Primary Nav CTA + Mobile Menu Button -->
+      <div class="flex items-center gap-3">
+        <div class="hidden lg:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-50 border border-amber-200/80 text-xs font-bold text-amber-900">
+          <span class="text-amber-500">★★★★★</span>
+          <span>4.9/5 (14.8k users)</span>
+        </div>
+        <a href="/login" class="text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-900 px-2.5 py-2 rounded-lg">Customer Login</a>
+        <a href="/download?install=1" class="hidden sm:inline-flex items-center gap-2 cta-primary text-white text-sm font-bold px-4 py-2.5 rounded-xl">
+          <span>Add to Browser</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+        </a>
+        <!-- Mobile Menu Toggle (Fixes missing mobile nav in original index.html) -->
+        <button type="button" onclick="document.getElementById('mobileMenu').classList.toggle('hidden')" aria-label="Toggle Menu" class="md:hidden p-2 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Collapsible Mobile Menu Drawer -->
+    <div id="mobileMenu" class="hidden md:hidden border-t border-slate-200 bg-white px-4 py-3 space-y-2 text-sm font-semibold text-slate-700">
+      <a href="#features" class="block py-2 hover:text-emerald-600">Features</a>
+      <a href="#pricing-preview" class="block py-2 hover:text-emerald-600">Pricing &amp; Plans</a>
+      <a href="/vs/total-adblock" class="block py-2 hover:text-emerald-600">Compare vs. Total Adblock</a>
+      <a href="/login" class="block py-2 hover:text-emerald-600">Customer Portal (1-Click Cancel)</a>
+    </div>
+  </header>
+
+  <!-- 2. ABOVE-THE-FOLD HERO (5-Second Clarity: Outcome Headline + 3 Scannable Bullets + 1 Primary CTA) -->
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 pt-10 sm:pt-16 pb-14 sm:pb-20">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+
+      <!-- Left Column (7 cols): Clear Value Prop & Single Primary Action -->
+      <div class="lg:col-span-7 text-left">
+        <!-- Browser Compatibility Pill -->
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold text-emerald-900 bg-emerald-100/90 border border-emerald-200 mb-5">
+          <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+          <span>Works on Chrome, Safari, Edge, Firefox &amp; Brave • 5 Devices</span>
+        </div>
+
+        <!-- Outcome-First Headline (Replaces repetitive brand-name H1) -->
+        <h1 class="text-3xl sm:text-5xl lg:text-[54px] font-black tracking-tight text-slate-900 leading-[1.08] mb-5">
+          Stop YouTube Ads &amp; <span class="text-emerald-600">Auto-Reject Cookie Pop-Ups</span> Automatically.
+        </h1>
+
+        <!-- Concise Subheadline -->
+        <p class="text-base sm:text-lg text-slate-600 leading-relaxed mb-6 max-w-xl">
+          One lightweight browser shield that replaces 5 bloated extensions—keeping every video, search result, and checkout page clean and private.
+        </p>
+
+        <!-- Scannable 3-Point Value Checklist (Replaces 44-word paragraph wall) -->
+        <ul class="space-y-3 mb-8 text-sm sm:text-base text-slate-800 font-medium">
+          <li class="flex items-start gap-3">
+            <span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">✓</span>
+            <span><strong class="font-bold text-slate-900">Undetectable Video &amp; Banner Adblocking:</strong> Skips YouTube pre-rolls &amp; mid-rolls without triggering "Turn off your adblocker" walls.</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">✓</span>
+            <span><strong class="font-bold text-slate-900">Instant Cookie "Reject All" (&lt;50ms):</strong> Declines GDPR/cookie banners automatically without freezing page scroll.</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">✓</span>
+            <span><strong class="font-bold text-slate-900">Scam Store &amp; AI Spam Shield (Included):</strong> Hides junk search results and warns you before buying from fake online shops.</span>
+          </li>
+        </ul>
+
+        <!-- Single Unmistakable Primary CTA + Subtle Pro Upgrade Link -->
+        <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+          <a href="/download?install=1" class="cta-primary text-white font-extrabold text-base sm:text-lg px-7 py-4 rounded-2xl inline-flex items-center justify-center gap-3">
+            <span>Install Free Extension</span>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+          </a>
+          <a href="/order?plan=annual" class="text-sm font-bold text-slate-700 hover:text-emerald-700 underline underline-offset-4 px-2 py-2 text-center sm:text-left">
+            Or unlock Pro All-Access (£4.99/mo, Save 50%) →
+          </a>
+        </div>
+
+        <!-- Unified Trust Microcopy (Consistent 30-Day Guarantee right under CTA) -->
+        <div class="mt-4 pt-4 border-t border-slate-200/70 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-semibold text-slate-600">
+          <span class="inline-flex items-center gap-1.5 text-slate-800">
+            <span class="text-amber-500">★★★★★</span> 4.9/5 from 14,820+ users
+          </span>
+          <span>•</span>
+          <span>🛡️ 30-Day Money-Back Guarantee</span>
+          <span>•</span>
+          <span>🔒 Zero Browsing Data Collected</span>
+        </div>
+      </div>
+
+      <!-- Right Column (5 cols): Visual Before vs. After Proof Card (Zero competing buttons/links) -->
+      <div class="lg:col-span-5">
+        <div class="bg-white rounded-3xl border border-slate-200/90 shadow-2xl p-5 sm:p-6 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3.5">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span class="text-xs font-extrabold uppercase tracking-wider text-slate-800">Live Shield Telemetry</span>
+            </div>
+            <span class="px-2.5 py-1 rounded-full text-[11px] font-extrabold bg-emerald-100 text-emerald-800">Active on All Sites</span>
+          </div>
+
+          <!-- Before vs. After Split Comparison Box -->
+          <div class="grid grid-cols-2 gap-3">
+            <!-- WITHOUT -->
+            <div class="rounded-2xl bg-rose-50/70 border border-rose-200/80 p-3.5 text-left">
+              <div class="text-[11px] font-extrabold uppercase tracking-wider text-rose-700 mb-2">✗ Without Deepblock</div>
+              <div class="space-y-1.5 text-xs text-rose-900 font-medium">
+                <div class="bg-white/90 rounded-lg px-2.5 py-1.5 border border-rose-200/60">2× Unskippable Video Ads</div>
+                <div class="bg-white/90 rounded-lg px-2.5 py-1.5 border border-rose-200/60">"Accept 842 Cookies" Wall</div>
+                <div class="bg-white/90 rounded-lg px-2.5 py-1.5 border border-rose-200/60">7.1 GB RAM (45 Open Tabs)</div>
+              </div>
+            </div>
+            <!-- WITH SWEEPR -->
+            <div class="rounded-2xl bg-emerald-50/80 border border-emerald-300 p-3.5 text-left">
+              <div class="text-[11px] font-extrabold uppercase tracking-wider text-emerald-800 mb-2">✓ With Deepblock Pro</div>
+              <div class="space-y-1.5 text-xs text-emerald-950 font-semibold">
+                <div class="bg-white rounded-lg px-2.5 py-1.5 border border-emerald-200 shadow-2xs">0 Video or Banner Ads</div>
+                <div class="bg-white rounded-lg px-2.5 py-1.5 border border-emerald-200 shadow-2xs">Cookies Rejected in 38ms</div>
+                <div class="bg-white rounded-lg px-2.5 py-1.5 border border-emerald-200 shadow-2xs">1.2 GB RAM (83% Saved)</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2x2 Scannable Live Counter Grid -->
+          <div class="grid grid-cols-2 gap-2.5 pt-1">
+            <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-3 flex items-center justify-between">
+              <span class="text-xs font-bold text-slate-600">Video &amp; Page Ads</span>
+              <span class="text-base font-black text-emerald-600">142 Blocked</span>
+            </div>
+            <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-3 flex items-center justify-between">
+              <span class="text-xs font-bold text-slate-600">Cookie Pop-Ups</span>
+              <span class="text-base font-black text-emerald-600">19 Rejected</span>
+            </div>
+            <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-3 flex items-center justify-between">
+              <span class="text-xs font-bold text-slate-600">AI Search Spam</span>
+              <span class="text-base font-black text-emerald-600">11 Hidden</span>
+            </div>
+            <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-3 flex items-center justify-between">
+              <span class="text-xs font-bold text-slate-600">Scam Shops</span>
+              <span class="text-base font-black text-emerald-600">4 Flagged</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- 3. 3-PILLAR FEATURE GRID (Replaces cramped 5-column row with spacious 3-column bento) -->
+  <section id="features" class="py-14 bg-slate-50/80 border-y border-slate-200/70 px-4 sm:px-6">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center max-w-2xl mx-auto mb-10">
+        <h2 class="text-2xl sm:text-4xl font-black text-slate-900 tracking-tight mb-3">Replace 5 Browser Extensions With 1 Clean Shield</h2>
+        <p class="text-sm sm:text-base text-slate-600">Built on Manifest V3 for zero browser slowdown, instant page loads, and complete privacy.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Pillar 1 -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-200/90 shadow-xs">
+          <div class="w-11 h-11 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center mb-4 font-bold">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg>
+          </div>
+          <h3 class="text-lg font-extrabold text-slate-900 mb-2">Ad, Video &amp; Cookie Pop-Up Blocker</h3>
+          <p class="text-sm text-slate-600 leading-relaxed">Blocks YouTube pre-rolls, banner ads, and floating videos while automatically clicking "Reject All" on cookie banners in under 50ms.</p>
+        </div>
+
+        <!-- Pillar 2 -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-200/90 shadow-xs">
+          <div class="flex items-center justify-between mb-4">
+            <div class="w-11 h-11 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+            </div>
+            <span class="px-2.5 py-1 rounded-full text-[11px] font-extrabold uppercase bg-emerald-100 text-emerald-800">Included Free in Pro</span>
+          </div>
+          <h3 class="text-lg font-extrabold text-slate-900 mb-2">Fake Shop &amp; AI Search Cleanser</h3>
+          <p class="text-sm text-slate-600 leading-relaxed">Flags suspicious scam stores and fake Amazon/Trustpilot reviews before you buy, and strips copy-paste AI spam from Google &amp; Bing results.</p>
+        </div>
+
+        <!-- Pillar 3 -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-200/90 shadow-xs">
+          <div class="flex items-center justify-between mb-4">
+            <div class="w-11 h-11 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center font-bold">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            </div>
+            <span class="px-2.5 py-1 rounded-full text-[11px] font-extrabold uppercase bg-amber-100 text-amber-900">Speed Add-On</span>
+          </div>
+          <h3 class="text-lg font-extrabold text-slate-900 mb-2">Total Tab &amp; RAM Tamer</h3>
+          <p class="text-sm text-slate-600 leading-relaxed">Puts idle background tabs to sleep to cut browser memory usage by up to 83%, stop laptop fan noise, and auto-recover crashed tab sessions.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. MOBILE THUMB-ZONE STICKY CTA BAR (<= 12% viewport height, visible only on mobile) -->
+  <div class="fixed bottom-0 inset-x-0 z-50 bg-white/95 backdrop-blur-lg border-t border-slate-200 p-3 flex items-center justify-between gap-3 md:hidden shadow-2xl">
+    <div>
+      <div class="text-xs font-extrabold text-slate-900">SWEEPR Deepblock</div>
+      <div class="text-[11px] font-semibold text-emerald-700">★★★★★ 4.9 • 30-Day Guarantee</div>
+    </div>
+    <a href="/download?install=1" class="cta-primary text-white text-xs font-extrabold px-4 py-2.5 rounded-xl shrink-0">
+      Add to Browser
+    </a>
+  </div>
+
+</body>
+</html>
