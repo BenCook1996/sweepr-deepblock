@@ -68,10 +68,31 @@
   <script src="https://pay.google.com/gp/p/js/pay.js" async></script>
   <style>
     #googlePayButtonContainer > div,
-    #googlePayButtonContainer button {
+    #googlePayButtonContainer button,
+    #googlePayButtonContainer .gpay-card-info-container-fill,
+    #googlePayButtonContainer .gpay-card-info-container {
       width: 100% !important;
+      min-width: 0 !important;
       height: 44px !important;
       min-height: 44px !important;
+      border-radius: 0.75rem !important;
+      background-color: #000 !important;
+      position: relative !important;
+      overflow: hidden !important;
+      display: block !important;
+    }
+    #googlePayButtonContainer .gpay-card-info-iframe,
+    #googlePayButtonContainer .gpay-card-info-animation-container {
+      width: 240px !important;
+      min-width: 240px !important;
+      max-width: none !important;
+      height: 44px !important;
+      position: absolute !important;
+      top: 0 !important;
+      left: 50% !important;
+      margin: 0 !important;
+      transform: translateX(-81px) !important;
+      clip-path: inset(0px 112px 0px 33px) !important;
     }
     /* 3D Box Mockup (SweeprCleaner Style) */
     .software-box {
@@ -1187,10 +1208,24 @@
           })
           .then((response) => {
             if (response && response.result) {
+              const container = document.getElementById('googlePayButtonContainer');
+              if (!container) return;
+              container.innerHTML = '';
+
+              const gpayButton = googlePaymentsClient.createButton({
+                onClick: () => handleGooglePayClick(cardPaymentMethod),
+                allowedPaymentMethods: [baseCardPaymentMethod],
+                buttonColor: 'black',
+                buttonType: 'plain',
+                buttonRadius: 12,
+                buttonSizeMode: 'fill'
+              });
+
+              container.appendChild(gpayButton);
+              container.classList.remove('hidden');
+
               const fallbackBtn = document.getElementById('expressGPayBtn');
-              if (fallbackBtn) {
-                fallbackBtn.onclick = () => handleGooglePayClick(cardPaymentMethod);
-              }
+              if (fallbackBtn) fallbackBtn.classList.add('hidden');
             }
           })
           .catch((err) => {
