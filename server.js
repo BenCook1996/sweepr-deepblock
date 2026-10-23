@@ -78,9 +78,14 @@ function getClientIp(req) {
 }
 
 const rateLimitBuckets = new Map();
-function checkRateLimit(req, bucketName, maxRequests = 30, windowMs = 60000) {
+function checkRateLimit(req, bucketName, maxRequests = 30, windowMs = 60000, scopeByIp = true) {
   const ip = getClientIp(req);
-  const key = `${bucketName}:${ip}`;
+  const isTargetScoped =
+    !scopeByIp ||
+    bucketName.startsWith('portal_target:') ||
+    bucketName.startsWith('verify_otp_email:') ||
+    bucketName.startsWith('portal_login_email:');
+  const key = isTargetScoped ? bucketName : `${bucketName}:${ip}`;
   const now = Date.now();
   let entry = rateLimitBuckets.get(key);
   if (!entry || now > entry.resetAt) {
@@ -147,7 +152,7 @@ const STRIPE_PRICE_MONTHLY = (process.env.STRIPE_PRICE_MONTHLY || 'price_1USkjM1
 const STRIPE_COUPON = (process.env.STRIPE_COUPON || 'sweepr_intro_gbp_800').trim();
 
 const BOT_UA_RE =
-  /googlebot|bingbot|gptbot|oai-searchbot|chatgpt-user|claudebot|anthropic-ai|perplexitybot|applebot|duckduckbot|yandexbot|baiduspider|cohere-ai|facebookexternalhit|twitterbot|linkedinbot|meta-externalagent|bytespider|amazonbot|diffbot/i;
+  /googlebot|bingbot|gptbot|oai-searchbot|chatgpt-user|claudebot|anthropic-ai|perplexitybot|applebot|duckduckbot|yandexbot|baiduspider|cohere-ai|facebookexternalhit|twitterbot|linkedinbot|meta-externalagent|bytespider|amazonbot|diffbot|google-inspectiontool|deepseek-ai|mistralai|qwenbot|semrushbot|ahrefsbot/i;
 
 // ============================================================================
 // Multi-Currency Geo-Pricing Engine (50% Annual Savings & .99 Charm Pricing)
@@ -300,7 +305,8 @@ async function stripeRequest(method, endpoint, params) {
   let url = `https://api.stripe.com/v1/${cleanEndpoint}`;
   const headers = {
     Authorization: `Bearer ${STRIPE_SECRET_KEY}`,
-    'Stripe-Version': '2024-06-20'
+    'Stripe-Version': '2024-06-20',
+    'User-Agent': 'SweeprDeepblock/1.0 (+https://sweeprdeepblock.com)'
   };
   const fetchOpts = { method, headers };
 
@@ -748,6 +754,17 @@ function isSameOriginWriteRequest(req) {
     if (origin.startsWith('chrome-extension://') || origin.startsWith('moz-extension://')) return true;
     return resolveTrustedOrigin(req) === origin;
   }
+  const referer = String(req.headers.referer || '').trim();
+  if (referer) {
+    try {
+      const refUrl = new URL(referer);
+      const refOrigin = refUrl.origin;
+      if (refOrigin.startsWith('chrome-extension://') || refOrigin.startsWith('moz-extension://')) return true;
+      if (resolveTrustedOrigin(req) !== refOrigin) return false;
+    } catch {
+      return false;
+    }
+  }
   const ct = String(req.headers['content-type'] || '').toLowerCase();
   return ct.startsWith('application/json') || Boolean(req.headers['x-requested-with']);
 }
@@ -767,6 +784,8 @@ function sendJson(res, statusCode, payload, extraHeaders = {}, req = null) {
     'Access-Control-Allow-Origin': corsOrigin,
     'Vary': 'Origin',
     'X-Content-Type-Options': 'nosniff',
+    'Cache-Control': 'no-store, no-cache, must-revalidate, private',
+    'Pragma': 'no-cache',
     ...extraHeaders
   });
   res.end(JSON.stringify(payload));
@@ -778,6 +797,9 @@ function sendHtml(res, statusCode, html, extraHeaders = {}) {
     'X-Content-Type-Options': 'nosniff',
     'X-Frame-Options': 'SAMEORIGIN',
     'Referrer-Policy': 'strict-origin-when-cross-origin',
+    'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
+    'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',
+    'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
     'Link': '<https://fonts.googleapis.com>; rel=preconnect, <https://fonts.gstatic.com>; rel=preconnect; crossorigin, <https://cdn.tailwindcss.com>; rel=preconnect',
     'Content-Security-Policy':
       "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://js.stripe.com https://pay.google.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https://api.stripe.com https://www.google-analytics.com https://api.country.is https://get.geojs.io; frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://pay.google.com; frame-ancestors 'self'; base-uri 'self'; object-src 'none'",
@@ -856,7 +878,7 @@ function serveStaticOptimized(req, res, fullPath) {
 
     if (isHtml) {
       headers['Link'] =
-        '<https://fonts.googleapis.com>; rel=preconnect, <https://fonts.gstatic.com>; rel=preconnect; crossorigin, <https://cdn.tailwindcss.com>; rel=preconnect';
+        '<https://fonts.googleapis.com>; rel=preconnect, <https://fonts.gstatic.com>; rel=preconnect; crossorigin, <https://cdn.tailwindcss.com>; rel=preconnect, </style.css>; rel=preload; as=style, </logo.svg>; rel=preload; as=image';
     }
 
     if (ext === '.zip' || ext === '.exe' || ext === '.command') {
@@ -868,23 +890,43 @@ function serveStaticOptimized(req, res, fullPath) {
       return res.end();
     }
 
-    // Native Gzip / Deflate Compression for text & vector assets
+    // Native Brotli / Gzip / Deflate Compression for text & vector assets
     const acceptEncoding = String(req.headers['accept-encoding'] || '');
     if (COMPRESSIBLE_EXTS.has(ext)) {
       headers['Vary'] = 'Accept-Encoding';
-      if (/\bgzip\b/i.test(acceptEncoding)) {
+      if (/\bbr\b/i.test(acceptEncoding) && typeof zlib.createBrotliCompress === 'function') {
+        headers['Content-Encoding'] = 'br';
+        res.writeHead(200, headers);
+        const readStream = fs.createReadStream(fullPath);
+        const brotliStream = zlib.createBrotliCompress({
+          params: {
+            [zlib.constants.BROTLI_PARAM_QUALITY]: 5
+          }
+        });
+        req.on('close', () => { readStream.destroy(); });
+        readStream.on('error', () => { if (!res.headersSent) res.writeHead(500); res.end(); });
+        return readStream.pipe(brotliStream).pipe(res);
+      } else if (/\bgzip\b/i.test(acceptEncoding)) {
         headers['Content-Encoding'] = 'gzip';
         res.writeHead(200, headers);
-        return fs.createReadStream(fullPath).pipe(zlib.createGzip({ level: 6 })).pipe(res);
+        const readStream = fs.createReadStream(fullPath);
+        req.on('close', () => { readStream.destroy(); });
+        readStream.on('error', () => { if (!res.headersSent) res.writeHead(500); res.end(); });
+        return readStream.pipe(zlib.createGzip({ level: 6 })).pipe(res);
       } else if (/\bdeflate\b/i.test(acceptEncoding)) {
         headers['Content-Encoding'] = 'deflate';
         res.writeHead(200, headers);
-        return fs.createReadStream(fullPath).pipe(zlib.createDeflate()).pipe(res);
+        const readStream = fs.createReadStream(fullPath);
+        req.on('close', () => { readStream.destroy(); });
+        readStream.on('error', () => { if (!res.headersSent) res.writeHead(500); res.end(); });
+        return readStream.pipe(zlib.createDeflate()).pipe(res);
       }
     }
 
     res.writeHead(200, headers);
-    fs.createReadStream(fullPath).pipe(res);
+    const fallbackStream = fs.createReadStream(fullPath);
+    req.on('close', () => { fallbackStream.destroy(); });
+    fallbackStream.pipe(res);
   });
 }
 
@@ -993,7 +1035,7 @@ function renderCheckoutSuccessPage(acc, isCancelled = false) {
           <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Your Extension License Key</div>
           <div id="licenseKeyText" class="font-mono text-xl sm:text-2xl font-black text-emerald-400 tracking-wider mt-0.5">${licenseKey}</div>
         </div>
-        <button onclick="navigator.clipboard.writeText('${licenseKey}'); this.textContent='Copied ✓';" class="px-3.5 py-2 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 text-xs font-bold cursor-pointer">
+        <button onclick="navigator.clipboard.writeText(document.getElementById('licenseKeyText').textContent.trim()); this.textContent='Copied ✓';" class="px-3.5 py-2 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 text-xs font-bold cursor-pointer">
           Copy Key
         </button>
       </div>
@@ -1023,11 +1065,33 @@ function renderCheckoutSuccessPage(acc, isCancelled = false) {
 }
 
 const server = http.createServer(async (req, res) => {
-  const parsedUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
-  const pathname = parsedUrl.pathname.replace(/\/+$/, '') || '/';
-  const ua = req.headers['user-agent'] || '';
+  try {
+    let parsedUrl;
+    try {
+      parsedUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
+    } catch {
+      res.writeHead(400, { 'Content-Type': 'text/plain; charset=utf-8' });
+      return res.end('400 Bad Request');
+    }
+    const pathname = parsedUrl.pathname.replace(/\/+$/, '') || '/';
+    const ua = req.headers['user-agent'] || '';
 
-  // Apple Pay Domain Verification File (/.well-known/apple-developer-merchantid-domain-association)
+    // RFC 9116 Security.txt
+    if ((req.method === 'GET' || req.method === 'HEAD') && (pathname === '/.well-known/security.txt' || pathname === '/security.txt')) {
+      const secPath = path.join(WEBSITE_DIR, '.well-known', 'security.txt');
+      if (fs.existsSync(secPath)) {
+        const content = fs.readFileSync(secPath, 'utf8');
+        res.writeHead(200, {
+          'Content-Type': 'text/plain; charset=utf-8',
+          'Cache-Control': 'public, max-age=86400',
+          'X-Content-Type-Options': 'nosniff',
+          'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload'
+        });
+        return res.end(req.method === 'HEAD' ? undefined : content);
+      }
+    }
+
+    // Apple Pay Domain Verification File (/.well-known/apple-developer-merchantid-domain-association)
   if ((req.method === 'GET' || req.method === 'HEAD') && pathname === '/.well-known/apple-developer-merchantid-domain-association') {
     const assocPath = path.join(WEBSITE_DIR, '.well-known', 'apple-developer-merchantid-domain-association');
     if (fs.existsSync(assocPath)) {
@@ -1461,6 +1525,9 @@ const server = http.createServer(async (req, res) => {
 
   // API 2b: Confirm & Sync On-Page Subscription after Stripe Elements / Google Pay / Apple Pay confirmation
   if (req.method === 'POST' && pathname === '/api/confirm-subscription') {
+    if (!isSameOriginWriteRequest(req)) {
+      return sendJson(res, 403, { ok: false, error: 'cross_origin_forbidden' }, {}, req);
+    }
     const body = await readBody(req);
     if (body && body.__tooLarge) return sendJson(res, 413, { error: 'payload_too_large' });
     const subscriptionId = typeof body?.subscriptionId === 'string' ? body.subscriptionId.trim() : '';
@@ -1922,6 +1989,9 @@ const server = http.createServer(async (req, res) => {
     req.method === 'POST' &&
     (pathname === '/api/portal-login' || pathname === '/api/auth/send-otp' || pathname === '/v1/account/send-otp')
   ) {
+    if (!isSameOriginWriteRequest(req)) {
+      return sendJson(res, 403, { ok: false, otpSent: false, error: 'cross_origin_forbidden' }, {}, req);
+    }
     if (!checkRateLimit(req, 'portal_login', 10, 60000)) {
       return sendJson(res, 429, {
         ok: false,
@@ -2022,6 +2092,9 @@ const server = http.createServer(async (req, res) => {
     req.method === 'POST' &&
     (pathname === '/api/verify-otp' || pathname === '/api/auth/verify-otp' || pathname === '/v1/account/verify-otp')
   ) {
+    if (!isSameOriginWriteRequest(req)) {
+      return sendJson(res, 403, { ok: false, error: 'cross_origin_forbidden' }, {}, req);
+    }
     if (!checkRateLimit(req, 'verify_otp', 10, 60000)) {
       return sendJson(res, 429, {
         ok: false,
@@ -2172,6 +2245,9 @@ const server = http.createServer(async (req, res) => {
 
   // API 3b: Customer Portal Subscription Lookup & 1-Click Auto-Renewal Cancellation (Delegated to Central SWEEPR CRM)
   if (req.method === 'POST' && pathname === '/api/portal/lookup') {
+    if (!isSameOriginWriteRequest(req)) {
+      return sendJson(res, 403, { ok: false, error: 'cross_origin_forbidden' }, {}, req);
+    }
     if (!checkRateLimit(req, 'portal_lookup', 20, 60000)) {
       return sendJson(res, 429, { ok: false, error: 'rate_limit_exceeded' });
     }
@@ -2426,32 +2502,89 @@ const server = http.createServer(async (req, res) => {
 
   // Resolve target file for static assets and programmatic SEO landing pages
   let candidateRel = CLEAN_ROUTES[pathname];
-  if (!candidateRel && /^\/(solutions|setup|vs|guides)\/[a-z0-9-]+$/i.test(pathname)) {
-    candidateRel = pathname.slice(1) + '.html';
+  if (!candidateRel) {
+    if (/^\/(solutions|setup|vs|guides)\/[a-z0-9-]+$/i.test(pathname)) {
+      candidateRel = pathname.slice(1) + '.html';
+    } else if (pathname.length > 1 && !path.extname(pathname)) {
+      const htmlCandidate = pathname.slice(1) + '.html';
+      const targetAbs = path.resolve(WEBSITE_DIR, htmlCandidate);
+      if (
+        targetAbs.startsWith(path.resolve(WEBSITE_DIR) + path.sep) &&
+        fs.existsSync(targetAbs) &&
+        fs.statSync(targetAbs).isFile()
+      ) {
+        candidateRel = htmlCandidate;
+      }
+    }
   }
   const mappedRelative = candidateRel || pathname.slice(1);
   const safePath = path.normalize(mappedRelative).replace(/^(\.\.(\/|\\|$))+/, '');
   const fullPath = path.resolve(WEBSITE_DIR, safePath);
   const resolvedRoot = path.resolve(WEBSITE_DIR);
 
-  // Security checks: directory traversal and blocked internal files
+  // Security checks: directory traversal, null bytes, dotfiles, and blocked internal files
+  if (req.url.includes('%00') || pathname.includes('\0') || safePath.includes('\0')) {
+    res.writeHead(400, { 'Content-Type': 'text/plain; charset=utf-8' });
+    return res.end('400 Bad Request');
+  }
+
   const BLOCKED_STATIC_FILES = new Set([
     'server.js',
     'sweepr-client.js',
     'package.json',
+    'package-lock.json',
+    'dockerfile',
+    'railway.json',
     'indexing-queue.json',
     'daily-seo-pages-state.json',
-    'outreach-seed-deepblock.json'
+    'outreach-seed-deepblock.json',
+    '.dockerignore',
+    '.gitignore',
+    '.env',
+    '.env.example'
   ]);
+
+  const BLOCKED_EXTENSIONS = new Set([
+    '.env',
+    '.bak',
+    '.conf',
+    '.log',
+    '.md',
+    '.ts',
+    '.mjs',
+    '.sh',
+    '.yml',
+    '.yaml',
+    '.sql',
+    '.db',
+    '.lock'
+  ]);
+
+  const baseName = path.basename(fullPath).toLowerCase();
+  const ext = path.extname(fullPath).toLowerCase();
+  const relPath = path.relative(resolvedRoot, fullPath);
+  const segments = relPath.split(path.sep);
+  const hasHiddenSegment = segments.some((seg) => seg.startsWith('.') && seg !== '.well-known');
+
   if (
     (fullPath !== resolvedRoot && !fullPath.startsWith(resolvedRoot + path.sep)) ||
-    BLOCKED_STATIC_FILES.has(path.basename(fullPath).toLowerCase())
+    BLOCKED_STATIC_FILES.has(baseName) ||
+    BLOCKED_EXTENSIONS.has(ext) ||
+    hasHiddenSegment ||
+    (ext === '.json' && baseName !== 'manifest.json' && baseName !== 'site.webmanifest')
   ) {
     res.writeHead(403, { 'Content-Type': 'text/plain; charset=utf-8' });
     return res.end('403 Forbidden');
   }
 
   return serveStaticOptimized(req, res, fullPath);
+  } catch (err) {
+    console.error('[SWEEPR SERVER UNCAUGHT ERROR]', err);
+    if (!res.headersSent) {
+      res.writeHead(500, { 'Content-Type': 'text/plain; charset=utf-8' });
+      res.end('500 Internal Server Error');
+    }
+  }
 });
 
 if (require.main === module) {
