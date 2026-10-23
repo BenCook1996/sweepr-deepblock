@@ -5,34 +5,61 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SWEEPR Deepblock — Dashboard &amp; Options</title>
   <style>
+    :root {
+      --bg: #f8fafc;
+      --bg-gradient: radial-gradient(circle at 15% 15%, rgba(209, 250, 229, 0.7) 0%, #f8fafc 55%);
+      --card-bg: #ffffff;
+      --card-border: #e5e7eb;
+      --hero-border: #d1fae5;
+      --surface-muted: #f9fafb;
+      --text: #111827;
+      --text-secondary: #374151;
+      --muted: #6b7280;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0f172a;
+        --bg-gradient: radial-gradient(circle at 15% 15%, rgba(6, 78, 59, 0.45) 0%, #0f172a 55%);
+        --card-bg: #1e293b;
+        --card-border: #334155;
+        --hero-border: rgba(16, 185, 129, 0.35);
+        --surface-muted: #0f172a;
+        --text: #f8fafc;
+        --text-secondary: #e2e8f0;
+        --muted: #94a3b8;
+      }
+    }
+
     * { box-sizing: border-box; }
     body {
       margin: 0;
       padding: 36px 20px 60px;
       font-family: "Segoe UI Variable", -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
-      color: #1f2937;
-      background: radial-gradient(circle at 15% 15%, rgba(209, 250, 229, 0.7) 0%, #f8fafc 55%);
+      color: var(--text);
+      background: var(--bg);
+      background-image: var(--bg-gradient);
       min-height: 100vh;
     }
     .container {
-      max-width: 900px;
+      max-width: 920px;
       margin: 0 auto;
     }
     .hero-card {
-      background: #ffffff;
-      border: 1px solid #d1fae5;
+      background: var(--card-bg);
+      border: 1px solid var(--hero-border);
       border-radius: 24px;
       padding: 32px;
-      box-shadow: 0 16px 40px rgba(6, 78, 59, 0.06);
+      box-shadow: 0 16px 40px rgba(6, 78, 59, 0.08);
       text-align: center;
     }
     .badge {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      background: #ecfdf5;
-      color: #047857;
-      border: 1px solid #a7f3d0;
+      background: rgba(16, 185, 129, 0.14);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.35);
       font-size: 12px;
       font-weight: 800;
       padding: 6px 14px;
@@ -43,13 +70,13 @@
     h1 {
       font-size: 30px;
       font-weight: 900;
-      color: #111827;
+      color: var(--text);
       margin: 14px 0 8px;
       letter-spacing: -0.02em;
     }
     .subtitle {
       font-size: 15px;
-      color: #4b5563;
+      color: var(--muted);
       max-width: 620px;
       margin: 0 auto 24px;
       line-height: 1.5;
@@ -62,8 +89,8 @@
       margin-bottom: 24px;
     }
     .step-card {
-      background: #f9fafb;
-      border: 1px solid #e5e7eb;
+      background: var(--surface-muted);
+      border: 1px solid var(--card-border);
       border-radius: 16px;
       padding: 18px;
     }
@@ -81,12 +108,12 @@
     .step-title {
       font-size: 15px;
       font-weight: 800;
-      color: #111827;
+      color: var(--text);
       margin-bottom: 5px;
     }
     .step-desc {
       font-size: 13px;
-      color: #4b5563;
+      color: var(--muted);
       line-height: 1.45;
     }
     .cta-row {
@@ -109,8 +136,8 @@
       box-shadow: 0 6px 18px rgba(16, 185, 129, 0.28);
     }
     .btn-outline {
-      background: #ffffff;
-      color: #065f46;
+      background: var(--surface-muted);
+      color: #10b981;
       border: 1.5px solid #10b981;
       border-radius: 12px;
       padding: 12px 20px;
@@ -122,10 +149,10 @@
     .key-section {
       margin: 0 auto 24px;
       padding: 18px 20px;
-      background: #ecfdf5;
-      border: 1.5px solid #6ee7b7;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1.5px solid rgba(16, 185, 129, 0.4);
       border-radius: 16px;
-      max-width: 500px;
+      max-width: 520px;
     }
     .key-row {
       display: flex;
@@ -135,7 +162,9 @@
     .key-input {
       flex: 1;
       padding: 10px 12px;
-      border: 1px solid #d1d5db;
+      border: 1px solid var(--card-border);
+      background: var(--card-bg);
+      color: var(--text);
       border-radius: 10px;
       font-size: 13px;
     }
@@ -151,22 +180,22 @@
     }
     .dashboard-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 16px;
       margin-top: 22px;
       text-align: left;
     }
     .panel-card {
-      background: #ffffff;
-      border: 1px solid #e5e7eb;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
       border-radius: 18px;
       padding: 20px;
-      box-shadow: 0 8px 24px rgba(6, 78, 59, 0.04);
+      box-shadow: 0 8px 24px rgba(6, 78, 59, 0.05);
     }
     .panel-title {
       font-size: 15px;
       font-weight: 800;
-      color: #111827;
+      color: var(--text);
       margin: 0 0 6px;
       display: flex;
       align-items: center;
@@ -174,41 +203,87 @@
     }
     .panel-sub {
       font-size: 12.5px;
-      color: #6b7280;
+      color: var(--muted);
       margin-bottom: 12px;
     }
     .list-item {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 8px 10px;
-      background: #f9fafb;
-      border: 1px solid #e5e7eb;
+      gap: 10px;
+      padding: 9px 11px;
+      background: var(--surface-muted);
+      border: 1px solid var(--card-border);
       border-radius: 10px;
       margin-bottom: 6px;
       font-size: 12.5px;
       font-weight: 600;
-      color: #374151;
+      color: var(--text-secondary);
     }
     .mini-btn {
-      background: #ecfdf5;
-      color: #047857;
-      border: 1px solid #a7f3d0;
+      background: rgba(16, 185, 129, 0.14);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.35);
       border-radius: 7px;
       padding: 4px 10px;
       font-size: 11px;
       font-weight: 800;
       cursor: pointer;
+      flex-shrink: 0;
+    }
+    .switch-btn {
+      width: 42px;
+      height: 24px;
+      border-radius: 999px;
+      background: #10b981;
+      border: none;
+      position: relative;
+      cursor: pointer;
+      padding: 0;
+      flex-shrink: 0;
+      transition: background 0.18s ease;
+    }
+    .switch-btn::after {
+      content: "";
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #ffffff;
+      position: absolute;
+      top: 3px;
+      right: 3px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.22);
+      transition: all 0.18s ease;
+    }
+    .switch-btn.off {
+      background: #9ca3af;
+    }
+    .switch-btn.off::after {
+      right: auto;
+      left: 3px;
+    }
+    .switch-btn.pro-lock {
+      width: auto;
+      height: auto;
+      background: #fffbeb;
+      color: #b45309;
+      border: 1px solid #fde68a;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 4px 9px;
+    }
+    .switch-btn.pro-lock::after {
+      display: none;
     }
     kbd {
-      background: #f3f4f6;
-      border: 1px solid #d1d5db;
+      background: var(--surface-muted);
+      border: 1px solid var(--card-border);
       border-radius: 6px;
       padding: 2px 6px;
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
       font-size: 11.5px;
       font-weight: 700;
-      color: #111827;
+      color: var(--text);
     }
   </style>
 </head>
@@ -216,13 +291,13 @@
   <div class="container">
     <div class="hero-card">
       <div class="badge" id="welcomeStatusBadge">🧩 Extension Installed — Activate Subscription to Unlock Protection</div>
-      <h1>SWEEPR <span style="color:#059669">Deepblock</span> Dashboard</h1>
+      <h1>SWEEPR <span style="color:#10b981">Deepblock</span> Dashboard</h1>
       <p class="subtitle">
-        Manage your subscription license, paused websites, saved tab sessions, and keyboard shortcuts from one distraction-free page.
+        Manage your subscription license, individual protection modules, paused websites, saved tab sessions, and keyboard shortcuts from one distraction-free page.
       </p>
 
       <div class="key-section">
-        <div style="font-size:14px;font-weight:800;color:#065f46;">🔑 Enter Your License Key or 6-Digit Activation Code:</div>
+        <div style="font-size:14px;font-weight:800;color:#10b981;">🔑 Enter Your License Key or 6-Digit Activation Code:</div>
         <div class="key-row">
           <input type="text" id="welcomeLicenseInput" class="key-input" placeholder="e.g. SWEEPR-DB-XXXX-XXXX-XXXX or 6-digit code" autocomplete="off" spellcheck="false" />
           <button type="button" id="welcomeActivateBtn" class="key-btn">Activate Pro</button>
@@ -251,7 +326,7 @@
           <span class="step-num">Step 3 · Mobile Sync</span>
           <div class="step-title">📱 iOS Safari &amp; Android</div>
           <div class="step-desc">
-            Visit <a href="https://sweeprdeepblock.com/download" target="_blank" rel="noopener" style="color:#059669;font-weight:800;">sweeprdeepblock.com/download</a> on your phone to install the 1-tap iOS/Android protection profile.
+            Visit <a href="https://sweeprdeepblock.com/download" target="_blank" rel="noopener" style="color:#10b981;font-weight:800;">sweeprdeepblock.com/download</a> on your phone to install the 1-tap iOS/Android protection profile.
           </div>
         </div>
       </div>
@@ -269,27 +344,86 @@
       </div>
     </div>
 
-    <!-- Offloaded Full-Tab Controls: Saved Tab Sessions & Whitelisted Websites -->
-    <div class="dashboard-grid">
+    <!-- Offloaded Full-Tab Controls: 6 Granular Protection Modules + Saved Sessions + Whitelisted Sites -->
+    <div class="dashboard-grid" id="modulesSection">
       <div class="panel-card">
         <div class="panel-title">
-          <span>📂 Saved Tab Session History</span>
-          <span id="fullSavedSessionsCount" style="font-size:12px;color:#059669;">0 snapshots</span>
+          <span>⚙️ Protection Module Toggles</span>
+          <span style="font-size:12px;color:#10b981;">6 Modules</span>
         </div>
-        <div class="panel-sub">Snapshots automatically saved when background tabs are put to sleep.</div>
-        <div id="fullSavedSessionsList">
-          <div style="font-size:12.5px;color:#6b7280;">No saved tab groups yet.</div>
+        <div class="panel-sub">Fine-tune individual SWEEPR Deepblock engines across your browser.</div>
+        <div>
+          <div class="list-item">
+            <div>
+              <div style="font-weight:800;">📺 Video &amp; Page Ad Blocking</div>
+              <div style="font-size:11px;color:var(--muted);">YouTube pre-roll &amp; anti-adblock cloaking</div>
+            </div>
+            <button type="button" data-setting="adBlocking" data-pro="1" class="switch-btn pro-lock">🔒 PRO</button>
+          </div>
+          <div class="list-item">
+            <div>
+              <div style="font-weight:800;">🍪 Auto-Decline Cookie Pop-Ups</div>
+              <div style="font-size:11px;color:var(--muted);">Silently rejects CMP banners in &lt;50ms</div>
+            </div>
+            <button type="button" data-setting="cookieAutoClose" data-pro="1" class="switch-btn pro-lock">🔒 PRO</button>
+          </div>
+          <div class="list-item">
+            <div>
+              <div style="font-weight:800;">🤖 Hide Search Engine Spam</div>
+              <div style="font-size:11px;color:var(--muted);">Cleans Google, Bing &amp; DuckDuckGo SERPs</div>
+            </div>
+            <button type="button" data-setting="hideSearchSpam" data-pro="1" class="switch-btn pro-lock">🔒 PRO</button>
+          </div>
+          <div class="list-item">
+            <div>
+              <div style="font-weight:800;">🛒 Scam Online Shop Alerts</div>
+              <div style="font-size:11px;color:var(--muted);">Warns on fake urgency countdown stores</div>
+            </div>
+            <button type="button" data-setting="fakeShopAlerts" data-pro="1" class="switch-btn pro-lock">🔒 PRO</button>
+          </div>
+          <div class="list-item">
+            <div>
+              <div style="font-weight:800;">🔒 Tracker-Free Links</div>
+              <div style="font-size:11px;color:var(--muted);">Strips click tracking parameters</div>
+            </div>
+            <button type="button" data-setting="trackerProtection" data-pro="1" class="switch-btn pro-lock">🔒 PRO</button>
+          </div>
+          <div class="list-item">
+            <div>
+              <div style="font-weight:800;">🤫 100% Silent Mode</div>
+              <div style="font-size:11px;color:var(--muted);">Hide on-page toasts &amp; counter badges</div>
+            </div>
+            <button type="button" data-setting="silentMode" data-pro="1" class="switch-btn pro-lock">🔒 PRO</button>
+          </div>
         </div>
       </div>
 
       <div class="panel-card">
         <div class="panel-title">
+          <span>📂 Saved Tab Session History</span>
+          <span id="fullSavedSessionsCount" style="font-size:12px;color:#10b981;">0 snapshots</span>
+        </div>
+        <div class="panel-sub">Snapshots automatically saved when background tabs are put to sleep.</div>
+        <div id="fullSavedSessionsList">
+          <div style="font-size:12.5px;color:var(--muted);">No saved tab groups yet.</div>
+        </div>
+
+        <div class="panel-title" style="margin-top:20px;">
           <span>🌐 Paused Websites (Whitelist)</span>
-          <span id="pausedSitesCount" style="font-size:12px;color:#059669;">0 sites</span>
+          <span id="pausedSitesCount" style="font-size:12px;color:#10b981;">0 sites</span>
         </div>
         <div class="panel-sub">Websites where SWEEPR Deepblock protection is currently paused.</div>
         <div id="pausedSitesList">
-          <div style="font-size:12.5px;color:#6b7280;">Protection is active on all websites.</div>
+          <div style="font-size:12.5px;color:var(--muted);">Protection is active on all websites.</div>
+        </div>
+
+        <div class="panel-title" style="margin-top:20px;">
+          <span>🧹 Custom Hidden Elements</span>
+          <span id="customZappedCount" style="font-size:12px;color:#10b981;">0 sites</span>
+        </div>
+        <div class="panel-sub">Elements hidden using the right-click / popup Element Hider.</div>
+        <div id="customZappedList">
+          <div style="font-size:12.5px;color:var(--muted);">No custom hidden elements yet.</div>
         </div>
       </div>
     </div>

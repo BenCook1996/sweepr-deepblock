@@ -1,4 +1,4 @@
-// SWEEPR Deepblock — Manifest V3 Background Service Worker (v1.1 UX & Architecture Audited)
+// SWEEPR Deepblock — Manifest V3 Background Service Worker (v1.2 UX & Architecture Audited)
 const LICENSE_VERIFY_ENDPOINTS = [
   'https://sweeprdeepblock.com/api/license-verify',
   'http://localhost:8787/v1/license/verify-key?project=deepblock',
@@ -13,6 +13,8 @@ const PRO_ONLY_SETTINGS = new Set([
   'trackerProtection',
   'silentMode'
 ]);
+
+const scamDetectedTabs = new Set();
 
 async function syncExtensionProtectionRules(enablePro) {
   try {
@@ -68,6 +70,7 @@ const DEFAULT_STATE = {
   entitlements: [],
   encryptedDnsEnabled: false,
   pausedSites: [],
+  customHiddenSelectors: {},
   settings: {
     cookieAutoClose: false,
     hideSearchSpam: false,
@@ -157,6 +160,7 @@ async function verifyLicenseWithServer(rawKey) {
           });
           verifiedSession.internalWriteInProgress = false;
           await syncExtensionProtectionRules(true);
+          await updateActionBadge();
           return {
             ok: true,
             valid: true,
@@ -276,6 +280,11 @@ function registerContextMenus() {
   if (!chrome.contextMenus) return;
   chrome.contextMenus.removeAll(() => {
     chrome.contextMenus.create({
+      id: 'sweepr-zap-element',
+      title: '🧹 Hide distracting element on this page',
+      contexts: ['page', 'selection', 'image', 'link']
+    });
+    chrome.contextMenus.create({
       id: 'sweepr-toggle-site',
       title: 'Pause / Resume SWEEPR Deepblock on this site',
       contexts: ['page', 'action']
@@ -314,15 +323,37 @@ chrome.runtime.onStartup.addListener(async () => {
   await enforceStoredSubscriptionIntegrity();
 });
 
-// Ambient vs. Active Toolbar Action Badge:
-// In 100% Silent Mode (default), keep the toolbar icon calm and un-badged unless the user turns off Silent Mode.
-async function updateActionBadge(stats, passedSettings) {
+// Dynamic Per-Tab Toolbar Action Badge:
+// - Shows "OFF" (slate #64748b) when the active tab's domain is in pausedSites
+// - Shows "!" (amber #d97706) when the active tab triggered a fake-shop alert
+// - Otherwise stays completely empty in 100% Silent Mode, or shows counter in Visual Mode
+async function updateActionBadge(passedStats, passedSettings) {
   try {
-    let settings = passedSettings;
-    if (!settings) {
-      const stored = await chrome.storage.local.get(['settings']);
-      settings = (stored && stored.settings) || DEFAULT_STATE.settings;
+    const [stored, tabs] = await Promise.all([
+      chrome.storage.local.get(['stats', 'settings', 'pausedSites', 'proActive']),
+      chrome.tabs.query({ active: true, currentWindow: true })
+    ]);
+    const stats = passedStats || (stored && stored.stats) || DEFAULT_STATE.stats;
+    const settings = passedSettings || (stored && stored.settings) || DEFAULT_STATE.settings;
+    const pausedSites = Array.isArray(stored && stored.pausedSites) ? stored.pausedSites : [];
+    const activeTab = tabs && tabs[0];
+
+    if (activeTab && activeTab.url && /^https?:\/\//i.test(activeTab.url)) {
+      try {
+        const host = new URL(activeTab.url).hostname.replace(/^www\./i, '').toLowerCase();
+        if (host && pausedSites.includes(host)) {
+          chrome.action.setBadgeText({ text: 'OFF' });
+          chrome.action.setBadgeBackgroundColor({ color: '#64748b' });
+          return;
+        }
+        if (activeTab.id && scamDetectedTabs.has(activeTab.id)) {
+          chrome.action.setBadgeText({ text: '!' });
+          chrome.action.setBadgeBackgroundColor({ color: '#d97706' });
+          return;
+        }
+      } catch (e) {}
     }
+
     const silentMode = settings.silentMode !== false;
     if (silentMode) {
       chrome.action.setBadgeText({ text: '' });
@@ -337,7 +368,26 @@ async function updateActionBadge(stats, passedSettings) {
   } catch (e) {}
 }
 
-// Helper to toggle site pause by hostname (used by Popup, Context Menu, and Keyboard Shortcut)
+// Refresh toolbar badge whenever user switches tabs or navigates
+if (chrome.tabs) {
+  if (chrome.tabs.onActivated) {
+    chrome.tabs.onActivated.addListener(() => {
+      updateActionBadge();
+    });
+  }
+  if (chrome.tabs.onUpdated) {
+    chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
+      if (changeInfo.status === 'loading') {
+        scamDetectedTabs.delete(tabId);
+      }
+      if (changeInfo.status === 'complete' || changeInfo.url) {
+        updateActionBadge();
+      }
+    });
+  }
+}
+
+// Helper to toggle site pause by hostname
 async function toggleSitePauseByHostname(rawHostname) {
   const host = String(rawHostname || '').replace(/^www\./i, '').trim().toLowerCase();
   if (!host) return { ok: false };
@@ -356,13 +406,16 @@ async function toggleSitePauseByHostname(rawHostname) {
   const isPaused = current.includes(host);
   const updated = isPaused ? current.filter((h) => h !== host) : [...current, host];
   await chrome.storage.local.set({ pausedSites: updated });
+  await updateActionBadge();
   return { ok: true, pausedSites: updated, paused: !isPaused, hostname: host };
 }
 
 // Right-Click Context Menu Handler
 if (chrome.contextMenus && chrome.contextMenus.onClicked) {
   chrome.contextMenus.onClicked.addListener(async (info, tab) => {
-    if (info.menuItemId === 'sweepr-toggle-site' && tab && tab.url && /^https?:\/\//i.test(tab.url)) {
+    if (info.menuItemId === 'sweepr-zap-element' && tab && tab.id) {
+      chrome.tabs.sendMessage(tab.id, { type: 'START_ELEMENT_ZAPPER' });
+    } else if (info.menuItemId === 'sweepr-toggle-site' && tab && tab.url && /^https?:\/\//i.test(tab.url)) {
       try {
         const hostname = new URL(tab.url).hostname;
         const res = await toggleSitePauseByHostname(hostname);
@@ -476,7 +529,31 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (!msg || typeof msg !== 'object') return false;
   if (sender && sender.id && sender.id !== chrome.runtime.id) return false;
 
+  // Allow Zero-Copy Website Auto-Activation Bridge from sweeprdeepblock.com
+  if (msg.type === 'AUTO_SYNC_WEBSITE_LICENSE') {
+    const senderUrl = String((sender && sender.url) || (sender && sender.tab && sender.tab.url) || '');
+    const isOfficialPortal =
+      /^https?:\/\/([a-z0-9-]+\.)?sweeprdeepblock\.com(\/|$)/i.test(senderUrl) ||
+      /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?(\/|$)/i.test(senderUrl);
+    if (!isOfficialPortal) {
+      sendResponse({ ok: false });
+      return true;
+    }
+    const key = String(msg.licenseKey || '').trim();
+    if (!key || key.length < 6) {
+      sendResponse({ ok: false });
+      return true;
+    }
+    verifyLicenseWithServer(key).then((result) => {
+      sendResponse(result);
+    });
+    return true;
+  }
+
   if (msg.type === 'INCREMENT_DIAGNOSTIC') {
+    if (msg.metric === 'fakeStoresDetected' && sender && sender.tab && sender.tab.id) {
+      scamDetectedTabs.add(sender.tab.id);
+    }
     chrome.storage.local.get(['stats', 'settings'], (res) => {
       const stats = res.stats || DEFAULT_STATE.stats;
       const key = msg.metric;
@@ -515,7 +592,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     return true;
   }
 
-  // Privileged extension UI actions (allow extension popup & extension pages like welcome.html; reject content-script web pages)
+  // Privileged extension UI actions
   const extBaseUrl = chrome.runtime.getURL('');
   const senderUrl = String((sender && sender.url) || (sender && sender.tab && sender.tab.url) || '');
   const isPrivilegedExtensionPage = !sender || !sender.tab || (extBaseUrl && senderUrl.startsWith(extBaseUrl));

@@ -1,4 +1,4 @@
-// SWEEPR Deepblock — Full-Tab Dashboard & Options Controller
+// SWEEPR Deepblock — Full-Tab Dashboard & Options Controller (v1.2 UX Audited)
 const WELCOME_VERIFY_ENDPOINTS = [
   'https://sweeprdeepblock.com/api/license-verify',
   'http://localhost:3000/api/license-verify'
@@ -35,6 +35,14 @@ async function directVerifyAndPersistLicense(rawKey) {
               addonsList.includes('sweepr_secure_bundle')
           );
           const canonicalKey = data.licenseKey || data.license_key || key;
+          const settings = {
+            cookieAutoClose: true,
+            hideSearchSpam: true,
+            fakeShopAlerts: true,
+            trackerProtection: true,
+            adBlocking: true,
+            silentMode: true
+          };
           await chrome.storage.local.set({
             deviceId,
             proActive: true,
@@ -47,14 +55,7 @@ async function directVerifyAndPersistLicense(rawKey) {
             subscriptionStatus: subStatus,
             licenseVerifiedAt: Date.now(),
             encryptedDnsEnabled: true,
-            settings: {
-              cookieAutoClose: true,
-              hideSearchSpam: true,
-              fakeShopAlerts: true,
-              trackerProtection: true,
-              adBlocking: true,
-              silentMode: true
-            }
+            settings
           });
           try {
             if (chrome.declarativeNetRequest && chrome.declarativeNetRequest.updateEnabledRulesets) {
@@ -64,7 +65,7 @@ async function directVerifyAndPersistLicense(rawKey) {
               });
             }
           } catch (e) {}
-          return { ok: true, valid: true, licenseKey: canonicalKey, ramTamerActive };
+          return { ok: true, valid: true, licenseKey: canonicalKey, ramTamerActive, settings };
         }
       }
       if (res.status === 400 || res.status === 403 || res.status === 404 || data?.valid === false) {
@@ -92,12 +93,39 @@ document.addEventListener('DOMContentLoaded', () => {
   const fullSavedSessionsList = document.getElementById('fullSavedSessionsList');
   const pausedSitesCount = document.getElementById('pausedSitesCount');
   const pausedSitesList = document.getElementById('pausedSitesList');
+  const customZappedCount = document.getElementById('customZappedCount');
+  const customZappedList = document.getElementById('customZappedList');
+
+  let dashboardState = {
+    proActive: false,
+    settings: {},
+    cloudTabSessions: [],
+    pausedSites: [],
+    customHiddenSelectors: {}
+  };
 
   if (!btn || !input || !feedback) return;
 
-  function markProActivated(licenseKey) {
+  function renderModuleSwitches(proActive, settings) {
+    const s = settings || {};
+    document.querySelectorAll('[data-setting]').forEach((sw) => {
+      const key = sw.getAttribute('data-setting');
+      if (!proActive) {
+        sw.textContent = '🔒 PRO';
+        sw.className = 'switch-btn pro-lock';
+        return;
+      }
+      sw.textContent = '';
+      const isOn = s[key] !== false;
+      sw.className = isOn ? 'switch-btn' : 'switch-btn off';
+    });
+  }
+
+  function markProActivated(licenseKey, settings) {
+    dashboardState.proActive = true;
+    if (settings) dashboardState.settings = settings;
     feedback.style.display = 'block';
-    feedback.style.color = '#059669';
+    feedback.style.color = '#10b981';
     feedback.textContent =
       '✓ Paid Pro Subscription Verified! All protection features are now active across your browser.';
     btn.textContent = '✓ Activated';
@@ -108,11 +136,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (licenseKey && !input.value) {
       input.value = licenseKey;
     }
+    renderModuleSwitches(true, dashboardState.settings);
   }
 
   function renderOffloadedPanels(stored) {
     const sessions = Array.isArray(stored && stored.cloudTabSessions) ? stored.cloudTabSessions : [];
     const pausedSites = Array.isArray(stored && stored.pausedSites) ? stored.pausedSites : [];
+    const customMap = (stored && stored.customHiddenSelectors) || {};
 
     if (fullSavedSessionsCount) {
       fullSavedSessionsCount.textContent = `${sessions.length} snapshot${sessions.length === 1 ? '' : 's'}`;
@@ -121,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
       fullSavedSessionsList.textContent = '';
       if (sessions.length === 0) {
         const empty = document.createElement('div');
-        empty.style.cssText = 'font-size:12.5px;color:#6b7280;';
+        empty.style.cssText = 'font-size:12.5px;color:var(--muted);';
         empty.textContent = 'No saved tab groups yet. Press Alt+Shift+Z to snooze inactive tabs.';
         fullSavedSessionsList.appendChild(empty);
       } else {
@@ -154,7 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
       pausedSitesList.textContent = '';
       if (pausedSites.length === 0) {
         const empty = document.createElement('div');
-        empty.style.cssText = 'font-size:12.5px;color:#6b7280;';
+        empty.style.cssText = 'font-size:12.5px;color:var(--muted);';
         empty.textContent = 'Protection is active on all websites.';
         pausedSitesList.appendChild(empty);
       } else {
@@ -170,7 +200,8 @@ document.addEventListener('DOMContentLoaded', () => {
           resumeBtn.addEventListener('click', () => {
             chrome.runtime.sendMessage({ type: 'TOGGLE_SITE_PAUSE', hostname: domain }, (res) => {
               if (res && res.ok) {
-                renderOffloadedPanels({ cloudTabSessions: sessions, pausedSites: res.pausedSites });
+                dashboardState.pausedSites = res.pausedSites;
+                renderOffloadedPanels(dashboardState);
               }
             });
           });
@@ -180,15 +211,80 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       }
     }
+
+    const zappedDomains = Object.keys(customMap).filter(
+      (d) => Array.isArray(customMap[d]) && customMap[d].length > 0
+    );
+    if (customZappedCount) {
+      customZappedCount.textContent = `${zappedDomains.length} site${zappedDomains.length === 1 ? '' : 's'}`;
+    }
+    if (customZappedList) {
+      customZappedList.textContent = '';
+      if (zappedDomains.length === 0) {
+        const empty = document.createElement('div');
+        empty.style.cssText = 'font-size:12.5px;color:var(--muted);';
+        empty.textContent = 'No custom hidden elements yet. Right-click any page to hide distracting elements.';
+        customZappedList.appendChild(empty);
+      } else {
+        zappedDomains.forEach((domain) => {
+          const count = customMap[domain].length;
+          const row = document.createElement('div');
+          row.className = 'list-item';
+          const label = document.createElement('span');
+          label.textContent = `${domain} (${count} hidden element${count === 1 ? '' : 's'})`;
+          const resetBtn = document.createElement('button');
+          resetBtn.type = 'button';
+          resetBtn.className = 'mini-btn';
+          resetBtn.textContent = 'Restore Elements';
+          resetBtn.addEventListener('click', () => {
+            delete customMap[domain];
+            chrome.storage.local.set({ customHiddenSelectors: customMap }, () => {
+              dashboardState.customHiddenSelectors = customMap;
+              renderOffloadedPanels(dashboardState);
+            });
+          });
+          row.appendChild(label);
+          row.appendChild(resetBtn);
+          customZappedList.appendChild(row);
+        });
+      }
+    }
   }
 
-  chrome.storage.local.get(['proActive', 'licenseKey', 'draftLicenseKey', 'cloudTabSessions', 'pausedSites'], (stored) => {
-    if (stored && stored.proActive && stored.licenseKey) {
-      markProActivated(stored.licenseKey);
-    } else if (stored && stored.draftLicenseKey && !input.value) {
-      input.value = stored.draftLicenseKey;
+  chrome.storage.local.get(
+    ['proActive', 'licenseKey', 'draftLicenseKey', 'settings', 'cloudTabSessions', 'pausedSites', 'customHiddenSelectors'],
+    (stored) => {
+      dashboardState = { ...dashboardState, ...(stored || {}) };
+      if (stored && stored.proActive && stored.licenseKey) {
+        markProActivated(stored.licenseKey, stored.settings);
+      } else {
+        if (stored && stored.draftLicenseKey && !input.value) {
+          input.value = stored.draftLicenseKey;
+        }
+        renderModuleSwitches(false, {});
+      }
+      renderOffloadedPanels(dashboardState);
     }
-    renderOffloadedPanels(stored || {});
+  );
+
+  // Module toggle switches inside full-tab dashboard
+  document.querySelectorAll('[data-setting]').forEach((sw) => {
+    sw.addEventListener('click', () => {
+      if (!dashboardState.proActive) {
+        input.focus();
+        feedback.style.display = 'block';
+        feedback.style.color = '#f59e0b';
+        feedback.textContent = '🔒 Enter your Pro license key or 6-digit code above to unlock module controls.';
+        return;
+      }
+      const settingKey = sw.getAttribute('data-setting');
+      chrome.runtime.sendMessage({ type: 'TOGGLE_SETTING', settingKey }, (res) => {
+        if (res && res.ok) {
+          dashboardState.settings = res.settings;
+          renderModuleSwitches(true, dashboardState.settings);
+        }
+      });
+    });
   });
 
   input.addEventListener('input', () => {
@@ -199,7 +295,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const key = (input.value || '').trim();
     if (!key) {
       feedback.style.display = 'block';
-      feedback.style.color = '#dc2626';
+      feedback.style.color = '#ef4444';
       feedback.textContent = 'Please paste your license key or 6-digit code first.';
       return;
     }
@@ -207,7 +303,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.textContent = 'Verifying...';
     btn.disabled = true;
     feedback.style.display = 'block';
-    feedback.style.color = '#6b7280';
+    feedback.style.color = '#9ca3af';
     feedback.textContent = 'Checking active subscription status...';
 
     chrome.runtime.sendMessage({ type: 'ACTIVATE_LICENSE', licenseKey: key }, async (res) => {
@@ -215,11 +311,18 @@ document.addEventListener('DOMContentLoaded', () => {
         res && typeof res === 'object' ? res : await directVerifyAndPersistLicense(key);
       btn.disabled = false;
       if (finalRes && finalRes.ok && finalRes.valid) {
-        markProActivated(finalRes.licenseKey || key);
+        markProActivated(finalRes.licenseKey || key, finalRes.settings || {
+          cookieAutoClose: true,
+          hideSearchSpam: true,
+          fakeShopAlerts: true,
+          trackerProtection: true,
+          adBlocking: true,
+          silentMode: true
+        });
       } else {
         btn.textContent = 'Activate Pro';
         feedback.style.display = 'block';
-        feedback.style.color = '#dc2626';
+        feedback.style.color = '#ef4444';
         feedback.textContent =
           (finalRes && finalRes.error) ||
           '✗ Invalid or unpaid license key. Please complete checkout first.';

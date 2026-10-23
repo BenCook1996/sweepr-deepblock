@@ -1,9 +1,11 @@
-// SWEEPR Deepblock — Real-Time Content Script (v1.1 UX & Ergonomics Audited)
-// 1. GDPR Cookie Banner Detector & Auto-Rejector (Safe Scroll-Unlock)
-// 2. AI Slop & SEO Content-Farm SERP Purifier
-// 3. Recipe & News Clutter Stripper (PureView)
-// 4. Fake E-Commerce Store & Review Detector (Shadow-DOM Non-Blocking Corner Pill)
-// 5. Throttled MutationObservers for Zero Main-Thread Jank
+// SWEEPR Deepblock — Real-Time Content Script (v1.2 UX & Ergonomics Audited)
+// 1. Zero-Copy Website Auto-Activation Bridge (sweeprdeepblock.com)
+// 2. GDPR Cookie Banner Detector & Auto-Rejector (Safe Scroll-Unlock)
+// 3. AI Slop & SEO Content-Farm SERP Purifier
+// 4. Recipe & News Clutter Stripper (PureView)
+// 5. Fake E-Commerce Store Detector (Shadow-DOM Non-Blocking Corner Pill)
+// 6. Interactive Page Element Zapper ("🧹 Hide Distracting Element")
+// 7. Throttled MutationObservers for Zero Main-Thread Jank
 
 (function () {
   const CMP_SELECTORS = [
@@ -50,6 +52,207 @@
     try {
       chrome.runtime.sendMessage({ type: 'INCREMENT_DIAGNOSTIC', metric, amount });
     } catch (e) {}
+  }
+
+  // ============================================================================
+  // 0. Zero-Copy Auto-Activation Bridge on sweeprdeepblock.com
+  // Automatically syncs a verified customer license key when signed into the portal
+  // ============================================================================
+  function initWebsiteAutoActivationBridge() {
+    const host = (location.hostname || '').toLowerCase();
+    if (!/(^|\.)sweeprdeepblock\.com$/i.test(host) && host !== 'localhost' && host !== '127.0.0.1') {
+      return;
+    }
+
+    let lastSyncedKey = '';
+    function trySyncKey(candidate) {
+      const clean = String(candidate || '').trim();
+      if (!clean || clean === 'Active' || clean === '—' || clean.length < 6 || clean === lastSyncedKey) return;
+      lastSyncedKey = clean;
+      try {
+        chrome.runtime.sendMessage({ type: 'AUTO_SYNC_WEBSITE_LICENSE', licenseKey: clean });
+      } catch (e) {}
+    }
+
+    try {
+      const storedKey =
+        localStorage.getItem('sweepr_license_key') ||
+        localStorage.getItem('deepblock_license_key') ||
+        '';
+      if (storedKey) trySyncKey(storedKey);
+    } catch (e) {}
+
+    window.addEventListener('message', (e) => {
+      if (e.source !== window || !e.data || e.data.source !== 'sweepr-web-portal') return;
+      if (e.data.type === 'SWEEPR_AUTO_ACTIVATE' && e.data.licenseKey) {
+        trySyncKey(e.data.licenseKey);
+      }
+    });
+
+    const portalObs = new MutationObserver(() => {
+      const keyEl = document.getElementById('portalLicenseKey');
+      const codeEl = document.getElementById('portalActivationCode');
+      if (keyEl && keyEl.textContent) trySyncKey(keyEl.textContent);
+      else if (codeEl && codeEl.textContent) trySyncKey(codeEl.textContent);
+    });
+    if (document.body) {
+      portalObs.observe(document.body, { childList: true, subtree: true, characterData: true });
+    }
+  }
+
+  initWebsiteAutoActivationBridge();
+
+  // ============================================================================
+  // Interactive Page Element Zapper ("🧹 Hide Distracting Element")
+  // ============================================================================
+  const currentHost = (location.hostname || '').replace(/^www\./i, '').toLowerCase();
+
+  function applySavedCustomHiddenSelectors(customMap) {
+    if (!currentHost || !customMap || typeof customMap !== 'object') return;
+    const list = Array.isArray(customMap[currentHost]) ? customMap[currentHost] : [];
+    let styleEl = document.getElementById('deepblock-custom-zapper');
+    if (list.length === 0) {
+      if (styleEl) styleEl.remove();
+      return;
+    }
+    if (!styleEl) {
+      styleEl = document.createElement('style');
+      styleEl.id = 'deepblock-custom-zapper';
+      (document.head || document.documentElement).appendChild(styleEl);
+    }
+    styleEl.textContent = `${list.join(',\n')} { display: none !important; }`;
+  }
+
+  function buildUniqueSelector(el) {
+    if (!el || el.nodeType !== 1) return '';
+    if (el.id && /^[a-zA-Z][\w-]*$/.test(el.id)) {
+      return `#${CSS.escape(el.id)}`;
+    }
+    const parts = [];
+    let cur = el;
+    while (cur && cur.nodeType === 1 && cur !== document.body && cur !== document.documentElement && parts.length < 4) {
+      let part = cur.tagName.toLowerCase();
+      if (cur.id && /^[a-zA-Z][\w-]*$/.test(cur.id)) {
+        parts.unshift(`#${CSS.escape(cur.id)}`);
+        break;
+      }
+      const classes = Array.from(cur.classList || [])
+        .filter((c) => c && !/^deepblock/i.test(c) && /^[a-zA-Z0-9_-]+$/.test(c))
+        .slice(0, 2);
+      if (classes.length > 0) {
+        part += '.' + classes.map((c) => CSS.escape(c)).join('.');
+      } else if (cur.parentElement) {
+        const siblings = Array.from(cur.parentElement.children).filter((s) => s.tagName === cur.tagName);
+        if (siblings.length > 1) {
+          part += `:nth-of-type(${siblings.indexOf(cur) + 1})`;
+        }
+      }
+      parts.unshift(part);
+      cur = cur.parentElement;
+    }
+    return parts.join(' > ');
+  }
+
+  let zapperActive = false;
+  function startElementZapper() {
+    if (zapperActive) return;
+    zapperActive = true;
+
+    let hoveredEl = null;
+    let prevOutline = '';
+
+    const banner = document.createElement('div');
+    banner.id = 'deepblockZapperBanner';
+    Object.assign(banner.style, {
+      position: 'fixed',
+      top: '14px',
+      left: '50%',
+      transform: 'translateX(-50%)',
+      zIndex: '2147483647',
+      background: '#064e3b',
+      color: '#ecfdf5',
+      border: '1.5px solid #10b981',
+      borderRadius: '999px',
+      padding: '7px 16px',
+      fontSize: '12px',
+      fontWeight: '800',
+      fontFamily: 'system-ui, -apple-system, sans-serif',
+      boxShadow: '0 8px 24px rgba(0,0,0,0.28)',
+      pointerEvents: 'none'
+    });
+    banner.textContent = '🧹 Click any distracting element to hide it on this site · Press Esc to cancel';
+    document.body.appendChild(banner);
+
+    function clearHighlight() {
+      if (hoveredEl) {
+        hoveredEl.style.outline = prevOutline;
+        hoveredEl = null;
+      }
+    }
+
+    function stopZapper() {
+      zapperActive = false;
+      clearHighlight();
+      banner.remove();
+      window.removeEventListener('mouseover', onMouseOver, true);
+      window.removeEventListener('click', onClick, true);
+      window.removeEventListener('keydown', onKeyDown, true);
+    }
+
+    function onMouseOver(e) {
+      const target = e.target;
+      if (!target || target === document.body || target === document.documentElement || target === banner) return;
+      if (hoveredEl !== target) {
+        clearHighlight();
+        hoveredEl = target;
+        prevOutline = hoveredEl.style.outline || '';
+        hoveredEl.style.outline = '2.5px solid #10b981';
+      }
+    }
+
+    function onClick(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      const target = hoveredEl || e.target;
+      stopZapper();
+      if (!target || target === document.body || target === document.documentElement) return;
+
+      const selector = buildUniqueSelector(target);
+      target.style.setProperty('display', 'none', 'important');
+      if (selector && currentHost) {
+        chrome.storage.local.get(['customHiddenSelectors'], (res) => {
+          const map = (res && res.customHiddenSelectors) || {};
+          const existing = Array.isArray(map[currentHost]) ? map[currentHost] : [];
+          if (!existing.includes(selector)) {
+            map[currentHost] = [...existing, selector];
+            chrome.storage.local.set({ customHiddenSelectors: map });
+            applySavedCustomHiddenSelectors(map);
+          }
+        });
+      }
+      reportMetric('clutterStripped', 1);
+    }
+
+    function onKeyDown(e) {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        stopZapper();
+      }
+    }
+
+    window.addEventListener('mouseover', onMouseOver, true);
+    window.addEventListener('click', onClick, true);
+    window.addEventListener('keydown', onKeyDown, true);
+  }
+
+  if (chrome.runtime && chrome.runtime.onMessage) {
+    chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
+      if (msg && msg.type === 'START_ELEMENT_ZAPPER') {
+        startElementZapper();
+        sendResponse({ ok: true });
+      }
+    });
   }
 
   function unlockScrollIfFrozenByModal() {
@@ -310,7 +513,7 @@
     }
   }
 
-  // 4. Fake E-Commerce Store Detector (Non-Blocking Shadow-DOM Corner Pill — Never Covers Sticky Headers)
+  // 4. Fake E-Commerce Store Detector (Non-Blocking Shadow-DOM Corner Pill)
   function processEcommerceStore(proActive) {
     if (!proActive) return;
     if (/(^|\.)(amazon\.|ebay\.|argos\.co\.uk|johnlewis\.com|currys\.co\.uk|tesco\.com)/i.test(location.hostname)) {
@@ -416,7 +619,7 @@
     }
   }
 
-  // 5. YouTube Ad-Pod Shield (Pre-Roll/Mid-Roll Instant Fast-Forward + Cosmetic Feed Cleanser)
+  // 5. YouTube Ad-Pod Shield
   function initYouTubeAdShield() {
     if (!/(^|\.)youtube\.com$/i.test(location.hostname)) return;
 
@@ -582,7 +785,7 @@
     }
   });
 
-  chrome.storage.local.get(['proActive', 'licenseKey', 'pausedSites', 'settings'], (res) => {
+  chrome.storage.local.get(['proActive', 'licenseKey', 'pausedSites', 'settings', 'customHiddenSelectors'], (res) => {
     const proActive = Boolean(res && res.proActive && res.licenseKey);
     if (!proActive) {
       try {
@@ -591,13 +794,16 @@
       return;
     }
 
-    const host = (location.hostname || '').replace(/^www\./i, '').toLowerCase();
     const pausedSites = Array.isArray(res && res.pausedSites) ? res.pausedSites : [];
-    if (host && pausedSites.includes(host)) return;
+    if (currentHost && pausedSites.includes(currentHost)) return;
 
     try {
       document.documentElement.dataset.sweeprProActive = '1';
     } catch (e) {}
+
+    if (res && res.customHiddenSelectors) {
+      applySavedCustomHiddenSelectors(res.customHiddenSelectors);
+    }
 
     const settings = (res && res.settings) || {};
     const silentMode = settings.silentMode !== false;

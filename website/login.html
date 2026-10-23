@@ -247,6 +247,16 @@
     function renderSubscriptionResult(data, email, code) {
       currentLookupValue = email;
       currentKeyValue = data.activation_code || code;
+      const syncKey = data.licenseKey || data.activation_code || code || '';
+      if (syncKey && syncKey !== 'Active') {
+        try {
+          localStorage.setItem('sweepr_license_key', syncKey);
+          window.postMessage(
+            { source: 'sweepr-web-portal', type: 'SWEEPR_AUTO_ACTIVATE', licenseKey: syncKey },
+            window.location.origin
+          );
+        } catch (e) {}
+      }
       document.getElementById('portalLicenseKey').textContent = data.licenseKey || 'Active';
       document.getElementById('portalActivationCode').textContent = data.activation_code || code || '—';
       document.getElementById('addonStatusText').innerHTML =

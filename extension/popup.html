@@ -9,12 +9,36 @@
       --bg: #ffffff;
       --bg-gradient: radial-gradient(circle at 10% 20%, rgba(220, 255, 230, 0.65) 0%, rgba(255, 255, 255, 1) 48%),
                      radial-gradient(circle at 90% 80%, rgba(209, 250, 229, 0.72) 0%, rgba(255, 255, 255, 1) 48%);
+      --card-bg: rgba(255, 255, 255, 0.95);
+      --card-border: rgba(16, 185, 129, 0.18);
+      --surface-muted: #f9fafb;
+      --border-muted: #e5e7eb;
       --accent: #10b981;
       --accent-dark: #059669;
       --emerald-deep: #064e3b;
-      --text: #1f2937;
+      --text: #111827;
+      --text-secondary: #374151;
       --muted: #6b7280;
+      --tab-strip-bg: #f3f4f6;
+      --tab-active-bg: #ffffff;
     }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0f172a;
+        --bg-gradient: radial-gradient(circle at 10% 15%, rgba(6, 78, 59, 0.45) 0%, #0f172a 55%);
+        --card-bg: rgba(30, 41, 59, 0.95);
+        --card-border: rgba(16, 185, 129, 0.28);
+        --surface-muted: #0f172a;
+        --border-muted: #334155;
+        --text: #f8fafc;
+        --text-secondary: #e2e8f0;
+        --muted: #94a3b8;
+        --tab-strip-bg: #1e293b;
+        --tab-active-bg: #0f172a;
+      }
+    }
+
     * { box-sizing: border-box; }
     body {
       width: 340px;
@@ -39,7 +63,7 @@
       gap: 7px;
       font-weight: 900;
       font-size: 13.5px;
-      color: #111827;
+      color: var(--text);
     }
     .logo {
       width: 22px;
@@ -54,16 +78,16 @@
       font-weight: 800;
       padding: 3px 8px;
       border-radius: 999px;
-      background: #f3f4f6;
-      color: #4b5563;
-      border: 1px solid #e5e7eb;
+      background: var(--surface-muted);
+      color: var(--muted);
+      border: 1px solid var(--border-muted);
       text-transform: uppercase;
       letter-spacing: 0.03em;
     }
     .status-pill.pro {
       background: #064e3b;
       color: #ecfdf5;
-      border-color: #059669;
+      border-color: #10b981;
     }
 
     /* Tab Panels */
@@ -76,21 +100,27 @@
       align-items: center;
       justify-content: space-between;
       gap: 10px;
-      background: #ffffff;
-      border: 1px solid rgba(16, 185, 129, 0.28);
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
       border-radius: 12px;
       padding: 9px 11px;
-      box-shadow: 0 3px 12px rgba(6, 78, 59, 0.05);
+      box-shadow: 0 3px 12px rgba(6, 78, 59, 0.06);
       transition: all 0.18s ease;
     }
     .site-bar.paused {
-      background: #fef2f2;
+      background: rgba(254, 242, 242, 0.9);
       border-color: #fecaca;
+    }
+    @media (prefers-color-scheme: dark) {
+      .site-bar.paused {
+        background: rgba(127, 29, 29, 0.35);
+        border-color: rgba(248, 113, 113, 0.45);
+      }
     }
     .site-domain {
       font-size: 12.5px;
       font-weight: 800;
-      color: #111827;
+      color: var(--text);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -98,12 +128,12 @@
     }
     .site-status-sub {
       font-size: 10.5px;
-      color: #059669;
+      color: #10b981;
       font-weight: 600;
       margin-top: 1px;
     }
     .site-bar.paused .site-status-sub {
-      color: #b91c1c;
+      color: #ef4444;
     }
 
     /* Sliding Toggle Switch */
@@ -121,10 +151,11 @@
     }
     .switch-btn:focus-visible,
     .tab-btn:focus-visible,
+    .preset-card:focus-visible,
     .btn-secondary:focus-visible,
     .btn-go:focus-visible,
     .link-btn:focus-visible {
-      outline: 2px solid #059669;
+      outline: 2px solid #10b981;
       outline-offset: 2px;
     }
     .switch-btn::after {
@@ -141,7 +172,7 @@
     }
     .switch-btn.off,
     .site-bar.paused .switch-btn {
-      background: #d1d5db;
+      background: #9ca3af;
     }
     .switch-btn.off::after,
     .site-bar.paused .switch-btn::after {
@@ -163,8 +194,8 @@
     }
 
     .card {
-      background: rgba(255, 255, 255, 0.95);
-      border: 1px solid rgba(16, 185, 129, 0.16);
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
       border-radius: 12px;
       padding: 9px 11px;
       margin-top: 7px;
@@ -176,9 +207,9 @@
       align-items: center;
       font-size: 11px;
       font-weight: 700;
-      color: #374151;
+      color: var(--text-secondary);
       padding-bottom: 6px;
-      border-bottom: 1px solid #f3f4f6;
+      border-bottom: 1px solid var(--border-muted);
     }
     .grid-4 {
       display: grid;
@@ -187,8 +218,8 @@
       margin-top: 6px;
     }
     .stat-box {
-      background: #f9fafb;
-      border: 1px solid #e5e7eb;
+      background: var(--surface-muted);
+      border: 1px solid var(--border-muted);
       border-radius: 8px;
       padding: 5px 8px;
       display: flex;
@@ -198,18 +229,18 @@
     .stat-num {
       font-size: 13px;
       font-weight: 900;
-      color: #059669;
+      color: #10b981;
     }
     .stat-label {
       font-size: 10px;
-      color: #4b5563;
+      color: var(--muted);
       font-weight: 700;
     }
 
     /* Speed Tab */
     .bar-bg {
       height: 6px;
-      background: #e5e7eb;
+      background: var(--border-muted);
       border-radius: 999px;
       overflow: hidden;
       margin: 6px 0;
@@ -224,7 +255,7 @@
       width: 100%;
       padding: 8px 10px;
       border-radius: 9px;
-      border: 1px solid rgba(255,255,255,0.25);
+      border: 1px solid rgba(255,255,255,0.2);
       background: linear-gradient(135deg, #10b981 0%, #059669 100%);
       color: #ffffff;
       font-weight: 800;
@@ -238,17 +269,17 @@
       align-items: center;
       justify-content: space-between;
       padding: 5px 7px;
-      background: #f9fafb;
-      border: 1px solid #e5e7eb;
+      background: var(--surface-muted);
+      border: 1px solid var(--border-muted);
       border-radius: 8px;
       margin-top: 5px;
       font-size: 10.5px;
-      color: #374151;
+      color: var(--text-secondary);
     }
     .restore-btn {
-      background: #ecfdf5;
-      color: #047857;
-      border: 1px solid #a7f3d0;
+      background: rgba(16, 185, 129, 0.14);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.35);
       border-radius: 6px;
       padding: 3px 8px;
       font-size: 9.5px;
@@ -256,24 +287,70 @@
       cursor: pointer;
     }
 
-    /* Controls Tab */
-    .module-row {
+    /* Controls Tab: 3 Instant Protection Presets */
+    .preset-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .preset-card {
+      width: 100%;
+      text-align: left;
+      background: var(--surface-muted);
+      border: 1.5px solid var(--border-muted);
+      border-radius: 10px;
+      padding: 7px 10px;
+      cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 8px;
-      padding: 5px 0;
-      border-bottom: 1px solid #f3f4f6;
+      transition: all 0.15s ease;
+      color: var(--text);
     }
-    .module-row:last-child { border-bottom: none; }
-    .module-title {
+    .preset-card.active {
+      border-color: #10b981;
+      background: rgba(16, 185, 129, 0.1);
+    }
+    .preset-title {
       font-size: 11px;
       font-weight: 800;
-      color: #111827;
+      color: var(--text);
     }
-    .module-sub {
+    .preset-sub {
       font-size: 9.5px;
-      color: #6b7280;
+      color: var(--muted);
+      margin-top: 1px;
+    }
+    .preset-pill {
+      font-size: 9px;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: var(--border-muted);
+      color: var(--text-secondary);
+      flex-shrink: 0;
+    }
+    .preset-card.active .preset-pill {
+      background: #10b981;
+      color: #ffffff;
+    }
+    .zapper-row {
+      display: flex;
+      gap: 6px;
+      margin-top: 6px;
+    }
+    .btn-ghost-action {
+      flex: 1;
+      background: var(--surface-muted);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-muted);
+      border-radius: 8px;
+      padding: 6px 8px;
+      font-size: 10px;
+      font-weight: 800;
+      cursor: pointer;
+      text-align: center;
     }
 
     /* 3-Tab Bottom Switcher */
@@ -281,7 +358,7 @@
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 4px;
-      background: #f3f4f6;
+      background: var(--tab-strip-bg);
       padding: 3px;
       border-radius: 9px;
       margin-top: 8px;
@@ -293,13 +370,13 @@
       padding: 5px 4px;
       font-size: 10.5px;
       font-weight: 800;
-      color: #4b5563;
+      color: var(--muted);
       cursor: pointer;
     }
     .tab-btn.active {
-      background: #ffffff;
-      color: #047857;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      background: var(--tab-active-bg);
+      color: #10b981;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.12);
     }
 
     .btn-go {
@@ -325,7 +402,7 @@
     .link-btn {
       background: none;
       border: none;
-      color: #047857;
+      color: #10b981;
       font-weight: 700;
       font-size: 10px;
       cursor: pointer;
@@ -334,8 +411,8 @@
     }
     .drawer-box {
       display: none;
-      background: #ffffff;
-      border: 1px solid #a7f3d0;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
       border-radius: 10px;
       padding: 8px 9px;
       margin-top: 6px;
@@ -349,7 +426,9 @@
     .license-input {
       flex: 1;
       padding: 6px 8px;
-      border: 1px solid #d1d5db;
+      border: 1px solid var(--border-muted);
+      background: var(--surface-muted);
+      color: var(--text);
       border-radius: 7px;
       font-size: 11px;
     }
@@ -388,14 +467,16 @@
         padding: 7px 11px;
         font-size: 11px;
       }
-      .tab-btn {
+      .tab-btn,
+      .preset-card {
         min-height: 44px;
         font-size: 12px;
       }
       .btn-secondary,
-      .btn-go {
+      .btn-go,
+      .btn-ghost-action {
         min-height: 44px;
-        font-size: 13px;
+        font-size: 12.5px;
       }
       .link-btn {
         min-height: 40px;
@@ -437,7 +518,7 @@
           <path d="M23.5 32.5L29.5 38.5L42.5 23.5" stroke="url(#sweep1)" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </div>
-      <span>SWEEPR <span style="color:#059669">Deepblock</span></span>
+      <span>SWEEPR <span style="color:#10b981">Deepblock</span></span>
     </div>
     <span id="tierBadge" class="status-pill">Locked</span>
   </div>
@@ -455,7 +536,7 @@
     <div class="card">
       <div class="quiet-summary-row">
         <span>Blocked quietly in background</span>
-        <span style="color:#059669;font-weight:900;" id="adsBlockedText">0 items</span>
+        <span style="color:#10b981;font-weight:900;" id="adsBlockedText">0 items</span>
       </div>
       <div class="grid-4">
         <div class="stat-box">
@@ -482,13 +563,13 @@
   <div id="tabSpeed" class="tab-panel">
     <div class="card">
       <div style="display:flex;justify-content:space-between;align-items:center;font-size:11.5px;font-weight:800;">
-        <span style="color:#047857;">⚡ Tab Memory Saver</span>
-        <span id="ramHeadlineMetric" style="color:#059669;">Running Fast</span>
+        <span style="color:#10b981;">⚡ Tab Memory Saver</span>
+        <span id="ramHeadlineMetric" style="color:#10b981;">Running Fast</span>
       </div>
       <div class="bar-bg">
         <div id="ramBarFill" class="bar-fill"></div>
       </div>
-      <div id="ramDescriptionText" style="font-size:10px;color:#4b5563;line-height:1.35;">
+      <div id="ramDescriptionText" style="font-size:10px;color:var(--muted);line-height:1.35;">
         Unused background tabs automatically snooze so your browser stays fast.
       </div>
       <button type="button" id="reclaimRamBtn" class="btn-secondary" title="Shortcut: Alt+Shift+Z">
@@ -497,65 +578,44 @@
     </div>
 
     <div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center;font-size:10.5px;font-weight:800;color:#374151;">
+      <div style="display:flex;justify-content:space-between;align-items:center;font-size:10.5px;font-weight:800;">
         <span>📂 Saved Tab Snapshots (<span id="savedTabsCount">0</span>)</span>
         <button type="button" id="openFullSessionsBtn" class="link-btn" style="font-size:9.5px;">Manage All ↗</button>
       </div>
       <div id="savedTabsDrawer" class="open" style="margin-top:4px;">
-        <div id="savedTabsList" style="font-size:10px;color:#6b7280;">No paused tab groups yet.</div>
+        <div id="savedTabsList" style="font-size:10px;color:var(--muted);">No paused tab groups yet.</div>
       </div>
     </div>
   </div>
 
-  <!-- TAB 3: CONTROLS -->
+  <!-- TAB 3: CONTROLS (3 Instant Presets + Element Zapper + Full Module Options) -->
   <div id="tabControls" class="tab-panel">
-    <div class="card" style="padding:7px 11px;">
-      <div class="module-row">
-        <div>
-          <div class="module-title">📺 Block Video &amp; Page Ads</div>
-          <div class="module-sub">YouTube &amp; news websites</div>
-        </div>
-        <button type="button" id="modStealth" data-setting="adBlocking" data-pro="1" class="switch-btn pro-lock" aria-label="Block Video and Page Ads">🔒 PRO</button>
+    <div class="card" style="padding:8px 10px;">
+      <div class="preset-stack">
+        <button type="button" id="presetQuietBtn" class="preset-card active" data-preset="quiet">
+          <div>
+            <div class="preset-title">🤫 Quiet Protection (Default)</div>
+            <div class="preset-sub">Blocks ads, cookies, spam &amp; scams with zero badge/toast noise</div>
+          </div>
+          <span class="preset-pill" id="presetQuietPill">Active</span>
+        </button>
+
+        <button type="button" id="presetVisualBtn" class="preset-card" data-preset="visual">
+          <div>
+            <div class="preset-title">🛡️ Visual Feedback Mode</div>
+            <div class="preset-sub">Full protection + shows 2s cookie whispers &amp; counter badge</div>
+          </div>
+          <span class="preset-pill" id="presetVisualPill">Select</span>
+        </button>
       </div>
 
-      <div class="module-row">
-        <div>
-          <div class="module-title">🍪 Auto-Close Cookie Boxes</div>
-          <div class="module-sub">Declines cookie pop-ups in &lt;50ms</div>
-        </div>
-        <button type="button" id="modCookie" data-setting="cookieAutoClose" data-pro="1" class="switch-btn pro-lock">🔒 PRO</button>
-      </div>
-
-      <div class="module-row">
-        <div>
-          <div class="module-title">🤖 Hide Search Spam Sites</div>
-          <div class="module-sub">Cleans Google, Bing &amp; DuckDuckGo</div>
-        </div>
-        <button type="button" id="modSlop" data-setting="hideSearchSpam" data-pro="1" class="switch-btn pro-lock">🔒 PRO</button>
-      </div>
-
-      <div class="module-row">
-        <div>
-          <div class="module-title">🛒 Scam Online Shop Alerts</div>
-          <div class="module-sub">Subtle corner alert on risky shops</div>
-        </div>
-        <button type="button" id="modShop" data-setting="fakeShopAlerts" data-pro="1" class="switch-btn pro-lock" aria-label="Scam Online Shop Alerts">🔒 PRO</button>
-      </div>
-
-      <div class="module-row">
-        <div>
-          <div class="module-title">🔒 Tracker-Free Links</div>
-          <div class="module-sub">Strips hidden click tracking tags</div>
-        </div>
-        <button type="button" id="modDns" data-setting="trackerProtection" data-pro="1" class="switch-btn pro-lock" aria-label="Private Tracker-Free Links">🔒 PRO</button>
-      </div>
-
-      <div class="module-row" style="background:#ecfdf5;margin:4px -6px -3px;padding:5px 6px;border-radius:8px;">
-        <div>
-          <div class="module-title" style="color:#065f46;">🤫 100% Silent Mode</div>
-          <div class="module-sub" style="color:#047857;">Hide on-page toasts &amp; badge noise</div>
-        </div>
-        <button type="button" id="modSilent" data-setting="silentMode" data-pro="1" class="switch-btn pro-lock" aria-label="100% Silent Mode">🔒 PRO</button>
+      <div class="zapper-row">
+        <button type="button" id="startZapperBtn" class="btn-ghost-action" title="Click any annoying element on the page to hide it">
+          🧹 Hide Page Element
+        </button>
+        <button type="button" id="openCustomModulesBtn" class="btn-ghost-action">
+          ⚙️ All 6 Toggles ↗
+        </button>
       </div>
     </div>
   </div>
@@ -577,14 +637,14 @@
     <button type="button" id="openTestLabBtn" class="link-btn">Test Shield ↗</button>
   </div>
 
-  <!-- Persistent License Key Drawer (Auto-saved on input so closing popup never wipes text) -->
+  <!-- Persistent License Key Drawer -->
   <div id="licenseDrawer" class="drawer-box">
-    <div style="font-size:10.5px;font-weight:800;color:#111827;">🔑 Activate Pro Key or 6-Digit Code</div>
+    <div style="font-size:10.5px;font-weight:800;">🔑 Activate Pro Key or 6-Digit Code</div>
     <div class="license-input-row">
       <input type="text" id="licenseKeyInput" class="license-input" placeholder="SWEEPR-DB-XXXX or 6-digit code" autocomplete="off" spellcheck="false" />
       <button type="button" id="activateKeyBtn" class="license-submit">Unlock</button>
     </div>
-    <div id="licenseFeedback" style="font-size:10px;color:#059669;font-weight:700;margin-top:4px;display:none;"></div>
+    <div id="licenseFeedback" style="font-size:10px;color:#10b981;font-weight:700;margin-top:4px;display:none;"></div>
   </div>
 
   <script src="popup.js"></script>
