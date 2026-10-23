@@ -252,15 +252,15 @@
     </div>
   </div>
 
-  <!-- Hero Section (Simple, Everyday Language + 3 Scannable Bullets + Single Primary CTA + Before/After Card) -->
+  <!-- Hero Section — Concept A: Interactive Before/After Slider Hero -->
   <main class="flex-1 pt-24 sm:pt-32 pb-14 sm:pb-20 px-4 sm:px-6 max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 items-center gap-8 sm:gap-12 text-left">
-    <div class="lg:col-span-7 w-full">
+    <div class="lg:col-span-6 w-full">
       <div class="inline-flex items-center gap-2 px-3 sm:px-3.5 py-1.5 rounded-full text-[11px] sm:text-xs font-bold text-emerald-900 bg-emerald-100/90 border border-emerald-200 mb-5">
         <span class="w-2 h-2 rounded-full bg-emerald-600 shrink-0"></span>
         <span>✓ Works on Chrome, Safari, Edge, Firefox &amp; Brave • Covers 5 Devices</span>
       </div>
-      <h1 class="text-3xl sm:text-5xl lg:text-[54px] font-black mb-5 leading-[1.08] tracking-tight text-gray-900">
-        Stop YouTube Ads &amp; <span style="color: var(--accent);">Auto-Reject Cookie Pop-Ups</span> Automatically.
+      <h1 class="text-3xl sm:text-5xl lg:text-[52px] font-black mb-5 leading-[1.08] tracking-tight text-gray-900">
+        Watch YouTube &amp; Browse <span style="color: var(--accent);">Without Ads or Cookie Pop-Ups.</span>
       </h1>
       <p class="text-base sm:text-lg text-gray-600 mb-6 max-w-xl leading-relaxed">
         Enjoy a cleaner, faster internet. One simple tool that blocks annoying video ads, closes cookie pop-ups for you, and warns you about fake shopping websites.
@@ -303,59 +303,129 @@
       </div>
     </div>
 
-    <!-- Right Column (5 cols): Clean Before vs. After Card (Zero competing CTAs) -->
-    <div class="lg:col-span-5 w-full">
-      <div class="glass-card p-5 sm:p-6 flex flex-col gap-4 border border-emerald-200/80 shadow-2xl text-left bg-white/95">
-        <div class="flex items-center justify-between border-b border-gray-100 pb-3.5">
+    <!-- Right Column (6 cols): Interactive Before/After Drag-Slider Browser Preview -->
+    <div class="lg:col-span-6 w-full">
+      <div class="bg-slate-900 rounded-3xl p-4 sm:p-5 shadow-2xl border border-slate-800 text-white">
+        <!-- Browser Top Bar -->
+        <div class="flex items-center justify-between mb-3 px-1">
           <div class="flex items-center gap-2">
-            <div class="logo-box !w-6 !h-6 !rounded-md shrink-0" aria-hidden="true"></div>
-            <h2 class="font-black text-gray-900 text-sm tracking-tight">SWEEPR <span class="text-emerald-600">Deepblock</span></h2>
+            <span class="w-2.5 h-2.5 rounded-full bg-rose-500/80"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-amber-400/80"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500/80"></span>
+            <span class="text-xs font-bold text-slate-300 ml-1">Drag slider to compare:</span>
           </div>
-          <span class="px-2.5 py-1 rounded-full text-[10.5px] font-extrabold uppercase tracking-wider bg-emerald-100 text-emerald-800 border border-emerald-200">✓ Active on All Sites</span>
+          <span class="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+            ✓ All Ads &amp; Pop-Ups Blocked
+          </span>
         </div>
 
-        <!-- Before vs. After Split Comparison Box -->
-        <div class="grid grid-cols-2 gap-3">
-          <div class="rounded-2xl bg-rose-50/70 border border-rose-200/80 p-3.5">
-            <div class="text-[11px] font-extrabold uppercase tracking-wider text-rose-700 mb-2">✗ Without Deepblock</div>
-            <div class="space-y-1.5 text-xs text-rose-900 font-medium">
-              <div class="bg-white/90 rounded-lg px-2.5 py-1.5 border border-rose-200/60">Unskippable Video Ads</div>
-              <div class="bg-white/90 rounded-lg px-2.5 py-1.5 border border-rose-200/60">Annoying Cookie Pop-Ups</div>
-              <div class="bg-white/90 rounded-lg px-2.5 py-1.5 border border-rose-200/60">Slow Browser (Too Many Tabs)</div>
+        <!-- Interactive Split Browser Stage -->
+        <div id="heroSliderStage" class="relative rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 h-72 sm:h-80 select-none cursor-ew-resize">
+          <!-- AFTER LAYER (Full Width Underneath — WITH SWEEPR DEEPBLOCK) -->
+          <div class="absolute inset-0 bg-gradient-to-br from-emerald-950/90 via-slate-900 to-slate-950 p-4 sm:p-5 flex flex-col justify-between">
+            <div class="flex items-center justify-between">
+              <span class="px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider bg-emerald-500 text-slate-950 shadow-xs">✓ WITH SWEEPR DEEPBLOCK</span>
+              <span class="text-xs font-bold text-emerald-300">0 Ads • 0 Pop-Ups</span>
+            </div>
+
+            <div class="bg-white/10 backdrop-blur-xs border border-emerald-500/30 rounded-2xl p-4 text-center my-auto shadow-lg">
+              <div class="w-11 h-11 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center mx-auto mb-2 font-black text-base shadow-md">▶</div>
+              <div class="text-sm sm:text-base font-extrabold text-white">Video Plays Immediately — No Ads</div>
+              <div class="text-xs text-emerald-300 mt-1 font-medium">Cookie Pop-Ups Closed Automatically • Smooth Scrolling</div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2 text-center text-[11px]">
+              <div class="bg-white/5 border border-white/10 rounded-xl p-2">
+                <div class="text-emerald-400 font-black">0 Video Ads</div>
+                <div class="text-slate-400 text-[10px]">On YouTube</div>
+              </div>
+              <div class="bg-white/5 border border-white/10 rounded-xl p-2">
+                <div class="text-emerald-400 font-black">Auto-Closed</div>
+                <div class="text-slate-400 text-[10px]">Cookie Boxes</div>
+              </div>
+              <div class="bg-white/5 border border-white/10 rounded-xl p-2">
+                <div class="text-emerald-400 font-black">Protected</div>
+                <div class="text-slate-400 text-[10px]">Safe Shopping</div>
+              </div>
             </div>
           </div>
-          <div class="rounded-2xl bg-emerald-50/80 border border-emerald-300 p-3.5">
-            <div class="text-[11px] font-extrabold uppercase tracking-wider text-emerald-800 mb-2">✓ With Deepblock Pro</div>
-            <div class="space-y-1.5 text-xs text-emerald-950 font-semibold">
-              <div class="bg-white rounded-lg px-2.5 py-1.5 border border-emerald-200 shadow-2xs">Zero Video or Banner Ads</div>
-              <div class="bg-white rounded-lg px-2.5 py-1.5 border border-emerald-200 shadow-2xs">Cookie Pop-Ups Closed</div>
-              <div class="bg-white rounded-lg px-2.5 py-1.5 border border-emerald-200 shadow-2xs">Fast, Smooth Browsing</div>
+
+          <!-- BEFORE LAYER (Clipped by Slider Percentage — WITHOUT DEEPBLOCK) -->
+          <div id="heroBeforeClip" style="width: 46%;" class="absolute inset-y-0 left-0 overflow-hidden bg-gradient-to-br from-rose-950 via-slate-900 to-rose-950/90">
+            <div id="heroBeforeInner" class="w-[520px] max-w-none h-full p-4 sm:p-5 flex flex-col justify-between">
+              <div class="flex items-center justify-between">
+                <span class="px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider bg-rose-600 text-white shadow-xs">✗ WITHOUT DEEPBLOCK</span>
+              </div>
+
+              <div class="bg-rose-950/90 border border-rose-500/50 rounded-2xl p-3.5 space-y-2.5 my-auto shadow-lg">
+                <div class="bg-rose-600 text-white text-xs font-extrabold px-3 py-1.5 rounded-lg flex items-center justify-between">
+                  <span>⚠ Video Ad 1 of 2 (0:30)</span>
+                  <span class="text-[10px] bg-black/30 px-2 py-0.5 rounded">Cannot Skip</span>
+                </div>
+                <div class="bg-white text-slate-900 text-xs font-bold p-3 rounded-xl shadow-md border border-rose-200">
+                  <div class="text-rose-700 font-extrabold mb-0.5">🍪 Cookie Consent Required</div>
+                  <div class="text-[11px] text-slate-600 font-medium">"We &amp; 842 ad partners track your clicks — Accept All to read this page"</div>
+                </div>
+              </div>
+
+              <div class="bg-rose-950/80 border border-rose-500/30 rounded-xl p-2 text-center text-[11px] text-rose-200 font-bold">
+                ✗ Page Covered by Ads &amp; Pop-Up Banners
+              </div>
+            </div>
+          </div>
+
+          <!-- Vertical Divider Line & Center Drag Handle (< | >) -->
+          <div id="heroSliderHandle" style="left: 46%;" class="absolute inset-y-0 w-0.5 bg-emerald-400 shadow-[0_0_12px_rgba(16,185,129,0.9)] pointer-events-none">
+            <div class="w-9 h-9 rounded-full bg-emerald-500 text-slate-950 font-black text-xs flex items-center justify-center shadow-xl border-2 border-white absolute top-1/2 -translate-x-1/2 -translate-y-1/2">
+              &lsaquo;&thinsp;&rsaquo;
             </div>
           </div>
         </div>
 
-        <!-- 2x2 Scannable Live Counter Grid -->
-        <div class="grid grid-cols-2 gap-2.5">
-          <div class="bg-gray-50 border border-gray-200/80 rounded-xl px-3 py-2.5 flex items-center justify-between">
-            <span class="text-xs font-bold text-gray-600">Video &amp; Page Ads</span>
-            <span class="text-sm font-black text-emerald-600" id="liveAdsCount">142 Blocked</span>
-          </div>
-          <div class="bg-gray-50 border border-gray-200/80 rounded-xl px-3 py-2.5 flex items-center justify-between">
-            <span class="text-xs font-bold text-gray-600">Cookie Pop-Ups</span>
-            <span class="text-sm font-black text-emerald-600" id="liveCookieCount">19 Closed</span>
-          </div>
-          <div class="bg-gray-50 border border-gray-200/80 rounded-xl px-3 py-2.5 flex items-center justify-between">
-            <span class="text-xs font-bold text-gray-600">Search Spam</span>
-            <span class="text-sm font-black text-emerald-600" id="liveSlopCount">11 Hidden</span>
-          </div>
-          <div class="bg-gray-50 border border-gray-200/80 rounded-xl px-3 py-2.5 flex items-center justify-between">
-            <span class="text-xs font-bold text-gray-600">Scam Shops</span>
-            <span class="text-sm font-black text-emerald-600" id="liveScamCount">4 Flagged</span>
+        <!-- Range Slider Control Bar -->
+        <div class="mt-3.5 px-1">
+          <input id="heroCompareRange" type="range" min="8" max="92" value="46" oninput="setHeroSlider(this.value)" class="w-full accent-emerald-500 cursor-pointer" aria-label="Compare Before and After SWEEPR Deepblock">
+          <div class="flex justify-between text-[11px] font-bold text-slate-400 mt-1">
+            <span>&larr; Slide Left for 100% Clean View</span>
+            <span>Slide Right to See Ads &amp; Pop-Ups &rarr;</span>
           </div>
         </div>
       </div>
     </div>
   </main>
+  <script>
+    function setHeroSlider(pct) {
+      const val = Math.max(8, Math.min(92, Number(pct) || 46));
+      const clip = document.getElementById('heroBeforeClip');
+      const handle = document.getElementById('heroSliderHandle');
+      const range = document.getElementById('heroCompareRange');
+      const stage = document.getElementById('heroSliderStage');
+      const inner = document.getElementById('heroBeforeInner');
+      if (stage && inner) inner.style.width = stage.clientWidth + 'px';
+      if (clip) clip.style.width = val + '%';
+      if (handle) handle.style.left = val + '%';
+      if (range && Number(range.value) !== val) range.value = val;
+    }
+    (function initHeroSliderDrag() {
+      const stage = document.getElementById('heroSliderStage');
+      if (!stage) return;
+      let dragging = false;
+      const updateFromEvent = (e) => {
+        const rect = stage.getBoundingClientRect();
+        const clientX = e.touches && e.touches[0] ? e.touches[0].clientX : e.clientX;
+        const pct = ((clientX - rect.left) / Math.max(1, rect.width)) * 100;
+        setHeroSlider(pct);
+      };
+      stage.addEventListener('pointerdown', (e) => { dragging = true; updateFromEvent(e); });
+      window.addEventListener('pointermove', (e) => { if (dragging) updateFromEvent(e); });
+      window.addEventListener('pointerup', () => { dragging = false; });
+      window.addEventListener('resize', () => {
+        const range = document.getElementById('heroCompareRange');
+        setHeroSlider(range ? range.value : 46);
+      });
+      setTimeout(() => setHeroSlider(46), 0);
+    })();
+  </script>
 
   <!-- 3-Pillar Bento Grid (Simple, Non-Technical) -->
   <section id="features" class="py-12 sm:py-16 px-4 sm:px-6 bg-gray-50/70 border-y border-gray-200/70">
