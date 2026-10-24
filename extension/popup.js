@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const ramBarFillEl = document.getElementById('ramBarFill');
   const reclaimRamBtn = document.getElementById('reclaimRamBtn');
   const keepSiteAwakeBtn = document.getElementById('keepSiteAwakeBtn');
+  const autoRamToggleBtn = document.getElementById('autoRamToggleBtn');
   const savedTabsCountEl = document.getElementById('savedTabsCount');
   const upgradeCtaBtn = document.getElementById('upgradeCtaBtn');
   const siteBarEl = document.getElementById('siteBar');
@@ -173,11 +174,26 @@ document.addEventListener('DOMContentLoaded', () => {
         ? `⚡ ${savedGb} GB Saved · ${discardedCount} Sleeping`
         : `${totalTabs} Tabs Open`;
       ramBarFillEl.style.width = isPro ? `${Math.min(85, Math.max(18, totalTabs * 4))}%` : '0%';
+      const autoOn = !state.settings || state.settings.autoRamTamer !== false;
+      if (autoRamToggleBtn) {
+        if (!isPro) {
+          autoRamToggleBtn.textContent = '🔒 Auto-Pilot';
+          autoRamToggleBtn.className = 'store-pill';
+        } else if (autoOn) {
+          autoRamToggleBtn.textContent = '● Auto-Pilot ON';
+          autoRamToggleBtn.className = 'store-pill';
+        } else {
+          autoRamToggleBtn.textContent = '○ Auto-Pilot Paused';
+          autoRamToggleBtn.className = 'store-pill risk';
+        }
+      }
       ramDescEl.textContent = !isPro
-        ? 'Unlock Pro to snooze inactive background tabs and save up to 5.9 GB RAM.'
+        ? 'Unlock Pro to snooze inactive background tabs automatically and save up to 5.9 GB RAM.'
+        : !autoOn
+        ? 'Auto-Pilot paused. Click "● Auto-Pilot" or "Free Up RAM Now" to resume automatic background snoozing.'
         : discardedCount > 0
-        ? `${discardedCount} background tab${discardedCount === 1 ? ' is' : 's are'} sleeping quietly.`
-        : `${totalTabs} open tabs. Unused background tabs snooze automatically.`;
+        ? `Auto-Pilot active · ${discardedCount} background tab${discardedCount === 1 ? ' is' : 's are'} sleeping quietly.`
+        : `Auto-Pilot active · ${totalTabs} open tabs monitored automatically in background.`;
     }
 
     if (isPro) {
@@ -274,6 +290,22 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // 1-Click Auto-Pilot Background RAM Tamer Toggle
+  if (autoRamToggleBtn) {
+    autoRamToggleBtn.addEventListener('click', () => {
+      if (!currentState.proActive) {
+        openProRequiredPrompt('🔒 Tab & RAM Tamer Auto-Pilot requires an active Pro subscription.');
+        return;
+      }
+      chrome.runtime.sendMessage({ type: 'TOGGLE_SETTING', settingKey: 'autoRamTamer' }, (res) => {
+        if (res && res.ok && res.settings) {
+          currentState.settings = res.settings;
+          renderState(currentState);
+        }
+      });
+    });
+  }
+
   if (upgradeCtaBtn) {
     upgradeCtaBtn.addEventListener('click', () => {
       chrome.tabs.create({ url: 'https://sweeprdeepblock.com/order?discount=intro&addon=ram_tamer' });
@@ -301,6 +333,15 @@ document.addEventListener('DOMContentLoaded', () => {
           count > 0 ? `✓ ${count} Tabs Snoozed` : '✓ Already Fast';
         ramHeadlineEl.textContent = `⚡ ${savedGb} GB Saved`;
         ramBarFillEl.style.width = '18%';
+        if (res.settings) {
+          currentState.settings = res.settings;
+        } else {
+          currentState.settings = { ...(currentState.settings || {}), autoRamTamer: true };
+        }
+        if (autoRamToggleBtn) {
+          autoRamToggleBtn.textContent = '● Auto-Pilot ON';
+          autoRamToggleBtn.className = 'store-pill';
+        }
         if (res.sessions && savedTabsCountEl) {
           currentState.cloudTabSessions = res.sessions;
           savedTabsCountEl.textContent = String(res.sessions.length);
@@ -371,7 +412,8 @@ document.addEventListener('DOMContentLoaded', () => {
               fakeShopAlerts: true,
               trackerProtection: true,
               adBlocking: true,
-              silentMode: true
+              silentMode: true,
+              autoRamTamer: true
             };
             await chrome.storage.local.set({
               deviceId,
@@ -442,7 +484,8 @@ document.addEventListener('DOMContentLoaded', () => {
           fakeShopAlerts: true,
           trackerProtection: true,
           adBlocking: true,
-          silentMode: true
+          silentMode: true,
+          autoRamTamer: true
         };
         licenseFeedbackEl.style.display = 'block';
         licenseFeedbackEl.style.color = '#10b981';

@@ -16,11 +16,14 @@ const PRO_ONLY_SETTINGS = new Set([
   'hideSearchSpam',
   'fakeShopAlerts',
   'trackerProtection',
-  'silentMode'
+  'silentMode',
+  'autoRamTamer'
 ]);
 
 const scamDetectedTabs = new Set();
 const scamReasonsByTab = new Map();
+const tabLastActiveAt = new Map();
+const AUTO_RAM_IDLE_MS = 10 * 60 * 1000; // 10 minutes idle threshold for automatic background snooze
 
 async function syncPausedSiteDnrAllowlist(passedPausedSites) {
   try {
@@ -120,7 +123,8 @@ const DEFAULT_STATE = {
     fakeShopAlerts: false,
     trackerProtection: false,
     adBlocking: false,
-    silentMode: false
+    silentMode: false,
+    autoRamTamer: false
   },
   stats: {
     adsBlocked: 0,
@@ -198,10 +202,12 @@ async function verifyLicenseWithServer(rawKey) {
               fakeShopAlerts: true,
               trackerProtection: true,
               adBlocking: true,
-              silentMode: true
+              silentMode: true,
+              autoRamTamer: true
             }
           });
           verifiedSession.internalWriteInProgress = false;
+          chrome.alarms.create('ramTamerCheck', { periodInMinutes: 5 });
           await syncExtensionProtectionRules(true);
           await updateActionBadge();
           return {
@@ -265,7 +271,8 @@ async function revokeProState(reason = 'inactive') {
       fakeShopAlerts: false,
       trackerProtection: false,
       adBlocking: false,
-      silentMode: false
+      silentMode: false,
+      autoRamTamer: false
     }
   });
   verifiedSession.internalWriteInProgress = false;
@@ -376,6 +383,8 @@ chrome.runtime.onInstalled.addListener(async (details) => {
 
 chrome.runtime.onStartup.addListener(async () => {
   registerContextMenus();
+  chrome.alarms.create('ramTamerCheck', { periodInMinutes: 5 });
+  chrome.alarms.create('licenseVerifyCheck', { periodInMinutes: 60 });
   await enforceStoredSubscriptionIntegrity();
 });
 
@@ -427,12 +436,18 @@ async function updateActionBadge(passedStats, passedSettings) {
 // Refresh toolbar badge whenever user switches tabs or navigates
 if (chrome.tabs) {
   if (chrome.tabs.onActivated) {
-    chrome.tabs.onActivated.addListener(() => {
+    chrome.tabs.onActivated.addListener((activeInfo) => {
+      if (activeInfo && activeInfo.tabId) {
+        tabLastActiveAt.set(activeInfo.tabId, Date.now());
+      }
       updateActionBadge();
     });
   }
   if (chrome.tabs.onUpdated) {
-    chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
+    chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+      if (tab && tab.active) {
+        tabLastActiveAt.set(tabId, Date.now());
+      }
       if (changeInfo.status === 'loading') {
         scamDetectedTabs.delete(tabId);
         scamReasonsByTab.delete(tabId);
@@ -444,6 +459,7 @@ if (chrome.tabs) {
   }
   if (chrome.tabs.onRemoved) {
     chrome.tabs.onRemoved.addListener((tabId) => {
+      tabLastActiveAt.delete(tabId);
       scamDetectedTabs.delete(tabId);
       scamReasonsByTab.delete(tabId);
     });
@@ -533,30 +549,25 @@ async function getRamSpeedometerMetrics() {
 }
 
 // Hibernate inactive background tabs & snapshot session to Cloud Vault
-async function hibernateInactiveTabs() {
+async function hibernateInactiveTabs(options = {}) {
+  const isAutoBackground = Boolean(options && options.isAutoBackground);
   const verified = await ensureVerifiedProSession();
   if (!verified.proActive || !verified.licenseKey) {
     return { ok: false, requiresPro: true, error: 'Active paid Pro subscription required.' };
   }
-  const data = await chrome.storage.local.get(['stats', 'cloudTabSessions', 'neverSnoozeSites']);
+  const data = await chrome.storage.local.get(['stats', 'cloudTabSessions', 'neverSnoozeSites', 'settings']);
 
   const stats = data.stats || DEFAULT_STATE.stats;
   const neverSnoozeSites = Array.isArray(data.neverSnoozeSites) ? data.neverSnoozeSites : [];
   const tabs = await chrome.tabs.query({});
-
-  const snapshot = {
-    id: 'session-' + Date.now(),
-    savedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-    tabCount: tabs.length,
-    tabs: tabs
-      .filter((t) => t.url && /^https?:\/\//i.test(t.url))
-      .slice(0, 30)
-      .map((t) => ({ title: t.title || 'Saved Page', url: t.url || '' }))
-  };
-  const sessions = [snapshot, ...(data.cloudTabSessions || [])].slice(0, 5);
+  const now = Date.now();
 
   let newlyDiscarded = 0;
   for (const tab of tabs) {
+    if (tab.active && tab.id) {
+      tabLastActiveAt.set(tab.id, now);
+      continue;
+    }
     if (!tab.active && !tab.pinned && !tab.audible && !tab.discarded && tab.id) {
       let tabHost = '';
       try {
@@ -567,6 +578,16 @@ async function hibernateInactiveTabs() {
       if (tabHost && neverSnoozeSites.includes(tabHost)) {
         continue;
       }
+      if (isAutoBackground) {
+        const lastActive = tabLastActiveAt.get(tab.id);
+        if (!lastActive) {
+          tabLastActiveAt.set(tab.id, now);
+          continue;
+        }
+        if (now - lastActive < AUTO_RAM_IDLE_MS) {
+          continue;
+        }
+      }
       try {
         await chrome.tabs.discard(tab.id);
         newlyDiscarded++;
@@ -574,12 +595,32 @@ async function hibernateInactiveTabs() {
     }
   }
 
+  let sessions = Array.isArray(data.cloudTabSessions) ? data.cloudTabSessions : [];
+  if (!isAutoBackground || newlyDiscarded > 0) {
+    const snapshot = {
+      id: 'session-' + now,
+      savedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      tabCount: tabs.length,
+      tabs: tabs
+        .filter((t) => t.url && /^https?:\/\//i.test(t.url))
+        .slice(0, 30)
+        .map((t) => ({ title: t.title || 'Saved Page', url: t.url || '' }))
+    };
+    sessions = [snapshot, ...sessions].slice(0, 5);
+  }
+
   const savedGbAdd = +(newlyDiscarded * 0.14).toFixed(1);
   stats.tabsHibernated = (stats.tabsHibernated || 0) + newlyDiscarded;
   stats.ramSavedGb = +((stats.ramSavedGb || 0) + savedGbAdd).toFixed(1);
 
-  await chrome.storage.local.set({ stats, cloudTabSessions: sessions });
-  return { ok: true, newlyDiscarded, savedGbAdd, stats, sessions };
+  const updatedSettings = { ...DEFAULT_STATE.settings, ...(data.settings || {}) };
+  if (!isAutoBackground) {
+    updatedSettings.autoRamTamer = true;
+    chrome.alarms.create('ramTamerCheck', { periodInMinutes: 5 });
+  }
+
+  await chrome.storage.local.set({ stats, cloudTabSessions: sessions, settings: updatedSettings });
+  return { ok: true, newlyDiscarded, savedGbAdd, stats, sessions, settings: updatedSettings };
 }
 
 chrome.alarms.onAlarm.addListener(async (alarm) => {
@@ -600,13 +641,14 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
     return;
   }
   if (alarm.name === 'ramTamerCheck') {
-    const { proActive, ramTamerActive, licenseKey } = await chrome.storage.local.get([
+    const { proActive, licenseKey, settings } = await chrome.storage.local.get([
       'proActive',
-      'ramTamerActive',
-      'licenseKey'
+      'licenseKey',
+      'settings'
     ]);
-    if (proActive && ramTamerActive && licenseKey) {
-      await hibernateInactiveTabs();
+    const autoEnabled = !settings || settings.autoRamTamer !== false;
+    if (proActive && licenseKey && autoEnabled) {
+      await hibernateInactiveTabs({ isAutoBackground: true });
     }
   }
 });
