@@ -48,6 +48,12 @@ function resolveTrustedOrigin(req) {
     `http://localhost:${PORT}`,
     `http://127.0.0.1:${PORT}`
   ]);
+  const hostHeader = String(req?.headers?.host || '').trim();
+  if (/^(localhost|127\.0\.0\.1)(:\d+)?$/i.test(hostHeader)) {
+    allowedOrigins.add(`http://${hostHeader}`);
+    allowedOrigins.add(`http://localhost:${hostHeader.split(':')[1] || PORT}`);
+    allowedOrigins.add(`http://127.0.0.1:${hostHeader.split(':')[1] || PORT}`);
+  }
   const rawOrigin = String(req.headers.origin || '').trim().replace(/\/+$/, '');
   if (rawOrigin && allowedOrigins.has(rawOrigin)) return rawOrigin;
   return PUBLIC_URL;
@@ -625,8 +631,277 @@ const accountsByEmail = new Map();
 const accountsBySubscriptionId = new Map();
 const usedIntroDiscountEmails = new Set();
 const processedWebhookEventIds = new Set();
-const MAX_DEVICES_PER_LICENSE = 5;
+const MAX_DEVICES_PER_LICENSE = 3;
 const HIGH_ENTROPY_LICENSE_KEY_RE = /^SWEEPR-[A-Z0-9]{2,8}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/i;
+
+// ============================================================================
+// Zero-Dependency ISO/IEC 18004 SVG QR Code Generator (Byte Mode, ECC Level L)
+// ============================================================================
+const QR_CAPACITIES_L = [0, 17, 32, 53, 78, 106, 134, 154, 192, 230, 271];
+const QR_TOTAL_CODEWORDS = [0, 26, 44, 70, 100, 134, 172, 196, 242, 292, 346];
+const QR_EC_CODEWORDS_L = [0, 7, 10, 15, 20, 26, 18, 20, 24, 30, 18];
+const QR_NUM_BLOCKS_L = [0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 4];
+const QR_ALIGNMENT_CENTERS = [
+  [],
+  [],
+  [6, 18],
+  [6, 22],
+  [6, 26],
+  [6, 30],
+  [6, 34],
+  [6, 22, 38],
+  [6, 24, 42],
+  [6, 26, 46],
+  [6, 28, 50]
+];
+
+const GF_EXP = new Uint8Array(512);
+const GF_LOG = new Uint8Array(256);
+(() => {
+  let x = 1;
+  for (let i = 0; i < 255; i++) {
+    GF_EXP[i] = x;
+    GF_LOG[x] = i;
+    x <<= 1;
+    if (x & 0x100) x ^= 0x11d;
+  }
+  for (let i = 255; i < 512; i++) {
+    GF_EXP[i] = GF_EXP[i - 255];
+  }
+})();
+
+function gfMul(a, b) {
+  if (a === 0 || b === 0) return 0;
+  return GF_EXP[GF_LOG[a] + GF_LOG[b]];
+}
+
+function rsGeneratorPoly(degree) {
+  let poly = new Uint8Array([1]);
+  for (let i = 0; i < degree; i++) {
+    const next = new Uint8Array(poly.length + 1);
+    const root = GF_EXP[i];
+    for (let j = 0; j < poly.length; j++) {
+      next[j] ^= poly[j];
+      next[j + 1] ^= gfMul(poly[j], root);
+    }
+    poly = next;
+  }
+  return poly;
+}
+
+function rsEncode(data, ecLen) {
+  const gen = rsGeneratorPoly(ecLen);
+  const rem = new Uint8Array(ecLen);
+  for (let i = 0; i < data.length; i++) {
+    const factor = data[i] ^ rem[0];
+    rem.copyWithin(0, 1);
+    rem[ecLen - 1] = 0;
+    if (factor !== 0) {
+      for (let j = 0; j < ecLen; j++) {
+        rem[j] ^= gfMul(gen[j + 1], factor);
+      }
+    }
+  }
+  return rem;
+}
+
+function generateQrMatrix(text) {
+  const bytes = Buffer.from(String(text || ''), 'utf8');
+  let version = 1;
+  while (version <= 10 && QR_CAPACITIES_L[version] < bytes.length) {
+    version++;
+  }
+  if (version > 10) {
+    throw new Error('QR payload exceeds Version 10 capacity');
+  }
+
+  const totalCodewords = QR_TOTAL_CODEWORDS[version];
+  const ecPerBlock = QR_EC_CODEWORDS_L[version];
+  const numBlocks = QR_NUM_BLOCKS_L[version];
+  const totalDataCodewords = totalCodewords - ecPerBlock * numBlocks;
+
+  const bits = [];
+  const pushBits = (val, len) => {
+    for (let i = len - 1; i >= 0; i--) {
+      bits.push((val >>> i) & 1);
+    }
+  };
+
+  pushBits(0b0100, 4);
+  pushBits(bytes.length, version < 10 ? 8 : 16);
+  for (let i = 0; i < bytes.length; i++) {
+    pushBits(bytes[i], 8);
+  }
+
+  const maxBits = totalDataCodewords * 8;
+  const terminator = Math.min(4, maxBits - bits.length);
+  pushBits(0, terminator);
+  while (bits.length % 8 !== 0) bits.push(0);
+
+  const dataBytes = new Uint8Array(totalDataCodewords);
+  for (let i = 0; i < bits.length / 8; i++) {
+    let b = 0;
+    for (let j = 0; j < 8; j++) {
+      b = (b << 1) | bits[i * 8 + j];
+    }
+    dataBytes[i] = b;
+  }
+  const padBytes = [0xec, 0x11];
+  for (let i = bits.length / 8, p = 0; i < totalDataCodewords; i++, p ^= 1) {
+    dataBytes[i] = padBytes[p];
+  }
+
+  const baseBlockDataLen = Math.floor(totalDataCodewords / numBlocks);
+  const extraBlocks = totalDataCodewords % numBlocks;
+  const dataBlocks = [];
+  const ecBlocks = [];
+  let offset = 0;
+  for (let b = 0; b < numBlocks; b++) {
+    const len = baseBlockDataLen + (b >= numBlocks - extraBlocks ? 1 : 0);
+    const block = dataBytes.subarray(offset, offset + len);
+    offset += len;
+    dataBlocks.push(block);
+    ecBlocks.push(rsEncode(block, ecPerBlock));
+  }
+
+  const finalCodewords = [];
+  const maxBlockLen = baseBlockDataLen + (extraBlocks > 0 ? 1 : 0);
+  for (let i = 0; i < maxBlockLen; i++) {
+    for (let b = 0; b < numBlocks; b++) {
+      if (i < dataBlocks[b].length) finalCodewords.push(dataBlocks[b][i]);
+    }
+  }
+  for (let i = 0; i < ecPerBlock; i++) {
+    for (let b = 0; b < numBlocks; b++) {
+      finalCodewords.push(ecBlocks[b][i]);
+    }
+  }
+
+  const size = version * 4 + 17;
+  const modules = Array.from({ length: size }, () => new Uint8Array(size));
+  const isFunction = Array.from({ length: size }, () => new Uint8Array(size));
+
+  const setFunctionModule = (r, c, dark) => {
+    if (r < 0 || r >= size || c < 0 || c >= size) return;
+    modules[r][c] = dark ? 1 : 0;
+    isFunction[r][c] = 1;
+  };
+
+  const drawFinder = (r, c) => {
+    for (let dy = -1; dy <= 7; dy++) {
+      for (let dx = -1; dx <= 7; dx++) {
+        const dist = Math.max(Math.abs(dx - 3), Math.abs(dy - 3));
+        const dark = dist !== 2 && dist !== 4;
+        setFunctionModule(r + dy, c + dx, dark);
+      }
+    }
+  };
+
+  drawFinder(0, 0);
+  drawFinder(0, size - 7);
+  drawFinder(size - 7, 0);
+
+  for (let i = 8; i < size - 8; i++) {
+    setFunctionModule(6, i, i % 2 === 0);
+    setFunctionModule(i, 6, i % 2 === 0);
+  }
+
+  const align = QR_ALIGNMENT_CENTERS[version];
+  for (let i = 0; i < align.length; i++) {
+    for (let j = 0; j < align.length; j++) {
+      if ((i === 0 && j === 0) || (i === 0 && j === align.length - 1) || (i === align.length - 1 && j === 0)) {
+        continue;
+      }
+      const cr = align[i];
+      const cc = align[j];
+      for (let dy = -2; dy <= 2; dy++) {
+        for (let dx = -2; dx <= 2; dx++) {
+          const dist = Math.max(Math.abs(dx), Math.abs(dy));
+          setFunctionModule(cr + dy, cc + dx, dist !== 1);
+        }
+      }
+    }
+  }
+
+  setFunctionModule(size - 8, 8, true);
+  for (let i = 0; i <= 8; i++) {
+    if (i !== 6) {
+      setFunctionModule(8, i, false);
+      setFunctionModule(i, 8, false);
+    }
+  }
+  for (let i = 0; i < 8; i++) {
+    setFunctionModule(size - 1 - i, 8, false);
+    setFunctionModule(8, size - 1 - i, false);
+  }
+
+  let bitIdx = 0;
+  const totalBits = finalCodewords.length * 8;
+  for (let right = size - 1; right >= 1; right -= 2) {
+    if (right === 6) right = 5;
+    for (let vert = 0; vert < size; vert++) {
+      for (let j = 0; j < 2; j++) {
+        const c = right - j;
+        const upward = ((right + 1) & 2) === 0;
+        const r = upward ? size - 1 - vert : vert;
+        if (!isFunction[r][c]) {
+          let dark = false;
+          if (bitIdx < totalBits) {
+            dark = ((finalCodewords[bitIdx >>> 3] >>> (7 - (bitIdx & 7))) & 1) !== 0;
+            bitIdx++;
+          }
+          if ((r + c) % 2 === 0) dark = !dark;
+          modules[r][c] = dark ? 1 : 0;
+        }
+      }
+    }
+  }
+
+  const formatBits = 0x77c4;
+  for (let i = 0; i <= 5; i++) setFunctionModule(8, i, ((formatBits >>> i) & 1) !== 0);
+  setFunctionModule(8, 7, ((formatBits >>> 6) & 1) !== 0);
+  setFunctionModule(8, 8, ((formatBits >>> 7) & 1) !== 0);
+  setFunctionModule(7, 8, ((formatBits >>> 8) & 1) !== 0);
+  for (let i = 9; i < 15; i++) setFunctionModule(14 - i, 8, ((formatBits >>> i) & 1) !== 0);
+
+  for (let i = 0; i < 8; i++) setFunctionModule(size - 1 - i, 8, ((formatBits >>> i) & 1) !== 0);
+  for (let i = 8; i < 15; i++) setFunctionModule(8, size - 15 + i, ((formatBits >>> i) & 1) !== 0);
+  setFunctionModule(size - 8, 8, true);
+
+  return modules.map((row) => Array.from(row, (v) => v === 1));
+}
+
+function generateQrSvg(text, options = {}) {
+  const matrix = generateQrMatrix(text);
+  const margin = options.margin ?? 2;
+  const darkColor = options.darkColor || '#0f172a';
+  const lightColor = options.lightColor || '#ffffff';
+  const size = matrix.length + margin * 2;
+  let pathData = '';
+  for (let r = 0; r < matrix.length; r++) {
+    for (let c = 0; c < matrix.length; c++) {
+      if (matrix[r][c]) {
+        pathData += `M${c + margin},${r + margin}h1v1h-1z`;
+      }
+    }
+  }
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}" shape-rendering="crispEdges" role="img" aria-label="SWEEPR Deepblock QR Pairing Code"><rect width="${size}" height="${size}" fill="${lightColor}" rx="1.5"/><path d="${pathData}" fill="${darkColor}"/></svg>`;
+}
+
+const qrPairingTokens = new Map();
+const qrPairingChallenges = new Map();
+
+function cleanupExpiredQrStates() {
+  const now = Date.now();
+  for (const [k, v] of qrPairingTokens.entries()) {
+    if (now > v.expiresAt + 60000) qrPairingTokens.delete(k);
+  }
+  for (const [k, v] of qrPairingChallenges.entries()) {
+    if (now > v.expiresAt + 60000) qrPairingChallenges.delete(k);
+  }
+}
+const qrCleanupInterval = setInterval(cleanupExpiredQrStates, 60000);
+if (typeof qrCleanupInterval.unref === 'function') qrCleanupInterval.unref();
 
 let stripeActiveSubsCache = { fetchedAt: 0, data: [], inflight: null };
 async function getCachedActiveStripeSubs() {
@@ -662,18 +937,86 @@ function verifyLocalAccountKeyOrCode(acc, rawKeyOrCode) {
   return false;
 }
 
-function registerLocalDeviceForAccount(acc, deviceId) {
-  const cleanId = String(deviceId || '').trim().slice(0, 128);
-  if (!cleanId) return { ok: true };
+function listAccountDevices(acc) {
+  if (!acc) return [];
   if (!acc.devices || !(acc.devices instanceof Set)) {
     acc.devices = new Set();
   }
-  if (acc.devices.has(cleanId)) return { ok: true };
+  if (!acc.deviceMeta || !(acc.deviceMeta instanceof Map)) {
+    acc.deviceMeta = new Map();
+  }
+  const items = [];
+  for (const devId of acc.devices) {
+    const meta = acc.deviceMeta.get(devId) || {};
+    items.push({
+      device_id: devId,
+      device_name: meta.device_name || (devId.startsWith('ext_') ? 'Desktop Browser Extension' : 'Linked Device'),
+      platform: meta.platform || 'browser_extension',
+      first_seen: meta.first_seen || acc.createdAt || new Date().toISOString(),
+      last_seen: meta.last_seen || new Date().toISOString()
+    });
+  }
+  return items.sort((a, b) => String(b.last_seen).localeCompare(String(a.last_seen)));
+}
+
+function registerLocalDeviceForAccount(acc, deviceId, meta = {}) {
+  const cleanId = String(deviceId || '').trim().slice(0, 128);
+  if (!acc.devices || !(acc.devices instanceof Set)) {
+    acc.devices = new Set();
+  }
+  if (!acc.deviceMeta || !(acc.deviceMeta instanceof Map)) {
+    acc.deviceMeta = new Map();
+  }
+  if (!cleanId) {
+    return { ok: true, used: acc.devices.size, max: MAX_DEVICES_PER_LICENSE };
+  }
+  const nowIso = new Date().toISOString();
+  const cleanName = String(meta.deviceName || meta.device_name || '').trim().slice(0, 80);
+  const cleanPlatform = String(meta.platform || '').trim().slice(0, 32);
+  if (acc.devices.has(cleanId)) {
+    const existing = acc.deviceMeta.get(cleanId) || {
+      device_id: cleanId,
+      device_name: cleanName || (cleanId.startsWith('ext_') ? 'Desktop Browser Extension' : 'Linked Device'),
+      platform: cleanPlatform || 'browser_extension',
+      first_seen: nowIso
+    };
+    if (cleanName) existing.device_name = cleanName;
+    if (cleanPlatform) existing.platform = cleanPlatform;
+    existing.last_seen = nowIso;
+    acc.deviceMeta.set(cleanId, existing);
+    return { ok: true, used: acc.devices.size, max: MAX_DEVICES_PER_LICENSE };
+  }
   if (acc.devices.size >= MAX_DEVICES_PER_LICENSE) {
-    return { ok: false, max: MAX_DEVICES_PER_LICENSE };
+    return {
+      ok: false,
+      used: acc.devices.size,
+      max: MAX_DEVICES_PER_LICENSE,
+      devices: listAccountDevices(acc)
+    };
   }
   acc.devices.add(cleanId);
-  return { ok: true };
+  acc.deviceMeta.set(cleanId, {
+    device_id: cleanId,
+    device_name: cleanName || (cleanId.startsWith('ext_') ? 'Desktop Browser Extension' : 'Linked Device'),
+    platform: cleanPlatform || 'browser_extension',
+    first_seen: nowIso,
+    last_seen: nowIso
+  });
+  return { ok: true, used: acc.devices.size, max: MAX_DEVICES_PER_LICENSE };
+}
+
+function removeLocalDeviceForAccount(acc, deviceId) {
+  if (!acc) return false;
+  const cleanId = String(deviceId || '').trim().slice(0, 128);
+  if (!cleanId) return false;
+  let removed = false;
+  if (acc.devices instanceof Set) {
+    removed = acc.devices.delete(cleanId);
+  }
+  if (acc.deviceMeta instanceof Map) {
+    acc.deviceMeta.delete(cleanId);
+  }
+  return removed;
 }
 
 function buildDeepblockEntitlements(ramTamerAddon) {
@@ -731,6 +1074,7 @@ function upsertLocalAccount({ email, name, country, stripeCustomerId, plan, ramT
       entitlements: buildDeepblockEntitlements(Boolean(ramTamerAddon)),
       status,
       devices: new Set(),
+      deviceMeta: new Map(),
       createdAt: new Date().toISOString()
     };
   } else {
@@ -904,12 +1248,12 @@ const CLEAN_ROUTES = {
 };
 
 function isSameOriginWriteRequest(req) {
-  const fetchSite = String(req.headers['sec-fetch-site'] || '').toLowerCase();
-  if (fetchSite === 'cross-site') return false;
   const origin = String(req.headers.origin || '').trim().replace(/\/+$/, '');
   if (origin === 'null') return false;
+  if (origin.startsWith('chrome-extension://') || origin.startsWith('moz-extension://')) return true;
+  const fetchSite = String(req.headers['sec-fetch-site'] || '').toLowerCase();
+  if (fetchSite === 'cross-site') return false;
   if (origin) {
-    if (origin.startsWith('chrome-extension://') || origin.startsWith('moz-extension://')) return true;
     return resolveTrustedOrigin(req) === origin;
   }
   const referer = String(req.headers.referer || '').trim();
@@ -1255,7 +1599,7 @@ function renderCheckoutSuccessPage(acc, isCancelled = false) {
         <span class="font-mono font-bold text-white bg-slate-800 px-2.5 py-1 rounded">${activationCode}</span>
       </div>
       <div class="text-xs text-slate-400 space-y-1 pt-2 border-t border-slate-800/80">
-        <div class="font-bold text-slate-200 mb-1">Unlocked on your account (Up to 5 Devices):</div>
+        <div class="font-bold text-slate-200 mb-1">Unlocked on your account (Up to 3 Devices — Desktop or Mobile):</div>
         <div>✓ YouTube &amp; Banner Ad Blocker + Auto Cookie Pop-Up Closer</div>
         <div>✓ Fake Online Shop &amp; Review Detector + Private Browsing Protection</div>
         ${hasRamTamer ? '<div class="text-emerald-400 font-semibold">✓ Total Tab &amp; RAM Tamer Speed Add-On Active</div>' : ''}
@@ -1562,6 +1906,7 @@ const server = http.createServer(async (req, res) => {
 
     const paymentMethod = typeof body.paymentMethod === 'string' ? body.paymentMethod.toLowerCase() : 'card';
     const isPayPal = paymentMethod === 'paypal';
+    const isRedirectMethod = ['paypal', 'revolut_pay', 'amazon_pay', 'ideal', 'bancontact', 'cashapp', 'kakao_pay', 'naver_pay'].includes(paymentMethod);
     const isApplePayCheckout = paymentMethod === 'apple_pay';
     const isWallet = paymentMethod === 'wallet' || paymentMethod === 'google_pay' || isApplePayCheckout;
     const isPopup = Boolean(body.popup);
@@ -1571,8 +1916,8 @@ const server = http.createServer(async (req, res) => {
     }
     const email =
       (providedEmail ? providedEmail : null) ||
-      (isPayPal || isWallet
-        ? `${isPayPal ? 'paypal' : isApplePayCheckout ? 'applepay' : 'wallet'}_${crypto.randomBytes(4).toString('hex')}@pending.sweeprdeepblock.com`
+      (isRedirectMethod || isWallet
+        ? `${isRedirectMethod ? paymentMethod : isApplePayCheckout ? 'applepay' : 'wallet'}_${crypto.randomBytes(4).toString('hex')}@pending.sweeprdeepblock.com`
         : null);
 
     if (!email) {
@@ -1768,7 +2113,7 @@ const server = http.createServer(async (req, res) => {
         payment_behavior: 'default_incomplete',
         payment_settings: {
           save_default_payment_method: 'on_subscription',
-          payment_method_types: isPayPal ? ['paypal'] : ['card']
+          payment_method_types: isRedirectMethod ? [paymentMethod] : ['card']
         },
         ...(introCouponId ? { discounts: [{ coupon: introCouponId }] } : {}),
         metadata,
@@ -1777,11 +2122,11 @@ const server = http.createServer(async (req, res) => {
 
       let subscription = null;
       const subIdempotencyBucket = Math.floor(Date.now() / 15000);
-      const subIdempotencyKey = `sub_${acc.id}_${plan}_${includeRamTamer ? 'ram' : 'std'}_${isPayPal ? 'pp' : 'card'}_${subIdempotencyBucket}`;
+      const subIdempotencyKey = `sub_${acc.id}_${plan}_${includeRamTamer ? 'ram' : 'std'}_${paymentMethod}_${subIdempotencyBucket}`;
       try {
         subscription = await stripeRequest('POST', 'subscriptions', subParams, { idempotencyKey: subIdempotencyKey });
       } catch (subErr) {
-        if (isPayPal && String(subErr.message || '').toLowerCase().includes('paypal')) {
+        if (isRedirectMethod) {
           const sessionParams = {
             mode: 'subscription',
             customer: customerId,
@@ -1834,7 +2179,7 @@ const server = http.createServer(async (req, res) => {
 
       const returnUrl = `${hostOrigin}/checkout/success?web=1&subscription_id=${encodeURIComponent(subscription.id)}&account_id=${encodeURIComponent(acc.id)}${isPopup ? '&popup=1' : ''}`;
 
-      if (isPayPal) {
+      if (isRedirectMethod) {
         const rawIp = getClientIp(req);
         const validIp =
           !rawIp || rawIp === 'local' || rawIp === '::1' || rawIp === '::ffff:127.0.0.1'
@@ -1842,7 +2187,7 @@ const server = http.createServer(async (req, res) => {
             : rawIp;
         const confirmedPi = await stripeRequest('POST', `payment_intents/${encodeURIComponent(paymentIntent.id)}/confirm`, {
           payment_method_data: {
-            type: 'paypal',
+            type: paymentMethod,
             ...(providedEmail || name
               ? {
                   billing_details: {
@@ -1866,7 +2211,7 @@ const server = http.createServer(async (req, res) => {
 
         const redirectUrl = confirmedPi.next_action?.redirect_to_url?.url || null;
         if (!redirectUrl) {
-          return sendJson(res, 500, { error: 'Could not initialize PayPal authorization redirect.' });
+          return sendJson(res, 500, { error: 'Could not initialize payment authorization redirect.' });
         }
 
         return sendJson(res, 200, {
@@ -2298,6 +2643,8 @@ const server = http.createServer(async (req, res) => {
     if (body && body.__tooLarge) return sendJson(res, 413, { valid: false, error: 'payload_too_large' });
     const key = String(body?.key || parsedUrl.searchParams.get('key') || '').trim();
     const deviceId = String(body?.device_id || parsedUrl.searchParams.get('device_id') || '').trim().slice(0, 128);
+    const deviceName = String(body?.device_name || parsedUrl.searchParams.get('device_name') || '').trim().slice(0, 80);
+    const platform = String(body?.platform || parsedUrl.searchParams.get('platform') || 'browser_extension').trim().slice(0, 32);
     if (!key || key.length < 6 || key.length > 512 || key.includes('@') || key.startsWith('acc_') || key.startsWith('sub_') || key.startsWith('cus_')) {
       return sendJson(res, 400, { valid: false, error: 'invalid_key_format' });
     }
@@ -2338,20 +2685,37 @@ const server = http.createServer(async (req, res) => {
           Boolean(crmVerify.data.ramTamerAddon) ||
           addonsList.includes('ram_tamer') ||
           addonsList.includes('sweepr_secure_bundle');
+        const localRec = licenses.get(key) || licenses.get(key.toUpperCase()) || null;
+        if (localRec) {
+          const seatCheck = registerLocalDeviceForAccount(localRec, deviceId, { deviceName, platform });
+          if (!seatCheck.ok) {
+            return sendJson(res, 403, {
+              valid: false,
+              error: 'device_limit_reached',
+              message: `Device limit reached (${seatCheck.max} devices max).`,
+              devices_used: seatCheck.used,
+              devices_max: seatCheck.max,
+              devices: seatCheck.devices
+            });
+          }
+        }
         return sendJson(res, 200, {
           valid: true,
           project_id: 'deepblock',
-          account_id: crmVerify.data.account_id,
-          activation_code: crmVerify.data.activation_code,
-          licenseKey: crmVerify.data.licenseKey || crmVerify.data.license_key || key,
-          plan: crmVerify.data.plan,
+          account_id: crmVerify.data.account_id || localRec?.id,
+          activation_code: crmVerify.data.activation_code || localRec?.activation_code,
+          licenseKey: crmVerify.data.licenseKey || crmVerify.data.license_key || localRec?.licenseKey || key,
+          plan: crmVerify.data.plan || localRec?.plan,
           ramTamerAddon: hasRamTamer,
           addons: addonsList,
           entitlements: buildDeepblockEntitlements(hasRamTamer),
           status: crmStatus,
           cancelAtPeriodEnd: Boolean(crmVerify.data.cancelAtPeriodEnd || crmVerify.data.cancel_at_period_end),
           expiresAt: crmVerify.data.expiresAt,
-          token: crmVerify.data.token
+          token: crmVerify.data.token,
+          devices_used: localRec ? localRec.devices.size : 1,
+          devices_max: MAX_DEVICES_PER_LICENSE,
+          devices: localRec ? listAccountDevices(localRec) : []
         });
       }
       if (crmStatus === 'canceled' || crmStatus === 'expired' || crmStatus === 'unpaid' || crmStatus === 'past_due') {
@@ -2424,23 +2788,30 @@ const server = http.createServer(async (req, res) => {
       }
 
       if (record.status === 'active' || record.status === 'trialing') {
-        const seatCheck = registerLocalDeviceForAccount(record, deviceId);
+        const seatCheck = registerLocalDeviceForAccount(record, deviceId, { deviceName, platform });
         if (!seatCheck.ok) {
           return sendJson(res, 403, {
             valid: false,
             error: 'device_limit_reached',
-            message: `Device limit reached (${seatCheck.max} devices max).`
+            message: `Device limit reached (${seatCheck.max} devices max).`,
+            devices_used: seatCheck.used,
+            devices_max: seatCheck.max,
+            devices: seatCheck.devices
           });
         }
         return sendJson(res, 200, {
           valid: true,
           project_id: 'deepblock',
+          account_id: record.id,
           activation_code: record.activation_code,
           licenseKey: record.licenseKey,
           plan: record.plan,
           ramTamerAddon: Boolean(record.ramTamerAddon),
           entitlements: record.entitlements,
-          status: record.status
+          status: record.status,
+          devices_used: record.devices.size,
+          devices_max: MAX_DEVICES_PER_LICENSE,
+          devices: listAccountDevices(record)
         });
       }
       return sendJson(res, 403, { valid: false, status: record.status, error: 'subscription_inactive' });
@@ -2703,6 +3074,9 @@ const server = http.createServer(async (req, res) => {
       200,
       {
         ...verifiedData,
+        devices_used: localAcc && localAcc.devices instanceof Set ? localAcc.devices.size : 0,
+        devices_max: MAX_DEVICES_PER_LICENSE,
+        devices: localAcc ? listAccountDevices(localAcc) : [],
         redirect: '/login?verified=1'
       },
       {
@@ -2750,10 +3124,13 @@ const server = http.createServer(async (req, res) => {
     if (crmLookup.ok && crmLookup.data && crmLookup.data.ok) {
       const d = crmLookup.data;
       const hasRamTamer = Boolean(d.ramTamerAddon);
+      const localRec = isEmail
+        ? accountsByEmail.get(effectiveLookup.toLowerCase())
+        : licenses.get(lookupKey) || licenses.get(lookupKey.toUpperCase());
       return sendJson(res, 200, {
         ok: true,
         project_id: 'deepblock',
-        account_id: d.account_id,
+        account_id: d.account_id || localRec?.id,
         status: d.status,
         plan: d.plan,
         activation_code: d.activation_code,
@@ -2761,7 +3138,10 @@ const server = http.createServer(async (req, res) => {
         ramTamerAddon: hasRamTamer,
         entitlements: buildDeepblockEntitlements(hasRamTamer),
         cancelAtPeriodEnd: Boolean(d.cancelAtPeriodEnd || d.cancel_at_period_end),
-        expiresAt: d.expiresAt
+        expiresAt: d.expiresAt,
+        devices_used: localRec && localRec.devices instanceof Set ? localRec.devices.size : 0,
+        devices_max: MAX_DEVICES_PER_LICENSE,
+        devices: localRec ? listAccountDevices(localRec) : []
       });
     }
 
@@ -2813,16 +3193,30 @@ const server = http.createServer(async (req, res) => {
       });
     }
 
-    return sendJson(res, 200, {
-      ok: true,
-      status: record.status,
-      plan: record.plan,
-      activation_code: record.activation_code,
-      licenseKey: record.licenseKey,
-      ramTamerAddon: Boolean(record.ramTamerAddon),
-      entitlements: record.entitlements,
-      cancelAtPeriodEnd: Boolean(record.cancelAtPeriodEnd)
-    });
+    const sessionToken = signSessionCookie(record.id, record.email || '');
+    const isHttps = PUBLIC_URL.startsWith('https://') || req.headers['x-forwarded-proto'] === 'https';
+    return sendJson(
+      res,
+      200,
+      {
+        ok: true,
+        account_id: record.id,
+        email: record.email,
+        status: record.status,
+        plan: record.plan,
+        activation_code: record.activation_code,
+        licenseKey: record.licenseKey,
+        ramTamerAddon: Boolean(record.ramTamerAddon),
+        entitlements: record.entitlements,
+        cancelAtPeriodEnd: Boolean(record.cancelAtPeriodEnd),
+        devices_used: record.devices instanceof Set ? record.devices.size : 0,
+        devices_max: MAX_DEVICES_PER_LICENSE,
+        devices: listAccountDevices(record)
+      },
+      {
+        'Set-Cookie': `sweepr_session=${sessionToken}; Path=/; HttpOnly; SameSite=Lax${isHttps ? '; Secure' : ''}; Max-Age=${86400 * 30}`
+      }
+    );
   }
 
   if (req.method === 'POST' && pathname === '/api/portal/cancel') {
@@ -2892,6 +3286,565 @@ const server = http.createServer(async (req, res) => {
     }
 
     return sendJson(res, 200, { ok: true, cancelAtPeriodEnd: true, status: record.status });
+  }
+
+  // ==========================================================================
+  // API 3c: Unified 3-Device Management & QR Code Device Linking (Flow A & B)
+  // ==========================================================================
+  function resolveAccountFromSessionOrCredentials(reqObj, bodyObj = {}) {
+    const sess = verifySessionCookie(reqObj);
+    if (sess && sess.sub) {
+      const bySub = accountsById.get(sess.sub) || (sess.email ? accountsByEmail.get(String(sess.email).toLowerCase()) : null);
+      if (bySub && (bySub.status === 'active' || bySub.status === 'trialing')) {
+        return bySub;
+      }
+    }
+    const rawLookup = String(bodyObj?.lookup || bodyObj?.email || '').trim().toLowerCase();
+    const keyOrCode = String(bodyObj?.key || bodyObj?.licenseKey || bodyObj?.code || bodyObj?.otp || '').trim();
+    if (rawLookup && rawLookup.includes('@')) {
+      const acc = accountsByEmail.get(rawLookup);
+      if (acc && (acc.status === 'active' || acc.status === 'trialing') && (!keyOrCode || verifyLocalAccountKeyOrCode(acc, keyOrCode))) {
+        if (keyOrCode || (sess && sess.email === rawLookup)) return acc;
+      }
+    }
+    const candidateKey = keyOrCode || rawLookup;
+    if (candidateKey) {
+      const acc = licenses.get(candidateKey) || licenses.get(candidateKey.toUpperCase());
+      if (acc && (acc.status === 'active' || acc.status === 'trialing')) {
+        return acc;
+      }
+    }
+    return null;
+  }
+
+  // Self-Service Device Slot Removal (frees a slot when at 3/3 devices)
+  if (req.method === 'POST' && pathname === '/api/portal/devices/remove') {
+    if (!isSameOriginWriteRequest(req)) {
+      return sendJson(res, 403, { ok: false, error: 'cross_origin_forbidden' }, {}, req);
+    }
+    if (!checkRateLimit(req, 'portal_device_remove', 20, 60000)) {
+      return sendJson(res, 429, { ok: false, error: 'rate_limit_exceeded' });
+    }
+    const body = await readBody(req);
+    if (body && body.__tooLarge) return sendJson(res, 413, { ok: false, error: 'payload_too_large' });
+    const deviceIdToRemove = String(body?.device_id || '').trim().slice(0, 128);
+    if (!deviceIdToRemove) {
+      return sendJson(res, 400, { ok: false, error: 'device_id_required' });
+    }
+    const acc = resolveAccountFromSessionOrCredentials(req, body || {});
+    if (!acc) {
+      return sendJson(res, 401, { ok: false, error: 'unauthorized' });
+    }
+    removeLocalDeviceForAccount(acc, deviceIdToRemove);
+    return sendJson(res, 200, {
+      ok: true,
+      removed: deviceIdToRemove,
+      devices_used: acc.devices instanceof Set ? acc.devices.size : 0,
+      devices_max: MAX_DEVICES_PER_LICENSE,
+      devices: listAccountDevices(acc)
+    });
+  }
+
+  // Flow A1: Generate 120-Second Single-Use QR Pairing Token (from Portal or Activated Extension)
+  if (req.method === 'POST' && pathname === '/api/device-link/create-token') {
+    cleanupExpiredQrStates();
+    if (!isSameOriginWriteRequest(req)) {
+      return sendJson(res, 403, { ok: false, error: 'cross_origin_forbidden' }, {}, req);
+    }
+    if (!checkRateLimit(req, 'qr_create_token', 15, 60000)) {
+      return sendJson(res, 429, { ok: false, error: 'rate_limit_exceeded' });
+    }
+    const body = await readBody(req);
+    if (body && body.__tooLarge) return sendJson(res, 413, { ok: false, error: 'payload_too_large' });
+    const acc = resolveAccountFromSessionOrCredentials(req, body || {});
+    if (!acc) {
+      return sendJson(res, 401, { ok: false, error: 'active_subscription_required' });
+    }
+    const callerDeviceId = String(body?.device_id || '').trim().slice(0, 128);
+    const usedCount = acc.devices instanceof Set ? acc.devices.size : 0;
+    const callerAlreadyRegistered = callerDeviceId && acc.devices instanceof Set && acc.devices.has(callerDeviceId);
+    if (usedCount >= MAX_DEVICES_PER_LICENSE && !callerAlreadyRegistered) {
+      return sendJson(res, 403, {
+        ok: false,
+        error: 'device_limit_reached',
+        message: `Maximum of ${MAX_DEVICES_PER_LICENSE} active devices reached (${usedCount}/${MAX_DEVICES_PER_LICENSE}). Remove an old device first to link a new one.`,
+        devices_used: usedCount,
+        devices_max: MAX_DEVICES_PER_LICENSE,
+        devices: listAccountDevices(acc)
+      });
+    }
+    const rawToken = `ptk_${crypto.randomBytes(16).toString('hex')}`;
+    const tokenHash = crypto.createHash('sha256').update(rawToken).digest('hex');
+    const now = Date.now();
+    const expiresAt = now + 120 * 1000;
+    qrPairingTokens.set(tokenHash, {
+      tokenHash,
+      accountId: acc.id,
+      createdAt: now,
+      expiresAt,
+      redeemedAt: null,
+      redeemedByDeviceId: null
+    });
+    const hostOrigin = resolveTrustedOrigin(req);
+    const pairUrl = `${hostOrigin}/pair?token=${encodeURIComponent(rawToken)}`;
+    return sendJson(res, 200, {
+      ok: true,
+      token: rawToken,
+      pair_url: pairUrl,
+      qr_svg: generateQrSvg(pairUrl),
+      expires_in: 120,
+      expires_at: Math.floor(expiresAt / 1000),
+      devices_used: usedCount,
+      devices_max: MAX_DEVICES_PER_LICENSE,
+      devices: listAccountDevices(acc)
+    });
+  }
+
+  // Flow A2: Redeem 120-Second Single-Use QR Pairing Token
+  if (req.method === 'POST' && pathname === '/api/device-link/redeem') {
+    cleanupExpiredQrStates();
+    if (!checkRateLimit(req, 'qr_redeem', 15, 60000)) {
+      return sendJson(res, 429, { ok: false, error: 'rate_limit_exceeded' });
+    }
+    const body = await readBody(req);
+    if (body && body.__tooLarge) return sendJson(res, 413, { ok: false, error: 'payload_too_large' });
+    const rawToken = String(body?.token || '').trim();
+    const deviceId = String(body?.device_id || `mob_db_${crypto.randomBytes(6).toString('hex')}`).trim().slice(0, 128);
+    const deviceName = String(body?.device_name || 'Mobile Browser').trim().slice(0, 80);
+    const platform = String(body?.platform || 'mobile').trim().slice(0, 32);
+
+    if (!/^ptk_[a-f0-9]{24,64}$/i.test(rawToken)) {
+      return sendJson(res, 400, { ok: false, error: 'invalid_pairing_token' });
+    }
+    const tokenHash = crypto.createHash('sha256').update(rawToken).digest('hex');
+    const row = qrPairingTokens.get(tokenHash);
+    if (!row || row.redeemedAt !== null || Date.now() > row.expiresAt) {
+      return sendJson(res, 401, { ok: false, error: 'token_expired_or_already_used' });
+    }
+    const acc = accountsById.get(row.accountId);
+    if (!acc || (acc.status !== 'active' && acc.status !== 'trialing')) {
+      return sendJson(res, 403, { ok: false, error: 'subscription_inactive' });
+    }
+    const seatCheck = registerLocalDeviceForAccount(acc, deviceId, { deviceName, platform });
+    if (!seatCheck.ok) {
+      return sendJson(res, 403, {
+        ok: false,
+        error: 'device_limit_reached',
+        message: `Maximum of ${MAX_DEVICES_PER_LICENSE} active devices reached (${seatCheck.used}/${seatCheck.max}). Remove a device in your Customer Portal first.`,
+        devices_used: seatCheck.used,
+        devices_max: seatCheck.max,
+        devices: seatCheck.devices
+      });
+    }
+    row.redeemedAt = Date.now();
+    row.redeemedByDeviceId = deviceId;
+
+    const sessionToken = signSessionCookie(acc.id, acc.email || '');
+    const isHttps = PUBLIC_URL.startsWith('https://') || req.headers['x-forwarded-proto'] === 'https';
+    return sendJson(
+      res,
+      200,
+      {
+        ok: true,
+        valid: true,
+        project_id: 'deepblock',
+        account_id: acc.id,
+        email: acc.email,
+        status: acc.status,
+        plan: acc.plan,
+        activation_code: acc.activation_code,
+        licenseKey: acc.licenseKey,
+        ramTamerAddon: Boolean(acc.ramTamerAddon),
+        entitlements: acc.entitlements,
+        devices_used: acc.devices.size,
+        devices_max: MAX_DEVICES_PER_LICENSE,
+        devices: listAccountDevices(acc)
+      },
+      {
+        'Set-Cookie': `sweepr_session=${sessionToken}; Path=/; HttpOnly; SameSite=Lax${isHttps ? '; Secure' : ''}; Max-Age=${86400 * 30}`
+      }
+    );
+  }
+
+  // Flow B1: Start Unactivated Extension / Browser QR Challenge (Scan with Phone to Unlock)
+  if (req.method === 'POST' && pathname === '/api/device-link/challenge') {
+    cleanupExpiredQrStates();
+    if (!checkRateLimit(req, 'qr_challenge', 20, 60000)) {
+      return sendJson(res, 429, { ok: false, error: 'rate_limit_exceeded' });
+    }
+    const body = await readBody(req);
+    if (body && body.__tooLarge) return sendJson(res, 413, { ok: false, error: 'payload_too_large' });
+    const deviceId = String(body?.device_id || `ext_db_${crypto.randomBytes(6).toString('hex')}`).trim().slice(0, 128);
+    const deviceName = String(body?.device_name || 'SWEEPR Deepblock Extension').trim().slice(0, 80);
+    const platform = String(body?.platform || 'browser_extension').trim().slice(0, 32);
+
+    const challengeId = `chk_${crypto.randomBytes(16).toString('hex')}`;
+    const pollSecret = `psec_${crypto.randomBytes(24).toString('hex')}`;
+    const pollSecretHash = crypto.createHash('sha256').update(pollSecret).digest('hex');
+    const now = Date.now();
+    const expiresAt = now + 120 * 1000;
+
+    qrPairingChallenges.set(challengeId, {
+      challengeId,
+      pollSecretHash,
+      deviceId,
+      deviceName,
+      platform,
+      status: 'pending',
+      accountId: null,
+      createdAt: now,
+      expiresAt
+    });
+
+    const hostOrigin = resolveTrustedOrigin(req);
+    const approveUrl = `${hostOrigin}/pair?mode=approve&challenge=${encodeURIComponent(challengeId)}`;
+    return sendJson(res, 200, {
+      ok: true,
+      challenge_id: challengeId,
+      poll_secret: pollSecret,
+      approve_url: approveUrl,
+      qr_svg: generateQrSvg(approveUrl),
+      expires_in: 120,
+      expires_at: Math.floor(expiresAt / 1000)
+    });
+  }
+
+  // Flow B2: Poll QR Challenge Status from Waiting Browser Extension
+  if (req.method === 'GET' && pathname === '/api/device-link/poll') {
+    cleanupExpiredQrStates();
+    if (!checkRateLimit(req, 'qr_poll', 90, 60000)) {
+      return sendJson(res, 429, { ok: false, error: 'rate_limit_exceeded' });
+    }
+    const challengeId = String(parsedUrl.searchParams.get('challenge_id') || '').trim();
+    const pollSecret = String(parsedUrl.searchParams.get('poll_secret') || '').trim();
+    if (!/^chk_[a-f0-9]{24,64}$/i.test(challengeId) || !/^psec_[a-f0-9]{32,64}$/i.test(pollSecret)) {
+      return sendJson(res, 400, { ok: false, error: 'invalid_challenge_params' });
+    }
+    const ch = qrPairingChallenges.get(challengeId);
+    if (!ch) {
+      return sendJson(res, 404, { ok: false, status: 'expired', error: 'challenge_not_found' });
+    }
+    const providedHash = crypto.createHash('sha256').update(pollSecret).digest('hex');
+    if (
+      providedHash.length !== ch.pollSecretHash.length ||
+      !crypto.timingSafeEqual(Buffer.from(providedHash), Buffer.from(ch.pollSecretHash))
+    ) {
+      return sendJson(res, 403, { ok: false, error: 'invalid_poll_secret' });
+    }
+    if (Date.now() > ch.expiresAt && ch.status === 'pending') {
+      return sendJson(res, 200, { ok: true, status: 'expired' });
+    }
+    if (ch.status === 'pending') {
+      return sendJson(res, 200, {
+        ok: true,
+        status: 'pending',
+        expires_in: Math.max(0, Math.floor((ch.expiresAt - Date.now()) / 1000))
+      });
+    }
+    if (ch.status === 'approved' && ch.accountId) {
+      const acc = accountsById.get(ch.accountId);
+      if (!acc || (acc.status !== 'active' && acc.status !== 'trialing')) {
+        return sendJson(res, 403, { ok: false, status: 'expired', error: 'subscription_inactive' });
+      }
+      ch.status = 'consumed';
+      return sendJson(res, 200, {
+        ok: true,
+        status: 'approved',
+        valid: true,
+        project_id: 'deepblock',
+        account_id: acc.id,
+        email: acc.email,
+        activation_code: acc.activation_code,
+        licenseKey: acc.licenseKey,
+        plan: acc.plan,
+        ramTamerAddon: Boolean(acc.ramTamerAddon),
+        entitlements: acc.entitlements,
+        devices_used: acc.devices.size,
+        devices_max: MAX_DEVICES_PER_LICENSE,
+        devices: listAccountDevices(acc)
+      });
+    }
+    return sendJson(res, 200, { ok: true, status: ch.status });
+  }
+
+  // Flow B3: Approve QR Challenge from Authenticated Phone / Portal
+  if (req.method === 'POST' && pathname === '/api/device-link/approve') {
+    cleanupExpiredQrStates();
+    if (!isSameOriginWriteRequest(req)) {
+      return sendJson(res, 403, { ok: false, error: 'cross_origin_forbidden' }, {}, req);
+    }
+    if (!checkRateLimit(req, 'qr_approve', 15, 60000)) {
+      return sendJson(res, 429, { ok: false, error: 'rate_limit_exceeded' });
+    }
+    const body = await readBody(req);
+    if (body && body.__tooLarge) return sendJson(res, 413, { ok: false, error: 'payload_too_large' });
+    const challengeId = String(body?.challenge_id || '').trim();
+    if (!/^chk_[a-f0-9]{24,64}$/i.test(challengeId)) {
+      return sendJson(res, 400, { ok: false, error: 'invalid_challenge_id' });
+    }
+    const ch = qrPairingChallenges.get(challengeId);
+    if (!ch || Date.now() > ch.expiresAt || ch.status !== 'pending') {
+      return sendJson(res, 404, { ok: false, error: 'challenge_expired_or_already_approved' });
+    }
+    const acc = resolveAccountFromSessionOrCredentials(req, body || {});
+    if (!acc) {
+      return sendJson(res, 401, {
+        ok: false,
+        error: 'authentication_required',
+        message: 'Please enter your Account Email and 6-digit Activation Code (or License Key) to approve this device.'
+      });
+    }
+    const seatCheck = registerLocalDeviceForAccount(acc, ch.deviceId, {
+      deviceName: ch.deviceName,
+      platform: ch.platform
+    });
+    if (!seatCheck.ok) {
+      return sendJson(res, 403, {
+        ok: false,
+        error: 'device_limit_reached',
+        message: `Maximum of ${MAX_DEVICES_PER_LICENSE} active devices reached (${seatCheck.used}/${seatCheck.max}). Remove a device below to approve ${ch.deviceName}.`,
+        devices_used: seatCheck.used,
+        devices_max: seatCheck.max,
+        devices: seatCheck.devices
+      });
+    }
+    ch.status = 'approved';
+    ch.accountId = acc.id;
+
+    const sessionToken = signSessionCookie(acc.id, acc.email || '');
+    const isHttps = PUBLIC_URL.startsWith('https://') || req.headers['x-forwarded-proto'] === 'https';
+    return sendJson(
+      res,
+      200,
+      {
+        ok: true,
+        status: 'approved',
+        device_id: ch.deviceId,
+        device_name: ch.deviceName,
+        devices_used: acc.devices.size,
+        devices_max: MAX_DEVICES_PER_LICENSE,
+        devices: listAccountDevices(acc)
+      },
+      {
+        'Set-Cookie': `sweepr_session=${sessionToken}; Path=/; HttpOnly; SameSite=Lax${isHttps ? '; Secure' : ''}; Max-Age=${86400 * 30}`
+      }
+    );
+  }
+
+  // Mobile-First QR Pairing & Browser Approval Web Page (/pair)
+  if (req.method === 'GET' && pathname === '/pair') {
+    cleanupExpiredQrStates();
+    const mode = String(parsedUrl.searchParams.get('mode') || '').trim();
+    const token = String(parsedUrl.searchParams.get('token') || '').trim();
+    const challengeId = String(parsedUrl.searchParams.get('challenge') || '').trim();
+    const sess = verifySessionCookie(req);
+    const loggedInAcc =
+      sess && sess.sub ? accountsById.get(sess.sub) || (sess.email ? accountsByEmail.get(String(sess.email).toLowerCase()) : null) : null;
+    const ch = challengeId ? qrPairingChallenges.get(challengeId) : null;
+
+    const pairHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Link Device via QR — SWEEPR Deepblock Pro</title>
+  <link rel="icon" type="image/svg+xml" href="/logo.svg">
+  <script src="https://cdn.tailwindcss.com/3.4.5"></script>
+</head>
+<body class="bg-[#0b1120] text-white min-h-screen flex items-center justify-center p-5 font-sans antialiased">
+  <div class="max-w-md w-full bg-[#131c31] border border-emerald-500/30 rounded-3xl p-7 shadow-2xl space-y-5">
+    <div class="flex items-center gap-3">
+      <div class="w-11 h-11 rounded-2xl bg-emerald-500/15 border border-emerald-500/40 flex items-center justify-center text-xl">🛡️</div>
+      <div>
+        <div class="text-[11px] font-extrabold uppercase tracking-wider text-emerald-400">SWEEPR Deepblock Pro</div>
+        <h1 class="text-xl font-black tracking-tight">${mode === 'approve' ? 'Approve Browser via QR' : 'Link Device to Pro'}</h1>
+      </div>
+    </div>
+
+    ${
+      mode === 'approve'
+        ? ch && ch.status === 'pending' && Date.now() <= ch.expiresAt
+          ? `
+      <div class="bg-slate-900/90 border border-slate-700/80 rounded-2xl p-4 space-y-2 text-sm">
+        <div class="text-xs font-bold uppercase tracking-wider text-slate-400">Waiting Device</div>
+        <div class="font-extrabold text-white text-base">${escapeHtml(ch.deviceName)}</div>
+        <div class="text-xs text-slate-400">Up to 3 devices (any combination of desktop or mobile) are included in your subscription.</div>
+      </div>
+
+      <div id="approveAuthFields" class="${loggedInAcc ? 'hidden' : 'space-y-3'}">
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1">Account Email</label>
+          <input id="pairEmail" type="email" placeholder="you@example.com" value="${escapeHtml(loggedInAcc?.email || '')}" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1">6-Digit Code or License Key</label>
+          <input id="pairKey" type="text" placeholder="e.g. 817797 or SWEEPR-DB-XXXX..." class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm font-mono">
+        </div>
+      </div>
+
+      <div id="pairStatus" class="hidden text-xs font-bold rounded-xl p-3"></div>
+      <div id="pairDeviceSlots" class="hidden space-y-2"></div>
+
+      <button id="approveBtn" type="button" class="w-full py-3.5 px-5 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-sm shadow-lg cursor-pointer">
+        ✓ Approve ${escapeHtml(ch.deviceName)} &amp; Unlock Pro
+      </button>
+      `
+          : `<div class="bg-rose-500/10 border border-rose-500/30 rounded-2xl p-4 text-sm text-rose-300 font-semibold">This QR code has expired or was already used. Please click "Scan QR with Phone" again in your browser extension.</div>`
+        : token
+        ? `
+      <div id="redeemContainer" class="space-y-4">
+        <div class="bg-slate-900/90 border border-slate-700/80 rounded-2xl p-4 text-sm text-slate-300">
+          Tap below to link this device to your <strong>SWEEPR Deepblock Pro</strong> subscription (up to 3 devices total).
+        </div>
+        <div id="redeemStatus" class="hidden text-xs font-bold rounded-xl p-3"></div>
+        <button id="redeemBtn" type="button" class="w-full py-3.5 px-5 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-sm shadow-lg cursor-pointer">
+          Link This Device Now →
+        </button>
+        <div id="redeemSuccessCard" class="hidden bg-slate-900/90 border border-emerald-500/40 rounded-2xl p-4 space-y-3">
+          <div class="text-xs font-bold uppercase tracking-wider text-emerald-400">✓ Device Linked (Pro Active)</div>
+          <div class="text-xs text-slate-300">License Key: <span id="redeemedKeyText" class="font-mono font-bold text-white"></span></div>
+          <div class="grid grid-cols-1 gap-2 pt-1">
+            <a href="/download/sweepr-deepblock.mobileconfig" class="text-center py-2.5 px-4 rounded-xl bg-emerald-500 text-slate-950 font-black text-xs no-underline">Install iOS / Mobile Protection Profile</a>
+            <a href="/download" class="text-center py-2.5 px-4 rounded-xl bg-slate-800 text-white font-bold text-xs border border-slate-700 no-underline">Open Extension &amp; App Downloads</a>
+          </div>
+        </div>
+      </div>
+      `
+        : `<div class="text-sm text-slate-400">Scan a valid SWEEPR Deepblock QR code from your Customer Portal or browser extension.</div>`
+    }
+  </div>
+  <script>
+    (function() {
+      const challengeId = ${JSON.stringify(challengeId)};
+      const token = ${JSON.stringify(token)};
+      const approveBtn = document.getElementById('approveBtn');
+      if (approveBtn && challengeId) {
+        approveBtn.addEventListener('click', async () => {
+          const emailEl = document.getElementById('pairEmail');
+          const keyEl = document.getElementById('pairKey');
+          const statusEl = document.getElementById('pairStatus');
+          const slotsEl = document.getElementById('pairDeviceSlots');
+          approveBtn.disabled = true;
+          approveBtn.textContent = 'Approving...';
+          try {
+            const res = await fetch('/api/device-link/approve', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                challenge_id: challengeId,
+                email: emailEl ? emailEl.value.trim() : '',
+                key: keyEl ? keyEl.value.trim() : ''
+              })
+            });
+            const data = await res.json().catch(() => ({}));
+            statusEl.classList.remove('hidden');
+            if (res.ok && data.ok) {
+              statusEl.className = 'text-xs font-bold rounded-xl p-3 bg-emerald-500/15 border border-emerald-500/40 text-emerald-300';
+              statusEl.textContent = '✓ Approved! Your browser extension is now unlocked (' + data.devices_used + '/' + data.devices_max + ' devices active).';
+              approveBtn.textContent = '✓ Approved';
+              if (slotsEl) slotsEl.classList.add('hidden');
+            } else {
+              approveBtn.disabled = false;
+              approveBtn.textContent = '✓ Approve & Unlock Pro';
+              statusEl.className = 'text-xs font-bold rounded-xl p-3 bg-rose-500/15 border border-rose-500/40 text-rose-300';
+              statusEl.textContent = data.message || data.error || 'Could not approve device.';
+              if (data.error === 'authentication_required') {
+                const authFields = document.getElementById('approveAuthFields');
+                if (authFields) authFields.classList.remove('hidden');
+              }
+              if (data.error === 'device_limit_reached' && Array.isArray(data.devices) && slotsEl) {
+                slotsEl.classList.remove('hidden');
+                slotsEl.innerHTML = '<div class="text-xs font-bold text-amber-300">Active Devices (3/3) — Remove one to continue:</div>';
+                data.devices.forEach((d) => {
+                  const row = document.createElement('div');
+                  row.className = 'flex items-center justify-between bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs';
+                  const nameSpan = document.createElement('span');
+                  nameSpan.textContent = (d.device_name || d.device_id) + ' (' + (d.platform || 'device') + ')';
+                  const rmBtn = document.createElement('button');
+                  rmBtn.className = 'px-2.5 py-1 rounded-lg bg-rose-500/20 border border-rose-500/40 text-rose-300 font-bold cursor-pointer';
+                  rmBtn.textContent = 'Remove';
+                  rmBtn.onclick = async () => {
+                    rmBtn.textContent = '...';
+                    const r = await fetch('/api/portal/devices/remove', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                        device_id: d.device_id,
+                        email: emailEl ? emailEl.value.trim() : '',
+                        key: keyEl ? keyEl.value.trim() : ''
+                      })
+                    });
+                    if (r.ok) {
+                      row.remove();
+                      approveBtn.click();
+                    }
+                  };
+                  row.appendChild(nameSpan);
+                  row.appendChild(rmBtn);
+                  slotsEl.appendChild(row);
+                });
+              }
+            }
+          } catch (e) {
+            approveBtn.disabled = false;
+            approveBtn.textContent = '✓ Approve & Unlock Pro';
+          }
+        });
+      }
+
+      const redeemBtn = document.getElementById('redeemBtn');
+      if (redeemBtn && token) {
+        redeemBtn.addEventListener('click', async () => {
+          const statusEl = document.getElementById('redeemStatus');
+          const cardEl = document.getElementById('redeemSuccessCard');
+          const keyText = document.getElementById('redeemedKeyText');
+          redeemBtn.disabled = true;
+          redeemBtn.textContent = 'Linking Device...';
+          let devId = localStorage.getItem('sweepr_db_device_id');
+          if (!devId) {
+            devId = 'mob_db_' + Math.random().toString(36).slice(2, 10);
+            localStorage.setItem('sweepr_db_device_id', devId);
+          }
+          try {
+            const res = await fetch('/api/device-link/redeem', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                token: token,
+                device_id: devId,
+                device_name: /iPhone|iPad|iPod/i.test(navigator.userAgent) ? 'iPhone / iPad Safari' : /Android/i.test(navigator.userAgent) ? 'Android Browser' : 'Web Browser',
+                platform: /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) ? 'mobile' : 'desktop'
+              })
+            });
+            const data = await res.json().catch(() => ({}));
+            statusEl.classList.remove('hidden');
+            if (res.ok && data.ok) {
+              localStorage.setItem('sweepr_license_key', data.licenseKey);
+              localStorage.setItem('deepblock_license_key', data.licenseKey);
+              window.postMessage({ source: 'sweepr-web-portal', type: 'SWEEPR_AUTO_ACTIVATE', licenseKey: data.licenseKey }, window.location.origin);
+              statusEl.className = 'text-xs font-bold rounded-xl p-3 bg-emerald-500/15 border border-emerald-500/40 text-emerald-300';
+              statusEl.textContent = '✓ Linked! (' + data.devices_used + '/' + data.devices_max + ' devices active on your subscription).';
+              if (keyText) keyText.textContent = data.licenseKey;
+              if (cardEl) cardEl.classList.remove('hidden');
+              redeemBtn.classList.add('hidden');
+            } else {
+              redeemBtn.disabled = false;
+              redeemBtn.textContent = 'Link This Device Now →';
+              statusEl.className = 'text-xs font-bold rounded-xl p-3 bg-rose-500/15 border border-rose-500/40 text-rose-300';
+              statusEl.textContent = data.message || data.error || 'Expired or invalid QR pairing token.';
+            }
+          } catch (e) {
+            redeemBtn.disabled = false;
+            redeemBtn.textContent = 'Link This Device Now →';
+          }
+        });
+      }
+    })();
+  </script>
+</body>
+</html>`;
+    return sendHtml(res, 200, pairHtml);
   }
 
   // API 4: Customer Support Ticket Submission -> Central CRM
