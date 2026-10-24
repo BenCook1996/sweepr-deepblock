@@ -152,7 +152,7 @@ const STRIPE_PRICE_MONTHLY = (process.env.STRIPE_PRICE_MONTHLY || 'price_1USkjM1
 const STRIPE_COUPON = (process.env.STRIPE_COUPON || 'sweepr_intro_gbp_800').trim();
 
 const BOT_UA_RE =
-  /googlebot|bingbot|gptbot|oai-searchbot|chatgpt-user|claudebot|anthropic-ai|perplexitybot|applebot|duckduckbot|yandexbot|baiduspider|cohere-ai|facebookexternalhit|twitterbot|linkedinbot|meta-externalagent|bytespider|amazonbot|diffbot|google-inspectiontool|deepseek-ai|mistralai|qwenbot|semrushbot|ahrefsbot/i;
+  /googlebot|bingbot|gptbot|oai-searchbot|chatgpt-user|claudebot|anthropic-ai|perplexitybot|applebot|duckduckbot|yandexbot|baiduspider|cohere-ai|facebookexternalhit|twitterbot|linkedinbot|meta-externalagent|bytespider|amazonbot|diffbot|google-inspectiontool|deepseek-ai|mistralai|qwenbot|semrushbot|ahrefsbot|google-extended|vertex-ai|youbot|brave-web-crawler|kagi-crawler|xai/i;
 
 // ============================================================================
 // Multi-Currency Geo-Pricing Engine (50% Annual Savings & .99 Charm Pricing)
@@ -784,6 +784,7 @@ function sendJson(res, statusCode, payload, extraHeaders = {}, req = null) {
     'Access-Control-Allow-Origin': corsOrigin,
     'Vary': 'Origin',
     'X-Content-Type-Options': 'nosniff',
+    'X-Robots-Tag': 'noindex, nofollow',
     'Cache-Control': 'no-store, no-cache, must-revalidate, private',
     'Pragma': 'no-cache',
     ...extraHeaders
@@ -859,7 +860,7 @@ function serveStaticOptimized(req, res, fullPath) {
     if (isSeoMetaFile) {
       cacheControl = 'public, max-age=3600, stale-while-revalidate=86400';
     } else if (isStaticAsset) {
-      cacheControl = 'public, max-age=86400, stale-while-revalidate=604800';
+      cacheControl = 'public, max-age=604800, stale-while-revalidate=2592000';
     }
 
     const headers = {
@@ -876,9 +877,24 @@ function serveStaticOptimized(req, res, fullPath) {
       'Content-Security-Policy': "frame-ancestors 'self'; base-uri 'self'; object-src 'none'"
     };
 
+    const NON_INDEXABLE_PAGES = new Set([
+      'order.html',
+      'login.html',
+      'logos.html',
+      'mockups.html',
+      'popup-mockups.html',
+      'redesign-prototype.html'
+    ]);
+
     if (isHtml) {
+      const fileNameLower = path.basename(fullPath).toLowerCase();
+      if (NON_INDEXABLE_PAGES.has(fileNameLower)) {
+        headers['X-Robots-Tag'] = 'noindex, nofollow';
+      } else {
+        headers['X-Robots-Tag'] = 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1';
+      }
       headers['Link'] =
-        '<https://fonts.googleapis.com>; rel=preconnect, <https://fonts.gstatic.com>; rel=preconnect; crossorigin, <https://cdn.tailwindcss.com>; rel=preconnect, </style.css>; rel=preload; as=style, </logo.svg>; rel=preload; as=image';
+        '<https://fonts.googleapis.com>; rel=preconnect, <https://fonts.gstatic.com>; rel=preconnect; crossorigin, <https://fonts.googleapis.com>; rel=dns-prefetch, <https://fonts.gstatic.com>; rel=dns-prefetch, <https://cdn.tailwindcss.com>; rel=preconnect, </style.css>; rel=preload; as=style, </logo.svg>; rel=preload; as=image';
     }
 
     if (ext === '.zip' || ext === '.exe' || ext === '.command') {
@@ -904,22 +920,27 @@ function serveStaticOptimized(req, res, fullPath) {
           }
         });
         req.on('close', () => { readStream.destroy(); });
+        brotliStream.on('error', () => { readStream.destroy(); if (!res.headersSent) res.writeHead(500); res.end(); });
         readStream.on('error', () => { if (!res.headersSent) res.writeHead(500); res.end(); });
         return readStream.pipe(brotliStream).pipe(res);
       } else if (/\bgzip\b/i.test(acceptEncoding)) {
         headers['Content-Encoding'] = 'gzip';
         res.writeHead(200, headers);
         const readStream = fs.createReadStream(fullPath);
+        const gzipStream = zlib.createGzip({ level: 6 });
         req.on('close', () => { readStream.destroy(); });
+        gzipStream.on('error', () => { readStream.destroy(); if (!res.headersSent) res.writeHead(500); res.end(); });
         readStream.on('error', () => { if (!res.headersSent) res.writeHead(500); res.end(); });
-        return readStream.pipe(zlib.createGzip({ level: 6 })).pipe(res);
+        return readStream.pipe(gzipStream).pipe(res);
       } else if (/\bdeflate\b/i.test(acceptEncoding)) {
         headers['Content-Encoding'] = 'deflate';
         res.writeHead(200, headers);
         const readStream = fs.createReadStream(fullPath);
+        const deflateStream = zlib.createDeflate();
         req.on('close', () => { readStream.destroy(); });
+        deflateStream.on('error', () => { readStream.destroy(); if (!res.headersSent) res.writeHead(500); res.end(); });
         readStream.on('error', () => { if (!res.headersSent) res.writeHead(500); res.end(); });
-        return readStream.pipe(zlib.createDeflate()).pipe(res);
+        return readStream.pipe(deflateStream).pipe(res);
       }
     }
 
@@ -932,6 +953,14 @@ function serveStaticOptimized(req, res, fullPath) {
 
 function readRawBody(req, maxBytes = MAX_BODY_BYTES) {
   return new Promise((resolve, reject) => {
+    const declaredLen = Number(req.headers?.['content-length'] || 0);
+    if (Number.isFinite(declaredLen) && declaredLen > maxBytes) {
+      try { req.resume(); } catch {}
+      const err = new Error('payload_too_large');
+      err.statusCode = 413;
+      reject(err);
+      return;
+    }
     let body = '';
     let totalBytes = 0;
     let rejected = false;
@@ -940,6 +969,8 @@ function readRawBody(req, maxBytes = MAX_BODY_BYTES) {
       totalBytes += chunk.length;
       if (totalBytes > maxBytes) {
         rejected = true;
+        body = '';
+        try { req.resume(); } catch {}
         const err = new Error('payload_too_large');
         err.statusCode = 413;
         reject(err);
