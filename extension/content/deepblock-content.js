@@ -48,9 +48,27 @@
     };
   }
 
+  const pendingMetrics = new Map();
+  let metricFlushTimer = null;
+
   function reportMetric(metric, amount = 1, extra = {}) {
     try {
-      chrome.runtime.sendMessage({ type: 'INCREMENT_DIAGNOSTIC', metric, amount, ...extra });
+      if (extra && Object.keys(extra).length > 0) {
+        chrome.runtime.sendMessage({ type: 'INCREMENT_DIAGNOSTIC', metric, amount, ...extra });
+        return;
+      }
+      pendingMetrics.set(metric, (pendingMetrics.get(metric) || 0) + (Number(amount) || 1));
+      if (!metricFlushTimer) {
+        metricFlushTimer = setTimeout(() => {
+          metricFlushTimer = null;
+          for (const [m, total] of pendingMetrics.entries()) {
+            try {
+              chrome.runtime.sendMessage({ type: 'INCREMENT_DIAGNOSTIC', metric: m, amount: total });
+            } catch (e) {}
+          }
+          pendingMetrics.clear();
+        }, 300);
+      }
     } catch (e) {}
   }
 
@@ -67,6 +85,7 @@
     }
 
     let lastSyncedKey = '';
+    let portalObs = null;
     function showAutoActivationConfirmation() {
       const targetEl = document.getElementById('licenseKeyText') || document.getElementById('portalLicenseKey');
       if (!targetEl || document.getElementById('sweeprAutoUnlockedPill')) return;
@@ -94,6 +113,7 @@
       try {
         chrome.runtime.sendMessage({ type: 'AUTO_SYNC_WEBSITE_LICENSE', licenseKey: clean }, (res) => {
           if (res && res.ok && res.valid) {
+            if (portalObs) portalObs.disconnect();
             showAutoActivationConfirmation();
           }
         });
@@ -126,9 +146,11 @@
       }
     });
 
-    const portalObs = new MutationObserver(scanPageForLicenseKey);
+    const throttledPortalScan = createThrottle(scanPageForLicenseKey, 250);
+    portalObs = new MutationObserver(throttledPortalScan);
     if (document.body) {
       portalObs.observe(document.body, { childList: true, subtree: true, characterData: true });
+      setTimeout(() => portalObs.disconnect(), 15000);
     }
   }
 
@@ -301,8 +323,11 @@
   }
 
   // 1. GDPR Cookie Banner Handling (100% Silent <50ms Rejector + Safe Scroll Unlock — Zero Toast Noise)
-  function processCookieBanners(proActive) {
-    const foundBanner = document.querySelector(CMP_SELECTORS.join(','));
+  function processCookieBanners(proActive, extraCmpSelectors = []) {
+    const allCmpSelectors = Array.isArray(extraCmpSelectors) && extraCmpSelectors.length > 0
+      ? [...CMP_SELECTORS, ...extraCmpSelectors]
+      : CMP_SELECTORS;
+    const foundBanner = document.querySelector(allCmpSelectors.join(','));
     if (!foundBanner) return;
 
     reportMetric('cookiePromptsDetected', 1);
@@ -319,15 +344,18 @@
       }
 
       if (!clicked) {
-        const buttons = Array.from(document.querySelectorAll('button, a[role="button"]'));
-        const rejectBtn = buttons.find((b) =>
-          /^(reject all|decline all|necessary only|essential only|refuse all|continue without accepting)$/i.test(
-            (b.textContent || '').trim()
-          )
-        );
-        if (rejectBtn) {
-          rejectBtn.click();
-          clicked = true;
+        const buttons = foundBanner.querySelectorAll('button, a[role="button"]');
+        for (let i = 0; i < buttons.length; i++) {
+          const b = buttons[i];
+          if (
+            /^(reject all|decline all|necessary only|essential only|refuse all|continue without accepting)$/i.test(
+              (b.textContent || '').trim()
+            )
+          ) {
+            b.click();
+            clicked = true;
+            break;
+          }
         }
       }
 
@@ -748,39 +776,73 @@
     }
   });
 
-  chrome.storage.local.get(['proActive', 'licenseKey', 'pausedSites', 'trustedShopSites', 'settings', 'customHiddenSelectors'], (res) => {
-    const proActive = Boolean(res && res.proActive && res.licenseKey);
-    if (!proActive) {
+  chrome.storage.local.get(
+    [
+      'proActive',
+      'licenseKey',
+      'pausedSites',
+      'trustedShopSites',
+      'settings',
+      'customHiddenSelectors',
+      'remoteFeatureFlags',
+      'extraCmpSelectors',
+      'extraAntiAdblockSelectors'
+    ],
+    (res) => {
+      const proActive = Boolean(res && res.proActive && res.licenseKey);
+      if (!proActive) {
+        try {
+          delete document.documentElement.dataset.sweeprProActive;
+        } catch (e) {}
+        return;
+      }
+
+      const pausedSites = Array.isArray(res && res.pausedSites) ? res.pausedSites : [];
+      const trustedShopSites = Array.isArray(res && res.trustedShopSites) ? res.trustedShopSites : [];
+      if (currentHost && pausedSites.includes(currentHost)) return;
+
       try {
-        delete document.documentElement.dataset.sweeprProActive;
+        document.documentElement.dataset.sweeprProActive = '1';
       } catch (e) {}
-      return;
+
+      if (res && res.customHiddenSelectors) {
+        applySavedCustomHiddenSelectors(res.customHiddenSelectors);
+      }
+
+      const settings = (res && res.settings) || {};
+      const flags = (res && res.remoteFeatureFlags) || {};
+      const extraCmpSelectors = Array.isArray(res && res.extraCmpSelectors) ? res.extraCmpSelectors : [];
+      const extraAntiAdblockSelectors = Array.isArray(res && res.extraAntiAdblockSelectors)
+        ? res.extraAntiAdblockSelectors
+        : [];
+      for (const extraSel of extraAntiAdblockSelectors) {
+        if (typeof extraSel === 'string' && extraSel && !ANTI_ADBLOCK_WALL_SELECTORS.includes(extraSel)) {
+          ANTI_ADBLOCK_WALL_SELECTORS.push(extraSel);
+        }
+      }
+
+      if (settings.cookieAutoClose !== false && flags.cookieAutoClose !== false) {
+        processCookieBanners(true, extraCmpSelectors);
+      }
+      if (settings.hideSearchSpam !== false && flags.hideSearchSpam !== false) {
+        processSearchResults(true);
+      }
+      processRecipeAndNewsClutter(true);
+      if (settings.fakeShopAlerts !== false && flags.fakeShopAlerts !== false) {
+        processEcommerceStore(true, trustedShopSites);
+      }
+      if (settings.adBlocking !== false) {
+        if (flags.youtubeAdShield !== false) {
+          initYouTubeAdShield();
+        }
+        if (flags.antiAdblockStealth !== false) {
+          processAntiAdblockStealth();
+          const throttledStealth = createThrottle(processAntiAdblockStealth, 150);
+          const stealthObs = new MutationObserver(throttledStealth);
+          stealthObs.observe(document.documentElement, { childList: true, subtree: true });
+          setTimeout(() => stealthObs.disconnect(), 15000);
+        }
+      }
     }
-
-    const pausedSites = Array.isArray(res && res.pausedSites) ? res.pausedSites : [];
-    const trustedShopSites = Array.isArray(res && res.trustedShopSites) ? res.trustedShopSites : [];
-    if (currentHost && pausedSites.includes(currentHost)) return;
-
-    try {
-      document.documentElement.dataset.sweeprProActive = '1';
-    } catch (e) {}
-
-    if (res && res.customHiddenSelectors) {
-      applySavedCustomHiddenSelectors(res.customHiddenSelectors);
-    }
-
-    const settings = (res && res.settings) || {};
-
-    if (settings.cookieAutoClose !== false) processCookieBanners(true);
-    if (settings.hideSearchSpam !== false) processSearchResults(true);
-    processRecipeAndNewsClutter(true);
-    if (settings.fakeShopAlerts !== false) processEcommerceStore(true, trustedShopSites);
-    if (settings.adBlocking !== false) {
-      initYouTubeAdShield();
-      processAntiAdblockStealth();
-      const throttledStealth = createThrottle(processAntiAdblockStealth, 150);
-      const stealthObs = new MutationObserver(throttledStealth);
-      stealthObs.observe(document.documentElement, { childList: true, subtree: true });
-    }
-  });
+  );
 })();

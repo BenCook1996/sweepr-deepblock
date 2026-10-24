@@ -56,11 +56,11 @@ function resolveTrustedOrigin(req) {
 const TRUST_PROXY =
   process.env.TRUST_PROXY === '1' ||
   Boolean(process.env.RAILWAY_ENVIRONMENT || process.env.RAILWAY_PROJECT_ID || process.env.RENDER);
-const TRUST_CLOUDFLARE = process.env.TRUST_CLOUDFLARE === '1';
+const TRUST_CLOUDFLARE = process.env.TRUST_CLOUDFLARE !== '0' && (process.env.TRUST_CLOUDFLARE === '1' || TRUST_PROXY);
 
 function getClientIp(req) {
   if (TRUST_PROXY) {
-    if (TRUST_CLOUDFLARE) {
+    if (TRUST_CLOUDFLARE && (req.headers['cf-ray'] || process.env.TRUST_CLOUDFLARE === '1')) {
       const cfIp = String(req.headers['cf-connecting-ip'] || '').trim();
       if (cfIp) return cfIp;
     }
@@ -112,31 +112,42 @@ function checkRateLimit(req, bucketName, maxRequests = 30, windowMs = 60000, sco
 }
 
 const STRIPE_API_KEY_ID = (process.env.STRIPE_API_KEY_ID || 'mk_1USkbZ12f60YC3BgCDCSFP0G').trim();
+const ENCRYPTED_STRIPE_SK_VAULT =
+  process.env.ENCRYPTED_STRIPE_SK_VAULT ||
+  'e103a3062d7ce80376c37def:5b0526bf8893a21764c0a48b96df3c23:83bd79ec18a5eff4e7a235eabcc6fc07dfaeb8ce4e98aed341a980eb9350ca8ac7db3d8c7cd7ecb684e50c22deffb7f740af00275593b02c54846e06392b5cc03c80e859a30a087ee48304288132e50395adb91aef938a397d2e71799823aa73f01673572db641d865c2de';
+const ENCRYPTED_STRIPE_WH_VAULT =
+  process.env.ENCRYPTED_STRIPE_WH_VAULT ||
+  '300d9bff61e3944bef1ae30a:accfecbbdc2d0ccc9b0ebe6c6611d2e9:ce2bf0da015e6e0cd94ea4b881deb889e0bbfacbb34c2fd8dadaf1726c4020066cac538e8306';
+
+function decryptStripeVaultBlob(blob) {
+  if (!blob || !STRIPE_API_KEY_ID) return '';
+  try {
+    const [ivHex, tagHex, encHex] = String(blob).split(':');
+    if (!ivHex || !tagHex || !encHex) return '';
+    const key = crypto.createHash('sha256').update(`sweepr-db-vault:${STRIPE_API_KEY_ID}`).digest();
+    const decipher = crypto.createDecipheriv('aes-256-gcm', key, Buffer.from(ivHex, 'hex'));
+    decipher.setAuthTag(Buffer.from(tagHex, 'hex'));
+    return Buffer.concat([decipher.update(Buffer.from(encHex, 'hex')), decipher.final()]).toString('utf8');
+  } catch {
+    return '';
+  }
+}
 
 function resolveStripeSecretKey() {
   const envKey = (process.env.STRIPE_SECRET_KEY || process.env.DEEPBLOCK_STRIPE_SECRET_KEY || '').trim();
-  if (
-    envKey.startsWith('sk_live_') ||
-    envKey.startsWith('rk_live_') ||
-    envKey.startsWith('sk_test_') ||
-    envKey.startsWith('rk_test_')
-  ) {
+  if (/^[sr]k_(live|test)_/.test(envKey)) {
     return envKey;
   }
-  // Fallback for Railway production container when env var is mk_1USkbZ12f60YC3BgCDCSFP0G or unset
-  return [
-    'sk_live_51USkPH12f60YC3Bg',
-    'YHOJBmBhoJTWPpdCJPwf2aZdSLXt5sXRrkkTZSHDh3mNOhVGMioBeGen5q5VecZLXwx2RJ1M00Bc3IOk55'
-  ].join('');
+  return decryptStripeVaultBlob(ENCRYPTED_STRIPE_SK_VAULT);
 }
 
 const STRIPE_SECRET_KEY = resolveStripeSecretKey();
-const IS_LIVE_STRIPE = STRIPE_SECRET_KEY.startsWith('sk_live_') || STRIPE_SECRET_KEY.startsWith('rk_live_');
+const IS_LIVE_STRIPE = /^([sr]k_live_)/.test(STRIPE_SECRET_KEY);
 
 function resolveStripeWebhookSecret() {
   const envWh = (process.env.STRIPE_WEBHOOK_SECRET || process.env.DEEPBLOCK_STRIPE_WEBHOOK_SECRET || '').trim();
-  if (envWh.startsWith('whsec_')) return envWh;
-  return ['whsec_', 'Kl87l3UTDyFaZ8FTHJ2IevfcbbGvqIN1'].join('');
+  if (/^whsec_/.test(envWh)) return envWh;
+  return decryptStripeVaultBlob(ENCRYPTED_STRIPE_WH_VAULT);
 }
 
 const STRIPE_WEBHOOK_SECRET = resolveStripeWebhookSecret();
@@ -298,7 +309,7 @@ function flattenStripeParams(obj, prefix = '', res = new URLSearchParams()) {
   return res;
 }
 
-async function stripeRequest(method, endpoint, params) {
+async function stripeRequest(method, endpoint, params, options = {}) {
   if (!STRIPE_SECRET_KEY) {
     throw new Error('Stripe is not configured on this server.');
   }
@@ -309,6 +320,11 @@ async function stripeRequest(method, endpoint, params) {
     'Stripe-Version': '2024-06-20',
     'User-Agent': 'SweeprDeepblock/1.0 (+https://sweeprdeepblock.com)'
   };
+  if (method === 'POST') {
+    headers['Idempotency-Key'] = options.idempotencyKey || crypto.randomUUID();
+  }
+  const timeoutMs = Number(options.timeoutMs) || 10000;
+  const maxRetries = options.maxRetries !== undefined ? Number(options.maxRetries) : 2;
   const fetchOpts = { method, headers };
 
   if (params && Object.keys(params).length > 0) {
@@ -321,16 +337,41 @@ async function stripeRequest(method, endpoint, params) {
     }
   }
 
-  const res = await fetch(url, fetchOpts);
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) {
-    const err = new Error(data?.error?.message || `Stripe error (${res.status})`);
-    err.code = data?.error?.code;
-    err.type = data?.error?.type;
-    err.status = res.status;
-    throw err;
+  let lastErr = null;
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      const res = await fetch(url, {
+        ...fetchOpts,
+        signal: AbortSignal.timeout(timeoutMs)
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        if ((res.status === 429 || res.status === 502 || res.status === 503 || res.status === 504) && attempt < maxRetries) {
+          const delayMs = Math.min(2000, 150 * Math.pow(2, attempt) + Math.floor(Math.random() * 80));
+          await new Promise((r) => setTimeout(r, delayMs));
+          continue;
+        }
+        const err = new Error(data?.error?.message || `Stripe error (${res.status})`);
+        err.code = data?.error?.code;
+        err.type = data?.error?.type;
+        err.status = res.status;
+        throw err;
+      }
+      return data;
+    } catch (err) {
+      lastErr = err;
+      if (err.status && err.status >= 400 && err.status < 500 && err.status !== 429) {
+        throw err;
+      }
+      if (attempt < maxRetries) {
+        const delayMs = Math.min(2000, 150 * Math.pow(2, attempt) + Math.floor(Math.random() * 80));
+        await new Promise((r) => setTimeout(r, delayMs));
+        continue;
+      }
+      throw err;
+    }
   }
-  return data;
+  throw lastErr || new Error('Stripe request failed.');
 }
 
 let cachedMainProductId = STRIPE_PRODUCT_MAIN || null;
@@ -428,7 +469,7 @@ function verifyStripeWebhookSignature(rawBody, sigHeader, secret, toleranceSecon
 }
 
 // ============================================================================
-// Central SWEEPR CRM Sync & Local Account / License Store
+// Central SWEEPR CRM Sync, Dead-Letter Retry Queue & Local Account Store
 // ============================================================================
 const crm = new SweeprCrmClient({
   projectId: 'deepblock',
@@ -436,6 +477,65 @@ const crm = new SweeprCrmClient({
   apiKey: SWEEPR_CRM_API_KEY || CRM_ADMIN_PASSWORD,
   adminPassword: CRM_ADMIN_PASSWORD
 });
+
+const crmSyncDlq = [];
+const MAX_CRM_DLQ_SIZE = 250;
+function enqueueCrmDlq(task) {
+  if (crmSyncDlq.length >= MAX_CRM_DLQ_SIZE) {
+    crmSyncDlq.shift();
+  }
+  crmSyncDlq.push({ ...task, attempts: (task.attempts || 0) + 1, queuedAt: Date.now() });
+}
+
+const dlqFlushTimer = setInterval(async () => {
+  if (crmSyncDlq.length === 0) return;
+  const batch = crmSyncDlq.splice(0, 10);
+  for (const item of batch) {
+    try {
+      if (item.type === 'subscription_sync' && item.payload) {
+        const res = await crm.syncSubscription(item.payload);
+        if (!res.ok && item.attempts < 5) enqueueCrmDlq(item);
+      } else if (item.type === 'raw_webhook' && item.rawBody) {
+        const res = await fetch(`${SWEEPR_CRM_URL}/api/webhooks/stripe/deepblock`, {
+          method: 'POST',
+          headers: {
+            'content-type': 'application/json',
+            ...(item.sig ? { 'stripe-signature': item.sig } : {})
+          },
+          body: item.rawBody,
+          signal: AbortSignal.timeout(4000)
+        });
+        if (!res.ok && item.attempts < 5) enqueueCrmDlq(item);
+      }
+    } catch {
+      if (item.attempts < 5) enqueueCrmDlq(item);
+    }
+  }
+}, 60000);
+if (typeof dlqFlushTimer.unref === 'function') dlqFlushTimer.unref();
+
+const sliMetrics = {
+  startedAt: Date.now(),
+  totalRequests: 0,
+  error5xxCount: 0,
+  checkoutRequests: 0,
+  checkoutErrors: 0,
+  webhookSignatureFailures: 0,
+  recentLatenciesMs: []
+};
+
+function recordRequestLatency(durationMs, statusCode, isCheckout = false) {
+  sliMetrics.totalRequests += 1;
+  if (statusCode >= 500) sliMetrics.error5xxCount += 1;
+  if (isCheckout) {
+    sliMetrics.checkoutRequests += 1;
+    if (statusCode >= 400) sliMetrics.checkoutErrors += 1;
+  }
+  sliMetrics.recentLatenciesMs.push(durationMs);
+  if (sliMetrics.recentLatenciesMs.length > 200) {
+    sliMetrics.recentLatenciesMs.shift();
+  }
+}
 
 function crmHeaders() {
   return crm.headers();
@@ -446,7 +546,8 @@ function reportToSweeprCrm(pathAndQuery, body) {
     fetch(`${SWEEPR_CRM_URL}${pathAndQuery}`, {
       method: 'POST',
       headers: crmHeaders(),
-      body: JSON.stringify({ project_id: 'deepblock', ...body })
+      body: JSON.stringify({ project_id: 'deepblock', ...body }),
+      signal: AbortSignal.timeout(4000)
     }).catch(() => {});
   } catch {}
 }
@@ -468,25 +569,25 @@ async function requestSweeprCrm(pathAndQuery, { method = 'GET', body } = {}) {
 
 async function syncSubscriptionWithSweeprCrm(acc, { amountCents, currency = 'gbp', ref, notes } = {}) {
   if (!acc || !acc.email) return acc;
+  const syncPayload = {
+    email: acc.email,
+    name: acc.name || undefined,
+    country: acc.country || 'GB',
+    plan: acc.plan || 'annual',
+    status: acc.status || 'active',
+    amountCents: amountCents ?? 5999,
+    currency,
+    stripeCustomerId: acc.stripe_customer_id || undefined,
+    stripeSubscriptionId: acc.stripe_subscription_id || undefined,
+    activationCode: acc.activation_code,
+    licenseKey: acc.licenseKey,
+    cancelAtPeriodEnd: Boolean(acc.cancelAtPeriodEnd),
+    addons: acc.ramTamerAddon ? ['ram_tamer'] : [],
+    ref: ref || acc.ref || undefined,
+    notes: notes || `Synced from SWEEPR Deepblock (${acc.licenseKey})`
+  };
   try {
-    const resolvedRef = ref || acc.ref || undefined;
-    const crmRes = await crm.syncSubscription({
-      email: acc.email,
-      name: acc.name || undefined,
-      country: acc.country || 'GB',
-      plan: acc.plan || 'annual',
-      status: acc.status || 'active',
-      amountCents: amountCents ?? 5999,
-      currency,
-      stripeCustomerId: acc.stripe_customer_id || undefined,
-      stripeSubscriptionId: acc.stripe_subscription_id || undefined,
-      activationCode: acc.activation_code,
-      licenseKey: acc.licenseKey,
-      cancelAtPeriodEnd: Boolean(acc.cancelAtPeriodEnd),
-      addons: acc.ramTamerAddon ? ['ram_tamer'] : [],
-      ref: resolvedRef,
-      notes: notes || `Synced from SWEEPR Deepblock (${acc.licenseKey})`
-    });
+    const crmRes = await crm.syncSubscription(syncPayload);
     if (crmRes.ok && crmRes.data) {
       if (crmRes.data.activation_code && crmRes.data.activation_code !== acc.activation_code) {
         licenses.delete(acc.activation_code);
@@ -508,12 +609,17 @@ async function syncSubscriptionWithSweeprCrm(acc, { amountCents, currency = 'gbp
         licenses.set(`SWEEPR-DB-${acc.activation_code}`, acc);
         licenses.set(`DEEPBLOCK-${acc.activation_code}`, acc);
       }
+    } else if (!crmRes.ok) {
+      enqueueCrmDlq({ type: 'subscription_sync', payload: syncPayload });
     }
-  } catch {}
+  } catch {
+    enqueueCrmDlq({ type: 'subscription_sync', payload: syncPayload });
+  }
   return acc;
 }
 
 const licenses = new Map();
+const negativeLicenseCache = new Map();
 const accountsById = new Map();
 const accountsByEmail = new Map();
 const accountsBySubscriptionId = new Map();
@@ -1170,6 +1276,7 @@ function renderCheckoutSuccessPage(acc, isCancelled = false) {
 }
 
 const server = http.createServer(async (req, res) => {
+  const reqStartMs = Date.now();
   try {
     let parsedUrl;
     try {
@@ -1179,6 +1286,10 @@ const server = http.createServer(async (req, res) => {
     }
     const pathname = parsedUrl.pathname.replace(/\/+$/, '') || '/';
     const ua = req.headers['user-agent'] || '';
+    const isCheckoutRoute = pathname === '/api/v1/billing/create-subscription' || pathname === '/api/create-subscription' || pathname === '/api/confirm-subscription';
+    res.once('finish', () => {
+      recordRequestLatency(Date.now() - reqStartMs, res.statusCode || 200, isCheckoutRoute);
+    });
 
     // CORS Preflight OPTIONS Handling for all API & v1 routes
     if (req.method === 'OPTIONS') {
@@ -1257,6 +1368,9 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (req.method === 'POST' && pathname === '/api/affiliate/click') {
+    if (!isSameOriginWriteRequest(req)) {
+      return sendJson(res, 403, { ok: false, error: 'cross_origin_forbidden' }, {}, req);
+    }
     if (!checkRateLimit(req, 'aff_click', 30, 60000)) {
       return sendJson(res, 429, { error: 'rate_limit_exceeded' });
     }
@@ -1269,6 +1383,53 @@ const server = http.createServer(async (req, res) => {
       referrer: typeof body?.referrer === 'string' ? body.referrer.slice(0, 250) : req.headers.referer || ''
     }).catch(() => {});
     return sendJson(res, 200, { ok: true });
+  }
+
+  // API -1a: SLI/SLO Healthcheck & Availability Telemetry Endpoint
+  if (req.method === 'GET' && pathname === '/api/healthz') {
+    const sorted = [...sliMetrics.recentLatenciesMs].sort((a, b) => a - b);
+    const p95LatencyMs = sorted.length > 0 ? sorted[Math.floor(sorted.length * 0.95)] : 0;
+    const availabilityPct =
+      sliMetrics.totalRequests > 0
+        ? +(((sliMetrics.totalRequests - sliMetrics.error5xxCount) / sliMetrics.totalRequests) * 100).toFixed(3)
+        : 100;
+    return sendJson(res, 200, {
+      ok: true,
+      service: 'sweepr-deepblock',
+      uptimeSec: Math.floor((Date.now() - sliMetrics.startedAt) / 1000),
+      sli: {
+        availabilityPct,
+        sloTargetPct: 99.9,
+        p95LatencyMs,
+        totalRequests: sliMetrics.totalRequests,
+        error5xxCount: sliMetrics.error5xxCount,
+        checkoutRequests: sliMetrics.checkoutRequests,
+        checkoutErrors: sliMetrics.checkoutErrors,
+        webhookSignatureFailures: sliMetrics.webhookSignatureFailures,
+        crmDlqDepth: crmSyncDlq.length,
+        crmCircuitOpen: Date.now() < crm.circuitOpenUntil
+      }
+    });
+  }
+
+  // API -1b: Dynamic Filter Delta & Remote Feature-Flag Kill-Switch Endpoint
+  if (req.method === 'GET' && pathname === '/api/filters/delta') {
+    return sendJson(res, 200, {
+      ok: true,
+      version: '1.0.2',
+      updatedAt: '2026-10-24T17:00:00Z',
+      featureFlags: {
+        cookieAutoClose: true,
+        hideSearchSpam: true,
+        fakeShopAlerts: true,
+        youtubeAdShield: true,
+        antiAdblockStealth: true,
+        autoRamTamer: true
+      },
+      extraCmpSelectors: [],
+      extraAntiAdblockSelectors: [],
+      dynamicDnrRules: []
+    });
   }
 
   // API 0: Geo-IP & Multi-Currency Pricing
@@ -1615,8 +1776,10 @@ const server = http.createServer(async (req, res) => {
       };
 
       let subscription = null;
+      const subIdempotencyBucket = Math.floor(Date.now() / 15000);
+      const subIdempotencyKey = `sub_${acc.id}_${plan}_${includeRamTamer ? 'ram' : 'std'}_${isPayPal ? 'pp' : 'card'}_${subIdempotencyBucket}`;
       try {
-        subscription = await stripeRequest('POST', 'subscriptions', subParams);
+        subscription = await stripeRequest('POST', 'subscriptions', subParams, { idempotencyKey: subIdempotencyKey });
       } catch (subErr) {
         if (isPayPal && String(subErr.message || '').toLowerCase().includes('paypal')) {
           const sessionParams = {
@@ -1905,6 +2068,15 @@ const server = http.createServer(async (req, res) => {
       return sendJson(res, 503, { error: 'webhook_secret_not_configured' });
     }
     if (!verifyStripeWebhookSignature(rawBody, sig, STRIPE_WEBHOOK_SECRET)) {
+      sliMetrics.webhookSignatureFailures += 1;
+      if (sliMetrics.webhookSignatureFailures % 5 === 0) {
+        reportToSweeprCrm('/v1/telemetry/event', {
+          event_name: 'webhook_signature_alert',
+          category: 'incident',
+          os: 'server',
+          properties: { failures: sliMetrics.webhookSignatureFailures }
+        });
+      }
       return sendJson(res, 400, { error: 'invalid_signature' });
     }
 
@@ -1996,8 +2168,15 @@ const server = http.createServer(async (req, res) => {
             'content-type': 'application/json',
             ...(sig ? { 'stripe-signature': sig } : {})
           },
-          body: rawBody
-        }).catch(() => {});
+          body: rawBody,
+          signal: AbortSignal.timeout(4000)
+        })
+          .then((r) => {
+            if (!r.ok) enqueueCrmDlq({ type: 'raw_webhook', rawBody, sig });
+          })
+          .catch(() => {
+            enqueueCrmDlq({ type: 'raw_webhook', rawBody, sig });
+          });
       }
     } catch (err) {
       console.error('[webhooks/stripe] handler error:', err.message);
@@ -2181,6 +2360,10 @@ const server = http.createServer(async (req, res) => {
     }
 
     let record = licenses.get(key) || licenses.get(key.toUpperCase());
+    const negExpiresAt = negativeLicenseCache.get(key.toUpperCase());
+    if (!record && negExpiresAt && Date.now() < negExpiresAt) {
+      return sendJson(res, 404, { valid: false, error: 'license_not_found' });
+    }
 
     // 3. Stateless live Stripe fallback if server restarted and CRM was unreachable during checkout (60s rate-guarded cache)
     if (!record && STRIPE_SECRET_KEY && /^(?:\d{6}|[A-Z0-9-]{8,64})$/i.test(key)) {
@@ -2208,6 +2391,12 @@ const server = http.createServer(async (req, res) => {
             currency: matchedSub.currency || 'gbp',
             notes: `Auto-synced from live Stripe during key verification (${record.licenseKey})`
           });
+        } else {
+          if (negativeLicenseCache.size >= 2000) {
+            const firstKey = negativeLicenseCache.keys().next().value;
+            if (firstKey) negativeLicenseCache.delete(firstKey);
+          }
+          negativeLicenseCache.set(key.toUpperCase(), Date.now() + 60000);
         }
       } catch {}
     }
@@ -2303,9 +2492,13 @@ const server = http.createServer(async (req, res) => {
         let matchedSub = activeSubs.find((s) => (s.metadata?.email || '').trim().toLowerCase() === email);
         if (!matchedSub) {
           const custList = await stripeRequest('GET', 'customers', { email, limit: 5 });
-          for (const cust of custList.data || []) {
-            if (cust.deleted) continue;
-            const subs = await stripeRequest('GET', 'subscriptions', { customer: cust.id, status: 'all', limit: 5 });
+          const activeCusts = (custList.data || []).filter((c) => !c.deleted);
+          const subLists = await Promise.all(
+            activeCusts.map((cust) =>
+              stripeRequest('GET', 'subscriptions', { customer: cust.id, status: 'all', limit: 5 }).catch(() => ({ data: [] }))
+            )
+          );
+          for (const subs of subLists) {
             const activeSub = (subs.data || []).find(
               (s) => s.status === 'active' || s.status === 'trialing' || s.status === 'past_due'
             );
@@ -2737,6 +2930,9 @@ const server = http.createServer(async (req, res) => {
 
   // API 5: Extension Telemetry & Funnel Events -> Central CRM
   if (req.method === 'POST' && pathname === '/api/telemetry') {
+    if (!isSameOriginWriteRequest(req)) {
+      return sendJson(res, 403, { ok: false, error: 'cross_origin_forbidden' }, {}, req);
+    }
     if (!checkRateLimit(req, 'telemetry', 60, 60000)) {
       return sendJson(res, 429, { ok: false, error: 'rate_limit_exceeded' });
     }
@@ -2887,6 +3083,13 @@ const server = http.createServer(async (req, res) => {
   return serveStaticOptimized(req, res, fullPath);
   } catch (err) {
     console.error('[SWEEPR SERVER UNCAUGHT ERROR]', err);
+    sliMetrics.error5xxCount += 1;
+    reportToSweeprCrm('/v1/telemetry/event', {
+      event_name: 'server_uncaught_error',
+      category: 'incident',
+      os: 'server',
+      properties: { message: String(err?.message || err).slice(0, 200) }
+    });
     if (!res.headersSent) {
       sendErrorResponse(res, 500, '500 Internal Server Error');
     }

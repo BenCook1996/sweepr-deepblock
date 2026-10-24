@@ -16,6 +16,57 @@ class SweeprCrmClient {
     this.adminUser = opts.adminUser || process.env.CRM_ADMIN_USER || 'admin';
     this.adminPassword = opts.adminPassword || process.env.CRM_ADMIN_PASSWORD || '';
     this.publicKeySpki = opts.publicKeySpki || process.env.SWEEPR_LICENSE_PUBLIC_KEY || '';
+    this.publicKeysByKid = opts.publicKeysByKid || {};
+    if (process.env.SWEEPR_LICENSE_PUBLIC_KEYS_JSON) {
+      try {
+        Object.assign(this.publicKeysByKid, JSON.parse(process.env.SWEEPR_LICENSE_PUBLIC_KEYS_JSON));
+      } catch {}
+    }
+    this.consecutiveFailures = 0;
+    this.circuitOpenUntil = 0;
+  }
+
+  async _fetchWithRetry(url, init = {}, { timeoutMs = 4000, maxRetries = 1 } = {}) {
+    if (Date.now() < this.circuitOpenUntil) {
+      return { ok: false, status: 503, circuitOpen: true, data: { error: 'crm_circuit_open' } };
+    }
+    let lastErr = null;
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      try {
+        const res = await fetch(url, {
+          ...init,
+          signal: AbortSignal.timeout(timeoutMs)
+        });
+        if (res.status === 429 || res.status === 502 || res.status === 503 || res.status === 504) {
+          if (attempt < maxRetries) {
+            const delayMs = Math.min(1500, 140 * Math.pow(2, attempt) + Math.floor(Math.random() * 80));
+            await new Promise((r) => setTimeout(r, delayMs));
+            continue;
+          }
+          this.consecutiveFailures += 1;
+          if (this.consecutiveFailures >= 3) {
+            this.circuitOpenUntil = Date.now() + 30000;
+          }
+        } else {
+          this.consecutiveFailures = 0;
+          this.circuitOpenUntil = 0;
+        }
+        const data = await res.json().catch(() => ({}));
+        return { ok: res.ok, status: res.status, data };
+      } catch (err) {
+        lastErr = err;
+        if (attempt < maxRetries) {
+          const delayMs = Math.min(1500, 140 * Math.pow(2, attempt) + Math.floor(Math.random() * 80));
+          await new Promise((r) => setTimeout(r, delayMs));
+          continue;
+        }
+        this.consecutiveFailures += 1;
+        if (this.consecutiveFailures >= 3) {
+          this.circuitOpenUntil = Date.now() + 30000;
+        }
+      }
+    }
+    return { ok: false, status: 502, data: { error: lastErr?.message || 'crm_unreachable' } };
   }
 
   headers(extra = {}) {
@@ -42,7 +93,12 @@ class SweeprCrmClient {
       const signingInput = Buffer.from(`${headerB64}.${payloadB64}`, 'utf8');
       const signature = Buffer.from(sigB64, 'base64url');
 
-      const rawKey = publicKeyOverride || this.publicKeySpki;
+      let header = {};
+      try {
+        header = JSON.parse(Buffer.from(headerB64, 'base64url').toString('utf8'));
+      } catch {}
+      const kidKey = header && header.kid && this.publicKeysByKid ? this.publicKeysByKid[header.kid] : '';
+      const rawKey = publicKeyOverride || kidKey || this.publicKeySpki;
       if (!rawKey) return { valid: false, reason: 'missing_public_key' };
 
       const keyObj = rawKey.includes('BEGIN PUBLIC KEY')
@@ -82,7 +138,7 @@ class SweeprCrmClient {
   }
 
   async activateDevice({ email, otp, accountId, refreshToken, deviceId, deviceName, os, appVersion }) {
-    const res = await fetch(`${this.crmUrl}/v1/license/activate`, {
+    return this._fetchWithRetry(`${this.crmUrl}/v1/license/activate`, {
       method: 'POST',
       headers: this.headers(),
       body: JSON.stringify({
@@ -95,14 +151,12 @@ class SweeprCrmClient {
         device_name: deviceName,
         os,
         app_version: appVersion
-      }),
-      signal: AbortSignal.timeout(4000)
+      })
     });
-    return { ok: res.ok, status: res.status, data: await res.json().catch(() => ({})) };
   }
 
   async refreshLicense({ accountId, refreshToken, deviceId, appVersion }) {
-    const res = await fetch(`${this.crmUrl}/v1/license/refresh`, {
+    return this._fetchWithRetry(`${this.crmUrl}/v1/license/refresh`, {
       method: 'POST',
       headers: this.headers(),
       body: JSON.stringify({
@@ -111,55 +165,55 @@ class SweeprCrmClient {
         refresh_token: refreshToken,
         device_id: deviceId,
         app_version: appVersion
-      }),
-      signal: AbortSignal.timeout(4000)
+      })
     });
-    return { ok: res.ok, status: res.status, data: await res.json().catch(() => ({})) };
   }
 
   async verifyKey(key, deviceId = '') {
     const qs = new URLSearchParams({ project: this.projectId, key: String(key || '').trim() });
     if (deviceId) qs.set('device_id', String(deviceId).trim().slice(0, 128));
-    const res = await fetch(`${this.crmUrl}/v1/license/verify-key?${qs.toString()}`, {
-      headers: this.headers(),
-      signal: AbortSignal.timeout(4000)
+    return this._fetchWithRetry(`${this.crmUrl}/v1/license/verify-key?${qs.toString()}`, {
+      headers: this.headers()
     });
-    return { ok: res.ok, status: res.status, data: await res.json().catch(() => ({})) };
   }
 
   async sendOtp(email) {
-    const res = await fetch(`${this.crmUrl}/v1/account/send-otp?project=${encodeURIComponent(this.projectId)}`, {
-      method: 'POST',
-      headers: this.headers(),
-      body: JSON.stringify({
-        project_id: this.projectId,
-        email: String(email || '').trim().toLowerCase()
-      }),
-      signal: AbortSignal.timeout(5000)
-    });
-    return { ok: res.ok, status: res.status, data: await res.json().catch(() => ({})) };
+    return this._fetchWithRetry(
+      `${this.crmUrl}/v1/account/send-otp?project=${encodeURIComponent(this.projectId)}`,
+      {
+        method: 'POST',
+        headers: this.headers(),
+        body: JSON.stringify({
+          project_id: this.projectId,
+          email: String(email || '').trim().toLowerCase()
+        })
+      },
+      { timeoutMs: 5000 }
+    );
   }
 
   async verifyOtp({ email, code, deviceId, platform = 'web', deviceLabel = 'SWEEPR Deepblock Portal' } = {}) {
-    const res = await fetch(`${this.crmUrl}/v1/account/verify-otp?project=${encodeURIComponent(this.projectId)}`, {
-      method: 'POST',
-      headers: this.headers(),
-      body: JSON.stringify({
-        project_id: this.projectId,
-        email: String(email || '').trim().toLowerCase(),
-        code: String(code || '').trim(),
-        device_id: deviceId || `portal_deepblock_${Date.now()}`,
-        device_type: 'pc',
-        platform,
-        device_label: deviceLabel
-      }),
-      signal: AbortSignal.timeout(5000)
-    });
-    return { ok: res.ok, status: res.status, data: await res.json().catch(() => ({})) };
+    return this._fetchWithRetry(
+      `${this.crmUrl}/v1/account/verify-otp?project=${encodeURIComponent(this.projectId)}`,
+      {
+        method: 'POST',
+        headers: this.headers(),
+        body: JSON.stringify({
+          project_id: this.projectId,
+          email: String(email || '').trim().toLowerCase(),
+          code: String(code || '').trim(),
+          device_id: deviceId || `portal_deepblock_${Date.now()}`,
+          device_type: 'pc',
+          platform,
+          device_label: deviceLabel
+        })
+      },
+      { timeoutMs: 5000 }
+    );
   }
 
   async syncSubscription(params = {}) {
-    const res = await fetch(`${this.crmUrl}/api/crm/subscriptions?project=${encodeURIComponent(this.projectId)}`, {
+    return this._fetchWithRetry(`${this.crmUrl}/api/crm/subscriptions?project=${encodeURIComponent(this.projectId)}`, {
       method: 'POST',
       headers: this.headers(),
       body: JSON.stringify({
@@ -181,16 +235,15 @@ class SweeprCrmClient {
         affiliate_code: params.affiliateCode ?? params.affiliate_code ?? params.ref,
         addons: params.addons || [],
         notes: params.notes
-      }),
-      signal: AbortSignal.timeout(4000)
+      })
     });
-    return { ok: res.ok, status: res.status, data: await res.json().catch(() => ({})) };
   }
 
   async reportAffiliateClick({ code, landingPath = '/', referrer = null, country = null } = {}) {
     if (!code) return { ok: false };
-    try {
-      const res = await fetch(`${this.crmUrl}/v1/affiliate/click`, {
+    return this._fetchWithRetry(
+      `${this.crmUrl}/v1/affiliate/click`,
+      {
         method: 'POST',
         headers: this.headers(),
         body: JSON.stringify({
@@ -199,31 +252,26 @@ class SweeprCrmClient {
           landing_path: landingPath,
           referrer,
           country
-        }),
-        signal: AbortSignal.timeout(3500)
-      });
-      return { ok: res.ok, status: res.status, data: await res.json().catch(() => ({})) };
-    } catch {
-      return { ok: false };
-    }
+        })
+      },
+      { timeoutMs: 3500, maxRetries: 0 }
+    );
   }
 
   async portalLookup(lookup, keyOrCode = '') {
-    const res = await fetch(`${this.crmUrl}/v1/license/portal-lookup`, {
+    return this._fetchWithRetry(`${this.crmUrl}/v1/license/portal-lookup`, {
       method: 'POST',
       headers: this.headers(),
       body: JSON.stringify({
         project_id: this.projectId,
         lookup,
         ...(keyOrCode ? { key: keyOrCode } : {})
-      }),
-      signal: AbortSignal.timeout(4000)
+      })
     });
-    return { ok: res.ok, status: res.status, data: await res.json().catch(() => ({})) };
   }
 
   async portalCancel(lookup, immediate = false, keyOrCode = '') {
-    const res = await fetch(`${this.crmUrl}/v1/license/portal-cancel`, {
+    return this._fetchWithRetry(`${this.crmUrl}/v1/license/portal-cancel`, {
       method: 'POST',
       headers: this.headers(),
       body: JSON.stringify({
@@ -231,10 +279,8 @@ class SweeprCrmClient {
         lookup,
         immediate,
         ...(keyOrCode ? { key: keyOrCode } : {})
-      }),
-      signal: AbortSignal.timeout(4000)
+      })
     });
-    return { ok: res.ok, status: res.status, data: await res.json().catch(() => ({})) };
   }
 }
 

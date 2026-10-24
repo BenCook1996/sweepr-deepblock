@@ -24,6 +24,110 @@ const scamDetectedTabs = new Set();
 const scamReasonsByTab = new Map();
 const tabLastActiveAt = new Map();
 const AUTO_RAM_IDLE_MS = 10 * 60 * 1000; // 10 minutes idle threshold for automatic background snooze
+const OFFLINE_GRACE_MS = 7 * 24 * 60 * 60 * 1000; // 7-day offline verification grace window
+
+let tabActivityHydrated = false;
+let tabActivitySaveScheduled = false;
+
+async function hydrateTabActivityMap() {
+  if (tabActivityHydrated) return;
+  tabActivityHydrated = true;
+  try {
+    if (chrome.storage && chrome.storage.session) {
+      const s = await chrome.storage.session.get(['tabLastActiveAt']);
+      const raw = (s && s.tabLastActiveAt) || {};
+      for (const [k, ts] of Object.entries(raw)) {
+        const idNum = Number(k);
+        if (Number.isFinite(idNum) && typeof ts === 'number' && !tabLastActiveAt.has(idNum)) {
+          tabLastActiveAt.set(idNum, ts);
+        }
+      }
+    }
+  } catch (e) {}
+}
+
+function schedulePersistTabActivityMap() {
+  if (tabActivitySaveScheduled || !chrome.storage || !chrome.storage.session) return;
+  tabActivitySaveScheduled = true;
+  setTimeout(() => {
+    tabActivitySaveScheduled = false;
+    try {
+      const serialized = {};
+      for (const [k, v] of tabLastActiveAt.entries()) {
+        serialized[k] = v;
+      }
+      chrome.storage.session.set({ tabLastActiveAt: serialized }).catch(() => {});
+    } catch (e) {}
+  }, 500);
+}
+
+function recordTabActivity(tabId, ts = Date.now()) {
+  if (!tabId) return;
+  tabLastActiveAt.set(tabId, ts);
+  schedulePersistTabActivityMap();
+}
+
+function removeTabActivity(tabId) {
+  if (!tabId) return;
+  tabLastActiveAt.delete(tabId);
+  schedulePersistTabActivityMap();
+}
+
+function sanitizeTabUrlForBackup(rawUrl) {
+  try {
+    const u = new URL(String(rawUrl || ''));
+    u.hash = '';
+    for (const k of [...u.searchParams.keys()]) {
+      if (/^(token|access_token|id_token|refresh_token|code|auth|secret|key|session|session_id|password|pass|sig|signature|client_secret)$/i.test(k) || /token|secret|auth|session_id/i.test(k)) {
+        u.searchParams.delete(k);
+      }
+    }
+    return u.toString();
+  } catch (e) {
+    return String(rawUrl || '').split('#')[0];
+  }
+}
+
+async function syncRemoteFilterDelta() {
+  try {
+    const res = await fetch('https://sweeprdeepblock.com/api/filters/delta', {
+      method: 'GET',
+      headers: { Accept: 'application/json' },
+      signal: AbortSignal.timeout(5000)
+    });
+    if (!res.ok) return;
+    const data = await res.json().catch(() => null);
+    if (!data || !data.ok) return;
+    const updates = {};
+    if (data.featureFlags && typeof data.featureFlags === 'object') {
+      updates.remoteFeatureFlags = data.featureFlags;
+    }
+    if (Array.isArray(data.extraCmpSelectors)) {
+      updates.extraCmpSelectors = data.extraCmpSelectors.slice(0, 50);
+    }
+    if (Array.isArray(data.extraAntiAdblockSelectors)) {
+      updates.extraAntiAdblockSelectors = data.extraAntiAdblockSelectors.slice(0, 50);
+    }
+    if (Object.keys(updates).length > 0) {
+      await chrome.storage.local.set(updates);
+    }
+    if (
+      Array.isArray(data.dynamicDnrRules) &&
+      chrome.declarativeNetRequest &&
+      chrome.declarativeNetRequest.updateDynamicRules
+    ) {
+      const existing = await chrome.declarativeNetRequest.getDynamicRules();
+      const removeRuleIds = existing.filter((r) => r.id >= 80000 && r.id < 81000).map((r) => r.id);
+      const validRules = data.dynamicDnrRules
+        .filter((r) => r && typeof r.id === 'number' && r.id >= 80000 && r.id < 81000)
+        .slice(0, 100);
+      await chrome.declarativeNetRequest.updateDynamicRules({
+        removeRuleIds,
+        addRules: validRules
+      });
+    }
+  } catch (e) {}
+}
 
 async function syncPausedSiteDnrAllowlist(passedPausedSites) {
   try {
@@ -151,91 +255,103 @@ async function verifyLicenseWithServer(rawKey) {
   const deviceId = await getOrCreateDeviceId();
   let lastNetworkError = false;
   for (const baseUrl of LICENSE_VERIFY_ENDPOINTS) {
-    try {
-      const sep = baseUrl.includes('?') ? '&' : '?';
-      const res = await fetch(`${baseUrl}${sep}key=${encodeURIComponent(key)}&device_id=${encodeURIComponent(deviceId)}`, {
-        method: 'GET',
-        headers: { Accept: 'application/json', 'x-sweepr-project': 'deepblock' },
-        signal: AbortSignal.timeout(5000)
-      });
-      const data = await res.json().catch(() => ({}));
+    for (let attempt = 0; attempt <= 1; attempt++) {
+      try {
+        const sep = baseUrl.includes('?') ? '&' : '?';
+        const res = await fetch(`${baseUrl}${sep}key=${encodeURIComponent(key)}&device_id=${encodeURIComponent(deviceId)}`, {
+          method: 'GET',
+          headers: { Accept: 'application/json', 'x-sweepr-project': 'deepblock' },
+          signal: AbortSignal.timeout(5000)
+        });
+        if ((res.status === 429 || res.status === 502 || res.status === 503 || res.status === 504) && attempt === 0) {
+          const delayMs = 150 + Math.floor(Math.random() * 100);
+          await new Promise((r) => setTimeout(r, delayMs));
+          continue;
+        }
+        const data = await res.json().catch(() => ({}));
 
-      if (res.ok && data && data.valid === true) {
-        const subStatus = String(data.status || 'active').toLowerCase();
-        if (subStatus === 'active' || subStatus === 'trialing') {
-          const addonsList = Array.isArray(data.addons) ? data.addons : [];
-          const ramTamerActive = Boolean(
-            data.ramTamerAddon === true ||
-              addonsList.includes('ram_tamer') ||
-              addonsList.includes('sweepr_secure_bundle')
-          );
-          const entitlements = Array.isArray(data.entitlements)
-            ? data.entitlements
-            : [
-                'pro_cookie_autoreject',
-                'pro_ai_slop_purifier',
-                'pro_clutter_stripper',
-                'bundle_fake_store_detector',
-                'bundle_encrypted_dns_proxy',
-                ...(ramTamerActive ? ['addon_total_tab_and_ram_tamer'] : [])
-              ];
-          const canonicalKey = data.licenseKey || data.license_key || key;
-          verifiedSession.proActive = true;
-          verifiedSession.ramTamerActive = ramTamerActive;
-          verifiedSession.licenseKey = canonicalKey;
-          verifiedSession.internalWriteInProgress = true;
-          await chrome.storage.local.set({
-            proActive: true,
-            ramTamerActive,
-            licenseKey: canonicalKey,
-            draftLicenseKey: '',
-            licenseDrawerOpen: false,
-            licenseToken: data.token || data.license_token || '',
-            crmAccountId: data.account_id || '',
-            subscriptionStatus: subStatus,
-            licenseVerifiedAt: Date.now(),
-            entitlements,
-            encryptedDnsEnabled: true,
-            settings: {
-              cookieAutoClose: true,
-              hideSearchSpam: true,
-              fakeShopAlerts: true,
-              trackerProtection: true,
-              adBlocking: true,
-              silentMode: true,
-              autoRamTamer: true
-            }
-          });
-          verifiedSession.internalWriteInProgress = false;
-          chrome.alarms.create('ramTamerCheck', { periodInMinutes: 5 });
-          await syncExtensionProtectionRules(true);
-          await updateActionBadge();
+        if (res.ok && data && data.valid === true) {
+          const subStatus = String(data.status || 'active').toLowerCase();
+          if (subStatus === 'active' || subStatus === 'trialing') {
+            const addonsList = Array.isArray(data.addons) ? data.addons : [];
+            const ramTamerActive = Boolean(
+              data.ramTamerAddon === true ||
+                addonsList.includes('ram_tamer') ||
+                addonsList.includes('sweepr_secure_bundle')
+            );
+            const entitlements = Array.isArray(data.entitlements)
+              ? data.entitlements
+              : [
+                  'pro_cookie_autoreject',
+                  'pro_ai_slop_purifier',
+                  'pro_clutter_stripper',
+                  'bundle_fake_store_detector',
+                  'bundle_encrypted_dns_proxy',
+                  ...(ramTamerActive ? ['addon_total_tab_and_ram_tamer'] : [])
+                ];
+            const canonicalKey = data.licenseKey || data.license_key || key;
+            verifiedSession.proActive = true;
+            verifiedSession.ramTamerActive = ramTamerActive;
+            verifiedSession.licenseKey = canonicalKey;
+            verifiedSession.internalWriteInProgress = true;
+            await chrome.storage.local.set({
+              proActive: true,
+              ramTamerActive,
+              licenseKey: canonicalKey,
+              draftLicenseKey: '',
+              licenseDrawerOpen: false,
+              licenseToken: data.token || data.license_token || '',
+              crmAccountId: data.account_id || '',
+              subscriptionStatus: subStatus,
+              licenseVerifiedAt: Date.now(),
+              entitlements,
+              encryptedDnsEnabled: true,
+              settings: {
+                cookieAutoClose: true,
+                hideSearchSpam: true,
+                fakeShopAlerts: true,
+                trackerProtection: true,
+                adBlocking: true,
+                silentMode: true,
+                autoRamTamer: true
+              }
+            });
+            verifiedSession.internalWriteInProgress = false;
+            chrome.alarms.create('ramTamerCheck', { periodInMinutes: 5 });
+            await syncExtensionProtectionRules(true);
+            await updateActionBadge();
+            return {
+              ok: true,
+              valid: true,
+              status: subStatus,
+              licenseKey: canonicalKey,
+              ramTamerActive,
+              entitlements
+            };
+          }
+        }
+
+        if (res.status === 400 || res.status === 403 || res.status === 404 || data?.valid === false) {
+          const statusReason = data?.status || data?.error || 'inactive';
+          await revokeProState(statusReason);
           return {
-            ok: true,
-            valid: true,
-            status: subStatus,
-            licenseKey: canonicalKey,
-            ramTamerActive,
-            entitlements
+            ok: false,
+            valid: false,
+            status: statusReason,
+            error:
+              res.status === 403
+                ? 'Your Pro subscription is no longer active. Please renew to unlock Pro features.'
+                : 'License key not recognized or no active paid subscription found.'
           };
         }
+        break;
+      } catch (e) {
+        lastNetworkError = true;
+        if (attempt === 0) {
+          const delayMs = 150 + Math.floor(Math.random() * 100);
+          await new Promise((r) => setTimeout(r, delayMs));
+        }
       }
-
-      if (res.status === 400 || res.status === 403 || res.status === 404 || data?.valid === false) {
-        const statusReason = data?.status || data?.error || 'inactive';
-        await revokeProState(statusReason);
-        return {
-          ok: false,
-          valid: false,
-          status: statusReason,
-          error:
-            res.status === 403
-              ? 'Your Pro subscription is no longer active. Please renew to unlock Pro features.'
-              : 'License key not recognized or no active paid subscription found.'
-        };
-      }
-    } catch (e) {
-      lastNetworkError = true;
     }
   }
 
@@ -292,7 +408,7 @@ if (chrome.storage && chrome.storage.onChanged) {
 }
 
 async function enforceStoredSubscriptionIntegrity() {
-  const store = await chrome.storage.local.get(['proActive', 'ramTamerActive', 'licenseKey']);
+  const store = await chrome.storage.local.get(['proActive', 'ramTamerActive', 'licenseKey', 'licenseVerifiedAt']);
   const key = String(store.licenseKey || '').trim();
   if (!key) {
     await revokeProState('free');
@@ -302,9 +418,11 @@ async function enforceStoredSubscriptionIntegrity() {
   const verified = await verifyLicenseWithServer(key);
   verifiedSession.coldChecked = true;
   if (verified.networkError) {
-    verifiedSession.proActive = Boolean(store.proActive && key);
-    verifiedSession.ramTamerActive = Boolean(store.proActive && store.ramTamerActive && key);
-    verifiedSession.licenseKey = key;
+    const withinOfflineGrace =
+      !store.licenseVerifiedAt || Date.now() - Number(store.licenseVerifiedAt) <= OFFLINE_GRACE_MS;
+    verifiedSession.proActive = Boolean(store.proActive && key && withinOfflineGrace);
+    verifiedSession.ramTamerActive = Boolean(store.proActive && store.ramTamerActive && key && withinOfflineGrace);
+    verifiedSession.licenseKey = withinOfflineGrace ? key : '';
     await syncExtensionProtectionRules(verifiedSession.proActive);
     return { proActive: verifiedSession.proActive, ramTamerActive: verifiedSession.ramTamerActive };
   }
@@ -349,16 +467,31 @@ function registerContextMenus() {
 
 chrome.runtime.onInstalled.addListener(async (details) => {
   const existing = await chrome.storage.local.get(Object.keys(DEFAULT_STATE));
+  let syncedSessions = [];
+  if (chrome.storage && chrome.storage.sync && (!Array.isArray(existing.cloudTabSessions) || existing.cloudTabSessions.length === 0)) {
+    try {
+      const syncData = await chrome.storage.sync.get(['cloudTabSessions']);
+      if (syncData && Array.isArray(syncData.cloudTabSessions)) {
+        syncedSessions = syncData.cloudTabSessions;
+      }
+    } catch (e) {}
+  }
   const merged = {
     ...DEFAULT_STATE,
     ...existing,
+    cloudTabSessions:
+      Array.isArray(existing.cloudTabSessions) && existing.cloudTabSessions.length > 0
+        ? existing.cloudTabSessions
+        : syncedSessions,
     settings: { ...DEFAULT_STATE.settings, ...(existing.settings || {}) },
     stats: { ...DEFAULT_STATE.stats, ...(existing.stats || {}) }
   };
   await chrome.storage.local.set(merged);
+  await hydrateTabActivityMap();
   await enforceStoredSubscriptionIntegrity();
   await updateActionBadge(merged.stats, merged.settings);
   registerContextMenus();
+  syncRemoteFilterDelta();
 
   if (details.reason === 'install') {
     chrome.tabs.create({ url: chrome.runtime.getURL('welcome.html') });
@@ -379,13 +512,17 @@ chrome.runtime.onInstalled.addListener(async (details) => {
 
   chrome.alarms.create('ramTamerCheck', { periodInMinutes: 5 });
   chrome.alarms.create('licenseVerifyCheck', { periodInMinutes: 60 });
+  chrome.alarms.create('filterDeltaSync', { periodInMinutes: 720 });
 });
 
 chrome.runtime.onStartup.addListener(async () => {
   registerContextMenus();
   chrome.alarms.create('ramTamerCheck', { periodInMinutes: 5 });
   chrome.alarms.create('licenseVerifyCheck', { periodInMinutes: 60 });
+  chrome.alarms.create('filterDeltaSync', { periodInMinutes: 720 });
+  await hydrateTabActivityMap();
   await enforceStoredSubscriptionIntegrity();
+  syncRemoteFilterDelta();
 });
 
 // Dynamic Per-Tab Toolbar Action Badge:
@@ -438,7 +575,7 @@ if (chrome.tabs) {
   if (chrome.tabs.onActivated) {
     chrome.tabs.onActivated.addListener((activeInfo) => {
       if (activeInfo && activeInfo.tabId) {
-        tabLastActiveAt.set(activeInfo.tabId, Date.now());
+        recordTabActivity(activeInfo.tabId, Date.now());
       }
       updateActionBadge();
     });
@@ -446,7 +583,7 @@ if (chrome.tabs) {
   if (chrome.tabs.onUpdated) {
     chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
       if (tab && tab.active) {
-        tabLastActiveAt.set(tabId, Date.now());
+        recordTabActivity(tabId, Date.now());
       }
       if (changeInfo.status === 'loading') {
         scamDetectedTabs.delete(tabId);
@@ -459,7 +596,7 @@ if (chrome.tabs) {
   }
   if (chrome.tabs.onRemoved) {
     chrome.tabs.onRemoved.addListener((tabId) => {
-      tabLastActiveAt.delete(tabId);
+      removeTabActivity(tabId);
       scamDetectedTabs.delete(tabId);
       scamReasonsByTab.delete(tabId);
     });
@@ -555,6 +692,7 @@ async function hibernateInactiveTabs(options = {}) {
   if (!verified.proActive || !verified.licenseKey) {
     return { ok: false, requiresPro: true, error: 'Active paid Pro subscription required.' };
   }
+  await hydrateTabActivityMap();
   const data = await chrome.storage.local.get(['stats', 'cloudTabSessions', 'neverSnoozeSites', 'settings']);
 
   const stats = data.stats || DEFAULT_STATE.stats;
@@ -565,7 +703,7 @@ async function hibernateInactiveTabs(options = {}) {
   let newlyDiscarded = 0;
   for (const tab of tabs) {
     if (tab.active && tab.id) {
-      tabLastActiveAt.set(tab.id, now);
+      recordTabActivity(tab.id, now);
       continue;
     }
     if (!tab.active && !tab.pinned && !tab.audible && !tab.discarded && tab.id) {
@@ -581,7 +719,7 @@ async function hibernateInactiveTabs(options = {}) {
       if (isAutoBackground) {
         const lastActive = tabLastActiveAt.get(tab.id);
         if (!lastActive) {
-          tabLastActiveAt.set(tab.id, now);
+          recordTabActivity(tab.id, now);
           continue;
         }
         if (now - lastActive < AUTO_RAM_IDLE_MS) {
@@ -597,16 +735,30 @@ async function hibernateInactiveTabs(options = {}) {
 
   let sessions = Array.isArray(data.cloudTabSessions) ? data.cloudTabSessions : [];
   if (!isAutoBackground || newlyDiscarded > 0) {
+    const sanitizedTabs = tabs
+      .filter((t) => t.url && /^https?:\/\//i.test(t.url))
+      .slice(0, 30)
+      .map((t) => ({
+        title: String(t.title || 'Saved Page').slice(0, 120),
+        url: sanitizeTabUrlForBackup(t.url || '')
+      }));
+    const newSignature = sanitizedTabs.map((t) => t.url).join('|');
+    const prevSignature =
+      sessions[0] && Array.isArray(sessions[0].tabs)
+        ? sessions[0].tabs.map((t) => t.url).join('|')
+        : '';
+
     const snapshot = {
-      id: 'session-' + now,
+      id: prevSignature && prevSignature === newSignature ? sessions[0].id : 'session-' + now,
       savedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       tabCount: tabs.length,
-      tabs: tabs
-        .filter((t) => t.url && /^https?:\/\//i.test(t.url))
-        .slice(0, 30)
-        .map((t) => ({ title: t.title || 'Saved Page', url: t.url || '' }))
+      tabs: sanitizedTabs
     };
-    sessions = [snapshot, ...sessions].slice(0, 5);
+    if (prevSignature && prevSignature === newSignature) {
+      sessions = [snapshot, ...sessions.slice(1)].slice(0, 5);
+    } else {
+      sessions = [snapshot, ...sessions].slice(0, 5);
+    }
   }
 
   const savedGbAdd = +(newlyDiscarded * 0.14).toFixed(1);
@@ -620,6 +772,20 @@ async function hibernateInactiveTabs(options = {}) {
   }
 
   await chrome.storage.local.set({ stats, cloudTabSessions: sessions, settings: updatedSettings });
+  if (chrome.storage && chrome.storage.sync && sessions.length > 0) {
+    try {
+      const compactSyncSessions = sessions.slice(0, 2).map((s) => ({
+        id: s.id,
+        savedAt: s.savedAt,
+        tabCount: s.tabCount,
+        tabs: (s.tabs || []).slice(0, 15).map((t) => ({
+          title: String(t.title || '').slice(0, 60),
+          url: String(t.url || '').slice(0, 200)
+        }))
+      }));
+      chrome.storage.sync.set({ cloudTabSessions: compactSyncSessions }).catch(() => {});
+    } catch (e) {}
+  }
   return { ok: true, newlyDiscarded, savedGbAdd, stats, sessions, settings: updatedSettings };
 }
 
@@ -640,18 +806,73 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
     await enforceStoredSubscriptionIntegrity();
     return;
   }
+  if (alarm.name === 'filterDeltaSync') {
+    await syncRemoteFilterDelta();
+    return;
+  }
   if (alarm.name === 'ramTamerCheck') {
-    const { proActive, licenseKey, settings } = await chrome.storage.local.get([
+    const { proActive, licenseKey, settings, remoteFeatureFlags } = await chrome.storage.local.get([
       'proActive',
       'licenseKey',
-      'settings'
+      'settings',
+      'remoteFeatureFlags'
     ]);
-    const autoEnabled = !settings || settings.autoRamTamer !== false;
+    const autoEnabled =
+      (!settings || settings.autoRamTamer !== false) &&
+      (!remoteFeatureFlags || remoteFeatureFlags.autoRamTamer !== false);
     if (proActive && licenseKey && autoEnabled) {
       await hibernateInactiveTabs({ isAutoBackground: true });
     }
   }
 });
+
+const pendingStatIncrements = new Map();
+let statFlushInFlight = false;
+let statFlushCallbacks = [];
+
+function queueDiagnosticStatIncrement(metric, amount, callback) {
+  if (metric && Object.prototype.hasOwnProperty.call(DEFAULT_STATE.stats, metric)) {
+    const safeAmount = Math.min(20, Math.max(1, Number(amount) || 1));
+    pendingStatIncrements.set(metric, (pendingStatIncrements.get(metric) || 0) + safeAmount);
+  }
+  if (typeof callback === 'function') {
+    statFlushCallbacks.push(callback);
+  }
+  if (statFlushInFlight) return;
+  statFlushInFlight = true;
+  setTimeout(async () => {
+    const batch = new Map(pendingStatIncrements);
+    const callbacks = statFlushCallbacks.splice(0, statFlushCallbacks.length);
+    pendingStatIncrements.clear();
+    try {
+      const res = await chrome.storage.local.get(['stats', 'settings']);
+      const stats = { ...DEFAULT_STATE.stats, ...(res.stats || {}) };
+      for (const [k, delta] of batch.entries()) {
+        if (typeof stats[k] === 'number') {
+          stats[k] += delta;
+        }
+      }
+      await chrome.storage.local.set({ stats });
+      await updateActionBadge(stats, res.settings);
+      for (const cb of callbacks) {
+        try {
+          cb({ ok: true, stats });
+        } catch (e) {}
+      }
+    } catch (e) {
+      for (const cb of callbacks) {
+        try {
+          cb({ ok: false });
+        } catch (err) {}
+      }
+    } finally {
+      statFlushInFlight = false;
+      if (pendingStatIncrements.size > 0) {
+        queueDiagnosticStatIncrement(null, 0);
+      }
+    }
+  }, 120);
+}
 
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (!msg || typeof msg !== 'object') return false;
@@ -685,18 +906,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
         scamReasonsByTab.set(sender.tab.id, msg.reasons);
       }
     }
-    chrome.storage.local.get(['stats', 'settings'], (res) => {
-      const stats = res.stats || DEFAULT_STATE.stats;
-      const key = msg.metric;
-      const safeAmount = Math.min(20, Math.max(1, Number(msg.amount) || 1));
-      if (key && Object.prototype.hasOwnProperty.call(DEFAULT_STATE.stats, key) && typeof stats[key] === 'number') {
-        stats[key] += safeAmount;
-      }
-      chrome.storage.local.set({ stats }, () => {
-        updateActionBadge(stats, res.settings);
-        sendResponse({ ok: true, stats });
-      });
-    });
+    queueDiagnosticStatIncrement(msg.metric, msg.amount, sendResponse);
     return true;
   }
 

@@ -30,8 +30,10 @@
     }
   }
 
+  let stealthBypassNotified = false;
   function notifyStealthBypass(detail) {
-    if (!isProEntitled()) return;
+    if (stealthBypassNotified || !isProEntitled()) return;
+    stealthBypassNotified = true;
     try {
       const targetOrigin =
         window.location && window.location.origin && window.location.origin !== 'null'
@@ -483,10 +485,14 @@
   };
 
   const origGetComputedStyle = window.getComputedStyle;
+  const baitStyleProxyCache = typeof WeakMap === 'function' ? new WeakMap() : null;
   window.getComputedStyle = function (el, pseudo) {
     const style = origGetComputedStyle.call(window, el, pseudo);
     if (!pseudo && isBaitElement(el)) {
-      return new Proxy(style, {
+      if (baitStyleProxyCache && baitStyleProxyCache.has(el)) {
+        return baitStyleProxyCache.get(el);
+      }
+      const proxy = new Proxy(style, {
         get(target, prop) {
           if (prop === 'display') return 'block';
           if (prop === 'visibility') return 'visible';
@@ -507,6 +513,10 @@
           return typeof val === 'function' ? val.bind(target) : val;
         }
       });
+      if (baitStyleProxyCache) {
+        baitStyleProxyCache.set(el, proxy);
+      }
+      return proxy;
     }
     return style;
   };
