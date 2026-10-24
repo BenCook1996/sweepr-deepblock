@@ -23,6 +23,90 @@
 })();
 
 document.addEventListener('DOMContentLoaded', () => {
+  const glassNav = document.querySelector('nav.glass-nav');
+  const currentPath = (window.location.pathname || '/').replace(/\/+$/, '') || '/';
+  const isSpecialNav = Boolean(document.getElementById('liveNavLogo') || document.getElementById('overallStatusBadge'));
+
+  // Ensure every page with nav.glass-nav stays 100% synced with the canonical Homepage menu
+  if (glassNav && !isSpecialNav && (!document.getElementById('navDropdownContainer') || !document.getElementById('langDropdownContainer'))) {
+    const isPricing = currentPath === '/pricing' || currentPath === '/pricing.html';
+    const isCompare = currentPath.startsWith('/vs/') || currentPath.startsWith('/guides/');
+    const isLogin = currentPath === '/login' || currentPath === '/login.html';
+    const featuresHref = (currentPath === '/' || currentPath === '/index.html') ? '/#features' : '/?home=1#features';
+
+    glassNav.className = 'glass-nav px-4 md:px-6 py-3.5 md:py-4 flex items-center justify-between';
+    glassNav.innerHTML = `
+      <div class="flex items-center gap-2.5 md:gap-8 min-w-0">
+        <a href="/?home=1" class="flex items-center gap-2.5 sm:gap-3 text-inherit no-underline min-w-0">
+          <div class="logo-box !w-9 !h-9 sm:!w-10 sm:!h-10" aria-hidden="true"></div>
+          <span class="font-extrabold text-base sm:text-xl tracking-tight text-gray-900 truncate">SWEEPR <span class="text-emerald-600">Deepblock</span></span>
+        </a>
+        <div class="hidden md:flex items-center gap-2">
+          <a href="${featuresHref}" class="btn btn-ghost text-sm">Features</a>
+          <a href="/pricing" class="${isPricing ? 'btn text-sm font-semibold text-emerald-700 bg-emerald-50/60 border border-emerald-200/50' : 'btn btn-ghost text-sm'}">Pricing</a>
+          <div class="relative inline-block text-left" id="navDropdownContainer">
+            <button type="button" id="navDropdownBtn" class="${isCompare ? 'btn text-sm font-semibold text-emerald-700 bg-emerald-50/60 border border-emerald-200/50' : 'btn btn-ghost text-sm font-medium'} flex items-center gap-1.5 cursor-pointer" aria-expanded="false" aria-haspopup="true">
+              <span>Compare &amp; Guides</span>
+              <svg id="navDropdownChevron" class="w-3.5 h-3.5 text-gray-500 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+              </svg>
+            </button>
+            <div id="navDropdownMenu" class="hidden absolute left-0 md:left-1/2 md:-translate-x-1/2 mt-2 w-[340px] sm:w-[430px] bg-white/95 backdrop-blur-xl border border-gray-200/90 rounded-2xl shadow-2xl p-2.5 z-50 transition-all">
+              <div class="grid grid-cols-1 gap-1.5">
+                <a href="/vs/total-adblock" class="flex items-start gap-3 p-3 rounded-xl hover:bg-emerald-50/70 border border-transparent hover:border-emerald-200/60 transition-all text-inherit no-underline group">
+                  <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between gap-1 mb-0.5">
+                      <span class="text-sm font-bold text-gray-900 group-hover:text-emerald-700 transition-colors">SWEEPR Deepblock vs Total Adblock</span>
+                      <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full">Comparison</span>
+                    </div>
+                    <p class="text-xs text-gray-500 leading-snug">See how SWEEPR Deepblock compares on YouTube ads, automatic cookie pop-up closing, fake shop alerts, and honest pricing.</p>
+                  </div>
+                </a>
+                <a href="/vs/total-adblock#fakespot" class="flex items-start gap-3 p-3 rounded-xl hover:bg-emerald-50/70 border border-transparent hover:border-emerald-200/60 transition-all text-inherit no-underline group">
+                  <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between gap-1 mb-0.5">
+                      <span class="text-sm font-bold text-gray-900 group-hover:text-emerald-700 transition-colors">Fake Online Shop Detector</span>
+                      <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full">2026 Guide</span>
+                    </div>
+                    <p class="text-xs text-gray-500 leading-snug">How SWEEPR warns you about suspicious scam shopping websites before you buy.</p>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="flex gap-2 md:gap-3 items-center">
+        <div class="relative inline-block text-left" id="langDropdownContainer">
+          <button type="button" id="langDropdownBtn" class="btn btn-ghost text-sm flex items-center gap-1.5 px-2.5 py-1.5 cursor-pointer font-medium text-gray-700 hover:text-emerald-600 transition-colors" aria-expanded="false" aria-label="Select Language">
+            <span class="text-base" id="currentLangFlag">🇬🇧</span>
+            <span class="text-xs font-bold tracking-wide" id="currentLangCode">EN</span>
+            <svg id="langDropdownChevron" class="w-3 h-3 text-gray-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div id="langDropdownMenu" class="hidden absolute right-0 mt-2 w-44 bg-white/95 backdrop-blur-xl border border-gray-200/90 rounded-2xl shadow-xl p-1.5 z-50 transition-all">
+            <div class="space-y-0.5 text-xs">
+              <button type="button" onclick="setLanguage('en')" class="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-emerald-50 text-gray-800 hover:text-emerald-700 font-medium cursor-pointer"><span>🇬🇧 English</span><span class="text-[10px] text-gray-400 font-mono">EN</span></button>
+              <button type="button" onclick="setLanguage('de')" class="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-emerald-50 text-gray-800 hover:text-emerald-700 font-medium cursor-pointer"><span>🇩🇪 Deutsch</span><span class="text-[10px] text-gray-400 font-mono">DE</span></button>
+              <button type="button" onclick="setLanguage('fr')" class="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-emerald-50 text-gray-800 hover:text-emerald-700 font-medium cursor-pointer"><span>🇫🇷 Français</span><span class="text-[10px] text-gray-400 font-mono">FR</span></button>
+              <button type="button" onclick="setLanguage('es')" class="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-emerald-50 text-gray-800 hover:text-emerald-700 font-medium cursor-pointer"><span>🇪🇸 Español</span><span class="text-[10px] text-gray-400 font-mono">ES</span></button>
+            </div>
+          </div>
+        </div>
+        <a href="/login" class="${isLogin ? 'btn text-xs sm:text-sm font-semibold text-emerald-700 bg-emerald-50/60 border border-emerald-200/50 !px-2.5 sm:!px-4' : 'btn btn-ghost text-xs sm:text-sm !px-2.5 sm:!px-4'}">Login</a>
+        <a href="/download?install=1" class="hidden md:inline-flex btn btn-go gap-2">
+          <span>Add to Browser</span>
+          <svg class="arrow-icon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+        </a>
+      </div>
+    `;
+  }
+
   const navBtn = document.getElementById('navDropdownBtn');
   const navMenu = document.getElementById('navDropdownMenu');
   const navChevron = document.getElementById('navDropdownChevron');
@@ -34,7 +118,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const langContainer = document.getElementById('langDropdownContainer');
 
   // Auto-inject mobile hamburger button & slide-down drawer into .glass-nav if not already present
-  const glassNav = document.querySelector('nav.glass-nav');
   if (glassNav && !document.getElementById('mobileMenuBtn')) {
     const rightGroup = glassNav.children[glassNav.children.length - 1];
     if (rightGroup) {

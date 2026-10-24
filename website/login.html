@@ -64,6 +64,7 @@
   <script src="https://cdn.tailwindcss.com/3.4.5"></script>
   <link rel="stylesheet" href="/style.css">
   <script src="/nav.js" defer></script>
+  <script src="/i18n.js" defer></script>
   <!-- Google tag (gtag.js) - Sweepr Deepblock -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-01MNBQSL9K"></script>
   <script>
@@ -75,12 +76,73 @@
 </head>
 <body class="text-gray-800">
   <nav class="glass-nav px-4 md:px-6 py-3.5 md:py-4 flex items-center justify-between">
-    <a href="/?home=1" class="flex items-center gap-2.5 sm:gap-3 text-inherit no-underline min-w-0">
-      <div class="logo-box !w-9 !h-9 sm:!w-10 sm:!h-10" aria-hidden="true"></div>
-      <span class="font-extrabold text-base sm:text-xl tracking-tight text-gray-900 truncate">SWEEPR <span class="text-emerald-600">Deepblock</span></span>
-    </a>
-    <div class="flex items-center gap-2">
-      <a href="/pricing" class="btn btn-ghost text-xs sm:text-sm !px-2.5 sm:!px-4">Back to Pricing</a>
+    <div class="flex items-center gap-2.5 md:gap-8 min-w-0">
+      <a href="/?home=1" class="flex items-center gap-2.5 sm:gap-3 text-inherit no-underline min-w-0">
+        <div class="logo-box !w-9 !h-9 sm:!w-10 sm:!h-10" aria-hidden="true"></div>
+        <span class="font-extrabold text-base sm:text-xl tracking-tight text-gray-900 truncate">SWEEPR <span class="text-emerald-600">Deepblock</span></span>
+      </a>
+      <div class="hidden md:flex items-center gap-2">
+        <a href="/?home=1#features" class="btn btn-ghost text-sm">Features</a>
+        <a href="/pricing" class="btn btn-ghost text-sm">Pricing</a>
+        <div class="relative inline-block text-left" id="navDropdownContainer">
+          <button type="button" id="navDropdownBtn" class="btn btn-ghost text-sm flex items-center gap-1.5 cursor-pointer font-medium" aria-expanded="false" aria-haspopup="true">
+            <span>Compare &amp; Guides</span>
+            <svg id="navDropdownChevron" class="w-3.5 h-3.5 text-gray-500 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </button>
+          <div id="navDropdownMenu" class="hidden absolute left-0 md:left-1/2 md:-translate-x-1/2 mt-2 w-[340px] sm:w-[430px] bg-white/95 backdrop-blur-xl border border-gray-200/90 rounded-2xl shadow-2xl p-2.5 z-50 transition-all">
+            <div class="grid grid-cols-1 gap-1.5">
+              <a href="/vs/total-adblock" class="flex items-start gap-3 p-3 rounded-xl hover:bg-emerald-50/70 border border-transparent hover:border-emerald-200/60 transition-all text-inherit no-underline group">
+                <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center justify-between gap-1 mb-0.5">
+                    <span class="text-sm font-bold text-gray-900 group-hover:text-emerald-700 transition-colors">SWEEPR Deepblock vs Total Adblock</span>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full">Comparison</span>
+                  </div>
+                  <p class="text-xs text-gray-500 leading-snug">See how SWEEPR Deepblock compares on YouTube ads, automatic cookie pop-up closing, fake shop alerts, and honest pricing.</p>
+                </div>
+              </a>
+              <a href="/vs/total-adblock#fakespot" class="flex items-start gap-3 p-3 rounded-xl hover:bg-emerald-50/70 border border-transparent hover:border-emerald-200/60 transition-all text-inherit no-underline group">
+                <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center justify-between gap-1 mb-0.5">
+                    <span class="text-sm font-bold text-gray-900 group-hover:text-emerald-700 transition-colors">Fake Online Shop Detector</span>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full">2026 Guide</span>
+                  </div>
+                  <p class="text-xs text-gray-500 leading-snug">How SWEEPR warns you about suspicious scam shopping websites before you buy.</p>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="flex gap-2 md:gap-3 items-center">
+      <div class="relative inline-block text-left" id="langDropdownContainer">
+        <button type="button" id="langDropdownBtn" class="btn btn-ghost text-sm flex items-center gap-1.5 px-2.5 py-1.5 cursor-pointer font-medium text-gray-700 hover:text-emerald-600 transition-colors" aria-expanded="false" aria-label="Select Language">
+          <span class="text-base" id="currentLangFlag">🇬🇧</span>
+          <span class="text-xs font-bold tracking-wide" id="currentLangCode">EN</span>
+          <svg id="langDropdownChevron" class="w-3 h-3 text-gray-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </button>
+        <div id="langDropdownMenu" class="hidden absolute right-0 mt-2 w-44 bg-white/95 backdrop-blur-xl border border-gray-200/90 rounded-2xl shadow-xl p-1.5 z-50 transition-all">
+          <div class="space-y-0.5 text-xs">
+            <button type="button" onclick="setLanguage('en')" class="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-emerald-50 text-gray-800 hover:text-emerald-700 font-medium cursor-pointer"><span>🇬🇧 English</span><span class="text-[10px] text-gray-400 font-mono">EN</span></button>
+            <button type="button" onclick="setLanguage('de')" class="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-emerald-50 text-gray-800 hover:text-emerald-700 font-medium cursor-pointer"><span>🇩🇪 Deutsch</span><span class="text-[10px] text-gray-400 font-mono">DE</span></button>
+            <button type="button" onclick="setLanguage('fr')" class="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-emerald-50 text-gray-800 hover:text-emerald-700 font-medium cursor-pointer"><span>🇫🇷 Français</span><span class="text-[10px] text-gray-400 font-mono">FR</span></button>
+            <button type="button" onclick="setLanguage('es')" class="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-emerald-50 text-gray-800 hover:text-emerald-700 font-medium cursor-pointer"><span>🇪🇸 Español</span><span class="text-[10px] text-gray-400 font-mono">ES</span></button>
+          </div>
+        </div>
+      </div>
+      <a href="/login" class="btn text-xs sm:text-sm font-semibold text-emerald-700 bg-emerald-50/60 border border-emerald-200/50 !px-2.5 sm:!px-4">Login</a>
+      <a href="/download?install=1" class="hidden md:inline-flex btn btn-go gap-2">
+        <span>Add to Browser</span>
+        <svg class="arrow-icon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+      </a>
     </div>
   </nav>
 
@@ -138,6 +200,26 @@
           <div><strong>Active Modules:</strong> Auto-Reject Cookie Cleanser, AI Slop SERP Purifier, Fake Store Detector, Encrypted DNS</div>
           <div id="addonStatusText"><strong>Total Tab &amp; RAM Tamer Add-On:</strong> Enabled</div>
         </div>
+
+        <div class="rounded-2xl border border-gray-200 bg-gray-50 p-3.5 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-extrabold uppercase tracking-wider text-gray-800">Linked Devices (Any Mix of Desktop &amp; Mobile)</span>
+            <span id="portalDevicesBadge" class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800">0 / 3 Active</span>
+          </div>
+          <div id="portalDevicesList" class="space-y-1.5 text-xs text-gray-700"></div>
+          <button type="button" id="portalShowQrBtn" class="btn bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold w-full justify-center py-2.5 rounded-xl cursor-pointer">
+            📱 Link Browser or Mobile via QR Code
+          </button>
+          <div id="portalQrDrawer" class="hidden rounded-xl border border-emerald-200 bg-white p-3.5 text-center space-y-2">
+            <div class="text-xs font-bold text-gray-900">Scan with your phone camera to link instantly</div>
+            <div id="portalQrSvgBox" class="w-40 h-40 mx-auto p-2 rounded-xl border border-gray-200 bg-white flex items-center justify-center"></div>
+            <div id="portalQrTimer" class="text-[11px] font-semibold text-emerald-700">Expires in 120s • Single-use token</div>
+            <button type="button" id="portalRefreshQrBtn" class="text-xs font-bold text-emerald-600 hover:text-emerald-700 underline cursor-pointer">
+              Generate Fresh QR Code
+            </button>
+          </div>
+        </div>
+
         <div class="flex flex-col gap-2.5 pt-2">
           <a href="/download" class="btn btn-go w-full justify-center text-xs font-bold">Install Browser Extension</a>
           <button type="button" onclick="cancelInOneClick()" id="cancelBtn" class="btn bg-red-50 hover:bg-red-100 text-red-700 border-red-200 text-xs font-bold w-full justify-center">
@@ -275,7 +357,128 @@
         cancelBtn.disabled = false;
       }
       resEl.classList.remove('hidden');
+      renderPortalDevices(data.devices || [], data.devices_used ?? (data.devices ? data.devices.length : 0), data.devices_max || 3);
     }
+
+    let portalQrInterval = null;
+
+    function renderPortalDevices(devices, usedCount, maxCount) {
+      const badgeEl = document.getElementById('portalDevicesBadge');
+      const listEl = document.getElementById('portalDevicesList');
+      if (badgeEl) {
+        badgeEl.textContent = usedCount + ' / ' + maxCount + ' Active';
+        badgeEl.className =
+          usedCount >= maxCount
+            ? 'px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800'
+            : 'px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800';
+      }
+      if (!listEl) return;
+      listEl.innerHTML = '';
+      if (!Array.isArray(devices) || devices.length === 0) {
+        const empty = document.createElement('div');
+        empty.className = 'text-xs text-gray-500 italic';
+        empty.textContent = 'No devices linked yet. Scan a QR code or activate your browser extension.';
+        listEl.appendChild(empty);
+        return;
+      }
+      devices.forEach((d) => {
+        const row = document.createElement('div');
+        row.className = 'flex items-center justify-between bg-white border border-gray-200 rounded-xl px-3 py-2';
+        const info = document.createElement('div');
+        const title = document.createElement('div');
+        title.className = 'font-bold text-gray-800 text-xs';
+        title.textContent = d.device_name || d.device_id;
+        const sub = document.createElement('div');
+        sub.className = 'text-[11px] text-gray-500';
+        sub.textContent = (d.platform || 'browser') + ' • ID: ' + String(d.device_id || '').slice(0, 16);
+        info.appendChild(title);
+        info.appendChild(sub);
+
+        const rmBtn = document.createElement('button');
+        rmBtn.type = 'button';
+        rmBtn.className = 'px-2.5 py-1 rounded-lg bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 text-[11px] font-bold cursor-pointer';
+        rmBtn.textContent = 'Remove';
+        rmBtn.addEventListener('click', async () => {
+          rmBtn.disabled = true;
+          rmBtn.textContent = '...';
+          try {
+            const r = await fetch('/api/portal/devices/remove', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                device_id: d.device_id,
+                email: currentLookupValue,
+                key: currentKeyValue
+              })
+            });
+            const resData = await r.json().catch(() => ({}));
+            if (r.ok && resData.ok) {
+              renderPortalDevices(resData.devices || [], resData.devices_used || 0, resData.devices_max || 3);
+            } else {
+              rmBtn.disabled = false;
+              rmBtn.textContent = 'Remove';
+            }
+          } catch {
+            rmBtn.disabled = false;
+            rmBtn.textContent = 'Remove';
+          }
+        });
+        row.appendChild(info);
+        row.appendChild(rmBtn);
+        listEl.appendChild(row);
+      });
+    }
+
+    async function generatePortalQrCode() {
+      const drawer = document.getElementById('portalQrDrawer');
+      const svgBox = document.getElementById('portalQrSvgBox');
+      const timerEl = document.getElementById('portalQrTimer');
+      if (!drawer || !svgBox || !timerEl) return;
+      drawer.classList.remove('hidden');
+      svgBox.innerHTML = '<span class="text-xs text-gray-400">Generating QR...</span>';
+      if (portalQrInterval) clearInterval(portalQrInterval);
+      try {
+        const res = await fetch('/api/device-link/create-token', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: currentLookupValue,
+            key: currentKeyValue
+          })
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || !data.ok) {
+          svgBox.innerHTML = '<span class="text-xs text-red-600 font-semibold px-2">' + (data.message || data.error || 'Could not create QR') + '</span>';
+          timerEl.textContent = 'Remove an active device above if you are at 3/3 devices.';
+          if (Array.isArray(data.devices)) {
+            renderPortalDevices(data.devices, data.devices_used || 3, data.devices_max || 3);
+          }
+          return;
+        }
+        svgBox.innerHTML = data.qr_svg || '';
+        const svgEl = svgBox.querySelector('svg');
+        if (svgEl) {
+          svgEl.style.width = '100%';
+          svgEl.style.height = '100%';
+        }
+        let rem = Number(data.expires_in) || 120;
+        timerEl.textContent = 'Expires in ' + rem + 's • Single-use token';
+        portalQrInterval = setInterval(() => {
+          rem -= 1;
+          if (rem <= 0) {
+            clearInterval(portalQrInterval);
+            timerEl.textContent = 'QR expired — click Generate Fresh QR Code below.';
+          } else {
+            timerEl.textContent = 'Expires in ' + rem + 's • Single-use token';
+          }
+        }, 1000);
+      } catch {
+        svgBox.innerHTML = '<span class="text-xs text-red-600">Network error</span>';
+      }
+    }
+
+    document.getElementById('portalShowQrBtn')?.addEventListener('click', generatePortalQrCode);
+    document.getElementById('portalRefreshQrBtn')?.addEventListener('click', generatePortalQrCode);
 
     async function requestOtpForSignedUpEmail(email, withCooldown = true) {
       loginBtn.disabled = true;
