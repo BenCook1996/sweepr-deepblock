@@ -317,6 +317,19 @@ chrome.runtime.onInstalled.addListener(async (details) => {
 
   if (details.reason === 'install') {
     chrome.tabs.create({ url: chrome.runtime.getURL('welcome.html') });
+    try {
+      const manifest = chrome.runtime.getManifest ? chrome.runtime.getManifest() : { version: '1.0.0' };
+      fetch('https://sweeprdeepblock.com/api/telemetry', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          event_name: 'extension_installed',
+          category: 'funnel',
+          os: 'extension',
+          app_version: manifest.version || '1.0.0'
+        })
+      }).catch(() => {});
+    } catch {}
   }
 
   chrome.alarms.create('ramTamerCheck', { periodInMinutes: 5 });

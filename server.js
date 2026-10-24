@@ -2652,6 +2652,25 @@ const server = http.createServer(async (req, res) => {
   }
 
   // Resolve target file for static assets and programmatic SEO landing pages
+  if (req.method === 'GET' && pathname.startsWith('/download/') && !BOT_UA_RE.test(String(req.headers['user-agent'] || ''))) {
+    const dlOs = pathname.endsWith('.exe')
+      ? 'windows'
+      : pathname.endsWith('.command')
+      ? 'mac'
+      : pathname.endsWith('.mobileconfig')
+      ? 'ios'
+      : 'extension';
+    requestSweeprCrm('/v1/telemetry/event', {
+      method: 'POST',
+      body: {
+        project_id: 'deepblock',
+        event_name: 'installer_downloaded',
+        category: 'funnel',
+        os: dlOs,
+        properties: { path: pathname, referrer: String(req.headers.referer || '').slice(0, 200) }
+      }
+    }).catch(() => {});
+  }
   let candidateRel = CLEAN_ROUTES[pathname];
   if (!candidateRel) {
     if (/^\/(solutions|setup|vs|guides)\/[a-z0-9-]+$/i.test(pathname)) {
