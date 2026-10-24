@@ -270,6 +270,19 @@ button.btn-ghost:hover:not(:disabled),
   will-change: transform;
 }
 
+.yt-font {
+  font-family: Roboto, -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+}
+
+@keyframes kenBurnsSlow {
+  0% { transform: scale(1) translate(0, 0); }
+  100% { transform: scale(1.06) translate(-4px, -2px); }
+}
+
+.yt-video-motion {
+  animation: kenBurnsSlow 14s ease-in-out infinite alternate;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;

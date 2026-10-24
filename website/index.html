@@ -294,13 +294,13 @@
   </div>
 
   <!-- Hero Section — Concept A: Interactive Before/After Slider Hero -->
-  <main class="flex-1 pt-24 sm:pt-32 pb-14 sm:pb-20 px-4 sm:px-6 max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 items-center gap-8 sm:gap-12 text-left">
-    <div class="lg:col-span-6 w-full">
+  <main class="flex-1 pt-24 sm:pt-32 pb-14 sm:pb-20 px-4 sm:px-6 max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 items-center gap-8 sm:gap-10 text-left">
+    <div class="lg:col-span-5 w-full">
       <div class="inline-flex items-center gap-2 px-3 sm:px-3.5 py-1.5 rounded-full text-[11px] sm:text-xs font-bold text-emerald-900 bg-emerald-100/90 border border-emerald-200 mb-5">
         <span class="w-2 h-2 rounded-full bg-emerald-600 shrink-0"></span>
         <span>✓ Works on Chrome, Safari, Edge, Firefox &amp; Brave • Covers 5 Devices</span>
       </div>
-      <h1 class="text-3xl sm:text-5xl lg:text-[52px] font-black mb-5 leading-[1.08] tracking-tight text-gray-900">
+      <h1 class="text-3xl sm:text-5xl lg:text-[46px] font-black mb-5 leading-[1.08] tracking-tight text-gray-900">
         Watch YouTube &amp; Browse <span style="color: var(--accent);">Without Ads or Cookie Pop-Ups.</span>
       </h1>
       <p class="text-base sm:text-lg text-gray-600 mb-6 max-w-xl leading-relaxed">
@@ -344,91 +344,188 @@
       </div>
     </div>
 
-    <!-- Right Column (6 cols): Interactive Before/After Drag-Slider Browser Preview -->
-    <div class="lg:col-span-6 w-full">
-      <div class="bg-slate-900 rounded-3xl p-4 sm:p-5 shadow-2xl border border-slate-800 text-white">
+    <!-- Right Column (7 cols): Interactive Realistic YouTube Light Mode Drag-Slider Browser Preview (Mockup 2) -->
+    <div class="lg:col-span-7 w-full">
+      <div class="bg-slate-900 rounded-3xl p-3 sm:p-4 shadow-2xl border border-slate-800 text-white">
         <!-- Browser Top Bar -->
-        <div class="flex items-center justify-between mb-3 px-1">
-          <div class="flex items-center gap-2">
-            <span class="w-2.5 h-2.5 rounded-full bg-rose-500/80"></span>
-            <span class="w-2.5 h-2.5 rounded-full bg-amber-400/80"></span>
-            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500/80"></span>
-            <span class="text-xs font-bold text-slate-300 ml-1">Drag slider to compare:</span>
+        <div class="flex items-center justify-between gap-2 mb-2.5 px-1">
+          <div class="flex items-center gap-1.5">
+            <span class="w-2.5 h-2.5 rounded-full bg-[#ff5f56]"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-[#ffbd2e]"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-[#27c93f]"></span>
           </div>
-          <span class="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-            ✓ All Ads &amp; Pop-Ups Blocked
+          <div class="flex-1 max-w-[320px] bg-slate-950 border border-slate-800 rounded-lg px-3 py-1 flex items-center justify-between text-[11px] text-slate-300">
+            <span class="truncate">🔒 youtube.com/watch?v=swiss-alps-4k</span>
+            <span class="text-emerald-400 font-extrabold text-[9.5px] shrink-0 ml-2">🛡️ Active</span>
+          </div>
+          <span class="hidden sm:inline-flex px-2.5 py-0.5 rounded-full text-[10.5px] font-extrabold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shrink-0">
+            ✓ 0 Ads • 0 Pop-Ups
           </span>
         </div>
 
         <!-- Interactive Split Browser Stage -->
-        <div id="heroSliderStage" class="relative rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 h-72 sm:h-80 select-none cursor-ew-resize">
-          <!-- AFTER LAYER (Full Width Underneath — WITH SWEEPR DEEPBLOCK) -->
-          <div class="absolute inset-0 bg-gradient-to-br from-emerald-950/90 via-slate-900 to-slate-950 p-4 sm:p-5 flex flex-col justify-between">
-            <div class="flex items-center justify-between">
-              <span class="px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider bg-emerald-500 text-slate-950 shadow-xs">✓ WITH SWEEPR DEEPBLOCK</span>
-              <span class="text-xs font-bold text-emerald-300">0 Ads • 0 Pop-Ups</span>
+        <div id="heroSliderStage" class="yt-font relative rounded-2xl overflow-hidden bg-white border border-slate-700 h-[380px] sm:h-[405px] select-none cursor-ew-resize">
+
+          <!-- AFTER LAYER (Full Width Underneath — CLEAN LIGHT-MODE YOUTUBE WITH SWEEPR DEEPBLOCK) -->
+          <div class="absolute inset-0 bg-white text-[#0f0f0f] flex flex-col">
+            <!-- Light YouTube Masthead -->
+            <div class="h-10 px-3 flex items-center justify-between border-b border-gray-200 shrink-0 bg-white">
+              <div class="flex items-center gap-2">
+                <span class="text-gray-700 text-sm">☰</span>
+                <div class="flex items-center gap-1">
+                  <svg class="w-6 h-4" viewBox="0 0 28 20" fill="none">
+                    <rect width="28" height="20" rx="4.5" fill="#FF0000"/>
+                    <polygon points="11,6 11,14 18.5,10" fill="#FFFFFF"/>
+                  </svg>
+                  <span class="font-bold text-[13.5px] tracking-tighter text-[#0f0f0f]">YouTube</span>
+                </div>
+              </div>
+              <div class="flex-1 max-w-[210px] mx-2 bg-gray-100 border border-gray-300 rounded-full px-3 py-0.5 text-[10px] text-gray-500 flex justify-between">
+                <span class="truncate">Swiss Alps 4K...</span>
+                <span>🔍</span>
+              </div>
+              <span class="px-2 py-0.5 rounded-md text-[9.5px] font-black uppercase tracking-wider bg-emerald-600 text-white shrink-0">
+                ✓ WITH DEEPBLOCK
+              </span>
             </div>
 
-            <div class="bg-white/10 backdrop-blur-xs border border-emerald-500/30 rounded-2xl p-4 text-center my-auto shadow-lg">
-              <div class="w-11 h-11 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center mx-auto mb-2 font-black text-base shadow-md">▶</div>
-              <div class="text-sm sm:text-base font-extrabold text-white">Video Plays Immediately — No Ads</div>
-              <div class="text-xs text-emerald-300 mt-1 font-medium">Cookie Pop-Ups Closed Automatically • Smooth Scrolling</div>
-            </div>
+            <div class="flex-1 grid grid-cols-12 gap-3 p-3 overflow-hidden">
+              <div class="col-span-8 flex flex-col justify-between min-w-0">
+                <div class="relative rounded-xl overflow-hidden bg-black aspect-video w-full shadow-md">
+                  <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=900&q=80" alt="Swiss Alps 4K" class="yt-video-motion w-full h-full object-cover"/>
+                  <div class="absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-black/85 to-transparent"></div>
+                  <div class="absolute top-2.5 right-2.5 bg-emerald-600/95 text-white px-2.5 py-0.5 rounded-full text-[9.5px] font-extrabold shadow">
+                    ✓ Playing Immediately • 0 Ads
+                  </div>
+                  <div class="absolute inset-x-2.5 bottom-1.5 space-y-1">
+                    <div class="w-full h-[3px] bg-white/30 rounded-full">
+                      <div class="w-2/5 h-full bg-[#ff0000] rounded-full"></div>
+                    </div>
+                    <div class="flex justify-between text-[9.5px] text-white font-medium">
+                      <span>⏸ &nbsp;🔊 &nbsp;08:14 / 32:00</span>
+                      <span>CC &nbsp;4K &nbsp;⛶</span>
+                    </div>
+                  </div>
+                </div>
 
-            <div class="grid grid-cols-3 gap-2 text-center text-[11px]">
-              <div class="bg-white/5 border border-white/10 rounded-xl p-2">
-                <div class="text-emerald-400 font-black">0 Video Ads</div>
-                <div class="text-slate-400 text-[10px]">On YouTube</div>
+                <div class="mt-2">
+                  <div class="text-[13px] font-bold text-[#0f0f0f] truncate">Swiss Alps 4K 60fps — Scenic Mountain Relaxation Film</div>
+                  <div class="mt-1.5 flex items-center justify-between gap-2">
+                    <div class="flex items-center gap-2 min-w-0">
+                      <div class="w-7 h-7 rounded-full bg-emerald-700 text-white font-bold text-xs flex items-center justify-center shrink-0">A</div>
+                      <div class="min-w-0">
+                        <div class="text-[11px] font-bold text-gray-900 truncate">Alps 4K Cinema ✓</div>
+                        <div class="text-[9.5px] text-gray-500">1.6M subscribers</div>
+                      </div>
+                      <span class="ml-1 px-3 py-1 rounded-full bg-[#0f0f0f] text-white text-[10px] font-bold shrink-0">Subscribe</span>
+                    </div>
+                    <div class="hidden sm:block bg-gray-100 rounded-full px-2.5 py-1 text-[10px] font-semibold text-gray-800 shrink-0">👍 42K &nbsp;|&nbsp; ↗ Share</div>
+                  </div>
+                  <div class="mt-2 bg-gray-100 rounded-xl px-2.5 py-1.5 text-[10px] text-gray-700 truncate">
+                    <span class="font-bold text-gray-900">920K views • 4 days ago</span> — Cookie pop-ups &amp; pre-roll ads automatically blocked.
+                  </div>
+                </div>
               </div>
-              <div class="bg-white/5 border border-white/10 rounded-xl p-2">
-                <div class="text-emerald-400 font-black">Auto-Closed</div>
-                <div class="text-slate-400 text-[10px]">Cookie Boxes</div>
-              </div>
-              <div class="bg-white/5 border border-white/10 rounded-xl p-2">
-                <div class="text-emerald-400 font-black">Protected</div>
-                <div class="text-slate-400 text-[10px]">Safe Shopping</div>
+
+              <div class="col-span-4 flex flex-col justify-between min-w-0">
+                <div class="text-[10.5px] font-bold text-gray-800 border-b border-gray-200 pb-1">Up Next • Clean Feed</div>
+                <div class="flex gap-2 items-start">
+                  <img src="https://images.unsplash.com/photo-1531366936337-7c912a4589a7?auto=format&fit=crop&w=240&q=75" class="w-20 h-12 rounded-lg object-cover shrink-0" alt="Iceland"/>
+                  <div class="min-w-0">
+                    <div class="text-[10px] font-bold text-gray-900 leading-tight line-clamp-2">Iceland Northern Lights 4K</div>
+                    <div class="text-[8.5px] text-gray-500 truncate">Scenic Earth • 1.9M views</div>
+                  </div>
+                </div>
+                <div class="flex gap-2 items-start">
+                  <img src="https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=240&q=75" class="w-20 h-12 rounded-lg object-cover shrink-0" alt="Ocean"/>
+                  <div class="min-w-0">
+                    <div class="text-[10px] font-bold text-gray-900 leading-tight line-clamp-2">Deep Ocean Coral Reefs 4K</div>
+                    <div class="text-[8.5px] text-gray-500 truncate">Blue Planet • 1.4M views</div>
+                  </div>
+                </div>
+                <div class="flex gap-2 items-start">
+                  <img src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=240&q=75" class="w-20 h-12 rounded-lg object-cover shrink-0" alt="Forest"/>
+                  <div class="min-w-0">
+                    <div class="text-[10px] font-bold text-gray-900 leading-tight line-clamp-2">Redwood National Park 4K</div>
+                    <div class="text-[8.5px] text-gray-500 truncate">Earth 60fps • 512K views</div>
+                  </div>
+                </div>
+                <div class="bg-emerald-50 border border-emerald-200 rounded-lg p-1.5 text-center text-[9px] font-bold text-emerald-800">
+                  ✓ 0 Sponsored Sidebar Ads
+                </div>
               </div>
             </div>
           </div>
 
-          <!-- BEFORE LAYER (Clipped by Slider Percentage — WITHOUT DEEPBLOCK) -->
-          <div id="heroBeforeClip" style="width: 100%; clip-path: inset(0 54% 0 0);" class="absolute inset-0 overflow-hidden bg-gradient-to-br from-rose-950 via-slate-900 to-rose-950/90">
-            <div id="heroBeforeInner" class="w-full h-full p-4 sm:p-5 flex flex-col justify-between">
-              <div class="flex items-center justify-between">
-                <span class="px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider bg-rose-600 text-white shadow-xs">✗ WITHOUT DEEPBLOCK</span>
+          <!-- BEFORE LAYER (Clipped by Slider Percentage — LIGHT MODE YOUTUBE WITH PRE-ROLL AD + COOKIE MODAL) -->
+          <div id="heroBeforeClip" style="width: 100%; clip-path: inset(0 50% 0 0);" class="absolute inset-0 overflow-hidden bg-white text-[#0f0f0f] flex flex-col">
+            <div class="h-10 px-3 flex items-center justify-between border-b border-rose-200 shrink-0 bg-rose-50">
+              <div class="flex items-center gap-2">
+                <svg class="w-6 h-4" viewBox="0 0 28 20" fill="none">
+                  <rect width="28" height="20" rx="4.5" fill="#FF0000"/>
+                  <polygon points="11,6 11,14 18.5,10" fill="#FFFFFF"/>
+                </svg>
+                <span class="font-bold text-[13.5px] tracking-tighter text-[#0f0f0f]">YouTube</span>
+                <span class="px-2 py-0.5 rounded-md text-[9.5px] font-black uppercase bg-rose-600 text-white">✗ WITHOUT DEEPBLOCK</span>
+              </div>
+              <span class="text-[10px] font-bold text-rose-700">⚠ Interrupted by Ads</span>
+            </div>
+
+            <div class="flex-1 grid grid-cols-12 gap-3 p-3 overflow-hidden">
+              <div class="col-span-8 flex flex-col justify-between min-w-0">
+                <div class="relative rounded-xl overflow-hidden bg-black aspect-video w-full border-2 border-rose-500">
+                  <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=900&q=80" class="w-full h-full object-cover brightness-75" alt="Pre-Roll Ad"/>
+                  <div class="absolute top-2.5 left-2.5 bg-amber-400 text-black text-[9.5px] font-black px-2 py-0.5 rounded">
+                    Sponsored • Ad 1 of 2 (0:30)
+                  </div>
+                  <div class="absolute inset-x-2.5 bottom-3 flex items-center justify-between gap-2">
+                    <span class="bg-blue-600 text-white text-[9.5px] font-bold px-2.5 py-1 rounded">Visit Advertiser ↗</span>
+                    <span class="bg-black/85 text-white text-[9.5px] font-semibold px-2.5 py-1 rounded border border-white/25">Video plays after ads ⏳</span>
+                  </div>
+                  <div class="absolute inset-x-0 bottom-0 h-1 bg-amber-400"></div>
+                </div>
+
+                <div class="mt-2 bg-rose-50 border-2 border-rose-500 rounded-xl p-2.5 flex items-center justify-between gap-2 shadow-lg">
+                  <div class="min-w-0">
+                    <div class="text-[10.5px] font-black text-rose-800 truncate">🍪 Before you continue to YouTube</div>
+                    <div class="text-[9px] text-gray-700 line-clamp-2">We &amp; 842 ad partners use cookies to personalize ads and track your clicks.</div>
+                  </div>
+                  <span class="px-2.5 py-1 rounded-full bg-rose-600 text-white text-[9px] font-bold shrink-0">Accept all</span>
+                </div>
               </div>
 
-              <div class="bg-rose-950/90 border border-rose-500/50 rounded-2xl p-3.5 space-y-2.5 my-auto shadow-lg">
-                <div class="bg-rose-600 text-white text-xs font-extrabold px-3 py-1.5 rounded-lg flex items-center justify-between">
-                  <span>⚠ Video Ad 1 of 2 (0:30)</span>
-                  <span class="text-[10px] bg-black/30 px-2 py-0.5 rounded">Cannot Skip</span>
+              <div class="col-span-4 flex flex-col justify-between min-w-0">
+                <div class="bg-amber-50 border border-amber-400 rounded-xl p-2">
+                  <span class="bg-amber-400 text-black text-[8px] font-black px-1 rounded">SPONSORED AD</span>
+                  <div class="text-[10px] font-black text-gray-900 mt-1 leading-tight">🔥 Lose Belly Fat In 7 Days — Doctors Shocked!</div>
+                  <div class="mt-1.5 bg-blue-600 text-white text-center text-[9px] font-bold py-1 rounded">Learn More ↗</div>
                 </div>
-                <div class="bg-white text-slate-900 text-xs font-bold p-3 rounded-xl shadow-md border border-rose-200">
-                  <div class="text-rose-700 font-extrabold mb-0.5">🍪 Cookie Consent Required</div>
-                  <div class="text-[11px] text-slate-600 font-medium">"We &amp; 842 ad partners track your clicks — Accept All to read this page"</div>
+                <div class="bg-rose-50 border border-rose-300 rounded-xl p-2">
+                  <span class="bg-amber-400 text-black text-[8px] font-black px-1 rounded">Ad</span>
+                  <div class="text-[9.5px] font-bold text-gray-900 mt-0.5 truncate">Cheap Replica Watches 90% Off</div>
+                  <div class="text-[8px] text-rose-700 truncate">scam-outlet-deals.top</div>
                 </div>
-              </div>
-
-              <div class="bg-rose-950/80 border border-rose-500/30 rounded-xl p-2 text-center text-[11px] text-rose-200 font-bold">
-                ✗ Page Covered by Ads &amp; Pop-Up Banners
+                <div class="bg-rose-100 border border-rose-300 rounded-lg p-1.5 text-center text-[9px] font-bold text-rose-800">
+                  ✗ Tracking Scripts Active
+                </div>
               </div>
             </div>
           </div>
 
           <!-- Vertical Divider Line & Center Drag Handle (< | >) -->
-          <div id="heroSliderHandle" style="left: 46%;" class="absolute inset-y-0 w-0.5 bg-emerald-400 shadow-[0_0_12px_rgba(16,185,129,0.9)] pointer-events-none">
-            <div id="heroSliderThumb" class="w-9 h-9 rounded-full bg-emerald-500 text-slate-950 font-black text-xs flex items-center justify-center shadow-xl border-2 border-white absolute top-1/2 -translate-x-1/2 -translate-y-1/2 transition-transform duration-100">
+          <div id="heroSliderHandle" style="left: 50%;" class="absolute inset-y-0 w-0.5 bg-emerald-500 shadow-[0_0_16px_rgba(16,185,129,1)] pointer-events-none z-30">
+            <div id="heroSliderThumb" class="w-9 h-9 rounded-full bg-emerald-500 text-slate-950 font-black text-xs flex items-center justify-center shadow-2xl border-2 border-white absolute top-1/2 -translate-x-1/2 -translate-y-1/2 transition-transform duration-100">
               &lsaquo;&thinsp;&rsaquo;
             </div>
           </div>
         </div>
 
         <!-- Range Slider Control Bar -->
-        <div class="mt-3.5 px-1">
-          <input id="heroCompareRange" type="range" min="8" max="92" value="46" oninput="setHeroSlider(this.value)" class="w-full accent-emerald-500 cursor-pointer" aria-label="Compare Before and After SWEEPR Deepblock">
+        <div class="mt-3 px-1">
+          <input id="heroCompareRange" type="range" min="8" max="92" value="50" oninput="setHeroSlider(this.value)" class="w-full accent-emerald-500 cursor-pointer" aria-label="Compare Before and After SWEEPR Deepblock on YouTube">
           <div class="flex justify-between text-[11px] font-bold text-slate-400 mt-1">
-            <span>&larr; Slide Left for 100% Clean View</span>
-            <span>Slide Right to See Ads &amp; Pop-Ups &rarr;</span>
+            <span>&larr; Slide Left for 100% Clean YouTube</span>
+            <span>Slide Right to See Pre-Roll Ads &amp; Pop-Ups &rarr;</span>
           </div>
         </div>
       </div>
@@ -436,7 +533,7 @@
   </main>
   <script>
     function setHeroSlider(pct) {
-      const val = Math.max(8, Math.min(92, Number(pct) || 46));
+      const val = Math.max(8, Math.min(92, Number(pct) || 50));
       const clip = document.getElementById('heroBeforeClip');
       const handle = document.getElementById('heroSliderHandle');
       const range = document.getElementById('heroCompareRange');
@@ -468,7 +565,7 @@
         if (thumb) thumb.style.transform = '';
       });
       setTimeout(() => {
-        setHeroSlider(46);
+        setHeroSlider(50);
         if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
         const start = performance.now();
         const dur = 400;
@@ -476,7 +573,7 @@
           if (userTouched) return;
           const t = Math.min(1, (now - start) / dur);
           const wave = Math.sin(t * Math.PI);
-          setHeroSlider(46 - wave * 6);
+          setHeroSlider(50 - wave * 6);
           if (t < 1) requestAnimationFrame(nudge);
         }
         setTimeout(() => requestAnimationFrame(nudge), 220);
