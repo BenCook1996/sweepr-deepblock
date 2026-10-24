@@ -22,6 +22,40 @@ const PRO_ONLY_SETTINGS = new Set([
 const scamDetectedTabs = new Set();
 const scamReasonsByTab = new Map();
 
+async function syncPausedSiteDnrAllowlist(passedPausedSites) {
+  try {
+    if (!chrome.declarativeNetRequest || !chrome.declarativeNetRequest.updateDynamicRules) return;
+    let pausedSites = passedPausedSites;
+    if (!Array.isArray(pausedSites)) {
+      const stored = await chrome.storage.local.get(['pausedSites']);
+      pausedSites = Array.isArray(stored && stored.pausedSites) ? stored.pausedSites : [];
+    }
+    const cleanDomains = pausedSites
+      .map((d) => String(d || '').replace(/^www\./i, '').trim().toLowerCase())
+      .filter(Boolean);
+
+    const existingRules = await chrome.declarativeNetRequest.getDynamicRules();
+    const removeRuleIds = existingRules.filter((r) => r.id >= 90000 && r.id < 91000).map((r) => r.id);
+
+    const addRules = [];
+    if (cleanDomains.length > 0) {
+      addRules.push({
+        id: 90001,
+        priority: 100000,
+        action: { type: 'allow' },
+        condition: {
+          initiatorDomains: cleanDomains
+        }
+      });
+    }
+
+    await chrome.declarativeNetRequest.updateDynamicRules({
+      removeRuleIds,
+      addRules
+    });
+  } catch (e) {}
+}
+
 async function syncExtensionProtectionRules(enablePro) {
   try {
     if (!chrome.declarativeNetRequest || !chrome.declarativeNetRequest.updateEnabledRulesets) return;
@@ -30,6 +64,7 @@ async function syncExtensionProtectionRules(enablePro) {
         enableRulesetIds: ['ads_and_trackers', 'cryptominers_and_heavy_scripts'],
         disableRulesetIds: []
       });
+      await syncPausedSiteDnrAllowlist();
     } else {
       await chrome.declarativeNetRequest.updateEnabledRulesets({
         enableRulesetIds: [],
@@ -434,6 +469,7 @@ async function toggleSitePauseByHostname(rawHostname) {
   const isPaused = current.includes(host);
   const updated = isPaused ? current.filter((h) => h !== host) : [...current, host];
   await chrome.storage.local.set({ pausedSites: updated });
+  await syncPausedSiteDnrAllowlist(updated);
   await updateActionBadge();
   return { ok: true, pausedSites: updated, paused: !isPaused, hostname: host };
 }
@@ -554,6 +590,7 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
       const current = Array.isArray(res.pausedSites) ? res.pausedSites : [];
       const updated = current.filter((h) => h !== hostToResume);
       await chrome.storage.local.set({ pausedSites: updated });
+      await syncPausedSiteDnrAllowlist(updated);
       await updateActionBadge();
     }
     return;
@@ -706,6 +743,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       const current = Array.isArray(res.pausedSites) ? res.pausedSites : [];
       const updated = current.includes(host) ? current : [...current, host];
       await chrome.storage.local.set({ pausedSites: updated });
+      await syncPausedSiteDnrAllowlist(updated);
       chrome.alarms.create(`resumeSite:${host}`, { delayInMinutes: 5 });
       await updateActionBadge();
       if (msg.reloadTabId) {
