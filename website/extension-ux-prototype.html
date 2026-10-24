@@ -1,451 +1,840 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SWEEPR Deepblock — Principal Extension UX Architect Prototype</title>
+  <title>SWEEPR Deepblock — Pre vs. Post UX Architecture Comparison</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: #0b1120;
-      color: #f8fafc;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #050811;
+      color: #F8FAFC;
     }
-    .popup-frame {
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    .popup-after-frame {
       width: 360px;
-      max-height: 500px;
+      height: 500px;
       overflow: hidden;
-      transition: all 0.2s ease;
+      background: radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.14), transparent 55%), #0B0F19;
     }
-    .switch-track {
-      width: 44px;
-      height: 24px;
+    .popup-before-frame {
+      width: 360px;
+      height: 500px;
+      overflow-y: scroll;
+      background: radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.12), transparent 60%), #0B0F19;
+    }
+    .popup-before-frame::-webkit-scrollbar {
+      width: 6px;
+    }
+    .popup-before-frame::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.8);
+    }
+    .popup-before-frame::-webkit-scrollbar-thumb {
+      background: #ef4444;
       border-radius: 999px;
-      background: #10b981;
-      position: relative;
-      transition: background 0.18s ease;
-      cursor: pointer;
     }
-    .switch-track.off {
-      background: #94a3b8;
+    .mobile-sheet-frame {
+      width: 380px;
+      height: 650px;
+      border-radius: 38px;
+      border: 8px solid #1E293B;
+      background: #0F172A;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
     }
-    .switch-thumb {
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      background: #ffffff;
-      position: absolute;
-      top: 3px;
-      right: 3px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.25);
-      transition: all 0.18s ease;
+    .callout-before {
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      color: #FCA5A5;
     }
-    .switch-track.off .switch-thumb {
-      right: auto;
-      left: 3px;
+    .callout-after {
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: #6EE7B7;
     }
   </style>
 </head>
-<body class="min-h-screen pb-20">
-  <!-- Top Interactive State Controller Bar -->
-  <header class="sticky top-0 z-50 bg-slate-900/95 backdrop-blur border-b border-slate-800 px-4 py-3">
-    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
-      <div class="flex items-center gap-2.5">
-        <div class="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center font-black text-slate-950">🛡️</div>
+<body class="min-h-screen pb-24">
+
+  <!-- Sticky Top Control Bar -->
+  <header class="sticky top-0 z-50 border-b border-slate-800/90 bg-slate-950/90 backdrop-blur-xl">
+    <div class="max-w-7xl mx-auto px-4 py-3.5 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-indigo-600 flex items-center justify-center font-extrabold text-white shadow-lg shadow-emerald-500/20">S</div>
         <div>
-          <div class="text-sm font-black tracking-tight text-white">SWEEPR Deepblock · Extension UX Redesign Prototype</div>
-          <div class="text-[11px] text-slate-400">360×500px Zero-Scroll Desktop Popup · iOS Safari Bottom Sheet · High-Trust Fake Shop Shield · Zero-Copy Unlock</div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-sm font-extrabold tracking-tight text-white">SWEEPR Deepblock — Pre vs. Post UX Comparison Studio</h1>
+            <span class="text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">Interactive Mockups</span>
+          </div>
+          <p class="text-xs text-slate-400">Compare the legacy cluttered UI (Left) against the refactored zero-scroll UX (Right) across all 4 extension surfaces</p>
         </div>
       </div>
 
-      <!-- Interactive Scenario Switcher -->
-      <div class="flex flex-wrap items-center gap-1.5 bg-slate-950 p-1.5 rounded-xl border border-slate-800">
-        <span class="text-[11px] font-bold text-slate-400 px-2">Simulate State:</span>
-        <button onclick="setPrototypeState('safe')" id="stateBtn-safe" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-500 text-slate-950 cursor-pointer">
-          1. Safe Site (Pro)
-        </button>
-        <button onclick="setPrototypeState('scam')" id="stateBtn-scam" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-300 hover:bg-slate-800 cursor-pointer">
-          2. Suspicious Shop ⚠️
-        </button>
-        <button onclick="setPrototypeState('paused')" id="stateBtn-paused" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-300 hover:bg-slate-800 cursor-pointer">
-          3. 5-Min Pause Escape Hatch
-        </button>
-        <button onclick="setPrototypeState('free')" id="stateBtn-free" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-300 hover:bg-slate-800 cursor-pointer">
-          4. Free Install (£1.99 Unlock)
-        </button>
+      <!-- Surface Jump Links & Live Simulation Controls -->
+      <div class="flex flex-wrap items-center gap-2">
+        <a href="#surface-1" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 transition">1. Toolbar Popup</a>
+        <a href="#surface-2" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 transition">2. In-Page Overlays</a>
+        <a href="#surface-3" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 transition">3. iOS Safari Sheet</a>
+        <a href="#surface-4" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 transition">4. Onboarding & Unlock</a>
+        <div class="h-5 w-px bg-slate-800 mx-1"></div>
+        <button onclick="setStoreScenario('safe')" id="btnScenarioSafe" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">Simulate: Safe Store</button>
+        <button onclick="setStoreScenario('scam')" id="btnScenarioScam" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-900 text-slate-400 border border-slate-800 hover:text-white">Simulate: Scam Store</button>
       </div>
     </div>
   </header>
 
-  <main class="max-w-7xl mx-auto px-4 pt-8 space-y-12">
-    <!-- SECTION 1: Desktop 360x500px Zero-Scroll Popup + iOS Safari Bottom Sheet -->
-    <section class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-      <!-- Left: Desktop 360x500px Popup -->
-      <div class="lg:col-span-5 flex flex-col items-center">
-        <div class="mb-3 text-center">
-          <span class="inline-block px-3 py-1 rounded-full text-[11px] font-extrabold uppercase tracking-wider bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
-            Desktop Toolbar Popup (360px × 478px · Zero Scrollbars)
-          </span>
+  <main class="max-w-7xl mx-auto px-4 pt-8 space-y-16">
+
+    <!-- Executive Summary Banner -->
+    <section class="rounded-3xl border border-slate-800/90 bg-slate-900/50 p-6 lg:p-8 shadow-2xl">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="p-4 rounded-2xl bg-slate-950/90 border border-slate-800/80">
+          <div class="text-[11px] font-extrabold uppercase tracking-wider text-slate-400">Popup Viewport Height</div>
+          <div class="mt-1 flex items-baseline gap-2">
+            <span class="text-sm font-bold line-through text-red-400">580px (Scrolls)</span>
+            <span class="text-xl font-black text-emerald-400">→ 500px Fixed</span>
+          </div>
+          <p class="mt-1 text-xs text-slate-400">Eliminated 3-tab switcher &amp; bottom key drawer for zero vertical/horizontal scroll.</p>
         </div>
-
-        <!-- 360x500px Extension Popup Frame -->
-        <div class="popup-frame bg-white text-slate-900 rounded-2xl shadow-2xl border border-emerald-500/30 p-3.5 space-y-2.5 select-none">
-          <!-- 1. Header -->
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <div class="w-6 h-6 rounded-md bg-gradient-to-br from-emerald-500 to-emerald-800 flex items-center justify-center text-white text-xs font-black shadow-sm">
-                ✓
-              </div>
-              <span class="font-black text-[13.5px] tracking-tight text-slate-900">
-                SWEEPR <span class="text-emerald-600">Deepblock</span>
-              </span>
-            </div>
-            <div class="flex items-center gap-1.5">
-              <span id="popupTierPill" class="px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-emerald-900 text-emerald-50 border border-emerald-500">
-                Pro Active
-              </span>
-              <button title="Open Full-Tab Settings & Saved Sessions" onclick="document.getElementById('onboardingSection').scrollIntoView({behavior:'smooth'})" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 text-xs cursor-pointer">
-                ⚙️
-              </button>
-            </div>
+        <div class="p-4 rounded-2xl bg-slate-950/90 border border-slate-800/80">
+          <div class="text-[11px] font-extrabold uppercase tracking-wider text-slate-400">"Fix Broken Page" Escape</div>
+          <div class="mt-1 flex items-baseline gap-2">
+            <span class="text-sm font-bold line-through text-red-400">Permanent Only</span>
+            <span class="text-xl font-black text-emerald-400">→ 1-Click 5m Pause</span>
           </div>
-
-          <!-- 2. Unified Site Shield Card + 1-Click 5-Min Escape Hatch -->
-          <div id="popupSiteCard" class="rounded-xl border border-emerald-500/25 bg-emerald-50/40 p-3 space-y-2 transition-all">
-            <div class="flex items-center justify-between gap-2">
-              <div class="min-w-0">
-                <div id="popupDomain" class="font-extrabold text-[13px] text-slate-900 truncate">
-                  youtube.com
-                </div>
-                <div id="popupSiteStatus" class="text-[11px] font-semibold text-emerald-600">
-                  Site Shield ON · Ads &amp; Cookie Pop-Ups Blocked
-                </div>
-              </div>
-              <button id="popupMainSwitch" onclick="toggleSiteShield()" class="switch-track shrink-0" aria-label="Toggle Site Shield">
-                <span class="switch-thumb"></span>
-              </button>
-            </div>
-
-            <!-- 1-Click Broken Page Escape Hatch + Element Zapper -->
-            <div class="grid grid-cols-2 gap-1.5 pt-1 border-t border-slate-200/80">
-              <button onclick="triggerFiveMinPause()" id="pause5mBtn" class="py-1.5 px-2 rounded-lg bg-white hover:bg-slate-50 border border-slate-200 text-[10.5px] font-bold text-slate-700 flex items-center justify-center gap-1 shadow-2xs cursor-pointer">
-                <span>🔧</span> <span id="pause5mLabel">Pause 5m (Fix Page)</span>
-              </button>
-              <button onclick="alert('Element Hider activated: Click any distracting element on the page to hide it permanently.')" class="py-1.5 px-2 rounded-lg bg-white hover:bg-slate-50 border border-slate-200 text-[10.5px] font-bold text-slate-700 flex items-center justify-center gap-1 shadow-2xs cursor-pointer">
-                <span>🧹</span> <span>Hide Element</span>
-              </button>
-            </div>
+          <p class="mt-1 text-xs text-slate-400">Added top-right <code class="text-emerald-300">🔧 Pause 5m</code> button with automatic MV3 alarm re-enable.</p>
+        </div>
+        <div class="p-4 rounded-2xl bg-slate-950/90 border border-slate-800/80">
+          <div class="text-[11px] font-extrabold uppercase tracking-wider text-slate-400">Safe-Site In-Page Toasts</div>
+          <div class="mt-1 flex items-baseline gap-2">
+            <span class="text-sm font-bold line-through text-red-400">3 Injected Bars</span>
+            <span class="text-xl font-black text-emerald-400">→ 100% Silent</span>
           </div>
-
-          <!-- 3. Contextual Store Safety & Silent Cleaning Card -->
-          <div id="popupStoreCard" class="rounded-xl border border-slate-200 bg-slate-50/80 p-2.5 space-y-2">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-1.5">
-                <span id="storeBadgeIcon" class="text-sm">🛡️</span>
-                <div>
-                  <div id="storeBadgeTitle" class="text-[11.5px] font-extrabold text-slate-900">
-                    Store &amp; Domain Check: Verified Safe
-                  </div>
-                  <div id="storeBadgeSub" class="text-[10px] text-slate-500">
-                    0 fake urgency timers or phishing signals on this page
-                  </div>
-                </div>
-              </div>
-              <span id="storeStatusTag" class="px-2 py-0.5 rounded-full text-[9.5px] font-extrabold bg-emerald-100 text-emerald-800">
-                SAFE
-              </span>
-            </div>
-
-            <!-- Compact 2-Pill Silent Protection Summary (Replaces noisy 4-box vanity grid) -->
-            <div class="grid grid-cols-2 gap-1.5">
-              <div class="bg-white border border-slate-200/90 rounded-lg px-2.5 py-1.5 flex items-center justify-between">
-                <span class="text-[10px] font-bold text-slate-500">🚫 Ads &amp; Trackers</span>
-                <span id="statAds" class="text-xs font-black text-emerald-600">14</span>
-              </div>
-              <div class="bg-white border border-slate-200/90 rounded-lg px-2.5 py-1.5 flex items-center justify-between">
-                <span class="text-[10px] font-bold text-slate-500">🍪 Cookie Banners</span>
-                <span id="statCookies" class="text-xs font-black text-emerald-600">Auto-No</span>
-              </div>
-            </div>
+          <p class="mt-1 text-xs text-slate-400">Removed cookie whisper toast, H1 recipe button &amp; SERP bar; only alerts on scam stores.</p>
+        </div>
+        <div class="p-4 rounded-2xl bg-slate-950/90 border border-slate-800/80">
+          <div class="text-[11px] font-extrabold uppercase tracking-wider text-slate-400">Stripe Pro Unlock Flow</div>
+          <div class="mt-1 flex items-baseline gap-2">
+            <span class="text-sm font-bold line-through text-red-400">4-Step Key Paste</span>
+            <span class="text-xl font-black text-emerald-400">→ 0-Click Auto</span>
           </div>
+          <p class="mt-1 text-xs text-slate-400"><code class="text-emerald-300">/checkout/success</code> now fires <code class="text-emerald-300">SWEEPR_AUTO_ACTIVATE</code> automatically.</p>
+        </div>
+      </div>
+    </section>
 
-          <!-- 4. Total Tab & RAM Tamer (Direct 1-Click Access — No Buried Second Tab) -->
-          <div class="rounded-xl border border-slate-200 bg-white p-2.5 space-y-2">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-1.5">
-                <span class="text-xs font-extrabold text-slate-900">⚡ Tab &amp; RAM Tamer</span>
-              </div>
-              <span id="ramSavedBadge" class="text-[10.5px] font-extrabold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                1.4 GB Saved · 9 Sleeping
-              </span>
-            </div>
-
-            <div class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
-              <div id="ramBar" class="h-full bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full transition-all" style="width: 34%"></div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-1.5">
-              <button onclick="snoozeTabsDemo()" id="snoozeBtn" class="py-1.5 px-2.5 rounded-lg bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-extrabold text-[11px] shadow-xs cursor-pointer">
-                ⚡ Free Up RAM Now
-              </button>
-              <button onclick="toggleKeepAwake()" id="keepAwakeBtn" class="py-1.5 px-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[10.5px] border border-slate-200 cursor-pointer">
-                📌 Keep Site Awake
-              </button>
-            </div>
-
-            <div class="flex items-center justify-between text-[10px] text-slate-500 pt-0.5">
-              <span>☁️ Last backup: 12 tabs (2m ago)</span>
-              <button onclick="document.getElementById('onboardingSection').scrollIntoView({behavior:'smooth'})" class="font-bold text-emerald-600 underline cursor-pointer">
-                Restore Tabs ↗
-              </button>
-            </div>
-          </div>
-
-          <!-- 5. Conditional £1.99 Upgrade Banner (Hidden when Pro is Active) -->
-          <div id="popupUpgradeBanner" class="hidden rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 p-2.5 text-white">
-            <div class="flex items-center justify-between gap-2">
-              <div>
-                <div class="text-[11px] font-black">Unlock Full Pro Protection — £1.99</div>
-                <div class="text-[9.5px] text-emerald-100">1st month £1.99 · Auto-syncs in 1 click</div>
-              </div>
-              <a href="/order?discount=intro" class="px-2.5 py-1.5 rounded-lg bg-white text-emerald-900 font-black text-[10.5px] shrink-0 shadow-xs">
-                Unlock &rarr;
-              </a>
-            </div>
-          </div>
+    <!-- =================================================================== -->
+    <!-- SURFACE 1: DESKTOP EXTENSION POPUP (PRE VS POST)                    -->
+    <!-- =================================================================== -->
+    <section id="surface-1" class="scroll-mt-20 space-y-6">
+      <div class="flex flex-wrap items-end justify-between gap-4 border-b border-slate-800 pb-4">
+        <div>
+          <span class="text-xs font-extrabold uppercase tracking-widest text-emerald-400">Surface 01 • Desktop Toolbar Popup (360px × 500px)</span>
+          <h2 class="text-2xl font-black text-white mt-1">Before (3 Cramped Tabs + Vertical Scroll) vs. After (Zero-Scroll Unified Shield)</h2>
+        </div>
+        <div class="text-xs text-slate-400">
+          Try clicking the tabs on the <strong class="text-red-400">Before</strong> popup vs. the 1-click controls on the <strong class="text-emerald-400">After</strong> popup
         </div>
       </div>
 
-      <!-- Right: Mobile Safari Bottom-Sheet & Fake Shop Interstitial -->
-      <div class="lg:col-span-7 space-y-6">
-        <div class="mb-1">
-          <span class="inline-block px-3 py-1 rounded-full text-[11px] font-extrabold uppercase tracking-wider bg-amber-500/15 text-amber-300 border border-amber-500/30">
-            In-Page Content Script: High-Trust, Zero-Panic Fake Shop Interstitial
-          </span>
-        </div>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
 
-        <!-- Simulated Suspicious Store Webpage with Shadow-DOM Interstitial -->
-        <div class="relative rounded-2xl overflow-hidden border border-slate-700 bg-slate-900 p-6 sm:p-8 shadow-2xl">
-          <div class="opacity-20 pointer-events-none select-none blur-[2px] space-y-3 mb-4">
-            <div class="h-6 w-1/3 bg-red-500 rounded"></div>
-            <div class="h-10 w-3/4 bg-slate-600 rounded"></div>
-            <div class="grid grid-cols-3 gap-3">
-              <div class="h-24 bg-slate-700 rounded"></div>
-              <div class="h-24 bg-slate-700 rounded"></div>
-              <div class="h-24 bg-slate-700 rounded"></div>
+        <!-- LEFT: PRE (BEFORE) POPUP -->
+        <div class="rounded-3xl border border-red-500/30 bg-slate-900/40 p-6 flex flex-col items-center">
+          <div class="w-full flex items-center justify-between mb-4">
+            <span class="px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-red-500/15 text-red-400 border border-red-500/30">❌ BEFORE (Legacy Cluttered Popup)</span>
+            <span class="text-xs font-mono text-red-400">360px × 585px (Scrollbars!)</span>
+          </div>
+
+          <!-- Legacy Popup Replica -->
+          <div class="popup-before-frame rounded-2xl border border-slate-700/80 shadow-2xl p-3.5 text-slate-100 select-none relative">
+            <!-- Header -->
+            <div class="flex items-center justify-between pb-2.5 border-b border-slate-800/80">
+              <div class="flex items-center gap-2">
+                <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-emerald-500 to-indigo-600 flex items-center justify-center font-extrabold text-xs">S</div>
+                <div>
+                  <div class="text-xs font-extrabold flex items-center gap-1.5">
+                    SWEEPR <span class="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">FREE</span>
+                  </div>
+                  <div class="text-[10px] text-slate-400">Deepblock Web Cleaner</div>
+                </div>
+              </div>
+              <button class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/40">● Active</button>
+            </div>
+
+            <!-- 3-Tab Switcher (Problem #1) -->
+            <div class="grid grid-cols-3 gap-1 bg-slate-900 p-1 rounded-xl border border-slate-800 mt-2.5">
+              <button onclick="switchBeforeTab('shield')" id="beforeTabBtnShield" class="py-1.5 rounded-lg text-[11px] font-bold bg-emerald-500/15 text-emerald-400">🛡️ Shield</button>
+              <button onclick="switchBeforeTab('shop')" id="beforeTabBtnShop" class="py-1.5 rounded-lg text-[11px] font-bold text-slate-400 hover:text-white">🛒 Shop Safe</button>
+              <button onclick="switchBeforeTab('ram')" id="beforeTabBtnRam" class="py-1.5 rounded-lg text-[11px] font-bold text-slate-400 hover:text-white">⚡ RAM</button>
+            </div>
+
+            <!-- Before Tab 1: Shield -->
+            <div id="beforePanelShield" class="space-y-2.5 mt-2.5">
+              <div class="grid grid-cols-2 gap-2">
+                <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-2.5 text-center">
+                  <div class="text-lg font-extrabold text-emerald-400">14</div>
+                  <div class="text-[10px] text-slate-400">Ads &amp; Trackers Blocked</div>
+                </div>
+                <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-2.5 text-center">
+                  <div class="text-lg font-extrabold text-emerald-400">1,284</div>
+                  <div class="text-[10px] text-slate-400">Total Elements Cleaned</div>
+                </div>
+              </div>
+
+              <!-- 4 separate module rows -->
+              <div class="bg-slate-900/90 border border-slate-800 rounded-xl divide-y divide-slate-800/70">
+                <div class="p-2.5 flex items-center justify-between">
+                  <div>
+                    <div class="text-xs font-bold">🛡️ DeepStealth Ad &amp; Tracker Shield</div>
+                    <div class="text-[10px] text-slate-400">YouTube ads, popups &amp; analytics stripped</div>
+                  </div>
+                  <span class="text-[10px] font-extrabold text-emerald-400">ON</span>
+                </div>
+                <div class="p-2.5 flex items-center justify-between">
+                  <div>
+                    <div class="text-xs font-bold">🍪 Cookie Whisperer</div>
+                    <div class="text-[10px] text-slate-400">Auto-declines GDPR &amp; consent popups</div>
+                  </div>
+                  <span class="text-[10px] font-extrabold text-emerald-400">ON</span>
+                </div>
+                <div class="p-2.5 flex items-center justify-between">
+                  <div>
+                    <div class="text-xs font-bold">📖 PureView Reader</div>
+                    <div class="text-[10px] text-slate-400">Jump-to-Recipe &amp; clutter-free articles</div>
+                  </div>
+                  <span class="text-[10px] font-extrabold text-emerald-400">ON</span>
+                </div>
+                <div class="p-2.5 flex items-center justify-between">
+                  <div>
+                    <div class="text-xs font-bold">🧹 AI Slop Search Cleanser <span class="text-[9px] px-1 rounded bg-indigo-500/20 text-indigo-300">PRO</span></div>
+                    <div class="text-[10px] text-slate-400">Hides SEO spam farms &amp; strips ?fbclid</div>
+                  </div>
+                  <input type="checkbox" checked class="accent-emerald-500" />
+                </div>
+              </div>
+
+              <!-- Site allowlist row (No 5-min pause!) -->
+              <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-2.5 flex items-center justify-between">
+                <div>
+                  <div class="text-xs font-bold text-slate-200">amazon.co.uk</div>
+                  <div class="text-[10px] text-slate-400">Pause protection on this website</div>
+                </div>
+                <button class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-slate-800 border border-slate-700 text-slate-300">Pause Site</button>
+              </div>
+            </div>
+
+            <!-- Before Tab 2: Shop Safe (Hidden unless clicked) -->
+            <div id="beforePanelShop" class="hidden space-y-2.5 mt-2.5">
+              <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-3 text-center">
+                <div class="text-2xl mb-1">✅</div>
+                <div class="text-sm font-extrabold">Verified Safe Store</div>
+                <div class="text-[11px] text-slate-400 mt-1">No drop-shipping scam or fake urgency timers detected on this domain.</div>
+              </div>
+            </div>
+
+            <!-- Before Tab 3: RAM (Hidden unless clicked) -->
+            <div id="beforePanelRam" class="hidden space-y-2.5 mt-2.5">
+              <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-3 text-center">
+                <div class="text-xl font-extrabold text-emerald-400">420 MB</div>
+                <div class="text-[10px] text-slate-400">Estimated Memory Reclaimed</div>
+                <button class="mt-2 w-full py-2 rounded-lg text-xs font-bold bg-gradient-to-r from-emerald-500 to-indigo-600 text-white">⚡ Snooze Inactive Tabs Now</button>
+              </div>
+            </div>
+
+            <!-- Upgrade Bar + Manual License Key Drawer (Forces scrolling!) -->
+            <div class="mt-2.5 p-2.5 rounded-xl bg-indigo-950/60 border border-indigo-500/30 flex items-center justify-between">
+              <div>
+                <div class="text-[11px] font-extrabold">Unlock Full Pro Bundle</div>
+                <div class="text-[10px] text-slate-400">£1.99 first month • 30-day guarantee</div>
+              </div>
+              <button class="px-2.5 py-1.5 rounded-lg text-[10px] font-extrabold bg-emerald-500 text-slate-950">Unlock Pro →</button>
+            </div>
+
+            <div class="mt-2 pt-2 border-t border-slate-800/80">
+              <div class="text-[10px] text-slate-400 underline text-center mb-1.5">Have a Pro license key or email? Activate here</div>
+              <div class="flex gap-1.5">
+                <input type="text" placeholder="Enter DBPRO-XXXX..." class="flex-1 bg-slate-950 border border-slate-700 rounded-lg px-2 py-1 text-[10px] text-white" />
+                <button class="px-2.5 py-1 rounded-lg bg-emerald-500 text-slate-950 text-[10px] font-extrabold">Activate</button>
+              </div>
             </div>
           </div>
 
-          <!-- High-Trust Security Interstitial Card -->
-          <div class="relative z-10 max-w-md mx-auto bg-white text-slate-900 rounded-2xl border-2 border-amber-500 shadow-2xl p-5 sm:p-6 space-y-4">
+          <!-- Red UX Audit Callouts -->
+          <div class="w-full mt-5 space-y-2">
+            <div class="callout-before rounded-xl p-3 text-xs">
+              <strong>1. Cramped 3-Tab Hunting:</strong> Shopper safety &amp; RAM saver are hidden behind tabs (`🛒 Shop Safe`, `⚡ RAM`) instead of visible at a glance.
+            </div>
+            <div class="callout-before rounded-xl p-3 text-xs">
+              <strong>2. No 5-Minute Escape Hatch:</strong> Clicking "Pause Site" permanently disables protection on that domain (`disabledSites`) with no auto-resume timer.
+            </div>
+            <div class="callout-before rounded-xl p-3 text-xs">
+              <strong>3. Overflow Scroll &amp; Focus-Loss Trap:</strong> The bottom license key drawer pushes height to `585px` (causing a scrollbar) and closes the popup when the user clicks away to copy their key.
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: POST (AFTER) POPUP -->
+        <div class="rounded-3xl border border-emerald-500/40 bg-slate-900/40 p-6 flex flex-col items-center">
+          <div class="w-full flex items-center justify-between mb-4">
+            <span class="px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">✅ AFTER (Zero-Scroll 360×500px Popup)</span>
+            <span class="text-xs font-mono text-emerald-400">360px × 500px (0 Scrollbars)</span>
+          </div>
+
+          <!-- New Zero-Scroll Popup Replica -->
+          <div class="popup-after-frame rounded-2xl border border-emerald-500/30 shadow-2xl p-3.5 flex flex-col justify-between text-slate-100 select-none">
+            <!-- Header (44px) -->
             <div class="flex items-center justify-between">
-              <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-extrabold uppercase tracking-wider bg-amber-100 text-amber-900 border border-amber-300">
-                ⚠️ SWEEPR Shop Shield · Caution
-              </span>
-              <span class="font-mono text-xs font-bold text-slate-500">luxury-clearance-uk.shop</span>
+              <div class="flex items-center gap-2">
+                <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-emerald-500 to-indigo-600 flex items-center justify-center font-extrabold text-xs text-white shadow">S</div>
+                <span class="text-xs font-extrabold tracking-tight">SWEEPR</span>
+                <span class="text-[9px] font-extrabold px-1.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">PRO ACTIVE</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <span id="afterHostLabel" class="mono text-[11px] font-semibold text-slate-300 bg-slate-900/90 border border-slate-800 px-2.5 py-1 rounded-full">amazon.co.uk</span>
+                <button title="Full-Tab Settings & Cloud Backup" class="w-7 h-7 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 hover:text-white flex items-center justify-center text-xs">⚙️</button>
+              </div>
             </div>
 
-            <div>
-              <h3 class="text-lg font-black text-slate-900 leading-snug">
-                Hold on — this store shows 3 signs of a fake online shop
-              </h3>
-              <p class="text-xs text-slate-600 mt-1">
-                SWEEPR Deepblock stays 100% silent on normal websites and only interrupts when a store matches known scam patterns:
-              </p>
+            <!-- Hero Unified Site Shield Card + 1-Click 5-Min Escape Hatch -->
+            <div id="afterHeroCard" class="rounded-2xl bg-slate-900/90 border border-emerald-500/30 p-3 flex items-center justify-between gap-2 transition-all">
+              <div>
+                <div class="flex items-center gap-1.5">
+                  <span id="afterDot" class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#10b981]"></span>
+                  <span id="afterShieldTitle" class="text-xs font-extrabold text-white">Site Shield: ON</span>
+                </div>
+                <p id="afterShieldSub" class="text-[10px] text-slate-400 mt-0.5">Ads, video sponsors &amp; cookie popups silenced</p>
+              </div>
+              <div class="flex items-center gap-1.5 shrink-0">
+                <button onclick="triggerAfterPause5m()" id="afterPauseBtn" class="px-2.5 py-1.5 rounded-lg text-[10px] font-extrabold bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/30 transition">
+                  🔧 Pause 5m
+                </button>
+                <button onclick="toggleAfterShield()" id="afterSwitch" class="w-10 h-6 rounded-full bg-emerald-500 p-0.5 transition flex items-center justify-end">
+                  <span class="w-5 h-5 rounded-full bg-white shadow"></span>
+                </button>
+              </div>
             </div>
 
-            <ul class="bg-amber-50/90 border border-amber-200 rounded-xl p-3.5 space-y-2 text-xs text-amber-950 font-semibold">
-              <li class="flex items-start gap-2">
-                <span class="text-amber-600 font-black">1.</span>
-                <span><strong>Fake urgency timer detected:</strong> Countdown clock resets every time the page is refreshed.</span>
-              </li>
-              <li class="flex items-start gap-2">
-                <span class="text-amber-600 font-black">2.</span>
-                <span><strong>Unverified storefront template:</strong> High-risk clearance layout with extreme 85%+ site-wide discounts.</span>
-              </li>
-              <li class="flex items-start gap-2">
-                <span class="text-amber-600 font-black">3.</span>
-                <span><strong>Missing business imprint:</strong> No verifiable company registration number or physical return address found.</span>
-              </li>
-            </ul>
+            <!-- 2 Compact Telemetry Pills -->
+            <div class="grid grid-cols-2 gap-2">
+              <div class="rounded-xl bg-slate-900/80 border border-slate-800/90 px-3 py-2 flex items-center justify-between">
+                <div>
+                  <div class="text-sm font-extrabold text-emerald-400">14</div>
+                  <div class="text-[10px] text-slate-400 font-medium">Ads &amp; Cookies</div>
+                </div>
+                <span class="text-sm">🛡️</span>
+              </div>
+              <div class="rounded-xl bg-slate-900/80 border border-slate-800/90 px-3 py-2 flex items-center justify-between">
+                <div>
+                  <div id="afterRamStat" class="text-sm font-extrabold text-emerald-400">420 MB</div>
+                  <div class="text-[10px] text-slate-400 font-medium">RAM Reclaimed</div>
+                </div>
+                <span class="text-sm">⚡</span>
+              </div>
+            </div>
 
-            <div class="space-y-2 pt-1">
-              <button onclick="alert('Navigated back to safety!')" class="w-full py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-sm shadow-md cursor-pointer">
-                &larr; Take Me Back to Safety
-              </button>
-              <div class="text-center">
-                <button onclick="alert('Store added to your Trusted Sites list for 30 days.')" class="text-xs font-semibold text-slate-500 hover:text-slate-800 underline cursor-pointer">
-                  I know this retailer — Proceed anyway (Trust this site)
+            <!-- Dynamic Store Safety Status Card -->
+            <div id="afterStoreCard" class="rounded-2xl bg-emerald-950/30 border border-emerald-500/30 p-3 transition-all">
+              <div class="flex items-start gap-2.5">
+                <div id="afterStoreIcon" class="w-7 h-7 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-xs shrink-0">✅</div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center justify-between">
+                    <span id="afterStoreTitle" class="text-xs font-extrabold text-emerald-300">Verified Authentic Store</span>
+                    <span id="afterStoreBadge" class="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">Safe Domain</span>
+                  </div>
+                  <p id="afterStoreDesc" class="text-[10px] text-slate-300 mt-0.5 leading-relaxed">
+                    Encrypted checkout verified. Zero fake urgency timers or scam signals found.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Total Tab & RAM Tamer Card -->
+            <div class="rounded-2xl bg-slate-900/90 border border-slate-800 p-3 space-y-2">
+              <div class="flex items-center justify-between">
+                <div>
+                  <div class="text-xs font-extrabold text-white flex items-center gap-1.5">
+                    ⚡ Total Tab &amp; RAM Tamer
+                  </div>
+                  <div id="afterRamDesc" class="text-[10px] text-slate-400">6 inactive background tabs ready to snooze</div>
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-1.5">
+                <button onclick="snoozeAfterTabs()" id="afterSnoozeBtn" class="py-1.5 px-2 rounded-lg text-[10px] font-extrabold bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition">
+                  ⚡ Free Up RAM Now
+                </button>
+                <button onclick="toggleKeepAwakeAfter()" id="afterKeepAwakeBtn" class="py-1.5 px-2 rounded-lg text-[10px] font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
+                  📌 Keep Site Awake
+                </button>
+              </div>
+            </div>
+
+            <!-- Footer Bar -->
+            <div class="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[10px] text-slate-400">
+              <span>☁️ Cloud Backup: <strong class="text-slate-200">2m ago</strong></span>
+              <a href="#surface-4" class="text-emerald-400 hover:underline font-bold">Restore Tabs &amp; Settings →</a>
+            </div>
+          </div>
+
+          <!-- Green UX Improvement Callouts -->
+          <div class="w-full mt-5 space-y-2">
+            <div class="callout-after rounded-xl p-3 text-xs">
+              <strong>1. All 4 Pillars in One Zero-Scroll Frame:</strong> Unified Site Shield, Live Store Safety, and Tab &amp; RAM Tamer fit cleanly in `360px × 500px` with zero tab hunting.
+            </div>
+            <div class="callout-after rounded-xl p-3 text-xs">
+              <strong>2. 1-Click 5-Minute Broken-Page Escape Hatch:</strong> Clicking <code class="text-white">🔧 Pause 5m</code> immediately reloads the page with filters paused and schedules a `chrome.alarms` auto-resume in 5 minutes.
+            </div>
+            <div class="callout-after rounded-xl p-3 text-xs">
+              <strong>3. 1-Click Tab Whitelist (<code class="text-white">📌 Keep Site Awake</code>):</strong> Users can pin music, downloads, or docs so Tab Tamer never snoozes them.
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- SURFACE 2: IN-PAGE CONTENT SCRIPTS (PRE VS POST)                    -->
+    <!-- =================================================================== -->
+    <section id="surface-2" class="scroll-mt-20 space-y-6">
+      <div class="flex flex-wrap items-end justify-between gap-4 border-b border-slate-800 pb-4">
+        <div>
+          <span class="text-xs font-extrabold uppercase tracking-widest text-emerald-400">Surface 02 • In-Page Content Script Overlays</span>
+          <h2 class="text-2xl font-black text-white mt-1">Before (Ironic Toast Popups &amp; Layout Shifts) vs. After (100% Silent + Shadow-DOM Scam Shield)</h2>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
+
+        <!-- LEFT: BEFORE IN-PAGE OVERLAYS -->
+        <div class="rounded-3xl border border-red-500/30 bg-slate-900/40 p-6 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-red-500/15 text-red-400 border border-red-500/30">❌ BEFORE (Ironic In-Page Clutter)</span>
+              <span class="text-xs font-mono text-red-400">3 Host-DOM Injections</span>
+            </div>
+
+            <!-- Simulated Browser Viewport (Before) -->
+            <div class="rounded-2xl border border-slate-700 bg-slate-950 overflow-hidden shadow-xl relative min-h-[380px] flex flex-col justify-between">
+              <!-- Fake Browser Top Bar + Legacy Top Sticky Red Bar -->
+              <div>
+                <div class="bg-slate-900 px-3 py-2 border-b border-slate-800 flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-red-500/60"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-amber-500/60"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-emerald-500/60"></span>
+                  <span class="ml-2 text-[11px] font-mono text-slate-400 bg-slate-950 px-3 py-0.5 rounded-md border border-slate-800 flex-1">https://daily-recipes-and-deals.com</span>
+                </div>
+
+                <!-- Legacy Top Warning Bar with Jargon Score -->
+                <div class="bg-gradient-to-r from-red-900 to-red-700 px-3 py-2 text-[11px] text-white flex items-center justify-between border-b border-red-400/40">
+                  <div>
+                    <strong>⚠️ SWEEPR Shop Safe Warning:</strong> Hold on! This store shows 4 risk signals (Risk Score: 80/100)
+                  </div>
+                  <div class="flex gap-1.5 shrink-0">
+                    <button class="px-2 py-0.5 rounded bg-white text-red-900 font-bold text-[10px]">Leave Store</button>
+                    <button class="px-2 py-0.5 rounded border border-white/40 text-white text-[10px]">Dismiss</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Simulated Host Website Content with Injected Clutter -->
+              <div class="p-5 space-y-3 bg-white text-slate-900 flex-1 relative">
+                <!-- Injected SERP Notice -->
+                <div class="px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-700 text-[11px] font-semibold flex items-center justify-between">
+                  <span>🧹 <strong>SWEEPR Deepblock:</strong> 2 low-quality AI farm results hidden</span>
+                  <span class="text-[10px] font-mono text-red-600 font-bold">← Injected DOM Bar #1</span>
+                </div>
+
+                <h3 class="text-lg font-extrabold text-slate-900">Best Homemade Sourdough Bread Recipe</h3>
+
+                <!-- Injected H1 Button -->
+                <div class="flex items-center gap-2">
+                  <button class="px-3 py-1.5 rounded-full text-xs font-bold text-white bg-gradient-to-r from-emerald-500 to-indigo-600 shadow">
+                    ✨ Jump to Recipe ↓
+                  </button>
+                  <span class="text-[11px] font-mono text-red-600 font-bold">← Injected under &lt;h1&gt; (#2)</span>
+                </div>
+
+                <p class="text-xs text-slate-500 leading-relaxed">
+                  Every time the user browsed a normal website, Deepblock injected floating buttons and bottom-right toast popups bragging about blocking cookies...
+                </p>
+
+                <!-- Injected Cookie Whisper Toast (#3) -->
+                <div class="absolute bottom-3 right-3 bg-slate-900 text-slate-100 border border-emerald-500/50 rounded-full px-3.5 py-1.5 text-xs font-bold shadow-xl flex items-center gap-2">
+                  <span>🍪 Cookie pop-up declined</span>
+                  <span class="text-[10px] font-mono text-red-400">(Toast #3)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="callout-before rounded-xl p-3 text-xs mt-5">
+            <strong>Irony Violation Fixed:</strong> An adblocker and pop-up closer must never become a pop-up itself. We removed `#deepblockCookieWhisper`, `#deepblockPureViewBtn`, and `#deepblockSlopNotice` so safe sites are 100% untouched.
+          </div>
+        </div>
+
+        <!-- RIGHT: AFTER IN-PAGE OVERLAYS -->
+        <div class="rounded-3xl border border-emerald-500/40 bg-slate-900/40 p-6 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">✅ AFTER (Silent Safe Sites + High-Trust Scam Modal)</span>
+              <span class="text-xs font-mono text-emerald-400">Shadow-DOM Isolated</span>
+            </div>
+
+            <!-- Simulated Browser Viewport (After) -->
+            <div class="rounded-2xl border border-emerald-500/30 bg-slate-950 overflow-hidden shadow-xl relative min-h-[380px] flex flex-col">
+              <div class="bg-slate-900 px-3 py-2 border-b border-slate-800 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-red-500/60"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-amber-500/60"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-emerald-500/60"></span>
+                  <span class="ml-2 text-[11px] font-mono text-red-300 bg-red-950/60 px-3 py-0.5 rounded-md border border-red-500/30">https://luxury-outlet-85off-clearance.shop</span>
+                </div>
+                <span class="text-[10px] font-bold text-emerald-400">Safe Sites = 0 Popups</span>
+              </div>
+
+              <!-- Centered High-Trust Shadow-DOM Interstitial -->
+              <div class="flex-1 bg-slate-950/90 backdrop-blur-md p-5 flex items-center justify-center">
+                <div class="w-full max-w-md rounded-2xl bg-slate-900 border border-red-500/40 p-5 shadow-2xl">
+                  <div class="flex items-center gap-3 mb-3">
+                    <div class="w-10 h-10 rounded-xl bg-red-500/15 border border-red-500/40 flex items-center justify-center text-lg shrink-0">⚠️</div>
+                    <div>
+                      <span class="text-[9px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full bg-red-500/20 text-red-300">SWEEPR Fake Shop Shield</span>
+                      <h4 class="text-sm font-black text-white mt-0.5">Hold on — This store shows scam signals</h4>
+                    </div>
+                  </div>
+
+                  <ul class="space-y-1.5 bg-slate-950/90 border border-slate-800 rounded-xl p-3 text-[11px] text-slate-200 mb-4">
+                    <li class="flex items-start gap-2"><span class="text-red-400 font-bold">•</span> <span>Extreme site-wide clearance claims (80–90% off everything)</span></li>
+                    <li class="flex items-start gap-2"><span class="text-red-400 font-bold">•</span> <span>Asks for irreversible payment (wire transfer, crypto, or cash app)</span></li>
+                    <li class="flex items-start gap-2"><span class="text-red-400 font-bold">•</span> <span>High-risk novelty domain extension (<code class="text-red-300">.shop</code>)</span></li>
+                  </ul>
+
+                  <button class="w-full py-2.5 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs shadow-lg shadow-emerald-500/20 transition">
+                    ← Take Me Back to Safety
+                  </button>
+                  <button class="w-full mt-2 py-1 text-center text-[11px] font-semibold text-slate-400 hover:text-slate-200 underline">
+                    Proceed anyway (Trust luxury-outlet-85off-clearance.shop)
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="callout-after rounded-xl p-3 text-xs mt-5">
+            <strong>High-Trust, Zero-Panic Protection:</strong> Safe sites have zero injected UI. Suspected scam stores render an isolated Shadow-DOM modal with plain-English bullets, a giant <code class="text-white">← Take Me Back to Safety</code> button, and a permanent domain trust link.
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- SURFACE 3: MOBILE iOS SAFARI BOTTOM SHEET (PRE VS POST)             -->
+    <!-- =================================================================== -->
+    <section id="surface-3" class="scroll-mt-20 space-y-6">
+      <div class="flex flex-wrap items-end justify-between gap-4 border-b border-slate-800 pb-4">
+        <div>
+          <span class="text-xs font-extrabold uppercase tracking-widest text-emerald-400">Surface 03 • Mobile iOS Safari Extension Bottom Sheet</span>
+          <h2 class="text-2xl font-black text-white mt-1">Before (Top-Heavy Desktop Squish) vs. After (44×44pt Thumb-Zone Ergonomics)</h2>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+
+        <!-- LEFT: BEFORE MOBILE SHEET -->
+        <div class="rounded-3xl border border-red-500/30 bg-slate-900/40 p-6 flex flex-col items-center">
+          <div class="w-full flex items-center justify-between mb-4">
+            <span class="px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-red-500/15 text-red-400 border border-red-500/30">❌ BEFORE (Hard-to-Reach Top Controls)</span>
+            <span class="text-xs font-mono text-red-400">28px Tap Targets</span>
+          </div>
+
+          <div class="mobile-sheet-frame shadow-2xl relative">
+            <div class="p-4 text-center text-xs text-slate-400 flex-1 flex flex-col justify-center items-center bg-slate-950/60">
+              <div class="px-3 py-1.5 rounded-full bg-red-500/15 border border-red-500/30 text-red-300 text-[11px] font-bold mb-2">
+                ⚠️ Primary toggles stuck at top of sheet
+              </div>
+              <p class="text-[11px] text-slate-500 max-w-[240px]">User has to stretch thumb to the top of the sheet to switch between 3 tiny 28px tabs.</p>
+            </div>
+
+            <div class="bg-[#0B0F19] border-t border-slate-700 rounded-t-3xl p-4 space-y-2.5">
+              <div class="w-10 h-1 bg-slate-700 rounded-full mx-auto mb-1"></div>
+              <!-- Small toggle at top -->
+              <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+                <span class="text-xs font-extrabold">SWEEPR Deepblock</span>
+                <button class="px-2 py-0.5 rounded-full text-[10px] bg-emerald-500/20 text-emerald-300">● Active</button>
+              </div>
+              <!-- 3 tiny tabs -->
+              <div class="grid grid-cols-3 gap-1 bg-slate-900 p-1 rounded-lg text-[10px] text-center font-bold">
+                <div class="bg-emerald-500/20 text-emerald-300 py-1 rounded">🛡️ Shield</div>
+                <div class="text-slate-400 py-1">🛒 Shop</div>
+                <div class="text-slate-400 py-1">⚡ RAM</div>
+              </div>
+              <div class="space-y-1.5 text-[11px]">
+                <div class="p-2 rounded bg-slate-900 flex justify-between"><span>🛡️ Ad &amp; Tracker Shield</span><span class="text-emerald-400">ON</span></div>
+                <div class="p-2 rounded bg-slate-900 flex justify-between"><span>🍪 Cookie Whisperer</span><span class="text-emerald-400">ON</span></div>
+                <div class="p-2 rounded bg-slate-900 flex justify-between"><span>📖 PureView Reader</span><span class="text-emerald-400">ON</span></div>
+              </div>
+              <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-800 flex justify-between items-center">
+                <span class="text-[10px] text-slate-400">Manual License Key Input at Bottom</span>
+                <span class="text-[10px] text-red-400 font-bold">Keyboard Overlaps!</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: AFTER MOBILE SHEET -->
+        <div class="rounded-3xl border border-emerald-500/40 bg-slate-900/40 p-6 flex flex-col items-center">
+          <div class="w-full flex items-center justify-between mb-4">
+            <span class="px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">✅ AFTER (Bottom Thumb-Zone Ergonomics)</span>
+            <span class="text-xs font-mono text-emerald-400">44×44pt Tap Targets</span>
+          </div>
+
+          <div class="mobile-sheet-frame shadow-2xl relative">
+            <div class="p-4 text-center text-xs text-slate-400 flex-1 flex flex-col justify-center items-center bg-slate-950/60">
+              <div class="px-3 py-1.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-[11px] font-bold mb-2">
+                👍 All primary actions in lower thumb zone
+              </div>
+              <p class="text-[11px] text-slate-400 max-w-[250px]">Opened via iOS Safari puzzle icon • Status cards on top, 44pt interactive buttons at the bottom.</p>
+            </div>
+
+            <div class="bg-[#0B0F19] border-t border-emerald-500/40 rounded-t-3xl p-4 space-y-3">
+              <div class="w-10 h-1.5 bg-slate-700 rounded-full mx-auto"></div>
+
+              <!-- Read-only status at top of sheet -->
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-extrabold text-white">SWEEPR Shield</span>
+                <span class="mono text-[11px] text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/30">amazon.co.uk • Safe</span>
+              </div>
+
+              <div class="rounded-xl bg-emerald-950/30 border border-emerald-500/30 p-2.5 flex items-center justify-between text-xs">
+                <span>✅ <strong>Verified Store</strong> • 14 trackers blocked</span>
+                <span class="text-emerald-400 font-bold">420 MB Free</span>
+              </div>
+
+              <!-- 44pt Thumb-Zone Primary Controls at Bottom -->
+              <div class="rounded-2xl bg-slate-900 border border-slate-800 p-3 flex items-center justify-between">
+                <div>
+                  <div class="text-xs font-extrabold text-white">Site Protection Active</div>
+                  <div class="text-[10px] text-slate-400">One-tap toggle or 5m fix</div>
+                </div>
+                <div class="flex items-center gap-2">
+                  <button class="min-h-[44px] px-3 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs font-extrabold">
+                    🔧 Pause 5m
+                  </button>
+                  <div class="w-12 h-7 rounded-full bg-emerald-500 p-1 flex items-center justify-end">
+                    <span class="w-5 h-5 rounded-full bg-white"></span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-2 pb-1">
+                <button class="min-h-[44px] rounded-xl bg-emerald-500 text-slate-950 font-extrabold text-xs">
+                  ⚡ Free Up RAM
+                </button>
+                <button class="min-h-[44px] rounded-xl bg-slate-800 border border-slate-700 text-slate-200 font-bold text-xs">
+                  📌 Keep Awake
                 </button>
               </div>
             </div>
           </div>
         </div>
+
       </div>
     </section>
 
-    <!-- SECTION 2: Post-Install Onboarding & Zero-Copy £1.99 + £14.99 Order Bump Dashboard -->
-    <section id="onboardingSection" class="pt-4">
-      <div class="mb-3">
-        <span class="inline-block px-3 py-1 rounded-full text-[11px] font-extrabold uppercase tracking-wider bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
-          Full-Tab Post-Install Onboarding &amp; Zero-Copy Checkout Handshake (welcome.html)
-        </span>
+    <!-- =================================================================== -->
+    <!-- SURFACE 4: ONBOARDING & ZERO-COPY STRIPE HANDSHAKE (PRE VS POST)    -->
+    <!-- =================================================================== -->
+    <section id="surface-4" class="scroll-mt-20 space-y-6">
+      <div class="flex flex-wrap items-end justify-between gap-4 border-b border-slate-800 pb-4">
+        <div>
+          <span class="text-xs font-extrabold uppercase tracking-widest text-emerald-400">Surface 04 • Post-Install Onboarding, Cloud Session Recovery &amp; Stripe Pro Unlock</span>
+          <h2 class="text-2xl font-black text-white mt-1">Before (4-Step Manual License Key Copy-Paste) vs. After (0-Click Auto-Unlock + Full-Tab Hub)</h2>
+        </div>
       </div>
 
-      <div class="bg-white text-slate-900 rounded-3xl border border-emerald-200 p-6 sm:p-10 shadow-2xl space-y-8">
-        <div class="text-center max-w-2xl mx-auto space-y-3">
-          <span class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-emerald-100 text-emerald-800 border border-emerald-300">
-            🎉 Extension Installed · Auto-Sync Active
-          </span>
-          <h2 class="text-2xl sm:text-4xl font-black tracking-tight text-slate-900">
-            Zero Ads. Zero Cookie Pop-Ups. <span class="text-emerald-600">Zero Setup.</span>
-          </h2>
-          <p class="text-sm text-slate-600">
-            No complex filter lists to configure and <strong>no license key copy-pasting required</strong>. Complete your £1.99 intro unlock below and your browser extension activates automatically in 1 second.
-          </p>
-        </div>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
-        <!-- Integrated £1.99 1st-Month + £14.99 RAM Tamer Order Bump Card -->
-        <div class="max-w-xl mx-auto rounded-2xl border-2 border-emerald-500 bg-emerald-50/40 p-6 space-y-4 shadow-md">
+        <!-- LEFT: BEFORE HANDSHAKE -->
+        <div class="rounded-3xl border border-red-500/30 bg-slate-900/40 p-6 space-y-4">
           <div class="flex items-center justify-between">
-            <div>
-              <div class="text-xs font-extrabold uppercase tracking-wider text-emerald-700">Special Introductory Unlock</div>
-              <div class="text-xl font-black text-slate-900">SWEEPR Deepblock Pro (Up to 5 Devices)</div>
-            </div>
-            <div class="text-right">
-              <div class="text-2xl font-black text-emerald-600">£1.99</div>
-              <div class="text-[11px] text-slate-500">1st month, then £9.99/mo</div>
-            </div>
+            <span class="px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-red-500/15 text-red-400 border border-red-500/30">❌ BEFORE (Broken `/checkout/success` Bridge)</span>
+            <span class="text-xs font-mono text-red-400">4 Manual Steps</span>
           </div>
 
-          <!-- Optional £14.99/yr Total Tab & RAM Tamer Add-On Bump -->
-          <label class="flex items-start gap-3 p-3.5 rounded-xl bg-white border border-emerald-300 cursor-pointer select-none">
-            <input type="checkbox" id="protoRamBump" checked class="mt-1 w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500" />
-            <div class="text-xs leading-relaxed">
-              <div class="font-extrabold text-slate-900">
-                ⚡ Include Total Tab &amp; RAM Tamer Add-On (+£1.99/mo or £14.99/yr)
-              </div>
-              <div class="text-slate-600">
-                Automatically snooze inactive background tabs, reclaim up to 5.9 GB of browser memory, and save automatic Cloud Tab Recovery snapshots.
-              </div>
-            </div>
-          </label>
-
-          <a href="/order?discount=intro&addon=ram_tamer" class="block w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-black text-center text-sm shadow-lg">
-            Unlock Pro Protection Now — £1.99 &rarr;
-          </a>
-
-          <div class="text-center text-[11px] text-slate-500">
-            ✓ Instant automatic extension handshake on checkout success · ✓ 14-Day Money-Back Guarantee · ✓ 1-Click Cancel
+          <div class="rounded-2xl bg-slate-950 border border-slate-800 p-5 space-y-3">
+            <div class="text-xs font-bold text-red-400 uppercase tracking-wider">Why users got stuck after paying £1.99:</div>
+            <ol class="space-y-2.5 text-xs text-slate-300 list-decimal list-inside">
+              <li>User paid £1.99 on Stripe and landed on <code class="text-amber-300">/checkout/success</code>, which rendered the license key inside <code class="text-amber-300">#licenseKeyText</code>.</li>
+              <li>However, <code class="text-red-300">deepblock-content.js</code> only looked for <code class="text-red-300">#portalLicenseKey</code> (which only existed on <code class="text-slate-400">/login</code>), so <strong>nothing unlocked automatically on the receipt page</strong>.</li>
+              <li>User had to manually highlight and copy <code class="text-slate-300">DBPRO-XXXX-XXXX</code>, click the tiny browser extension icon, click <em>"Have a Pro license key?"</em>, and paste it.</li>
+              <li>Cloud Session Backup was crammed into a 105px scrolling box inside Popup Tab 3 instead of a full-tab recovery screen.</li>
+            </ol>
           </div>
         </div>
+
+        <!-- RIGHT: AFTER HANDSHAKE -->
+        <div class="rounded-3xl border border-emerald-500/40 bg-slate-900/40 p-6 space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">✅ AFTER (Zero-Copy Instant Unlock + Full-Tab Hub)</span>
+            <span class="text-xs font-mono text-emerald-400">0 Manual Clicks</span>
+          </div>
+
+          <div class="rounded-2xl bg-slate-950 border border-emerald-500/30 p-5 space-y-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <span class="text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">Live on /checkout/success</span>
+                <h4 class="text-base font-black text-white mt-1">✓ Browser Extension Automatically Unlocked &amp; Active</h4>
+              </div>
+              <span class="text-2xl">🎉</span>
+            </div>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              The instant Stripe redirects to <code class="text-emerald-300">/checkout/success</code>, <code class="text-emerald-300">server.js</code> writes <code class="text-emerald-300">sweepr_license_key</code> and dispatches <code class="text-emerald-300">SWEEPR_AUTO_ACTIVATE</code>. <code class="text-emerald-300">deepblock-content.js</code> reads <code class="text-emerald-300">#licenseKeyText</code>, verifies with <code class="text-emerald-300">background.js</code>, and unlocks Pro + Tab &amp; RAM Tamer with zero copy-pasting.
+            </p>
+            <div class="grid grid-cols-2 gap-3 pt-1">
+              <div class="p-3 rounded-xl bg-slate-900 border border-slate-800">
+                <div class="text-xs font-extrabold text-white">☁️ Full-Tab Cloud Recovery</div>
+                <div class="text-[11px] text-slate-400 mt-0.5">Moved out of the 360px popup into <code class="text-emerald-300">welcome.html</code> with 1-click full window restore.</div>
+              </div>
+              <div class="p-3 rounded-xl bg-slate-900 border border-slate-800">
+                <div class="text-xs font-extrabold text-white">📱 iOS Safari Setup Card</div>
+                <div class="text-[11px] text-slate-400 mt-0.5">Added step-by-step <code class="text-emerald-300">Settings → Safari → Extensions</code> activation guide.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </section>
+
   </main>
 
   <script>
-    let shieldOn = true;
-    let keepAwake = false;
+    let afterShieldActive = true;
+    let afterPauseCountdown = null;
+    let afterKeepAwake = false;
 
-    function setPrototypeState(mode) {
-      ['safe', 'scam', 'paused', 'free'].forEach((m) => {
-        const btn = document.getElementById('stateBtn-' + m);
-        if (m === mode) {
-          btn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-500 text-slate-950 cursor-pointer';
+    function switchBeforeTab(tab) {
+      const tabs = ['shield', 'shop', 'ram'];
+      tabs.forEach(t => {
+        const panel = document.getElementById('beforePanel' + t.charAt(0).toUpperCase() + t.slice(1));
+        const btn = document.getElementById('beforeTabBtn' + t.charAt(0).toUpperCase() + t.slice(1));
+        if (t === tab) {
+          panel.classList.remove('hidden');
+          btn.className = 'py-1.5 rounded-lg text-[11px] font-bold bg-emerald-500/15 text-emerald-400';
         } else {
-          btn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold text-slate-300 hover:bg-slate-800 cursor-pointer';
+          panel.classList.add('hidden');
+          btn.className = 'py-1.5 rounded-lg text-[11px] font-bold text-slate-400 hover:text-white';
         }
       });
+    }
 
-      const domainEl = document.getElementById('popupDomain');
-      const statusEl = document.getElementById('popupSiteStatus');
-      const switchEl = document.getElementById('popupMainSwitch');
-      const siteCard = document.getElementById('popupSiteCard');
-      const storeCard = document.getElementById('popupStoreCard');
-      const storeIcon = document.getElementById('storeBadgeIcon');
-      const storeTitle = document.getElementById('storeBadgeTitle');
-      const storeSub = document.getElementById('storeBadgeSub');
-      const storeTag = document.getElementById('storeStatusTag');
-      const tierPill = document.getElementById('popupTierPill');
-      const upgradeBanner = document.getElementById('popupUpgradeBanner');
-      const pauseLabel = document.getElementById('pause5mLabel');
-
-      upgradeBanner.classList.add('hidden');
-      tierPill.textContent = 'Pro Active';
-      tierPill.className = 'px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-emerald-900 text-emerald-50 border border-emerald-500';
-      pauseLabel.textContent = 'Pause 5m (Fix Page)';
-
-      if (mode === 'safe') {
-        shieldOn = true;
-        domainEl.textContent = 'youtube.com';
-        statusEl.textContent = 'Site Shield ON · Ads & Cookie Pop-Ups Blocked';
-        statusEl.className = 'text-[11px] font-semibold text-emerald-600';
-        switchEl.className = 'switch-track shrink-0';
-        siteCard.className = 'rounded-xl border border-emerald-500/25 bg-emerald-50/40 p-3 space-y-2 transition-all';
-        storeCard.className = 'rounded-xl border border-slate-200 bg-slate-50/80 p-2.5 space-y-2';
-        storeIcon.textContent = '🛡️';
-        storeTitle.textContent = 'Store & Domain Check: Verified Safe';
-        storeSub.textContent = '0 fake urgency timers or phishing signals on this page';
-        storeTag.textContent = 'SAFE';
-        storeTag.className = 'px-2 py-0.5 rounded-full text-[9.5px] font-extrabold bg-emerald-100 text-emerald-800';
-      } else if (mode === 'scam') {
-        shieldOn = true;
-        domainEl.textContent = 'luxury-clearance-uk.shop';
-        statusEl.textContent = '⚠️ High-Risk Storefront · Warning Displayed';
-        statusEl.className = 'text-[11px] font-bold text-amber-700';
-        switchEl.className = 'switch-track shrink-0';
-        siteCard.className = 'rounded-xl border border-amber-400 bg-amber-50/60 p-3 space-y-2 transition-all';
-        storeCard.className = 'rounded-xl border-2 border-amber-400 bg-amber-50 p-2.5 space-y-2';
-        storeIcon.textContent = '⚠️';
-        storeTitle.textContent = 'Suspicious Store: 3 Scam Signals Found';
-        storeSub.textContent = 'Fake countdown timer + missing company registration';
-        storeTag.textContent = 'RISK';
-        storeTag.className = 'px-2 py-0.5 rounded-full text-[9.5px] font-extrabold bg-amber-200 text-amber-950';
-      } else if (mode === 'paused') {
-        shieldOn = false;
-        domainEl.textContent = 'checkout.example.co.uk';
-        statusEl.textContent = 'Paused for 4m 52s · Auto-resumes protection';
-        statusEl.className = 'text-[11px] font-semibold text-amber-600';
-        switchEl.className = 'switch-track off shrink-0';
-        siteCard.className = 'rounded-xl border border-amber-300 bg-amber-50/40 p-3 space-y-2 transition-all';
-        pauseLabel.textContent = 'Resume Now';
-      } else if (mode === 'free') {
-        shieldOn = false;
-        tierPill.textContent = 'Free Preview';
-        tierPill.className = 'px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-amber-100 text-amber-900 border border-amber-300';
-        domainEl.textContent = 'youtube.com';
-        statusEl.textContent = '3 Ads & 1 Cookie Banner detected on this page';
-        statusEl.className = 'text-[11px] font-semibold text-amber-700';
-        switchEl.className = 'switch-track off shrink-0';
-        upgradeBanner.classList.remove('hidden');
+    function toggleAfterShield() {
+      afterShieldActive = !afterShieldActive;
+      const dot = document.getElementById('afterDot');
+      const title = document.getElementById('afterShieldTitle');
+      const sub = document.getElementById('afterShieldSub');
+      const sw = document.getElementById('afterSwitch');
+      if (afterShieldActive) {
+        dot.className = 'w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#10b981]';
+        title.textContent = 'Site Shield: ON';
+        sub.textContent = 'Ads, video sponsors & cookie popups silenced';
+        sw.className = 'w-10 h-6 rounded-full bg-emerald-500 p-0.5 transition flex items-center justify-end';
+      } else {
+        dot.className = 'w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_8px_#f59e0b]';
+        title.textContent = 'Paused on this site';
+        sub.textContent = 'Protection disabled for current domain';
+        sw.className = 'w-10 h-6 rounded-full bg-slate-700 p-0.5 transition flex items-center justify-start';
       }
     }
 
-    function toggleSiteShield() {
-      shieldOn = !shieldOn;
-      setPrototypeState(shieldOn ? 'safe' : 'paused');
+    function triggerAfterPause5m() {
+      const btn = document.getElementById('afterPauseBtn');
+      const dot = document.getElementById('afterDot');
+      const title = document.getElementById('afterShieldTitle');
+      const sub = document.getElementById('afterShieldSub');
+      if (afterPauseCountdown) {
+        clearInterval(afterPauseCountdown);
+        afterPauseCountdown = null;
+        afterShieldActive = false;
+        toggleAfterShield();
+        btn.textContent = '🔧 Pause 5m';
+        return;
+      }
+      let remaining = 300;
+      dot.className = 'w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_8px_#f59e0b]';
+      title.textContent = 'Paused for 5m (Fixing Page)';
+      sub.textContent = 'Auto-resumes via MV3 alarm so you stay protected';
+      btn.textContent = 'Resume (4:59)';
+      afterPauseCountdown = setInterval(() => {
+        remaining--;
+        const m = Math.floor(remaining / 60);
+        const s = String(remaining % 60).padStart(2, '0');
+        btn.textContent = `Resume (${m}:${s})`;
+      }, 1000);
     }
 
-    function triggerFiveMinPause() {
-      setPrototypeState('paused');
+    function setStoreScenario(mode) {
+      const card = document.getElementById('afterStoreCard');
+      const icon = document.getElementById('afterStoreIcon');
+      const title = document.getElementById('afterStoreTitle');
+      const badge = document.getElementById('afterStoreBadge');
+      const desc = document.getElementById('afterStoreDesc');
+      const host = document.getElementById('afterHostLabel');
+      const btnSafe = document.getElementById('btnScenarioSafe');
+      const btnScam = document.getElementById('btnScenarioScam');
+
+      if (mode === 'scam') {
+        host.textContent = 'lux-outlet-85off.shop';
+        card.className = 'rounded-2xl bg-red-950/40 border border-red-500/40 p-3 transition-all';
+        icon.className = 'w-7 h-7 rounded-lg bg-red-500/20 border border-red-500/40 flex items-center justify-center text-xs shrink-0';
+        icon.textContent = '⚠️';
+        title.className = 'text-xs font-extrabold text-red-300';
+        title.textContent = 'High Scam Risk Detected';
+        badge.className = 'text-[9px] font-bold uppercase px-1.5 py-0.5 rounded bg-red-500/20 text-red-300';
+        badge.textContent = '3 Risk Signals';
+        desc.textContent = 'Brand-new .shop domain with 85% site-wide clearance & unverified checkout.';
+        btnScam.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-red-500/20 text-red-300 border border-red-500/40';
+        btnSafe.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-900 text-slate-400 border border-slate-800 hover:text-white';
+      } else {
+        host.textContent = 'amazon.co.uk';
+        card.className = 'rounded-2xl bg-emerald-950/30 border border-emerald-500/30 p-3 transition-all';
+        icon.className = 'w-7 h-7 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-xs shrink-0';
+        icon.textContent = '✅';
+        title.className = 'text-xs font-extrabold text-emerald-300';
+        title.textContent = 'Verified Authentic Store';
+        badge.className = 'text-[9px] font-bold uppercase px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300';
+        badge.textContent = 'Safe Domain';
+        desc.textContent = 'Encrypted checkout verified. Zero fake urgency timers or scam signals found.';
+        btnSafe.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40';
+        btnScam.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-900 text-slate-400 border border-slate-800 hover:text-white';
+      }
     }
 
-    function snoozeTabsDemo() {
-      const btn = document.getElementById('snoozeBtn');
-      const badge = document.getElementById('ramSavedBadge');
-      const bar = document.getElementById('ramBar');
-      btn.textContent = '✓ 6 Tabs Snoozed!';
-      badge.textContent = '2.3 GB Saved · 15 Sleeping';
-      bar.style.width = '18%';
+    function snoozeAfterTabs() {
+      document.getElementById('afterRamStat').textContent = '870 MB';
+      document.getElementById('afterRamDesc').textContent = '✓ 6 background tabs snoozed (+450 MB freed)';
+      const btn = document.getElementById('afterSnoozeBtn');
+      btn.textContent = '✓ RAM Freed!';
+      setTimeout(() => { btn.textContent = '⚡ Free Up RAM Now'; }, 2200);
     }
 
-    function toggleKeepAwake() {
-      keepAwake = !keepAwake;
-      const btn = document.getElementById('keepAwakeBtn');
-      btn.textContent = keepAwake ? '✓ Kept Awake' : '📌 Keep Site Awake';
-      btn.className = keepAwake
-        ? 'py-1.5 px-2 rounded-lg bg-emerald-100 text-emerald-900 font-extrabold text-[10.5px] border border-emerald-300 cursor-pointer'
-        : 'py-1.5 px-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[10.5px] border border-slate-200 cursor-pointer';
+    function toggleKeepAwakeAfter() {
+      afterKeepAwake = !afterKeepAwake;
+      const btn = document.getElementById('afterKeepAwakeBtn');
+      if (afterKeepAwake) {
+        btn.textContent = '📌 Kept Awake ✓';
+        btn.className = 'py-1.5 px-2 rounded-lg text-[10px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 transition';
+      } else {
+        btn.textContent = '📌 Keep Site Awake';
+        btn.className = 'py-1.5 px-2 rounded-lg text-[10px] font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition';
+      }
     }
   </script>
 </body>
