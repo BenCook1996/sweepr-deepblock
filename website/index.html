@@ -392,8 +392,8 @@
           </div>
 
           <!-- BEFORE LAYER (Clipped by Slider Percentage — WITHOUT DEEPBLOCK) -->
-          <div id="heroBeforeClip" style="width: 46%;" class="absolute inset-y-0 left-0 overflow-hidden bg-gradient-to-br from-rose-950 via-slate-900 to-rose-950/90">
-            <div id="heroBeforeInner" class="w-[520px] max-w-none h-full p-4 sm:p-5 flex flex-col justify-between">
+          <div id="heroBeforeClip" style="width: 100%; clip-path: inset(0 54% 0 0);" class="absolute inset-0 overflow-hidden bg-gradient-to-br from-rose-950 via-slate-900 to-rose-950/90">
+            <div id="heroBeforeInner" class="w-full h-full p-4 sm:p-5 flex flex-col justify-between">
               <div class="flex items-center justify-between">
                 <span class="px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider bg-rose-600 text-white shadow-xs">✗ WITHOUT DEEPBLOCK</span>
               </div>
@@ -417,7 +417,7 @@
 
           <!-- Vertical Divider Line & Center Drag Handle (< | >) -->
           <div id="heroSliderHandle" style="left: 46%;" class="absolute inset-y-0 w-0.5 bg-emerald-400 shadow-[0_0_12px_rgba(16,185,129,0.9)] pointer-events-none">
-            <div class="w-9 h-9 rounded-full bg-emerald-500 text-slate-950 font-black text-xs flex items-center justify-center shadow-xl border-2 border-white absolute top-1/2 -translate-x-1/2 -translate-y-1/2">
+            <div id="heroSliderThumb" class="w-9 h-9 rounded-full bg-emerald-500 text-slate-950 font-black text-xs flex items-center justify-center shadow-xl border-2 border-white absolute top-1/2 -translate-x-1/2 -translate-y-1/2 transition-transform duration-100">
               &lsaquo;&thinsp;&rsaquo;
             </div>
           </div>
@@ -440,31 +440,47 @@
       const clip = document.getElementById('heroBeforeClip');
       const handle = document.getElementById('heroSliderHandle');
       const range = document.getElementById('heroCompareRange');
-      const stage = document.getElementById('heroSliderStage');
-      const inner = document.getElementById('heroBeforeInner');
-      if (stage && inner) inner.style.width = stage.clientWidth + 'px';
-      if (clip) clip.style.width = val + '%';
+      if (clip) clip.style.clipPath = 'inset(0 ' + (100 - val).toFixed(2) + '% 0 0)';
       if (handle) handle.style.left = val + '%';
       if (range && Number(range.value) !== val) range.value = val;
     }
     (function initHeroSliderDrag() {
       const stage = document.getElementById('heroSliderStage');
+      const thumb = document.getElementById('heroSliderThumb');
       if (!stage) return;
       let dragging = false;
+      let userTouched = false;
       const updateFromEvent = (e) => {
         const rect = stage.getBoundingClientRect();
         const clientX = e.touches && e.touches[0] ? e.touches[0].clientX : e.clientX;
         const pct = ((clientX - rect.left) / Math.max(1, rect.width)) * 100;
         setHeroSlider(pct);
       };
-      stage.addEventListener('pointerdown', (e) => { dragging = true; updateFromEvent(e); });
-      window.addEventListener('pointermove', (e) => { if (dragging) updateFromEvent(e); });
-      window.addEventListener('pointerup', () => { dragging = false; });
-      window.addEventListener('resize', () => {
-        const range = document.getElementById('heroCompareRange');
-        setHeroSlider(range ? range.value : 46);
+      stage.addEventListener('pointerdown', (e) => {
+        dragging = true;
+        userTouched = true;
+        if (thumb) thumb.style.transform = 'translate(-50%, -50%) scale(1.06)';
+        updateFromEvent(e);
       });
-      setTimeout(() => setHeroSlider(46), 0);
+      window.addEventListener('pointermove', (e) => { if (dragging) updateFromEvent(e); });
+      window.addEventListener('pointerup', () => {
+        dragging = false;
+        if (thumb) thumb.style.transform = '';
+      });
+      setTimeout(() => {
+        setHeroSlider(46);
+        if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        const start = performance.now();
+        const dur = 400;
+        function nudge(now) {
+          if (userTouched) return;
+          const t = Math.min(1, (now - start) / dur);
+          const wave = Math.sin(t * Math.PI);
+          setHeroSlider(46 - wave * 6);
+          if (t < 1) requestAnimationFrame(nudge);
+        }
+        setTimeout(() => requestAnimationFrame(nudge), 220);
+      }, 0);
     })();
   </script>
 
@@ -548,25 +564,25 @@
           </div>
         </div>
 
-        <div class="w-full lg:w-[380px] bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-5 sm:p-6 text-left">
+        <div id="ramSpeedometerCard" onclick="replayRamSpeedometer()" title="Click to replay RAM drop" class="w-full lg:w-[380px] bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-5 sm:p-6 text-left cursor-pointer">
           <div class="flex items-center justify-between mb-4">
             <span class="text-xs uppercase font-bold tracking-wider text-gray-400">Live Speedometer Preview</span>
-            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300">RECLAIMED 5.9 GB</span>
+            <span id="ramReclaimedBadge" class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300 tabular-nums">RECLAIMED 5.9 GB</span>
           </div>
           <div class="space-y-4">
             <div>
               <div class="flex justify-between text-xs mb-1">
                 <span class="text-gray-400">Before (45 Open Tabs)</span>
-                <span class="text-red-400 font-bold">7.1 GB RAM (Fan High)</span>
+                <span class="text-red-400 font-bold tabular-nums">7.1 GB RAM (Fan High)</span>
               </div>
-              <div class="h-2.5 bg-gray-800 rounded-full overflow-hidden"><div class="h-full bg-red-500 w-[88%]"></div></div>
+              <div class="h-2.5 bg-gray-800 rounded-full overflow-hidden"><div class="h-full bg-red-500 w-full ram-gauge-fill" style="transform: scaleX(0.88);"></div></div>
             </div>
             <div>
               <div class="flex justify-between text-xs mb-1">
                 <span class="text-gray-300 font-semibold">After Tab &amp; RAM Tamer</span>
-                <span class="text-emerald-400 font-bold">1.2 GB RAM (83% Saved)</span>
+                <span id="ramAfterVal" class="text-emerald-400 font-bold tabular-nums">1.2 GB RAM (83% Saved)</span>
               </div>
-              <div class="h-2.5 bg-gray-800 rounded-full overflow-hidden"><div class="h-full bg-emerald-400 w-[18%]"></div></div>
+              <div class="h-2.5 bg-gray-800 rounded-full overflow-hidden"><div id="ramAfterBar" class="h-full bg-emerald-400 w-full ram-gauge-fill" style="transform: scaleX(0.18);"></div></div>
             </div>
           </div>
           <div class="mt-5 pt-4 border-t border-white/10 text-xs text-gray-300 flex items-center justify-between">
@@ -574,6 +590,36 @@
             <span class="text-emerald-400 font-bold">45 Tabs Synced &amp; Safe</span>
           </div>
         </div>
+        <script>
+          function replayRamSpeedometer() {
+            const bar = document.getElementById('ramAfterBar');
+            const val = document.getElementById('ramAfterVal');
+            const badge = document.getElementById('ramReclaimedBadge');
+            if (!bar || !val) return;
+            if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+            bar.style.transition = 'none';
+            bar.style.transform = 'scaleX(0.88)';
+            val.textContent = '7.1 GB RAM (0% Saved)';
+            if (badge) badge.textContent = 'RECLAIMED 0.0 GB';
+            void bar.offsetWidth;
+            bar.style.transition = 'transform 180ms cubic-bezier(0.16, 1, 0.3, 1)';
+            bar.style.transform = 'scaleX(0.18)';
+            const start = performance.now();
+            const dur = 180;
+            function step(now) {
+              const t = Math.min(1, (now - start) / dur);
+              const ease = 1 - Math.pow(1 - t, 3);
+              const gb = (7.1 - 5.9 * ease).toFixed(1);
+              const saved = Math.round(83 * ease);
+              const rec = (5.9 * ease).toFixed(1);
+              val.textContent = gb + ' GB RAM (' + saved + '% Saved)';
+              if (badge) badge.textContent = 'RECLAIMED ' + rec + ' GB';
+              if (t < 1) requestAnimationFrame(step);
+            }
+            requestAnimationFrame(step);
+          }
+          window.addEventListener('DOMContentLoaded', () => setTimeout(replayRamSpeedometer, 260));
+        </script>
       </div>
     </div>
   </section>

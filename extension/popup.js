@@ -173,7 +173,8 @@ document.addEventListener('DOMContentLoaded', () => {
         : savedGb > 0
         ? `⚡ ${savedGb} GB Saved · ${discardedCount} Sleeping`
         : `${totalTabs} Tabs Open`;
-      ramBarFillEl.style.width = isPro ? `${Math.min(85, Math.max(18, totalTabs * 4))}%` : '0%';
+      const scaleRatio = isPro ? Math.min(0.85, Math.max(0.18, (totalTabs * 4) / 100)) : 0;
+      ramBarFillEl.style.transform = `scaleX(${scaleRatio.toFixed(2)})`;
       const autoOn = !state.settings || state.settings.autoRamTamer !== false;
       if (autoRamToggleBtn) {
         if (!isPro) {
@@ -332,7 +333,16 @@ document.addEventListener('DOMContentLoaded', () => {
         reclaimRamBtn.textContent =
           count > 0 ? `✓ ${count} Tabs Snoozed` : '✓ Already Fast';
         ramHeadlineEl.textContent = `⚡ ${savedGb} GB Saved`;
-        ramBarFillEl.style.width = '18%';
+        ramBarFillEl.style.transform = 'scaleX(0.18)';
+        if (ramHeadlineEl.animate) {
+          ramHeadlineEl.animate(
+            [
+              { transform: 'scale(1.06)', opacity: 0.7 },
+              { transform: 'scale(1)', opacity: 1 }
+            ],
+            { duration: 150, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' }
+          );
+        }
         if (res.settings) {
           currentState.settings = res.settings;
         } else {

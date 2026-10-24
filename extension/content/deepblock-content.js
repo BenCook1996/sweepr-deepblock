@@ -422,7 +422,8 @@
         inset: '0',
         zIndex: '2147483647',
         background: 'rgba(15, 23, 42, 0.72)',
-        backdropFilter: 'blur(4px)',
+        backdropFilter: 'blur(8px)',
+        webkitBackdropFilter: 'blur(8px)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -522,8 +523,12 @@
         fontSize: '13.5px',
         fontWeight: '800',
         cursor: 'pointer',
-        boxShadow: '0 4px 14px rgba(5, 150, 105, 0.3)'
+        boxShadow: '0 4px 14px rgba(5, 150, 105, 0.3)',
+        transition: 'transform 75ms cubic-bezier(0.16, 1, 0.3, 1)'
       });
+      leaveBtn.onpointerdown = () => { leaveBtn.style.transform = 'scale(0.985)'; };
+      leaveBtn.onpointerup = () => { leaveBtn.style.transform = ''; };
+      leaveBtn.onpointerleave = () => { leaveBtn.style.transform = ''; };
       leaveBtn.onclick = () => {
         if (window.history.length > 1) {
           window.history.back();
@@ -565,6 +570,15 @@
       card.appendChild(trustBtn);
       root.appendChild(card);
       document.body.appendChild(host);
+      if (card.animate && !(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) {
+        card.animate(
+          [
+            { opacity: 0, transform: 'translateY(-6px) scale(0.985)' },
+            { opacity: 1, transform: 'translateY(0) scale(1)' }
+          ],
+          { duration: 160, easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'forwards' }
+        );
+      }
     }
   }
 

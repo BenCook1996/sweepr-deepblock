@@ -171,7 +171,7 @@
       border-color: #10b981;
     }
 
-    /* Sliding Toggle Switch */
+    /* Sliding Toggle Switch (Compositor-Only transform: translateX) */
     .switch-btn {
       width: 40px;
       height: 22px;
@@ -182,7 +182,7 @@
       cursor: pointer;
       padding: 0;
       flex-shrink: 0;
-      transition: background 0.18s ease;
+      transition: background 140ms cubic-bezier(0.16, 1, 0.3, 1);
     }
     .switch-btn::after {
       content: "";
@@ -192,9 +192,15 @@
       background: #ffffff;
       position: absolute;
       top: 3px;
-      right: 3px;
+      left: 3px;
+      transform: translateX(18px);
       box-shadow: 0 1px 3px rgba(0,0,0,0.22);
-      transition: all 0.18s ease;
+      transition: transform 140ms cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: transform;
+    }
+    .switch-btn:active::after {
+      transform: translateX(18px) scale(0.94);
+      transition-duration: 75ms;
     }
     .switch-btn.off,
     .site-card.paused .switch-btn {
@@ -202,8 +208,12 @@
     }
     .switch-btn.off::after,
     .site-card.paused .switch-btn::after {
-      right: auto;
-      left: 3px;
+      transform: translateX(0);
+    }
+    .switch-btn.off:active::after,
+    .site-card.paused .switch-btn:active::after {
+      transform: translateX(0) scale(0.94);
+      transition-duration: 75ms;
     }
     .switch-btn.pro-lock {
       width: auto;
@@ -285,6 +295,10 @@
       font-size: 12px;
       font-weight: 900;
       color: #10b981;
+      font-variant-numeric: tabular-nums;
+    }
+    #ramHeadlineMetric, #savedTabsCount {
+      font-variant-numeric: tabular-nums;
     }
 
     /* 3. Total Tab & RAM Tamer Card */
@@ -305,8 +319,11 @@
     .bar-fill {
       height: 100%;
       background: linear-gradient(90deg, #10b981, #059669);
-      width: 25%;
-      transition: width 0.3s ease;
+      width: 100%;
+      transform: scaleX(0.25);
+      transform-origin: left center;
+      transition: transform 160ms cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: transform;
     }
     .ram-actions {
       display: grid;
@@ -372,7 +389,29 @@
       padding: 7px 9px;
       margin-top: 5px;
     }
-    .drawer-box.open { display: block; }
+    .drawer-box.open {
+      display: block;
+      animation: drawerRevealIn 150ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+    @keyframes drawerRevealIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .btn-chip, .btn-primary-sm, .btn-go, .icon-btn, .license-submit {
+      transition: transform 140ms cubic-bezier(0.16, 1, 0.3, 1), border-color 140ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 140ms cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: transform;
+    }
+    .btn-chip:active, .btn-primary-sm:active, .btn-go:active, .icon-btn:active, .license-submit:active {
+      transform: scale(0.985);
+      transition-duration: 75ms;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
     .license-input-row {
       display: flex;
       gap: 5px;

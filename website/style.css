@@ -92,7 +92,7 @@ button.btn,
   padding: 0 16px;
   height: 44px;
   font-weight: 500;
-  transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transition: transform 140ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 140ms cubic-bezier(0.16, 1, 0.3, 1), background-color 140ms cubic-bezier(0.16, 1, 0.3, 1), border-color 140ms cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
   display: inline-flex;
   align-items: center;
@@ -100,6 +100,15 @@ button.btn,
   text-decoration: none;
   white-space: nowrap;
   box-sizing: border-box;
+  will-change: transform;
+}
+
+.btn:active:not(:disabled),
+button.btn:active:not(:disabled),
+[type="submit"].btn:active:not(:disabled),
+[type="button"].btn:active:not(:disabled) {
+  transform: scale(0.985);
+  transition-duration: 75ms;
 }
 
 @media (min-width: 768px) {
@@ -166,19 +175,23 @@ button.btn-go:hover:not(:disabled),
 [type="button"].btn-go:hover:not(:disabled) {
   background: linear-gradient(135deg, #059669 0%, #047857 100%);
   box-shadow: 0 8px 30px rgba(16, 185, 129, 0.55), 0 0 0 2px rgba(16, 185, 129, 0.3);
-  transform: translateY(-2px) scale(1.02);
+  transform: translateY(-1px);
 }
 
-.btn-go:active:not(:disabled) {
-  transform: translateY(1px) scale(0.98);
+.btn-go:active:not(:disabled),
+button.btn-go:active:not(:disabled),
+[type="submit"].btn-go:active:not(:disabled),
+[type="button"].btn-go:active:not(:disabled) {
+  transform: scale(0.985);
+  transition-duration: 75ms;
 }
 
 .btn-go svg.arrow-icon {
-  transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1);
+  transition: transform 140ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .btn-go:hover svg.arrow-icon {
-  transform: translateX(4px);
+  transform: translateX(3px);
 }
 
 /* Crisp static elevation for main checkout/hero CTA (no distracting infinite loop) */
@@ -245,4 +258,22 @@ button.btn-ghost:hover:not(:disabled),
   color: #ffffff;
   border: 1px solid #047857;
   line-height: 1.2;
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+.ram-gauge-fill {
+  transform-origin: left center;
+  transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
