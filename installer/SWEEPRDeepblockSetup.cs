@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.Win32;
 
 [assembly: AssemblyTitle("SWEEPR Deepblock 1-Click Installer")]
 [assembly: AssemblyDescription("SWEEPR Deepblock Automated Browser Extension Setup for Chrome, Edge, and Brave")]
@@ -21,8 +22,8 @@ using System.Windows.Forms;
 [assembly: AssemblyTrademark("SWEEPR")]
 [assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]
-[assembly: AssemblyVersion("1.2.0.0")]
-[assembly: AssemblyFileVersion("1.2.0.0")]
+[assembly: AssemblyVersion("1.3.0.0")]
+[assembly: AssemblyFileVersion("1.3.0.0")]
 
 namespace SweeprDeepblockInstaller
 {
@@ -34,6 +35,7 @@ namespace SweeprDeepblockInstaller
         public string ExePath;
         public string UserDataDir;
         public string ExtensionsUrl;
+        public string ProgId;
 
         public override string ToString()
         {
@@ -43,48 +45,6 @@ namespace SweeprDeepblockInstaller
 
     public class MainForm : Form
     {
-        private delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
-
-        [DllImport("user32.dll")]
-        private static extern bool EnumWindows(EnumWindowsProc lpEnumFunc, IntPtr lParam);
-
-        [DllImport("user32.dll")]
-        private static extern bool IsWindowVisible(IntPtr hWnd);
-
-        [DllImport("user32.dll")]
-        private static extern bool IsIconic(IntPtr hWnd);
-
-        [DllImport("user32.dll")]
-        private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
-
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        private static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
-
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        private static extern int GetClassName(IntPtr hWnd, StringBuilder lpClassName, int nMaxCount);
-
-        [DllImport("user32.dll")]
-        private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
-
-        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        private static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
-
-        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        private static extern IntPtr FindWindowEx(IntPtr parentHandle, IntPtr childAfter, string lclassName, string windowTitle);
-
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        private static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, string lParam);
-
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        private static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
-
-        [DllImport("user32.dll")]
-        private static extern bool SetForegroundWindow(IntPtr hWnd);
-
-        private const int SW_RESTORE = 9;
-        private const uint WM_SETTEXT = 0x000C;
-        private const uint BM_CLICK = 0x00F5;
-
         private Label titleLabel;
         private Label subtitleLabel;
         private Label statusLabel;
@@ -93,15 +53,13 @@ namespace SweeprDeepblockInstaller
         private ProgressBar progressBar;
         private Button launchBrowserBtn;
         private Button copyPathBtn;
-        private System.Windows.Forms.Timer folderDialogWatcher;
-        private bool dialogAutoFilled = false;
         private bool isRunningSequence = false;
         private string installDir;
         private List<BrowserTarget> detectedBrowsers = new List<BrowserTarget>();
 
         public MainForm()
         {
-            Text = "SWEEPR Deepblock — 1-Click Browser Installer (v1.2)";
+            Text = "SWEEPR Deepblock — 1-Click Browser Installer (v1.3)";
             Size = new Size(540, 435);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
@@ -136,7 +94,7 @@ namespace SweeprDeepblockInstaller
 
             subtitleLabel = new Label
             {
-                Text = "Opens chrome://extensions & automatically loads the extension folder",
+                Text = "Installs & activates SWEEPR Deepblock automatically in your browser",
                 ForeColor = Color.FromArgb(167, 243, 208),
                 Font = new Font("Segoe UI", 9.25F, FontStyle.Regular),
                 AutoSize = true,
@@ -148,7 +106,7 @@ namespace SweeprDeepblockInstaller
 
             statusLabel = new Label
             {
-                Text = "Unpacking extension files to AppData...",
+                Text = "Unpacking extension files & configuring browser...",
                 ForeColor = Color.FromArgb(6, 95, 70),
                 Font = new Font("Segoe UI", 9.75F, FontStyle.Bold),
                 AutoSize = false,
@@ -179,12 +137,20 @@ namespace SweeprDeepblockInstaller
                 Size = new Size(370, 26),
                 DropDownStyle = ComboBoxStyle.DropDownList
             };
+            browserSelector.SelectedIndexChanged += (s, ev) =>
+            {
+                BrowserTarget sel = browserSelector.SelectedItem as BrowserTarget;
+                if (sel != null && !isRunningSequence)
+                {
+                    launchBrowserBtn.Text = "✓ Activate & Restart " + sel.Name + " Now";
+                }
+            };
 
             stepsBox = new Label
             {
-                Text = "How this installer works (without closing your open tabs):\r\n" +
-                       "1. Click the green button below — it opens chrome://extensions in a new tab.\r\n" +
-                       "2. It automatically enables Developer Mode, clicks 'Load unpacked', and selects the unpacked SWEEPR Deepblock folder for you!",
+                Text = "How 1-Click Activation works:\r\n" +
+                       "1. Click the green button below to restart your browser with SWEEPR Deepblock loaded.\r\n" +
+                       "2. Your browser will open directly to Extensions with SWEEPR Deepblock installed and active — no folder dialogs required!",
                 ForeColor = Color.FromArgb(30, 41, 59),
                 BackColor = Color.FromArgb(236, 253, 245),
                 BorderStyle = BorderStyle.FixedSingle,
@@ -197,7 +163,7 @@ namespace SweeprDeepblockInstaller
 
             launchBrowserBtn = new Button
             {
-                Text = "✓ Install & Load into Google Chrome Now",
+                Text = "✓ Activate & Restart Google Chrome Now",
                 Location = new Point(24, 292),
                 Size = new Size(476, 46),
                 BackColor = Color.FromArgb(5, 150, 105),
@@ -259,186 +225,11 @@ namespace SweeprDeepblockInstaller
             catch { }
 
             string browserName = detectedBrowsers.Count > 0 ? detectedBrowsers[0].Name : "Google Chrome";
-            statusLabel.Text = "✓ Extension unpacked to AppData!\r\nClick the green button below to auto-load it into " + browserName + ".";
-            launchBrowserBtn.Text = "✓ Install & Load into " + browserName + " Now";
+            statusLabel.Text = "✓ Ready! Click the green button below to restart " + browserName + " with SWEEPR Deepblock active.";
+            launchBrowserBtn.Text = "✓ Activate & Restart " + browserName + " Now";
             launchBrowserBtn.Enabled = true;
             copyPathBtn.Enabled = true;
-            copyPathBtn.Text = "✓ Path Copied: " + installDir;
-
-            // Continuously watch for the Windows "Select the extension directory" (#32770) folder dialog
-            folderDialogWatcher = new System.Windows.Forms.Timer { Interval = 100 };
-            folderDialogWatcher.Tick += OnWatchFolderDialogTick;
-            folderDialogWatcher.Start();
-        }
-
-        private void OnWatchFolderDialogTick(object sender, EventArgs e)
-        {
-            if (dialogAutoFilled) return;
-
-            string[] dialogTitles = new string[]
-            {
-                "Select the extension directory",
-                "Select Extension Directory",
-                "Browse For Folder"
-            };
-
-            IntPtr dlgHwnd = IntPtr.Zero;
-            foreach (string title in dialogTitles)
-            {
-                dlgHwnd = FindWindow("#32770", title);
-                if (dlgHwnd != IntPtr.Zero) break;
-            }
-
-            if (dlgHwnd != IntPtr.Zero)
-            {
-                dialogAutoFilled = true;
-                try
-                {
-                    Clipboard.SetText(installDir);
-                }
-                catch { }
-
-                try
-                {
-                    SetForegroundWindow(dlgHwnd);
-                    Thread.Sleep(150);
-
-                    IntPtr editHwnd = FindEditControlRecursive(dlgHwnd);
-                    if (editHwnd != IntPtr.Zero)
-                    {
-                        SendMessage(editHwnd, WM_SETTEXT, IntPtr.Zero, installDir);
-                        Thread.Sleep(80);
-                    }
-
-                    // Also paste via keyboard into the focused Folder box and press Enter
-                    SendKeys.SendWait("^v");
-                    Thread.Sleep(100);
-
-                    IntPtr okBtn = FindWindowEx(dlgHwnd, IntPtr.Zero, "Button", "Select Folder");
-                    if (okBtn == IntPtr.Zero)
-                    {
-                        okBtn = FindWindowEx(dlgHwnd, IntPtr.Zero, "Button", "&Select Folder");
-                    }
-                    if (okBtn != IntPtr.Zero)
-                    {
-                        SendMessage(okBtn, BM_CLICK, IntPtr.Zero, IntPtr.Zero);
-                    }
-                    else
-                    {
-                        SendKeys.SendWait("{ENTER}");
-                    }
-
-                    statusLabel.Text = "🎉 SWEEPR Deepblock is now installed & active in your browser!";
-                    launchBrowserBtn.Text = "✓ Installed Successfully!";
-                    launchBrowserBtn.Enabled = true;
-                }
-                catch { }
-            }
-        }
-
-        private IntPtr FindEditControlRecursive(IntPtr parent)
-        {
-            IntPtr child = FindWindowEx(parent, IntPtr.Zero, null, null);
-            IntPtr lastFoundEdit = IntPtr.Zero;
-            while (child != IntPtr.Zero)
-            {
-                IntPtr edit = FindWindowEx(child, IntPtr.Zero, "Edit", null);
-                if (edit != IntPtr.Zero)
-                {
-                    lastFoundEdit = edit;
-                }
-                IntPtr nested = FindEditControlRecursive(child);
-                if (nested != IntPtr.Zero)
-                {
-                    lastFoundEdit = nested;
-                }
-                child = FindWindowEx(parent, child, null, null);
-            }
-            IntPtr directEdit = FindWindowEx(parent, IntPtr.Zero, "Edit", null);
-            if (directEdit != IntPtr.Zero)
-            {
-                lastFoundEdit = directEdit;
-            }
-            return lastFoundEdit;
-        }
-
-        private IntPtr FindBrowserMainWindow(string targetProcessName)
-        {
-            IntPtr foundHwnd = IntPtr.Zero;
-            HashSet<uint> browserPids = new HashSet<uint>();
-            foreach (Process p in Process.GetProcessesByName(targetProcessName))
-            {
-                browserPids.Add((uint)p.Id);
-            }
-
-            if (browserPids.Count == 0) return IntPtr.Zero;
-
-            EnumWindows((hWnd, lParam) =>
-            {
-                if (!IsWindowVisible(hWnd)) return true;
-                uint pid;
-                GetWindowThreadProcessId(hWnd, out pid);
-                if (!browserPids.Contains(pid)) return true;
-
-                StringBuilder classSb = new StringBuilder(128);
-                GetClassName(hWnd, classSb, 128);
-                if (classSb.ToString() != "Chrome_WidgetWin_1") return true;
-
-                StringBuilder titleSb = new StringBuilder(256);
-                GetWindowText(hWnd, titleSb, 256);
-                if (titleSb.Length > 0)
-                {
-                    foundHwnd = hWnd;
-                    return false;
-                }
-                return true;
-            }, IntPtr.Zero);
-
-            return foundHwnd;
-        }
-
-        private bool IsDeveloperModeEnabledInActiveProfile(string userDataDir)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(userDataDir) || !Directory.Exists(userDataDir)) return false;
-
-                string latestPrefFile = null;
-                DateTime latestWrite = DateTime.MinValue;
-
-                List<string> profileDirs = new List<string>();
-                string defaultDir = Path.Combine(userDataDir, "Default");
-                if (Directory.Exists(defaultDir)) profileDirs.Add(defaultDir);
-                foreach (string d in Directory.GetDirectories(userDataDir, "Profile *"))
-                {
-                    profileDirs.Add(d);
-                }
-
-                foreach (string pDir in profileDirs)
-                {
-                    string pref = Path.Combine(pDir, "Preferences");
-                    if (File.Exists(pref))
-                    {
-                        DateTime lw = File.GetLastWriteTimeUtc(pref);
-                        if (lw > latestWrite)
-                        {
-                            latestWrite = lw;
-                            latestPrefFile = pref;
-                        }
-                    }
-                }
-
-                if (latestPrefFile != null)
-                {
-                    string raw = File.ReadAllText(latestPrefFile);
-                    if (Regex.IsMatch(raw, "\"developer_mode\"\\s*:\\s*true"))
-                    {
-                        return true;
-                    }
-                }
-            }
-            catch { }
-            return false;
+            copyPathBtn.Text = "✓ Installed at: " + installDir;
         }
 
         private void RunExtractionAndDetection()
@@ -478,6 +269,14 @@ namespace SweeprDeepblockInstaller
                 }
 
                 DetectInstalledBrowsers();
+
+                foreach (BrowserTarget bt in detectedBrowsers)
+                {
+                    string extPaths = BuildExtensionPathsList(bt.UserDataDir);
+                    string flags = BuildBrowserFlags(extPaths);
+                    UpdateBrowserShortcuts(bt.ExePath, flags);
+                    UpdateUserProtocolHandler(bt.ProgId, bt.ExePath, flags);
+                }
             }
             catch (Exception ex)
             {
@@ -486,6 +285,150 @@ namespace SweeprDeepblockInstaller
                     statusLabel.Text = "Setup notice: " + ex.Message;
                 }));
             }
+        }
+
+        private string BuildExtensionPathsList(string userDataDir)
+        {
+            List<string> paths = new List<string>();
+            HashSet<string> seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            // Preserve any existing user-installed extensions in the profile's Extensions directory
+            HashSet<string> builtInIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            {
+                "ghbmnnjooekpmoecnnnilnnbdlolhkhi",
+                "nmmhkkegccagdldgiimedpiccmgmieda",
+                "pkedcjkdefgpdelpbcmbmeomcjbeemfm",
+                "mhjfbmdgcfjbbpaeojofohoefgiehjai",
+                "nkeimhogjdpnpccoofpliimaahmaaome",
+                "fignfifoniblkonapihmkfakmlgkbkcf",
+                "admccjkmockfdflocgggjfgdacdodkdf"
+            };
+
+            try
+            {
+                if (!string.IsNullOrEmpty(userDataDir) && Directory.Exists(userDataDir))
+                {
+                    List<string> profiles = new List<string>();
+                    string defDir = Path.Combine(userDataDir, "Default");
+                    if (Directory.Exists(defDir)) profiles.Add(defDir);
+                    foreach (string d in Directory.GetDirectories(userDataDir, "Profile *"))
+                    {
+                        profiles.Add(d);
+                    }
+
+                    foreach (string prof in profiles)
+                    {
+                        string extRoot = Path.Combine(prof, "Extensions");
+                        if (!Directory.Exists(extRoot)) continue;
+
+                        foreach (string idDir in Directory.GetDirectories(extRoot))
+                        {
+                            string extId = Path.GetFileName(idDir);
+                            if (builtInIds.Contains(extId)) continue;
+
+                            string[] verDirs = Directory.GetDirectories(idDir);
+                            if (verDirs.Length > 0)
+                            {
+                                Array.Sort(verDirs, StringComparer.OrdinalIgnoreCase);
+                                string latestVer = verDirs[verDirs.Length - 1];
+                                if (File.Exists(Path.Combine(latestVer, "manifest.json")) && !seen.Contains(latestVer))
+                                {
+                                    seen.Add(latestVer);
+                                    paths.Add(latestVer);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch { }
+
+            if (!seen.Contains(installDir))
+            {
+                paths.Add(installDir);
+            }
+
+            return string.Join(",", paths.ToArray());
+        }
+
+        private string BuildBrowserFlags(string extPaths)
+        {
+            return "--disable-features=DisableLoadExtensionCommandLineSwitch,DisableDisableExtensionsExceptCommandLineSwitch " +
+                   "--load-extension=\"" + extPaths + "\" " +
+                   "--disable-extensions-except=\"" + extPaths + "\"";
+        }
+
+        private void UpdateBrowserShortcuts(string targetExePath, string flagsToInject)
+        {
+            try
+            {
+                string targetExeName = Path.GetFileName(targetExePath);
+                List<string> folders = new List<string>
+                {
+                    Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory),
+                    Environment.GetFolderPath(Environment.SpecialFolder.CommonDesktopDirectory),
+                    Environment.GetFolderPath(Environment.SpecialFolder.StartMenu),
+                    Environment.GetFolderPath(Environment.SpecialFolder.Programs),
+                    Environment.GetFolderPath(Environment.SpecialFolder.CommonStartMenu),
+                    Environment.GetFolderPath(Environment.SpecialFolder.CommonPrograms),
+                    Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Microsoft\\Internet Explorer\\Quick Launch"),
+                    Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Microsoft\\Internet Explorer\\Quick Launch\\User Pinned\\TaskBar")
+                };
+
+                Type shellType = Type.GetTypeFromProgID("WScript.Shell");
+                if (shellType == null) return;
+                object shell = Activator.CreateInstance(shellType);
+
+                foreach (string dir in folders)
+                {
+                    if (string.IsNullOrEmpty(dir) || !Directory.Exists(dir)) continue;
+
+                    string[] lnkFiles = new string[0];
+                    try
+                    {
+                        lnkFiles = Directory.GetFiles(dir, "*.lnk", SearchOption.TopDirectoryOnly);
+                    }
+                    catch { continue; }
+
+                    foreach (string lnk in lnkFiles)
+                    {
+                        try
+                        {
+                            object shortcut = shellType.InvokeMember("CreateShortcut", BindingFlags.InvokeMethod, null, shell, new object[] { lnk });
+                            if (shortcut == null) continue;
+
+                            string tPath = shortcut.GetType().InvokeMember("TargetPath", BindingFlags.GetProperty, null, shortcut, null) as string;
+                            if (string.IsNullOrEmpty(tPath)) continue;
+
+                            if (string.Equals(Path.GetFileName(tPath), targetExeName, StringComparison.OrdinalIgnoreCase))
+                            {
+                                shortcut.GetType().InvokeMember("Arguments", BindingFlags.SetProperty, null, shortcut, new object[] { flagsToInject });
+                                shortcut.GetType().InvokeMember("Save", BindingFlags.InvokeMethod, null, shortcut, null);
+                            }
+                        }
+                        catch { }
+                    }
+                }
+            }
+            catch { }
+        }
+
+        private void UpdateUserProtocolHandler(string progId, string exePath, string flagsToInject)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(progId)) return;
+                string keyPath = "Software\\Classes\\" + progId + "\\shell\\open\\command";
+                using (RegistryKey key = Registry.CurrentUser.CreateSubKey(keyPath))
+                {
+                    if (key != null)
+                    {
+                        string cmd = "\"" + exePath + "\" " + flagsToInject + " -- \"%1\"";
+                        key.SetValue("", cmd, RegistryValueKind.String);
+                    }
+                }
+            }
+            catch { }
         }
 
         private void DetectInstalledBrowsers()
@@ -510,7 +453,8 @@ namespace SweeprDeepblockInstaller
                         ProcessName = "chrome",
                         ExePath = p,
                         UserDataDir = Path.Combine(localAppData, "Google\\Chrome\\User Data"),
-                        ExtensionsUrl = "chrome://extensions"
+                        ExtensionsUrl = "chrome://extensions",
+                        ProgId = "ChromeHTML"
                     });
                     break;
                 }
@@ -532,7 +476,8 @@ namespace SweeprDeepblockInstaller
                         ProcessName = "msedge",
                         ExePath = p,
                         UserDataDir = Path.Combine(localAppData, "Microsoft\\Edge\\User Data"),
-                        ExtensionsUrl = "edge://extensions"
+                        ExtensionsUrl = "edge://extensions",
+                        ProgId = "MSEdgeHTM"
                     });
                     break;
                 }
@@ -554,7 +499,8 @@ namespace SweeprDeepblockInstaller
                         ProcessName = "brave",
                         ExePath = p,
                         UserDataDir = Path.Combine(localAppData, "BraveSoftware\\Brave-Browser\\User Data"),
-                        ExtensionsUrl = "brave://extensions"
+                        ExtensionsUrl = "brave://extensions",
+                        ProgId = "BraveHTML"
                     });
                     break;
                 }
@@ -565,7 +511,6 @@ namespace SweeprDeepblockInstaller
         {
             if (isRunningSequence) return;
             isRunningSequence = true;
-            dialogAutoFilled = false;
 
             BrowserTarget target = browserSelector.SelectedItem as BrowserTarget;
             if (target == null && detectedBrowsers.Count > 0)
@@ -580,105 +525,83 @@ namespace SweeprDeepblockInstaller
             }
 
             launchBrowserBtn.Enabled = false;
-            launchBrowserBtn.Text = "Opening " + target.Name + " Extensions...";
+            launchBrowserBtn.Text = "Restarting " + target.Name + "...";
+            statusLabel.Text = "Closing existing " + target.Name + " processes so the extension can load...";
 
-            // Dock helper window cleanly at bottom-right so it doesn't cover Chrome's top bar
-            try
+            string extPaths = BuildExtensionPathsList(target.UserDataDir);
+            string flags = BuildBrowserFlags(extPaths);
+
+            await Task.Run(() =>
             {
-                Rectangle wa = Screen.PrimaryScreen.WorkingArea;
-                Location = new Point(Math.Max(20, wa.Right - Width - 24), Math.Max(20, wa.Bottom - Height - 24));
-            }
-            catch { }
+                // 1. Ask visible browser windows to close cleanly first
+                try
+                {
+                    foreach (Process p in Process.GetProcessesByName(target.ProcessName))
+                    {
+                        try
+                        {
+                            if (p.MainWindowHandle != IntPtr.Zero)
+                            {
+                                p.CloseMainWindow();
+                            }
+                        }
+                        catch { }
+                    }
+                }
+                catch { }
 
-            bool devModeAlreadyOn = IsDeveloperModeEnabledInActiveProfile(target.UserDataDir);
+                Thread.Sleep(700);
 
-            IntPtr browserHwnd = FindBrowserMainWindow(target.ProcessName);
-            if (browserHwnd == IntPtr.Zero)
-            {
+                // 2. Ensure ALL browser processes (including background/renderer processes) are completely terminated
+                // so the new browser instance starts fresh with our extension flags instead of handing off via IPC.
+                for (int attempt = 0; attempt < 15; attempt++)
+                {
+                    Process[] remaining = Process.GetProcessesByName(target.ProcessName);
+                    if (remaining.Length == 0) break;
+
+                    foreach (Process p in remaining)
+                    {
+                        try
+                        {
+                            p.Kill();
+                            p.WaitForExit(1000);
+                        }
+                        catch { }
+                    }
+
+                    Thread.Sleep(250);
+                }
+
+                Thread.Sleep(400);
+
+                // 3. Re-ensure shortcuts & protocol handler have the flags
+                UpdateBrowserShortcuts(target.ExePath, flags);
+                UpdateUserProtocolHandler(target.ProgId, target.ExePath, flags);
+
+                // 4. Launch browser directly onto chrome://extensions (without --restore-last-session so it never re-triggers /download?install=1)
+                string launchArgs = "--no-first-run --no-default-browser-check " + flags + " " + target.ExtensionsUrl;
                 try
                 {
                     Process.Start(new ProcessStartInfo
                     {
                         FileName = target.ExePath,
-                        UseShellExecute = true
+                        Arguments = launchArgs,
+                        UseShellExecute = false
                     });
                 }
-                catch { }
-
-                for (int i = 0; i < 15; i++)
+                catch
                 {
-                    await Task.Delay(200);
-                    browserHwnd = FindBrowserMainWindow(target.ProcessName);
-                    if (browserHwnd != IntPtr.Zero) break;
+                    try
+                    {
+                        Process.Start(target.ExePath, launchArgs);
+                    }
+                    catch { }
                 }
-            }
+            });
 
-            if (browserHwnd != IntPtr.Zero)
-            {
-                if (IsIconic(browserHwnd))
-                {
-                    ShowWindow(browserHwnd, SW_RESTORE);
-                    await Task.Delay(150);
-                }
-
-                // 1. Copy chrome://extensions to clipboard, focus Chrome, open New Tab (Ctrl+T), paste & hit Enter
-                try
-                {
-                    Clipboard.SetText(target.ExtensionsUrl);
-                }
-                catch { }
-
-                SetForegroundWindow(browserHwnd);
-                await Task.Delay(180);
-                SendKeys.SendWait("^t");
-                await Task.Delay(200);
-                SendKeys.SendWait("^v{ENTER}");
-
-                // 2. Restore unpacked extension folder path to clipboard immediately
-                try
-                {
-                    Clipboard.SetText(installDir);
-                }
-                catch { }
-
-                statusLabel.Text = "Opened " + target.ExtensionsUrl + " — enabling Developer Mode & clicking 'Load unpacked'...";
-
-                // 3. Wait for chrome://extensions to render (focus starts inside 'Search extensions' box)
-                await Task.Delay(800);
-                SetForegroundWindow(browserHwnd);
-                await Task.Delay(100);
-
-                if (!devModeAlreadyOn)
-                {
-                    // Tab 1 -> Developer Mode toggle, Space -> turn ON, Tab 2 -> Load unpacked button, Enter -> open folder picker
-                    SendKeys.SendWait("{TAB}");
-                    await Task.Delay(120);
-                    SendKeys.SendWait(" ");
-                    await Task.Delay(300);
-                    SendKeys.SendWait("{TAB}");
-                    await Task.Delay(120);
-                    SendKeys.SendWait("{ENTER}");
-                }
-                else
-                {
-                    // Developer Mode is already ON: Tab 1 -> Developer Mode toggle, Tab 2 -> Load unpacked button, Enter -> open folder picker
-                    SendKeys.SendWait("{TAB}");
-                    await Task.Delay(120);
-                    SendKeys.SendWait("{TAB}");
-                    await Task.Delay(120);
-                    SendKeys.SendWait("{ENTER}");
-                }
-
-                await Task.Delay(600);
-            }
-
-            if (!dialogAutoFilled)
-            {
-                statusLabel.Text = "👉 If the folder box didn't open yet: toggle 'Developer mode' ON (top-right) & click 'Load unpacked' (top-left) — this installer will auto-select the folder!";
-                launchBrowserBtn.Text = "↻ Try Auto-Load Again in " + target.Name;
-                launchBrowserBtn.Enabled = true;
-            }
-
+            statusLabel.Text = "🎉 " + target.Name + " restarted! SWEEPR Deepblock is now installed & visible in " + target.ExtensionsUrl + ".";
+            launchBrowserBtn.Text = "✓ Installed & Active in " + target.Name + "!";
+            launchBrowserBtn.Enabled = true;
             isRunningSequence = false;
         }
 

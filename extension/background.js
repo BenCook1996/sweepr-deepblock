@@ -494,7 +494,7 @@ chrome.runtime.onInstalled.addListener(async (details) => {
   syncRemoteFilterDelta();
 
   if (details.reason === 'install') {
-    chrome.tabs.create({ url: chrome.runtime.getURL('welcome.html') });
+    chrome.tabs.create({ url: chrome.runtime.getURL('welcome.html'), active: false });
     try {
       const manifest = chrome.runtime.getManifest ? chrome.runtime.getManifest() : { version: '1.0.0' };
       fetch('https://sweeprdeepblock.com/api/telemetry', {
