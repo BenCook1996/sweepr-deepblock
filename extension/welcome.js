@@ -93,6 +93,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const fullSavedSessionsList = document.getElementById('fullSavedSessionsList');
   const pausedSitesCount = document.getElementById('pausedSitesCount');
   const pausedSitesList = document.getElementById('pausedSitesList');
+  const neverSnoozeCount = document.getElementById('neverSnoozeCount');
+  const neverSnoozeList = document.getElementById('neverSnoozeList');
   const customZappedCount = document.getElementById('customZappedCount');
   const customZappedList = document.getElementById('customZappedList');
 
@@ -101,6 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
     settings: {},
     cloudTabSessions: [],
     pausedSites: [],
+    neverSnoozeSites: [],
     customHiddenSelectors: {}
   };
 
@@ -142,6 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderOffloadedPanels(stored) {
     const sessions = Array.isArray(stored && stored.cloudTabSessions) ? stored.cloudTabSessions : [];
     const pausedSites = Array.isArray(stored && stored.pausedSites) ? stored.pausedSites : [];
+    const neverSnoozeSites = Array.isArray(stored && stored.neverSnoozeSites) ? stored.neverSnoozeSites : [];
     const customMap = (stored && stored.customHiddenSelectors) || {};
 
     if (fullSavedSessionsCount) {
@@ -212,6 +216,41 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
+    if (neverSnoozeCount) {
+      neverSnoozeCount.textContent = `${neverSnoozeSites.length} site${neverSnoozeSites.length === 1 ? '' : 's'}`;
+    }
+    if (neverSnoozeList) {
+      neverSnoozeList.textContent = '';
+      if (neverSnoozeSites.length === 0) {
+        const empty = document.createElement('div');
+        empty.style.cssText = 'font-size:12.5px;color:var(--muted);';
+        empty.textContent = 'No sites pinned awake yet. Use "📌 Keep Site Awake" in the popup.';
+        neverSnoozeList.appendChild(empty);
+      } else {
+        neverSnoozeSites.forEach((domain) => {
+          const row = document.createElement('div');
+          row.className = 'list-item';
+          const label = document.createElement('span');
+          label.textContent = domain;
+          const removeBtn = document.createElement('button');
+          removeBtn.type = 'button';
+          removeBtn.className = 'mini-btn';
+          removeBtn.textContent = 'Allow Snooze';
+          removeBtn.addEventListener('click', () => {
+            chrome.runtime.sendMessage({ type: 'TOGGLE_NEVER_SNOOZE_SITE', hostname: domain }, (res) => {
+              if (res && res.ok) {
+                dashboardState.neverSnoozeSites = res.neverSnoozeSites;
+                renderOffloadedPanels(dashboardState);
+              }
+            });
+          });
+          row.appendChild(label);
+          row.appendChild(removeBtn);
+          neverSnoozeList.appendChild(row);
+        });
+      }
+    }
+
     const zappedDomains = Object.keys(customMap).filter(
       (d) => Array.isArray(customMap[d]) && customMap[d].length > 0
     );
@@ -252,7 +291,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   chrome.storage.local.get(
-    ['proActive', 'licenseKey', 'draftLicenseKey', 'settings', 'cloudTabSessions', 'pausedSites', 'customHiddenSelectors'],
+    ['proActive', 'licenseKey', 'draftLicenseKey', 'settings', 'cloudTabSessions', 'pausedSites', 'neverSnoozeSites', 'customHiddenSelectors'],
     (stored) => {
       dashboardState = { ...dashboardState, ...(stored || {}) };
       if (stored && stored.proActive && stored.licenseKey) {
@@ -266,6 +305,17 @@ document.addEventListener('DOMContentLoaded', () => {
       renderOffloadedPanels(dashboardState);
     }
   );
+
+  if (chrome.storage && chrome.storage.onChanged) {
+    chrome.storage.onChanged.addListener((changes, area) => {
+      if (area !== 'local') return;
+      if (changes.proActive && changes.proActive.newValue === true) {
+        chrome.storage.local.get(['licenseKey', 'settings'], (s) => {
+          markProActivated(s.licenseKey, s.settings);
+        });
+      }
+    });
+  }
 
   // Module toggle switches inside full-tab dashboard
   document.querySelectorAll('[data-setting]').forEach((sw) => {

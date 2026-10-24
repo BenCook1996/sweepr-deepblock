@@ -7,55 +7,52 @@
   <style>
     :root {
       --bg: #ffffff;
-      --bg-gradient: radial-gradient(circle at 10% 20%, rgba(220, 255, 230, 0.65) 0%, rgba(255, 255, 255, 1) 48%),
-                     radial-gradient(circle at 90% 80%, rgba(209, 250, 229, 0.72) 0%, rgba(255, 255, 255, 1) 48%);
-      --card-bg: rgba(255, 255, 255, 0.95);
-      --card-border: rgba(16, 185, 129, 0.18);
-      --surface-muted: #f9fafb;
-      --border-muted: #e5e7eb;
+      --bg-gradient: radial-gradient(circle at 10% 15%, rgba(209, 250, 229, 0.55) 0%, #ffffff 55%);
+      --card-bg: #ffffff;
+      --card-border: rgba(16, 185, 129, 0.22);
+      --surface-muted: #f8fafc;
+      --border-muted: #e2e8f0;
       --accent: #10b981;
       --accent-dark: #059669;
-      --emerald-deep: #064e3b;
-      --text: #111827;
-      --text-secondary: #374151;
-      --muted: #6b7280;
-      --tab-strip-bg: #f3f4f6;
-      --tab-active-bg: #ffffff;
+      --text: #0f172a;
+      --text-secondary: #334155;
+      --muted: #64748b;
     }
 
     @media (prefers-color-scheme: dark) {
       :root {
         --bg: #0f172a;
         --bg-gradient: radial-gradient(circle at 10% 15%, rgba(6, 78, 59, 0.45) 0%, #0f172a 55%);
-        --card-bg: rgba(30, 41, 59, 0.95);
+        --card-bg: #1e293b;
         --card-border: rgba(16, 185, 129, 0.28);
         --surface-muted: #0f172a;
         --border-muted: #334155;
         --text: #f8fafc;
         --text-secondary: #e2e8f0;
         --muted: #94a3b8;
-        --tab-strip-bg: #1e293b;
-        --tab-active-bg: #0f172a;
       }
     }
 
     * { box-sizing: border-box; }
     body {
-      width: 340px;
+      width: 360px;
+      max-height: 500px;
       max-width: 100vw;
       margin: 0;
-      padding: 12px 14px 11px;
+      padding: 12px 14px;
       font-family: "Segoe UI Variable", "Segoe UI", -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
       color: var(--text);
       background: var(--bg);
       background-image: var(--bg-gradient);
       overflow-x: hidden;
+      overflow-y: hidden;
     }
+
     .header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 9px;
+      margin-bottom: 8px;
     }
     .brand {
       display: flex;
@@ -73,6 +70,11 @@
       place-items: center;
       box-shadow: 0 2px 6px rgba(16, 185, 129, 0.22);
     }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
     .status-pill {
       font-size: 9.5px;
       font-weight: 800;
@@ -89,33 +91,43 @@
       color: #ecfdf5;
       border-color: #10b981;
     }
+    .icon-btn {
+      width: 26px;
+      height: 26px;
+      border-radius: 7px;
+      border: 1px solid var(--border-muted);
+      background: var(--surface-muted);
+      color: var(--text-secondary);
+      font-size: 12px;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      padding: 0;
+    }
 
-    /* Tab Panels */
-    .tab-panel { display: none; }
-    .tab-panel.active { display: block; }
-
-    /* Current Site Card with Sliding Switch */
-    .site-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
+    /* 1. Hero Unified Site Shield Card + 1-Click Escape Hatch */
+    .site-card {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
       border-radius: 12px;
       padding: 9px 11px;
-      box-shadow: 0 3px 12px rgba(6, 78, 59, 0.06);
-      transition: all 0.18s ease;
+      box-shadow: 0 3px 10px rgba(6, 78, 59, 0.05);
     }
-    .site-bar.paused {
+    .site-card.paused {
       background: rgba(254, 242, 242, 0.9);
       border-color: #fecaca;
     }
     @media (prefers-color-scheme: dark) {
-      .site-bar.paused {
-        background: rgba(127, 29, 29, 0.35);
+      .site-card.paused {
+        background: rgba(127, 29, 29, 0.3);
         border-color: rgba(248, 113, 113, 0.45);
       }
+    }
+    .site-top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
     }
     .site-domain {
       font-size: 12.5px;
@@ -124,7 +136,7 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      max-width: 220px;
+      max-width: 235px;
     }
     .site-status-sub {
       font-size: 10.5px;
@@ -132,8 +144,31 @@
       font-weight: 600;
       margin-top: 1px;
     }
-    .site-bar.paused .site-status-sub {
+    .site-card.paused .site-status-sub {
       color: #ef4444;
+    }
+    .escape-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-top: 7px;
+      padding-top: 7px;
+      border-top: 1px solid var(--border-muted);
+    }
+    .btn-chip {
+      background: var(--surface-muted);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-muted);
+      border-radius: 8px;
+      padding: 5px 8px;
+      font-size: 10px;
+      font-weight: 800;
+      cursor: pointer;
+      text-align: center;
+      white-space: nowrap;
+    }
+    .btn-chip:hover {
+      border-color: #10b981;
     }
 
     /* Sliding Toggle Switch */
@@ -149,15 +184,6 @@
       flex-shrink: 0;
       transition: background 0.18s ease;
     }
-    .switch-btn:focus-visible,
-    .tab-btn:focus-visible,
-    .preset-card:focus-visible,
-    .btn-secondary:focus-visible,
-    .btn-go:focus-visible,
-    .link-btn:focus-visible {
-      outline: 2px solid #10b981;
-      outline-offset: 2px;
-    }
     .switch-btn::after {
       content: "";
       width: 16px;
@@ -171,11 +197,11 @@
       transition: all 0.18s ease;
     }
     .switch-btn.off,
-    .site-bar.paused .switch-btn {
+    .site-card.paused .switch-btn {
       background: #9ca3af;
     }
     .switch-btn.off::after,
-    .site-bar.paused .switch-btn::after {
+    .site-card.paused .switch-btn::after {
       right: auto;
       left: 3px;
     }
@@ -189,31 +215,55 @@
       font-weight: 800;
       padding: 4px 8px;
     }
-    .switch-btn.pro-lock::after {
-      display: none;
-    }
+    .switch-btn.pro-lock::after { display: none; }
 
+    /* 2. Store Safety & Silent Cleaning Card */
     .card {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
       border-radius: 12px;
-      padding: 9px 11px;
+      padding: 8px 11px;
       margin-top: 7px;
-      box-shadow: 0 3px 12px rgba(6, 78, 59, 0.04);
+      box-shadow: 0 3px 10px rgba(6, 78, 59, 0.04);
     }
-    .quiet-summary-row {
+    .card.scam-alert {
+      border-color: #f59e0b;
+      background: rgba(254, 243, 199, 0.45);
+    }
+    .store-row {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--text-secondary);
+      justify-content: space-between;
+      gap: 8px;
       padding-bottom: 6px;
       border-bottom: 1px solid var(--border-muted);
     }
-    .grid-4 {
+    .store-title {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--text);
+    }
+    .store-sub {
+      font-size: 9.5px;
+      color: var(--muted);
+    }
+    .store-pill {
+      font-size: 9px;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: rgba(16, 185, 129, 0.15);
+      color: #059669;
+      flex-shrink: 0;
+    }
+    .store-pill.risk {
+      background: #fef3c7;
+      color: #b45309;
+      border: 1px solid #f59e0b;
+    }
+    .stats-duo {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: 1fr 1fr;
       gap: 6px;
       margin-top: 6px;
     }
@@ -226,24 +276,31 @@
       align-items: center;
       justify-content: space-between;
     }
-    .stat-num {
-      font-size: 13px;
-      font-weight: 900;
-      color: #10b981;
-    }
     .stat-label {
       font-size: 10px;
       color: var(--muted);
       font-weight: 700;
     }
+    .stat-num {
+      font-size: 12px;
+      font-weight: 900;
+      color: #10b981;
+    }
 
-    /* Speed Tab */
+    /* 3. Total Tab & RAM Tamer Card */
+    .ram-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 800;
+    }
     .bar-bg {
-      height: 6px;
+      height: 5px;
       background: var(--border-muted);
       border-radius: 999px;
       overflow: hidden;
-      margin: 6px 0;
+      margin: 5px 0;
     }
     .bar-fill {
       height: 100%;
@@ -251,134 +308,32 @@
       width: 25%;
       transition: width 0.3s ease;
     }
-    .btn-secondary {
-      width: 100%;
-      padding: 8px 10px;
-      border-radius: 9px;
-      border: 1px solid rgba(255,255,255,0.2);
+    .ram-actions {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 6px;
+      margin-top: 5px;
+    }
+    .btn-primary-sm {
+      padding: 6px 8px;
+      border-radius: 8px;
+      border: none;
       background: linear-gradient(135deg, #10b981 0%, #059669 100%);
       color: #ffffff;
       font-weight: 800;
-      font-size: 11px;
+      font-size: 10.5px;
       cursor: pointer;
-      margin-top: 6px;
-      box-shadow: 0 3px 10px rgba(16, 185, 129, 0.22);
     }
-    .saved-session-row {
+    .session-strip {
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      padding: 5px 7px;
-      background: var(--surface-muted);
-      border: 1px solid var(--border-muted);
-      border-radius: 8px;
+      align-items: center;
+      font-size: 9.5px;
+      color: var(--muted);
       margin-top: 5px;
-      font-size: 10.5px;
-      color: var(--text-secondary);
-    }
-    .restore-btn {
-      background: rgba(16, 185, 129, 0.14);
-      color: #10b981;
-      border: 1px solid rgba(16, 185, 129, 0.35);
-      border-radius: 6px;
-      padding: 3px 8px;
-      font-size: 9.5px;
-      font-weight: 800;
-      cursor: pointer;
     }
 
-    /* Controls Tab: 3 Instant Protection Presets */
-    .preset-stack {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-    .preset-card {
-      width: 100%;
-      text-align: left;
-      background: var(--surface-muted);
-      border: 1.5px solid var(--border-muted);
-      border-radius: 10px;
-      padding: 7px 10px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      transition: all 0.15s ease;
-      color: var(--text);
-    }
-    .preset-card.active {
-      border-color: #10b981;
-      background: rgba(16, 185, 129, 0.1);
-    }
-    .preset-title {
-      font-size: 11px;
-      font-weight: 800;
-      color: var(--text);
-    }
-    .preset-sub {
-      font-size: 9.5px;
-      color: var(--muted);
-      margin-top: 1px;
-    }
-    .preset-pill {
-      font-size: 9px;
-      font-weight: 800;
-      padding: 2px 7px;
-      border-radius: 999px;
-      background: var(--border-muted);
-      color: var(--text-secondary);
-      flex-shrink: 0;
-    }
-    .preset-card.active .preset-pill {
-      background: #10b981;
-      color: #ffffff;
-    }
-    .zapper-row {
-      display: flex;
-      gap: 6px;
-      margin-top: 6px;
-    }
-    .btn-ghost-action {
-      flex: 1;
-      background: var(--surface-muted);
-      color: var(--text-secondary);
-      border: 1px solid var(--border-muted);
-      border-radius: 8px;
-      padding: 6px 8px;
-      font-size: 10px;
-      font-weight: 800;
-      cursor: pointer;
-      text-align: center;
-    }
-
-    /* 3-Tab Bottom Switcher */
-    .tab-switcher {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 4px;
-      background: var(--tab-strip-bg);
-      padding: 3px;
-      border-radius: 9px;
-      margin-top: 8px;
-    }
-    .tab-btn {
-      background: transparent;
-      border: none;
-      border-radius: 7px;
-      padding: 5px 4px;
-      font-size: 10.5px;
-      font-weight: 800;
-      color: var(--muted);
-      cursor: pointer;
-    }
-    .tab-btn.active {
-      background: var(--tab-active-bg);
-      color: #10b981;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.12);
-    }
-
+    /* 4. £1.99 Upgrade Banner & License Drawer */
     .btn-go {
       width: 100%;
       margin-top: 7px;
@@ -396,7 +351,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-top: 6px;
+      margin-top: 5px;
       font-size: 10px;
     }
     .link-btn {
@@ -414,18 +369,18 @@
       background: var(--card-bg);
       border: 1px solid var(--card-border);
       border-radius: 10px;
-      padding: 8px 9px;
-      margin-top: 6px;
+      padding: 7px 9px;
+      margin-top: 5px;
     }
     .drawer-box.open { display: block; }
     .license-input-row {
       display: flex;
       gap: 5px;
-      margin-top: 5px;
+      margin-top: 4px;
     }
     .license-input {
       flex: 1;
-      padding: 6px 8px;
+      padding: 5px 8px;
       border: 1px solid var(--border-muted);
       background: var(--surface-muted);
       color: var(--text);
@@ -437,22 +392,21 @@
       color: #fff;
       border: none;
       border-radius: 7px;
-      padding: 6px 10px;
+      padding: 5px 10px;
       font-size: 10.5px;
       font-weight: 800;
       cursor: pointer;
     }
 
-    /* Mobile Bottom-Sheet & Touch Ergonomics (iOS Safari / Android Browsers >= 44pt targets) */
+    /* Mobile Bottom-Sheet & Touch Ergonomics (iOS Safari / Android >= 44pt targets) */
     @media (pointer: coarse), (max-width: 480px) {
       body {
         width: 100%;
         min-width: 320px;
         max-width: 430px;
+        max-height: none;
         padding: 14px 16px 18px;
-      }
-      .site-bar {
-        padding: 12px 14px;
+        overflow-y: auto;
       }
       .switch-btn {
         width: 48px;
@@ -462,189 +416,124 @@
         width: 22px;
         height: 22px;
       }
-      .switch-btn.pro-lock {
-        min-height: 36px;
-        padding: 7px 11px;
-        font-size: 11px;
-      }
-      .tab-btn,
-      .preset-card {
+      .btn-chip,
+      .btn-primary-sm,
+      .btn-go,
+      .icon-btn {
         min-height: 44px;
         font-size: 12px;
-      }
-      .btn-secondary,
-      .btn-go,
-      .btn-ghost-action {
-        min-height: 44px;
-        font-size: 12.5px;
-      }
-      .link-btn {
-        min-height: 40px;
-        font-size: 11.5px;
-        display: inline-flex;
-        align-items: center;
-      }
-      .license-input,
-      .license-submit {
-        min-height: 42px;
-        font-size: 13px;
       }
     }
   </style>
 </head>
 <body>
+  <!-- 1. Header -->
   <div class="header">
     <div class="brand">
       <div class="logo">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="22" height="22" fill="none">
-          <defs>
-            <linearGradient id="bg1" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stop-color="#10b981"/>
-              <stop offset="55%" stop-color="#059669"/>
-              <stop offset="100%" stop-color="#064e3b"/>
-            </linearGradient>
-            <linearGradient id="shield1" x1="16" y1="10" x2="48" y2="54" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stop-color="#ffffff"/>
-              <stop offset="100%" stop-color="#a7f3d0"/>
-            </linearGradient>
-            <linearGradient id="sweep1" x1="14" y1="44" x2="50" y2="18" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stop-color="#34d399"/>
-              <stop offset="100%" stop-color="#ffffff"/>
-            </linearGradient>
-          </defs>
-          <rect width="64" height="64" rx="16" fill="url(#bg1)"/>
-          <path d="M32 10L50 17.5V31C50 43.2 42.3 51.8 32 55.5C21.7 51.8 14 43.2 14 31V17.5L32 10Z" fill="white" fill-opacity="0.14" stroke="url(#shield1)" stroke-width="2.8" stroke-linejoin="round"/>
-          <path d="M32 16.5L44 21.5V30.8C44 39.4 38.8 45.8 32 48.8C25.2 45.8 20 39.4 20 30.8V21.5L32 16.5Z" fill="#064e3b" fill-opacity="0.55"/>
-          <path d="M23.5 32.5L29.5 38.5L42.5 23.5" stroke="url(#sweep1)" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/>
+          <rect width="64" height="64" rx="16" fill="#059669"/>
+          <path d="M32 10L50 17.5V31C50 43.2 42.3 51.8 32 55.5C21.7 51.8 14 43.2 14 31V17.5L32 10Z" fill="white" fill-opacity="0.16" stroke="#a7f3d0" stroke-width="2.8" stroke-linejoin="round"/>
+          <path d="M23.5 32.5L29.5 38.5L42.5 23.5" stroke="#ffffff" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </div>
       <span>SWEEPR <span style="color:#10b981">Deepblock</span></span>
     </div>
-    <span id="tierBadge" class="status-pill">Locked</span>
+    <div class="header-actions">
+      <span id="tierBadge" class="status-pill">Free Preview</span>
+      <button type="button" id="openDashboardBtn" class="icon-btn" title="Open Full Settings &amp; Saved Tabs">⚙️</button>
+    </div>
   </div>
 
-  <!-- TAB 1: STATUS (Subtle Default Home View) -->
-  <div id="tabStatus" class="tab-panel active">
-    <div id="siteBar" class="site-bar">
+  <!-- 2. Unified Site Shield Card + 1-Click 5-Min Broken-Page Escape Hatch -->
+  <div id="siteBar" class="site-card">
+    <div class="site-top-row">
       <div>
         <div class="site-domain" id="currentSiteLabel">🌐 All Websites</div>
-        <div class="site-status-sub" id="currentSiteSub">Protection is ON for this site</div>
+        <div class="site-status-sub" id="currentSiteSub">Site Shield ON · Ads &amp; Cookies Blocked</div>
       </div>
-      <button type="button" id="sitePauseBtn" class="switch-btn" title="Pause or resume on this website (Alt+Shift+S)" aria-label="Toggle site protection"></button>
+      <button type="button" id="sitePauseBtn" class="switch-btn" title="Toggle Site Shield (Alt+Shift+S)" aria-label="Toggle site protection"></button>
     </div>
-
-    <div class="card">
-      <div class="quiet-summary-row">
-        <span>Blocked quietly in background</span>
-        <span style="color:#10b981;font-weight:900;" id="adsBlockedText">0 items</span>
-      </div>
-      <div class="grid-4">
-        <div class="stat-box">
-          <span class="stat-label">📺 Ads</span>
-          <span class="stat-num" id="adsCount">0</span>
-        </div>
-        <div class="stat-box">
-          <span class="stat-label">🍪 Cookies</span>
-          <span class="stat-num" id="cookieCount">0</span>
-        </div>
-        <div class="stat-box">
-          <span class="stat-label">🤖 Spam</span>
-          <span class="stat-num" id="slopCount">0</span>
-        </div>
-        <div class="stat-box">
-          <span class="stat-label">🛒 Scams</span>
-          <span class="stat-num" id="scamCount">0</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- TAB 2: SPEED & SLEEPING TABS -->
-  <div id="tabSpeed" class="tab-panel">
-    <div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center;font-size:11.5px;font-weight:800;">
-        <span style="color:#10b981;">⚡ Tab Memory Saver</span>
-        <span id="ramHeadlineMetric" style="color:#10b981;">Running Fast</span>
-      </div>
-      <div class="bar-bg">
-        <div id="ramBarFill" class="bar-fill"></div>
-      </div>
-      <div id="ramDescriptionText" style="font-size:10px;color:var(--muted);line-height:1.35;">
-        Unused background tabs automatically snooze so your browser stays fast.
-      </div>
-      <button type="button" id="reclaimRamBtn" class="btn-secondary" title="Shortcut: Alt+Shift+Z">
-        ⚡ Snooze Inactive Tabs
+    <div class="escape-row">
+      <button type="button" id="pause5MinBtn" class="btn-chip" title="Temporarily pause for 5 minutes and reload if a checkout or login button is broken">
+        🔧 Pause 5m (Fix Page)
+      </button>
+      <button type="button" id="startZapperBtn" class="btn-chip" title="Click any annoying element on the page to hide it">
+        🧹 Hide Element
       </button>
     </div>
+  </div>
 
-    <div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center;font-size:10.5px;font-weight:800;">
-        <span>📂 Saved Tab Snapshots (<span id="savedTabsCount">0</span>)</span>
-        <button type="button" id="openFullSessionsBtn" class="link-btn" style="font-size:9.5px;">Manage All ↗</button>
+  <!-- 3. Live Store Safety & Silent Cleaning Summary -->
+  <div id="storeSafetyCard" class="card">
+    <div class="store-row">
+      <div>
+        <div class="store-title" id="storeSafetyTitle">🛡️ Store &amp; Site Check: Verified Safe</div>
+        <div class="store-sub" id="storeSafetySub">Silent background protection active</div>
       </div>
-      <div id="savedTabsDrawer" class="open" style="margin-top:4px;">
-        <div id="savedTabsList" style="font-size:10px;color:var(--muted);">No paused tab groups yet.</div>
+      <span class="store-pill" id="storeSafetyPill">SAFE</span>
+    </div>
+    <div class="stats-duo">
+      <div class="stat-box">
+        <span class="stat-label">🚫 Ads &amp; Spam</span>
+        <span class="stat-num" id="adsCount">0</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-label">🍪 Cookie Pop-Ups</span>
+        <span class="stat-num" id="cookieCount">0</span>
       </div>
     </div>
+    <!-- Hidden legacy stat nodes for telemetry compatibility -->
+    <span id="slopCount" style="display:none;">0</span>
+    <span id="scamCount" style="display:none;">0</span>
+    <span id="adsBlockedText" style="display:none;">0</span>
   </div>
 
-  <!-- TAB 3: CONTROLS (3 Instant Presets + Element Zapper + Full Module Options) -->
-  <div id="tabControls" class="tab-panel">
-    <div class="card" style="padding:8px 10px;">
-      <div class="preset-stack">
-        <button type="button" id="presetQuietBtn" class="preset-card active" data-preset="quiet">
-          <div>
-            <div class="preset-title">🤫 Quiet Protection (Default)</div>
-            <div class="preset-sub">Blocks ads, cookies, spam &amp; scams with zero badge/toast noise</div>
-          </div>
-          <span class="preset-pill" id="presetQuietPill">Active</span>
-        </button>
-
-        <button type="button" id="presetVisualBtn" class="preset-card" data-preset="visual">
-          <div>
-            <div class="preset-title">🛡️ Visual Feedback Mode</div>
-            <div class="preset-sub">Full protection + shows 2s cookie whispers &amp; counter badge</div>
-          </div>
-          <span class="preset-pill" id="presetVisualPill">Select</span>
-        </button>
-      </div>
-
-      <div class="zapper-row">
-        <button type="button" id="startZapperBtn" class="btn-ghost-action" title="Click any annoying element on the page to hide it">
-          🧹 Hide Page Element
-        </button>
-        <button type="button" id="openCustomModulesBtn" class="btn-ghost-action">
-          ⚙️ All 6 Toggles ↗
-        </button>
-      </div>
+  <!-- 4. Total Tab & RAM Tamer (Direct 1-Click Access — Zero Tab Switching) -->
+  <div class="card">
+    <div class="ram-header">
+      <span style="color:#10b981;">⚡ Tab &amp; RAM Tamer</span>
+      <span id="ramHeadlineMetric" style="color:#10b981;">Running Fast</span>
     </div>
+    <div class="bar-bg">
+      <div id="ramBarFill" class="bar-fill"></div>
+    </div>
+    <div id="ramDescriptionText" style="font-size:9.5px;color:var(--muted);">
+      Unused background tabs snooze automatically to save memory.
+    </div>
+    <div class="ram-actions">
+      <button type="button" id="reclaimRamBtn" class="btn-primary-sm" title="Shortcut: Alt+Shift+Z">
+        ⚡ Free Up RAM Now
+      </button>
+      <button type="button" id="keepSiteAwakeBtn" class="btn-chip" title="Never snooze this website in the background">
+        📌 Keep Site Awake
+      </button>
+    </div>
+    <div class="session-strip">
+      <span>☁️ Saved Snapshots: <strong id="savedTabsCount">0</strong></span>
+      <button type="button" id="openFullSessionsBtn" class="link-btn" style="font-size:9.5px;">Restore Tabs ↗</button>
+    </div>
+    <div id="savedTabsList" style="display:none;"></div>
   </div>
 
-  <!-- Compact 3-Tab Switcher -->
-  <div class="tab-switcher">
-    <button type="button" class="tab-btn active" data-tab="tabStatus">🛡️ Status</button>
-    <button type="button" class="tab-btn" data-tab="tabSpeed">⚡ Speed</button>
-    <button type="button" class="tab-btn" data-tab="tabControls">⚙️ Controls</button>
-  </div>
-
+  <!-- 5. 1-Click £1.99 Intro Upgrade CTA & Collapsible Key Drawer -->
   <button type="button" id="upgradeCtaBtn" class="btn-go">
-    Unlock Pro Protection — £1.99/mo &rarr;
+    Unlock Pro — £1.99 1st Month &rarr;
   </button>
 
   <div class="footer-links">
-    <button type="button" id="toggleLicenseDrawerBtn" class="link-btn">🔑 Enter Pro Key</button>
-    <button type="button" id="openDashboardBtn" class="link-btn">⚙️ Full Dashboard ↗</button>
+    <button type="button" id="toggleLicenseDrawerBtn" class="link-btn">🔑 Have a Pro Code?</button>
+    <button type="button" id="openCustomModulesBtn" class="link-btn">⚙️ All Settings ↗</button>
     <button type="button" id="openTestLabBtn" class="link-btn">Test Shield ↗</button>
   </div>
 
-  <!-- Persistent License Key Drawer -->
   <div id="licenseDrawer" class="drawer-box">
-    <div style="font-size:10.5px;font-weight:800;">🔑 Activate Pro Key or 6-Digit Code</div>
+    <div style="font-size:10px;font-weight:800;">🔑 Enter Pro Key or 6-Digit Code</div>
     <div class="license-input-row">
       <input type="text" id="licenseKeyInput" class="license-input" placeholder="SWEEPR-DB-XXXX or 6-digit code" autocomplete="off" spellcheck="false" />
       <button type="button" id="activateKeyBtn" class="license-submit">Unlock</button>
     </div>
-    <div id="licenseFeedback" style="font-size:10px;color:#10b981;font-weight:700;margin-top:4px;display:none;"></div>
+    <div id="licenseFeedback" style="font-size:9.5px;color:#10b981;font-weight:700;margin-top:4px;display:none;"></div>
   </div>
 
   <script src="popup.js"></script>

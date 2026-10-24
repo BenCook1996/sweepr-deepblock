@@ -48,15 +48,15 @@
     };
   }
 
-  function reportMetric(metric, amount = 1) {
+  function reportMetric(metric, amount = 1, extra = {}) {
     try {
-      chrome.runtime.sendMessage({ type: 'INCREMENT_DIAGNOSTIC', metric, amount });
+      chrome.runtime.sendMessage({ type: 'INCREMENT_DIAGNOSTIC', metric, amount, ...extra });
     } catch (e) {}
   }
 
   // ============================================================================
   // 0. Zero-Copy Auto-Activation Bridge on sweeprdeepblock.com
-  // Automatically syncs a verified customer license key when signed into the portal
+  // Automatically syncs a verified customer license key on /checkout/success or /login
   // ============================================================================
   function initWebsiteAutoActivationBridge() {
     const host = (location.hostname || '').toLowerCase();
@@ -67,22 +67,57 @@
     }
 
     let lastSyncedKey = '';
+    function showAutoActivationConfirmation() {
+      const targetEl = document.getElementById('licenseKeyText') || document.getElementById('portalLicenseKey');
+      if (!targetEl || document.getElementById('sweeprAutoUnlockedPill')) return;
+      const pill = document.createElement('div');
+      pill.id = 'sweeprAutoUnlockedPill';
+      pill.textContent = '✓ Browser Extension Automatically Unlocked & Active';
+      Object.assign(pill.style, {
+        marginTop: '8px',
+        display: 'inline-block',
+        padding: '4px 10px',
+        borderRadius: '999px',
+        background: 'rgba(16, 185, 129, 0.2)',
+        border: '1px solid rgba(16, 185, 129, 0.45)',
+        color: '#6ee7b7',
+        fontSize: '11px',
+        fontWeight: '800'
+      });
+      targetEl.parentElement?.appendChild(pill);
+    }
+
     function trySyncKey(candidate) {
       const clean = String(candidate || '').trim();
       if (!clean || clean === 'Active' || clean === '—' || clean.length < 6 || clean === lastSyncedKey) return;
       lastSyncedKey = clean;
       try {
-        chrome.runtime.sendMessage({ type: 'AUTO_SYNC_WEBSITE_LICENSE', licenseKey: clean });
+        chrome.runtime.sendMessage({ type: 'AUTO_SYNC_WEBSITE_LICENSE', licenseKey: clean }, (res) => {
+          if (res && res.ok && res.valid) {
+            showAutoActivationConfirmation();
+          }
+        });
       } catch (e) {}
     }
 
-    try {
-      const storedKey =
-        localStorage.getItem('sweepr_license_key') ||
-        localStorage.getItem('deepblock_license_key') ||
-        '';
-      if (storedKey) trySyncKey(storedKey);
-    } catch (e) {}
+    function scanPageForLicenseKey() {
+      try {
+        const storedKey =
+          localStorage.getItem('sweepr_license_key') ||
+          localStorage.getItem('deepblock_license_key') ||
+          '';
+        if (storedKey) trySyncKey(storedKey);
+      } catch (e) {}
+
+      const checkoutKeyEl = document.getElementById('licenseKeyText');
+      const portalKeyEl = document.getElementById('portalLicenseKey');
+      const portalCodeEl = document.getElementById('portalActivationCode');
+      if (checkoutKeyEl && checkoutKeyEl.textContent) trySyncKey(checkoutKeyEl.textContent);
+      else if (portalKeyEl && portalKeyEl.textContent) trySyncKey(portalKeyEl.textContent);
+      else if (portalCodeEl && portalCodeEl.textContent) trySyncKey(portalCodeEl.textContent);
+    }
+
+    scanPageForLicenseKey();
 
     window.addEventListener('message', (e) => {
       if (e.source !== window || !e.data || e.data.source !== 'sweepr-web-portal') return;
@@ -91,12 +126,7 @@
       }
     });
 
-    const portalObs = new MutationObserver(() => {
-      const keyEl = document.getElementById('portalLicenseKey');
-      const codeEl = document.getElementById('portalActivationCode');
-      if (keyEl && keyEl.textContent) trySyncKey(keyEl.textContent);
-      else if (codeEl && codeEl.textContent) trySyncKey(codeEl.textContent);
-    });
+    const portalObs = new MutationObserver(scanPageForLicenseKey);
     if (document.body) {
       portalObs.observe(document.body, { childList: true, subtree: true, characterData: true });
     }
@@ -270,8 +300,8 @@
     } catch (e) {}
   }
 
-  // 1. GDPR Cookie Banner Handling (Silent <50ms Rejector + Safe Scroll Unlock)
-  function processCookieBanners(proActive, silentMode = true) {
+  // 1. GDPR Cookie Banner Handling (100% Silent <50ms Rejector + Safe Scroll Unlock — Zero Toast Noise)
+  function processCookieBanners(proActive) {
     const foundBanner = document.querySelector(CMP_SELECTORS.join(','));
     if (!foundBanner) return;
 
@@ -305,42 +335,15 @@
         unlockScrollIfFrozenByModal();
         reportMetric('cookiePromptsRejected', 1);
       }
-
-      if (clicked && !silentMode && !document.getElementById('deepblockCookieWhisper')) {
-        const toast = document.createElement('div');
-        toast.id = 'deepblockCookieWhisper';
-        toast.textContent = '🍪 Cookie pop-up declined';
-        Object.assign(toast.style, {
-          position: 'fixed',
-          bottom: '14px',
-          left: '14px',
-          zIndex: '2147483647',
-          background: 'rgba(255, 255, 255, 0.96)',
-          color: '#065f46',
-          border: '1px solid #a7f3d0',
-          borderRadius: '999px',
-          padding: '4px 11px',
-          fontSize: '11px',
-          fontWeight: '600',
-          fontFamily: 'system-ui, -apple-system, sans-serif',
-          boxShadow: '0 4px 12px rgba(6, 78, 59, 0.08)',
-          pointerEvents: 'none',
-          transition: 'opacity 0.4s ease'
-        });
-        document.body.appendChild(toast);
-        setTimeout(() => { toast.style.opacity = '0'; }, 1600);
-        setTimeout(() => { toast.remove(); }, 2050);
-      }
     }
   }
 
-  // 2. AI Slop & SEO Content-Farm SERP Purifier (Google / Bing / DuckDuckGo)
-  function processSearchResults(proActive, silentMode = true) {
+  // 2. AI Slop & SEO Content-Farm SERP Purifier (100% Silent Hiding — Zero SERP Badge Clutter)
+  function processSearchResults(proActive) {
     if (!/(google\.|bing\.com|duckduckgo\.com)/i.test(location.hostname)) return;
 
     const results = document.querySelectorAll('div.g, li.b_algo, article[data-testid="result"]');
     let slopCount = 0;
-    const hiddenItems = [];
 
     results.forEach((item) => {
       const text = (item.textContent || '').toLowerCase();
@@ -357,267 +360,211 @@
         slopCount++;
         if (proActive) {
           item.style.display = 'none';
-          hiddenItems.push(item);
-        } else if (!silentMode) {
-          const badge = document.createElement('div');
-          badge.textContent = '⚠️ Low-quality spam result flagged';
-          Object.assign(badge.style, {
-            fontSize: '11px',
-            fontWeight: '600',
-            color: '#92400e',
-            background: '#fffbeb',
-            border: '1px solid #fde68a',
-            padding: '2px 8px',
-            borderRadius: '999px',
-            marginBottom: '4px',
-            display: 'inline-block'
-          });
-          item.prepend(badge);
         }
       }
     });
 
     if (slopCount > 0) {
       reportMetric('aiSlopDetected', slopCount);
-      if (proActive && hiddenItems.length > 0 && !document.getElementById('deepblockSlopNotice')) {
-        const notice = document.createElement('span');
-        notice.id = 'deepblockSlopNotice';
-        Object.assign(notice.style, {
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: '6px',
-          background: '#ecfdf5',
-          color: '#047857',
-          border: '1px solid #a7f3d0',
-          padding: '2px 9px',
-          borderRadius: '999px',
-          fontSize: '11px',
-          fontWeight: '700',
-          marginLeft: '8px',
-          fontFamily: 'system-ui, -apple-system, sans-serif'
-        });
-        const label = document.createElement('span');
-        label.textContent = `🛡️ ${hiddenItems.length} spam result${hiddenItems.length > 1 ? 's' : ''} hidden`;
-        const showBtn = document.createElement('button');
-        showBtn.type = 'button';
-        showBtn.textContent = 'Undo';
-        Object.assign(showBtn.style, {
-          background: 'none',
-          color: '#065f46',
-          border: 'none',
-          padding: '0',
-          fontSize: '11px',
-          fontWeight: '800',
-          textDecoration: 'underline',
-          cursor: 'pointer'
-        });
-        showBtn.onclick = () => {
-          hiddenItems.forEach((el) => { el.style.display = ''; });
-          notice.remove();
-        };
-        notice.appendChild(label);
-        notice.appendChild(showBtn);
-
-        const statsHost =
-          document.querySelector('#result-stats, #b_tween, #react-layout') ||
-          document.querySelector('#search, #b_results');
-        if (statsHost && statsHost.parentNode) {
-          if (statsHost.id === 'result-stats' || statsHost.id === 'b_tween') {
-            statsHost.appendChild(notice);
-          } else {
-            statsHost.parentNode.insertBefore(notice, statsHost);
-          }
-        }
-      }
     }
   }
 
-  // 3. Recipe & News Clutter Helper (Subtle Native Inline Jump Pill Under Heading)
-  function processRecipeAndNewsClutter(proActive, silentMode = true) {
+  // 3. Recipe & News Clutter Stripper (100% Silent — No Unsolicited Injected Page Buttons)
+  function processRecipeAndNewsClutter(proActive) {
     if (!proActive) return;
     const recipeEl = document.querySelector(
       '[itemtype*="schema.org/Recipe"], .wprm-recipe-container, .tasty-recipes, .mv-create-card'
     );
-    if (recipeEl && !document.getElementById('deepblockPureViewBtn')) {
+    if (recipeEl && !recipeEl.dataset.deepblockCounted) {
+      recipeEl.dataset.deepblockCounted = '1';
       reportMetric('clutterStripped', 1);
-      const wrap = document.createElement('div');
-      wrap.id = 'deepblockPureViewBtn';
-      Object.assign(wrap.style, {
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: '7px',
-        background: '#ecfdf5',
-        color: '#065f46',
-        border: '1px solid #a7f3d0',
-        borderRadius: '999px',
-        padding: '4px 11px',
-        margin: '6px 0 12px',
-        fontSize: '12px',
-        fontWeight: '700',
-        fontFamily: 'system-ui, -apple-system, sans-serif'
-      });
-
-      const dot = document.createElement('span');
-      Object.assign(dot.style, {
-        width: '7px',
-        height: '7px',
-        borderRadius: '50%',
-        background: '#10b981',
-        flexShrink: '0'
-      });
-
-      const jumpBtn = document.createElement('button');
-      jumpBtn.type = 'button';
-      jumpBtn.textContent = 'Jump to Recipe ↓';
-      Object.assign(jumpBtn.style, {
-        background: 'none',
-        border: 'none',
-        color: '#065f46',
-        fontWeight: '800',
-        fontSize: '12px',
-        cursor: 'pointer',
-        padding: '0'
-      });
-      jumpBtn.onclick = () => recipeEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-      const closeBtn = document.createElement('button');
-      closeBtn.type = 'button';
-      closeBtn.textContent = '✕';
-      closeBtn.title = 'Dismiss';
-      Object.assign(closeBtn.style, {
-        background: 'none',
-        border: 'none',
-        color: '#047857',
-        fontSize: '11px',
-        fontWeight: '800',
-        cursor: 'pointer',
-        padding: '0 2px'
-      });
-      closeBtn.onclick = () => wrap.remove();
-
-      wrap.appendChild(dot);
-      wrap.appendChild(jumpBtn);
-      wrap.appendChild(closeBtn);
-
-      const mainHeading = document.querySelector('article h1, main h1, h1');
-      if (mainHeading && mainHeading.parentNode) {
-        mainHeading.parentNode.insertBefore(wrap, mainHeading.nextSibling);
-      } else if (!silentMode) {
-        Object.assign(wrap.style, {
-          position: 'fixed',
-          bottom: '16px',
-          right: '16px',
-          zIndex: '2147483647',
-          boxShadow: '0 4px 14px rgba(6, 78, 59, 0.14)'
-        });
-        document.body.appendChild(wrap);
-      }
     }
   }
 
-  // 4. Fake E-Commerce Store Detector (Non-Blocking Shadow-DOM Corner Pill)
-  function processEcommerceStore(proActive) {
+  // 4. High-Trust, Zero-Panic Fake E-Commerce Store Interstitial (Shadow-DOM Isolated)
+  function processEcommerceStore(proActive, trustedShopSites = []) {
     if (!proActive) return;
-    if (/(^|\.)(amazon\.|ebay\.|argos\.co\.uk|johnlewis\.com|currys\.co\.uk|tesco\.com)/i.test(location.hostname)) {
+    if (/(^|\.)(amazon\.|ebay\.|argos\.co\.uk|johnlewis\.com|currys\.co\.uk|tesco\.com|apple\.com|nike\.com)/i.test(location.hostname)) {
+      return;
+    }
+    if (currentHost && Array.isArray(trustedShopSites) && trustedShopSites.includes(currentHost)) {
       return;
     }
 
     const isShopifyOrStore =
       Boolean(window.Shopify) ||
-      document.querySelector('meta[name="shopify-checkout-api-token"]');
+      document.querySelector('meta[name="shopify-checkout-api-token"]') ||
+      document.querySelector('form[action*="/cart/add"]');
 
     if (!isShopifyOrStore) return;
 
     const hasFakeUrgency = Boolean(
       document.querySelector('[class*="countdown" i], [id*="hurrify" i], [class*="scarcity" i]')
     );
-    if (hasFakeUrgency) {
-      reportMetric('fakeStoresDetected', 1);
-      if (!document.getElementById('deepblockShopWarningBar')) {
-        const host = document.createElement('div');
-        host.id = 'deepblockShopWarningBar';
-        Object.assign(host.style, {
-          position: 'fixed',
-          bottom: '16px',
-          right: '16px',
-          zIndex: '2147483647',
-          maxWidth: '340px',
-          width: 'calc(100vw - 32px)'
-        });
+    if (!hasFakeUrgency) return;
 
-        const root = host.attachShadow ? host.attachShadow({ mode: 'open' }) : host;
-        const card = document.createElement('div');
-        Object.assign(card.style, {
-          background: 'rgba(255, 251, 235, 0.98)',
-          color: '#92400e',
-          border: '1px solid #f59e0b',
-          borderRadius: '14px',
-          padding: '10px 12px',
-          fontSize: '12px',
-          fontWeight: '700',
-          fontFamily: 'system-ui, -apple-system, sans-serif',
-          boxShadow: '0 10px 25px rgba(0, 0, 0, 0.12)',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '8px'
-        });
+    const reasons = [
+      'Fake urgency countdown timer detected on this storefront.',
+      'High-pressure promotional layout matching known clearance scam templates.'
+    ];
+    const bodyText = (document.body ? document.body.innerText || '' : '').toLowerCase();
+    if (!/company number|registered in|vat\s*(no|number|reg)/i.test(bodyText)) {
+      reasons.push('No verifiable company registration number found on this page.');
+    }
 
-        const msg = document.createElement('div');
-        msg.style.lineHeight = '1.35';
-        msg.textContent =
-          '⚠️ Caution: Fake urgency timer detected on this store.';
+    reportMetric('fakeStoresDetected', 1, { reasons, hostname: currentHost });
 
-        const actions = document.createElement('div');
-        Object.assign(actions.style, {
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'flex-end',
-          gap: '6px'
-        });
+    if (!document.getElementById('deepblockShopWarningBar')) {
+      const host = document.createElement('div');
+      host.id = 'deepblockShopWarningBar';
+      Object.assign(host.style, {
+        position: 'fixed',
+        inset: '0',
+        zIndex: '2147483647',
+        background: 'rgba(15, 23, 42, 0.72)',
+        backdropFilter: 'blur(4px)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '16px'
+      });
 
-        const leaveBtn = document.createElement('button');
-        leaveBtn.type = 'button';
-        leaveBtn.textContent = '← Leave Site';
-        Object.assign(leaveBtn.style, {
-          background: '#059669',
-          color: '#ffffff',
-          border: 'none',
-          borderRadius: '8px',
-          padding: '5px 10px',
-          fontSize: '11px',
-          fontWeight: '800',
-          cursor: 'pointer'
-        });
-        leaveBtn.onclick = () => {
-          if (window.history.length > 1) {
-            window.history.back();
-          } else {
-            window.location.href = 'https://www.google.com';
-          }
-        };
+      const root = host.attachShadow ? host.attachShadow({ mode: 'open' }) : host;
+      const card = document.createElement('div');
+      Object.assign(card.style, {
+        background: '#ffffff',
+        color: '#0f172a',
+        border: '2px solid #f59e0b',
+        borderRadius: '20px',
+        padding: '22px 24px',
+        maxWidth: '440px',
+        width: '100%',
+        fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+        boxShadow: '0 24px 48px rgba(0, 0, 0, 0.35)',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '14px'
+      });
 
-        const dismiss = document.createElement('button');
-        dismiss.type = 'button';
-        dismiss.textContent = 'Dismiss';
-        Object.assign(dismiss.style, {
-          background: 'transparent',
-          color: '#78350f',
-          border: '1px solid #fcd34d',
-          borderRadius: '8px',
-          padding: '5px 9px',
-          fontSize: '11px',
-          fontWeight: '700',
-          cursor: 'pointer'
-        });
-        dismiss.onclick = () => host.remove();
+      const badgeRow = document.createElement('div');
+      Object.assign(badgeRow.style, {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: '8px'
+      });
 
-        actions.appendChild(dismiss);
-        actions.appendChild(leaveBtn);
-        card.appendChild(msg);
-        card.appendChild(actions);
-        root.appendChild(card);
-        document.body.appendChild(host);
-      }
+      const badge = document.createElement('span');
+      badge.textContent = '⚠️ SWEEPR SHOP SHIELD · CAUTION';
+      Object.assign(badge.style, {
+        background: '#fef3c7',
+        color: '#92400e',
+        border: '1px solid #fde68a',
+        borderRadius: '999px',
+        padding: '4px 10px',
+        fontSize: '10.5px',
+        fontWeight: '800',
+        letterSpacing: '0.03em'
+      });
+
+      const domainLabel = document.createElement('span');
+      domainLabel.textContent = currentHost || location.hostname;
+      Object.assign(domainLabel.style, {
+        fontSize: '11px',
+        fontWeight: '700',
+        color: '#64748b',
+        fontFamily: 'ui-monospace, monospace'
+      });
+
+      badgeRow.appendChild(badge);
+      badgeRow.appendChild(domainLabel);
+
+      const title = document.createElement('div');
+      title.textContent = `Hold on — this store shows ${reasons.length} signs of a risky online shop`;
+      Object.assign(title.style, {
+        fontSize: '17px',
+        fontWeight: '900',
+        color: '#0f172a',
+        lineHeight: '1.3'
+      });
+
+      const list = document.createElement('ul');
+      Object.assign(list.style, {
+        margin: '0',
+        padding: '12px 14px 12px 28px',
+        background: '#fffbeb',
+        border: '1px solid #fde68a',
+        borderRadius: '12px',
+        color: '#78350f',
+        fontSize: '12px',
+        fontWeight: '600',
+        lineHeight: '1.45',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '6px'
+      });
+      reasons.forEach((r) => {
+        const li = document.createElement('li');
+        li.textContent = r;
+        list.appendChild(li);
+      });
+
+      const leaveBtn = document.createElement('button');
+      leaveBtn.type = 'button';
+      leaveBtn.textContent = '← Take Me Back to Safety';
+      Object.assign(leaveBtn.style, {
+        width: '100%',
+        background: '#059669',
+        color: '#ffffff',
+        border: 'none',
+        borderRadius: '12px',
+        padding: '12px 16px',
+        fontSize: '13.5px',
+        fontWeight: '800',
+        cursor: 'pointer',
+        boxShadow: '0 4px 14px rgba(5, 150, 105, 0.3)'
+      });
+      leaveBtn.onclick = () => {
+        if (window.history.length > 1) {
+          window.history.back();
+        } else {
+          window.location.href = 'https://www.google.com';
+        }
+      };
+
+      const trustBtn = document.createElement('button');
+      trustBtn.type = 'button';
+      trustBtn.textContent = 'I know this retailer — Proceed anyway (Trust this site)';
+      Object.assign(trustBtn.style, {
+        background: 'transparent',
+        color: '#64748b',
+        border: 'none',
+        padding: '4px 8px',
+        fontSize: '11.5px',
+        fontWeight: '600',
+        textDecoration: 'underline',
+        cursor: 'pointer',
+        alignSelf: 'center'
+      });
+      trustBtn.onclick = () => {
+        if (currentHost) {
+          chrome.storage.local.get(['trustedShopSites'], (res) => {
+            const list = Array.isArray(res && res.trustedShopSites) ? res.trustedShopSites : [];
+            if (!list.includes(currentHost)) {
+              chrome.storage.local.set({ trustedShopSites: [...list, currentHost] });
+            }
+          });
+        }
+        host.remove();
+      };
+
+      card.appendChild(badgeRow);
+      card.appendChild(title);
+      card.appendChild(list);
+      card.appendChild(leaveBtn);
+      card.appendChild(trustBtn);
+      root.appendChild(card);
+      document.body.appendChild(host);
     }
   }
 
@@ -787,7 +734,7 @@
     }
   });
 
-  chrome.storage.local.get(['proActive', 'licenseKey', 'pausedSites', 'settings', 'customHiddenSelectors'], (res) => {
+  chrome.storage.local.get(['proActive', 'licenseKey', 'pausedSites', 'trustedShopSites', 'settings', 'customHiddenSelectors'], (res) => {
     const proActive = Boolean(res && res.proActive && res.licenseKey);
     if (!proActive) {
       try {
@@ -797,6 +744,7 @@
     }
 
     const pausedSites = Array.isArray(res && res.pausedSites) ? res.pausedSites : [];
+    const trustedShopSites = Array.isArray(res && res.trustedShopSites) ? res.trustedShopSites : [];
     if (currentHost && pausedSites.includes(currentHost)) return;
 
     try {
@@ -808,12 +756,11 @@
     }
 
     const settings = (res && res.settings) || {};
-    const silentMode = settings.silentMode !== false;
 
-    if (settings.cookieAutoClose !== false) processCookieBanners(true, silentMode);
-    if (settings.hideSearchSpam !== false) processSearchResults(true, silentMode);
-    processRecipeAndNewsClutter(true, silentMode);
-    if (settings.fakeShopAlerts !== false) processEcommerceStore(true);
+    if (settings.cookieAutoClose !== false) processCookieBanners(true);
+    if (settings.hideSearchSpam !== false) processSearchResults(true);
+    processRecipeAndNewsClutter(true);
+    if (settings.fakeShopAlerts !== false) processEcommerceStore(true, trustedShopSites);
     if (settings.adBlocking !== false) {
       initYouTubeAdShield();
       processAntiAdblockStealth();

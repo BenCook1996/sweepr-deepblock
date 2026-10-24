@@ -748,6 +748,7 @@ const CLEAN_ROUTES = {
   '/order': 'order.html',
   '/checkout': 'order.html',
   '/login': 'login.html',
+  '/extension-ux-prototype': 'extension-ux-prototype.html',
   '/privacy': 'privacy.html',
   '/refund': 'refund.html',
   '/terms': 'terms.html',
@@ -1071,6 +1072,14 @@ function renderCheckoutSuccessPage(acc, isCancelled = false) {
       localStorage.removeItem('deepblock_visited_order');
       localStorage.removeItem('sweepr_visited_order');
       document.cookie = 'sweepr_visited_order=; path=/; max-age=0';
+      const activeKey = ${JSON.stringify(acc?.licenseKey || 'SWEEPR-DB-PRO')};
+      if (activeKey) {
+        localStorage.setItem('sweepr_license_key', activeKey);
+        localStorage.setItem('deepblock_license_key', activeKey);
+        window.addEventListener('DOMContentLoaded', () => {
+          window.postMessage({ source: 'sweepr-web-portal', type: 'SWEEPR_AUTO_ACTIVATE', licenseKey: activeKey }, window.location.origin);
+        });
+      }
     } catch (e) {}
   </script>
 </head>

@@ -20,6 +20,7 @@ const PRO_ONLY_SETTINGS = new Set([
 ]);
 
 const scamDetectedTabs = new Set();
+const scamReasonsByTab = new Map();
 
 async function syncExtensionProtectionRules(enablePro) {
   try {
@@ -75,6 +76,8 @@ const DEFAULT_STATE = {
   entitlements: [],
   encryptedDnsEnabled: false,
   pausedSites: [],
+  neverSnoozeSites: [],
+  trustedShopSites: [],
   customHiddenSelectors: {},
   settings: {
     cookieAutoClose: false,
@@ -397,6 +400,7 @@ if (chrome.tabs) {
     chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
       if (changeInfo.status === 'loading') {
         scamDetectedTabs.delete(tabId);
+        scamReasonsByTab.delete(tabId);
       }
       if (changeInfo.status === 'complete' || changeInfo.url) {
         updateActionBadge();
@@ -406,6 +410,7 @@ if (chrome.tabs) {
   if (chrome.tabs.onRemoved) {
     chrome.tabs.onRemoved.addListener((tabId) => {
       scamDetectedTabs.delete(tabId);
+      scamReasonsByTab.delete(tabId);
     });
   }
 }
@@ -497,9 +502,10 @@ async function hibernateInactiveTabs() {
   if (!verified.proActive || !verified.licenseKey) {
     return { ok: false, requiresPro: true, error: 'Active paid Pro subscription required.' };
   }
-  const data = await chrome.storage.local.get(['stats', 'cloudTabSessions']);
+  const data = await chrome.storage.local.get(['stats', 'cloudTabSessions', 'neverSnoozeSites']);
 
   const stats = data.stats || DEFAULT_STATE.stats;
+  const neverSnoozeSites = Array.isArray(data.neverSnoozeSites) ? data.neverSnoozeSites : [];
   const tabs = await chrome.tabs.query({});
 
   const snapshot = {
@@ -516,6 +522,15 @@ async function hibernateInactiveTabs() {
   let newlyDiscarded = 0;
   for (const tab of tabs) {
     if (!tab.active && !tab.pinned && !tab.audible && !tab.discarded && tab.id) {
+      let tabHost = '';
+      try {
+        if (tab.url && /^https?:\/\//i.test(tab.url)) {
+          tabHost = new URL(tab.url).hostname.replace(/^www\./i, '').toLowerCase();
+        }
+      } catch (e) {}
+      if (tabHost && neverSnoozeSites.includes(tabHost)) {
+        continue;
+      }
       try {
         await chrome.tabs.discard(tab.id);
         newlyDiscarded++;
@@ -532,6 +547,17 @@ async function hibernateInactiveTabs() {
 }
 
 chrome.alarms.onAlarm.addListener(async (alarm) => {
+  if (alarm.name && alarm.name.startsWith('resumeSite:')) {
+    const hostToResume = alarm.name.slice('resumeSite:'.length).trim().toLowerCase();
+    if (hostToResume) {
+      const res = await chrome.storage.local.get(['pausedSites']);
+      const current = Array.isArray(res.pausedSites) ? res.pausedSites : [];
+      const updated = current.filter((h) => h !== hostToResume);
+      await chrome.storage.local.set({ pausedSites: updated });
+      await updateActionBadge();
+    }
+    return;
+  }
   if (alarm.name === 'licenseVerifyCheck') {
     await enforceStoredSubscriptionIntegrity();
     return;
@@ -576,6 +602,9 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.type === 'INCREMENT_DIAGNOSTIC') {
     if (msg.metric === 'fakeStoresDetected' && sender && sender.tab && sender.tab.id) {
       scamDetectedTabs.add(sender.tab.id);
+      if (Array.isArray(msg.reasons) && msg.reasons.length > 0) {
+        scamReasonsByTab.set(sender.tab.id, msg.reasons);
+      }
     }
     chrome.storage.local.get(['stats', 'settings'], (res) => {
       const stats = res.stats || DEFAULT_STATE.stats;
@@ -595,13 +624,18 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.type === 'GET_DASHBOARD_STATE') {
     Promise.all([
       chrome.storage.local.get(Object.keys(DEFAULT_STATE)),
-      getRamSpeedometerMetrics()
-    ]).then(async ([store, ramMetrics]) => {
+      getRamSpeedometerMetrics(),
+      chrome.tabs.query({ active: true, currentWindow: true })
+    ]).then(async ([store, ramMetrics, activeTabs]) => {
       let isPro = Boolean(store.proActive && store.licenseKey);
       if (!store.licenseKey && (store.proActive || store.ramTamerActive)) {
         await revokeProState('free');
         isPro = false;
       }
+      const activeTab = activeTabs && activeTabs[0];
+      const activeTabId = activeTab ? activeTab.id : null;
+      const currentTabScamDetected = Boolean(activeTabId && scamDetectedTabs.has(activeTabId));
+      const currentTabScamReasons = (activeTabId && scamReasonsByTab.get(activeTabId)) || [];
       sendResponse({
         ...DEFAULT_STATE,
         ...store,
@@ -609,7 +643,9 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
         ramTamerActive: Boolean(isPro && store.ramTamerActive),
         settings: { ...DEFAULT_STATE.settings, ...(store.settings || {}) },
         stats: { ...DEFAULT_STATE.stats, ...(store.stats || {}) },
-        ramMetrics
+        ramMetrics,
+        currentTabScamDetected,
+        currentTabScamReasons
       });
     });
     return true;
@@ -641,8 +677,59 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   }
 
   if (msg.type === 'TOGGLE_SITE_PAUSE') {
-    toggleSitePauseByHostname(msg.hostname).then((res) => {
+    toggleSitePauseByHostname(msg.hostname).then(async (res) => {
+      if (res && res.ok && msg.reloadTabId) {
+        try {
+          await chrome.tabs.reload(msg.reloadTabId);
+        } catch (e) {}
+      }
       sendResponse(res);
+    });
+    return true;
+  }
+
+  if (msg.type === 'PAUSE_SITE_5_MIN') {
+    const host = String(msg.hostname || '').replace(/^www\./i, '').trim().toLowerCase();
+    Promise.all([ensureVerifiedProSession(), chrome.storage.local.get(['pausedSites'])]).then(async ([auth, res]) => {
+      if (!auth.proActive || !auth.licenseKey) {
+        sendResponse({
+          ok: false,
+          requiresPro: true,
+          error: 'Active paid Pro subscription required.'
+        });
+        return;
+      }
+      if (!host) {
+        sendResponse({ ok: false });
+        return;
+      }
+      const current = Array.isArray(res.pausedSites) ? res.pausedSites : [];
+      const updated = current.includes(host) ? current : [...current, host];
+      await chrome.storage.local.set({ pausedSites: updated });
+      chrome.alarms.create(`resumeSite:${host}`, { delayInMinutes: 5 });
+      await updateActionBadge();
+      if (msg.reloadTabId) {
+        try {
+          await chrome.tabs.reload(msg.reloadTabId);
+        } catch (e) {}
+      }
+      sendResponse({ ok: true, pausedSites: updated, paused: true, hostname: host, resumesInMinutes: 5 });
+    });
+    return true;
+  }
+
+  if (msg.type === 'TOGGLE_NEVER_SNOOZE_SITE') {
+    const host = String(msg.hostname || '').replace(/^www\./i, '').trim().toLowerCase();
+    chrome.storage.local.get(['neverSnoozeSites'], async (res) => {
+      if (!host) {
+        sendResponse({ ok: false });
+        return;
+      }
+      const current = Array.isArray(res.neverSnoozeSites) ? res.neverSnoozeSites : [];
+      const keptAwake = !current.includes(host);
+      const updated = keptAwake ? [...current, host] : current.filter((h) => h !== host);
+      await chrome.storage.local.set({ neverSnoozeSites: updated });
+      sendResponse({ ok: true, neverSnoozeSites: updated, keptAwake, hostname: host });
     });
     return true;
   }

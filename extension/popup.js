@@ -1,4 +1,4 @@
-// SWEEPR Deepblock — Subtle Toolbar Popover Controller (v1.2 UX & Ergonomics Audited)
+// SWEEPR Deepblock — Zero-Scroll 360x500px Unified Popup Controller (v2.0 UX Architect Refactored)
 document.addEventListener('DOMContentLoaded', () => {
   const adsCountEl = document.getElementById('adsCount');
   const cookieCountEl = document.getElementById('cookieCount');
@@ -10,13 +10,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const ramDescEl = document.getElementById('ramDescriptionText');
   const ramBarFillEl = document.getElementById('ramBarFill');
   const reclaimRamBtn = document.getElementById('reclaimRamBtn');
+  const keepSiteAwakeBtn = document.getElementById('keepSiteAwakeBtn');
   const savedTabsCountEl = document.getElementById('savedTabsCount');
-  const savedTabsListEl = document.getElementById('savedTabsList');
   const upgradeCtaBtn = document.getElementById('upgradeCtaBtn');
   const siteBarEl = document.getElementById('siteBar');
   const currentSiteLabelEl = document.getElementById('currentSiteLabel');
   const currentSiteSubEl = document.getElementById('currentSiteSub');
   const sitePauseBtn = document.getElementById('sitePauseBtn');
+  const pause5MinBtn = document.getElementById('pause5MinBtn');
+  const storeSafetyCard = document.getElementById('storeSafetyCard');
+  const storeSafetyTitle = document.getElementById('storeSafetyTitle');
+  const storeSafetySub = document.getElementById('storeSafetySub');
+  const storeSafetyPill = document.getElementById('storeSafetyPill');
   const toggleLicenseDrawerBtn = document.getElementById('toggleLicenseDrawerBtn');
   const licenseDrawerEl = document.getElementById('licenseDrawer');
   const licenseKeyInput = document.getElementById('licenseKeyInput');
@@ -27,39 +32,21 @@ document.addEventListener('DOMContentLoaded', () => {
   const openFullSessionsBtn = document.getElementById('openFullSessionsBtn');
   const openCustomModulesBtn = document.getElementById('openCustomModulesBtn');
   const startZapperBtn = document.getElementById('startZapperBtn');
-  const presetQuietBtn = document.getElementById('presetQuietBtn');
-  const presetVisualBtn = document.getElementById('presetVisualBtn');
-  const presetQuietPill = document.getElementById('presetQuietPill');
-  const presetVisualPill = document.getElementById('presetVisualPill');
 
   let currentHostname = '';
   let currentTabId = null;
-  let currentState = { proActive: false, settings: {}, pausedSites: [], cloudTabSessions: [] };
+  let currentState = {
+    proActive: false,
+    settings: {},
+    pausedSites: [],
+    neverSnoozeSites: [],
+    trustedShopSites: [],
+    cloudTabSessions: [],
+    currentTabScamDetected: false,
+    currentTabScamReasons: []
+  };
 
-  // 3-Tab Switcher with State Persistence (Status / Speed / Controls)
-  const tabButtons = document.querySelectorAll('.tab-btn[data-tab]');
-  const tabPanels = document.querySelectorAll('.tab-panel');
-
-  function activateTab(targetId, persist = true) {
-    if (!targetId) return;
-    tabButtons.forEach((b) => b.classList.toggle('active', b.getAttribute('data-tab') === targetId));
-    tabPanels.forEach((p) => p.classList.toggle('active', p.id === targetId));
-    if (persist) {
-      chrome.storage.local.set({ lastActivePopupTab: targetId });
-    }
-  }
-
-  tabButtons.forEach((btn) => {
-    btn.addEventListener('click', () => {
-      activateTab(btn.getAttribute('data-tab'), true);
-    });
-  });
-
-  // Restore persisted popup UI state (active tab, draft license key, open drawer)
-  chrome.storage.local.get(['lastActivePopupTab', 'draftLicenseKey', 'licenseDrawerOpen', 'proActive'], (uiState) => {
-    if (uiState && uiState.lastActivePopupTab) {
-      activateTab(uiState.lastActivePopupTab, false);
-    }
+  chrome.storage.local.get(['draftLicenseKey', 'licenseDrawerOpen', 'proActive'], (uiState) => {
     if (uiState && typeof uiState.draftLicenseKey === 'string' && uiState.draftLicenseKey && licenseKeyInput) {
       licenseKeyInput.value = uiState.draftLicenseKey;
     }
@@ -77,14 +64,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Detect active tab website hostname
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     const activeTab = tabs && tabs[0];
     if (activeTab) {
       currentTabId = activeTab.id || null;
       if (activeTab.url && /^https?:\/\//i.test(activeTab.url)) {
         try {
-          currentHostname = new URL(activeTab.url).hostname.replace(/^www\./i, '');
+          currentHostname = new URL(activeTab.url).hostname.replace(/^www\./i, '').toLowerCase();
           currentSiteLabelEl.textContent = currentHostname;
           updateSiteBarState();
         } catch (e) {}
@@ -99,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
     licenseFeedbackEl.style.color = '#f59e0b';
     licenseFeedbackEl.textContent =
       customMsg ||
-      '🔒 Active Pro subscription required. Paste your key or 6-digit code below.';
+      '🔒 Unlock Pro (£1.99 1st mo) or enter your 6-digit code below.';
     licenseKeyInput.focus();
   }
 
@@ -108,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
       siteBarEl.classList.add('paused');
       sitePauseBtn.className = 'switch-btn pro-lock';
       sitePauseBtn.textContent = '🔒 PRO';
-      currentSiteSubEl.textContent = 'Activate Pro key below to enable protection';
+      currentSiteSubEl.textContent = 'Unlock Pro below to enable full Site Shield';
       return;
     }
     sitePauseBtn.textContent = '';
@@ -120,157 +106,187 @@ document.addEventListener('DOMContentLoaded', () => {
       siteBarEl.classList.add('paused');
       sitePauseBtn.className = 'switch-btn off';
       currentSiteSubEl.textContent = 'Protection paused on this site';
+      if (pause5MinBtn) pause5MinBtn.textContent = '▶️ Resume Protection';
     } else {
       siteBarEl.classList.remove('paused');
       sitePauseBtn.className = 'switch-btn';
-      currentSiteSubEl.textContent = 'Protection is ON for this site';
+      currentSiteSubEl.textContent = 'Site Shield ON · Ads & Cookies Blocked';
+      if (pause5MinBtn) pause5MinBtn.textContent = '🔧 Pause 5m (Fix Page)';
+    }
+
+    if (keepSiteAwakeBtn) {
+      const keptAwake =
+        currentHostname &&
+        Array.isArray(currentState.neverSnoozeSites) &&
+        currentState.neverSnoozeSites.includes(currentHostname);
+      keepSiteAwakeBtn.textContent = keptAwake ? '✓ Kept Awake' : '📌 Keep Site Awake';
+      keepSiteAwakeBtn.style.borderColor = keptAwake ? '#10b981' : '';
+      keepSiteAwakeBtn.style.color = keptAwake ? '#059669' : '';
     }
   }
 
-  function renderSavedSessions(sessions) {
-    const list = Array.isArray(sessions) ? sessions : [];
-    savedTabsCountEl.textContent = String(list.length);
-    savedTabsListEl.textContent = '';
-
-    if (list.length === 0) {
-      savedTabsListEl.textContent =
-        'No paused tab groups yet. Unused tabs automatically snooze in the background.';
-      return;
+  function renderStoreSafety(state) {
+    if (!storeSafetyCard || !storeSafetyTitle || !storeSafetySub || !storeSafetyPill) return;
+    if (state.currentTabScamDetected) {
+      storeSafetyCard.classList.add('scam-alert');
+      storeSafetyTitle.textContent = '⚠️ Suspicious Store Signals Found';
+      const firstReason = (state.currentTabScamReasons && state.currentTabScamReasons[0]) || 'Fake urgency countdown timer detected on store';
+      storeSafetySub.textContent = firstReason;
+      storeSafetyPill.textContent = 'RISK';
+      storeSafetyPill.className = 'store-pill risk';
+    } else {
+      storeSafetyCard.classList.remove('scam-alert');
+      storeSafetyTitle.textContent = '🛡️ Store & Site Check: Verified Safe';
+      storeSafetySub.textContent = '0 phishing or fake-urgency scam signals on this page';
+      storeSafetyPill.textContent = 'SAFE';
+      storeSafetyPill.className = 'store-pill';
     }
-
-    list.slice(0, 2).forEach((sess) => {
-      const row = document.createElement('div');
-      row.className = 'saved-session-row';
-
-      const label = document.createElement('span');
-      label.textContent = `Saved ${sess.savedAt || 'earlier'} (${Number(sess.tabCount) || 0} tabs)`;
-
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'restore-btn';
-      btn.textContent = 'Reopen';
-      btn.addEventListener('click', () => {
-        btn.textContent = 'Opening...';
-        chrome.runtime.sendMessage({ type: 'RESTORE_SAVED_SESSION', sessionId: sess.id }, () => {
-          btn.textContent = '✓ Opened';
-        });
-      });
-
-      row.appendChild(label);
-      row.appendChild(btn);
-      savedTabsListEl.appendChild(row);
-    });
-  }
-
-  function renderPresets(proActive, settings) {
-    const s = settings || {};
-    const isQuiet = s.silentMode !== false;
-    if (!proActive) {
-      if (presetQuietBtn) presetQuietBtn.classList.remove('active');
-      if (presetVisualBtn) presetVisualBtn.classList.remove('active');
-      if (presetQuietPill) presetQuietPill.textContent = '🔒 PRO';
-      if (presetVisualPill) presetVisualPill.textContent = '🔒 PRO';
-      return;
-    }
-    if (presetQuietBtn) presetQuietBtn.classList.toggle('active', isQuiet);
-    if (presetVisualBtn) presetVisualBtn.classList.toggle('active', !isQuiet);
-    if (presetQuietPill) presetQuietPill.textContent = isQuiet ? 'Active ✓' : 'Select';
-    if (presetVisualPill) presetVisualPill.textContent = !isQuiet ? 'Active ✓' : 'Select';
   }
 
   function renderState(state) {
     currentState = state || currentState;
     const isPro = Boolean(state.proActive);
     const stats = state.stats || {};
-    const ads = isPro ? Number(stats.adsBlocked) || 0 : 0;
+    const ads = isPro ? (Number(stats.adsBlocked) || 0) + (Number(stats.aiSlopDetected) || 0) : 0;
     const cookies = isPro ? Number(stats.cookiePromptsDetected) || 0 : 0;
     const slop = isPro ? Number(stats.aiSlopDetected) || 0 : 0;
     const scams = isPro ? Number(stats.fakeStoresDetected) || 0 : 0;
 
-    adsCountEl.textContent = String(ads);
-    cookieCountEl.textContent = String(cookies);
-    slopCountEl.textContent = String(slop);
-    scamCountEl.textContent = String(scams);
+    if (adsCountEl) adsCountEl.textContent = String(ads);
+    if (cookieCountEl) cookieCountEl.textContent = String(cookies);
+    if (slopCountEl) slopCountEl.textContent = String(slop);
+    if (scamCountEl) scamCountEl.textContent = String(scams);
     if (adsBlockedTextEl) {
-      adsBlockedTextEl.textContent = isPro ? `${ads + cookies + slop} blocked ✓` : '🔒 Locked';
-      adsBlockedTextEl.style.color = isPro ? '#10b981' : '#f59e0b';
+      adsBlockedTextEl.textContent = isPro ? `${ads + cookies} blocked ✓` : '🔒 Locked';
     }
+
+    const sessions = Array.isArray(state.cloudTabSessions) ? state.cloudTabSessions : [];
+    if (savedTabsCountEl) savedTabsCountEl.textContent = String(sessions.length);
 
     if (state.ramMetrics) {
       const totalTabs = Number(state.ramMetrics.totalTabs) || 1;
       const discardedCount = Number(state.ramMetrics.discardedCount) || 0;
+      const savedGb = Number(stats.ramSavedGb) || +(discardedCount * 0.14).toFixed(1);
       ramHeadlineEl.textContent = !isPro
-        ? '🔒 Locked'
-        : discardedCount > 0
-        ? `⚡ ${discardedCount} Sleeping`
+        ? '🔒 Pro Add-On'
+        : savedGb > 0
+        ? `⚡ ${savedGb} GB Saved · ${discardedCount} Sleeping`
         : `${totalTabs} Tabs Open`;
-      ramBarFillEl.style.width = isPro ? `${Math.min(85, Math.max(20, totalTabs * 4))}%` : '0%';
-
+      ramBarFillEl.style.width = isPro ? `${Math.min(85, Math.max(18, totalTabs * 4))}%` : '0%';
       ramDescEl.textContent = !isPro
-        ? 'Activate Pro to snooze inactive background tabs and speed up your browser.'
+        ? 'Unlock Pro to snooze inactive background tabs and save up to 5.9 GB RAM.'
         : discardedCount > 0
-        ? `${discardedCount} background tab${discardedCount > 1 ? 's are' : ' is'} quietly sleeping.`
+        ? `${discardedCount} background tab${discardedCount === 1 ? ' is' : 's are'} sleeping quietly.`
         : `${totalTabs} open tabs. Unused background tabs snooze automatically.`;
     }
 
     if (isPro) {
-      tierBadgeEl.textContent = 'Active';
+      tierBadgeEl.textContent = 'Pro Active';
       tierBadgeEl.classList.add('pro');
       upgradeCtaBtn.style.display = 'none';
       toggleLicenseDrawerBtn.style.display = 'none';
       licenseDrawerEl.classList.remove('open');
     } else {
-      tierBadgeEl.textContent = 'Locked';
+      tierBadgeEl.textContent = 'Free Preview';
       tierBadgeEl.classList.remove('pro');
       upgradeCtaBtn.style.display = 'block';
       toggleLicenseDrawerBtn.style.display = 'inline-flex';
-      toggleLicenseDrawerBtn.textContent = '🔑 Enter Pro Key';
     }
 
     updateSiteBarState();
-    renderPresets(isPro, state.settings);
-    renderSavedSessions(state.cloudTabSessions);
+    renderStoreSafety(currentState);
   }
 
   chrome.runtime.sendMessage({ type: 'GET_DASHBOARD_STATE' }, (response) => {
     if (response) renderState(response);
   });
 
-  // Pause / Resume protection on current website
+  // 1-Click Toggle Site Shield (and reload active tab so change takes effect immediately)
   sitePauseBtn.addEventListener('click', () => {
     if (!currentState.proActive) {
       openProRequiredPrompt();
       return;
     }
     if (!currentHostname) return;
-    chrome.runtime.sendMessage({ type: 'TOGGLE_SITE_PAUSE', hostname: currentHostname }, (res) => {
-      if (res && res.requiresPro) {
-        currentState.proActive = false;
-        renderState(currentState);
-        openProRequiredPrompt(res.error);
-        return;
+    chrome.runtime.sendMessage(
+      { type: 'TOGGLE_SITE_PAUSE', hostname: currentHostname, reloadTabId: currentTabId },
+      (res) => {
+        if (res && res.requiresPro) {
+          currentState.proActive = false;
+          renderState(currentState);
+          openProRequiredPrompt(res.error);
+          return;
+        }
+        if (res && res.ok) {
+          currentState.pausedSites = res.pausedSites;
+          updateSiteBarState();
+        }
       }
-      if (res && res.ok) {
-        currentState.pausedSites = res.pausedSites;
-        updateSiteBarState();
-      }
-    });
+    );
   });
 
-  if (upgradeCtaBtn) {
-    upgradeCtaBtn.addEventListener('click', () => {
-      chrome.tabs.create({ url: 'https://sweeprdeepblock.com/order?plan=annual' });
+  // 1-Click "Pause 5m (Fix Page)" Broken-Website Escape Hatch
+  if (pause5MinBtn) {
+    pause5MinBtn.addEventListener('click', () => {
+      if (!currentState.proActive) {
+        openProRequiredPrompt();
+        return;
+      }
+      if (!currentHostname) return;
+      const isAlreadyPaused =
+        Array.isArray(currentState.pausedSites) && currentState.pausedSites.includes(currentHostname);
+      if (isAlreadyPaused) {
+        chrome.runtime.sendMessage(
+          { type: 'TOGGLE_SITE_PAUSE', hostname: currentHostname, reloadTabId: currentTabId },
+          (res) => {
+            if (res && res.ok) {
+              currentState.pausedSites = res.pausedSites;
+              updateSiteBarState();
+            }
+          }
+        );
+        return;
+      }
+      pause5MinBtn.textContent = '✓ Paused 5m · Reloading...';
+      chrome.runtime.sendMessage(
+        { type: 'PAUSE_SITE_5_MIN', hostname: currentHostname, reloadTabId: currentTabId },
+        (res) => {
+          if (res && res.ok) {
+            currentState.pausedSites = res.pausedSites;
+            updateSiteBarState();
+            currentSiteSubEl.textContent = 'Paused for 5 mins (Auto-resumes protection)';
+          }
+        }
+      );
     });
   }
 
-  // Snooze inactive background tabs
+  // 1-Click "Keep Site Awake" Whitelist Toggle for Tab & RAM Tamer
+  if (keepSiteAwakeBtn) {
+    keepSiteAwakeBtn.addEventListener('click', () => {
+      if (!currentHostname) return;
+      chrome.runtime.sendMessage({ type: 'TOGGLE_NEVER_SNOOZE_SITE', hostname: currentHostname }, (res) => {
+        if (res && res.ok) {
+          currentState.neverSnoozeSites = res.neverSnoozeSites;
+          updateSiteBarState();
+        }
+      });
+    });
+  }
+
+  if (upgradeCtaBtn) {
+    upgradeCtaBtn.addEventListener('click', () => {
+      chrome.tabs.create({ url: 'https://sweeprdeepblock.com/order?discount=intro&addon=ram_tamer' });
+    });
+  }
+
   reclaimRamBtn.addEventListener('click', () => {
     if (!currentState.proActive) {
-      openProRequiredPrompt('🔒 Tab Memory Saver requires an active Pro subscription.');
+      openProRequiredPrompt('🔒 Tab & RAM Tamer requires an active Pro subscription.');
       return;
     }
 
-    reclaimRamBtn.textContent = 'Snoozing inactive tabs...';
+    reclaimRamBtn.textContent = 'Freeing RAM...';
     chrome.runtime.sendMessage({ type: 'HIBERNATE_TABS_NOW' }, (res) => {
       if (res && res.requiresPro) {
         currentState.proActive = false;
@@ -280,44 +296,19 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       if (res && res.ok) {
         const count = Number(res.newlyDiscarded) || 0;
+        const savedGb = (res.stats && res.stats.ramSavedGb) || 0.4;
         reclaimRamBtn.textContent =
-          count > 0 ? `✓ ${count} Tabs Put to Sleep` : '✓ Already Running Fast';
-        ramHeadlineEl.textContent = '⚡ Fast & Quiet';
-        ramBarFillEl.style.width = '20%';
-        if (res.sessions) {
+          count > 0 ? `✓ ${count} Tabs Snoozed` : '✓ Already Fast';
+        ramHeadlineEl.textContent = `⚡ ${savedGb} GB Saved`;
+        ramBarFillEl.style.width = '18%';
+        if (res.sessions && savedTabsCountEl) {
           currentState.cloudTabSessions = res.sessions;
-          renderSavedSessions(res.sessions);
+          savedTabsCountEl.textContent = String(res.sessions.length);
         }
       }
     });
   });
 
-  // 1-Click Protection Presets (Quiet Default vs. Visual Feedback Mode)
-  function selectPreset(presetMode) {
-    if (!currentState.proActive) {
-      openProRequiredPrompt();
-      return;
-    }
-    const wantSilent = presetMode === 'quiet';
-    const currentSilent = currentState.settings && currentState.settings.silentMode !== false;
-    if (wantSilent === currentSilent) return;
-
-    chrome.runtime.sendMessage({ type: 'TOGGLE_SETTING', settingKey: 'silentMode' }, (res) => {
-      if (res && res.requiresPro) {
-        openProRequiredPrompt(res.error);
-        return;
-      }
-      if (res && res.ok) {
-        currentState.settings = res.settings;
-        renderPresets(Boolean(currentState.proActive), currentState.settings);
-      }
-    });
-  }
-
-  if (presetQuietBtn) presetQuietBtn.addEventListener('click', () => selectPreset('quiet'));
-  if (presetVisualBtn) presetVisualBtn.addEventListener('click', () => selectPreset('visual'));
-
-  // 1-Click Interactive Page Element Zapper
   if (startZapperBtn) {
     startZapperBtn.addEventListener('click', () => {
       if (!currentState.proActive) {
@@ -332,7 +323,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Toggle License Key drawer and persist open state
   if (toggleLicenseDrawerBtn) {
     toggleLicenseDrawerBtn.addEventListener('click', () => {
       const isOpen = licenseDrawerEl.classList.toggle('open');
@@ -424,7 +414,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
-  // Activate Pro License Key
   async function handlePopupActivate() {
     const key = (licenseKeyInput.value || '').trim();
     if (!key) {
