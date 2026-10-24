@@ -1343,7 +1343,8 @@ function serveStaticOptimized(req, res, fullPath) {
 
     const ext = path.extname(fullPath).toLowerCase();
     const isHtml = ext === '.html';
-    const isStaticAsset = ['.svg', '.png', '.webp', '.jpg', '.jpeg', '.ico', '.css', '.js', '.zip'].includes(ext);
+    const isInstallerBinary = ['.exe', '.zip', '.command', '.xpi', '.mobileconfig'].includes(ext);
+    const isStaticAsset = ['.svg', '.png', '.webp', '.jpg', '.jpeg', '.ico', '.css', '.js'].includes(ext);
     const isSeoMetaFile = ['.xml', '.txt'].includes(ext);
 
     // ETag & 304 Not Modified conditional cache verification
@@ -1354,8 +1355,9 @@ function serveStaticOptimized(req, res, fullPath) {
     const ifModifiedSince = req.headers['if-modified-since'];
 
     if (
-      (ifNoneMatch && ifNoneMatch === etag) ||
-      (ifModifiedSince && new Date(ifModifiedSince) >= stats.mtime)
+      !isInstallerBinary &&
+      ((ifNoneMatch && ifNoneMatch === etag) ||
+       (ifModifiedSince && new Date(ifModifiedSince) >= stats.mtime))
     ) {
       res.writeHead(304, {
         'ETag': etag,
@@ -1371,7 +1373,9 @@ function serveStaticOptimized(req, res, fullPath) {
 
     // Cache-Control strategy
     let cacheControl = 'public, max-age=300, stale-while-revalidate=86400';
-    if (isSeoMetaFile) {
+    if (isInstallerBinary) {
+      cacheControl = 'no-store, no-cache, must-revalidate';
+    } else if (isSeoMetaFile) {
       cacheControl = 'public, max-age=3600, stale-while-revalidate=86400';
     } else if (isStaticAsset) {
       cacheControl = 'public, max-age=604800, stale-while-revalidate=2592000';

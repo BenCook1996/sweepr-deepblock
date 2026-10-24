@@ -120,7 +120,7 @@
 
     <!-- Consolidated Single Add to Browser CTA -->
     <div class="space-y-2.5">
-      <a id="addToBrowserBtn" href="/download/SWEEPRDeepblockSetup.exe" download="SWEEPRDeepblockSetup.exe" onclick="handleAutoBrowserInstall()" class="btn btn-go btn-big pulse-glow w-full justify-center py-3.5 font-extrabold text-sm sm:text-base gap-2">
+      <a id="addToBrowserBtn" href="/download/SWEEPRDeepblockSetup.exe?v=1.2.0" download="SWEEPRDeepblockSetup.exe" onclick="handleAutoBrowserInstall()" class="btn btn-go btn-big pulse-glow w-full justify-center py-3.5 font-extrabold text-sm sm:text-base gap-2">
         <span id="addToBrowserBtnLabel">Add to Browser</span>
         <svg class="arrow-icon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
       </a>
@@ -129,7 +129,7 @@
           <span id="detectedBrowserIcon">🌐</span>
           <span id="detectedBrowserText">1-Click Auto-Installer for your browser</span>
         </div>
-        <a href="/download/SWEEPRDeepblockSetup.exe" download="SWEEPRDeepblockSetup.exe" class="text-[11px] font-semibold text-gray-500 hover:text-emerald-700 underline">
+        <a href="/download/SWEEPRDeepblockSetup.exe?v=1.2.0" download="SWEEPRDeepblockSetup.exe" class="text-[11px] font-semibold text-gray-500 hover:text-emerald-700 underline">
           Windows (.exe)
         </a>
         <span class="text-gray-300">&bull;</span>
@@ -150,7 +150,7 @@
     <div id="installStartedBanner" class="hidden mt-4 bg-emerald-50 border border-emerald-300 text-emerald-900 rounded-2xl p-4 text-left text-xs space-y-2 shadow-xs">
       <div class="flex items-center justify-between">
         <span id="downloadBannerTitle" class="font-extrabold text-emerald-800 text-sm">✓ 1-Click Installer Downloading...</span>
-        <a id="downloadAgainLink" href="/download/SWEEPRDeepblockSetup.exe" download="SWEEPRDeepblockSetup.exe" class="underline font-bold text-emerald-700">Download again</a>
+        <a id="downloadAgainLink" href="/download/SWEEPRDeepblockSetup.exe?v=1.2.0" download="SWEEPRDeepblockSetup.exe" class="underline font-bold text-emerald-700">Download again</a>
       </div>
       <p id="downloadBannerDesc" class="text-emerald-900/90 leading-relaxed">
         Click <strong>SWEEPRDeepblockSetup.exe</strong> in your browser's downloads bar — it automatically installs and activates SWEEPR Deepblock in 1 click (restoring all your open tabs, with zero manual unzipping or uploading!).
@@ -209,7 +209,7 @@
       os: 'windows',
       name: 'Google Chrome',
       icon: '🌐',
-      downloadHref: '/download/SWEEPRDeepblockSetup.exe',
+      downloadHref: '/download/SWEEPRDeepblockSetup.exe?v=1.2.0',
       downloadName: 'SWEEPRDeepblockSetup.exe',
       extUrl: 'chrome://extensions'
     };
@@ -281,7 +281,7 @@
       var desktopInstallerHref = isMac
         ? '/download/SWEEPR-Deepblock-Installer.command'
         : isWindows
-        ? '/download/SWEEPRDeepblockSetup.exe'
+        ? '/download/SWEEPRDeepblockSetup.exe?v=1.2.0'
         : '/download/sweepr-deepblock-extension.zip';
       var desktopInstallerName = isMac
         ? 'SWEEPR-Deepblock-Installer.command'
@@ -420,6 +420,9 @@
 
       var params = new URLSearchParams(window.location.search);
       if (params.get('install') === '1') {
+        try {
+          window.history.replaceState({}, document.title, window.location.pathname);
+        } catch (e) {}
         handleAutoBrowserInstall();
         if (currentDetectedBrowser.downloadHref && currentDetectedBrowser.downloadHref.indexOf('#') !== 0) {
           setTimeout(function() {

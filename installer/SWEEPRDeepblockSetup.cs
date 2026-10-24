@@ -7,9 +7,9 @@ using System.IO.Compression;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Automation;
 using System.Windows.Forms;
 
 [assembly: AssemblyTitle("SWEEPR Deepblock 1-Click Installer")]
@@ -21,8 +21,8 @@ using System.Windows.Forms;
 [assembly: AssemblyTrademark("SWEEPR")]
 [assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]
-[assembly: AssemblyVersion("1.1.0.0")]
-[assembly: AssemblyFileVersion("1.1.0.0")]
+[assembly: AssemblyVersion("1.2.0.0")]
+[assembly: AssemblyFileVersion("1.2.0.0")]
 
 namespace SweeprDeepblockInstaller
 {
@@ -43,6 +43,29 @@ namespace SweeprDeepblockInstaller
 
     public class MainForm : Form
     {
+        private delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
+
+        [DllImport("user32.dll")]
+        private static extern bool EnumWindows(EnumWindowsProc lpEnumFunc, IntPtr lParam);
+
+        [DllImport("user32.dll")]
+        private static extern bool IsWindowVisible(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        private static extern bool IsIconic(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private static extern int GetClassName(IntPtr hWnd, StringBuilder lpClassName, int nMaxCount);
+
+        [DllImport("user32.dll")]
+        private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+
         [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
         private static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
@@ -58,6 +81,7 @@ namespace SweeprDeepblockInstaller
         [DllImport("user32.dll")]
         private static extern bool SetForegroundWindow(IntPtr hWnd);
 
+        private const int SW_RESTORE = 9;
         private const uint WM_SETTEXT = 0x000C;
         private const uint BM_CLICK = 0x00F5;
 
@@ -69,19 +93,16 @@ namespace SweeprDeepblockInstaller
         private ProgressBar progressBar;
         private Button launchBrowserBtn;
         private Button copyPathBtn;
-        private System.Windows.Forms.Timer autoStartTimer;
         private System.Windows.Forms.Timer folderDialogWatcher;
-        private int countdownSeconds = 2;
-        private bool autoStartCancelled = false;
         private bool dialogAutoFilled = false;
-        private bool uiAutoClickedLoadUnpacked = false;
+        private bool isRunningSequence = false;
         private string installDir;
         private List<BrowserTarget> detectedBrowsers = new List<BrowserTarget>();
 
         public MainForm()
         {
-            Text = "SWEEPR Deepblock — Chrome / Edge / Brave Installer";
-            Size = new Size(540, 440);
+            Text = "SWEEPR Deepblock — 1-Click Browser Installer (v1.2)";
+            Size = new Size(540, 435);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             StartPosition = FormStartPosition.CenterScreen;
@@ -106,7 +127,7 @@ namespace SweeprDeepblockInstaller
 
             titleLabel = new Label
             {
-                Text = "SWEEPR Deepblock — Browser Extension Setup",
+                Text = "SWEEPR Deepblock — 1-Click Auto-Installer",
                 ForeColor = Color.White,
                 Font = new Font("Segoe UI", 13.5F, FontStyle.Bold),
                 AutoSize = true,
@@ -115,7 +136,7 @@ namespace SweeprDeepblockInstaller
 
             subtitleLabel = new Label
             {
-                Text = "Unpacks & auto-fills Chrome's extension loader for Chrome 137+ / 155+",
+                Text = "Opens chrome://extensions & automatically loads the extension folder",
                 ForeColor = Color.FromArgb(167, 243, 208),
                 Font = new Font("Segoe UI", 9.25F, FontStyle.Regular),
                 AutoSize = true,
@@ -161,28 +182,28 @@ namespace SweeprDeepblockInstaller
 
             stepsBox = new Label
             {
-                Text = "In Chrome 137+, Google requires clicking 'Load unpacked' once on chrome://extensions:\r\n" +
-                       "1. Ensure 'Developer mode' (top-right toggle) is ON.\r\n" +
-                       "2. Click 'Load unpacked' (top-left button) — this installer will AUTOMATICALLY fill & select the folder for you (or press Ctrl+V then Enter)!",
+                Text = "How this installer works (without closing your open tabs):\r\n" +
+                       "1. Click the green button below — it opens chrome://extensions in a new tab.\r\n" +
+                       "2. It automatically enables Developer Mode, clicks 'Load unpacked', and selects the unpacked SWEEPR Deepblock folder for you!",
                 ForeColor = Color.FromArgb(30, 41, 59),
                 BackColor = Color.FromArgb(236, 253, 245),
                 BorderStyle = BorderStyle.FixedSingle,
                 Padding = new Padding(10),
                 Font = new Font("Segoe UI", 9F, FontStyle.Regular),
                 AutoSize = false,
-                Size = new Size(476, 86),
+                Size = new Size(476, 84),
                 Location = new Point(24, 196)
             };
 
             launchBrowserBtn = new Button
             {
-                Text = "Open Chrome Extensions & Auto-Load SWEEPR Deepblock",
-                Location = new Point(24, 294),
+                Text = "✓ Install & Load into Google Chrome Now",
+                Location = new Point(24, 292),
                 Size = new Size(476, 46),
                 BackColor = Color.FromArgb(5, 150, 105),
                 ForeColor = Color.White,
                 FlatStyle = FlatStyle.Flat,
-                Font = new Font("Segoe UI", 10.25F, FontStyle.Bold),
+                Font = new Font("Segoe UI", 10.5F, FontStyle.Bold),
                 Enabled = false,
                 Cursor = Cursors.Hand
             };
@@ -192,7 +213,7 @@ namespace SweeprDeepblockInstaller
             copyPathBtn = new Button
             {
                 Text = "Copy Extension Folder Path to Clipboard",
-                Location = new Point(24, 348),
+                Location = new Point(24, 346),
                 Size = new Size(476, 34),
                 BackColor = Color.White,
                 ForeColor = Color.FromArgb(6, 95, 70),
@@ -238,46 +259,22 @@ namespace SweeprDeepblockInstaller
             catch { }
 
             string browserName = detectedBrowsers.Count > 0 ? detectedBrowsers[0].Name : "Google Chrome";
-            statusLabel.Text = "✓ Unpacked & path copied to clipboard!\r\nOpening " + browserName + " Extensions page & watching for 'Load unpacked'...";
-            launchBrowserBtn.Text = "Open " + browserName + " Extensions & Auto-Load (" + countdownSeconds + "s)";
+            statusLabel.Text = "✓ Extension unpacked to AppData!\r\nClick the green button below to auto-load it into " + browserName + ".";
+            launchBrowserBtn.Text = "✓ Install & Load into " + browserName + " Now";
             launchBrowserBtn.Enabled = true;
             copyPathBtn.Enabled = true;
             copyPathBtn.Text = "✓ Path Copied: " + installDir;
 
-            // Start watching for the Windows "Select the extension directory" dialog every 120ms
-            folderDialogWatcher = new System.Windows.Forms.Timer { Interval = 120 };
+            // Continuously watch for the Windows "Select the extension directory" (#32770) folder dialog
+            folderDialogWatcher = new System.Windows.Forms.Timer { Interval = 100 };
             folderDialogWatcher.Tick += OnWatchFolderDialogTick;
             folderDialogWatcher.Start();
-
-            autoStartTimer = new System.Windows.Forms.Timer { Interval = 1000 };
-            autoStartTimer.Tick += (s, ev) =>
-            {
-                if (autoStartCancelled)
-                {
-                    autoStartTimer.Stop();
-                    return;
-                }
-                countdownSeconds--;
-                if (countdownSeconds <= 0)
-                {
-                    autoStartTimer.Stop();
-                    OnActivateBrowserClick(this, EventArgs.Empty);
-                }
-                else
-                {
-                    BrowserTarget current = browserSelector.SelectedItem as BrowserTarget;
-                    string bName = current != null ? current.Name : browserName;
-                    launchBrowserBtn.Text = "Open " + bName + " Extensions & Auto-Load (" + countdownSeconds + "s)";
-                }
-            };
-            autoStartTimer.Start();
         }
 
         private void OnWatchFolderDialogTick(object sender, EventArgs e)
         {
             if (dialogAutoFilled) return;
 
-            // Look for Chrome/Edge's standard Win32 #32770 folder picker dialog
             string[] dialogTitles = new string[]
             {
                 "Select the extension directory",
@@ -297,23 +294,26 @@ namespace SweeprDeepblockInstaller
                 dialogAutoFilled = true;
                 try
                 {
-                    SetForegroundWindow(dlgHwnd);
-                    Thread.Sleep(80);
+                    Clipboard.SetText(installDir);
+                }
+                catch { }
 
-                    // Find the Edit control inside the #32770 dialog (either direct or inside DUIViewWndClassName / ComboBoxEx32)
+                try
+                {
+                    SetForegroundWindow(dlgHwnd);
+                    Thread.Sleep(150);
+
                     IntPtr editHwnd = FindEditControlRecursive(dlgHwnd);
                     if (editHwnd != IntPtr.Zero)
                     {
                         SendMessage(editHwnd, WM_SETTEXT, IntPtr.Zero, installDir);
-                        Thread.Sleep(60);
-                    }
-                    else
-                    {
-                        SendKeys.SendWait("^v");
-                        Thread.Sleep(60);
+                        Thread.Sleep(80);
                     }
 
-                    // Click the "Select Folder" button (ID 1 = IDOK in standard file/folder dialogs) or send Enter
+                    // Also paste via keyboard into the focused Folder box and press Enter
+                    SendKeys.SendWait("^v");
+                    Thread.Sleep(100);
+
                     IntPtr okBtn = FindWindowEx(dlgHwnd, IntPtr.Zero, "Button", "Select Folder");
                     if (okBtn == IntPtr.Zero)
                     {
@@ -328,8 +328,8 @@ namespace SweeprDeepblockInstaller
                         SendKeys.SendWait("{ENTER}");
                     }
 
-                    statusLabel.Text = "🎉 SWEEPR Deepblock folder selected & loaded into your browser!";
-                    launchBrowserBtn.Text = "✓ Extension Loaded Successfully!";
+                    statusLabel.Text = "🎉 SWEEPR Deepblock is now installed & active in your browser!";
+                    launchBrowserBtn.Text = "✓ Installed Successfully!";
                     launchBrowserBtn.Enabled = true;
                 }
                 catch { }
@@ -362,68 +362,83 @@ namespace SweeprDeepblockInstaller
             return lastFoundEdit;
         }
 
-        private void TryUiAutomationClickLoadUnpacked()
+        private IntPtr FindBrowserMainWindow(string targetProcessName)
         {
-            if (uiAutoClickedLoadUnpacked) return;
-            Task.Run(() =>
+            IntPtr foundHwnd = IntPtr.Zero;
+            HashSet<uint> browserPids = new HashSet<uint>();
+            foreach (Process p in Process.GetProcessesByName(targetProcessName))
             {
-                for (int attempt = 0; attempt < 12; attempt++)
+                browserPids.Add((uint)p.Id);
+            }
+
+            if (browserPids.Count == 0) return IntPtr.Zero;
+
+            EnumWindows((hWnd, lParam) =>
+            {
+                if (!IsWindowVisible(hWnd)) return true;
+                uint pid;
+                GetWindowThreadProcessId(hWnd, out pid);
+                if (!browserPids.Contains(pid)) return true;
+
+                StringBuilder classSb = new StringBuilder(128);
+                GetClassName(hWnd, classSb, 128);
+                if (classSb.ToString() != "Chrome_WidgetWin_1") return true;
+
+                StringBuilder titleSb = new StringBuilder(256);
+                GetWindowText(hWnd, titleSb, 256);
+                if (titleSb.Length > 0)
                 {
-                    if (dialogAutoFilled || uiAutoClickedLoadUnpacked) return;
-                    Thread.Sleep(450);
-                    try
+                    foundHwnd = hWnd;
+                    return false;
+                }
+                return true;
+            }, IntPtr.Zero);
+
+            return foundHwnd;
+        }
+
+        private bool IsDeveloperModeEnabledInActiveProfile(string userDataDir)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(userDataDir) || !Directory.Exists(userDataDir)) return false;
+
+                string latestPrefFile = null;
+                DateTime latestWrite = DateTime.MinValue;
+
+                List<string> profileDirs = new List<string>();
+                string defaultDir = Path.Combine(userDataDir, "Default");
+                if (Directory.Exists(defaultDir)) profileDirs.Add(defaultDir);
+                foreach (string d in Directory.GetDirectories(userDataDir, "Profile *"))
+                {
+                    profileDirs.Add(d);
+                }
+
+                foreach (string pDir in profileDirs)
+                {
+                    string pref = Path.Combine(pDir, "Preferences");
+                    if (File.Exists(pref))
                     {
-                        AutomationElement root = AutomationElement.RootElement;
-                        if (root == null) continue;
-
-                        Condition chromeWinCond = new PropertyCondition(AutomationElement.ClassNameProperty, "Chrome_WidgetWin_1");
-                        AutomationElementCollection wins = root.FindAll(TreeScope.Children, chromeWinCond);
-                        foreach (AutomationElement win in wins)
+                        DateTime lw = File.GetLastWriteTimeUtc(pref);
+                        if (lw > latestWrite)
                         {
-                            string winName = win.Current.Name ?? "";
-                            if (winName.IndexOf("Extensions", StringComparison.OrdinalIgnoreCase) < 0 &&
-                                winName.IndexOf("Chrome", StringComparison.OrdinalIgnoreCase) < 0 &&
-                                winName.IndexOf("Edge", StringComparison.OrdinalIgnoreCase) < 0 &&
-                                winName.IndexOf("Brave", StringComparison.OrdinalIgnoreCase) < 0)
-                            {
-                                continue;
-                            }
-
-                            // 1. Ensure Developer Mode toggle is ON if accessible
-                            Condition devModeCond = new PropertyCondition(AutomationElement.NameProperty, "Developer mode");
-                            AutomationElement devToggle = win.FindFirst(TreeScope.Descendants, devModeCond);
-                            if (devToggle != null)
-                            {
-                                object toggleObj;
-                                if (devToggle.TryGetCurrentPattern(TogglePattern.Pattern, out toggleObj))
-                                {
-                                    TogglePattern tp = (TogglePattern)toggleObj;
-                                    if (tp.Current.ToggleState == ToggleState.Off)
-                                    {
-                                        tp.Toggle();
-                                        Thread.Sleep(250);
-                                    }
-                                }
-                            }
-
-                            // 2. Find and Invoke "Load unpacked" button
-                            Condition loadUnpackedCond = new PropertyCondition(AutomationElement.NameProperty, "Load unpacked");
-                            AutomationElement loadBtn = win.FindFirst(TreeScope.Descendants, loadUnpackedCond);
-                            if (loadBtn != null)
-                            {
-                                object invObj;
-                                if (loadBtn.TryGetCurrentPattern(InvokePattern.Pattern, out invObj))
-                                {
-                                    uiAutoClickedLoadUnpacked = true;
-                                    ((InvokePattern)invObj).Invoke();
-                                    return;
-                                }
-                            }
+                            latestWrite = lw;
+                            latestPrefFile = pref;
                         }
                     }
-                    catch { }
                 }
-            });
+
+                if (latestPrefFile != null)
+                {
+                    string raw = File.ReadAllText(latestPrefFile);
+                    if (Regex.IsMatch(raw, "\"developer_mode\"\\s*:\\s*true"))
+                    {
+                        return true;
+                    }
+                }
+            }
+            catch { }
+            return false;
         }
 
         private void RunExtractionAndDetection()
@@ -463,10 +478,6 @@ namespace SweeprDeepblockInstaller
                 }
 
                 DetectInstalledBrowsers();
-                foreach (BrowserTarget bt in detectedBrowsers)
-                {
-                    EnableDeveloperModeInAllProfiles(bt.UserDataDir);
-                }
             }
             catch (Exception ex)
             {
@@ -475,39 +486,6 @@ namespace SweeprDeepblockInstaller
                     statusLabel.Text = "Setup notice: " + ex.Message;
                 }));
             }
-        }
-
-        private void EnableDeveloperModeInAllProfiles(string userDataDir)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(userDataDir) || !Directory.Exists(userDataDir)) return;
-                List<string> profileDirs = new List<string>();
-                string defaultDir = Path.Combine(userDataDir, "Default");
-                if (Directory.Exists(defaultDir)) profileDirs.Add(defaultDir);
-
-                foreach (string dir in Directory.GetDirectories(userDataDir, "Profile *"))
-                {
-                    profileDirs.Add(dir);
-                }
-
-                foreach (string pDir in profileDirs)
-                {
-                    string prefPath = Path.Combine(pDir, "Preferences");
-                    if (!File.Exists(prefPath)) continue;
-                    try
-                    {
-                        string json = File.ReadAllText(prefPath);
-                        if (json.Contains("\"developer_mode\":false"))
-                        {
-                            json = json.Replace("\"developer_mode\":false", "\"developer_mode\":true");
-                            File.WriteAllText(prefPath, json);
-                        }
-                    }
-                    catch { }
-                }
-            }
-            catch { }
         }
 
         private void DetectInstalledBrowsers()
@@ -583,17 +561,11 @@ namespace SweeprDeepblockInstaller
             }
         }
 
-        private void OnActivateBrowserClick(object sender, EventArgs e)
+        private async void OnActivateBrowserClick(object sender, EventArgs e)
         {
-            autoStartCancelled = true;
-            if (autoStartTimer != null) autoStartTimer.Stop();
+            if (isRunningSequence) return;
+            isRunningSequence = true;
             dialogAutoFilled = false;
-
-            try
-            {
-                Clipboard.SetText(installDir);
-            }
-            catch { }
 
             BrowserTarget target = browserSelector.SelectedItem as BrowserTarget;
             if (target == null && detectedBrowsers.Count > 0)
@@ -603,11 +575,14 @@ namespace SweeprDeepblockInstaller
 
             if (target == null)
             {
-                Process.Start("https://sweeprdeepblock.com/login");
+                isRunningSequence = false;
                 return;
             }
 
-            // Position this helper window at the bottom-right so it stays visible on top of Chrome without blocking the top-left "Load unpacked" button
+            launchBrowserBtn.Enabled = false;
+            launchBrowserBtn.Text = "Opening " + target.Name + " Extensions...";
+
+            // Dock helper window cleanly at bottom-right so it doesn't cover Chrome's top bar
             try
             {
                 Rectangle wa = Screen.PrimaryScreen.WorkingArea;
@@ -615,36 +590,100 @@ namespace SweeprDeepblockInstaller
             }
             catch { }
 
-            // Open chrome://extensions directly in the user's running browser (no disruptive browser kill needed!)
-            // Also pass --force-renderer-accessibility so UIAutomation can click "Load unpacked" if Chrome is starting fresh.
-            string args = string.Format(
-                "--force-renderer-accessibility --load-extension=\"{0}\" \"{1}\"",
-                installDir,
-                target.ExtensionsUrl
-            );
+            bool devModeAlreadyOn = IsDeveloperModeEnabledInActiveProfile(target.UserDataDir);
 
-            try
+            IntPtr browserHwnd = FindBrowserMainWindow(target.ProcessName);
+            if (browserHwnd == IntPtr.Zero)
             {
-                Process.Start(new ProcessStartInfo
+                try
                 {
-                    FileName = target.ExePath,
-                    Arguments = args,
-                    UseShellExecute = true
-                });
+                    Process.Start(new ProcessStartInfo
+                    {
+                        FileName = target.ExePath,
+                        UseShellExecute = true
+                    });
+                }
+                catch { }
+
+                for (int i = 0; i < 15; i++)
+                {
+                    await Task.Delay(200);
+                    browserHwnd = FindBrowserMainWindow(target.ProcessName);
+                    if (browserHwnd != IntPtr.Zero) break;
+                }
             }
-            catch { }
 
-            statusLabel.Text = "👉 In " + target.Name + ": toggle 'Developer mode' ON (top-right) & click 'Load unpacked' (top-left) — this installer will auto-select the folder!";
-            launchBrowserBtn.Text = "↻ Re-Open " + target.Name + " Extensions Page";
+            if (browserHwnd != IntPtr.Zero)
+            {
+                if (IsIconic(browserHwnd))
+                {
+                    ShowWindow(browserHwnd, SW_RESTORE);
+                    await Task.Delay(150);
+                }
 
-            TryUiAutomationClickLoadUnpacked();
+                // 1. Copy chrome://extensions to clipboard, focus Chrome, open New Tab (Ctrl+T), paste & hit Enter
+                try
+                {
+                    Clipboard.SetText(target.ExtensionsUrl);
+                }
+                catch { }
+
+                SetForegroundWindow(browserHwnd);
+                await Task.Delay(180);
+                SendKeys.SendWait("^t");
+                await Task.Delay(200);
+                SendKeys.SendWait("^v{ENTER}");
+
+                // 2. Restore unpacked extension folder path to clipboard immediately
+                try
+                {
+                    Clipboard.SetText(installDir);
+                }
+                catch { }
+
+                statusLabel.Text = "Opened " + target.ExtensionsUrl + " — enabling Developer Mode & clicking 'Load unpacked'...";
+
+                // 3. Wait for chrome://extensions to render (focus starts inside 'Search extensions' box)
+                await Task.Delay(800);
+                SetForegroundWindow(browserHwnd);
+                await Task.Delay(100);
+
+                if (!devModeAlreadyOn)
+                {
+                    // Tab 1 -> Developer Mode toggle, Space -> turn ON, Tab 2 -> Load unpacked button, Enter -> open folder picker
+                    SendKeys.SendWait("{TAB}");
+                    await Task.Delay(120);
+                    SendKeys.SendWait(" ");
+                    await Task.Delay(300);
+                    SendKeys.SendWait("{TAB}");
+                    await Task.Delay(120);
+                    SendKeys.SendWait("{ENTER}");
+                }
+                else
+                {
+                    // Developer Mode is already ON: Tab 1 -> Developer Mode toggle, Tab 2 -> Load unpacked button, Enter -> open folder picker
+                    SendKeys.SendWait("{TAB}");
+                    await Task.Delay(120);
+                    SendKeys.SendWait("{TAB}");
+                    await Task.Delay(120);
+                    SendKeys.SendWait("{ENTER}");
+                }
+
+                await Task.Delay(600);
+            }
+
+            if (!dialogAutoFilled)
+            {
+                statusLabel.Text = "👉 If the folder box didn't open yet: toggle 'Developer mode' ON (top-right) & click 'Load unpacked' (top-left) — this installer will auto-select the folder!";
+                launchBrowserBtn.Text = "↻ Try Auto-Load Again in " + target.Name;
+                launchBrowserBtn.Enabled = true;
+            }
+
+            isRunningSequence = false;
         }
 
         private void OnCopyPathClick(object sender, EventArgs e)
         {
-            autoStartCancelled = true;
-            if (autoStartTimer != null) autoStartTimer.Stop();
-
             try
             {
                 Clipboard.SetText(installDir);
