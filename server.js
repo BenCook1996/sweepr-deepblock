@@ -675,6 +675,40 @@ function upsertLocalAccount({ email, name, country, stripeCustomerId, plan, ramT
   return acc;
 }
 
+async function syncPayPalCustomerEmail(sub, acc) {
+  if (!STRIPE_SECRET_KEY || !sub || !acc) return;
+  try {
+    const currentEmail = (acc.email || '').trim().toLowerCase();
+    if (currentEmail && !currentEmail.endsWith('@pending.sweeprdeepblock.com')) return;
+
+    let pm = typeof sub.default_payment_method === 'object' && sub.default_payment_method ? sub.default_payment_method : null;
+    if (!pm) {
+      const latestInv = sub.latest_invoice;
+      const pi = latestInv?.payment_intent;
+      if (pi && typeof pi.payment_method === 'object' && pi.payment_method) {
+        pm = pi.payment_method;
+      } else if (pi && typeof pi.payment_method === 'string') {
+        pm = await stripeRequest('GET', `payment_methods/${encodeURIComponent(pi.payment_method)}`).catch(() => null);
+      } else if (typeof sub.default_payment_method === 'string') {
+        pm = await stripeRequest('GET', `payment_methods/${encodeURIComponent(sub.default_payment_method)}`).catch(() => null);
+      }
+    }
+    const payerEmail = String(pm?.paypal?.payer_email || pm?.billing_details?.email || '').trim().toLowerCase();
+    if (payerEmail && isValidEmail(payerEmail) && !payerEmail.endsWith('@pending.sweeprdeepblock.com')) {
+      const existing = accountsByEmail.get(payerEmail);
+      if (!existing || existing.id === acc.id) {
+        if (acc.email) accountsByEmail.delete(acc.email);
+        acc.email = payerEmail;
+        accountsByEmail.set(payerEmail, acc);
+        const custId = typeof sub.customer === 'string' ? sub.customer : sub.customer?.id || acc.stripe_customer_id;
+        if (custId) {
+          await stripeRequest('POST', `customers/${encodeURIComponent(custId)}`, { email: payerEmail }).catch(() => {});
+        }
+      }
+    }
+  } catch {}
+}
+
 // Seed founder account for end-to-end testing across all products
 upsertLocalAccount({
   email: (process.env.FOUNDER_EMAIL || 'cookbenjamin1996@gmail.com').trim().toLowerCase(),
@@ -1577,10 +1611,44 @@ const server = http.createServer(async (req, res) => {
         },
         ...(introCouponId ? { discounts: [{ coupon: introCouponId }] } : {}),
         metadata,
-        expand: ['latest_invoice.payment_intent']
+        expand: ['latest_invoice.payment_intent', 'latest_invoice.confirmation_secret']
       };
 
-      const subscription = await stripeRequest('POST', 'subscriptions', subParams);
+      let subscription = null;
+      try {
+        subscription = await stripeRequest('POST', 'subscriptions', subParams);
+      } catch (subErr) {
+        if (isPayPal && String(subErr.message || '').toLowerCase().includes('paypal')) {
+          const sessionParams = {
+            mode: 'subscription',
+            customer: customerId,
+            managed_payments: { enabled: false },
+            line_items: subItems.map((it) => ({
+              price_data: it.price_data,
+              quantity: 1
+            })),
+            ...(introCouponId ? { discounts: [{ coupon: introCouponId }] } : {}),
+            subscription_data: {
+              metadata
+            },
+            metadata,
+            success_url: `${hostOrigin}/checkout/success?web=1&session_id={CHECKOUT_SESSION_ID}&account_id=${encodeURIComponent(acc.id)}${isPopup ? '&popup=1' : ''}`,
+            cancel_url: `${hostOrigin}/order?error=payment_cancelled`
+          };
+          const checkoutSession = await stripeRequest('POST', 'checkout/sessions', sessionParams);
+          if (checkoutSession?.url) {
+            return sendJson(res, 200, {
+              redirectUrl: checkoutSession.url,
+              subscriptionId: checkoutSession.id,
+              accountId: acc.id,
+              plan,
+              livemode: Boolean(checkoutSession.livemode)
+            });
+          }
+        }
+        throw subErr;
+      }
+
       acc.stripe_subscription_id = subscription.id;
       accountsBySubscriptionId.set(subscription.id, acc);
 
@@ -1588,6 +1656,13 @@ const server = http.createServer(async (req, res) => {
       let paymentIntent = latestInvoice?.payment_intent || null;
       if (typeof paymentIntent === 'string') {
         paymentIntent = await stripeRequest('GET', `payment_intents/${encodeURIComponent(paymentIntent)}`);
+      }
+      if (!paymentIntent?.id && typeof latestInvoice?.confirmation_secret?.client_secret === 'string') {
+        const csSecret = latestInvoice.confirmation_secret.client_secret;
+        const piId = csSecret.split('_secret_')[0];
+        if (piId) {
+          paymentIntent = { id: piId, client_secret: csSecret, livemode: subscription.livemode };
+        }
       }
 
       if (!paymentIntent?.id) {
@@ -1597,6 +1672,11 @@ const server = http.createServer(async (req, res) => {
       const returnUrl = `${hostOrigin}/checkout/success?web=1&subscription_id=${encodeURIComponent(subscription.id)}&account_id=${encodeURIComponent(acc.id)}${isPopup ? '&popup=1' : ''}`;
 
       if (isPayPal) {
+        const rawIp = getClientIp(req);
+        const validIp =
+          !rawIp || rawIp === 'local' || rawIp === '::1' || rawIp === '::ffff:127.0.0.1'
+            ? '127.0.0.1'
+            : rawIp;
         const confirmedPi = await stripeRequest('POST', `payment_intents/${encodeURIComponent(paymentIntent.id)}/confirm`, {
           payment_method_data: {
             type: 'paypal',
@@ -1613,7 +1693,7 @@ const server = http.createServer(async (req, res) => {
             customer_acceptance: {
               type: 'online',
               online: {
-                ip_address: getClientIp(req),
+                ip_address: validIp,
                 user_agent: req.headers['user-agent'] || 'Mozilla/5.0'
               }
             }
@@ -1728,6 +1808,7 @@ const server = http.createServer(async (req, res) => {
         ramTamerAddon: hasRamTamer,
         status: 'active'
       });
+      await syncPayPalCustomerEmail(sub, acc);
 
       const totalAmount = (sub.items?.data || []).reduce(
         (sum, it) => sum + (it.price?.unit_amount || 0) * (it.quantity || 1),
@@ -1868,11 +1949,40 @@ const server = http.createServer(async (req, res) => {
               status: subStatus
             });
             syncedAcc.cancelAtPeriodEnd = Boolean(obj.cancel_at_period_end);
+            await syncPayPalCustomerEmail(obj, syncedAcc);
             if (obj.metadata?.ref) syncedAcc.ref = obj.metadata.ref;
             await syncSubscriptionWithSweeprCrm(syncedAcc, {
               currency: obj.currency || 'gbp',
               ref: obj.metadata?.ref || syncedAcc.ref,
               notes: `Stripe Webhook (${event.type}) ${obj.id}`
+            });
+            syncedViaApi = true;
+          }
+        }
+      } else if (event.type === 'checkout.session.completed' && obj.subscription) {
+        const subId = typeof obj.subscription === 'string' ? obj.subscription : obj.subscription.id;
+        if (subId && STRIPE_SECRET_KEY) {
+          const sub = await stripeRequest('GET', `subscriptions/${encodeURIComponent(subId)}`, {
+            expand: ['default_payment_method', 'latest_invoice.payment_intent.payment_method']
+          }).catch(() => null);
+          if (sub && (sub.status === 'active' || sub.status === 'trialing')) {
+            const customerEmail =
+              obj.customer_details?.email || obj.customer_email || sub.metadata?.email || `${sub.id}@stripe.sweeprdeepblock.com`;
+            const syncedAcc = upsertLocalAccount({
+              email: customerEmail,
+              name: obj.customer_details?.name || undefined,
+              stripeCustomerId: typeof sub.customer === 'string' ? sub.customer : sub.customer?.id,
+              subscriptionId: sub.id,
+              plan: sub.metadata?.plan || obj.metadata?.plan || 'annual',
+              ramTamerAddon: sub.metadata?.ram_tamer === 'true' || obj.metadata?.ram_tamer === 'true',
+              status: 'active'
+            });
+            await syncPayPalCustomerEmail(sub, syncedAcc);
+            if (sub.metadata?.ref || obj.metadata?.ref) syncedAcc.ref = sub.metadata?.ref || obj.metadata?.ref;
+            await syncSubscriptionWithSweeprCrm(syncedAcc, {
+              currency: sub.currency || 'gbp',
+              ref: syncedAcc.ref,
+              notes: `Stripe Checkout Session Completed (${sub.id})`
             });
             syncedViaApi = true;
           }
@@ -1921,7 +2031,9 @@ const server = http.createServer(async (req, res) => {
     let acc = (accountId ? accountsById.get(accountId) : null) || null;
     if (subscriptionId && STRIPE_SECRET_KEY) {
       try {
-        const sub = await stripeRequest('GET', `subscriptions/${encodeURIComponent(subscriptionId)}`);
+        const sub = await stripeRequest('GET', `subscriptions/${encodeURIComponent(subscriptionId)}`, {
+          expand: ['default_payment_method', 'latest_invoice.payment_intent.payment_method']
+        });
         if (sub.status !== 'active' && sub.status !== 'trialing') {
           res.writeHead(302, { Location: '/order?error=payment_cancelled' });
           return res.end();
@@ -1938,6 +2050,7 @@ const server = http.createServer(async (req, res) => {
           subscriptionId: sub.id,
           status: 'active'
         });
+        await syncPayPalCustomerEmail(sub, acc);
         if (sub.metadata?.ref) acc.ref = sub.metadata.ref;
         await syncSubscriptionWithSweeprCrm(acc, {
           currency: sub.currency || 'gbp',
