@@ -1,4 +1,27 @@
 // Navigation & Dropdown Controller (Compare & Guides + Language Selector + Mobile Hamburger Drawer)
+(function checkActiveOrderDraftRedirect() {
+  function runOrderDraftCheck() {
+    try {
+      const path = (window.location.pathname || '/').replace(/\/+$/, '') || '/';
+      if (path === '/order' || path === '/order.html' || path === '/checkout' || path.startsWith('/checkout/')) {
+        return;
+      }
+      const raw = localStorage.getItem('sweepr_order_draft');
+      if (!raw) return;
+      const draft = JSON.parse(raw);
+      const ttlMs = 30 * 60 * 1000;
+      if (draft && draft.hasDetails && draft.updatedAt && (Date.now() - Number(draft.updatedAt) <= ttlMs)) {
+        window.location.replace('/order');
+      } else {
+        localStorage.removeItem('sweepr_order_draft');
+        document.cookie = 'sweepr_order_draft_active=; path=/; max-age=0; SameSite=Lax';
+      }
+    } catch (e) {}
+  }
+  runOrderDraftCheck();
+  window.addEventListener('pageshow', runOrderDraftCheck);
+})();
+
 document.addEventListener('DOMContentLoaded', () => {
   const navBtn = document.getElementById('navDropdownBtn');
   const navMenu = document.getElementById('navDropdownMenu');

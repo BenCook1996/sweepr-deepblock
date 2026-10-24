@@ -295,8 +295,19 @@
   <script src="/i18n.js" defer></script>
   <script>
     try {
-      localStorage.setItem('deepblock_visited_order', '1');
-      document.cookie = 'sweepr_visited_order=1; path=/; max-age=2592000; SameSite=Lax';
+      localStorage.removeItem('deepblock_visited_order');
+      localStorage.removeItem('sweepr_visited_order');
+      document.cookie = 'sweepr_visited_order=; path=/; max-age=0; SameSite=Lax';
+      const rawDraft = localStorage.getItem('sweepr_order_draft');
+      if (rawDraft) {
+        const parsedDraft = JSON.parse(rawDraft);
+        if (!parsedDraft || !parsedDraft.hasDetails || !parsedDraft.updatedAt || (Date.now() - Number(parsedDraft.updatedAt) > 30 * 60 * 1000)) {
+          localStorage.removeItem('sweepr_order_draft');
+          document.cookie = 'sweepr_order_draft_active=; path=/; max-age=0; SameSite=Lax';
+        }
+      } else {
+        document.cookie = 'sweepr_order_draft_active=; path=/; max-age=0; SameSite=Lax';
+      }
     } catch (e) {}
   </script>
   <!-- Google tag (gtag.js) - Sweepr Deepblock -->
@@ -887,6 +898,139 @@
     let googlePaymentsClient = null;
     let canMakePaymentReady = false;
 
+    const ORDER_DRAFT_KEY = 'sweepr_order_draft';
+    const ORDER_DRAFT_TTL_MS = 30 * 60 * 1000;
+    let orderDraftTouched = false;
+    let stripeFieldTouched = false;
+
+    function clearOrderDraft() {
+      try {
+        orderDraftTouched = false;
+        stripeFieldTouched = false;
+        localStorage.removeItem(ORDER_DRAFT_KEY);
+        document.cookie = 'sweepr_order_draft_active=; path=/; max-age=0; SameSite=Lax';
+      } catch (e) {}
+    }
+
+    function saveOrderDraft(forceHasDetails = false, refreshTimestamp = true) {
+      try {
+        const cardName = (document.getElementById('cardName')?.value || '').trim();
+        const billingAddress = (document.getElementById('billingAddress')?.value || '').trim();
+        const billingPostcode = (document.getElementById('billingPostcode')?.value || '').trim();
+        const email = (document.getElementById('email')?.value || '').trim();
+        const fallbackCardNumber = (document.getElementById('fallbackCardNumber')?.value || '').trim();
+        const fallbackCardExpiry = (document.getElementById('fallbackCardExpiry')?.value || '').trim();
+        const fallbackCardCvc = (document.getElementById('fallbackCardCvc')?.value || '').trim();
+
+        const hasAnyInput = Boolean(
+          forceHasDetails ||
+          orderDraftTouched ||
+          stripeFieldTouched ||
+          cardName ||
+          billingAddress ||
+          billingPostcode ||
+          email ||
+          fallbackCardNumber ||
+          fallbackCardExpiry ||
+          fallbackCardCvc
+        );
+
+        if (!hasAnyInput) return;
+        orderDraftTouched = true;
+
+        let updatedAt = Date.now();
+        if (!refreshTimestamp) {
+          try {
+            const existing = JSON.parse(localStorage.getItem(ORDER_DRAFT_KEY) || 'null');
+            if (existing && existing.updatedAt) updatedAt = Number(existing.updatedAt);
+          } catch (e) {}
+        }
+
+        const remainingSec = Math.max(1, Math.floor((ORDER_DRAFT_TTL_MS - (Date.now() - updatedAt)) / 1000));
+        const draftPayload = {
+          updatedAt,
+          hasDetails: true,
+          cardName: document.getElementById('cardName')?.value || '',
+          billingAddress: document.getElementById('billingAddress')?.value || '',
+          billingPostcode: document.getElementById('billingPostcode')?.value || '',
+          email: document.getElementById('email')?.value || '',
+          fallbackCardExpiry: document.getElementById('fallbackCardExpiry')?.value || '',
+          plan: selectedPlan,
+          isDiscountApplied: Boolean(isDiscountApplied),
+          isRamTamerAdded: Boolean(isRamTamerAdded),
+          termsConsent: Boolean(document.getElementById('termsConsent')?.checked),
+          legalConsent: Boolean(document.getElementById('legalConsent')?.checked)
+        };
+
+        localStorage.setItem(ORDER_DRAFT_KEY, JSON.stringify(draftPayload));
+        document.cookie = `sweepr_order_draft_active=1; path=/; max-age=${remainingSec}; SameSite=Lax`;
+      } catch (e) {}
+    }
+
+    function restoreOrderDraft() {
+      try {
+        const raw = localStorage.getItem(ORDER_DRAFT_KEY);
+        if (!raw) return null;
+        const draft = JSON.parse(raw);
+        if (!draft || !draft.hasDetails || !draft.updatedAt || (Date.now() - Number(draft.updatedAt) > ORDER_DRAFT_TTL_MS)) {
+          clearOrderDraft();
+          return null;
+        }
+        orderDraftTouched = true;
+        const setVal = (id, val) => {
+          const el = document.getElementById(id);
+          if (el && typeof val === 'string' && val.length > 0 && !el.value) {
+            el.value = val;
+          }
+        };
+        setVal('cardName', draft.cardName);
+        setVal('billingAddress', draft.billingAddress);
+        setVal('billingPostcode', draft.billingPostcode);
+        setVal('email', draft.email);
+        setVal('fallbackCardExpiry', draft.fallbackCardExpiry);
+
+        if (typeof draft.termsConsent === 'boolean') {
+          const termsEl = document.getElementById('termsConsent');
+          if (termsEl) termsEl.checked = draft.termsConsent;
+        }
+        if (typeof draft.legalConsent === 'boolean') {
+          const legalEl = document.getElementById('legalConsent');
+          if (legalEl) legalEl.checked = draft.legalConsent;
+        }
+
+        const remainingSec = Math.max(1, Math.floor((ORDER_DRAFT_TTL_MS - (Date.now() - Number(draft.updatedAt))) / 1000));
+        document.cookie = `sweepr_order_draft_active=1; path=/; max-age=${remainingSec}; SameSite=Lax`;
+        return draft;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function bindOrderDraftListeners() {
+      const textIds = [
+        'cardName',
+        'billingAddress',
+        'billingPostcode',
+        'email',
+        'fallbackCardNumber',
+        'fallbackCardExpiry',
+        'fallbackCardCvc'
+      ];
+      textIds.forEach((id) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.addEventListener('input', () => saveOrderDraft(false, true));
+        el.addEventListener('change', () => saveOrderDraft(false, true));
+      });
+      ['termsConsent', 'legalConsent'].forEach((id) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.addEventListener('change', () => {
+          if (orderDraftTouched) saveOrderDraft(true, false);
+        });
+      });
+    }
+
     function getRamAddonPence(plan = selectedPlan) {
       const p = checkoutConfig && checkoutConfig.pricing;
       if (plan === 'annual') return p?.ramTamerAnnualAmount ?? 1499;
@@ -1057,6 +1201,7 @@
         selectedPlan = plan;
         try { sessionStorage.setItem('deepblock_selected_plan', plan); } catch (e) {}
         updateOrderUI();
+        if (orderDraftTouched) saveOrderDraft(true, false);
       }
     }
 
@@ -1065,10 +1210,14 @@
       const cb = document.getElementById('ramTamerAddonCheckbox');
       if (cb) cb.checked = isRamTamerAdded;
       updateOrderUI();
+      if (orderDraftTouched) saveOrderDraft(true, false);
     }
 
     // 1. Initialize Page & Live Stripe Elements Config
     async function initCheckout() {
+      const restoredDraft = restoreOrderDraft();
+      bindOrderDraftListeners();
+
       try {
         const res = await fetch('/api/checkout-config');
         if (res.ok) {
@@ -1087,7 +1236,7 @@
 
       const params = new URLSearchParams(window.location.search);
       const savedPlan = sessionStorage.getItem('deepblock_selected_plan');
-      const p = params.get('plan') || savedPlan;
+      const p = params.get('plan') || (restoredDraft && restoredDraft.plan) || savedPlan;
       const offerParam = params.get('offer');
       const discountParam = params.get('discount');
       const errorParam = params.get('error');
@@ -1095,11 +1244,16 @@
 
       if (emailParam) {
         const emailEl = document.getElementById('email');
-        if (emailEl && !emailEl.value) emailEl.value = emailParam;
+        if (emailEl && !emailEl.value) {
+          emailEl.value = emailParam;
+          saveOrderDraft(false, true);
+        }
       }
 
       if (params.get('addon') === 'none' || params.get('ram_tamer') === '0') {
         isRamTamerAdded = false;
+      } else if (restoredDraft && typeof restoredDraft.isRamTamerAdded === 'boolean') {
+        isRamTamerAdded = restoredDraft.isRamTamerAdded;
       } else {
         isRamTamerAdded = true;
       }
@@ -1110,7 +1264,13 @@
         showError('Your payment was cancelled or not completed. No charge was made — please try again below.');
       }
 
-      if (offerParam === 'intro' || discountParam === '1' || params.get('intro') === '1' || p === 'intro') {
+      if (
+        offerParam === 'intro' ||
+        discountParam === '1' ||
+        params.get('intro') === '1' ||
+        p === 'intro' ||
+        (restoredDraft && restoredDraft.isDiscountApplied && (!params.get('plan') || p === 'monthly'))
+      ) {
         activateDiscountOffer();
       } else if (p === 'six_month' || p === '6month' || p === 'sixmonth') {
         selectedPlan = 'six_month';
@@ -1174,6 +1334,15 @@
         cardNumberEl.mount('#stripeCardNumber');
         cardExpiryEl.mount('#stripeCardExpiry');
         cardCvcEl.mount('#stripeCardCvc');
+
+        [cardNumberEl, cardExpiryEl, cardCvcEl].forEach((el) => {
+          el.on('change', (ev) => {
+            if (ev && (!ev.empty || ev.complete)) {
+              stripeFieldTouched = true;
+              saveOrderDraft(true, true);
+            }
+          });
+        });
 
         cardElements = { cardNumberEl, cardExpiryEl, cardCvcEl };
 
@@ -1342,6 +1511,7 @@
           })
         });
         const verifyData = await verifyRes.json();
+        clearOrderDraft();
         window.location.href = verifyData.redirect || '/checkout/success?web=1';
       } catch (err) {
         if (err && err.statusCode === 'CANCELED') return;
@@ -1448,6 +1618,7 @@
                 })
               });
               const verifyData = await verifyRes.json();
+              clearOrderDraft();
               window.location.href = verifyData.redirect || '/checkout/success?web=1';
             } catch (err) {
               ev.complete('fail');
@@ -1542,6 +1713,7 @@
       if (bannerSubtitle) bannerSubtitle.innerHTML = `⚡ Full Pro Protection across up to 5 Devices. Renews at standard £9.99/mo; cancel anytime in 1 click.`;
 
       updateOrderUI();
+      if (orderDraftTouched) saveOrderDraft(true, false);
       document.getElementById('checkoutBox')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
@@ -1694,6 +1866,7 @@
             })
           });
           const confirmData = await confirmRes.json();
+          clearOrderDraft();
           window.location.href = confirmData.redirect || '/checkout/success?web=1';
           return;
         }
@@ -1743,6 +1916,7 @@
 
         const subData = await subRes.json();
         if (subRes.ok && subData.redirectUrl) {
+          clearOrderDraft();
           window.location.href = subData.redirectUrl;
           return;
         } else {

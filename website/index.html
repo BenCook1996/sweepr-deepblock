@@ -164,6 +164,20 @@
     ]
   }
   </script>
+  <script>
+    try {
+      const rawDraft = localStorage.getItem('sweepr_order_draft');
+      if (rawDraft) {
+        const draft = JSON.parse(rawDraft);
+        if (draft && draft.hasDetails && draft.updatedAt && (Date.now() - Number(draft.updatedAt) <= 30 * 60 * 1000)) {
+          window.location.replace('/order');
+        } else {
+          localStorage.removeItem('sweepr_order_draft');
+          document.cookie = 'sweepr_order_draft_active=; path=/; max-age=0; SameSite=Lax';
+        }
+      }
+    } catch (e) {}
+  </script>
   <script src="https://cdn.tailwindcss.com/3.4.5"></script>
   <link rel="stylesheet" href="/style.css">
   <script src="/nav.js" defer></script>

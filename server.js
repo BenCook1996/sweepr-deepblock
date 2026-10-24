@@ -1071,7 +1071,9 @@ function renderCheckoutSuccessPage(acc, isCancelled = false) {
     try {
       localStorage.removeItem('deepblock_visited_order');
       localStorage.removeItem('sweepr_visited_order');
+      localStorage.removeItem('sweepr_order_draft');
       document.cookie = 'sweepr_visited_order=; path=/; max-age=0';
+      document.cookie = 'sweepr_order_draft_active=; path=/; max-age=0; SameSite=Lax';
       const activeKey = ${JSON.stringify(acc?.licenseKey || 'SWEEPR-DB-PRO')};
       if (activeKey) {
         localStorage.setItem('sweepr_license_key', activeKey);
@@ -2752,6 +2754,21 @@ const server = http.createServer(async (req, res) => {
     (ext === '.json' && baseName !== 'manifest.json' && baseName !== 'site.webmanifest')
   ) {
     return sendErrorResponse(res, 403, '403 Forbidden');
+  }
+
+  // Redirect returning visitors with an active 30-minute order draft straight back to /order
+  if (
+    (req.method === 'GET' || req.method === 'HEAD') &&
+    ext === '.html' &&
+    baseName !== 'order.html' &&
+    !BOT_UA_RE.test(ua) &&
+    /(?:^|;\s*)sweepr_order_draft_active=1(?:;|$)/.test(String(req.headers.cookie || ''))
+  ) {
+    res.writeHead(302, {
+      Location: '/order',
+      'Cache-Control': 'no-store, no-cache, must-revalidate, private'
+    });
+    return res.end();
   }
 
   return serveStaticOptimized(req, res, fullPath);
