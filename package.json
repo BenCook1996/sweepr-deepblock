@@ -5,7 +5,11 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
+    "seo:daily": "node scripts/daily-50-seo-pages.mjs 50",
     "seo:drip": "node scripts/deepblock-seo-drip.mjs 300",
     "seo:audit": "node scripts/technical-seo-audit.mjs"
+  },
+  "engines": {
+    "node": ">=22.23.4"
   }
 }

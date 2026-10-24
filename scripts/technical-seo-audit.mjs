@@ -44,17 +44,23 @@ for (const filePath of htmlFiles) {
   if (!title) {
     results.htmlIssues.push({ file: rel, type: 'missing_title', msg: 'Missing <title> tag' });
   } else {
-    if (title.length > 70) {
-      results.htmlWarnings.push({ file: rel, type: 'long_title', msg: `Title exceeds 70 chars (${title.length} chars): "${title}"` });
+    const decodedTitle = title.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'");
+    if (decodedTitle.length > 70) {
+      results.htmlWarnings.push({ file: rel, type: 'long_title', msg: `Title exceeds 70 chars (${decodedTitle.length} chars): "${decodedTitle}"` });
     }
-    if (title.length < 25) {
-      results.htmlWarnings.push({ file: rel, type: 'short_title', msg: `Title under 25 chars (${title.length} chars): "${title}"` });
+    if (decodedTitle.length < 25) {
+      results.htmlWarnings.push({ file: rel, type: 'short_title', msg: `Title under 25 chars (${decodedTitle.length} chars): "${decodedTitle}"` });
+    }
+    if (decodedTitle.endsWith('...') || decodedTitle.endsWith('…')) {
+      results.htmlWarnings.push({ file: rel, type: 'truncated_title', msg: `Title contains trailing ellipses: "${decodedTitle}"` });
     }
   }
 
   // Meta description
-  const descMatch = content.match(/<meta\s+name=["']description["']\s+content=["']([^"']+)["']/i) ||
-                    content.match(/<meta\s+content=["']([^"']+)["']\s+name=["']description["']/i);
+  const descMatch = content.match(/<meta\s+name=["']description["']\s+content="([^"]*)"/i) ||
+                    content.match(/<meta\s+name=["']description["']\s+content='([^']*)'/i) ||
+                    content.match(/<meta\s+content="([^"]*)"\s+name=["']description["']/i) ||
+                    content.match(/<meta\s+content='([^']*)'\s+name=["']description["']/i);
   const desc = descMatch ? descMatch[1].trim() : null;
   if (!desc) {
     results.htmlIssues.push({ file: rel, type: 'missing_description', msg: 'Missing meta description' });
@@ -68,8 +74,10 @@ for (const filePath of htmlFiles) {
   }
 
   // Canonical tag
-  const canMatch = content.match(/<link\s+rel=["']canonical["']\s+href=["']([^"']+)["']/i) ||
-                   content.match(/<link\s+href=["']([^"']+)["']\s+rel=["']canonical["']/i);
+  const canMatch = content.match(/<link\s+rel=["']canonical["']\s+href="([^"]*)"/i) ||
+                   content.match(/<link\s+rel=["']canonical["']\s+href='([^']*)'/i) ||
+                   content.match(/<link\s+href="([^"]*)"\s+rel=["']canonical["']/i) ||
+                   content.match(/<link\s+href='([^']*)'\s+rel=["']canonical["']/i);
   if (!canMatch) {
     results.htmlIssues.push({ file: rel, type: 'missing_canonical', msg: 'Missing canonical link tag' });
   } else {
@@ -187,17 +195,75 @@ if (fs.existsSync(robotsPath)) {
   results.htmlIssues.push({ file: 'robots.txt', type: 'missing_robots', msg: 'robots.txt not found!' });
 }
 
+// Check site.webmanifest
+const manifestPath = path.join(WEBSITE_DIR, 'site.webmanifest');
+if (fs.existsSync(manifestPath)) {
+  try {
+    const manifestJson = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+    if (!manifestJson.name || !manifestJson.short_name || !manifestJson.icons) {
+      results.htmlWarnings.push({ file: 'site.webmanifest', type: 'incomplete_manifest', msg: 'site.webmanifest missing name, short_name or icons' });
+    }
+  } catch (err) {
+    results.htmlIssues.push({ file: 'site.webmanifest', type: 'invalid_manifest_json', msg: `site.webmanifest JSON error: ${err.message}` });
+  }
+} else {
+  results.htmlWarnings.push({ file: 'site.webmanifest', type: 'missing_webmanifest', msg: 'site.webmanifest not found!' });
+}
+
+// Check pad.xml
+const padPath = path.join(WEBSITE_DIR, 'pad.xml');
+if (fs.existsSync(padPath)) {
+  const padXml = fs.readFileSync(padPath, 'utf8');
+  if (!padXml.includes('<Program_Name>') || !padXml.includes('<Program_Version>') || !padXml.includes('<Program_Cost_Other>')) {
+    results.htmlIssues.push({ file: 'pad.xml', type: 'incomplete_pad_xml', msg: 'pad.xml missing standard PAD metadata fields' });
+  }
+} else {
+  results.htmlIssues.push({ file: 'pad.xml', type: 'missing_pad_xml', msg: 'pad.xml not found!' });
+}
+
+// Check llms.txt
+const llmsPath = path.join(WEBSITE_DIR, 'llms.txt');
+if (fs.existsSync(llmsPath)) {
+  const llmsTxt = fs.readFileSync(llmsPath, 'utf8');
+  if (!llmsTxt.includes('## Verified Guides & Platform Solutions')) {
+    results.htmlWarnings.push({ file: 'llms.txt', type: 'incomplete_llms_txt', msg: 'llms.txt missing Verified Guides section' });
+  }
+} else {
+  results.htmlWarnings.push({ file: 'llms.txt', type: 'missing_llms_txt', msg: 'llms.txt not found!' });
+}
+
+// Check indexing-queue.json
+const queuePath = path.join(WEBSITE_DIR, 'indexing-queue.json');
+if (fs.existsSync(queuePath)) {
+  try {
+    const queueJson = JSON.parse(fs.readFileSync(queuePath, 'utf8'));
+    if (!queueJson.indexnow_key || !Array.isArray(queueJson.pending_urls)) {
+      results.htmlWarnings.push({ file: 'indexing-queue.json', type: 'incomplete_indexing_queue', msg: 'indexing-queue.json missing indexnow_key or pending_urls array' });
+    }
+  } catch (err) {
+    results.htmlIssues.push({ file: 'indexing-queue.json', type: 'invalid_queue_json', msg: `indexing-queue.json JSON error: ${err.message}` });
+  }
+} else {
+  results.htmlWarnings.push({ file: 'indexing-queue.json', type: 'missing_indexing_queue', msg: 'indexing-queue.json not found!' });
+}
+
 // Server.js audit
 const serverCode = fs.readFileSync(SERVER_PATH, 'utf8');
 results.serverAudit = {
+  hasBrotliCompression: serverCode.includes('createBrotliCompress') && serverCode.includes("'br'"),
   hasGzipCompression: serverCode.includes('createGzip') || serverCode.includes('zlib'),
+  hasBrotliStreamErrorHandling: serverCode.includes("brotliStream.on('error'"),
   hasETagSupport: /etag/i.test(serverCode),
   hasIfNoneMatch: /if-none-match/i.test(serverCode),
   hasTrailingSlashRedirect: serverCode.includes('endsWith(\'/\')') || serverCode.includes('endsWith("/")'),
   hasHtmlExtensionRedirect: serverCode.includes('.html'),
+  hasDynamicHtmlFallback: serverCode.includes('htmlCandidate') || serverCode.includes('directHtmlCandidate'),
   hasSecurityHeaders: serverCode.includes('Strict-Transport-Security') && serverCode.includes('X-Content-Type-Options'),
+  hasXRobotsTagSupport: serverCode.includes('X-Robots-Tag'),
+  hasExtendedStaticCaching: serverCode.includes('max-age=604800'),
   hasBotHitTelemetry: serverCode.includes('BOT_UA_RE') && serverCode.includes('bot-hit'),
-  hasPreconnectHeaders: serverCode.includes('rel=preconnect')
+  hasPreconnectHeaders: serverCode.includes('rel=preconnect'),
+  hasPreloadHeaders: serverCode.includes('rel=preload')
 };
 
 console.log('\n=== AUDIT SUMMARY ===');

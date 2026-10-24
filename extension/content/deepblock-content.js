@@ -60,7 +60,9 @@
   // ============================================================================
   function initWebsiteAutoActivationBridge() {
     const host = (location.hostname || '').toLowerCase();
-    if (!/(^|\.)sweeprdeepblock\.com$/i.test(host) && host !== 'localhost' && host !== '127.0.0.1') {
+    const isProdHost = /(^|\.)sweeprdeepblock\.com$/i.test(host);
+    const isDevHost = host === 'localhost' || host === '127.0.0.1';
+    if (!isDevHost && (!isProdHost || location.protocol !== 'https:')) {
       return;
     }
 

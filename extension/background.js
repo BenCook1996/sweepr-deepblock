@@ -1,8 +1,13 @@
 // SWEEPR Deepblock — Manifest V3 Background Service Worker (v1.2 UX & Architecture Audited)
+const isDevExtension = typeof chrome !== 'undefined' && chrome.runtime && !('update_url' in chrome.runtime.getManifest());
 const LICENSE_VERIFY_ENDPOINTS = [
   'https://sweeprdeepblock.com/api/license-verify',
-  'http://localhost:8787/v1/license/verify-key?project=deepblock',
-  'http://localhost:3000/api/license-verify'
+  ...(isDevExtension
+    ? [
+        'http://localhost:8787/v1/license/verify-key?project=deepblock',
+        'http://localhost:3000/api/license-verify'
+      ]
+    : [])
 ];
 
 const PRO_ONLY_SETTINGS = new Set([
@@ -385,6 +390,11 @@ if (chrome.tabs) {
       }
     });
   }
+  if (chrome.tabs.onRemoved) {
+    chrome.tabs.onRemoved.addListener((tabId) => {
+      scamDetectedTabs.delete(tabId);
+    });
+  }
 }
 
 // Helper to toggle site pause by hostname
@@ -533,8 +543,8 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.type === 'AUTO_SYNC_WEBSITE_LICENSE') {
     const senderUrl = String((sender && sender.url) || (sender && sender.tab && sender.tab.url) || '');
     const isOfficialPortal =
-      /^https?:\/\/([a-z0-9-]+\.)?sweeprdeepblock\.com(\/|$)/i.test(senderUrl) ||
-      /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?(\/|$)/i.test(senderUrl);
+      /^https:\/\/([a-z0-9-]+\.)?sweeprdeepblock\.com(\/|$)/i.test(senderUrl) ||
+      (isDevExtension && /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?(\/|$)/i.test(senderUrl));
     if (!isOfficialPortal) {
       sendResponse({ ok: false });
       return true;

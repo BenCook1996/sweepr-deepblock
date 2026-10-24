@@ -2,8 +2,12 @@ User-agent: *
 Allow: /
 Disallow: /api/
 Disallow: /checkout/
+Disallow: /order
 Disallow: /login
-Disallow: /logos.html
+Disallow: /logos
+Disallow: /mockups
+Disallow: /popup-mockups
+Disallow: /redesign-prototype
 
 # Explicitly permit AI Search and Answer Engines for LLM citations (GEO/AEO)
 User-agent: OAI-SearchBot
