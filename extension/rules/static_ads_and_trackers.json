@@ -943,5 +943,131 @@
       "urlFilter": "||u5s5.com^",
       "resourceTypes": ["main_frame", "sub_frame", "script", "xmlhttprequest"]
     }
+  },
+  {
+    "id": 127,
+    "priority": 5,
+    "action": { "type": "block" },
+    "condition": {
+      "regexFilter": "^https?://[^/]+/[0-9a-z]{8,12}/[0-9a-z]{8,12}\\.js(\\?|$)",
+      "resourceTypes": ["script", "xmlhttprequest"]
+    }
+  },
+  {
+    "id": 128,
+    "priority": 3,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||yomeno.xyz^",
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "media", "other"]
+    }
+  },
+  {
+    "id": 129,
+    "priority": 3,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||ahw2lok.txxx.com^",
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "media"]
+    }
+  },
+  {
+    "id": 130,
+    "priority": 3,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||zog.link^",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "xmlhttprequest", "image"]
+    }
+  },
+  {
+    "id": 131,
+    "priority": 3,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||iloptrex.com^",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "xmlhttprequest", "image"]
+    }
+  },
+  {
+    "id": 132,
+    "priority": 3,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||nereserv.com^",
+      "resourceTypes": ["sub_frame", "script", "xmlhttprequest", "image"]
+    }
+  },
+  {
+    "id": 133,
+    "priority": 3,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||vidvas3.com^",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "xmlhttprequest", "image", "media"]
+    }
+  },
+  {
+    "id": 134,
+    "priority": 3,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||tubecup.net^",
+      "resourceTypes": ["sub_frame", "script", "xmlhttprequest", "ping"]
+    }
+  },
+  {
+    "id": 135,
+    "priority": 3,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||fhgte.com^",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "xmlhttprequest", "image"]
+    }
+  },
+  {
+    "id": 136,
+    "priority": 3,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||faphouse4k.com^",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "xmlhttprequest", "image"]
+    }
+  },
+  {
+    "id": 137,
+    "priority": 3,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||tikbblove.com^",
+      "resourceTypes": ["sub_frame", "script", "xmlhttprequest", "image"]
+    }
+  },
+  {
+    "id": 138,
+    "priority": 3,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||directsle.com^",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "xmlhttprequest"]
+    }
+  },
+  {
+    "id": 139,
+    "priority": 3,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||gggpppht.com^",
+      "resourceTypes": ["script", "xmlhttprequest", "ping"]
+    }
+  },
+  {
+    "id": 140,
+    "priority": 3,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||infrapu.sh^",
+      "resourceTypes": ["script", "xmlhttprequest", "ping"]
+    }
   }
 ]

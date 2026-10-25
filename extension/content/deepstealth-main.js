@@ -836,6 +836,64 @@
   // Neutralize adplsr video pause-banner SDK
   safeDefine(window, 'adplsr', Object.freeze({ cmd: Object.freeze({ push: noopFn }) }));
 
+  // Neutralize TubeCorporate / txxx.me / hclips / upornia AdManager, VAST pre-roll (ad_preroll2),
+  // in-player CPA banner (_playerBannerCPA / _plBtn), and bottom-right inpage skins (__inpageSkins)
+  const adManagerStub = Object.freeze({
+    push: function () {
+      return 0;
+    },
+    runFormatSpot: noopFn,
+    adFormats: [],
+    Logger: { silentMode: true },
+    getLocalConfig: () => ({}),
+    getConfigHelpers: () => ({
+      findFormat: () => ({ autostart: false }),
+      findFormatSpot: () => null
+    })
+  });
+  safeDefine(window, 'AdManager', adManagerStub);
+  safeDefine(window, 'ad_preroll2', noopFn);
+  safeDefine(window, 'canStartPreroll', 0);
+  safeDefine(window, 'ignorePauseroll', true);
+  safeDefine(window, 'ignoreInpage', true);
+  safeDefine(window, 'ignorePopunder', true);
+  safeDefine(window, 'ignoreVideoslider', true);
+  safeDefine(window, 'ignoreOutstream', true);
+  safeDefine(window, 'ignorePush', true);
+  safeDefine(window, 'skPop', true);
+  safeDefine(window, '_plBtnIgnore', true);
+  safeDefine(window, '_plBtn', undefined);
+  safeDefine(window, '_plBtnText', '');
+  safeDefine(window, '_direct_player_btn', undefined);
+  safeDefine(window, '_playerBannerCPA', undefined);
+  safeDefine(window, '_playerBanner', false);
+  safeDefine(window, '_promobar', undefined);
+  safeDefine(window, '_direct_underplayer', []);
+  safeDefine(window, 'cpa_undpItems', []);
+  safeDefine(window, 'cpa_undpRandom', 0);
+  safeDefine(window, '__inpageSkins', noopFn);
+  safeDefine(window, 'blockBanner', noopFn);
+  safeDefine(window, 'runDownloadBanner', noopFn);
+
+  try {
+    const dealProxy = new Proxy(
+      {},
+      {
+        get: () => true,
+        set: () => true
+      }
+    );
+    safeDefine(window, '$deal', dealProxy);
+  } catch (e) {}
+
+  try {
+    const emptyHlArray = [];
+    emptyHlArray.push = function () {
+      return 0;
+    };
+    safeDefine(window, '_hl', emptyHlArray);
+  } catch (e) {}
+
   if (/(^|\.)pornoxo\.com$/i.test(location.hostname)) {
     try {
       sessionStorage.setItem('bnr_labadena1', 'true');
@@ -890,7 +948,7 @@
 
   // Block popunders and ad-network URLs
   const POPUNDER_URL_REGEX =
-    /(\/zv3\/(b|url|cam)|\/link\/out\/|\/getape\/|\/prepop\.php|\/getadb\/|\/venor\.php|\/v1\/link\.php|\/splash\.php\?idzone=|banner-iframe|advertiserName=|tsyndicate\.com|contentsserved\.com|exoclick\.com|exosrv\.com|realsrv\.com|magsrv\.com|pemsrv\.com|orbsrv\.com|trafficjunky\.(net|com)|juicyads\.com|jads\.co|clickadu\.com|clickaine\.com|\/lv\/esnk\/|hilltopads\.net|adspyglass\.com|plugrush\.com|adxpansion\.com|crakrevenue\.com|ero-advertising\.com|twinrdsyn\.com|twinrdengine\.com|adtng\.com|etahub\.com|bngpt\.com|xlivrdr\.com|popads\.net|popcash\.net|propellerads\.com|cdn-fc\.com|meteorpomposity\.com|glutenmuttsensuous\.com|cupbearergrowllurch\.com|hollowgoal\.com|u5s5\.com|adplsr\.com|nomarax\.com|fh-wgt\.com)/i;
+    /(\/zv3\/(b|url|cam)|\/link\/out\/|\/getape\/|\/prepop\.php|\/getadb\/|\/venor\.php|\/v1\/link\.php|\/splash\.php\?idzone=|banner-iframe|advertiserName=|tsyndicate\.com|contentsserved\.com|exoclick\.com|exosrv\.com|realsrv\.com|magsrv\.com|pemsrv\.com|orbsrv\.com|trafficjunky\.(net|com)|juicyads\.com|jads\.co|clickadu\.com|clickaine\.com|\/lv\/esnk\/|hilltopads\.net|adspyglass\.com|plugrush\.com|adxpansion\.com|crakrevenue\.com|ero-advertising\.com|twinrdsyn\.com|twinrdengine\.com|adtng\.com|etahub\.com|bngpt\.com|xlivrdr\.com|popads\.net|popcash\.net|propellerads\.com|cdn-fc\.com|meteorpomposity\.com|glutenmuttsensuous\.com|cupbearergrowllurch\.com|hollowgoal\.com|u5s5\.com|adplsr\.com|nomarax\.com|fh-wgt\.com|yomeno\.xyz|ahw2lok\.txxx\.com|zog\.link|iloptrex\.com|nereserv\.com|vidvas3\.com|tubecup\.net|fhgte\.com|faphouse4k\.com|tikbblove\.com|directsle\.com|g2fame\.com)/i;
 
   // Block dynamic popunder <script> injections via appendChild / insertBefore
   const isBlockedDynamicScript = (node) => {
@@ -905,6 +963,7 @@
       POPUNDER_URL_REGEX.test(src) ||
       /\/pxo\/www\/js-v[0-9.]+\/[a-z0-9]{8}\.min\.js/i.test(src) ||
       /\/pxo\/www\/js.*\.min\.js\?url=/i.test(src) ||
+      /\/[0-9a-z]{8,12}\/[0-9a-z]{8,12}\.js(\?|$)/i.test(src) ||
       /\/on\.js(\?|$)/i.test(src)
     ) {
       return true;
