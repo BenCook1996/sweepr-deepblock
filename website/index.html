@@ -326,13 +326,25 @@
       <!-- Single Unmistakable Primary Green CTA + Secondary Upgrade Text Link -->
       <div class="flex flex-col sm:flex-row sm:items-center gap-3.5 sm:gap-5">
         <a href="/download?install=1" id="downloadBtn" class="btn btn-go btn-big pulse-glow gap-2.5 w-full sm:w-auto justify-center">
-          <span>Install Free Extension</span>
+          <span id="osDownloadText">Install Free Extension</span>
           <svg class="arrow-icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
         </a>
         <a href="/order?plan=annual" onclick="try{sessionStorage.setItem('deepblock_selected_plan','annual')}catch(e){}" class="text-sm font-bold text-gray-700 hover:text-emerald-700 underline underline-offset-4 py-2 text-center sm:text-left">
           Get Pro Access
         </a>
       </div>
+      <script>
+        (function() {
+          try {
+            var ua = (navigator.userAgent || '').toLowerCase();
+            var isIpadOs = navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1;
+            var el = document.getElementById('osDownloadText');
+            if (el && (/iphone|ipad|ipod|android|mobile|iemobile|opera mini/.test(ua) || isIpadOs)) {
+              el.textContent = 'Install Now';
+            }
+          } catch (e) {}
+        })();
+      </script>
 
       <!-- Unified Trust & Risk Reversal Bar -->
       <div class="flex flex-wrap items-center gap-x-3.5 gap-y-1.5 mt-5 pt-4 border-t border-gray-200/70 text-xs text-gray-600 font-semibold">
@@ -392,7 +404,7 @@
             <div class="flex-1 grid grid-cols-12 gap-3 p-3 overflow-hidden">
               <div class="col-span-8 flex flex-col justify-between min-w-0">
                 <div class="relative rounded-xl overflow-hidden bg-black aspect-video w-full shadow-md">
-                  <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=900&q=80" alt="Swiss Alps 4K" class="yt-video-motion w-full h-full object-cover"/>
+                  <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=900&q=80" alt="Swiss Alps 4K" width="900" height="506" loading="lazy" decoding="async" class="yt-video-motion w-full h-full object-cover"/>
                   <div class="absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-black/85 to-transparent"></div>
                   <div class="absolute top-2.5 right-2.5 bg-emerald-600/95 text-white px-2.5 py-0.5 rounded-full text-[9.5px] font-extrabold shadow">
                     ✓ Playing Immediately • 0 Ads
@@ -430,21 +442,21 @@
               <div class="col-span-4 flex flex-col justify-between min-w-0">
                 <div class="text-[10.5px] font-bold text-gray-800 border-b border-gray-200 pb-1">Up Next • Clean Feed</div>
                 <div class="flex gap-2 items-start">
-                  <img src="https://images.unsplash.com/photo-1531366936337-7c912a4589a7?auto=format&fit=crop&w=240&q=75" class="w-20 h-12 rounded-lg object-cover shrink-0" alt="Iceland"/>
+                  <img src="https://images.unsplash.com/photo-1531366936337-7c912a4589a7?auto=format&fit=crop&w=240&q=75" width="240" height="144" loading="lazy" decoding="async" class="w-20 h-12 rounded-lg object-cover shrink-0" alt="Iceland"/>
                   <div class="min-w-0">
                     <div class="text-[10px] font-bold text-gray-900 leading-tight line-clamp-2">Iceland Northern Lights 4K</div>
                     <div class="text-[8.5px] text-gray-500 truncate">Scenic Earth • 1.9M views</div>
                   </div>
                 </div>
                 <div class="flex gap-2 items-start">
-                  <img src="https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=240&q=75" class="w-20 h-12 rounded-lg object-cover shrink-0" alt="Ocean"/>
+                  <img src="https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=240&q=75" width="240" height="144" loading="lazy" decoding="async" class="w-20 h-12 rounded-lg object-cover shrink-0" alt="Ocean"/>
                   <div class="min-w-0">
                     <div class="text-[10px] font-bold text-gray-900 leading-tight line-clamp-2">Deep Ocean Coral Reefs 4K</div>
                     <div class="text-[8.5px] text-gray-500 truncate">Blue Planet • 1.4M views</div>
                   </div>
                 </div>
                 <div class="flex gap-2 items-start">
-                  <img src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=240&q=75" class="w-20 h-12 rounded-lg object-cover shrink-0" alt="Forest"/>
+                  <img src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=240&q=75" width="240" height="144" loading="lazy" decoding="async" class="w-20 h-12 rounded-lg object-cover shrink-0" alt="Forest"/>
                   <div class="min-w-0">
                     <div class="text-[10px] font-bold text-gray-900 leading-tight line-clamp-2">Redwood National Park 4K</div>
                     <div class="text-[8.5px] text-gray-500 truncate">Earth 60fps • 512K views</div>
@@ -474,7 +486,7 @@
             <div class="flex-1 grid grid-cols-12 gap-3 p-3 overflow-hidden">
               <div class="col-span-8 flex flex-col justify-between min-w-0">
                 <div class="relative rounded-xl overflow-hidden bg-black aspect-video w-full border-2 border-rose-500">
-                  <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=900&q=80" class="w-full h-full object-cover brightness-75" alt="Pre-Roll Ad"/>
+                  <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=900&q=80" width="900" height="506" loading="lazy" decoding="async" class="w-full h-full object-cover brightness-75" alt="Pre-Roll Ad"/>
                   <div class="absolute top-2.5 left-2.5 bg-amber-400 text-black text-[9.5px] font-black px-2 py-0.5 rounded">
                     Sponsored • Ad 1 of 2 (0:30)
                   </div>
@@ -639,7 +651,7 @@
     <p>&copy; 2026 SWEEPR Global Limited. All rights reserved.</p>
     <div class="mt-3 flex justify-center">
       <a href="https://sitepatent.com/?utm_source=sweeprdeepblock.com&utm_medium=badge" target="_blank" rel="nofollow noopener noreferrer">
-        <img src="https://sitepatent.com/api/badge?style=classic" alt="Featured tool on SitePatent" height="36" class="h-9 opacity-80 hover:opacity-100 transition-opacity" loading="lazy" />
+        <img src="https://sitepatent.com/api/badge?style=classic" alt="Featured tool on SitePatent" width="150" height="36" class="h-9 opacity-80 hover:opacity-100 transition-opacity" loading="lazy" decoding="async" />
       </a>
     </div>
   </footer>
@@ -651,7 +663,7 @@
       <div class="text-[11px] font-semibold text-emerald-700 truncate">🛡️ 14-Day Money-Back Guarantee</div>
     </div>
     <a href="/download?install=1" class="btn btn-go !h-9 !px-3.5 !rounded-xl text-xs gap-1.5 shrink-0">
-      <span>Add to Browser</span>
+      <span>Install Now</span>
       <svg class="arrow-icon w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
     </a>
   </div>

@@ -163,7 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
         <div class="pt-2 border-t border-gray-100 flex flex-col gap-2">
           <a href="/download?install=1" class="btn btn-go w-full justify-center gap-2 text-sm">
-            <span>Add to Browser</span>
+            <span>Install Now</span>
             <svg class="arrow-icon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
           </a>
           <a href="/order?plan=annual" class="btn w-full justify-center text-sm font-bold bg-white border border-gray-300 text-gray-800">
@@ -259,4 +259,16 @@ document.addEventListener('DOMContentLoaded', () => {
       if (langChevron) langChevron.classList.remove('rotate-180');
     }
   });
+
+  try {
+    const ua = (navigator.userAgent || '').toLowerCase();
+    const isIpadOs = navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1;
+    const isMobile = /iphone|ipad|ipod|android|mobile|iemobile|opera mini/.test(ua) || isIpadOs;
+    if (isMobile) {
+      const osBtnLbl = document.getElementById('osDownloadText') || document.getElementById('downloadBtnLabel');
+      if (osBtnLbl) {
+        osBtnLbl.textContent = 'Install Now';
+      }
+    }
+  } catch {}
 });
