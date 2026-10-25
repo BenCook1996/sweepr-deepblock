@@ -20,13 +20,16 @@
 
   function isProEntitled() {
     try {
-      return Boolean(
+      if (
         document.documentElement &&
-          document.documentElement.dataset &&
-          document.documentElement.dataset.sweeprProActive === '1'
-      );
+        document.documentElement.dataset &&
+        document.documentElement.dataset.sweeprPaused === '1'
+      ) {
+        return false;
+      }
+      return true;
     } catch (e) {
-      return false;
+      return true;
     }
   }
 
@@ -583,27 +586,35 @@
   // BEFORE the player schedules pre-roll or mid-roll ads, avoiding enforcement triggers.
   // ============================================================================
   if (/(^|\.)youtube\.com$/i.test(location.hostname)) {
-    function stripYtAdsFromObject(obj) {
-      if (!isProEntitled()) return obj;
+    function stripYtAdsFromObject(obj, depth = 0) {
+      if (!isProEntitled() || depth > 8) return obj;
       if (!obj || typeof obj !== 'object') return obj;
-      if (Array.isArray(obj.adPlacements)) {
-        obj.adPlacements = [];
-        notifyStealthBypass('yt-adPlacements-stripped');
-      }
-      if (Array.isArray(obj.playerAds)) {
-        obj.playerAds = [];
-      }
-      if (Array.isArray(obj.adSlots)) {
-        obj.adSlots = [];
-      }
-      if (obj.playerResponse && typeof obj.playerResponse === 'object') {
-        stripYtAdsFromObject(obj.playerResponse);
-      }
+      try {
+        if (Array.isArray(obj.adPlacements) && obj.adPlacements.length > 0) {
+          obj.adPlacements = [];
+          notifyStealthBypass('yt-adPlacements-stripped');
+        }
+        if (Array.isArray(obj.playerAds) && obj.playerAds.length > 0) {
+          obj.playerAds = [];
+        }
+        if (Array.isArray(obj.adSlots) && obj.adSlots.length > 0) {
+          obj.adSlots = [];
+        }
+        if ('adBreakHeartbeatParams' in obj) {
+          delete obj.adBreakHeartbeatParams;
+        }
+        if (obj.playerResponse && typeof obj.playerResponse === 'object') {
+          stripYtAdsFromObject(obj.playerResponse, depth + 1);
+        }
+        if (Array.isArray(obj.onResponseReceivedEndpoints)) {
+          obj.onResponseReceivedEndpoints.forEach((ep) => stripYtAdsFromObject(ep, depth + 1));
+        }
+      } catch (e) {}
       return obj;
-    };
+    }
 
     // Intercept window.ytInitialPlayerResponse assignment
-    let ytPlayerRespValue = window.ytInitialPlayerResponse;
+    let ytPlayerRespValue = stripYtAdsFromObject(window.ytInitialPlayerResponse);
     try {
       Object.defineProperty(window, 'ytInitialPlayerResponse', {
         get: () => ytPlayerRespValue,
@@ -614,16 +625,50 @@
       });
     } catch (e) {}
 
-    // Intercept Response.prototype.json() for /youtubei/v1/player & /youtubei/v1/next
+    // Wrap JSON.parse so YouTube's internal text-based JSON parsing of player/next responses also strips ads
+    const origJsonParse = JSON.parse;
+    JSON.parse = function (text, reviver) {
+      const parsed = origJsonParse.apply(this, arguments);
+      try {
+        if (
+          parsed &&
+          typeof parsed === 'object' &&
+          ('adPlacements' in parsed || 'playerAds' in parsed || 'adSlots' in parsed || 'playerResponse' in parsed)
+        ) {
+          return stripYtAdsFromObject(parsed);
+        }
+      } catch (e) {}
+      return parsed;
+    };
+
+    // Intercept Response.prototype.json() and Response.prototype.text() for /youtubei/v1/player & /youtubei/v1/next
     const origRespJson = Response.prototype.json;
     Response.prototype.json = async function () {
       const data = await origRespJson.apply(this, arguments);
       try {
-        if (this.url && /\/youtubei\/v1\/(player|next)/i.test(this.url)) {
+        if (!this.url || /\/youtubei\/v1\/(player|next|browse|search)/i.test(this.url)) {
           return stripYtAdsFromObject(data);
         }
       } catch (e) {}
       return data;
+    };
+
+    const origRespText = Response.prototype.text;
+    Response.prototype.text = async function () {
+      const txt = await origRespText.apply(this, arguments);
+      try {
+        if (
+          this.url &&
+          /\/youtubei\/v1\/(player|next)/i.test(this.url) &&
+          txt &&
+          (txt.includes('"adPlacements"') || txt.includes('"playerAds"') || txt.includes('"adSlots"'))
+        ) {
+          const parsed = origJsonParse(txt);
+          stripYtAdsFromObject(parsed);
+          return JSON.stringify(parsed);
+        }
+      } catch (e) {}
+      return txt;
     };
   }
 })();

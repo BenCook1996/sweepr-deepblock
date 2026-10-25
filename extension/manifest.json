@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "SWEEPR Deepblock — Block Ads, Cookie Pop-Ups & Fake Shops",
   "short_name": "SWEEPR Deepblock",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Block YouTube & banner ads, automatically say No to cookie pop-ups, hide junk search results, and spot fake online shops.",
   "permissions": [
     "declarativeNetRequest",
@@ -62,12 +62,12 @@
     "rule_resources": [
       {
         "id": "ads_and_trackers",
-        "enabled": false,
+        "enabled": true,
         "path": "rules/static_ads_and_trackers.json"
       },
       {
         "id": "cryptominers_and_heavy_scripts",
-        "enabled": false,
+        "enabled": true,
         "path": "rules/cryptominers.json"
       }
     ]
@@ -83,7 +83,7 @@
     {
       "matches": ["<all_urls>"],
       "js": ["content/deepblock-content.js"],
-      "run_at": "document_idle"
+      "run_at": "document_start"
     }
   ],
   "browser_specific_settings": {

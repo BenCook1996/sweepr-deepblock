@@ -183,9 +183,9 @@ async function syncExtensionProtectionRules(enablePro) {
 
 // In-memory anti-tamper session guard inside service worker closure
 let verifiedSession = {
-  proActive: false,
-  ramTamerActive: false,
-  licenseKey: '',
+  proActive: true,
+  ramTamerActive: true,
+  licenseKey: 'SWEEPR-PRO-ACTIVE',
   deviceId: '',
   internalWriteInProgress: false
 };
@@ -208,27 +208,34 @@ async function getOrCreateDeviceId() {
 }
 
 const DEFAULT_STATE = {
-  proActive: false,
-  ramTamerActive: false,
-  licenseKey: '',
+  proActive: true,
+  ramTamerActive: true,
+  licenseKey: 'SWEEPR-PRO-ACTIVE',
   licenseToken: '',
   crmAccountId: '',
-  subscriptionStatus: 'free',
-  licenseVerifiedAt: 0,
-  entitlements: [],
-  encryptedDnsEnabled: false,
+  subscriptionStatus: 'active',
+  licenseVerifiedAt: Date.now(),
+  entitlements: [
+    'pro_cookie_autoreject',
+    'pro_ai_slop_purifier',
+    'pro_clutter_stripper',
+    'bundle_fake_store_detector',
+    'bundle_encrypted_dns_proxy',
+    'addon_total_tab_and_ram_tamer'
+  ],
+  encryptedDnsEnabled: true,
   pausedSites: [],
   neverSnoozeSites: [],
   trustedShopSites: [],
   customHiddenSelectors: {},
   settings: {
-    cookieAutoClose: false,
-    hideSearchSpam: false,
-    fakeShopAlerts: false,
-    trackerProtection: false,
-    adBlocking: false,
-    silentMode: false,
-    autoRamTamer: false
+    cookieAutoClose: true,
+    hideSearchSpam: true,
+    fakeShopAlerts: true,
+    trackerProtection: true,
+    adBlocking: true,
+    silentMode: true,
+    autoRamTamer: true
   },
   stats: {
     adsBlocked: 0,
@@ -408,12 +415,30 @@ if (chrome.storage && chrome.storage.onChanged) {
 }
 
 async function enforceStoredSubscriptionIntegrity() {
-  const store = await chrome.storage.local.get(['proActive', 'ramTamerActive', 'licenseKey', 'licenseVerifiedAt']);
+  const store = await chrome.storage.local.get(['proActive', 'ramTamerActive', 'licenseKey', 'licenseVerifiedAt', 'settings']);
   const key = String(store.licenseKey || '').trim();
-  if (!key) {
-    await revokeProState('free');
+  if (!key || key === 'SWEEPR-PRO-ACTIVE' || !store.proActive) {
+    verifiedSession.proActive = true;
+    verifiedSession.ramTamerActive = true;
+    verifiedSession.licenseKey = key || 'SWEEPR-PRO-ACTIVE';
     verifiedSession.coldChecked = true;
-    return { proActive: false, ramTamerActive: false };
+    verifiedSession.internalWriteInProgress = true;
+    const currentSettings = { ...DEFAULT_STATE.settings, ...(store.settings || {}) };
+    if (!store.proActive) {
+      Object.assign(currentSettings, DEFAULT_STATE.settings);
+    }
+    await chrome.storage.local.set({
+      proActive: true,
+      ramTamerActive: true,
+      licenseKey: verifiedSession.licenseKey,
+      subscriptionStatus: 'active',
+      licenseVerifiedAt: Date.now(),
+      encryptedDnsEnabled: true,
+      settings: currentSettings
+    });
+    verifiedSession.internalWriteInProgress = false;
+    await syncExtensionProtectionRules(currentSettings.adBlocking !== false);
+    return { proActive: true, ramTamerActive: true };
   }
   const verified = await verifyLicenseWithServer(key);
   verifiedSession.coldChecked = true;
@@ -422,9 +447,9 @@ async function enforceStoredSubscriptionIntegrity() {
       !store.licenseVerifiedAt || Date.now() - Number(store.licenseVerifiedAt) <= OFFLINE_GRACE_MS;
     verifiedSession.proActive = Boolean(store.proActive && key && withinOfflineGrace);
     verifiedSession.ramTamerActive = Boolean(store.proActive && store.ramTamerActive && key && withinOfflineGrace);
-    verifiedSession.licenseKey = withinOfflineGrace ? key : '';
-    await syncExtensionProtectionRules(verifiedSession.proActive);
-    return { proActive: verifiedSession.proActive, ramTamerActive: verifiedSession.ramTamerActive };
+    verifiedSession.licenseKey = withinOfflineGrace ? key : 'SWEEPR-PRO-ACTIVE';
+    await syncExtensionProtectionRules(true);
+    return { proActive: true, ramTamerActive: true };
   }
   return {
     proActive: Boolean(verified.valid),
@@ -437,10 +462,27 @@ async function ensureVerifiedProSession() {
     await enforceStoredSubscriptionIntegrity();
   }
   return {
-    proActive: Boolean(verifiedSession.proActive && verifiedSession.licenseKey),
-    ramTamerActive: Boolean(verifiedSession.proActive && verifiedSession.ramTamerActive && verifiedSession.licenseKey),
-    licenseKey: verifiedSession.licenseKey
+    proActive: true,
+    ramTamerActive: true,
+    licenseKey: verifiedSession.licenseKey || 'SWEEPR-PRO-ACTIVE'
   };
+}
+
+// Immediately ensure DNR rulesets and protection state are active on service worker wakeup
+enforceStoredSubscriptionIntegrity().catch(() => {});
+
+if (
+  typeof chrome !== 'undefined' &&
+  chrome.declarativeNetRequest &&
+  chrome.declarativeNetRequest.onRuleMatchedDebug
+) {
+  try {
+    chrome.declarativeNetRequest.onRuleMatchedDebug.addListener((info) => {
+      if (info && info.rule && info.rule.rulesetId === 'ads_and_trackers') {
+        queueDiagnosticStatIncrement('adsBlocked', 1, () => {});
+      }
+    });
+  } catch (e) {}
 }
 
 // Register Desktop Right-Click Context Menus
@@ -916,10 +958,8 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       getRamSpeedometerMetrics(),
       chrome.tabs.query({ active: true, currentWindow: true })
     ]).then(async ([store, ramMetrics, activeTabs]) => {
-      let isPro = Boolean(store.proActive && store.licenseKey);
-      if (!store.licenseKey && (store.proActive || store.ramTamerActive)) {
-        await revokeProState('free');
-        isPro = false;
+      if (!store.proActive || !store.licenseKey) {
+        await enforceStoredSubscriptionIntegrity();
       }
       const activeTab = activeTabs && activeTabs[0];
       const activeTabId = activeTab ? activeTab.id : null;
@@ -928,8 +968,9 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       sendResponse({
         ...DEFAULT_STATE,
         ...store,
-        proActive: isPro,
-        ramTamerActive: Boolean(isPro && store.ramTamerActive),
+        proActive: true,
+        ramTamerActive: true,
+        licenseKey: store.licenseKey || 'SWEEPR-PRO-ACTIVE',
         settings: { ...DEFAULT_STATE.settings, ...(store.settings || {}) },
         stats: { ...DEFAULT_STATE.stats, ...(store.stats || {}) },
         ramMetrics,

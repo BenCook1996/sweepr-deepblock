@@ -368,5 +368,107 @@
     "priority": 1,
     "action": { "type": "block" },
     "condition": { "urlFilter": "||connect.facebook.net/*/fbevents.js", "resourceTypes": ["script"] }
+  },
+  {
+    "id": 49,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": { "urlFilter": "||adservice.google.com^", "resourceTypes": ["script", "sub_frame", "image", "xmlhttprequest", "ping"] }
+  },
+  {
+    "id": 50,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": { "urlFilter": "||adservice.google.co.uk^", "resourceTypes": ["script", "sub_frame", "image", "xmlhttprequest", "ping"] }
+  },
+  {
+    "id": 51,
+    "priority": 2,
+    "action": { "type": "block" },
+    "condition": { "urlFilter": "||youtube.com/get_midroll_", "resourceTypes": ["xmlhttprequest", "script", "ping"] }
+  },
+  {
+    "id": 52,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": { "urlFilter": "||mediavine.com^", "resourceTypes": ["script", "sub_frame", "image", "xmlhttprequest"] }
+  },
+  {
+    "id": 53,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": { "urlFilter": "||adthrive.com^", "resourceTypes": ["script", "sub_frame", "image", "xmlhttprequest"] }
+  },
+  {
+    "id": 54,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": { "urlFilter": "||gumgum.com^", "resourceTypes": ["script", "sub_frame", "image", "xmlhttprequest"] }
+  },
+  {
+    "id": 55,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": { "urlFilter": "||sovrn.com^", "resourceTypes": ["script", "sub_frame", "image", "xmlhttprequest"] }
+  },
+  {
+    "id": 56,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": { "urlFilter": "||lijit.com^", "resourceTypes": ["script", "sub_frame", "image", "xmlhttprequest"] }
+  },
+  {
+    "id": 57,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": { "urlFilter": "||bidswitch.net^", "resourceTypes": ["script", "sub_frame", "image", "xmlhttprequest"] }
+  },
+  {
+    "id": 58,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": { "urlFilter": "||demdex.net^", "resourceTypes": ["script", "sub_frame", "image", "xmlhttprequest", "ping"] }
+  },
+  {
+    "id": 59,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": { "urlFilter": "||connatix.com^", "resourceTypes": ["script", "sub_frame", "image", "xmlhttprequest", "media"] }
+  },
+  {
+    "id": 60,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": { "urlFilter": "||primis.tech^", "resourceTypes": ["script", "sub_frame", "image", "xmlhttprequest", "media"] }
+  },
+  {
+    "id": 61,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": { "urlFilter": "||aniview.com^", "resourceTypes": ["script", "sub_frame", "image", "xmlhttprequest", "media"] }
+  },
+  {
+    "id": 62,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": { "urlFilter": "||nativo.com^", "resourceTypes": ["script", "sub_frame", "image", "xmlhttprequest"] }
+  },
+  {
+    "id": 63,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": { "urlFilter": "||zemanta.com^", "resourceTypes": ["script", "sub_frame", "image", "xmlhttprequest"] }
+  },
+  {
+    "id": 64,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": { "urlFilter": "||ads.yahoo.com^", "resourceTypes": ["script", "sub_frame", "image", "xmlhttprequest", "ping"] }
+  },
+  {
+    "id": 65,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": { "urlFilter": "||bat.bing.com^", "resourceTypes": ["script", "image", "xmlhttprequest", "ping"] }
   }
 ]

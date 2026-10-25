@@ -776,6 +776,90 @@
     }
   });
 
+  const UNIVERSAL_AD_COSMETIC_CSS = `
+    /* YouTube Sponsored & Feed Ad Slots */
+    ytd-ad-slot-renderer,
+    ytd-in-feed-ad-layout-renderer,
+    ytd-banner-promo-renderer,
+    ytd-statement-banner-renderer,
+    ytd-display-ad-renderer,
+    ytd-promoted-sparkles-web-renderer,
+    ytd-promoted-sparkles-text-search-renderer,
+    ytd-compact-promoted-video-renderer,
+    ytd-video-masthead-ad-v3-renderer,
+    ytd-primetime-promo-renderer,
+    ytd-action-companion-ad-renderer,
+    ytd-image-companion-ad-renderer,
+    #masthead-ad,
+    #player-ads,
+    #offer-module,
+    .ytp-ad-overlay-container,
+    .ytp-ad-message-container,
+    .ytp-ad-player-overlay-layout,
+    ytd-engagement-panel-section-list-renderer[target-id="engagement-panel-ads"],
+    /* Search Engine Sponsored Ads */
+    #tads,
+    #tadsb,
+    #bottomads,
+    [data-text-ad],
+    div[aria-label="Ads"],
+    .commercial-unit-desktop-top,
+    .commercial-unit-desktop-rhs,
+    .uEierd,
+    li.b_ad,
+    .b_adLastChild,
+    /* Universal Display, Programmatic, Taboola & Outbrain Ads */
+    ins.adsbygoogle,
+    [id^="div-gpt-ad"],
+    [id^="google_ads_iframe"],
+    iframe[id^="google_ads_"],
+    iframe[src*="doubleclick.net"],
+    iframe[src*="googlesyndication.com"],
+    iframe[src*="adnxs.com"],
+    iframe[src*="amazon-adsystem.com"],
+    iframe[src*="rubiconproject.com"],
+    iframe[src*="criteo."],
+    [data-google-query-id],
+    [data-ad-client],
+    [data-ad-slot],
+    [id^="taboola-"],
+    .trc_rbox_container,
+    .trc_related_container,
+    .OUTBRAIN,
+    [data-widget-id^="outbrain"],
+    [id*="ScriptRoot"],
+    .mgbox,
+    amp-ad,
+    amp-embed[type="taboola"] {
+      display: none !important;
+    }
+  `;
+
+  function injectUniversalAdCosmeticStyle() {
+    try {
+      if (document.getElementById('deepblock-universal-cosmetic')) return;
+      const style = document.createElement('style');
+      style.id = 'deepblock-universal-cosmetic';
+      style.textContent = UNIVERSAL_AD_COSMETIC_CSS;
+      (document.head || document.documentElement).appendChild(style);
+    } catch (e) {}
+  }
+
+  function removeUniversalAdCosmeticStyle() {
+    try {
+      const el = document.getElementById('deepblock-universal-cosmetic');
+      if (el) el.remove();
+    } catch (e) {}
+  }
+
+  // Inject cosmetic ad shield immediately at document_start to prevent any flash of ad slots
+  injectUniversalAdCosmeticStyle();
+  try {
+    if (document.documentElement) {
+      document.documentElement.dataset.sweeprProActive = '1';
+    }
+  } catch (e) {}
+
   chrome.storage.local.get(
     [
       'proActive',
@@ -789,27 +873,26 @@
       'extraAntiAdblockSelectors'
     ],
     (res) => {
-      const proActive = Boolean(res && res.proActive && res.licenseKey);
-      if (!proActive) {
+      const pausedSites = Array.isArray(res && res.pausedSites) ? res.pausedSites : [];
+      const trustedShopSites = Array.isArray(res && res.trustedShopSites) ? res.trustedShopSites : [];
+      const settings = (res && res.settings) || {};
+
+      if ((currentHost && pausedSites.includes(currentHost)) || settings.adBlocking === false) {
+        removeUniversalAdCosmeticStyle();
         try {
+          document.documentElement.dataset.sweeprPaused = '1';
           delete document.documentElement.dataset.sweeprProActive;
         } catch (e) {}
         return;
       }
 
-      const pausedSites = Array.isArray(res && res.pausedSites) ? res.pausedSites : [];
-      const trustedShopSites = Array.isArray(res && res.trustedShopSites) ? res.trustedShopSites : [];
-      if (currentHost && pausedSites.includes(currentHost)) return;
-
       try {
+        delete document.documentElement.dataset.sweeprPaused;
         document.documentElement.dataset.sweeprProActive = '1';
       } catch (e) {}
 
-      if (res && res.customHiddenSelectors) {
-        applySavedCustomHiddenSelectors(res.customHiddenSelectors);
-      }
+      injectUniversalAdCosmeticStyle();
 
-      const settings = (res && res.settings) || {};
       const flags = (res && res.remoteFeatureFlags) || {};
       const extraCmpSelectors = Array.isArray(res && res.extraCmpSelectors) ? res.extraCmpSelectors : [];
       const extraAntiAdblockSelectors = Array.isArray(res && res.extraAntiAdblockSelectors)
@@ -821,28 +904,47 @@
         }
       }
 
-      if (settings.cookieAutoClose !== false && flags.cookieAutoClose !== false) {
-        processCookieBanners(true, extraCmpSelectors);
-      }
-      if (settings.hideSearchSpam !== false && flags.hideSearchSpam !== false) {
-        processSearchResults(true);
-      }
-      processRecipeAndNewsClutter(true);
-      if (settings.fakeShopAlerts !== false && flags.fakeShopAlerts !== false) {
-        processEcommerceStore(true, trustedShopSites);
-      }
-      if (settings.adBlocking !== false) {
-        if (flags.youtubeAdShield !== false) {
-          initYouTubeAdShield();
+      function runDomProtectionPass() {
+        if (res && res.customHiddenSelectors) {
+          applySavedCustomHiddenSelectors(res.customHiddenSelectors);
         }
-        if (flags.antiAdblockStealth !== false) {
+        if (settings.cookieAutoClose !== false && flags.cookieAutoClose !== false) {
+          processCookieBanners(true, extraCmpSelectors);
+        }
+        if (settings.hideSearchSpam !== false && flags.hideSearchSpam !== false) {
+          processSearchResults(true);
+        }
+        processRecipeAndNewsClutter(true);
+        if (settings.fakeShopAlerts !== false && flags.fakeShopAlerts !== false) {
+          processEcommerceStore(true, trustedShopSites);
+        }
+        if (settings.adBlocking !== false) {
+          if (flags.youtubeAdShield !== false) {
+            initYouTubeAdShield();
+          }
+          if (flags.antiAdblockStealth !== false) {
+            processAntiAdblockStealth();
+          }
+        }
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', runDomProtectionPass, { once: true });
+      } else {
+        runDomProtectionPass();
+      }
+
+      const throttledDomPass = createThrottle(() => {
+        if (settings.cookieAutoClose !== false && flags.cookieAutoClose !== false) {
+          processCookieBanners(true, extraCmpSelectors);
+        }
+        if (settings.adBlocking !== false && flags.antiAdblockStealth !== false) {
           processAntiAdblockStealth();
-          const throttledStealth = createThrottle(processAntiAdblockStealth, 150);
-          const stealthObs = new MutationObserver(throttledStealth);
-          stealthObs.observe(document.documentElement, { childList: true, subtree: true });
-          setTimeout(() => stealthObs.disconnect(), 15000);
         }
-      }
+      }, 200);
+      const domObs = new MutationObserver(throttledDomPass);
+      domObs.observe(document.documentElement, { childList: true, subtree: true });
+      setTimeout(() => domObs.disconnect(), 20000);
     }
   );
 })();
