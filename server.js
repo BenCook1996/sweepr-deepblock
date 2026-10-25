@@ -4407,10 +4407,10 @@ const server = http.createServer(async (req, res) => {
     const uaLower = String(req.headers['user-agent'] || '').toLowerCase();
     const chPlat = String(req.headers['sec-ch-ua-platform'] || '').toLowerCase();
     const chMob = String(req.headers['sec-ch-ua-mobile'] || '').toLowerCase();
-    if (reqPlat === 'android' || reqPlat === 'apk' || uaLower.includes('android') || chPlat.includes('android') || (chMob === '?1' && uaLower.includes('linux')) || /mobile|iemobile|opera mini/.test(uaLower)) {
-      candidateRel = 'SWEEPRDeepblock.apk';
-    } else if (reqPlat === 'ios' || /iphone|ipad|ipod/.test(uaLower) || chPlat.includes('ios')) {
+    if (reqPlat === 'ios' || /iphone|ipad|ipod/.test(uaLower) || chPlat.includes('ios')) {
       candidateRel = 'sweepr-deepblock.mobileconfig';
+    } else if (reqPlat === 'android' || reqPlat === 'apk' || uaLower.includes('android') || chPlat.includes('android') || (chMob === '?1' && uaLower.includes('linux')) || /mobile|iemobile|opera mini/.test(uaLower)) {
+      candidateRel = 'SWEEPRDeepblock.apk';
     }
   }
   if (!candidateRel) {
