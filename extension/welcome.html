@@ -152,7 +152,7 @@
       background: rgba(16, 185, 129, 0.1);
       border: 1.5px solid rgba(16, 185, 129, 0.4);
       border-radius: 16px;
-      max-width: 520px;
+      max-width: 560px;
     }
     .key-row {
       display: flex;
@@ -298,18 +298,11 @@
 
       <div class="key-section">
         <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
-          <div style="font-size:14px;font-weight:800;color:#10b981;">🔑 Enter Your License Key or 6-Digit Activation Code:</div>
-          <button type="button" id="welcomeQrBtn" class="mini-btn" style="font-size:12px;">📱 Scan QR with Phone</button>
+          <div style="font-size:14px;font-weight:800;color:#10b981;">🔑 Enter Your License Key, 6-Digit Code, or Website QR Pairing Code:</div>
         </div>
         <div class="key-row">
-          <input type="text" id="welcomeLicenseInput" class="key-input" placeholder="e.g. SWEEPR-DB-XXXX-XXXX-XXXX or 6-digit code" autocomplete="off" spellcheck="false" />
+          <input type="text" id="welcomeLicenseInput" class="key-input" placeholder="e.g. SWEEPR-DB-XXXX, ptk_... pairing code, or 6-digit code" autocomplete="off" spellcheck="false" />
           <button type="button" id="welcomeActivateBtn" class="key-btn">Activate Pro</button>
-        </div>
-        <div id="welcomeQrDrawer" style="display:none;margin-top:12px;padding:14px;border-radius:14px;background:var(--card-bg);border:1px solid var(--card-border);text-align:center;">
-          <div id="welcomeQrTitle" style="font-size:13px;font-weight:800;color:var(--text);margin-bottom:6px;">Scan with your phone camera (up to 3 devices total)</div>
-          <div id="welcomeQrSvg" style="width:156px;height:156px;margin:0 auto;padding:8px;background:#fff;border-radius:12px;border:1px solid var(--card-border);display:flex;align-items:center;justify-content:center;"></div>
-          <div id="welcomeQrStatus" style="font-size:12px;color:var(--muted);margin-top:6px;font-weight:700;">Waiting for scan...</div>
-          <button type="button" id="welcomeRefreshQrBtn" class="mini-btn" style="margin-top:6px;">Refresh QR Code</button>
         </div>
         <div id="welcomeKeyFeedback" style="font-size:12px;font-weight:700;margin-top:6px;display:none;"></div>
       </div>
@@ -335,7 +328,7 @@
           <span class="step-num">Step 3 · Mobile Sync</span>
           <div class="step-title">📱 iOS Safari &amp; Android</div>
           <div class="step-desc">
-            Visit <a href="https://sweeprdeepblock.com/download" target="_blank" rel="noopener" style="color:#10b981;font-weight:800;">sweeprdeepblock.com/download</a> on your phone to install the 1-tap iOS/Android protection profile.
+            Log in at <a href="https://sweeprdeepblock.com/login" target="_blank" rel="noopener" style="color:#10b981;font-weight:800;">sweeprdeepblock.com/login</a> to scan your QR code on a separate device (up to 3 devices).
           </div>
         </div>
       </div>
@@ -345,7 +338,7 @@
           ⭐ Unlock Pro Protection — £1.99 1st Month &rarr;
         </a>
         <a href="https://sweeprdeepblock.com/login" target="_blank" rel="noopener" class="btn-outline">
-          🔑 Sync From Customer Portal
+          🔑 Customer Portal &amp; QR Setup
         </a>
         <a href="https://sweeprdeepblock.com/test-lab" target="_blank" rel="noopener" class="btn-outline">
           🛡️ Run 8-Point Shield Check
@@ -442,6 +435,23 @@
         <div class="panel-sub">Elements hidden using the right-click / popup Element Hider.</div>
         <div id="customZappedList">
           <div style="font-size:12.5px;color:var(--muted);">No custom hidden elements yet.</div>
+        </div>
+      </div>
+
+      <div class="panel-card" style="grid-column: 1 / -1;">
+        <div class="panel-title">
+          <span>💬 Need Help? Message SWEEPR Support</span>
+          <span style="font-size:12px;color:#10b981;">Direct UK Engineering Support</span>
+        </div>
+        <div class="panel-sub">Have a question or found a website with stubborn ads? Send a message directly to our support team.</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:10px;">
+          <input type="email" id="welcomeSupportEmail" class="key-input" placeholder="Your email address for our reply" />
+          <input type="text" id="welcomeSupportSubject" class="key-input" placeholder="Subject (e.g. Ad report or billing help)" />
+        </div>
+        <textarea id="welcomeSupportMessage" class="key-input" rows="3" style="width:100%;resize:vertical;margin-bottom:10px;" placeholder="Describe how we can help..."></textarea>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+          <button type="button" id="welcomeSupportSendBtn" class="key-btn">Send Message to Support</button>
+          <span id="welcomeSupportFeedback" style="font-size:12.5px;font-weight:700;display:none;"></span>
         </div>
       </div>
     </div>
