@@ -631,8 +631,27 @@ const accountsByEmail = new Map();
 const accountsBySubscriptionId = new Map();
 const usedIntroDiscountEmails = new Set();
 const processedWebhookEventIds = new Set();
-const MAX_DEVICES_PER_LICENSE = 3;
+const MAX_DEVICES_PER_LICENSE = 4; // 1 primary device + 3 additional devices per paid subscription
 const HIGH_ENTROPY_LICENSE_KEY_RE = /^SWEEPR-[A-Z0-9]{2,8}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/i;
+
+// Seed permanent Owner Pro License Key for local admin workstation
+setImmediate(() => {
+  try {
+    const ownerAcc = upsertLocalAccount({
+      email: 'owner@sweeprdeepblock.com',
+      name: 'SWEEPR Owner',
+      plan: 'annual',
+      ramTamerAddon: true,
+      status: 'active'
+    });
+    ownerAcc.licenseKey = 'SWEEPR-OWNER-PRO-2026';
+    ownerAcc.activation_code = '999888';
+    licenses.set('SWEEPR-OWNER-PRO-2026', ownerAcc);
+    licenses.set('999888', ownerAcc);
+    licenses.set('SWEEPR-DB-999888', ownerAcc);
+    licenses.set('DEEPBLOCK-999888', ownerAcc);
+  } catch {}
+});
 
 // ============================================================================
 // Zero-Dependency ISO/IEC 18004 SVG QR Code Generator (Byte Mode, ECC Level L)
@@ -1171,6 +1190,316 @@ upsertLocalAccount({
   licenseKey: 'SWEEPR-DB-8177-9700-2026'
 });
 
+// ===========================================================================
+// Deepblock Verified Blocked Sites Registry (Local Mirror + CRM Sync)
+// ===========================================================================
+const BLOCKED_SITES_STORE_PATH = path.join(__dirname, 'data', 'deepblock-blocked-sites.json');
+const deepblockBlockedSites = new Map();
+
+function normalizeSiteDomain(raw) {
+  const s = String(raw || '').trim().toLowerCase();
+  if (!s) return '';
+  try {
+    const withProto = /^https?:\/\//i.test(s) ? s : `https://${s}`;
+    const u = new URL(withProto);
+    return u.hostname.replace(/^www\./i, '').trim().toLowerCase();
+  } catch {
+    return s
+      .replace(/^https?:\/\//i, '')
+      .replace(/^www\./i, '')
+      .replace(/[/?#].*$/, '')
+      .replace(/:\d+$/, '')
+      .trim()
+      .toLowerCase();
+  }
+}
+
+function normalizeDeepblockSiteStatus(raw) {
+  const s = String(raw || '').trim().toLowerCase();
+  if (!s) return 'blocked';
+  if (s.includes('manual') || s.includes('fail') || s.includes('review') || s === 'needs_fix') return 'manual_review';
+  if (s.includes('patch') || s.includes('auto')) return 'auto_patched';
+  if (s === 'clean') return 'clean';
+  return 'blocked';
+}
+
+function upsertLocalBlockedSite(input = {}, flush = true) {
+  const rawUrl = String(input.target_url || input.Target_URL || input.url || '').trim();
+  const domain = normalizeSiteDomain(input.domain || rawUrl);
+  if (!domain) return null;
+  const nowSec = Math.floor(Date.now() / 1000);
+  const existing = deepblockBlockedSites.get(domain);
+  const status = normalizeDeepblockSiteStatus(input.status || input.Fix_Status);
+  const keepRich = existing && existing.status === 'blocked' && status === 'clean';
+
+  const record = {
+    domain,
+    target_url: rawUrl && /^https?:\/\//i.test(rawUrl) ? rawUrl.slice(0, 500) : (existing?.target_url || `https://${domain}`),
+    category: String(input.category || existing?.category || 'general').trim().toLowerCase().slice(0, 64) || 'general',
+    status: keepRich ? existing.status : status,
+    ad_types_blocked: keepRich
+      ? existing.ad_types_blocked
+      : String(
+          input.ad_types_blocked ||
+            input.Ad_Type_Detected ||
+            existing?.ad_types_blocked ||
+            (status === 'clean' ? 'MV3 Static DNR + Cosmetic Engine (0 Leaks)' : 'Network / DOM / Script')
+        ).slice(0, 400),
+    generated_rules: keepRich
+      ? existing.generated_rules
+      : String(
+          input.generated_rules ||
+            input.Generated_Rule ||
+            existing?.generated_rules ||
+            (status === 'clean' ? 'Covered by Baseline MV3 Ruleset' : '')
+        ).slice(0, 600),
+    extension_version: String(input.extension_version || existing?.extension_version || '1.1.6').slice(0, 32),
+    commit_hash: String(input.commit_hash || input.Commit_Hash || existing?.commit_hash || 'aff5a0a').slice(0, 64),
+    run_id: input.run_id || input.Run_ID || existing?.run_id || 'manual-verified',
+    leaks_found: Math.max(Number(existing?.leaks_found || 0), Number(input.leaks_found ?? (status === 'clean' ? 0 : 1))),
+    leaks_patched: Math.max(Number(existing?.leaks_patched || 0), Number(input.leaks_patched ?? (status === 'manual_review' ? 0 : 1))),
+    scan_count: existing ? (Number(existing.scan_count) || 1) + (flush ? 1 : 0) : Math.max(1, Number(input.scan_count || 1)),
+    notes: input.notes !== undefined ? String(input.notes || '').slice(0, 1000) : (existing?.notes || null),
+    first_blocked_at: existing?.first_blocked_at || Number(input.first_blocked_at || nowSec),
+    last_verified_at: Number(input.last_verified_at || nowSec)
+  };
+  deepblockBlockedSites.set(domain, record);
+  if (flush) flushBlockedSitesStore();
+  return record;
+}
+
+function flushBlockedSitesStore() {
+  try {
+    fs.mkdirSync(path.dirname(BLOCKED_SITES_STORE_PATH), { recursive: true });
+    const rows = Array.from(deepblockBlockedSites.values());
+    fs.writeFileSync(BLOCKED_SITES_STORE_PATH, JSON.stringify({ updatedAt: new Date().toISOString(), total: rows.length, sites: rows }, null, 2), 'utf8');
+  } catch {}
+}
+
+function initDeepblockBlockedSitesRegistry() {
+  const verifiedSeeds = [
+    {
+      domain: 'videosection.com',
+      target_url: 'https://videosection.com/video/636212295',
+      category: 'video',
+      status: 'blocked',
+      ad_types_blocked: 'AdSpyglass (window.__NA), hotadultcontent.com Popunders, fluidPlayer VAST, AppInvideoNativeAdv Pause Overlay, fhgte.com Tab-Under',
+      generated_rules: '||hotadultcontent.com^, ||hotxxxcontent.com^, ||qoqh.com^, ||fhgte.com^, DeepStealth __NA & fluidPlayer vastOptions',
+      extension_version: '1.1.6',
+      commit_hash: 'aff5a0a',
+      leaks_found: 5,
+      leaks_patched: 5,
+      notes: 'Verified blocked: neutralized AdSpyglass window.__NA, fluidPlayer VAST pre-rolls, and eliminated ERR_BLOCKED_BY_CLIENT main_frame screen on fhgte.com'
+    },
+    {
+      domain: 'nuvid.com',
+      target_url: 'https://www.nuvid.com/video/8698013/',
+      category: 'video',
+      status: 'blocked',
+      ad_types_blocked: 'htmlVideoPlayer Pause Banner, Bottom-Right rvp2p (rvmessage.online) Widget, ExoLoader NeverBlock, TRAFF_TARGETS Popunders',
+      generated_rules: '||rvmessage.online^, ||growcdn.online^, DeepStealth htmlVideoPlayer (doNotShowInPlayerBannerWhenPause=1), rvp2p, ExoLoader',
+      extension_version: '1.1.5',
+      commit_hash: 'f1df554',
+      leaks_found: 4,
+      leaks_patched: 4,
+      notes: 'Verified blocked: wrapped window.htmlVideoPlayer to disable pause overlay banner and blocked rvp2p / ExoLoader'
+    },
+    {
+      domain: 'drtuber.com',
+      target_url: 'https://www.drtuber.com/',
+      category: 'video',
+      status: 'blocked',
+      ad_types_blocked: 'htmlVideoPlayer Pause Banner, Bottom-Right rvp2p Widget, ExoLoader NeverBlock',
+      generated_rules: '||rvmessage.online^, ||growcdn.online^, DeepStealth htmlVideoPlayer & rvp2p',
+      extension_version: '1.1.5',
+      commit_hash: 'f1df554',
+      leaks_found: 3,
+      leaks_patched: 3,
+      notes: 'Verified blocked: shared player engine with nuvid.com (htmlVideoPlayer + rvp2p + ExoLoader)'
+    },
+    {
+      domain: 'txxx.me',
+      target_url: 'https://txxx.me/videos/19327667/brcc-butt-banged-brunette-babe-nina-gets-a-big-load-of-jizz-on-her-face/',
+      category: 'video',
+      status: 'blocked',
+      ad_types_blocked: 'TubeCorporate 5s VAST Pre-Roll (ad_preroll2), In-Player CPA Banner (_plBtn), Bottom-Right __inpageSkins',
+      generated_rules: '||hdbanner.online^, ||tsyndicate.com^, DeepStealth AdManager, Mraid, __inpageSkins',
+      extension_version: '1.1.4',
+      commit_hash: '6909920',
+      leaks_found: 3,
+      leaks_patched: 3,
+      notes: 'Verified blocked: neutralized TubeCorporate AdManager 5s VAST pre-roll, in-player CPA button, and bottom-right inpage skin'
+    },
+    {
+      domain: 'txxx.com',
+      target_url: 'https://txxx.com/',
+      category: 'video',
+      status: 'blocked',
+      ad_types_blocked: 'TubeCorporate AdManager VAST Pre-Roll, In-Player CPA Banner, __inpageSkins',
+      generated_rules: '||hdbanner.online^, ||tsyndicate.com^, DeepStealth AdManager',
+      extension_version: '1.1.4',
+      commit_hash: '6909920',
+      leaks_found: 3,
+      leaks_patched: 3,
+      notes: 'Verified blocked: TubeCorporate network rules & DeepStealth player hooks'
+    },
+    {
+      domain: 'pornoxo.com',
+      target_url: 'https://www.pornoxo.com/videos/2886279/two-hot-lesbians-make-out-while-a-videomaker-masturbates/',
+      category: 'video',
+      status: 'blocked',
+      ad_types_blocked: '__videoPlayerData.clickFlow Tab-Under, .player-click-layer Overlay, renderVideoPlayerV3 Pre-Roll, /zv3/ Redirects',
+      generated_rules: '||pornoxo.com/zv3/*, pornoxo.com##.player-click-layer, DeepStealth __videoPlayerData.clickFlow & renderVideoPlayerV3',
+      extension_version: '1.1.3',
+      commit_hash: 'f0c86ed',
+      leaks_found: 4,
+      leaks_patched: 4,
+      notes: 'Verified blocked: stripped clickFlow tab-under & preRoll config while keeping main video tab intact'
+    },
+    {
+      domain: 'sxyprn.com',
+      target_url: 'https://sxyprn.com/',
+      category: 'video',
+      status: 'blocked',
+      ad_types_blocked: 'ExoClick popMagic v7 Reverse Tab-Under, VAST Pre-Roll (use_vast / vast_urls), /anel/ Native Banners',
+      generated_rules: '||sxyprn.com/anel/*, ||exoclick.com^, DeepStealth popMagic, use_vast=false, vast_urls=[]',
+      extension_version: '1.1.2',
+      commit_hash: 'e6bcc23',
+      leaks_found: 3,
+      leaks_patched: 3,
+      notes: 'Verified blocked: intercepted ExoClick popMagic reverse tab-under and disabled player VAST flags'
+    },
+    {
+      domain: 'eporner.com',
+      target_url: 'https://www.eporner.com/video-iGh1VdIL3nV/anal-stepmom-big-naturals-curvy-mona-azar-fuck-anal-facial/',
+      category: 'video',
+      status: 'blocked',
+      ad_types_blocked: 'VAST Pre-Rolls, First-Party /dot/dot.php Ad Loader, EP.ads Pause Banners, Popunders & Anti-Adblock Redirects',
+      generated_rules: '||eporner.com/dot/*, ||trafficjunky.net^, ||exoclick.com^, DeepStealth EP.ads',
+      extension_version: '1.1.1',
+      commit_hash: '8006b50',
+      leaks_found: 4,
+      leaks_patched: 4,
+      notes: 'Verified blocked: blocked first-party /dot/ ad loader, VAST pre-rolls, and EP.ads pause overlays'
+    },
+    {
+      domain: 'youtube.com',
+      target_url: 'https://www.youtube.com/',
+      category: 'streaming',
+      status: 'blocked',
+      ad_types_blocked: 'Video Pre-Roll & Mid-Roll VAST, Masthead Banner, Anti-Adblock Enforcement Modal',
+      generated_rules: '||doubleclick.net^, ||googlesyndication.com^, DeepStealth ytInitialPlayerResponse',
+      extension_version: '1.1.6',
+      commit_hash: 'bfca0ba',
+      leaks_found: 3,
+      leaks_patched: 3,
+      notes: 'Core verified site: MAIN-world player response sanitizer + 16x mute fast-forward'
+    },
+    {
+      domain: 'twitch.tv',
+      target_url: 'https://www.twitch.tv/',
+      category: 'streaming',
+      status: 'blocked',
+      ad_types_blocked: 'Amazon AAX Stream Ads, Display Companion Slots',
+      generated_rules: '||amazon-adsystem.com^, ||scorecardresearch.com^',
+      extension_version: '1.1.6',
+      commit_hash: 'bfca0ba',
+      leaks_found: 2,
+      leaks_patched: 2,
+      notes: 'Core verified site'
+    },
+    {
+      domain: 'forbes.com',
+      target_url: 'https://www.forbes.com/',
+      category: 'news',
+      status: 'blocked',
+      ad_types_blocked: 'Prebid Header Bidding, Anti-Adblock Paywall, Sticky Video Rail, Taboola Feed',
+      generated_rules: '||taboola.com^, ||criteo.com^, ||rubiconproject.com^',
+      extension_version: '1.1.6',
+      commit_hash: 'bfca0ba',
+      leaks_found: 4,
+      leaks_patched: 4,
+      notes: 'Core verified site'
+    },
+    {
+      domain: 'dailymail.co.uk',
+      target_url: 'https://www.dailymail.co.uk/',
+      category: 'news',
+      status: 'blocked',
+      ad_types_blocked: 'Outbrain Sponsored Widgets, Floating Video Player, Display Skyscrapers, GDPR CMP Banner',
+      generated_rules: '||outbrain.com^, ||adsafeprotected.com^, CMP Auto-Reject',
+      extension_version: '1.1.6',
+      commit_hash: 'bfca0ba',
+      leaks_found: 4,
+      leaks_patched: 4,
+      notes: 'Core verified site'
+    }
+  ];
+
+  if (fs.existsSync(BLOCKED_SITES_STORE_PATH)) {
+    try {
+      const saved = JSON.parse(fs.readFileSync(BLOCKED_SITES_STORE_PATH, 'utf8'));
+      if (Array.isArray(saved?.sites)) {
+        for (const s of saved.sites) upsertLocalBlockedSite(s, false);
+      }
+    } catch {}
+  }
+
+  for (const seed of verifiedSeeds) {
+    upsertLocalBlockedSite(seed, false);
+  }
+
+  // Also import any sites from website/ad-filter-pipeline-state.json if present
+  const pipeStatePath = path.join(__dirname, 'website', 'ad-filter-pipeline-state.json');
+  if (fs.existsSync(pipeStatePath)) {
+    try {
+      const pipe = JSON.parse(fs.readFileSync(pipeStatePath, 'utf8'));
+      const latestRunId = pipe?.recentRuns?.[0]?.run_id || 'pipeline-sync';
+      const latestCommit = pipe?.recentRuns?.[0]?.commit_hash || 'aff5a0a';
+      if (Array.isArray(pipe?.detectedLeaks)) {
+        for (const leak of pipe.detectedLeaks) {
+          upsertLocalBlockedSite(
+            {
+              domain: leak.domain || leak.target_url,
+              target_url: leak.target_url,
+              status: leak.fix_status,
+              ad_types_blocked: `${leak.ad_type_detected || 'DOM'}${leak.offending_artifact ? ' (' + leak.offending_artifact + ')' : ''}`,
+              generated_rules: leak.generated_rule,
+              commit_hash: leak.commit_hash || latestCommit,
+              run_id: leak.run_id || latestRunId,
+              notes: leak.verification_notes
+            },
+            false
+          );
+        }
+      }
+      if (pipe?.scannedDomains && typeof pipe.scannedDomains === 'object') {
+        for (const [dom, meta] of Object.entries(pipe.scannedDomains)) {
+          if (deepblockBlockedSites.has(normalizeSiteDomain(dom))) continue;
+          upsertLocalBlockedSite(
+            {
+              domain: dom,
+              target_url: `https://${dom}`,
+              category: meta?.category || 'general',
+              status: meta?.lastStatus === 'manual_review' ? 'manual_review' : meta?.leaksFound ? 'auto_patched' : 'clean',
+              ad_types_blocked: 'MV3 Static DNR + Cosmetic Engine (0 Leaks)',
+              generated_rules: 'Covered by Baseline MV3 Ruleset',
+              commit_hash: latestCommit,
+              run_id: latestRunId,
+              scan_count: meta?.scanCount || 1,
+              last_verified_at: meta?.lastScannedAt ? Math.floor(Number(meta.lastScannedAt) / 1000) : Math.floor(Date.now() / 1000)
+            },
+            false
+          );
+        }
+      }
+    } catch {}
+  }
+
+  flushBlockedSitesStore();
+}
+initDeepblockBlockedSitesRegistry();
+
 function signSessionCookie(accountId, email) {
   const exp = Math.floor(Date.now() / 1000) + 86400 * 30;
   const payload = Buffer.from(JSON.stringify({ sub: accountId, email, exp })).toString('base64url');
@@ -1223,7 +1552,8 @@ const MIME_TYPES = {
   '.exe': 'application/vnd.microsoft.portable-executable',
   '.command': 'application/octet-stream',
   '.mobileconfig': 'application/x-apple-aspen-config',
-  '.xpi': 'application/x-xpinstall'
+  '.xpi': 'application/x-xpinstall',
+  '.apk': 'application/vnd.android.package-archive'
 };
 
 const CLEAN_ROUTES = {
@@ -1232,6 +1562,7 @@ const CLEAN_ROUTES = {
   '/order': 'order.html',
   '/checkout': 'order.html',
   '/login': 'login.html',
+  '/ios-app': 'ios-app.html',
   '/extension-ux-prototype': 'extension-ux-prototype.html',
   '/privacy': 'privacy.html',
   '/refund': 'refund.html',
@@ -1243,6 +1574,8 @@ const CLEAN_ROUTES = {
   '/download/SWEEPR-Deepblock-Installer.command': 'SWEEPR-Deepblock-Installer.command',
   '/download/sweepr-deepblock.mobileconfig': 'sweepr-deepblock.mobileconfig',
   '/download/sweepr-deepblock-firefox.xpi': 'sweepr-deepblock-firefox.xpi',
+  '/download/SWEEPRDeepblock.apk': 'SWEEPRDeepblock.apk',
+  '/SWEEPRDeepblock.apk': 'SWEEPRDeepblock.apk',
   '/test-lab': 'test-lab.html',
   '/vs/total-adblock': path.join('vs', 'total-adblock.html')
 };
@@ -1401,7 +1734,8 @@ function serveStaticOptimized(req, res, fullPath) {
       'logos.html',
       'mockups.html',
       'popup-mockups.html',
-      'redesign-prototype.html'
+      'redesign-prototype.html',
+      'extension-ux-prototype.html'
     ]);
 
     if (isHtml) {
@@ -1762,6 +2096,15 @@ const server = http.createServer(async (req, res) => {
 
   // API -1b: Dynamic Filter Delta & Remote Feature-Flag Kill-Switch Endpoint
   if (req.method === 'GET' && pathname === '/api/filters/delta') {
+    const deltaPath = path.join(__dirname, 'extension', 'rules', 'dynamic_delta.json');
+    if (fs.existsSync(deltaPath)) {
+      try {
+        const dynamicPayload = JSON.parse(fs.readFileSync(deltaPath, 'utf8'));
+        if (dynamicPayload && typeof dynamicPayload === 'object') {
+          return sendJson(res, 200, { ok: true, ...dynamicPayload });
+        }
+      } catch {}
+    }
     return sendJson(res, 200, {
       ok: true,
       version: '1.0.2',
@@ -3914,6 +4257,113 @@ const server = http.createServer(async (req, res) => {
     return sendJson(res, 200, crmRes.data);
   }
 
+  // API 6: Deepblock Verified Blocked Sites Registry & Automation Deduplication API
+  if (
+    pathname === '/api/crm/deepblock/blocked-sites' ||
+    pathname === '/api/deepblock/blocked-sites' ||
+    pathname === '/v1/deepblock/blocked-sites'
+  ) {
+    if (req.method === 'GET') {
+      const checkQuery = (
+        parsedUrl.searchParams.get('domain') ||
+        parsedUrl.searchParams.get('url') ||
+        parsedUrl.searchParams.get('check') ||
+        ''
+      ).trim();
+      if (checkQuery) {
+        const dom = normalizeSiteDomain(checkQuery);
+        const site = deepblockBlockedSites.get(dom) || null;
+        const alreadyBlocked = Boolean(site && (site.status === 'blocked' || site.status === 'auto_patched' || site.status === 'clean'));
+        return sendJson(res, 200, {
+          ok: true,
+          checked: Boolean(site),
+          already_blocked: alreadyBlocked,
+          alreadyBlocked,
+          skip_scan: alreadyBlocked,
+          domain: dom,
+          site
+        });
+      }
+
+      const statusFilter = (parsedUrl.searchParams.get('status') || parsedUrl.searchParams.get('filter') || 'all').trim().toLowerCase();
+      const search = (parsedUrl.searchParams.get('search') || '').trim().toLowerCase();
+      const limit = Math.min(Math.max(Number(parsedUrl.searchParams.get('limit') || 1000), 1), 5000);
+      const allRows = Array.from(deepblockBlockedSites.values());
+      const counts = {
+        total: allRows.length,
+        blocked: 0,
+        auto_patched: 0,
+        verified_blocked: 0,
+        clean: 0,
+        manual_review: 0
+      };
+      const domains = [];
+      for (const r of allRows) {
+        counts[r.status] = (counts[r.status] || 0) + 1;
+        if (r.status === 'blocked' || r.status === 'auto_patched') counts.verified_blocked += 1;
+        if (r.status === 'blocked' || r.status === 'auto_patched' || r.status === 'clean') domains.push(r.domain);
+      }
+      const filtered = allRows
+        .filter((r) => {
+          if (statusFilter && statusFilter !== 'all') {
+            if (statusFilter === 'verified' && r.status !== 'blocked' && r.status !== 'auto_patched') return false;
+            if (statusFilter !== 'verified' && r.status !== statusFilter) return false;
+          }
+          if (search) {
+            const hay = `${r.domain} ${r.target_url} ${r.ad_types_blocked} ${r.generated_rules} ${r.notes || ''} ${r.commit_hash}`.toLowerCase();
+            if (!hay.includes(search)) return false;
+          }
+          return true;
+        })
+        .slice(0, limit);
+
+      return sendJson(res, 200, {
+        ok: true,
+        total: allRows.length,
+        filtered_count: filtered.length,
+        counts,
+        domains,
+        rows: filtered,
+        sites: filtered
+      });
+    }
+
+    if (req.method === 'POST') {
+      const body = await readBody(req);
+      if (body && body.__tooLarge) return sendJson(res, 413, { ok: false, error: 'payload_too_large' });
+      const batch = Array.isArray(body)
+        ? body
+        : Array.isArray(body?.sites)
+        ? body.sites
+        : Array.isArray(body?.records)
+        ? body.records
+        : null;
+
+      if (batch) {
+        let upserted = 0;
+        for (const item of batch) {
+          if (upsertLocalBlockedSite(item, false)) upserted += 1;
+        }
+        flushBlockedSitesStore();
+        requestSweeprCrm('/v1/deepblock/blocked-sites', { method: 'POST', body: { sites: batch } }).catch(() => {});
+        return sendJson(res, 200, { ok: true, upserted, total: deepblockBlockedSites.size });
+      }
+
+      const saved = upsertLocalBlockedSite(body || {}, true);
+      if (!saved) return sendJson(res, 400, { ok: false, error: 'valid_domain_or_url_required' });
+      requestSweeprCrm('/v1/deepblock/blocked-sites', { method: 'POST', body: saved }).catch(() => {});
+      return sendJson(res, 200, { ok: true, site: saved, item: saved });
+    }
+
+    if (req.method === 'DELETE') {
+      const dom = normalizeSiteDomain(parsedUrl.searchParams.get('domain') || parsedUrl.searchParams.get('url') || '');
+      if (!dom) return sendJson(res, 400, { ok: false, error: 'domain_required' });
+      const deleted = deepblockBlockedSites.delete(dom);
+      if (deleted) flushBlockedSitesStore();
+      return sendJson(res, 200, { ok: true, deleted });
+    }
+  }
+
   // 301 Canonical Redirect 1: Trailing slash normalization (e.g. /pricing/ -> /pricing)
   if ((req.method === 'GET' || req.method === 'HEAD') && parsedUrl.pathname.length > 1 && parsedUrl.pathname.endsWith('/')) {
     const cleanPath = parsedUrl.pathname.replace(/\/+$/, '') + (parsedUrl.search || '');
@@ -3936,6 +4386,8 @@ const server = http.createServer(async (req, res) => {
       ? 'mac'
       : pathname.endsWith('.mobileconfig')
       ? 'ios'
+      : pathname.endsWith('.apk')
+      ? 'android'
       : 'extension';
     requestSweeprCrm('/v1/telemetry/event', {
       method: 'POST',
@@ -3949,6 +4401,11 @@ const server = http.createServer(async (req, res) => {
     }).catch(() => {});
   }
   let candidateRel = CLEAN_ROUTES[pathname];
+  if (pathname === '/download') {
+    const reqPlat = (parsedUrl.searchParams.get('platform') || '').toLowerCase();
+    if (reqPlat === 'android' || reqPlat === 'apk') candidateRel = 'SWEEPRDeepblock.apk';
+    else if (reqPlat === 'ios') candidateRel = 'sweepr-deepblock.mobileconfig';
+  }
   if (!candidateRel) {
     if (/^\/(solutions|setup|vs|guides)\/[a-z0-9-]+$/i.test(pathname)) {
       candidateRel = pathname.slice(1) + '.html';

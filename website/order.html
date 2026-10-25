@@ -344,7 +344,7 @@
         Get Complete Ad &amp; Pop-Up Protection for 2026
       </h1>
       <p id="bannerSubtitle" class="text-gray-300 text-xs sm:text-sm md:text-base mt-1.5 font-normal max-w-2xl mx-auto">
-        Block YouTube &amp; Banner Ads, Automatically Close Cookie Pop-Ups &amp; Stay Safe from Fake Online Shops
+        Block Ads, Pop-Ups &amp; Scams.
       </p>
     </div>
   </header>
@@ -871,23 +871,32 @@
                     <img src="/logo.svg" width="14" height="14" class="w-3.5 h-3.5 rounded" alt="SWEEPR Deepblock">
                     <span class="text-[9px] font-bold tracking-tight">SWEEPR DEEPBLOCK PRO</span>
                   </div>
-                  <span class="text-[8px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-semibold">ACTIVATED</span>
+                  <span class="text-[8px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-semibold">SHIELD ON</span>
                 </div>
-                <div class="text-center py-2">
-                  <div class="w-12 h-12 mx-auto rounded-full bg-emerald-500/10 border-2 border-emerald-500 flex items-center justify-center text-emerald-400 mb-1 shadow-inner">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                <div class="bg-gray-800/90 border border-emerald-500/30 rounded-lg p-2 mb-2">
+                  <div class="flex items-center justify-between text-[8px] text-gray-400 mb-1">
+                    <span class="font-mono text-emerald-300">🔒 Browser Ad &amp; Pop-Up Shield</span>
+                    <span class="text-emerald-400 font-bold">LIVE</span>
                   </div>
-                  <div class="text-[10px] font-bold text-white">100% Cleansed &amp; Protected</div>
-                  <div class="text-[8px] text-gray-400">Zero Ads • Cookie Pop-Ups Blocked</div>
+                  <div class="text-[11px] font-black text-white leading-tight">1,482 Ads &amp; Trackers Blocked</div>
+                  <div class="text-[8px] text-gray-400 mt-0.5">YouTube Pre-Rolls • Pop-Unders • Banner Ads Stopped</div>
                 </div>
-                <div class="grid grid-cols-2 gap-1.5 pt-1 text-[8px]">
-                  <div class="bg-gray-800/80 p-1.5 rounded">
-                    <div class="text-gray-400">Cookie Pop-Ups</div>
-                    <div class="text-emerald-400 font-bold">42 Closed</div>
+                <div class="grid grid-cols-2 gap-1.5 text-[8px]">
+                  <div class="bg-gray-800/80 p-1.5 rounded border border-gray-700/60">
+                    <div class="text-gray-400">Video &amp; Pop-Up Ads</div>
+                    <div class="text-emerald-400 font-bold">0 Shown (Blocked)</div>
                   </div>
-                  <div class="bg-gray-800/80 p-1.5 rounded">
-                    <div class="text-gray-400">Shop Shield</div>
-                    <div class="text-emerald-400 font-bold">Active</div>
+                  <div class="bg-gray-800/80 p-1.5 rounded border border-gray-700/60">
+                    <div class="text-gray-400">Cookie Consents</div>
+                    <div class="text-emerald-400 font-bold">Auto-Rejected</div>
+                  </div>
+                  <div class="bg-gray-800/80 p-1.5 rounded border border-gray-700/60">
+                    <div class="text-gray-400">Fake Shop Detector</div>
+                    <div class="text-emerald-400 font-bold">Scams Blocked</div>
+                  </div>
+                  <div class="bg-gray-800/80 p-1.5 rounded border border-gray-700/60">
+                    <div class="text-gray-400">Tab &amp; RAM Tamer</div>
+                    <div class="text-emerald-400 font-bold">1.8 GB Freed</div>
                   </div>
                 </div>
               </div>
@@ -1806,16 +1815,16 @@
       }
     }
 
-    // 5. Inactivity Timer (30 Seconds) & Exit Intent Popup
+    // 5. Inactivity Timer (90 Seconds) & Exit Intent Popup
     function startInactivityTimer() {
       clearTimeout(inactivityTimer);
-      inactivityTimer = setTimeout(() => showDiscountModal(), 30000);
+      inactivityTimer = setTimeout(() => showDiscountModal(), 90000);
     }
 
     function resetInactivityTimer() {
       if (!discountModalShown && !isDiscountApplied) {
         clearTimeout(inactivityTimer);
-        inactivityTimer = setTimeout(() => showDiscountModal(), 30000);
+        inactivityTimer = setTimeout(() => showDiscountModal(), 90000);
       }
     }
 

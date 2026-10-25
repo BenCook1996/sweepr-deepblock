@@ -945,6 +945,35 @@
     .asg-container,
     .asg-vpaid-overlay,
     [id^="ts_ad_native_"],
+    .under_video_ad,
+    .under_video_ss,
+    .avd-title,
+    .avd-item,
+    .video-page-aside:has(.avd-item),
+    #ad_5454652,
+    #ad_5454654,
+    #im_video,
+    #im_video_content,
+    #vl_1,
+    #vl_2,
+    [id^="vl_"],
+    [id^="wrapper_vl_"],
+    [id^="click_vl_"],
+    [id^="btn_close_videoslider_"],
+    [id^="close_videoslider_"],
+    [id^="lbl_advertise_slider_"],
+    .sldr_right_right,
+    .exc-pp,
+    .lbl_advertise_slider,
+    video[src*="sacdnssedge.com"],
+    #fpa_layer,
+    .invideo_banner,
+    [id^="F8-"],
+    [id^="F8m-"],
+    [data-spot^="F8-"],
+    a[href*="/link/cams/"],
+    iframe[src*="applzr.com"],
+    iframe[src*="goadserver.com"],
     iframe[src*="/agent.php?spot="],
     iframe[src*="nvdst.com/adx_"],
     iframe[src*="rvmessage.online"],
@@ -987,6 +1016,30 @@
     try {
       const el = document.getElementById('deepblock-universal-cosmetic');
       if (el) el.remove();
+      const otaEl = document.getElementById('deepblock-ota-cosmetic');
+      if (otaEl) otaEl.remove();
+    } catch (e) {}
+  }
+
+  function injectIsolatedOtaCosmeticStyles(selectors) {
+    try {
+      if (!Array.isArray(selectors) || selectors.length === 0) return;
+      let style = document.getElementById('deepblock-ota-cosmetic');
+      if (!style) {
+        style = document.createElement('style');
+        style.id = 'deepblock-ota-cosmetic';
+        (document.head || document.documentElement).appendChild(style);
+      }
+      // Each selector is written as an independent CSS rule block so CSSOM error recovery
+      // isolates each rule and can never invalidate UNIVERSAL_AD_COSMETIC_CSS or peer rules.
+      const rulesCss = selectors
+        .filter((s) => typeof s === 'string' && s.trim().length > 2 && !/[{};]/.test(s))
+        .map(
+          (s) =>
+            `${s.trim()} { display: none !important; visibility: hidden !important; height: 0 !important; min-height: 0 !important; pointer-events: none !important; }`
+        )
+        .join('\n');
+      style.textContent = rulesCss;
     } catch (e) {}
   }
 
@@ -1008,16 +1061,21 @@
       'customHiddenSelectors',
       'remoteFeatureFlags',
       'extraCmpSelectors',
-      'extraAntiAdblockSelectors'
+      'extraAntiAdblockSelectors',
+      'extraCosmeticSelectors'
     ],
     (res) => {
       const pausedSites = Array.isArray(res && res.pausedSites) ? res.pausedSites : [];
       const trustedShopSites = Array.isArray(res && res.trustedShopSites) ? res.trustedShopSites : [];
       const settings = (res && res.settings) || {};
 
-      if ((currentHost && pausedSites.includes(currentHost)) || settings.adBlocking === false) {
+      const isPaidEntitled = Boolean(res && res.proActive && res.licenseKey);
+      if (!isPaidEntitled || (currentHost && pausedSites.includes(currentHost)) || settings.adBlocking === false) {
         removeUniversalAdCosmeticStyle();
         try {
+          if (!isPaidEntitled && typeof sessionStorage !== 'undefined') {
+            sessionStorage.setItem('__sweepr_unpaid', '1');
+          }
           document.documentElement.dataset.sweeprPaused = '1';
           delete document.documentElement.dataset.sweeprProActive;
         } catch (e) {}
@@ -1025,11 +1083,17 @@
       }
 
       try {
+        if (typeof sessionStorage !== 'undefined') {
+          sessionStorage.removeItem('__sweepr_unpaid');
+        }
         delete document.documentElement.dataset.sweeprPaused;
         document.documentElement.dataset.sweeprProActive = '1';
       } catch (e) {}
 
       injectUniversalAdCosmeticStyle();
+      if (Array.isArray(res && res.extraCosmeticSelectors)) {
+        injectIsolatedOtaCosmeticStyles(res.extraCosmeticSelectors);
+      }
 
       const flags = (res && res.remoteFeatureFlags) || {};
       const extraCmpSelectors = Array.isArray(res && res.extraCmpSelectors) ? res.extraCmpSelectors : [];

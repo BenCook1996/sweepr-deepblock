@@ -27,6 +27,9 @@
       ) {
         return false;
       }
+      if (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('__sweepr_unpaid') === '1') {
+        return false;
+      }
       return true;
     } catch (e) {
       return true;
@@ -51,7 +54,7 @@
 
   // Common ad/tracker domain & path patterns used by anti-adblock probes
   const AD_PROBE_URL_REGEX =
-    /(googlesyndication\.com|doubleclick\.net|google-analytics\.com|googletagmanager\.com|imasdk\.googleapis\.com|adnxs\.com|adsrvr\.org|criteo\.(com|net)|rubiconproject\.com|pubmatic\.com|openx\.net|taboola\.com|outbrain\.com|amazon-adsystem\.com|moatads\.com|scorecardresearch\.com|quantserve\.com|ads-twitter\.com|connect\.facebook\.net\/.*\/fbevents|admiral\.com|getadmiral\.com|fundingchoicesmessages\.google\.com|pagefair\.com|\/ads\.js(\?|$)|\/adframe\.js(\?|$)|\/adblock-detect|\/show_ads\.js|\/adsbygoogle\.js)/i;
+    /(googlesyndication\.com|doubleclick\.net|google-analytics\.com|googletagmanager\.com|imasdk\.googleapis\.com|adnxs\.com|adsrvr\.org|criteo\.(com|net)|rubiconproject\.com|pubmatic\.com|openx\.net|taboola\.com|outbrain\.com|amazon-adsystem\.com|moatads\.com|scorecardresearch\.com|quantserve\.com|ads-twitter\.com|connect\.facebook\.net\/.*\/fbevents|admiral\.com|getadmiral\.com|fundingchoicesmessages\.google\.com|pagefair\.com|applzr\.com|goadserver\.com|sacdnssedge\.com|magsrv\.com|exoclick\.com|\/ads\.js(\?|$)|\/adframe\.js(\?|$)|\/adblock-detect|\/show_ads\.js|\/adsbygoogle\.js)/i;
 
   // ============================================================================
   // LAYER 1B: <script onerror> -> <script onload> Alchemist
@@ -1000,6 +1003,88 @@
     } catch (e) {}
   }
 
+  // Neutralize adMoxyCtrl / live.applzr.com / eaPopn (popunder / tab-under & bottom-right videoslider on shooshtime.com and KVS sites)
+  const adMoxyStub = Object.freeze({
+    init: noopFn,
+    add: noopFn,
+    ad: noopFn,
+    display: noopFn,
+    load: noopFn,
+    logImp: noopFn,
+    getItem: () => '',
+    getStorage: () => ({}),
+    setStorage: noopFn,
+    Tools: Object.freeze({ on: noopFn, append: noopFn, hide: noopFn, parents: () => [], dw: () => 1920 }),
+    connectors: Object.freeze({}),
+    videoslider: Object.freeze({ skipreload: true, display: noopFn, procs: [] }),
+    pop: Object.freeze({ init: noopFn }),
+    procs: [],
+    c: [],
+    an: [],
+    ao: [],
+    cr: [],
+    aPlugins: [],
+    bypassAb: false,
+    abDetected: false
+  });
+  safeDefine(window, 'adMoxyCtrl', adMoxyStub);
+  safeDefine(window, 'adMoxyCtrlRecs', dummyPopArray);
+  safeDefine(window, 'AdProvider', dummyPopArray);
+  safeDefine(window, '__spotSettings', Object.freeze({}));
+  safeDefine(window, 'settingsBannersSpot', Object.freeze({}));
+  safeDefine(window, 'eaPopn', function () {
+    return {
+      init: noopFn,
+      canrun: () => false,
+      genUrl: () => ''
+    };
+  });
+
+  // Neutralize Kernel Team Video Sharing (kt_player) VAST pre-roll / post-roll / pause-roll & popunders in flashvars
+  function sanitizeKtFlashvars(fv) {
+    if (!fv || typeof fv !== 'object') return fv;
+    try {
+      for (const key of Object.keys(fv)) {
+        if (/^(adv_|vast_|popunder|lrcv$)/i.test(key)) {
+          delete fv[key];
+        }
+      }
+    } catch (e) {}
+    return fv;
+  }
+
+  let flashvarsStore = sanitizeKtFlashvars(window.flashvars);
+  try {
+    Object.defineProperty(window, 'flashvars', {
+      get: () => flashvarsStore,
+      set: (val) => {
+        flashvarsStore = isProEntitled() ? sanitizeKtFlashvars(val) : val;
+      },
+      configurable: true
+    });
+  } catch (e) {}
+
+  let realKtPlayer = window.kt_player;
+  try {
+    Object.defineProperty(window, 'kt_player', {
+      get: () => {
+        if (typeof realKtPlayer !== 'function') return realKtPlayer;
+        return function (containerId, swfUrl, width, height, flashvarsObj, paramsObj) {
+          try {
+            if (isProEntitled() && flashvarsObj && typeof flashvarsObj === 'object') {
+              sanitizeKtFlashvars(flashvarsObj);
+            }
+          } catch (e) {}
+          return realKtPlayer.apply(this, arguments);
+        };
+      },
+      set: (fn) => {
+        realKtPlayer = fn;
+      },
+      configurable: true
+    });
+  } catch (e) {}
+
   // Wrap JSON.parse globally to strip VAST pre-roll/post-roll tags, inplayer pause ads, fad.json, and adCodes
   const baseJsonParse = JSON.parse;
   JSON.parse = function (text, reviver) {
@@ -1049,13 +1134,18 @@
 
   // Block popunders and ad-network URLs
   const POPUNDER_URL_REGEX =
-    /(\/zv3\/(b|url|cam)|\/link\/out\/|\/getape\/|\/prepop\.php|\/getadb\/|\/venor\.php|\/v1\/link\.php|\/splash\.php\?idzone=|\/api\/spots\/|\/api\/click\/|\/agent\.php\?spot=|banner-iframe|advertiserName=|tsyndicate\.com|contentsserved\.com|exoclick\.com|exosrv\.com|realsrv\.com|magsrv\.com|pemsrv\.com|orbsrv\.com|trafficjunky\.(net|com)|juicyads\.com|jads\.co|clickadu\.com|clickaine\.com|\/lv\/esnk\/|hilltopads\.net|adspyglass\.com|plugrush\.com|adxpansion\.com|crakrevenue\.com|ero-advertising\.com|twinrdsyn\.com|twinrdengine\.com|adtng\.com|etahub\.com|bngpt\.com|xlivrdr\.com|popads\.net|popcash\.net|propellerads\.com|cdn-fc\.com|meteorpomposity\.com|glutenmuttsensuous\.com|cupbearergrowllurch\.com|hollowgoal\.com|u5s5\.com|adplsr\.com|nomarax\.com|fh-wgt\.com|yomeno\.xyz|ahw2lok\.txxx\.com|zog\.link|iloptrex\.com|nereserv\.com|vidvas3\.com|tubecup\.net|fhgte\.com|faphouse4k\.com|tikbblove\.com|directsle\.com|g2fame\.com|rvmessage\.online|rvrpushserv\.com|yequka\.my|tophqcam\.com|doublepimp\.com|advnet\.xyz|hotadultcontent\.com|hotxxxcontent\.com|qoqh\.com|hqpornpro\.com|lxax\.com|koxk\.com|nvdst\.com\/adx_|_pnuvid\.js|p2p\.init\.js|jquery\.shows2\.min\.js)/i;
+    /(\/zv3\/(b|url|cam)|\/link\/out\/|\/getape\/|\/prepop\.php|\/getadb\/|\/venor\.php|\/v1\/link\.php|\/splash\.php\?idzone=|\/api\/spots\/|\/api\/click\/|\/agent\.php\?spot=|\/loadeactrl\.go|\/vast\.go|\/click\.go|banner-iframe|advertiserName=|tsyndicate\.com|contentsserved\.com|exoclick\.com|exosrv\.com|realsrv\.com|magsrv\.com|pemsrv\.com|orbsrv\.com|trafficjunky\.(net|com)|juicyads\.com|jads\.co|clickadu\.com|clickaine\.com|\/lv\/esnk\/|hilltopads\.net|adspyglass\.com|plugrush\.com|adxpansion\.com|crakrevenue\.com|ero-advertising\.com|twinrdsyn\.com|twinrdengine\.com|adtng\.com|etahub\.com|bngpt\.com|xlivrdr\.com|popads\.net|popcash\.net|propellerads\.com|cdn-fc\.com|meteorpomposity\.com|glutenmuttsensuous\.com|cupbearergrowllurch\.com|hollowgoal\.com|u5s5\.com|adplsr\.com|nomarax\.com|fh-wgt\.com|yomeno\.xyz|ahw2lok\.txxx\.com|zog\.link|iloptrex\.com|nereserv\.com|vidvas3\.com|tubecup\.net|fhgte\.com|faphouse4k\.com|tikbblove\.com|directsle\.com|g2fame\.com|rvmessage\.online|rvrpushserv\.com|yequka\.my|tophqcam\.com|doublepimp\.com|advnet\.xyz|hotadultcontent\.com|hotxxxcontent\.com|qoqh\.com|hqpornpro\.com|lxax\.com|koxk\.com|applzr\.com|goadserver\.com|sacdnssedge\.com|kol88\.freeporn8\.com|Y1l0oxvJ\.js|nvdst\.com\/adx_|_pnuvid\.js|p2p\.init\.js|jquery\.shows2\.min\.js)/i;
 
-  // Block dynamic popunder <script> injections via appendChild / insertBefore
+  // Block dynamic popunder <script> and videoslider container injections via appendChild / insertBefore
   const isBlockedDynamicScript = (node) => {
-    if (!isProEntitled() || !node || node.nodeType !== 1 || node.tagName !== 'SCRIPT') return false;
-    const src = String(node.src || node.getAttribute('src') || '');
+    if (!isProEntitled() || !node || node.nodeType !== 1) return false;
+    const tag = String(node.tagName || '').toUpperCase();
     const id = String(node.id || '');
+    if (tag === 'DIV' && (/^vl_[0-9]+(_content)?$/i.test(id) || node.classList && node.classList.contains('sldr_right_right'))) {
+      return true;
+    }
+    if (tag !== 'SCRIPT') return false;
+    const src = String(node.src || node.getAttribute('src') || '');
     if (
       id === 'popmagicldr' ||
       node.hasAttribute('data-clocid') ||
@@ -1094,7 +1184,7 @@
 
   // Block click-hijacking addEventListener registrations from popunder scripts
   const POPUNDER_LISTENER_REGEX =
-    /popMagic|venorShouldShow|findLinkToOpen|executeOnRedirect|EPpopConfig|EPeventFire|openPopunder|__videoPlayerData\.popunder|inVideoTabUnderSeenCookie|clickFlow|loadBannerContent|Popunder\b|adblockFallbackPending|syndication_host|exoJsPop101|zomhphp|TRAFF_TARGETS|initTraffTargets|__NA|renderSpot|asgtbndr|AsgInterop|_asg_was_tabunder/i;
+    /popMagic|venorShouldShow|findLinkToOpen|executeOnRedirect|EPpopConfig|EPeventFire|openPopunder|__videoPlayerData\.popunder|inVideoTabUnderSeenCookie|clickFlow|loadBannerContent|Popunder\b|adblockFallbackPending|syndication_host|exoJsPop101|zomhphp|TRAFF_TARGETS|initTraffTargets|__NA|renderSpot|asgtbndr|AsgInterop|_asg_was_tabunder|adMoxyCtrl|eaPopn|loadeactrl/i;
 
   const origAddEventListener = EventTarget.prototype.addEventListener;
   EventTarget.prototype.addEventListener = function (type, listener, options) {
@@ -1278,25 +1368,38 @@
 
   // Neutralize Eporner first-party EP.ads object & expand video player container
   if (/(^|\.)eporner\.com$/i.test(location.hostname)) {
-    const patchEpAds = () => {
+    const sanitizeEpObj = (epObj) => {
+      if (!epObj || typeof epObj !== 'object') return epObj;
       try {
-        if (window.EP) {
-          window.EP.adblockFallbackPending = noopFn;
-          if (window.EP.ads) {
-            window.EP.ads.initialize = noopFn;
-            window.EP.ads.show = noopFn;
-            window.EP.ads.serve = noopFn;
-            window.EP.ads.showAd = noopFn;
-            window.EP.ads.showInplayerAds = noopFn;
-            window.EP.ads.refreshVideoPauseAds = noopFn;
-            if (window.EP.ads.ref) {
-              window.EP.ads.ref.check = noopFn;
-              window.EP.ads.ref.reload = noopFn;
-            }
-          }
+        epObj.adblockFallbackPending = noopFn;
+        const adsStub = {
+          initialize: noopFn,
+          show: noopFn,
+          serve: noopFn,
+          showAd: noopFn,
+          showInplayerAds: noopFn,
+          refreshVideoPauseAds: noopFn,
+          ref: { check: noopFn, reload: noopFn }
+        };
+        if (epObj.ads && typeof epObj.ads === 'object') {
+          Object.assign(epObj.ads, adsStub);
+        } else {
+          epObj.ads = adsStub;
         }
       } catch (e) {}
+      return epObj;
     };
+    let epStore = sanitizeEpObj(window.EP || { ads: {} });
+    try {
+      Object.defineProperty(window, 'EP', {
+        get: () => epStore,
+        set: (val) => {
+          epStore = sanitizeEpObj(val);
+        },
+        configurable: true
+      });
+    } catch (e) {}
+    const patchEpAds = () => sanitizeEpObj(window.EP);
     patchEpAds();
     origAddEventListener.call(document, 'readystatechange', patchEpAds);
     origAddEventListener.call(document, 'DOMContentLoaded', patchEpAds);

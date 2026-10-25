@@ -90,13 +90,30 @@ function sanitizeTabUrlForBackup(rawUrl) {
 
 async function syncRemoteFilterDelta() {
   try {
-    const res = await fetch('https://sweeprdeepblock.com/api/filters/delta', {
-      method: 'GET',
-      headers: { Accept: 'application/json' },
-      signal: AbortSignal.timeout(5000)
-    });
-    if (!res.ok) return;
-    const data = await res.json().catch(() => null);
+    const endpoints = [
+      ...(isDevExtension ? ['http://localhost:3000/api/filters/delta'] : []),
+      'https://sweeprdeepblock.com/api/filters/delta',
+      ...(typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getURL
+        ? [chrome.runtime.getURL('rules/dynamic_delta.json')]
+        : [])
+    ];
+    let data = null;
+    for (const url of endpoints) {
+      try {
+        const res = await fetch(url, {
+          method: 'GET',
+          headers: { Accept: 'application/json' },
+          signal: AbortSignal.timeout(4000)
+        });
+        if (res.ok) {
+          const parsed = await res.json().catch(() => null);
+          if (parsed && parsed.ok) {
+            data = parsed;
+            break;
+          }
+        }
+      } catch (err) {}
+    }
     if (!data || !data.ok) return;
     const updates = {};
     if (data.featureFlags && typeof data.featureFlags === 'object') {
@@ -108,6 +125,9 @@ async function syncRemoteFilterDelta() {
     if (Array.isArray(data.extraAntiAdblockSelectors)) {
       updates.extraAntiAdblockSelectors = data.extraAntiAdblockSelectors.slice(0, 50);
     }
+    if (Array.isArray(data.extraCosmeticSelectors)) {
+      updates.extraCosmeticSelectors = data.extraCosmeticSelectors.slice(0, 100);
+    }
     if (Object.keys(updates).length > 0) {
       await chrome.storage.local.set(updates);
     }
@@ -118,9 +138,12 @@ async function syncRemoteFilterDelta() {
     ) {
       const existing = await chrome.declarativeNetRequest.getDynamicRules();
       const removeRuleIds = existing.filter((r) => r.id >= 80000 && r.id < 81000).map((r) => r.id);
-      const validRules = data.dynamicDnrRules
-        .filter((r) => r && typeof r.id === 'number' && r.id >= 80000 && r.id < 81000)
-        .slice(0, 100);
+      const validRules =
+        verifiedSession.proActive && verifiedSession.licenseKey
+          ? data.dynamicDnrRules
+              .filter((r) => r && typeof r.id === 'number' && r.id >= 80000 && r.id < 81000)
+              .slice(0, 100)
+          : [];
       await chrome.declarativeNetRequest.updateDynamicRules({
         removeRuleIds,
         addRules: validRules
@@ -183,9 +206,9 @@ async function syncExtensionProtectionRules(enablePro) {
 
 // In-memory anti-tamper session guard inside service worker closure
 let verifiedSession = {
-  proActive: true,
-  ramTamerActive: true,
-  licenseKey: 'SWEEPR-PRO-ACTIVE',
+  proActive: false,
+  ramTamerActive: false,
+  licenseKey: '',
   deviceId: '',
   internalWriteInProgress: false
 };
@@ -208,34 +231,27 @@ async function getOrCreateDeviceId() {
 }
 
 const DEFAULT_STATE = {
-  proActive: true,
-  ramTamerActive: true,
-  licenseKey: 'SWEEPR-PRO-ACTIVE',
+  proActive: false,
+  ramTamerActive: false,
+  licenseKey: '',
   licenseToken: '',
   crmAccountId: '',
-  subscriptionStatus: 'active',
-  licenseVerifiedAt: Date.now(),
-  entitlements: [
-    'pro_cookie_autoreject',
-    'pro_ai_slop_purifier',
-    'pro_clutter_stripper',
-    'bundle_fake_store_detector',
-    'bundle_encrypted_dns_proxy',
-    'addon_total_tab_and_ram_tamer'
-  ],
-  encryptedDnsEnabled: true,
+  subscriptionStatus: 'unactivated',
+  licenseVerifiedAt: 0,
+  entitlements: [],
+  encryptedDnsEnabled: false,
   pausedSites: [],
   neverSnoozeSites: [],
   trustedShopSites: [],
   customHiddenSelectors: {},
   settings: {
-    cookieAutoClose: true,
-    hideSearchSpam: true,
-    fakeShopAlerts: true,
-    trackerProtection: true,
-    adBlocking: true,
-    silentMode: true,
-    autoRamTamer: true
+    cookieAutoClose: false,
+    hideSearchSpam: false,
+    fakeShopAlerts: false,
+    trackerProtection: false,
+    adBlocking: false,
+    silentMode: false,
+    autoRamTamer: false
   },
   stats: {
     adsBlocked: 0,
@@ -417,39 +433,21 @@ if (chrome.storage && chrome.storage.onChanged) {
 async function enforceStoredSubscriptionIntegrity() {
   const store = await chrome.storage.local.get(['proActive', 'ramTamerActive', 'licenseKey', 'licenseVerifiedAt', 'settings']);
   const key = String(store.licenseKey || '').trim();
-  if (!key || key === 'SWEEPR-PRO-ACTIVE' || !store.proActive) {
-    verifiedSession.proActive = true;
-    verifiedSession.ramTamerActive = true;
-    verifiedSession.licenseKey = key || 'SWEEPR-PRO-ACTIVE';
+  if (!key || !store.proActive) {
     verifiedSession.coldChecked = true;
-    verifiedSession.internalWriteInProgress = true;
-    const currentSettings = { ...DEFAULT_STATE.settings, ...(store.settings || {}) };
-    if (!store.proActive) {
-      Object.assign(currentSettings, DEFAULT_STATE.settings);
-    }
-    await chrome.storage.local.set({
-      proActive: true,
-      ramTamerActive: true,
-      licenseKey: verifiedSession.licenseKey,
-      subscriptionStatus: 'active',
-      licenseVerifiedAt: Date.now(),
-      encryptedDnsEnabled: true,
-      settings: currentSettings
-    });
-    verifiedSession.internalWriteInProgress = false;
-    await syncExtensionProtectionRules(currentSettings.adBlocking !== false);
-    return { proActive: true, ramTamerActive: true };
+    await revokeProState('unactivated');
+    return { proActive: false, ramTamerActive: false };
   }
   const verified = await verifyLicenseWithServer(key);
   verifiedSession.coldChecked = true;
   if (verified.networkError) {
     const withinOfflineGrace =
-      !store.licenseVerifiedAt || Date.now() - Number(store.licenseVerifiedAt) <= OFFLINE_GRACE_MS;
+      Boolean(store.licenseVerifiedAt) && Date.now() - Number(store.licenseVerifiedAt) <= OFFLINE_GRACE_MS;
     verifiedSession.proActive = Boolean(store.proActive && key && withinOfflineGrace);
     verifiedSession.ramTamerActive = Boolean(store.proActive && store.ramTamerActive && key && withinOfflineGrace);
-    verifiedSession.licenseKey = withinOfflineGrace ? key : 'SWEEPR-PRO-ACTIVE';
-    await syncExtensionProtectionRules(true);
-    return { proActive: true, ramTamerActive: true };
+    verifiedSession.licenseKey = withinOfflineGrace ? key : '';
+    await syncExtensionProtectionRules(verifiedSession.proActive);
+    return { proActive: verifiedSession.proActive, ramTamerActive: verifiedSession.ramTamerActive };
   }
   return {
     proActive: Boolean(verified.valid),
@@ -462,9 +460,9 @@ async function ensureVerifiedProSession() {
     await enforceStoredSubscriptionIntegrity();
   }
   return {
-    proActive: true,
-    ramTamerActive: true,
-    licenseKey: verifiedSession.licenseKey || 'SWEEPR-PRO-ACTIVE'
+    proActive: Boolean(verifiedSession.proActive && verifiedSession.licenseKey),
+    ramTamerActive: Boolean(verifiedSession.ramTamerActive && verifiedSession.licenseKey),
+    licenseKey: verifiedSession.licenseKey || ''
   };
 }
 
@@ -567,6 +565,9 @@ chrome.runtime.onStartup.addListener(async () => {
   syncRemoteFilterDelta();
 });
 
+// Ensure dynamic DNR rules and remote filter deltas are synced whenever the service worker wakes
+syncRemoteFilterDelta();
+
 // Dynamic Per-Tab Toolbar Action Badge:
 // - Shows "OFF" (slate #64748b) when the active tab's domain is in pausedSites
 // - Shows "!" (amber #d97706) when the active tab triggered a fake-shop alert
@@ -613,7 +614,7 @@ async function updateActionBadge(passedStats, passedSettings) {
 }
 
 const POPUNDER_TAB_URL_REGEX =
-  /(\/zv3\/(b|url|cam)|\/link\/out\/|\/getape\/|\/prepop\.php|\/getadb\/|\/venor\.php|\/v1\/link\.php|\/splash\.php\?idzone=|\/api\/click\/|tsyndicate\.com|contentsserved\.com|exoclick\.com|exosrv\.com|realsrv\.com|magsrv\.com|pemsrv\.com|orbsrv\.com|trafficjunky\.(net|com)|juicyads\.com|jads\.co|clickadu\.com|clickaine\.com|hilltopads\.net|adspyglass\.com|plugrush\.com|adxpansion\.com|crakrevenue\.com|ero-advertising\.com|twinrdsyn\.com|twinrdengine\.com|adtng\.com|etahub\.com|bngpt\.com|xlivrdr\.com|popads\.net|popcash\.net|propellerads\.com|u5s5\.com|fh-wgt\.com|cupbearergrowllurch\.com|hollowgoal\.com|fhgte\.com|faphouse4k\.com|tikbblove\.com|directsle\.com|hotadultcontent\.com|hotxxxcontent\.com|qoqh\.com|hqpornpro\.com|lxax\.com|koxk\.com|yequka\.my|rvmessage\.online|rvrpushserv\.com|tophqcam\.com|doublepimp\.com|advnet\.xyz|zog\.link|iloptrex\.com|vidvas3\.com|stripchat\.com|chaturbate\.com|bongacams\.com|cam4\.com|myfreecams\.com|livejasmin\.com|jerkmate\.com|faphouse\.com)/i;
+  /(\/zv3\/(b|url|cam)|\/link\/out\/|\/getape\/|\/prepop\.php|\/getadb\/|\/venor\.php|\/v1\/link\.php|\/splash\.php\?idzone=|\/api\/click\/|\/click\.go|\/loadeactrl\.go|tsyndicate\.com|contentsserved\.com|exoclick\.com|exosrv\.com|realsrv\.com|magsrv\.com|pemsrv\.com|orbsrv\.com|trafficjunky\.(net|com)|juicyads\.com|jads\.co|clickadu\.com|clickaine\.com|hilltopads\.net|adspyglass\.com|plugrush\.com|adxpansion\.com|crakrevenue\.com|ero-advertising\.com|twinrdsyn\.com|twinrdengine\.com|adtng\.com|etahub\.com|bngpt\.com|xlivrdr\.com|popads\.net|popcash\.net|propellerads\.com|u5s5\.com|fh-wgt\.com|cupbearergrowllurch\.com|hollowgoal\.com|fhgte\.com|faphouse4k\.com|tikbblove\.com|directsle\.com|hotadultcontent\.com|hotxxxcontent\.com|qoqh\.com|hqpornpro\.com|lxax\.com|koxk\.com|applzr\.com|goadserver\.com|yequka\.my|rvmessage\.online|rvrpushserv\.com|tophqcam\.com|doublepimp\.com|advnet\.xyz|zog\.link|iloptrex\.com|vidvas3\.com|stripchat\.com|chaturbate\.com|bongacams\.com|cam4\.com|myfreecams\.com|livejasmin\.com|jerkmate\.com|faphouse\.com)/i;
 
 const STRICT_POPUNDER_OPENER_HOSTS = new Set([
   'pornoxo.com',
@@ -628,7 +629,9 @@ const STRICT_POPUNDER_OPENER_HOSTS = new Set([
   'proporn.com',
   'txxx.me',
   'txxx.com',
-  'videosection.com'
+  'videosection.com',
+  'shooshtime.com',
+  'freeporn8.com'
 ]);
 
 const newlySpawnedChildTabs = new Map();
@@ -1053,9 +1056,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       getRamSpeedometerMetrics(),
       chrome.tabs.query({ active: true, currentWindow: true })
     ]).then(async ([store, ramMetrics, activeTabs]) => {
-      if (!store.proActive || !store.licenseKey) {
-        await enforceStoredSubscriptionIntegrity();
-      }
+      const auth = await ensureVerifiedProSession();
       const activeTab = activeTabs && activeTabs[0];
       const activeTabId = activeTab ? activeTab.id : null;
       const currentTabScamDetected = Boolean(activeTabId && scamDetectedTabs.has(activeTabId));
@@ -1063,9 +1064,9 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       sendResponse({
         ...DEFAULT_STATE,
         ...store,
-        proActive: true,
-        ramTamerActive: true,
-        licenseKey: store.licenseKey || 'SWEEPR-PRO-ACTIVE',
+        proActive: Boolean(auth.proActive),
+        ramTamerActive: Boolean(auth.ramTamerActive),
+        licenseKey: auth.licenseKey || '',
         settings: { ...DEFAULT_STATE.settings, ...(store.settings || {}) },
         stats: { ...DEFAULT_STATE.stats, ...(store.stats || {}) },
         ramMetrics,
