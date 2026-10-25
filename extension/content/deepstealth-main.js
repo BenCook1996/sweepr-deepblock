@@ -774,12 +774,18 @@
   safeDefine(window, 'conf_on_end', false);
   safeDefine(window, 'fadm', noopFn);
 
-  // Neutralize Pornoxo & sister-network __videoPlayerData.popunder & VAST properties
+  // Neutralize Pornoxo & sister-network __videoPlayerData.clickFlow, .popunder & VAST properties
   function sanitizeVideoPlayerData(obj) {
     if (!obj || typeof obj !== 'object') return obj;
     try {
       obj.popunder = undefined;
       Object.defineProperty(obj, 'popunder', {
+        get: () => undefined,
+        set: () => {},
+        configurable: true
+      });
+      obj.clickFlow = undefined;
+      Object.defineProperty(obj, 'clickFlow', {
         get: () => undefined,
         set: () => {},
         configurable: true
@@ -803,9 +809,38 @@
     });
   } catch (e) {}
 
+  // Intercept window.renderVideoPlayerV3 to strip VAST pre-rolls (renderArgs.preRoll) and in-video text ads
+  let realRenderVideoPlayerV3 = window.renderVideoPlayerV3;
+  try {
+    Object.defineProperty(window, 'renderVideoPlayerV3', {
+      get: () => {
+        if (typeof realRenderVideoPlayerV3 !== 'function') return realRenderVideoPlayerV3;
+        return function (renderArgs) {
+          try {
+            if (isProEntitled() && renderArgs && typeof renderArgs === 'object') {
+              renderArgs.preRoll = {};
+              renderArgs.videoTextAd = undefined;
+              renderArgs.nextVideoBannerUrl = null;
+            }
+          } catch (e) {}
+          return realRenderVideoPlayerV3.apply(this, arguments);
+        };
+      },
+      set: (fn) => {
+        realRenderVideoPlayerV3 = fn;
+      },
+      configurable: true
+    });
+  } catch (e) {}
+
+  // Neutralize adplsr video pause-banner SDK
+  safeDefine(window, 'adplsr', Object.freeze({ cmd: Object.freeze({ push: noopFn }) }));
+
   if (/(^|\.)pornoxo\.com$/i.test(location.hostname)) {
     try {
       sessionStorage.setItem('bnr_labadena1', 'true');
+      sessionStorage.setItem('ivtas', '1');
+      document.cookie = 'inVideoTabUnderSeenCookie=true; path=/';
     } catch (e) {}
   }
 
@@ -845,6 +880,9 @@
         if ('popunder' in parsed) {
           parsed.popunder = undefined;
         }
+        if ('clickFlow' in parsed) {
+          parsed.clickFlow = undefined;
+        }
       }
     } catch (e) {}
     return parsed;
@@ -852,7 +890,7 @@
 
   // Block popunders and ad-network URLs
   const POPUNDER_URL_REGEX =
-    /(\/link\/out\/|\/getape\/|\/prepop\.php|\/getadb\/|\/venor\.php|\/v1\/link\.php|\/splash\.php\?idzone=|banner-iframe|advertiserName=|tsyndicate\.com|contentsserved\.com|exoclick\.com|exosrv\.com|realsrv\.com|magsrv\.com|pemsrv\.com|orbsrv\.com|trafficjunky\.(net|com)|juicyads\.com|jads\.co|clickadu\.com|clickaine\.com|\/lv\/esnk\/|hilltopads\.net|adspyglass\.com|plugrush\.com|adxpansion\.com|crakrevenue\.com|ero-advertising\.com|twinrdsyn\.com|twinrdengine\.com|adtng\.com|etahub\.com|bngpt\.com|xlivrdr\.com|popads\.net|popcash\.net|propellerads\.com|cdn-fc\.com|meteorpomposity\.com|glutenmuttsensuous\.com|cupbearergrowllurch\.com|hollowgoal\.com)/i;
+    /(\/zv3\/(b|url|cam)|\/link\/out\/|\/getape\/|\/prepop\.php|\/getadb\/|\/venor\.php|\/v1\/link\.php|\/splash\.php\?idzone=|banner-iframe|advertiserName=|tsyndicate\.com|contentsserved\.com|exoclick\.com|exosrv\.com|realsrv\.com|magsrv\.com|pemsrv\.com|orbsrv\.com|trafficjunky\.(net|com)|juicyads\.com|jads\.co|clickadu\.com|clickaine\.com|\/lv\/esnk\/|hilltopads\.net|adspyglass\.com|plugrush\.com|adxpansion\.com|crakrevenue\.com|ero-advertising\.com|twinrdsyn\.com|twinrdengine\.com|adtng\.com|etahub\.com|bngpt\.com|xlivrdr\.com|popads\.net|popcash\.net|propellerads\.com|cdn-fc\.com|meteorpomposity\.com|glutenmuttsensuous\.com|cupbearergrowllurch\.com|hollowgoal\.com|u5s5\.com|adplsr\.com|nomarax\.com|fh-wgt\.com)/i;
 
   // Block dynamic popunder <script> injections via appendChild / insertBefore
   const isBlockedDynamicScript = (node) => {
@@ -862,6 +900,7 @@
     if (
       id === 'popmagicldr' ||
       node.hasAttribute('data-clocid') ||
+      node.hasAttribute('data-spots') ||
       (node.settings && node.settings.misc && node.settings.misc.ignoreTo) ||
       POPUNDER_URL_REGEX.test(src) ||
       /\/pxo\/www\/js-v[0-9.]+\/[a-z0-9]{8}\.min\.js/i.test(src) ||
@@ -893,7 +932,7 @@
 
   // Block click-hijacking addEventListener registrations from popunder scripts
   const POPUNDER_LISTENER_REGEX =
-    /popMagic|venorShouldShow|findLinkToOpen|executeOnRedirect|EPpopConfig|EPeventFire|openPopunder|__videoPlayerData\.popunder|loadBannerContent|Popunder\b|adblockFallbackPending|syndication_host|exoJsPop101|zomhphp/i;
+    /popMagic|venorShouldShow|findLinkToOpen|executeOnRedirect|EPpopConfig|EPeventFire|openPopunder|__videoPlayerData\.popunder|inVideoTabUnderSeenCookie|clickFlow|loadBannerContent|Popunder\b|adblockFallbackPending|syndication_host|exoJsPop101|zomhphp/i;
 
   const origAddEventListener = EventTarget.prototype.addEventListener;
   EventTarget.prototype.addEventListener = function (type, listener, options) {
@@ -931,7 +970,7 @@
 
   // Capture-phase shield: prevent clicks on invisible video player ad overlays or /link/out/ popunder links
   const VIDEO_AD_OVERLAY_SELECTOR =
-    '.new-videoplayer-overlay, .video-extra-overlay, #invideo_wrapper, .vast-overlay, .video-end-overlay, #movieplayer-box-adv, #divExoLayerWrapper, a.blinker, li.media-item.no-popup';
+    '.player-click-layer, .new-videoplayer-overlay, .video-extra-overlay, #invideo_wrapper, .vast-overlay, .video-end-overlay, #movieplayer-box-adv, #divExoLayerWrapper, a.blinker, li.media-item.no-popup';
 
   const blockOverlayClick = function (e) {
     if (!isProEntitled() || !e || !e.target || typeof e.target.closest !== 'function') return;

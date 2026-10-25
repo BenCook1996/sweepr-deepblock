@@ -613,7 +613,7 @@ async function updateActionBadge(passedStats, passedSettings) {
 }
 
 const POPUNDER_TAB_URL_REGEX =
-  /(\/link\/out\/|\/getape\/|\/prepop\.php|\/getadb\/|\/venor\.php|\/v1\/link\.php|\/splash\.php\?idzone=|tsyndicate\.com|contentsserved\.com|exoclick\.com|exosrv\.com|realsrv\.com|magsrv\.com|pemsrv\.com|orbsrv\.com|trafficjunky\.(net|com)|juicyads\.com|jads\.co|clickadu\.com|clickaine\.com|hilltopads\.net|adspyglass\.com|plugrush\.com|adxpansion\.com|crakrevenue\.com|ero-advertising\.com|twinrdsyn\.com|twinrdengine\.com|adtng\.com|etahub\.com|bngpt\.com|xlivrdr\.com|popads\.net|popcash\.net|propellerads\.com|stripchat\.com|chaturbate\.com|bongacams\.com|cam4\.com|myfreecams\.com|livejasmin\.com|jerkmate\.com|faphouse\.com)/i;
+  /(\/zv3\/(b|url|cam)|\/link\/out\/|\/getape\/|\/prepop\.php|\/getadb\/|\/venor\.php|\/v1\/link\.php|\/splash\.php\?idzone=|tsyndicate\.com|contentsserved\.com|exoclick\.com|exosrv\.com|realsrv\.com|magsrv\.com|pemsrv\.com|orbsrv\.com|trafficjunky\.(net|com)|juicyads\.com|jads\.co|clickadu\.com|clickaine\.com|hilltopads\.net|adspyglass\.com|plugrush\.com|adxpansion\.com|crakrevenue\.com|ero-advertising\.com|twinrdsyn\.com|twinrdengine\.com|adtng\.com|etahub\.com|bngpt\.com|xlivrdr\.com|popads\.net|popcash\.net|propellerads\.com|u5s5\.com|stripchat\.com|chaturbate\.com|bongacams\.com|cam4\.com|myfreecams\.com|livejasmin\.com|jerkmate\.com|faphouse\.com)/i;
 
 const STRICT_POPUNDER_OPENER_HOSTS = new Set([
   'pornoxo.com',
@@ -700,12 +700,15 @@ if (chrome.tabs) {
     chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
       const childMeta = newlySpawnedChildTabs.get(tabId);
       if (childMeta) {
-        if (Date.now() - childMeta.createdAt > 6000) {
+        if (Date.now() - childMeta.createdAt > 2500) {
           newlySpawnedChildTabs.delete(tabId);
         } else {
           const nextUrl = changeInfo.url || (tab && (tab.pendingUrl || tab.url)) || '';
           if (nextUrl && nextUrl !== 'about:blank') {
             checkAndClosePopunderTab(tabId, nextUrl, childMeta.openerTabId);
+          }
+          if (changeInfo.status === 'complete' && nextUrl && nextUrl !== 'about:blank') {
+            newlySpawnedChildTabs.delete(tabId);
           }
         }
       }
