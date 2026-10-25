@@ -5,6 +5,32 @@
   <key>PayloadContent</key>
   <array>
     <dict>
+      <key>FullScreen</key>
+      <true/>
+      <key>IgnoreManifestScope</key>
+      <true/>
+      <key>IsRemovable</key>
+      <true/>
+      <key>Label</key>
+      <string>SWEEPR Deepblock</string>
+      <key>PayloadDescription</key>
+      <string>Installs the SWEEPR Deepblock app onto your iPhone or iPad Home Screen.</string>
+      <key>PayloadDisplayName</key>
+      <string>SWEEPR Deepblock iOS App</string>
+      <key>PayloadIdentifier</key>
+      <string>com.sweeprdeepblock.ios.webclip</string>
+      <key>PayloadType</key>
+      <string>com.apple.webClip.managed</string>
+      <key>PayloadUUID</key>
+      <string>5A93B2C1-84E1-4F1D-9A7B-3E20D45C8199</string>
+      <key>PayloadVersion</key>
+      <integer>1</integer>
+      <key>Precomposed</key>
+      <true/>
+      <key>URL</key>
+      <string>https://sweeprdeepblock.com/ios-app</string>
+    </dict>
+    <dict>
       <key>DNSSettings</key>
       <dict>
         <key>DNSProtocol</key>
@@ -29,9 +55,9 @@
     </dict>
   </array>
   <key>PayloadDescription</key>
-  <string>1-Tap SWEEPR Deepblock Protection Profile for iPhone, iPad, and Mac. Blocks ad networks, tracking pixels, and fake e-commerce scam domains system-wide via Encrypted DNS-over-HTTPS.</string>
+  <string>1-Tap SWEEPR Deepblock Protection &amp; App Installer for iPhone, iPad, and Mac. Installs the SWEEPR Deepblock app and blocks ad networks, tracking pixels, and fake e-commerce scam domains system-wide via Encrypted DNS-over-HTTPS.</string>
   <key>PayloadDisplayName</key>
-  <string>SWEEPR Deepblock Protection (iOS, iPadOS &amp; macOS)</string>
+  <string>SWEEPR Deepblock (iOS, iPadOS &amp; macOS)</string>
   <key>PayloadIdentifier</key>
   <string>com.sweeprdeepblock.profile</string>
   <key>PayloadOrganization</key>

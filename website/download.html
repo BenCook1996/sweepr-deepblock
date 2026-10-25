@@ -137,6 +137,10 @@
           macOS (.command)
         </a>
         <span class="text-gray-300">&bull;</span>
+        <a href="/download/SWEEPRDeepblock.apk" download="SWEEPRDeepblock.apk" class="text-[11px] font-semibold text-gray-500 hover:text-emerald-700 underline">
+          Android (.apk)
+        </a>
+        <span class="text-gray-300">&bull;</span>
         <a href="/download/sweepr-deepblock.mobileconfig" class="text-[11px] font-semibold text-gray-500 hover:text-emerald-700 underline">
           Safari / iOS (.mobileconfig)
         </a>
@@ -216,19 +220,22 @@
 
     function detectCurrentBrowser() {
       var ua = navigator.userAgent || '';
-      var isIOS = /iPhone|iPad|iPod/i.test(ua);
+      var isIpadOs = navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1;
+      var isIOS = /iPhone|iPad|iPod/i.test(ua) || isIpadOs;
       var isAndroid = /Android/i.test(ua);
       var isMac = /Macintosh|Mac OS X/i.test(ua) && !isIOS;
       var isWindows = /Windows/i.test(ua);
       var os = isIOS ? 'ios' : isAndroid ? 'android' : isMac ? 'mac' : isWindows ? 'windows' : 'other';
 
       if (isIOS) {
+        var isNonSafariIos = /CriOS|FxiOS|EdgiOS|OPiOS|Instagram|FBAN|FBAV|TikTok|Line\/|wv/i.test(ua);
+        var hostClean = (window.location.host || 'sweeprdeepblock.com');
         return {
-          id: 'safari-ios',
+          id: isNonSafariIos ? 'ios-other' : 'safari-ios',
           os: 'ios',
-          name: 'iPhone / iPad (iOS Safari)',
-          icon: '🧭',
-          downloadHref: '/download/sweepr-deepblock.mobileconfig',
+          name: 'iPhone / iPad (iOS)',
+          icon: '🍎',
+          downloadHref: isNonSafariIos ? ('x-safari-https://' + hostClean + '/download/sweepr-deepblock.mobileconfig') : '/download/sweepr-deepblock.mobileconfig',
           downloadName: '',
           extUrl: 'Settings > General > VPN & Device Management'
         };
@@ -240,19 +247,19 @@
             os: 'android',
             name: 'Firefox for Android',
             icon: '🦊',
-            downloadHref: OFFICIAL_STORE_URLS.firefox || '/download/sweepr-deepblock-firefox.xpi',
-            downloadName: '',
-            extUrl: 'Add-ons Menu'
+            downloadHref: OFFICIAL_STORE_URLS.firefox || '/download/SWEEPRDeepblock.apk',
+            downloadName: 'SWEEPRDeepblock.apk',
+            extUrl: 'Download & Install SWEEPRDeepblock.apk (or Add-ons Menu)'
           };
         }
         return {
           id: 'android',
           os: 'android',
-          name: 'Android Device',
+          name: 'Android Phone / Tablet',
           icon: '📱',
-          downloadHref: '#androidDnsCard',
-          downloadName: '',
-          extUrl: 'Settings > Network & Internet > Private DNS'
+          downloadHref: '/download/SWEEPRDeepblock.apk',
+          downloadName: 'SWEEPRDeepblock.apk',
+          extUrl: 'Open SWEEPRDeepblock.apk to Install'
         };
       }
       if (/Firefox\//i.test(ua)) {
@@ -352,7 +359,16 @@
         }
       }
 
-      if (info.os === 'ios' || info.id === 'safari') {
+      var btnLabelEl = document.getElementById('addToBrowserBtnLabel');
+      if (info.os === 'ios') {
+        if (btnLabelEl) btnLabelEl.textContent = 'Install on iPhone & iPad';
+        if (step1El) {
+          step1El.innerHTML = '<strong>1. Tap "Install on iPhone &amp; iPad" above</strong> and tap <strong>Allow</strong> when Apple asks to download the SWEEPR Deepblock App &amp; Protection Profile.';
+        }
+        if (step2El) {
+          step2El.innerHTML = '<strong>2. Tap "Install" in Settings ⚙️</strong> — open <code class="font-mono bg-emerald-50 text-emerald-800 px-1.5 py-0.5 rounded border border-emerald-200">' + info.extUrl + '</code> and tap <strong>Install</strong> to add the SWEEPR Deepblock iOS App &amp; Ad Shield.';
+        }
+      } else if (info.id === 'safari') {
         if (step1El) {
           step1El.innerHTML = '<strong>1. Tap "Add to Browser" above</strong> and tap <strong>Allow</strong> when Apple asks to download the SWEEPR Deepblock Protection Profile.';
         }
@@ -360,12 +376,13 @@
           step2El.innerHTML = '<strong>2. Tap "Install" in Settings ⚙️</strong> — open <code class="font-mono bg-emerald-50 text-emerald-800 px-1.5 py-0.5 rounded border border-emerald-200">' + info.extUrl + '</code> and tap <strong>Install</strong> to activate Encrypted Ad &amp; Tracker Blocking.';
         }
       } else if (info.os === 'android') {
+        if (btnLabelEl) btnLabelEl.textContent = 'Download Android App (.apk)';
         if (androidCard) androidCard.classList.remove('hidden');
         if (step1El) {
-          step1El.innerHTML = '<strong>1. Tap "Copy DNS" above</strong> to copy <code class="font-mono bg-emerald-50 text-emerald-800 px-1.5 py-0.5 rounded border border-emerald-200">dns.adguard-dns.com</code>.';
+          step1El.innerHTML = '<strong>1. Tap "Download Android App (.apk)" above</strong> and open <code class="font-mono bg-emerald-50 text-emerald-800 px-1.5 py-0.5 rounded border border-emerald-200">SWEEPRDeepblock.apk</code> to install the SWEEPR Deepblock Android app.';
         }
         if (step2El) {
-          step2El.innerHTML = '<strong>2. Paste in Android Private DNS ⚙️</strong> — open <code class="font-mono bg-emerald-50 text-emerald-800 px-1.5 py-0.5 rounded border border-emerald-200">' + info.extUrl + '</code> and save to block ads &amp; trackers across all apps.';
+          step2El.innerHTML = '<strong>2. Activate &amp; Enable Shield ⚙️</strong> — enter your Pro license key or website QR pairing code inside the Android app to enable system-wide ad &amp; tracker blocking.';
         }
       } else if (info.id === 'firefox') {
         if (step1El) {
@@ -380,14 +397,6 @@
     }
 
     function handleAutoBrowserInstall() {
-      if (currentDetectedBrowser.os === 'android' && currentDetectedBrowser.id === 'android') {
-        var androidCard = document.getElementById('androidDnsCard');
-        if (androidCard) androidCard.classList.remove('hidden');
-        if (navigator.clipboard) {
-          navigator.clipboard.writeText('dns.adguard-dns.com').catch(function() {});
-        }
-        return;
-      }
       var banner = document.getElementById('installStartedBanner');
       var titleEl = document.getElementById('downloadBannerTitle');
       var descEl = document.getElementById('downloadBannerDesc');
@@ -396,7 +405,7 @@
         titleEl.textContent = '✓ Starting 1-Click Setup for ' + currentDetectedBrowser.name + '...';
       }
       if (descEl && currentDetectedBrowser.downloadName) {
-        descEl.innerHTML = 'Open <strong>' + currentDetectedBrowser.downloadName + '</strong> in your browser downloads bar — it automatically installs and activates SWEEPR Deepblock in 1 click (restoring all your open tabs, with zero manual unzipping or uploading!).';
+        descEl.innerHTML = 'Open <strong>' + currentDetectedBrowser.downloadName + '</strong> in your browser downloads bar to install and activate SWEEPR Deepblock.';
       }
     }
 
