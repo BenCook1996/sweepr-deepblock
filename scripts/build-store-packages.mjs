@@ -72,6 +72,7 @@ copyDirSync(EXT_DIR, ffStaging);
 
 const ffManifest = {
   ...baseManifest,
+  name: 'SWEEPR Deepblock: Ad & Cookie Blocker',
   background: {
     scripts: ['background.js'],
     service_worker: 'background.js'
