@@ -470,5 +470,226 @@
     "priority": 1,
     "action": { "type": "block" },
     "condition": { "urlFilter": "||bat.bing.com^", "resourceTypes": ["script", "image", "xmlhttprequest", "ping"] }
+  },
+  {
+    "id": 66,
+    "priority": 2,
+    "action": { "type": "block" },
+    "condition": { "urlFilter": "||tsyndicate.com^", "resourceTypes": ["script", "sub_frame", "image", "xmlhttprequest", "media", "ping"] }
+  },
+  {
+    "id": 67,
+    "priority": 2,
+    "action": { "type": "block" },
+    "condition": { "urlFilter": "||contentsserved.com^", "resourceTypes": ["script", "sub_frame", "image", "xmlhttprequest", "media"] }
+  },
+  {
+    "id": 68,
+    "priority": 2,
+    "action": { "type": "block" },
+    "condition": { "urlFilter": "||exoclick.com^", "resourceTypes": ["script", "sub_frame", "image", "xmlhttprequest", "media", "ping"] }
+  },
+  {
+    "id": 69,
+    "priority": 2,
+    "action": { "type": "block" },
+    "condition": { "urlFilter": "||exosrv.com^", "resourceTypes": ["script", "sub_frame", "image", "xmlhttprequest", "media", "ping"] }
+  },
+  {
+    "id": 70,
+    "priority": 2,
+    "action": { "type": "block" },
+    "condition": { "urlFilter": "||realsrv.com^", "resourceTypes": ["script", "sub_frame", "image", "xmlhttprequest", "media", "ping"] }
+  },
+  {
+    "id": 71,
+    "priority": 2,
+    "action": { "type": "block" },
+    "condition": { "urlFilter": "||magsrv.com^", "resourceTypes": ["script", "sub_frame", "image", "xmlhttprequest", "media", "ping"] }
+  },
+  {
+    "id": 72,
+    "priority": 2,
+    "action": { "type": "block" },
+    "condition": { "urlFilter": "||pemsrv.com^", "resourceTypes": ["script", "sub_frame", "image", "xmlhttprequest", "media", "ping"] }
+  },
+  {
+    "id": 73,
+    "priority": 2,
+    "action": { "type": "block" },
+    "condition": { "urlFilter": "||orbsrv.com^", "resourceTypes": ["script", "sub_frame", "image", "xmlhttprequest", "media", "ping"] }
+  },
+  {
+    "id": 74,
+    "priority": 2,
+    "action": { "type": "block" },
+    "condition": { "urlFilter": "||trafficjunky.net^", "resourceTypes": ["script", "sub_frame", "image", "xmlhttprequest", "media", "ping"] }
+  },
+  {
+    "id": 75,
+    "priority": 2,
+    "action": { "type": "block" },
+    "condition": { "urlFilter": "||trafficjunky.com^", "resourceTypes": ["script", "sub_frame", "image", "xmlhttprequest", "media", "ping"] }
+  },
+  {
+    "id": 76,
+    "priority": 2,
+    "action": { "type": "block" },
+    "condition": { "urlFilter": "||juicyads.com^", "resourceTypes": ["script", "sub_frame", "image", "xmlhttprequest", "media", "ping"] }
+  },
+  {
+    "id": 77,
+    "priority": 2,
+    "action": { "type": "block" },
+    "condition": { "urlFilter": "||jads.co^", "resourceTypes": ["script", "sub_frame", "image", "xmlhttprequest", "media", "ping"] }
+  },
+  {
+    "id": 78,
+    "priority": 2,
+    "action": { "type": "block" },
+    "condition": { "urlFilter": "||clickadu.com^", "resourceTypes": ["script", "sub_frame", "image", "xmlhttprequest", "media", "ping"] }
+  },
+  {
+    "id": 79,
+    "priority": 2,
+    "action": { "type": "block" },
+    "condition": { "urlFilter": "||clickaine.com^", "resourceTypes": ["script", "sub_frame", "image", "xmlhttprequest", "media", "ping"] }
+  },
+  {
+    "id": 80,
+    "priority": 3,
+    "action": { "type": "block" },
+    "condition": { "urlFilter": "/lv/esnk/*/code.js", "resourceTypes": ["script", "xmlhttprequest"] }
+  },
+  {
+    "id": 81,
+    "priority": 2,
+    "action": { "type": "block" },
+    "condition": { "urlFilter": "||hilltopads.net^", "resourceTypes": ["script", "sub_frame", "image", "xmlhttprequest", "media", "ping"] }
+  },
+  {
+    "id": 82,
+    "priority": 2,
+    "action": { "type": "block" },
+    "condition": { "urlFilter": "||adspyglass.com^", "resourceTypes": ["script", "sub_frame", "image", "xmlhttprequest", "media", "ping"] }
+  },
+  {
+    "id": 83,
+    "priority": 2,
+    "action": { "type": "block" },
+    "condition": { "urlFilter": "||plugrush.com^", "resourceTypes": ["script", "sub_frame", "image", "xmlhttprequest", "media"] }
+  },
+  {
+    "id": 84,
+    "priority": 2,
+    "action": { "type": "block" },
+    "condition": { "urlFilter": "||adxpansion.com^", "resourceTypes": ["script", "sub_frame", "image", "xmlhttprequest", "media"] }
+  },
+  {
+    "id": 85,
+    "priority": 2,
+    "action": { "type": "block" },
+    "condition": { "urlFilter": "||crakrevenue.com^", "resourceTypes": ["script", "sub_frame", "image", "xmlhttprequest"] }
+  },
+  {
+    "id": 86,
+    "priority": 2,
+    "action": { "type": "block" },
+    "condition": { "urlFilter": "||ero-advertising.com^", "resourceTypes": ["script", "sub_frame", "image", "xmlhttprequest"] }
+  },
+  {
+    "id": 87,
+    "priority": 2,
+    "action": { "type": "block" },
+    "condition": { "urlFilter": "||twinrdsyn.com^", "resourceTypes": ["script", "sub_frame", "image", "xmlhttprequest", "media"] }
+  },
+  {
+    "id": 88,
+    "priority": 2,
+    "action": { "type": "block" },
+    "condition": { "urlFilter": "||twinrdengine.com^", "resourceTypes": ["script", "sub_frame", "image", "xmlhttprequest", "media"] }
+  },
+  {
+    "id": 89,
+    "priority": 2,
+    "action": { "type": "block" },
+    "condition": { "urlFilter": "||adtng.com^", "resourceTypes": ["script", "sub_frame", "image", "xmlhttprequest", "media"] }
+  },
+  {
+    "id": 90,
+    "priority": 2,
+    "action": { "type": "block" },
+    "condition": { "urlFilter": "||etahub.com^", "resourceTypes": ["script", "sub_frame", "image", "xmlhttprequest", "media"] }
+  },
+  {
+    "id": 91,
+    "priority": 2,
+    "action": { "type": "block" },
+    "condition": { "urlFilter": "||bngpt.com^", "resourceTypes": ["script", "sub_frame", "image", "xmlhttprequest", "media"] }
+  },
+  {
+    "id": 92,
+    "priority": 2,
+    "action": { "type": "block" },
+    "condition": { "urlFilter": "||xlivrdr.com^", "resourceTypes": ["script", "sub_frame", "image", "xmlhttprequest", "media"] }
+  },
+  {
+    "id": 93,
+    "priority": 10,
+    "action": {
+      "type": "redirect",
+      "redirect": {
+        "url": "data:application/javascript;base64,d2luZG93LmV4bzk5SEwzOTAzampkeHRybkxvYWQ9dHJ1ZTt3aW5kb3cuaW5pdEVQTkI9ZnVuY3Rpb24oKXt9Ow=="
+      }
+    },
+    "condition": {
+      "urlFilter": "||eporner.com/dot/pop",
+      "resourceTypes": ["script"]
+    }
+  },
+  {
+    "id": 94,
+    "priority": 5,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||eporner.com/dot/dot.php",
+      "resourceTypes": ["xmlhttprequest", "script", "sub_frame", "ping"]
+    }
+  },
+  {
+    "id": 95,
+    "priority": 5,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||eporner.com/static/popCode",
+      "resourceTypes": ["script"]
+    }
+  },
+  {
+    "id": 96,
+    "priority": 5,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||eporner.com/getape/",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "xmlhttprequest"]
+    }
+  },
+  {
+    "id": 97,
+    "priority": 5,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||eporner.com/prepop.php",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "xmlhttprequest"]
+    }
+  },
+  {
+    "id": 98,
+    "priority": 5,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||eporner.com/getadb/",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "xmlhttprequest"]
+    }
   }
 ]

@@ -830,8 +830,59 @@
     [id*="ScriptRoot"],
     .mgbox,
     amp-ad,
-    amp-embed[type="taboola"] {
+    amp-embed[type="taboola"],
+    /* Streaming & Tube Ad Containers (Eporner, ExoClick, TrafficStars, TrafficJunky, JuicyAds, ClickAdu) */
+    #movieplayer-box-adv,
+    #movieplayer-box-adv-iframe,
+    #movieplayer-box-adv-NTVA,
+    #movieplayer-box-adv-NTVB,
+    #movieplayer-box-adv-NTVC,
+    .movieplayer-box-adv-box,
+    #adstripe,
+    #deskadmiddle,
+    #ifdeskadmiddle,
+    #admobiletop,
+    #admobiletopinside,
+    #admobilemiddle,
+    #ifadmiddle,
+    #footadframe,
+    #admobilefoot,
+    #admobilefootinside,
+    #adPlayerIfr,
+    #adPlayerIfrMob,
+    #videotextbanner,
+    #pbwuvpad,
+    #adnative-1x1-iframe,
+    #EPimLayerOuter,
+    #admobileoutstream,
+    #ifadoutstream,
+    .dotcontainer,
+    .adstext,
+    .adsinfo,
+    [id^="epad-"],
+    [data-ep-adzone],
+    [data-ts-spot],
+    [class^="__clb-"],
+    #divExoLayerWrapper,
+    iframe[src*="tsyndicate.com"],
+    iframe[src*="contentsserved.com"],
+    iframe[src*="exosrv.com"],
+    iframe[src*="exoclick.com"],
+    iframe[src*="realsrv.com"],
+    iframe[src*="magsrv.com"],
+    iframe[src*="pemsrv.com"],
+    iframe[src*="trafficjunky."],
+    iframe[src*="juicyads.com"],
+    iframe[src*="jads.co"] {
       display: none !important;
+      visibility: hidden !important;
+      height: 0 !important;
+      min-height: 0 !important;
+      pointer-events: none !important;
+    }
+    #moviexxx {
+      max-width: initial !important;
+      max-height: initial !important;
     }
   `;
 

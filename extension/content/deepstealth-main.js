@@ -671,4 +671,115 @@
       return txt;
     };
   }
+
+  // ============================================================================
+  // LAYER 6: Streaming Video VAST/In-Player JSON Sanitizer, Popunder Shield & Canary Guard
+  // Defeats first-party ad loaders (/dot/dot.php), VAST pre-rolls (/xhr/video/),
+  // popunder click-hijackers (/dot/pop4.php, exo99HL3903jjdxtrnLoad), and window.open traps.
+  // ============================================================================
+  try {
+    Object.defineProperty(window, 'exo99HL3903jjdxtrnLoad', {
+      value: true,
+      writable: false,
+      configurable: false
+    });
+  } catch (e) {
+    window.exo99HL3903jjdxtrnLoad = true;
+  }
+
+  try {
+    Object.defineProperty(window, 'initEPNB', {
+      value: function () {},
+      writable: false,
+      configurable: false
+    });
+  } catch (e) {}
+
+  // Wrap JSON.parse globally to strip VAST pre-roll/post-roll tags, inplayer pause ads, and first-party adCodes
+  const baseJsonParse = JSON.parse;
+  JSON.parse = function (text, reviver) {
+    const parsed = baseJsonParse.apply(this, arguments);
+    try {
+      if (isProEntitled() && parsed && typeof parsed === 'object') {
+        if (parsed.vast && typeof parsed.vast === 'object') {
+          parsed.vast.active = false;
+          parsed.vast.tag = '';
+          parsed.vast.adTagUrl = '';
+          if (parsed.vast.postroll && typeof parsed.vast.postroll === 'object') {
+            parsed.vast.postroll.active = false;
+            parsed.vast.postroll.tag = '';
+            parsed.vast.postroll.adTagUrl = '';
+          }
+          notifyStealthBypass('vast-preroll-json-stripped');
+        }
+        if (parsed.inplayer && typeof parsed.inplayer === 'object') {
+          parsed.inplayer.active = false;
+          if (parsed.inplayer.desktop) parsed.inplayer.desktop.active = false;
+          if (parsed.inplayer.mobile) parsed.inplayer.mobile.active = false;
+        }
+        if (parsed.inplayerLink && typeof parsed.inplayerLink === 'object') {
+          parsed.inplayerLink.active = false;
+        }
+        if (Array.isArray(parsed.adCodes)) {
+          parsed.adCodes = [];
+          parsed.status = 0;
+        }
+      }
+    } catch (e) {}
+    return parsed;
+  };
+
+  // Block popunders and ad-network window.open calls
+  const POPUNDER_URL_REGEX =
+    /(\/getape\/|\/prepop\.php|\/getadb\/|tsyndicate\.com|contentsserved\.com|exoclick\.com|exosrv\.com|realsrv\.com|magsrv\.com|pemsrv\.com|orbsrv\.com|trafficjunky\.(net|com)|juicyads\.com|jads\.co|clickadu\.com|clickaine\.com|\/lv\/esnk\/|hilltopads\.net|adspyglass\.com|plugrush\.com|adxpansion\.com|crakrevenue\.com|ero-advertising\.com|twinrdsyn\.com|twinrdengine\.com|adtng\.com|etahub\.com|bngpt\.com|xlivrdr\.com|popads\.net|popcash\.net|propellerads\.com)/i;
+
+  const origWindowOpen = window.open;
+  if (typeof origWindowOpen === 'function') {
+    window.open = function (url, target, features) {
+      const urlStr = String(url || '');
+      if (isProEntitled() && (!urlStr || urlStr === 'about:blank' || POPUNDER_URL_REGEX.test(urlStr))) {
+        notifyStealthBypass('popunder-window-open-blocked:' + urlStr);
+        return {
+          focus: function () {},
+          blur: function () {},
+          close: function () {},
+          closed: false,
+          location: { href: urlStr, assign: function () {}, replace: function () {} },
+          postMessage: function () {}
+        };
+      }
+      return origWindowOpen.apply(this, arguments);
+    };
+  }
+
+  // Neutralize Eporner first-party EP.ads object & expand video player container
+  if (/(^|\.)eporner\.com$/i.test(location.hostname)) {
+    const noop = function () {
+      return false;
+    };
+    const patchEpAds = () => {
+      try {
+        if (window.EP) {
+          window.EP.adblockFallbackPending = function () {
+            return false;
+          };
+          if (window.EP.ads) {
+            window.EP.ads.initialize = noop;
+            window.EP.ads.show = noop;
+            window.EP.ads.serve = noop;
+            window.EP.ads.showAd = noop;
+            window.EP.ads.showInplayerAds = noop;
+            window.EP.ads.refreshVideoPauseAds = noop;
+            if (window.EP.ads.ref) {
+              window.EP.ads.ref.check = noop;
+              window.EP.ads.ref.reload = noop;
+            }
+          }
+        }
+      } catch (e) {}
+    };
+    patchEpAds();
+    document.addEventListener('readystatechange', patchEpAds);
+    document.addEventListener('DOMContentLoaded', patchEpAds);
+  }
 })();
