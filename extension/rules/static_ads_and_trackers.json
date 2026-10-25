@@ -691,5 +691,203 @@
       "urlFilter": "||eporner.com/getadb/",
       "resourceTypes": ["main_frame", "sub_frame", "script", "xmlhttprequest"]
     }
+  },
+  {
+    "id": 99,
+    "priority": 5,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||pornoxo.com/link/out/",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "xmlhttprequest", "ping"]
+    }
+  },
+  {
+    "id": 100,
+    "priority": 5,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||pornoxo.com/ads/",
+      "resourceTypes": ["sub_frame", "script", "xmlhttprequest", "image", "media"]
+    }
+  },
+  {
+    "id": 101,
+    "priority": 5,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||pornoxo.com/pxo/www/js*.min.js?url=",
+      "resourceTypes": ["script", "xmlhttprequest"]
+    }
+  },
+  {
+    "id": 102,
+    "priority": 5,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||cdn77.pornoxo.com/pxo/www/js-v*/vast.min.js",
+      "resourceTypes": ["script", "xmlhttprequest"]
+    }
+  },
+  {
+    "id": 103,
+    "priority": 5,
+    "action": { "type": "block" },
+    "condition": {
+      "regexFilter": "^https?://cdn77\\.pornoxo\\.com/pxo/www/js-v[0-9.]+/[a-z0-9]{8}\\.min\\.js",
+      "resourceTypes": ["script"]
+    }
+  },
+  {
+    "id": 104,
+    "priority": 5,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||pornoxo.com/api/tiles?*advertiserName=",
+      "resourceTypes": ["xmlhttprequest", "sub_frame"]
+    }
+  },
+  {
+    "id": 105,
+    "priority": 5,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||pornoxo.com/banner-iframe",
+      "resourceTypes": ["sub_frame", "script", "xmlhttprequest"]
+    }
+  },
+  {
+    "id": 106,
+    "priority": 5,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||sxyprn.com/js/fad.json",
+      "resourceTypes": ["xmlhttprequest", "script"]
+    }
+  },
+  {
+    "id": 107,
+    "priority": 5,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||sxyprn.net/js/fad.json",
+      "resourceTypes": ["xmlhttprequest", "script"]
+    }
+  },
+  {
+    "id": 108,
+    "priority": 5,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||sxyprn.com/js/epo.js",
+      "resourceTypes": ["script"]
+    }
+  },
+  {
+    "id": 109,
+    "priority": 5,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||sxyprn.com/player/p12.js",
+      "resourceTypes": ["script"]
+    }
+  },
+  {
+    "id": 110,
+    "priority": 2,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||cdn-fc.com^",
+      "resourceTypes": ["script", "sub_frame", "image", "xmlhttprequest", "media"]
+    }
+  },
+  {
+    "id": 111,
+    "priority": 2,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||meteorpomposity.com^",
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "media"]
+    }
+  },
+  {
+    "id": 112,
+    "priority": 2,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||glutenmuttsensuous.com^",
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest", "media"]
+    }
+  },
+  {
+    "id": 113,
+    "priority": 2,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||cupbearergrowllurch.com^",
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest"]
+    }
+  },
+  {
+    "id": 114,
+    "priority": 2,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||hollowgoal.com^",
+      "resourceTypes": ["script", "sub_frame", "xmlhttprequest"]
+    }
+  },
+  {
+    "id": 115,
+    "priority": 3,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "/venor.php",
+      "resourceTypes": ["xmlhttprequest", "script", "sub_frame"]
+    }
+  },
+  {
+    "id": 116,
+    "priority": 3,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "/v1/link.php?*idzone=",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "xmlhttprequest"]
+    }
+  },
+  {
+    "id": 117,
+    "priority": 3,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "/splash.php?idzone=",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "xmlhttprequest", "media"]
+    }
+  },
+  {
+    "id": 118,
+    "priority": 5,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||eporner.com/js/bowser.php",
+      "resourceTypes": ["script", "xmlhttprequest"]
+    }
+  },
+  {
+    "id": 119,
+    "priority": 5,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||eporner.com/cppb/",
+      "resourceTypes": ["script", "sub_frame", "image", "xmlhttprequest"]
+    }
+  },
+  {
+    "id": 120,
+    "priority": 5,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||eporner.com/dotm/",
+      "resourceTypes": ["script", "sub_frame", "image", "xmlhttprequest"]
+    }
   }
 ]

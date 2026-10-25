@@ -674,9 +674,14 @@
 
   // ============================================================================
   // LAYER 6: Streaming Video VAST/In-Player JSON Sanitizer, Popunder Shield & Canary Guard
-  // Defeats first-party ad loaders (/dot/dot.php), VAST pre-rolls (/xhr/video/),
-  // popunder click-hijackers (/dot/pop4.php, exo99HL3903jjdxtrnLoad), and window.open traps.
+  // Defeats first-party ad loaders (/dot/dot.php, /js/fad.json), VAST pre-rolls (/xhr/video/, vast_urls),
+  // ExoClick popMagic reverse tab-unders, Pornoxo __videoPlayerData.popunder & /link/out/ overlays,
+  // PopAds/ClickAdu/AdSpyglass click-hijackers, and synthetic MouseEvent / <a target="_blank">.click() traps.
   // ============================================================================
+  const noopFn = function () {
+    return false;
+  };
+
   try {
     Object.defineProperty(window, 'exo99HL3903jjdxtrnLoad', {
       value: true,
@@ -689,13 +694,122 @@
 
   try {
     Object.defineProperty(window, 'initEPNB', {
-      value: function () {},
+      value: noopFn,
       writable: false,
       configurable: false
     });
   } catch (e) {}
 
-  // Wrap JSON.parse globally to strip VAST pre-roll/post-roll tags, inplayer pause ads, and first-party adCodes
+  // Neutralize ExoClick popMagic v7.0.0 & PopAds / OnClick / AdSpyglass globals before inline scripts run
+  try {
+    Object.defineProperty(window, 'exoJsPop101', {
+      value: Object.freeze({ add: noopFn }),
+      writable: false,
+      configurable: false
+    });
+  } catch (e) {}
+
+  try {
+    const popMagicStub = new Proxy(
+      {
+        version: 7,
+        url: '',
+        config: {},
+        open_count: 999,
+        top: window,
+        init: noopFn,
+        preparePop: noopFn,
+        shouldShow: () => false,
+        venorShouldShow: () => false,
+        addEvent: noopFn,
+        addEventToElement: noopFn,
+        buildUrl: () => '',
+        getunga: noopFn,
+        setAsOpened: noopFn,
+        isOpened: () => true,
+        loadHosted: noopFn,
+        findLinkToOpen: () => null,
+        methods: {
+          default: noopFn,
+          chromeTab: noopFn,
+          popup: noopFn
+        }
+      },
+      {
+        get(target, prop) {
+          return prop in target ? target[prop] : noopFn;
+        },
+        set() {
+          return true;
+        }
+      }
+    );
+    Object.defineProperty(window, 'popMagic', {
+      get: () => popMagicStub,
+      set: () => {},
+      configurable: false
+    });
+  } catch (e) {}
+
+  // Neutralize PopAds (_pop, popns, PopURL), OnClick Wasm loader (zomhphp), and AdSpyglass (__aaZoneid)
+  const dummyPopArray = [];
+  dummyPopArray.push = function () {
+    return 0;
+  };
+  safeDefine(window, '_pop', dummyPopArray);
+  safeDefine(window, 'popns', '0');
+  safeDefine(window, 'PopURL', '');
+  safeDefine(window, '__aaZoneid', undefined);
+  safeDefine(window, 'zomhphp', noopFn);
+  safeDefine(window, 'openPopunder', noopFn);
+  safeDefine(window, 'loadBannerContent', noopFn);
+  safeDefine(window, 'backgroundBanner', false);
+  safeDefine(window, 'Popunder', noopFn);
+  safeDefine(window, 'EPeventFire', noopFn);
+
+  // Neutralize sxyprn.com VAST pre-roll globals (use_vast, vast_urls, vast_time, conf_on_end, fadm)
+  safeDefine(window, 'use_vast', false);
+  safeDefine(window, 'vast_urls', {});
+  safeDefine(window, 'vast_time', []);
+  safeDefine(window, 'conf_on_end', false);
+  safeDefine(window, 'fadm', noopFn);
+
+  // Neutralize Pornoxo & sister-network __videoPlayerData.popunder & VAST properties
+  function sanitizeVideoPlayerData(obj) {
+    if (!obj || typeof obj !== 'object') return obj;
+    try {
+      obj.popunder = undefined;
+      Object.defineProperty(obj, 'popunder', {
+        get: () => undefined,
+        set: () => {},
+        configurable: true
+      });
+      if ('vast' in obj) obj.vast = undefined;
+      if ('vastURL' in obj) obj.vastURL = '';
+      if ('ads' in obj) obj.ads = undefined;
+      if ('preroll' in obj) obj.preroll = undefined;
+    } catch (e) {}
+    return obj;
+  }
+
+  let videoPlayerDataStore = sanitizeVideoPlayerData(window.__videoPlayerData);
+  try {
+    Object.defineProperty(window, '__videoPlayerData', {
+      get: () => videoPlayerDataStore,
+      set: (val) => {
+        videoPlayerDataStore = sanitizeVideoPlayerData(val);
+      },
+      configurable: true
+    });
+  } catch (e) {}
+
+  if (/(^|\.)pornoxo\.com$/i.test(location.hostname)) {
+    try {
+      sessionStorage.setItem('bnr_labadena1', 'true');
+    } catch (e) {}
+  }
+
+  // Wrap JSON.parse globally to strip VAST pre-roll/post-roll tags, inplayer pause ads, fad.json, and adCodes
   const baseJsonParse = JSON.parse;
   JSON.parse = function (text, reviver) {
     const parsed = baseJsonParse.apply(this, arguments);
@@ -724,29 +838,226 @@
           parsed.adCodes = [];
           parsed.status = 0;
         }
+        if ('use_v' in parsed && 'nvu' in parsed) {
+          parsed.use_v = 'false';
+          parsed.nvu = [];
+        }
+        if ('popunder' in parsed) {
+          parsed.popunder = undefined;
+        }
       }
     } catch (e) {}
     return parsed;
   };
 
-  // Block popunders and ad-network window.open calls
+  // Block popunders and ad-network URLs
   const POPUNDER_URL_REGEX =
-    /(\/getape\/|\/prepop\.php|\/getadb\/|tsyndicate\.com|contentsserved\.com|exoclick\.com|exosrv\.com|realsrv\.com|magsrv\.com|pemsrv\.com|orbsrv\.com|trafficjunky\.(net|com)|juicyads\.com|jads\.co|clickadu\.com|clickaine\.com|\/lv\/esnk\/|hilltopads\.net|adspyglass\.com|plugrush\.com|adxpansion\.com|crakrevenue\.com|ero-advertising\.com|twinrdsyn\.com|twinrdengine\.com|adtng\.com|etahub\.com|bngpt\.com|xlivrdr\.com|popads\.net|popcash\.net|propellerads\.com)/i;
+    /(\/link\/out\/|\/getape\/|\/prepop\.php|\/getadb\/|\/venor\.php|\/v1\/link\.php|\/splash\.php\?idzone=|banner-iframe|advertiserName=|tsyndicate\.com|contentsserved\.com|exoclick\.com|exosrv\.com|realsrv\.com|magsrv\.com|pemsrv\.com|orbsrv\.com|trafficjunky\.(net|com)|juicyads\.com|jads\.co|clickadu\.com|clickaine\.com|\/lv\/esnk\/|hilltopads\.net|adspyglass\.com|plugrush\.com|adxpansion\.com|crakrevenue\.com|ero-advertising\.com|twinrdsyn\.com|twinrdengine\.com|adtng\.com|etahub\.com|bngpt\.com|xlivrdr\.com|popads\.net|popcash\.net|propellerads\.com|cdn-fc\.com|meteorpomposity\.com|glutenmuttsensuous\.com|cupbearergrowllurch\.com|hollowgoal\.com)/i;
 
+  // Block dynamic popunder <script> injections via appendChild / insertBefore
+  const isBlockedDynamicScript = (node) => {
+    if (!isProEntitled() || !node || node.nodeType !== 1 || node.tagName !== 'SCRIPT') return false;
+    const src = String(node.src || node.getAttribute('src') || '');
+    const id = String(node.id || '');
+    if (
+      id === 'popmagicldr' ||
+      node.hasAttribute('data-clocid') ||
+      (node.settings && node.settings.misc && node.settings.misc.ignoreTo) ||
+      POPUNDER_URL_REGEX.test(src) ||
+      /\/pxo\/www\/js-v[0-9.]+\/[a-z0-9]{8}\.min\.js/i.test(src) ||
+      /\/pxo\/www\/js.*\.min\.js\?url=/i.test(src) ||
+      /\/on\.js(\?|$)/i.test(src)
+    ) {
+      return true;
+    }
+    return false;
+  };
+
+  const origAppendChild = Node.prototype.appendChild;
+  Node.prototype.appendChild = function (child) {
+    if (isBlockedDynamicScript(child)) {
+      notifyStealthBypass('dynamic-popunder-script-blocked');
+      return child;
+    }
+    return origAppendChild.apply(this, arguments);
+  };
+
+  const origInsertBefore = Node.prototype.insertBefore;
+  Node.prototype.insertBefore = function (newNode, refNode) {
+    if (isBlockedDynamicScript(newNode)) {
+      notifyStealthBypass('dynamic-popunder-script-blocked');
+      return newNode;
+    }
+    return origInsertBefore.apply(this, arguments);
+  };
+
+  // Block click-hijacking addEventListener registrations from popunder scripts
+  const POPUNDER_LISTENER_REGEX =
+    /popMagic|venorShouldShow|findLinkToOpen|executeOnRedirect|EPpopConfig|EPeventFire|openPopunder|__videoPlayerData\.popunder|loadBannerContent|Popunder\b|adblockFallbackPending|syndication_host|exoJsPop101|zomhphp/i;
+
+  const origAddEventListener = EventTarget.prototype.addEventListener;
+  EventTarget.prototype.addEventListener = function (type, listener, options) {
+    if (
+      isProEntitled() &&
+      listener &&
+      /^(click|mousedown|mouseup|pointerdown|pointerup|touchstart|touchend|auxclick)$/i.test(String(type))
+    ) {
+      try {
+        const fnSrc = typeof listener === 'function' ? Function.prototype.toString.call(listener) : '';
+        if (fnSrc && POPUNDER_LISTENER_REGEX.test(fnSrc)) {
+          notifyStealthBypass('popunder-listener-blocked:' + type);
+          return;
+        }
+      } catch (e) {}
+    }
+    return origAddEventListener.apply(this, arguments);
+  };
+
+  // Track last trusted user click so we can block any window.open() triggered when clicking a video player or normal link
+  let lastTrustedClickTarget = null;
+  let lastTrustedClickTime = 0;
+
+  origAddEventListener.call(
+    window,
+    'pointerdown',
+    function (e) {
+      if (e && e.isTrusted) {
+        lastTrustedClickTarget = e.target;
+        lastTrustedClickTime = Date.now();
+      }
+    },
+    true
+  );
+
+  // Capture-phase shield: prevent clicks on invisible video player ad overlays or /link/out/ popunder links
+  const VIDEO_AD_OVERLAY_SELECTOR =
+    '.new-videoplayer-overlay, .video-extra-overlay, #invideo_wrapper, .vast-overlay, .video-end-overlay, #movieplayer-box-adv, #divExoLayerWrapper, a.blinker, li.media-item.no-popup';
+
+  const blockOverlayClick = function (e) {
+    if (!isProEntitled() || !e || !e.target || typeof e.target.closest !== 'function') return;
+    const overlay = e.target.closest(VIDEO_AD_OVERLAY_SELECTOR);
+    if (overlay) {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      try {
+        overlay.remove();
+      } catch (err) {}
+      notifyStealthBypass('video-ad-overlay-click-neutralized');
+      return false;
+    }
+    const anchor = e.target.closest('a[href]');
+    if (anchor) {
+      const href = String(anchor.getAttribute('href') || anchor.href || '');
+      if (POPUNDER_URL_REGEX.test(href)) {
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        notifyStealthBypass('popunder-anchor-click-blocked:' + href);
+        return false;
+      }
+    }
+  };
+
+  origAddEventListener.call(window, 'click', blockOverlayClick, true);
+  origAddEventListener.call(window, 'auxclick', blockOverlayClick, true);
+  origAddEventListener.call(window, 'mousedown', blockOverlayClick, true);
+
+  // Block synthetic MouseEvent('click', { ctrlKey: true, metaKey: true }) tab-unders (used by popMagic.methods.chromeTab)
+  // and programmatic <a target="_blank">.click() popunders
+  const origDispatchEvent = EventTarget.prototype.dispatchEvent;
+  EventTarget.prototype.dispatchEvent = function (event) {
+    if (
+      isProEntitled() &&
+      event &&
+      !event.isTrusted &&
+      /^(click|mousedown|mouseup|auxclick)$/i.test(String(event.type))
+    ) {
+      if (event.ctrlKey || event.metaKey || event.button === 1) {
+        notifyStealthBypass('synthetic-ctrl-click-tabunder-blocked');
+        return false;
+      }
+      if (this && this.tagName === 'A') {
+        const href = String(this.href || this.getAttribute('href') || '');
+        if (
+          this.target === '_blank' ||
+          POPUNDER_URL_REGEX.test(href) ||
+          (this.hostname && this.hostname !== location.hostname)
+        ) {
+          notifyStealthBypass('synthetic-anchor-dispatch-blocked:' + href);
+          return false;
+        }
+      }
+    }
+    return origDispatchEvent.apply(this, arguments);
+  };
+
+  const origHtmlElementClick = HTMLElement.prototype.click;
+  if (typeof origHtmlElementClick === 'function') {
+    HTMLElement.prototype.click = function () {
+      if (isProEntitled() && this && this.tagName === 'A') {
+        const href = String(this.href || this.getAttribute('href') || '');
+        if (
+          this.target === '_blank' ||
+          POPUNDER_URL_REGEX.test(href) ||
+          (this.hostname && this.hostname !== location.hostname && !this.hasAttribute('download'))
+        ) {
+          notifyStealthBypass('programmatic-anchor-click-blocked:' + href);
+          return;
+        }
+      }
+      return origHtmlElementClick.apply(this, arguments);
+    };
+  }
+
+  // Upgrade window.open interceptor to block ad URLs, cross-origin _self tab-unders, and video-player click popunders
   const origWindowOpen = window.open;
   if (typeof origWindowOpen === 'function') {
     window.open = function (url, target, features) {
       const urlStr = String(url || '');
-      if (isProEntitled() && (!urlStr || urlStr === 'about:blank' || POPUNDER_URL_REGEX.test(urlStr))) {
-        notifyStealthBypass('popunder-window-open-blocked:' + urlStr);
-        return {
-          focus: function () {},
-          blur: function () {},
-          close: function () {},
-          closed: false,
-          location: { href: urlStr, assign: function () {}, replace: function () {} },
-          postMessage: function () {}
-        };
+      const targetStr = String(target || '');
+      if (isProEntitled()) {
+        let shouldBlock = !urlStr || urlStr === 'about:blank' || POPUNDER_URL_REGEX.test(urlStr);
+
+        // Block reverse tab-unders that call window.open(adUrl, "_self") or cross-origin window.open
+        if (!shouldBlock) {
+          try {
+            const parsedUrl = new URL(urlStr, location.href);
+            if (
+              (targetStr === '_self' || targetStr === '_top' || targetStr === 'top') &&
+              parsedUrl.hostname !== location.hostname
+            ) {
+              shouldBlock = true;
+            }
+          } catch (e) {}
+        }
+
+        // Block any window.open() triggered when the user clicks on a video player or a same-tab link
+        if (!shouldBlock && lastTrustedClickTarget && Date.now() - lastTrustedClickTime < 1500) {
+          try {
+            if (typeof lastTrustedClickTarget.closest === 'function') {
+              const clickedVideoOrLink = lastTrustedClickTarget.closest(
+                'video, [id*="player" i], [class*="player" i], [id*="video" i], [class*="video" i], .post_el_small, .js-pop, a:not([target="_blank"])'
+              );
+              if (clickedVideoOrLink) {
+                shouldBlock = true;
+              }
+            }
+          } catch (e) {}
+        }
+
+        if (shouldBlock) {
+          notifyStealthBypass('popunder-window-open-blocked:' + urlStr);
+          return {
+            focus: noopFn,
+            blur: noopFn,
+            close: noopFn,
+            closed: false,
+            document: { write: noopFn, open: noopFn, close: noopFn },
+            location: { href: urlStr, assign: noopFn, replace: noopFn },
+            postMessage: noopFn
+          };
+        }
       }
       return origWindowOpen.apply(this, arguments);
     };
@@ -754,32 +1065,27 @@
 
   // Neutralize Eporner first-party EP.ads object & expand video player container
   if (/(^|\.)eporner\.com$/i.test(location.hostname)) {
-    const noop = function () {
-      return false;
-    };
     const patchEpAds = () => {
       try {
         if (window.EP) {
-          window.EP.adblockFallbackPending = function () {
-            return false;
-          };
+          window.EP.adblockFallbackPending = noopFn;
           if (window.EP.ads) {
-            window.EP.ads.initialize = noop;
-            window.EP.ads.show = noop;
-            window.EP.ads.serve = noop;
-            window.EP.ads.showAd = noop;
-            window.EP.ads.showInplayerAds = noop;
-            window.EP.ads.refreshVideoPauseAds = noop;
+            window.EP.ads.initialize = noopFn;
+            window.EP.ads.show = noopFn;
+            window.EP.ads.serve = noopFn;
+            window.EP.ads.showAd = noopFn;
+            window.EP.ads.showInplayerAds = noopFn;
+            window.EP.ads.refreshVideoPauseAds = noopFn;
             if (window.EP.ads.ref) {
-              window.EP.ads.ref.check = noop;
-              window.EP.ads.ref.reload = noop;
+              window.EP.ads.ref.check = noopFn;
+              window.EP.ads.ref.reload = noopFn;
             }
           }
         }
       } catch (e) {}
     };
     patchEpAds();
-    document.addEventListener('readystatechange', patchEpAds);
-    document.addEventListener('DOMContentLoaded', patchEpAds);
+    origAddEventListener.call(document, 'readystatechange', patchEpAds);
+    origAddEventListener.call(document, 'DOMContentLoaded', patchEpAds);
   }
 })();

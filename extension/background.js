@@ -612,8 +612,82 @@ async function updateActionBadge(passedStats, passedSettings) {
   } catch (e) {}
 }
 
-// Refresh toolbar badge whenever user switches tabs or navigates
+const POPUNDER_TAB_URL_REGEX =
+  /(\/link\/out\/|\/getape\/|\/prepop\.php|\/getadb\/|\/venor\.php|\/v1\/link\.php|\/splash\.php\?idzone=|tsyndicate\.com|contentsserved\.com|exoclick\.com|exosrv\.com|realsrv\.com|magsrv\.com|pemsrv\.com|orbsrv\.com|trafficjunky\.(net|com)|juicyads\.com|jads\.co|clickadu\.com|clickaine\.com|hilltopads\.net|adspyglass\.com|plugrush\.com|adxpansion\.com|crakrevenue\.com|ero-advertising\.com|twinrdsyn\.com|twinrdengine\.com|adtng\.com|etahub\.com|bngpt\.com|xlivrdr\.com|popads\.net|popcash\.net|propellerads\.com|stripchat\.com|chaturbate\.com|bongacams\.com|cam4\.com|myfreecams\.com|livejasmin\.com|jerkmate\.com|faphouse\.com)/i;
+
+const STRICT_POPUNDER_OPENER_HOSTS = new Set([
+  'pornoxo.com',
+  'sxyprn.com',
+  'sxyprn.net',
+  'eporner.com',
+  'ashemaletube.com',
+  'fetishpapa.com',
+  'boyfriendtv.com'
+]);
+
+const newlySpawnedChildTabs = new Map();
+
+function normalizeHost(rawUrl) {
+  try {
+    return new URL(String(rawUrl || '')).hostname.replace(/^www\./i, '').toLowerCase();
+  } catch (e) {
+    return '';
+  }
+}
+
+async function checkAndClosePopunderTab(tabId, candidateUrl, openerTabId) {
+  if (!tabId || !candidateUrl || /^chrome(-extension)?:\/\//i.test(candidateUrl)) return false;
+  try {
+    const store = await chrome.storage.local.get(['settings', 'pausedSites']);
+    const settings = store.settings || DEFAULT_STATE.settings;
+    if (settings.adBlocking === false) return false;
+    const pausedSites = Array.isArray(store.pausedSites) ? store.pausedSites : [];
+
+    let openerHost = '';
+    if (openerTabId) {
+      try {
+        const openerTab = await chrome.tabs.get(openerTabId);
+        openerHost = normalizeHost(openerTab && openerTab.url);
+      } catch (e) {}
+    }
+    if (openerHost && pausedSites.includes(openerHost)) return false;
+
+    const childHost = normalizeHost(candidateUrl);
+    const isAdUrl = POPUNDER_TAB_URL_REGEX.test(candidateUrl);
+    const isCrossOriginFromStrictTube =
+      Boolean(openerHost && STRICT_POPUNDER_OPENER_HOSTS.has(openerHost)) &&
+      Boolean(childHost && childHost !== openerHost && !childHost.endsWith('.' + openerHost));
+
+    if (isAdUrl || isCrossOriginFromStrictTube) {
+      newlySpawnedChildTabs.delete(tabId);
+      await chrome.tabs.remove(tabId);
+      if (openerTabId) {
+        try {
+          await chrome.tabs.update(openerTabId, { active: true });
+        } catch (e) {}
+      }
+      queueDiagnosticStatIncrement('adsBlocked', 1);
+      return true;
+    }
+  } catch (e) {}
+  return false;
+}
+
+// Refresh toolbar badge whenever user switches tabs or navigates, and kill popunder ad tabs
 if (chrome.tabs) {
+  if (chrome.tabs.onCreated) {
+    chrome.tabs.onCreated.addListener((tab) => {
+      if (!tab || !tab.id || !tab.openerTabId) return;
+      newlySpawnedChildTabs.set(tab.id, {
+        openerTabId: tab.openerTabId,
+        createdAt: Date.now()
+      });
+      const initialUrl = tab.pendingUrl || tab.url || '';
+      if (initialUrl && initialUrl !== 'about:blank') {
+        checkAndClosePopunderTab(tab.id, initialUrl, tab.openerTabId);
+      }
+    });
+  }
   if (chrome.tabs.onActivated) {
     chrome.tabs.onActivated.addListener((activeInfo) => {
       if (activeInfo && activeInfo.tabId) {
@@ -624,6 +698,17 @@ if (chrome.tabs) {
   }
   if (chrome.tabs.onUpdated) {
     chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+      const childMeta = newlySpawnedChildTabs.get(tabId);
+      if (childMeta) {
+        if (Date.now() - childMeta.createdAt > 6000) {
+          newlySpawnedChildTabs.delete(tabId);
+        } else {
+          const nextUrl = changeInfo.url || (tab && (tab.pendingUrl || tab.url)) || '';
+          if (nextUrl && nextUrl !== 'about:blank') {
+            checkAndClosePopunderTab(tabId, nextUrl, childMeta.openerTabId);
+          }
+        }
+      }
       if (tab && tab.active) {
         recordTabActivity(tabId, Date.now());
       }
@@ -638,6 +723,7 @@ if (chrome.tabs) {
   }
   if (chrome.tabs.onRemoved) {
     chrome.tabs.onRemoved.addListener((tabId) => {
+      newlySpawnedChildTabs.delete(tabId);
       removeTabActivity(tabId);
       scamDetectedTabs.delete(tabId);
       scamReasonsByTab.delete(tabId);
