@@ -263,8 +263,14 @@ document.addEventListener('DOMContentLoaded', () => {
   try {
     const ua = (navigator.userAgent || '').toLowerCase();
     const isIpadOs = navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1;
-    const isMobile = /iphone|ipad|ipod|android|mobile|iemobile|opera mini/.test(ua) || isIpadOs;
+    const isIos = /iphone|ipad|ipod/.test(ua) || isIpadOs;
+    const isAndroid = ua.includes('android') || (ua.includes('linux') && navigator.maxTouchPoints > 0);
+    const isMobile = isIos || isAndroid || /mobile|iemobile|opera mini/.test(ua);
     if (isMobile) {
+      const targetHref = isIos ? '/download?platform=ios&direct=1' : '/download?platform=android&direct=1';
+      document.querySelectorAll('a[href^="/download"]').forEach((a) => {
+        a.setAttribute('href', targetHref);
+      });
       const osBtnLbl = document.getElementById('osDownloadText') || document.getElementById('downloadBtnLabel');
       if (osBtnLbl) {
         osBtnLbl.textContent = 'Install Now';

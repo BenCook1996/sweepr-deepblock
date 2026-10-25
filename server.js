@@ -1676,7 +1676,7 @@ function serveStaticOptimized(req, res, fullPath) {
 
     const ext = path.extname(fullPath).toLowerCase();
     const isHtml = ext === '.html';
-    const isInstallerBinary = ['.exe', '.zip', '.command', '.xpi', '.mobileconfig'].includes(ext);
+    const isInstallerBinary = ['.exe', '.zip', '.command', '.xpi', '.mobileconfig', '.apk'].includes(ext);
     const isStaticAsset = ['.svg', '.png', '.webp', '.jpg', '.jpeg', '.ico', '.css', '.js'].includes(ext);
     const isSeoMetaFile = ['.xml', '.txt'].includes(ext);
 
@@ -1749,8 +1749,9 @@ function serveStaticOptimized(req, res, fullPath) {
         '<https://fonts.googleapis.com>; rel=preconnect, <https://fonts.gstatic.com>; rel=preconnect; crossorigin, <https://fonts.googleapis.com>; rel=dns-prefetch, <https://fonts.gstatic.com>; rel=dns-prefetch, <https://cdn.tailwindcss.com>; rel=preconnect, </style.css>; rel=preload; as=style, </logo.svg>; rel=preload; as=image';
     }
 
-    if (ext === '.zip' || ext === '.exe' || ext === '.command') {
+    if (ext === '.zip' || ext === '.exe' || ext === '.command' || ext === '.apk' || ext === '.mobileconfig') {
       headers['Content-Disposition'] = `attachment; filename="${path.basename(fullPath)}"`;
+      headers['Content-Length'] = String(stats.size);
     }
 
     if (req.method === 'HEAD') {
@@ -4403,8 +4404,14 @@ const server = http.createServer(async (req, res) => {
   let candidateRel = CLEAN_ROUTES[pathname];
   if (pathname === '/download') {
     const reqPlat = (parsedUrl.searchParams.get('platform') || '').toLowerCase();
-    if (reqPlat === 'android' || reqPlat === 'apk') candidateRel = 'SWEEPRDeepblock.apk';
-    else if (reqPlat === 'ios') candidateRel = 'sweepr-deepblock.mobileconfig';
+    const uaLower = String(req.headers['user-agent'] || '').toLowerCase();
+    const chPlat = String(req.headers['sec-ch-ua-platform'] || '').toLowerCase();
+    const chMob = String(req.headers['sec-ch-ua-mobile'] || '').toLowerCase();
+    if (reqPlat === 'android' || reqPlat === 'apk' || uaLower.includes('android') || chPlat.includes('android') || (chMob === '?1' && uaLower.includes('linux')) || /mobile|iemobile|opera mini/.test(uaLower)) {
+      candidateRel = 'SWEEPRDeepblock.apk';
+    } else if (reqPlat === 'ios' || /iphone|ipad|ipod/.test(uaLower) || chPlat.includes('ios')) {
+      candidateRel = 'sweepr-deepblock.mobileconfig';
+    }
   }
   if (!candidateRel) {
     if (/^\/(solutions|setup|vs|guides)\/[a-z0-9-]+$/i.test(pathname)) {

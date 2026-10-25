@@ -338,9 +338,14 @@
           try {
             var ua = (navigator.userAgent || '').toLowerCase();
             var isIpadOs = navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1;
+            var isIos = /iphone|ipad|ipod/.test(ua) || isIpadOs;
+            var isAndroid = ua.indexOf('android') !== -1 || (ua.indexOf('linux') !== -1 && navigator.maxTouchPoints > 0);
+            var isMobile = isIos || isAndroid || /mobile|iemobile|opera mini/.test(ua);
             var el = document.getElementById('osDownloadText');
-            if (el && (/iphone|ipad|ipod|android|mobile|iemobile|opera mini/.test(ua) || isIpadOs)) {
-              el.textContent = 'Install Now';
+            var btn = document.getElementById('downloadBtn');
+            if (isMobile) {
+              if (el) el.textContent = 'Install Now';
+              if (btn) btn.setAttribute('href', isIos ? '/download?platform=ios&direct=1' : '/download?platform=android&direct=1');
             }
           } catch (e) {}
         })();
@@ -662,10 +667,26 @@
       <div class="text-xs font-extrabold text-gray-900 truncate">SWEEPR Deepblock</div>
       <div class="text-[11px] font-semibold text-emerald-700 truncate">🛡️ 14-Day Money-Back Guarantee</div>
     </div>
-    <a href="/download?install=1" class="btn btn-go !h-9 !px-3.5 !rounded-xl text-xs gap-1.5 shrink-0">
+    <a href="/download?install=1" id="mobileStickyDownloadBtn" class="btn btn-go !h-9 !px-3.5 !rounded-xl text-xs gap-1.5 shrink-0">
       <span>Install Now</span>
       <svg class="arrow-icon w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
     </a>
   </div>
+  <script>
+    (function() {
+      try {
+        var ua = (navigator.userAgent || '').toLowerCase();
+        var isIpadOs = navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1;
+        var isIos = /iphone|ipad|ipod/.test(ua) || isIpadOs;
+        var isAndroid = ua.indexOf('android') !== -1 || (ua.indexOf('linux') !== -1 && navigator.maxTouchPoints > 0);
+        if (isIos || isAndroid || /mobile|iemobile|opera mini/.test(ua)) {
+          var targetHref = isIos ? '/download?platform=ios&direct=1' : '/download?platform=android&direct=1';
+          document.querySelectorAll('a[href^="/download"]').forEach(function(a) {
+            a.setAttribute('href', targetHref);
+          });
+        }
+      } catch (e) {}
+    })();
+  </script>
 </body>
 </html>
