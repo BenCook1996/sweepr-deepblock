@@ -1,84 +1,66 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="robots" content="noindex, nofollow" />
-  <title>SWEEPR Mobile UI/UX Redesign Mockups | Internal Review</title>
+  <title>SWEEPR VPN Mobile — 5 Interactive UI/UX Design Concepts</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;600;700&display=swap');
-
-    /* ==========================================================================
-       1. SEMANTIC DESIGN TOKENS (WEB-TO-MOBILE TRANSLATION — WCAG AAA VERIFIED)
-       ========================================================================== */
-    :root[data-theme="dark"] {
-      --canvas-bg: #060A12;
-      --workbench-panel: #0B1220;
-      --workbench-border: #1E293B;
-      --surface-primary: #070B14;       /* True OLED-optimized abyssal slate */
-      --surface-elevated: #0F172A;      /* Primary card surface */
-      --surface-interactive: #1E293B;   /* Tappable pill / row surface */
-      --surface-glass: rgba(15, 23, 42, 0.88);
-      --text-primary: #F8FAFC;          /* 17.4:1 contrast vs surface-primary (AAA) */
-      --text-secondary: #CBD5E1;        /* 11.2:1 contrast vs surface-primary (AAA) */
-      --text-muted: #94A3B8;            /* 7.1:1 contrast vs surface-primary (AAA) */
-      --border-subtle: rgba(148, 163, 184, 0.16);
-      --border-strong: rgba(148, 163, 184, 0.32);
-
-      /* 4 Core VPN State Semantic Tokens */
-      --status-disconnected-fg: #94A3B8;
-      --status-disconnected-bg: rgba(148, 163, 184, 0.12);
-      --status-disconnected-border: rgba(148, 163, 184, 0.28);
-
-      --status-connecting-fg: #FBBF24;  /* Amber 400 — 11.6:1 contrast on dark */
-      --status-connecting-bg: rgba(251, 191, 36, 0.14);
-      --status-connecting-border: rgba(251, 191, 36, 0.42);
-
-      --status-secure-fg: #34D399;      /* Emerald 400 — 10.8:1 contrast on dark */
-      --status-secure-solid: #10B981;
-      --status-secure-bg: rgba(16, 185, 129, 0.15);
-      --status-secure-border: rgba(52, 211, 153, 0.45);
-      --status-secure-cta-text: #022C22;
-
-      --status-critical-fg: #FCA5A5;    /* Red 300 — 9.8:1 contrast on dark */
-      --status-critical-solid: #EF4444;
-      --status-critical-bg: rgba(239, 68, 68, 0.16);
-      --status-critical-border: rgba(248, 113, 113, 0.5);
-    }
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;600;700;800&display=swap');
 
     :root[data-theme="light"] {
-      --canvas-bg: #EEF2F6;
-      --workbench-panel: #FFFFFF;
-      --workbench-border: #CBD5E1;
-      --surface-primary: #F8FAFC;       /* High-luminance outdoor-readable canvas */
-      --surface-elevated: #FFFFFF;      /* Pure white card surface */
-      --surface-interactive: #F1F5F9;   /* Tappable pill / row surface */
-      --surface-glass: rgba(255, 255, 255, 0.92);
-      --text-primary: #0F172A;          /* 16.8:1 contrast vs surface-elevated (AAA) */
-      --text-secondary: #334155;        /* 10.4:1 contrast vs surface-elevated (AAA) */
-      --text-muted: #475569;            /* 7.5:1 contrast vs surface-elevated (AAA) */
-      --border-subtle: #E2E8F0;
-      --border-strong: #CBD5E1;
+      --page-bg: #EEF2F6;
+      --bar-bg: rgba(255, 255, 255, 0.94);
+      --bar-border: #CBD5E1;
+      --text-main: #0F172A;
+      --text-sub: #334155;
+      --text-muted: #64748B;
+      --card-bg: #FFFFFF;
+      --card-sub: #F1F5F9;
+      --card-border: #E2E8F0;
+      --card-border-strong: #CBD5E1;
+      --phone-screen: #F8FAFC;
+      --accent: #059669;
+      --accent-bright: #10B981;
+      --accent-soft: #D1FAE5;
+      --accent-border: #10B981;
+      --accent-fg: #065F46;
+      --amber-soft: #FEF3C7;
+      --amber-fg: #92400E;
+      --amber-border: #F59E0B;
+      --red-soft: #FEE2E2;
+      --red-fg: #991B1B;
+      --red-border: #EF4444;
+      --map-bg: #E2E8F0;
+      --map-land: #CBD5E1;
+      --shadow-phone: 0 24px 54px rgba(15, 23, 42, 0.16);
+    }
 
-      /* 4 Core VPN State Semantic Tokens (High-Contrast Daylight Safe) */
-      --status-disconnected-fg: #475569;
-      --status-disconnected-bg: #E2E8F0;
-      --status-disconnected-border: #94A3B8;
-
-      --status-connecting-fg: #92400E;  /* Amber 800 — 7.8:1 contrast on light */
-      --status-connecting-bg: #FEF3C7;
-      --status-connecting-border: #F59E0B;
-
-      --status-secure-fg: #065F46;      /* Emerald 800 — 8.2:1 contrast on light */
-      --status-secure-solid: #059669;
-      --status-secure-bg: #D1FAE5;
-      --status-secure-border: #059669;
-      --status-secure-cta-text: #FFFFFF;
-
-      --status-critical-fg: #991B1B;    /* Red 800 — 8.6:1 contrast on light */
-      --status-critical-solid: #DC2626;
-      --status-critical-bg: #FEE2E2;
-      --status-critical-border: #DC2626;
+    :root[data-theme="dark"] {
+      --page-bg: #050811;
+      --bar-bg: rgba(11, 18, 32, 0.94);
+      --bar-border: #1E293B;
+      --text-main: #F8FAFC;
+      --text-sub: #CBD5E1;
+      --text-muted: #94A3B8;
+      --card-bg: #0F172A;
+      --card-sub: #1E293B;
+      --card-border: rgba(148, 163, 184, 0.16);
+      --card-border-strong: rgba(148, 163, 184, 0.32);
+      --phone-screen: #070B14;
+      --accent: #10B981;
+      --accent-bright: #34D399;
+      --accent-soft: rgba(16, 185, 129, 0.15);
+      --accent-border: rgba(52, 211, 153, 0.45);
+      --accent-fg: #34D399;
+      --amber-soft: rgba(251, 191, 36, 0.15);
+      --amber-fg: #FBBF24;
+      --amber-border: rgba(251, 191, 36, 0.45);
+      --red-soft: rgba(239, 68, 68, 0.18);
+      --red-fg: #FCA5A5;
+      --red-border: rgba(248, 113, 113, 0.5);
+      --map-bg: #09101F;
+      --map-land: #1E293B;
+      --shadow-phone: 0 28px 64px rgba(0, 0, 0, 0.55);
     }
 
     * {
@@ -90,8 +72,8 @@
 
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: var(--canvas-bg);
-      color: var(--text-primary);
+      background: var(--page-bg);
+      color: var(--text-main);
       min-height: 100vh;
       transition: background 0.2s ease, color 0.2s ease;
     }
@@ -102,72 +84,62 @@
     }
 
     /* ==========================================================================
-       WORKBENCH TOP CONTROL BAR
+       STICKY GALLERY CONTROL HEADER
        ========================================================================== */
-    .workbench-header {
+    .top-header {
       position: sticky;
       top: 0;
-      z-index: 200;
-      background: var(--workbench-panel);
-      border-bottom: 1px solid var(--workbench-border);
-      padding: 14px 24px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+      z-index: 300;
+      background: var(--bar-bg);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--bar-border);
+      padding: 12px 24px;
     }
-    .workbench-header-inner {
-      max-width: 1440px;
+    .top-header-inner {
+      max-width: 1680px;
       margin: 0 auto;
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      gap: 14px;
+      gap: 12px;
     }
-    .wb-brand {
+    .brand-row {
       display: flex;
       align-items: center;
       gap: 12px;
     }
-    .wb-logo {
+    .brand-logo {
       width: 36px;
       height: 36px;
       border-radius: 10px;
       background: linear-gradient(135deg, #10B981, #059669);
+      color: #fff;
+      font-weight: 900;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #fff;
-      font-weight: 900;
       box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
     }
-    .wb-title {
-      font-size: 15px;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-    }
-    .wb-subtitle {
-      font-size: 11.5px;
-      color: var(--text-muted);
-      font-weight: 600;
-    }
-
-    .wb-controls {
+    .ctrl-bar {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       gap: 10px;
     }
-    .ctrl-group {
+    .pill-group {
       display: inline-flex;
-      background: var(--surface-interactive);
-      border: 1px solid var(--border-subtle);
+      background: var(--card-sub);
+      border: 1px solid var(--card-border);
       border-radius: 12px;
       padding: 3px;
       gap: 3px;
     }
-    .ctrl-btn {
+    .pill-btn {
       border: none;
       background: transparent;
-      color: var(--text-secondary);
+      color: var(--text-sub);
       font-size: 12px;
       font-weight: 700;
       padding: 7px 12px;
@@ -178,1302 +150,902 @@
       gap: 6px;
       transition: all 0.15s ease;
     }
-    .ctrl-btn:hover {
-      color: var(--text-primary);
-    }
-    .ctrl-btn.active {
-      background: var(--surface-elevated);
-      color: var(--text-primary);
-      box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+    .pill-btn.active {
+      background: var(--card-bg);
+      color: var(--text-main);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
     }
     .dot {
       width: 8px;
       height: 8px;
-      border-radius: 999px;
-    }
-
-    /* Haptic Toast Banner */
-    .haptic-indicator {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      z-index: 300;
-      background: var(--surface-elevated);
-      border: 1px solid var(--status-secure-border);
-      color: var(--text-primary);
-      padding: 10px 16px;
-      border-radius: 14px;
-      font-size: 12px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      box-shadow: 0 12px 32px rgba(0,0,0,0.3);
-      transform: translateY(80px);
-      opacity: 0;
-      transition: all 0.22s cubic-bezier(0.22, 1, 0.36, 1);
-      pointer-events: none;
-    }
-    .haptic-indicator.show {
-      transform: translateY(0);
-      opacity: 1;
+      border-radius: 99px;
     }
 
     /* ==========================================================================
-       WORKBENCH MAIN GRID & DEVICE FRAMES
+       CONCEPT SELECTOR BAR
        ========================================================================== */
-    .workbench-main {
-      max-width: 1440px;
-      margin: 24px auto 64px;
+    .concept-bar {
+      max-width: 1680px;
+      margin: 20px auto 0;
       padding: 0 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 32px;
-    }
-
-    .screen-tabs {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      border-bottom: 1px solid var(--border-subtle);
-      padding-bottom: 14px;
-    }
-    .screen-tab {
-      padding: 10px 16px;
-      border-radius: 12px;
-      border: 1px solid var(--border-subtle);
-      background: var(--workbench-panel);
-      color: var(--text-secondary);
-      font-weight: 700;
-      font-size: 13px;
-      cursor: pointer;
-      display: flex;
       align-items: center;
+      justify-content: space-between;
+    }
+    .concept-tabs {
+      display: flex;
+      flex-wrap: wrap;
       gap: 8px;
     }
-    .screen-tab.active {
-      background: var(--status-secure-solid);
-      color: var(--status-secure-cta-text);
-      border-color: var(--status-secure-solid);
+    .concept-tab {
+      padding: 10px 15px;
+      border-radius: 12px;
+      border: 1px solid var(--card-border-strong);
+      background: var(--card-bg);
+      color: var(--text-sub);
+      font-size: 12.5px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .concept-tab.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+      box-shadow: 0 6px 16px rgba(16, 185, 129, 0.25);
     }
 
-    .showcase-grid {
+    /* ==========================================================================
+       GALLERY CONTAINER (ALL 5 SIDE-BY-SIDE OR FOCUSED)
+       ========================================================================== */
+    .gallery-grid {
+      max-width: 1680px;
+      margin: 20px auto 64px;
+      padding: 0 24px;
       display: grid;
-      grid-template-columns: 390px 1fr;
-      gap: 32px;
+      grid-template-columns: repeat(auto-fit, minmax(355px, 1fr));
+      gap: 28px;
       align-items: start;
-    }
-    @media (max-width: 980px) {
-      .showcase-grid {
-        grid-template-columns: 1fr;
-        justify-items: center;
-      }
+      justify-items: center;
     }
 
-    /* Phone Simulator Frame (iPhone 16 Pro / Pixel 9 Pro proportions: 390x820) */
-    .phone-frame {
-      width: 390px;
-      height: 820px;
-      background: var(--surface-primary);
-      border-radius: 52px;
-      border: 10px solid #1E293B;
-      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.38), inset 0 0 0 1px rgba(255,255,255,0.08);
+    .concept-column {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      width: 100%;
+      max-width: 376px;
+    }
+    .concept-header-card {
+      width: 100%;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      padding: 14px 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    }
+    .concept-tag {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: var(--accent-soft);
+      color: var(--accent-fg);
+      margin-bottom: 6px;
+    }
+    .concept-title {
+      font-size: 15px;
+      font-weight: 900;
+      letter-spacing: -0.01em;
+    }
+    .concept-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.45;
+      margin-top: 4px;
+    }
+
+    /* ==========================================================================
+       PHONE SIMULATOR SHELL (366 x 760)
+       ========================================================================== */
+    .phone {
+      width: 366px;
+      height: 760px;
+      background: var(--phone-screen);
+      border-radius: 48px;
+      border: 9px solid #1E293B;
+      box-shadow: var(--shadow-phone);
       position: relative;
       overflow: hidden;
       display: flex;
       flex-direction: column;
       user-select: none;
+      transition: background 0.2s ease;
     }
 
-    /* Thumb-Zone Ergonomic Heatmap Overlay */
-    .thumb-zone-overlay {
+    /* Thumb-Zone Overlay */
+    .tz-overlay {
       position: absolute;
       inset: 0;
-      z-index: 90;
+      z-index: 80;
       pointer-events: none;
       opacity: 0;
-      transition: opacity 0.25s ease;
+      transition: opacity 0.2s ease;
       display: flex;
       flex-direction: column;
     }
-    .thumb-zone-overlay.visible {
+    .tz-overlay.show {
       opacity: 1;
     }
-    .tz-top {
+    .tz-1 {
       height: 18%;
-      background: rgba(239, 68, 68, 0.18);
+      background: rgba(239, 68, 68, 0.16);
       border-bottom: 1.5px dashed #EF4444;
-      padding: 46px 14px 6px;
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      font-size: 10px;
+      padding: 42px 12px 4px;
+      font-size: 9.5px;
       font-weight: 800;
-      color: #FCA5A5;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
+      color: #EF4444;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
     }
-    .tz-mid {
+    .tz-2 {
       height: 24%;
-      background: rgba(245, 158, 11, 0.15);
+      background: rgba(245, 158, 11, 0.14);
       border-bottom: 1.5px dashed #F59E0B;
-      padding: 8px 14px;
+      padding: 6px 12px;
+      font-size: 9.5px;
+      font-weight: 800;
+      color: #D97706;
       display: flex;
+      justify-content: space-between;
       align-items: flex-end;
-      justify-content: space-between;
-      font-size: 10px;
-      font-weight: 800;
-      color: #FCD34D;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
     }
-    .tz-bottom {
+    .tz-3 {
       height: 58%;
-      background: radial-gradient(circle at 85% 85%, rgba(16, 185, 129, 0.28) 0%, rgba(16, 185, 129, 0.12) 70%);
-      padding: 12px 14px 84px;
+      background: radial-gradient(circle at 80% 80%, rgba(16, 185, 129, 0.26), rgba(16, 185, 129, 0.1));
+      padding: 10px 12px;
+      font-size: 9.5px;
+      font-weight: 800;
+      color: #059669;
       display: flex;
+      justify-content: space-between;
       align-items: flex-start;
-      justify-content: space-between;
-      font-size: 10px;
-      font-weight: 800;
-      color: #6EE7B7;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-    .thumb-zone-overlay.left-hand .tz-bottom {
-      background: radial-gradient(circle at 15% 85%, rgba(16, 185, 129, 0.28) 0%, rgba(16, 185, 129, 0.12) 70%);
     }
 
-    /* Status Bar & Dynamic Island */
-    .ios-statusbar {
-      height: 48px;
-      padding: 12px 24px 0;
+    .statusbar {
+      height: 44px;
+      padding: 10px 22px 0;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 700;
-      z-index: 40;
       flex-shrink: 0;
+      z-index: 30;
     }
-    .dynamic-island {
-      background: #000;
+    .island {
+      background: #090D16;
       color: #fff;
-      height: 28px;
-      padding: 0 12px;
-      border-radius: 999px;
+      height: 25px;
+      padding: 0 11px;
+      border-radius: 99px;
       display: flex;
       align-items: center;
-      gap: 8px;
-      font-size: 10.5px;
+      gap: 6px;
+      font-size: 10px;
       font-weight: 700;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
     }
 
-    /* Phone Screen Content Area */
-    .phone-body {
+    .screen-body {
       flex: 1;
+      padding: 10px 15px 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
       overflow-y: auto;
-      padding: 8px 16px 16px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 12px;
+      position: relative;
     }
-    .phone-body::-webkit-scrollbar {
-      width: 0;
-    }
+    .screen-body::-webkit-scrollbar { width: 0; }
 
-    /* ==========================================================================
-       PHONE INTERNAL COMPONENTS (THUMB-ZONE ARCHITECTED)
-       ========================================================================== */
-    /* Top Zone (15%): Passive Brand & Status Pill Only — Zero Critical Actions */
-    .app-top-passive {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 4px 2px;
-    }
-    .app-brand {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-weight: 900;
-      font-size: 15px;
-      letter-spacing: -0.02em;
-    }
-    .app-brand-badge {
-      width: 26px;
-      height: 26px;
-      border-radius: 8px;
-      background: linear-gradient(135deg, #10B981, #059669);
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 13px;
-      font-weight: 900;
-    }
-    .state-banner-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 5px 11px;
-      border-radius: 999px;
-      font-size: 11.5px;
-      font-weight: 800;
-      border: 1px solid var(--status-secure-border);
-      background: var(--status-secure-bg);
-      color: var(--status-secure-fg);
-      transition: all 0.2s ease;
-    }
-
-    /* Passive Telemetry Card (Top/Mid Zone) */
-    .telemetry-card {
-      background: var(--surface-elevated);
-      border: 1px solid var(--border-subtle);
-      border-radius: 20px;
-      padding: 14px 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .telemetry-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-    }
-    .t-item {
-      background: var(--surface-interactive);
-      border-radius: 12px;
-      padding: 9px 10px;
-    }
-    .t-label {
-      font-size: 10px;
-      font-weight: 700;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
-    .t-val {
-      font-size: 12.5px;
-      font-weight: 800;
-      margin-top: 3px;
-      color: var(--text-primary);
-    }
-
-    /* Live Speed Sparkline */
-    .sparkline-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding-top: 4px;
-      border-top: 1px solid var(--border-subtle);
-    }
-    .speed-pair {
-      display: flex;
-      gap: 14px;
-      font-size: 11.5px;
-      font-weight: 700;
-    }
-
-    /* ==========================================================================
-       BOTTOM 60% NATURAL THUMB ARC: PRIMARY INTERACTIVE STAGE
-       ========================================================================== */
-    .thumb-stage {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-top: auto;
-    }
-
-    /* Primary Connect / Disconnect Ergonomic Card */
-    .connect-deck {
-      background: var(--surface-elevated);
-      border: 1.5px solid var(--status-secure-border);
-      border-radius: 28px;
-      padding: 20px 18px;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 14px;
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.14);
-      transition: all 0.25s ease;
-    }
-
-    /* Deterministic 3-Step Handshake Progress Stepper */
-    .handshake-stepper {
-      display: none;
-      width: 100%;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 6px;
-      margin-bottom: 2px;
-    }
-    .handshake-stepper.visible {
-      display: grid;
-    }
-    .hs-step {
-      font-size: 10px;
-      font-weight: 700;
-      padding: 6px 4px;
-      border-radius: 8px;
-      background: var(--surface-interactive);
-      color: var(--text-muted);
-      border: 1px solid var(--border-subtle);
-    }
-    .hs-step.active {
-      background: var(--status-connecting-bg);
-      color: var(--status-connecting-fg);
-      border-color: var(--status-connecting-border);
-    }
-
-    /* Kill Switch Emergency Recovery Box */
-    .killswitch-alert {
-      display: none;
-      width: 100%;
-      background: var(--status-critical-bg);
-      border: 1px solid var(--status-critical-border);
-      border-radius: 16px;
-      padding: 12px;
-      text-align: left;
-      gap: 8px;
-      flex-direction: column;
-    }
-    .killswitch-alert.visible {
-      display: flex;
-    }
-
-    /* Master Ergonomic Connect Button (Positioned squarely in Thumb Arc) */
-    .master-connect-btn {
-      width: 100%;
-      min-height: 64px; /* Exceeds 48dp/44pt minimum */
-      border-radius: 20px;
-      border: none;
-      background: var(--status-secure-solid);
-      color: var(--status-secure-cta-text);
-      font-size: 16px;
-      font-weight: 900;
-      letter-spacing: -0.01em;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 20px;
-      box-shadow: 0 8px 24px rgba(16, 185, 129, 0.28);
-      transition: transform 0.12s ease, background 0.2s ease;
-    }
-    .master-connect-btn:active {
-      transform: scale(0.975);
-    }
-
-    /* Quick Server Switcher Pill (Directly below Connect Button in Thumb Zone) */
-    .quick-server-pill {
-      width: 100%;
-      min-height: 58px; /* 58px touch target */
-      background: var(--surface-elevated);
-      border: 1px solid var(--border-strong);
-      border-radius: 20px;
-      padding: 10px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      cursor: pointer;
-      color: var(--text-primary);
-      transition: transform 0.12s ease, border-color 0.2s ease;
-    }
-    .quick-server-pill:active {
-      transform: scale(0.985);
-    }
-    .qsp-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      text-align: left;
-    }
-    .flag-box {
-      width: 34px;
-      height: 24px;
-      border-radius: 6px;
+    /* Shared Flag SVG Container */
+    .flag-svg {
+      width: 30px;
+      height: 21px;
+      border-radius: 5px;
       overflow: hidden;
-      border: 1px solid var(--border-subtle);
+      border: 1px solid var(--card-border-strong);
       flex-shrink: 0;
-      display: flex;
+      display: inline-flex;
     }
-    .flag-box svg {
-      width: 100%;
-      height: 100%;
-      display: block;
-    }
+    .flag-svg svg { width: 100%; height: 100%; display: block; }
 
-    /* Quick Security Chips Row (52px height, 10px gap) */
-    .quick-chips-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-    .sec-chip {
-      min-height: 50px;
-      border-radius: 16px;
-      border: 1px solid var(--border-subtle);
-      background: var(--surface-elevated);
-      color: var(--text-primary);
-      padding: 8px 12px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 12px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    /* Bottom Navigation Bar (56dp height + 10px dead-space gap) */
-    .phone-bottom-nav {
-      height: 68px;
-      background: var(--surface-glass);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-top: 1px solid var(--border-subtle);
+    /* Shared Bottom Nav */
+    .b-nav {
+      height: 64px;
+      background: var(--bar-bg);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid var(--card-border);
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      padding: 6px 10px 12px;
-      gap: 8px;
+      padding: 5px 8px 10px;
+      gap: 6px;
       flex-shrink: 0;
-      z-index: 50;
+      z-index: 30;
     }
-    .p-nav-btn {
+    .b-nav-item {
       border: none;
       background: transparent;
       color: var(--text-muted);
-      border-radius: 14px;
+      border-radius: 12px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 4px;
-      font-size: 10.5px;
+      gap: 3px;
+      font-size: 10px;
       font-weight: 800;
       cursor: pointer;
     }
-    .p-nav-btn.active {
-      color: var(--status-secure-fg);
-      background: var(--status-secure-bg);
+    .b-nav-item.active {
+      color: var(--accent-fg);
+      background: var(--accent-soft);
     }
 
     /* ==========================================================================
-       RIGHT-SIDE SPECIFICATION & AUDIT PANEL
+       CONCEPT B SPECIFIC: VECTOR WORLD MAP & RADAR BEACON
        ========================================================================== */
-    .spec-panel {
+    .map-hero {
+      position: relative;
+      height: 235px;
+      background: var(--map-bg);
+      border-radius: 24px;
+      border: 1px solid var(--card-border);
+      overflow: hidden;
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      justify-content: space-between;
+      padding: 12px;
     }
-    .spec-card {
-      background: var(--workbench-panel);
-      border: 1px solid var(--workbench-border);
-      border-radius: 22px;
-      padding: 22px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-    .spec-card h2 {
-      font-size: 17px;
-      font-weight: 800;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .spec-card p {
-      font-size: 13.5px;
-      color: var(--text-secondary);
-      line-height: 1.55;
-    }
-    .token-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 12.5px;
-    }
-    .token-table th, .token-table td {
-      text-align: left;
-      padding: 10px 12px;
-      border-bottom: 1px solid var(--border-subtle);
-    }
-    .token-table th {
-      font-size: 11px;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      letter-spacing: 0.04em;
-    }
-    .swatch {
-      display: inline-block;
+    .radar-pulse {
+      position: absolute;
+      top: 44%;
+      left: 32%;
       width: 14px;
       height: 14px;
-      border-radius: 4px;
-      vertical-align: middle;
-      margin-right: 6px;
-      border: 1px solid rgba(148,163,184,0.4);
+      border-radius: 99px;
+      background: var(--accent-bright);
+      box-shadow: 0 0 0 8px rgba(16, 185, 129, 0.25), 0 0 0 18px rgba(16, 185, 129, 0.12);
     }
 
-    .server-row-item {
-      min-height: 56px;
-      border-radius: 16px;
-      border: 1px solid var(--border-subtle);
-      background: var(--surface-elevated);
-      padding: 10px 14px;
+    /* ==========================================================================
+       CONCEPT C SPECIFIC: TACTILE POWER ORB IN THUMB ZONE
+       ========================================================================== */
+    .power-orb-wrap {
       display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: space-between;
+      justify-content: center;
+      margin: 12px 0;
+    }
+    .power-orb {
+      width: 144px;
+      height: 144px;
+      border-radius: 999px;
+      border: 5px solid var(--accent-border);
+      background: radial-gradient(circle at 30% 30%, var(--accent-bright), var(--accent));
+      color: #ffffff;
+      box-shadow: 0 16px 40px rgba(16, 185, 129, 0.35), 0 0 0 12px var(--accent-soft);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
       cursor: pointer;
+      transition: all 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .power-orb:active {
+      transform: scale(0.94);
+    }
+
+    /* ==========================================================================
+       CONCEPT D SPECIFIC: SWISS HARDWARE TERMINAL
+       ========================================================================== */
+    .terminal-card {
+      background: var(--card-bg);
+      border: 1.5px solid var(--card-border-strong);
+      border-radius: 12px;
+      padding: 12px;
+    }
+    .terminal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px dashed var(--card-border-strong);
+      padding-bottom: 8px;
       margin-bottom: 8px;
+      font-size: 10.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
     }
-    .server-row-item.active {
-      border-color: var(--status-secure-border);
-      background: var(--status-secure-bg);
-    }
-    /* Colorblind-Safe Latency Bars */
-    .sig-bars {
-      display: inline-flex;
-      align-items: flex-end;
-      gap: 2px;
-      height: 14px;
-    }
-    .sig-bars span {
-      width: 3px;
-      border-radius: 1.5px;
-      background: var(--status-secure-solid);
+
+    /* ==========================================================================
+       CONCEPT E SPECIFIC: SOFT PORCELAIN & EMERALD AIR (CONSUMER LIGHT)
+       ========================================================================== */
+    .porcelain-card {
+      background: var(--card-bg);
+      border-radius: 26px;
+      padding: 18px;
+      border: 1px solid var(--card-border);
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
     }
   </style>
 </head>
 <body>
 
-  <!-- WORKBENCH STICKY HEADER -->
-  <header class="workbench-header">
-    <div class="workbench-header-inner">
-      <div class="wb-brand">
-        <div class="wb-logo">S</div>
+  <!-- STICKY GLOBAL CONTROLS -->
+  <header class="top-header">
+    <div class="top-header-inner">
+      <div class="brand-row">
+        <div class="brand-logo">S</div>
         <div>
-          <div class="wb-title">SWEEPR VPN Mobile — Principal UI/UX Redesign Workbench</div>
-          <div class="wb-subtitle">WCAG AAA Contrast &bull; Bottom-60% One-Handed Ergonomics &bull; 120Hz Deterministic State Machine</div>
+          <div style="font-size:15px;font-weight:900;letter-spacing:-0.02em">SWEEPR VPN Mobile — 5 Interactive UI/UX Design Concepts</div>
+          <div style="font-size:11.5px;color:var(--text-muted);font-weight:600">Compare 5 distinct mobile architectures side-by-side or focus on one &bull; Test Light/Dark &amp; 4 VPN States live</div>
         </div>
       </div>
 
-      <div class="wb-controls">
-        <!-- Theme Toggle -->
-        <div class="ctrl-group" role="group" aria-label="Theme Switcher">
-          <button class="ctrl-btn active" id="btnThemeDark" onclick="setTheme('dark')">OLED Dark (Default)</button>
-          <button class="ctrl-btn" id="btnThemeLight" onclick="setTheme('light')">Daylight Light (AAA)</button>
+      <div class="ctrl-bar">
+        <!-- Theme Toggle (Light by default per your preference!) -->
+        <div class="pill-group">
+          <button class="pill-btn active" id="btnLight" onclick="setGlobalTheme('light')">☀️ Light Mode (Default)</button>
+          <button class="pill-btn" id="btnDark" onclick="setGlobalTheme('dark')">🌙 OLED Dark Mode</button>
         </div>
 
-        <!-- 4 VPN States Switcher -->
-        <div class="ctrl-group" role="group" aria-label="VPN State Switcher">
-          <button class="ctrl-btn" id="st-disconnected" onclick="setVpnState('disconnected')">
-            <span class="dot" style="background:#94A3B8"></span> 1. Disconnected
+        <!-- 4 VPN States -->
+        <div class="pill-group">
+          <button class="pill-btn" id="stBtn-disconnected" onclick="setGlobalState('disconnected')">
+            <span class="dot" style="background:#94A3B8"></span> Disconnected
           </button>
-          <button class="ctrl-btn" id="st-connecting" onclick="setVpnState('connecting')">
-            <span class="dot" style="background:#FBBF24"></span> 2. Handshaking
+          <button class="pill-btn" id="stBtn-connecting" onclick="setGlobalState('connecting')">
+            <span class="dot" style="background:#F59E0B"></span> Handshaking
           </button>
-          <button class="ctrl-btn active" id="st-connected" onclick="setVpnState('connected')">
-            <span class="dot" style="background:#10B981"></span> 3. Connected
+          <button class="pill-btn active" id="stBtn-connected" onclick="setGlobalState('connected')">
+            <span class="dot" style="background:#10B981"></span> Connected (US)
           </button>
-          <button class="ctrl-btn" id="st-killswitch" onclick="setVpnState('killswitch')">
-            <span class="dot" style="background:#EF4444"></span> 4. Kill Switch Drop
+          <button class="pill-btn" id="stBtn-killswitch" onclick="setGlobalState('killswitch')">
+            <span class="dot" style="background:#EF4444"></span> Kill Switch
           </button>
         </div>
 
-        <!-- Thumb-Zone Overlay Toggle -->
-        <div class="ctrl-group">
-          <button class="ctrl-btn" id="btnThumbZone" onclick="toggleThumbZone()">
-            Thumb-Zone Arc Overlay
-          </button>
-          <button class="ctrl-btn" id="btnHandMode" onclick="toggleHandMode()" title="Switch Left/Right Hand Reachability">
-            Right-Handed
-          </button>
+        <!-- Thumb-Zone Arc Overlay -->
+        <div class="pill-group">
+          <button class="pill-btn" id="btnTz" onclick="toggleGlobalThumbZone()">👍 Thumb-Zone Overlay</button>
         </div>
       </div>
     </div>
   </header>
 
-  <main class="workbench-main">
-    <!-- 5 CORE SCREEN FLOW SELECTOR -->
-    <div class="screen-tabs">
-      <button class="screen-tab active" data-screen="home" onclick="switchScreen('home')">
-        1. Home Dashboard (Thumb-Zone Connect)
-      </button>
-      <button class="screen-tab" data-screen="servers" onclick="switchScreen('servers')">
-        2. Bottom-Sheet Server Picker
-      </button>
-      <button class="screen-tab" data-screen="security" onclick="switchScreen('security')">
-        3. Jargon-Free Security Controls
-      </button>
-      <button class="screen-tab" data-screen="ftux" onclick="switchScreen('ftux')">
-        4. Zero-Friction FTUX &amp; OS Permission Primer
-      </button>
-      <button class="screen-tab" data-screen="edge" onclick="switchScreen('edge')">
-        5. Edge Cases &amp; OS Widgets / Dynamic Island
-      </button>
+  <!-- CONCEPT FILTER TABS -->
+  <div class="concept-bar">
+    <div class="concept-tabs">
+      <button class="concept-tab active" data-filter="all" onclick="filterConcepts('all')">Compare All 5 Side-by-Side</button>
+      <button class="concept-tab" data-filter="a" onclick="filterConcepts('a')">1. Bento Thumb-Deck</button>
+      <button class="concept-tab" data-filter="b" onclick="filterConcepts('b')">2. Live Map + Sheet</button>
+      <button class="concept-tab" data-filter="c" onclick="filterConcepts('c')">3. Tactile Power Orb</button>
+      <button class="concept-tab" data-filter="d" onclick="filterConcepts('d')">4. Cyber Hardware Terminal</button>
+      <button class="concept-tab" data-filter="e" onclick="filterConcepts('e')">5. Porcelain Consumer Air</button>
     </div>
+  </div>
 
-    <div class="showcase-grid">
-      <!-- ====================================================================
-           INTERACTIVE MOBILE DEVICE SIMULATOR (390x820pt)
-           ==================================================================== -->
-      <div class="phone-frame" id="phoneFrame">
-        <!-- Optional Ergonomic Heatmap Overlay -->
-        <div class="thumb-zone-overlay" id="thumbOverlay">
-          <div class="tz-top">
-            <span>Hard Reach (Top 18%)</span>
-            <span>Passive Telemetry Only</span>
-          </div>
-          <div class="tz-mid">
-            <span>Stretch Zone (Mid 24%)</span>
-            <span>Secondary Cards</span>
-          </div>
-          <div class="tz-bottom">
-            <span>Natural One-Handed Thumb Arc (Bottom 58%)</span>
-            <span>All Primary Controls</span>
-          </div>
-        </div>
+  <!-- 5-CONCEPT GALLERY GRID -->
+  <main class="gallery-grid" id="galleryGrid">
 
-        <!-- iOS / Android Status Bar + Dynamic Island Live Activity -->
-        <div class="ios-statusbar">
-          <span class="mono">09:41</span>
-          <div class="dynamic-island" id="dynamicIsland">
-            <span class="dot" id="diDot" style="background:#10B981"></span>
-            <span id="diLabel" class="mono">VPN • UK-LON • 11ms</span>
-          </div>
-          <span class="mono">5G 100%</span>
-        </div>
+    <!-- ======================================================================
+         CONCEPT 1: ERGONOMIC BENTO DECK (APPLE / LINEAR INSPIRED)
+         ====================================================================== -->
+    <section class="concept-column" data-concept="a">
+      <div class="concept-header-card">
+        <span class="concept-tag">Concept 1 &bull; Institutional Minimalist</span>
+        <div class="concept-title">Ergonomic Bento Deck</div>
+        <p class="concept-desc">Structured modular Bento telemetry in the upper canvas with a full-width 64dp Connect bar and Server Pill anchored in the bottom thumb arc.</p>
+      </div>
 
-        <!-- ================================================================
-             SCREEN 1: HOME DASHBOARD
-             ================================================================ -->
-        <div class="phone-body" id="screen-home">
-          <!-- TOP PASSIVE HEADER (No critical buttons in top corners) -->
+      <div class="phone">
+        <div class="tz-overlay"><div class="tz-1"><span>Top 18%</span><span>Passive Only</span></div><div class="tz-2"><span>Mid 24%</span><span>Glanceable</span></div><div class="tz-3"><span>Bottom 58% Thumb Arc</span><span>Primary Controls</span></div></div>
+        <div class="statusbar"><span class="mono">09:41</span><div class="island"><span class="dot js-di-dot" style="background:#10B981"></span><span class="mono js-di-text">VPN • US-NYC • 28ms</span></div><span class="mono">5G</span></div>
+
+        <div class="screen-body">
+          <!-- Top Passive Brand & State -->
           <div>
-            <div class="app-top-passive">
-              <div class="app-brand">
-                <div class="app-brand-badge">S</div>
-                <span>SWEEPR <span style="color:var(--status-secure-solid)">VPN</span></span>
-              </div>
-              <div class="state-banner-pill" id="topStatePill">
-                <svg id="topStateIcon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
-                <span id="topStateText">ENCRYPTED &amp; SAFE</span>
-              </div>
-            </div>
-
-            <!-- PASSIVE TELEMETRY CARD (Tabular Numerals — Zero Layout Jitter) -->
-            <div class="telemetry-card" style="margin-top:10px">
-              <div style="display:flex;justify-content:space-between;align-items:center">
-                <div>
-                  <div class="t-label">Virtual Public IPv4</div>
-                  <div class="t-val mono" id="ipDisplay">185.212.164.42</div>
-                </div>
-                <span style="font-size:11px;font-weight:800;padding:4px 9px;border-radius:8px;background:var(--surface-interactive);color:var(--text-secondary)" class="mono">WireGuard • 10Gbps</span>
-              </div>
-
-              <div class="telemetry-grid">
-                <div class="t-item">
-                  <div class="t-label">Latency</div>
-                  <div class="t-val mono" id="pingDisplay">11 ms</div>
-                </div>
-                <div class="t-item">
-                  <div class="t-label">Session</div>
-                  <div class="t-val mono" id="timerDisplay">02:14:09</div>
-                </div>
-                <div class="t-item">
-                  <div class="t-label">Trackers</div>
-                  <div class="t-val mono" id="trackerDisplay">142 Blocked</div>
-                </div>
-              </div>
-
-              <div class="sparkline-row">
-                <div class="speed-pair mono">
-                  <span>↓ <strong id="downSpeed">84.2 Mbps</strong></span>
-                  <span>↑ <strong id="upSpeed">31.8 Mbps</strong></span>
-                </div>
-                <svg width="96" height="22" viewBox="0 0 96 22" fill="none" aria-label="Live throughput graph">
-                  <path d="M2 18 L16 14 L30 16 L44 7 L58 11 L72 4 L86 8 L94 3" stroke="var(--status-secure-solid)" stroke-width="2.2" stroke-linecap="round"/>
-                </svg>
-              </div>
-            </div>
-          </div>
-
-          <!-- NATURAL THUMB ARC (BOTTOM 60%): ALL INTERACTIVE CONTROLS -->
-          <div class="thumb-stage">
-            <div class="connect-deck" id="connectDeck">
-              <div style="display:flex;align-items:center;gap:10px">
-                <div id="heroShieldIcon" style="width:44px;height:44px;border-radius:14px;background:var(--status-secure-bg);color:var(--status-secure-fg);display:flex;align-items:center;justify-content:center">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
-                </div>
-                <div style="text-align:left">
-                  <div id="heroHeadline" style="font-size:15.5px;font-weight:900">Tunnel Active &bull; Zero Leaks</div>
-                  <div id="heroSubline" style="font-size:12px;color:var(--text-muted);font-weight:600">DNS, IPv6 &amp; Smart-TV WebRTC Shielded</div>
-                </div>
-              </div>
-
-              <!-- Deterministic 3-Step Stepper (Shown during Connecting State) -->
-              <div class="handshake-stepper" id="handshakeStepper">
-                <div class="hs-step active">1. Auth Keys</div>
-                <div class="hs-step active">2. Assign IP</div>
-                <div class="hs-step">3. Lock Tunnel</div>
-              </div>
-
-              <!-- Kill Switch Emergency Lockout Box (Shown during State 4) -->
-              <div class="killswitch-alert" id="killswitchAlert">
-                <div style="font-size:12px;font-weight:800;color:var(--status-critical-fg)">
-                  Kill Switch Engaged: Internet Paused to Prevent IP Leak
-                </div>
-                <div style="display:flex;gap:8px;margin-top:4px">
-                  <button onclick="setVpnState('connected')" style="flex:1;padding:9px;border-radius:10px;border:none;background:var(--status-critical-solid);color:#fff;font-size:11.5px;font-weight:800;cursor:pointer">Reconnect Now</button>
-                  <button onclick="setVpnState('disconnected')" style="padding:9px 12px;border-radius:10px;border:1px solid var(--status-critical-border);background:transparent;color:var(--text-primary);font-size:11.5px;font-weight:700;cursor:pointer">Unblock Web</button>
-                </div>
-              </div>
-
-              <!-- PRIMARY ERGONOMIC ACTION: 64px Height Master Connect Button -->
-              <button class="master-connect-btn" id="masterConnectBtn" onclick="cycleConnectState()">
-                <span id="masterBtnLabel">Connected — Tap to Pause</span>
-                <span class="mono" style="font-size:12px;opacity:0.9" id="masterBtnRight">PROTECTED</span>
-              </button>
-            </div>
-
-            <!-- QUICK SERVER SWITCHER PILL (58px Height — Thumb Arc) -->
-            <button class="quick-server-pill" onclick="switchScreen('servers'); triggerHaptic('Selection Tick (Light Impact)')">
-              <div class="qsp-left">
-                <div class="flag-box" id="homeFlagBox">
-                  <svg viewBox="0 0 60 40"><rect width="60" height="40" fill="#012169"/><path d="M0 0L60 40M60 0L0 40" stroke="#fff" stroke-width="8"/><path d="M0 0L60 40M60 0L0 40" stroke="#C8102E" stroke-width="4"/><path d="M30 0V40M0 20H60" stroke="#fff" stroke-width="12"/><path d="M30 0V40M0 20H60" stroke="#C8102E" stroke-width="7"/></svg>
-                </div>
-                <div>
-                  <div style="font-size:13.5px;font-weight:800" id="homeServerName">United Kingdom &middot; London</div>
-                  <div style="font-size:11px;color:var(--text-muted);font-weight:600" class="mono">Fastest Smart Node &bull; 11 ms &bull; 18% Load</div>
-                </div>
-              </div>
-              <span style="font-size:12px;font-weight:800;color:var(--status-secure-fg)">Change &rarr;</span>
-            </button>
-
-            <!-- QUICK SECURITY CHIPS (50px Height, 10px Dead Space) -->
-            <div class="quick-chips-row">
-              <button class="sec-chip" onclick="switchScreen('security'); triggerHaptic('Light Tick')">
-                <span>Kill Switch</span>
-                <span style="color:var(--status-secure-fg);font-weight:800">Always On</span>
-              </button>
-              <button class="sec-chip" onclick="switchScreen('security'); triggerHaptic('Light Tick')">
-                <span>Wi-Fi Shield</span>
-                <span style="color:var(--status-secure-fg);font-weight:800">Protected</span>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- ================================================================
-             SCREEN 2: SERVER PICKER SHEET
-             ================================================================ -->
-        <div class="phone-body" id="screen-servers" style="display:none">
-          <div>
-            <div style="width:40px;height:5px;border-radius:99px;background:var(--border-strong);margin:2px auto 12px"></div>
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-              <div style="font-size:17px;font-weight:900">Select Location</div>
-              <span style="font-size:11px;color:var(--text-muted);font-weight:700">Pull to refresh ping</span>
+              <div style="display:flex;align-items:center;gap:8px;font-weight:900;font-size:15px">
+                <span style="width:26px;height:26px;border-radius:8px;background:var(--accent);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:13px">S</span>
+                SWEEPR <span style="color:var(--accent)">VPN</span>
+              </div>
+              <span class="js-badge" style="font-size:11px;font-weight:800;padding:4px 10px;border-radius:99px;background:var(--accent-soft);color:var(--accent-fg);border:1px solid var(--accent-border)">ENCRYPTED</span>
             </div>
 
-            <!-- Specialty Filter Pills -->
-            <div style="display:flex;gap:6px;margin-bottom:12px;overflow-x:auto">
-              <span style="padding:7px 12px;border-radius:99px;background:var(--status-secure-solid);color:var(--status-secure-cta-text);font-size:11.5px;font-weight:800">All (8)</span>
-              <span style="padding:7px 12px;border-radius:99px;background:var(--surface-elevated);border:1px solid var(--border-subtle);font-size:11.5px;font-weight:700">Streaming</span>
-              <span style="padding:7px 12px;border-radius:99px;background:var(--surface-elevated);border:1px solid var(--border-subtle);font-size:11.5px;font-weight:700">P2P</span>
-              <span style="padding:7px 12px;border-radius:99px;background:var(--surface-elevated);border:1px solid var(--border-subtle);font-size:11.5px;font-weight:700">Double VPN</span>
-            </div>
-
-            <!-- Fastest Smart Location at Top -->
-            <div class="server-row-item active" onclick="pickMockServer('United Kingdom · London', '11 ms')">
-              <div class="qsp-left">
-                <div style="width:34px;height:34px;border-radius:10px;background:var(--status-secure-solid);color:var(--status-secure-cta-text);display:flex;align-items:center;justify-content:center;font-weight:900">⚡</div>
+            <!-- Bento Grid Telemetry -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+              <div style="grid-column:span 2;background:var(--card-bg);border:1px solid var(--card-border);border-radius:18px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center">
                 <div>
-                  <div style="font-size:13.5px;font-weight:800">Fastest Available (Smart)</div>
-                  <div style="font-size:11px;color:var(--text-muted)">Auto-routes to UK · London</div>
+                  <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase">Virtual Public IP</div>
+                  <div class="mono js-ip" style="font-size:14px;font-weight:800;margin-top:2px">104.28.194.112 (US)</div>
                 </div>
+                <span class="mono" style="font-size:10.5px;font-weight:800;padding:4px 8px;border-radius:8px;background:var(--card-sub)">WireGuard</span>
               </div>
-              <div class="mono" style="font-size:12px;font-weight:800;color:var(--status-secure-fg)">11 ms</div>
-            </div>
-
-            <div class="server-row-item" onclick="pickMockServer('United States · New York', '64 ms')">
-              <div class="qsp-left">
-                <div class="flag-box"><svg viewBox="0 0 60 40"><rect width="60" height="40" fill="#B22234"/><rect y="6" width="60" height="5" fill="#fff"/><rect y="16" width="60" height="5" fill="#fff"/><rect y="26" width="60" height="5" fill="#fff"/><rect width="26" height="22" fill="#3C3B6E"/></svg></div>
-                <div>
-                  <div style="font-size:13.5px;font-weight:800">United States &middot; New York</div>
-                  <div style="font-size:11px;color:var(--text-muted)">Streaming &bull; 24% Load</div>
-                </div>
+              <div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:16px;padding:11px 12px">
+                <div style="font-size:10px;font-weight:700;color:var(--text-muted)">LATENCY</div>
+                <div class="mono" style="font-size:14px;font-weight:800;margin-top:2px;color:var(--accent-fg)">28 ms</div>
               </div>
-              <div style="display:flex;align-items:center;gap:6px">
-                <div class="sig-bars"><span style="height:5px"></span><span style="height:9px"></span><span style="height:13px"></span></div>
-                <span class="mono" style="font-size:12px;font-weight:800">64 ms</span>
-              </div>
-            </div>
-
-            <div class="server-row-item" onclick="pickMockServer('Germany · Frankfurt', '16 ms')">
-              <div class="qsp-left">
-                <div class="flag-box"><svg viewBox="0 0 60 40"><rect width="60" height="13.3" fill="#000"/><rect y="13.3" width="60" height="13.3" fill="#DD0000"/><rect y="26.6" width="60" height="13.4" fill="#FFCE00"/></svg></div>
-                <div>
-                  <div style="font-size:13.5px;font-weight:800">Germany &middot; Frankfurt</div>
-                  <div style="font-size:11px;color:var(--text-muted)">P2P &bull; 14% Load</div>
-                </div>
-              </div>
-              <div style="display:flex;align-items:center;gap:6px">
-                <div class="sig-bars"><span style="height:5px"></span><span style="height:9px"></span><span style="height:13px"></span></div>
-                <span class="mono" style="font-size:12px;font-weight:800">16 ms</span>
-              </div>
-            </div>
-
-            <div class="server-row-item" onclick="pickMockServer('Netherlands · Amsterdam', '14 ms')">
-              <div class="qsp-left">
-                <div class="flag-box"><svg viewBox="0 0 60 40"><rect width="60" height="13.3" fill="#AE1C28"/><rect y="13.3" width="60" height="13.3" fill="#FFF"/><rect y="26.6" width="60" height="13.4" fill="#21468B"/></svg></div>
-                <div>
-                  <div style="font-size:13.5px;font-weight:800">Netherlands &middot; Amsterdam</div>
-                  <div style="font-size:11px;color:var(--text-muted)">Double VPN &bull; 19% Load</div>
-                </div>
-              </div>
-              <div style="display:flex;align-items:center;gap:6px">
-                <div class="sig-bars"><span style="height:5px"></span><span style="height:9px"></span><span style="height:13px"></span></div>
-                <span class="mono" style="font-size:12px;font-weight:800">14 ms</span>
+              <div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:16px;padding:11px 12px">
+                <div style="font-size:10px;font-weight:700;color:var(--text-muted)">THROUGHPUT</div>
+                <div class="mono" style="font-size:14px;font-weight:800;margin-top:2px">94.6 Mbps</div>
               </div>
             </div>
           </div>
 
-          <!-- Bottom-Anchored Search Input (Inside Thumb Arc!) -->
-          <div style="margin-top:auto;padding-top:8px">
-            <div style="background:var(--surface-elevated);border:1.5px solid var(--border-strong);border-radius:16px;padding:12px 14px;display:flex;align-items:center;gap:10px">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-              <span style="font-size:13px;color:var(--text-muted);font-weight:600">Search country, city, or streaming...</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- ================================================================
-             SCREEN 3: JARGON-FREE SECURITY CONTROLS
-             ================================================================ -->
-        <div class="phone-body" id="screen-security" style="display:none">
-          <div style="display:flex;flex-direction:column;gap:10px">
-            <div style="font-size:17px;font-weight:900;margin-bottom:4px">Protection &amp; Shield Controls</div>
-
-            <div class="telemetry-card">
-              <div style="display:flex;justify-content:space-between;align-items:center">
+          <!-- Bottom 58% Thumb Zone -->
+          <div style="display:flex;flex-direction:column;gap:10px;margin-top:auto">
+            <div style="background:var(--card-bg);border:1.5px solid var(--accent-border);border-radius:24px;padding:16px;display:flex;flex-direction:column;gap:12px" class="js-card-border">
+              <div style="display:flex;align-items:center;gap:10px">
+                <div style="width:40px;height:40px;border-radius:12px;background:var(--accent-soft);color:var(--accent-fg);display:flex;align-items:center;justify-content:center;font-weight:900">🛡️</div>
                 <div>
-                  <div style="font-size:14px;font-weight:800">Internet Kill Switch</div>
-                  <div style="font-size:11.5px;color:var(--text-muted);margin-top:2px">Pauses traffic if the VPN drops so your real IP never leaks.</div>
+                  <div class="js-headline" style="font-size:14.5px;font-weight:900">Full-Tunnel Protection Active</div>
+                  <div class="js-subline" style="font-size:11.5px;color:var(--text-muted)">IPv4, IPv6 &amp; DNS routed via New York</div>
                 </div>
-                <span style="padding:6px 10px;border-radius:99px;background:var(--status-secure-bg);color:var(--status-secure-fg);font-size:11px;font-weight:800">ON</span>
               </div>
-            </div>
-
-            <div class="telemetry-card">
-              <div style="display:flex;justify-content:space-between;align-items:center">
-                <div>
-                  <div style="font-size:14px;font-weight:800">Auto-Shield Untrusted Wi-Fi</div>
-                  <div style="font-size:11.5px;color:var(--text-muted);margin-top:2px">Automatically connects on hotel, cafe, and airport Wi-Fi.</div>
-                </div>
-                <span style="padding:6px 10px;border-radius:99px;background:var(--status-secure-bg);color:var(--status-secure-fg);font-size:11px;font-weight:800">ON</span>
-              </div>
-            </div>
-
-            <div class="telemetry-card">
-              <div style="display:flex;justify-content:space-between;align-items:center">
-                <div>
-                  <div style="font-size:14px;font-weight:800">App Split Tunneling</div>
-                  <div style="font-size:11.5px;color:var(--text-muted);margin-top:2px">Let banking &amp; local delivery apps bypass the VPN tunnel.</div>
-                </div>
-                <span style="font-size:12px;font-weight:800;color:var(--status-secure-fg)">3 Apps &rarr;</span>
-              </div>
-            </div>
-
-            <div class="telemetry-card">
-              <div style="display:flex;justify-content:space-between;align-items:center">
-                <div>
-                  <div style="font-size:14px;font-weight:800">Tunnel Protocol</div>
-                  <div style="font-size:11.5px;color:var(--text-muted);margin-top:2px">WireGuard (Recommended for fastest battery-friendly speed).</div>
-                </div>
-                <span class="mono" style="font-size:11px;font-weight:800;color:var(--status-secure-fg)">WireGuard</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- ================================================================
-             SCREEN 4: ZERO-FRICTION FTUX & OS VPN PERMISSION PRIMER
-             ================================================================ -->
-        <div class="phone-body" id="screen-ftux" style="display:none">
-          <div style="margin-top:20px;text-align:center;padding:0 8px">
-            <div style="width:68px;height:68px;border-radius:22px;background:var(--status-secure-bg);border:1.5px solid var(--status-secure-border);color:var(--status-secure-fg);display:flex;align-items:center;justify-content:center;margin:0 auto 14px">
-              <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
-            </div>
-            <div style="font-size:19px;font-weight:900">1-Tap Tunnel Setup</div>
-            <p style="font-size:12.5px;color:var(--text-secondary);margin-top:6px;line-height:1.5">
-              On the next screen, iOS/Android will show a standard system prompt asking to <strong>"Add VPN Configurations"</strong>.
-            </p>
-          </div>
-
-          <div class="telemetry-card">
-            <div style="font-size:12px;font-weight:800;color:var(--status-secure-fg)">WHY THIS OS ALERT APPEARS</div>
-            <div style="font-size:12px;color:var(--text-secondary);line-height:1.45">
-              &bull; Required by Apple &amp; Google to create an encrypted network tunnel.<br/>
-              &bull; SWEEPR operates a strict <strong>Zero-Logs</strong> RAM-only architecture—we never inspect or store your traffic.
-            </div>
-          </div>
-
-          <div class="thumb-stage">
-            <button class="master-connect-btn" onclick="switchScreen('home'); setVpnState('connected')">
-              <span>Allow &amp; Connect Protected</span>
-              <span>&rarr;</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- ================================================================
-             SCREEN 5: EDGE CASES (CAPTIVE PORTAL + LOCK SCREEN WIDGETS)
-             ================================================================ -->
-        <div class="phone-body" id="screen-edge" style="display:none">
-          <div style="display:flex;flex-direction:column;gap:12px">
-            <div style="font-size:16px;font-weight:900">Edge Cases &amp; OS Ecosystem</div>
-
-            <!-- Captive Portal Edge Case Card -->
-            <div style="background:var(--status-connecting-bg);border:1.5px solid var(--status-connecting-border);border-radius:20px;padding:14px">
-              <div style="font-size:12.5px;font-weight:900;color:var(--status-connecting-fg)">
-                Hotel / Airport Wi-Fi Login Detected
-              </div>
-              <p style="font-size:11.5px;color:var(--text-secondary);margin-top:4px;line-height:1.4">
-                "Heathrow_Free_WiFi" requires a browser sign-in before encrypted VPN traffic can pass.
-              </p>
-              <button onclick="triggerHaptic('Medium Impact — Temporary Captive Bypass')" style="margin-top:10px;width:100%;padding:11px;border-radius:12px;border:none;background:#F59E0B;color:#0F172A;font-weight:800;font-size:12px;cursor:pointer">
-                Complete Wi-Fi Sign-In (60s Safe Window)
+              <button onclick="toggleCycleState()" class="js-cta" style="width:100%;min-height:58px;border-radius:16px;border:none;background:var(--accent);color:#fff;font-size:14.5px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:0 18px">
+                <span class="js-cta-text">Connected — Tap to Pause</span>
+                <span class="mono" style="font-size:11px;opacity:0.9">01:42:18</span>
               </button>
             </div>
 
-            <!-- iOS Lock Screen Widget & Android Quick Tile Preview -->
-            <div class="telemetry-card">
-              <div class="t-label">iOS Lock Screen Widget &amp; Android Tile</div>
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px">
-                <div style="background:var(--surface-interactive);border-radius:16px;padding:12px;border:1px solid var(--border-subtle)">
-                  <div style="font-size:10px;font-weight:800;color:var(--status-secure-fg)">SWEEPR WIDGET</div>
-                  <div style="font-size:13px;font-weight:900;margin-top:4px">Protected</div>
-                  <div class="mono" style="font-size:10.5px;color:var(--text-muted);margin-top:2px">UK-LON • 11ms</div>
-                </div>
-                <div style="background:var(--status-secure-solid);color:var(--status-secure-cta-text);border-radius:16px;padding:12px;display:flex;flex-direction:column;justify-content:space-between">
-                  <div style="font-size:10px;font-weight:800;opacity:0.85">QUICK TILE</div>
-                  <div style="font-size:13px;font-weight:900">VPN: ON</div>
+            <!-- Quick Server Pill -->
+            <div style="background:var(--card-bg);border:1px solid var(--card-border-strong);border-radius:18px;padding:11px 14px;display:flex;align-items:center;justify-content:space-between;min-height:54px">
+              <div style="display:flex;align-items:center;gap:10px">
+                <span class="flag-svg"><svg viewBox="0 0 60 40"><rect width="60" height="40" fill="#B22234"/><rect y="6" width="60" height="5" fill="#fff"/><rect y="16" width="60" height="5" fill="#fff"/><rect y="26" width="60" height="5" fill="#fff"/><rect width="26" height="22" fill="#3C3B6E"/></svg></span>
+                <div>
+                  <div style="font-size:13px;font-weight:800">United States &middot; New York</div>
+                  <div class="mono" style="font-size:10.5px;color:var(--text-muted)">US-NYC-01 &bull; 28 ms &bull; 19% Load</div>
                 </div>
               </div>
+              <span style="font-size:11.5px;font-weight:800;color:var(--accent-fg)">Switch &rarr;</span>
             </div>
           </div>
         </div>
 
-        <!-- BOTTOM NAVIGATION BAR (48dp+ Touch Targets + 8px Spacing) -->
-        <nav class="phone-bottom-nav" aria-label="Primary Mobile Navigation">
-          <button class="p-nav-btn active" data-nav="home" onclick="switchScreen('home')">
-            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            <span>Shield</span>
-          </button>
-          <button class="p-nav-btn" data-nav="servers" onclick="switchScreen('servers')">
-            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/></svg>
-            <span>Servers</span>
-          </button>
-          <button class="p-nav-btn" data-nav="security" onclick="switchScreen('security')">
-            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-            <span>Security</span>
-          </button>
-          <button class="p-nav-btn" data-nav="edge" onclick="switchScreen('edge')">
-            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
-            <span>Widgets</span>
-          </button>
+        <nav class="b-nav">
+          <button class="b-nav-item active"><span>Shield</span></button>
+          <button class="b-nav-item"><span>Servers</span></button>
+          <button class="b-nav-item"><span>Wi-Fi</span></button>
+          <button class="b-nav-item"><span>Account</span></button>
         </nav>
       </div>
+    </section>
 
-      <!-- ====================================================================
-           RIGHT-HAND ARCHITECTURAL SPECIFICATION & AUDIT PANEL
-           ==================================================================== -->
-      <div class="spec-panel">
-        <div class="spec-card">
-          <h2>1. Physical Ergonomics &amp; Thumb-Zone Architecture</h2>
-          <p>
-            Legacy mobile VPN interfaces place the Connect orb and server selector in the upper-middle canvas, forcing a two-handed grip on 6.7"&ndash;6.9" Pro Max / Ultra devices. Our redesigned layout anchors <strong>100% of primary interactive controls inside the bottom 58% natural thumb arc</strong> while reserving the top 42% for high-contrast, passive telemetry (`tabular-nums` IP, latency, and throughput).
-          </p>
-          <table class="token-table">
-            <thead>
-              <tr>
-                <th>Viewport Zone</th>
-                <th>Height Allocation</th>
-                <th>Assigned UI Components</th>
-                <th>Touch Target Spec</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>Top Zone (Passive)</strong></td>
-                <td class="mono">Top 18%</td>
-                <td>Brand Header, Connection Status Pill, Dynamic Island</td>
-                <td>Read-only (Zero required taps)</td>
-              </tr>
-              <tr>
-                <td><strong>Middle Zone (Glanceable)</strong></td>
-                <td class="mono">Middle 24%</td>
-                <td>Virtual IPv4, `tabular-nums` Latency/Timer, Live Throughput Graph</td>
-                <td>Optional tap-to-copy IP (`48x48dp`)</td>
-              </tr>
-              <tr>
-                <td><strong>Bottom Zone (Thumb Arc)</strong></td>
-                <td class="mono">Bottom 58%</td>
-                <td>Master Connect CTA, Quick Server Pill, Bottom-Anchored Search, 4-Tab Nav</td>
-                <td class="mono">56–64px height + 10px gap</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="spec-card">
-          <h2>2. Web-to-Mobile Semantic Color Tokens (WCAG AAA Verified)</h2>
-          <p>
-            All tokens meet or exceed <strong>WCAG AAA (7:1+)</strong> for critical status copy and <strong>4.5:1+</strong> for secondary telemetry across both OLED Dark Mode and direct-sunlight Light Mode, paired with distinct iconography for color-vision deficiency (protanopia/deuteranopia).
-          </p>
-          <table class="token-table">
-            <thead>
-              <tr>
-                <th>Semantic Token</th>
-                <th>Dark Mode (OLED)</th>
-                <th>Light Mode (Daylight)</th>
-                <th>Contrast Ratio</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td class="mono">surface-primary</td>
-                <td class="mono"><span class="swatch" style="background:#070B14"></span>#070B14</td>
-                <td class="mono"><span class="swatch" style="background:#F8FAFC"></span>#F8FAFC</td>
-                <td>Base Canvas</td>
-              </tr>
-              <tr>
-                <td class="mono">status-secure-fg</td>
-                <td class="mono"><span class="swatch" style="background:#34D399"></span>#34D399</td>
-                <td class="mono"><span class="swatch" style="background:#065F46"></span>#065F46</td>
-                <td class="mono">10.8:1 (Dark) / 8.2:1 (Light) AAA</td>
-              </tr>
-              <tr>
-                <td class="mono">status-connecting-fg</td>
-                <td class="mono"><span class="swatch" style="background:#FBBF24"></span>#FBBF24</td>
-                <td class="mono"><span class="swatch" style="background:#92400E"></span>#92400E</td>
-                <td class="mono">11.6:1 (Dark) / 7.8:1 (Light) AAA</td>
-              </tr>
-              <tr>
-                <td class="mono">status-critical-fg</td>
-                <td class="mono"><span class="swatch" style="background:#FCA5A5"></span>#FCA5A5</td>
-                <td class="mono"><span class="swatch" style="background:#991B1B"></span>#991B1B</td>
-                <td class="mono">9.8:1 (Dark) / 8.6:1 (Light) AAA</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="spec-card">
-          <h2>3. 60–120Hz Motion &amp; Native Haptic Choreography</h2>
-          <table class="token-table">
-            <thead>
-              <tr>
-                <th>User Action / Event</th>
-                <th>Visual Transition (<16ms initial frame)</th>
-                <th>Duration &amp; Curve</th>
-                <th>iOS / Android Haptic Pattern</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>Tap Master Connect</strong></td>
-                <td>Button scales `0.975`, stepper reveals Step 1 (`Auth Keys`)</td>
-                <td class="mono">180ms cubic-bezier(0.22,1,0.36,1)</td>
-                <td><code>UIImpactFeedbackGenerator(.medium)</code> / <code>EFFECT_CLICK</code></td>
-              </tr>
-              <tr>
-                <td><strong>Tunnel Locked (Connected)</strong></td>
-                <td>Emerald border lock-in + IP morphs with `tabular-nums`</td>
-                <td class="mono">260ms spring(damping: 0.82)</td>
-                <td><code>UINotificationFeedbackGenerator(.success)</code> (Double-Tap)</td>
-              </tr>
-              <tr>
-                <td><strong>Scrub Server Picker</strong></td>
-                <td>Row highlight + latency bar elevation</td>
-                <td class="mono">90ms linear</td>
-                <td><code>UISelectionFeedbackGenerator</code> / <code>CLOCK_TICK</code></td>
-              </tr>
-              <tr>
-                <td><strong>Kill Switch Drop Alert</strong></td>
-                <td>Critical crimson banner slide-in + Reconnect CTA</td>
-                <td class="mono">220ms cubic-bezier(0.16,1,0.3,1)</td>
-                <td><code>UINotificationFeedbackGenerator(.error)</code> (Heavy Pulse)</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+    <!-- ======================================================================
+         CONCEPT 2: LIVE VECTOR MAP & FLOATING SHEET (PROTON / MULLVAD INSPIRED)
+         ====================================================================== -->
+    <section class="concept-column" data-concept="b">
+      <div class="concept-header-card">
+        <span class="concept-tag">Concept 2 &bull; Geographic Verification</span>
+        <div class="concept-title">Live Radar Map + Floating Sheet</div>
+        <p class="concept-desc">Visually proves your spoofed country with a live vector map &amp; node beacon in the upper half and a floating bottom sheet in the thumb zone.</p>
       </div>
-    </div>
-  </main>
 
-  <div class="haptic-indicator" id="hapticToast">
-    <span class="dot" style="background:#10B981"></span>
-    <span id="hapticToastText">Haptic: Medium Impact</span>
-  </div>
+      <div class="phone">
+        <div class="tz-overlay"><div class="tz-1"><span>Top 18%</span><span>Map Canvas</span></div><div class="tz-2"><span>Mid 24%</span><span>Node Beacon</span></div><div class="tz-3"><span>Bottom 58% Thumb Arc</span><span>Floating Control Sheet</span></div></div>
+        <div class="statusbar"><span class="mono">09:41</span><div class="island"><span class="dot js-di-dot" style="background:#10B981"></span><span class="mono js-di-text">VPN • US-NYC • 28ms</span></div><span class="mono">5G</span></div>
+
+        <div class="screen-body">
+          <!-- Interactive Vector Map Canvas -->
+          <div class="map-hero">
+            <div style="display:flex;justify-content:space-between;align-items:center;z-index:5">
+              <span style="background:var(--card-bg);padding:5px 10px;border-radius:99px;font-size:11px;font-weight:800;border:1px solid var(--card-border)">SWEEPR <span style="color:var(--accent)">GEO-SHIELD</span></span>
+              <span class="mono js-badge" style="background:var(--accent-soft);color:var(--accent-fg);padding:4px 9px;border-radius:99px;font-size:10.5px;font-weight:800;border:1px solid var(--accent-border)">US EXIT NODE</span>
+            </div>
+
+            <!-- Stylized Continents & Encrypted Arc -->
+            <svg viewBox="0 0 320 140" style="position:absolute;inset:0;width:100%;height:100%;opacity:0.85">
+              <!-- North America & Europe Stylized Polygons -->
+              <path d="M25,35 L95,28 L112,62 L78,95 L42,84 Z" fill="var(--map-land)" />
+              <path d="M165,25 L235,22 L248,58 L185,68 L160,48 Z" fill="var(--map-land)" />
+              <!-- Encrypted Tunnel Arc from UK to US-NYC -->
+              <path d="M180,44 Q135,10 88,54" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-dasharray="4 3" />
+              <circle cx="180" cy="44" r="4" fill="var(--text-muted)" />
+            </svg>
+            <div class="radar-pulse"></div>
+
+            <div style="z-index:5;background:var(--bar-bg);backdrop-filter:blur(8px);border-radius:14px;padding:8px 12px;border:1px solid var(--card-border);display:flex;justify-content:space-between;align-items:center">
+              <div>
+                <div style="font-size:10px;font-weight:700;color:var(--text-muted)">VISIBLE LOCATION</div>
+                <div style="font-size:12.5px;font-weight:900">New York, United States</div>
+              </div>
+              <div class="mono js-ip" style="font-size:11.5px;font-weight:800;color:var(--accent-fg)">104.28.194.112</div>
+            </div>
+          </div>
+
+          <!-- Floating Bottom Sheet in Thumb Zone -->
+          <div style="background:var(--card-bg);border:1.5px solid var(--card-border-strong);border-radius:28px;padding:16px;display:flex;flex-direction:column;gap:12px;box-shadow:0 -8px 24px rgba(0,0,0,0.06)">
+            <div style="width:36px;height:4px;border-radius:99px;background:var(--card-border-strong);margin:0 auto"></div>
+
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div>
+                <div class="js-headline" style="font-size:15px;font-weight:900">Encrypted Tunnel Active</div>
+                <div class="js-subline" style="font-size:11.5px;color:var(--text-muted)">Real UK location hidden from websites</div>
+              </div>
+              <span class="mono" style="font-size:12px;font-weight:800;color:var(--accent-fg)">28 ms</span>
+            </div>
+
+            <!-- Server Switcher Row inside Sheet -->
+            <div style="background:var(--card-sub);border-radius:16px;padding:10px 12px;display:flex;align-items:center;justify-content:space-between">
+              <div style="display:flex;align-items:center;gap:10px">
+                <span class="flag-svg"><svg viewBox="0 0 60 40"><rect width="60" height="40" fill="#B22234"/><rect y="6" width="60" height="5" fill="#fff"/><rect y="16" width="60" height="5" fill="#fff"/><rect y="26" width="60" height="5" fill="#fff"/><rect width="26" height="22" fill="#3C3B6E"/></svg></span>
+                <div>
+                  <div style="font-size:12.5px;font-weight:800">USA &middot; New York (Streaming)</div>
+                  <div style="font-size:10.5px;color:var(--text-muted)">Tap to switch country</div>
+                </div>
+              </div>
+              <span style="font-size:11px;font-weight:800;color:var(--accent-fg)">Change</span>
+            </div>
+
+            <!-- Master Connect CTA -->
+            <button onclick="toggleCycleState()" class="js-cta" style="width:100%;min-height:58px;border-radius:18px;border:none;background:var(--accent);color:#fff;font-size:14.5px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
+              <span class="js-cta-text">Disconnect / Pause Shield</span>
+            </button>
+          </div>
+        </div>
+
+        <nav class="b-nav">
+          <button class="b-nav-item active"><span>Map Shield</span></button>
+          <button class="b-nav-item"><span>Locations</span></button>
+          <button class="b-nav-item"><span>Kill Switch</span></button>
+          <button class="b-nav-item"><span>Account</span></button>
+        </nav>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         CONCEPT 3: TACTILE POWER ORB & GESTURE RING (EXPRESS / WARP INSPIRED)
+         ====================================================================== -->
+    <section class="concept-column" data-concept="c">
+      <div class="concept-header-card">
+        <span class="concept-tag">Concept 3 &bull; Zero-Learning-Curve Consumer</span>
+        <div class="concept-title">Tactile Power Orb (Lower Thumb Zone)</div>
+        <p class="concept-desc">Centers the entire experience around an unmistakable 144px tactile power button positioned in the lower thumb zone with progressive disclosure.</p>
+      </div>
+
+      <div class="phone">
+        <div class="tz-overlay"><div class="tz-1"><span>Top 18%</span><span>Status Header</span></div><div class="tz-2"><span>Mid 24%</span><span>Location Summary</span></div><div class="tz-3"><span>Bottom 58% Thumb Arc</span><span>144px Tactile Orb + Pill</span></div></div>
+        <div class="statusbar"><span class="mono">09:41</span><div class="island"><span class="dot js-di-dot" style="background:#10B981"></span><span class="mono js-di-text">VPN • US-NYC • 28ms</span></div><span class="mono">5G</span></div>
+
+        <div class="screen-body" style="text-align:center">
+          <!-- Top Status Summary -->
+          <div style="padding-top:8px">
+            <div class="js-badge" style="display:inline-block;font-size:11px;font-weight:900;padding:5px 14px;border-radius:99px;background:var(--accent-soft);color:var(--accent-fg);border:1px solid var(--accent-border)">
+              SHIELD ON &bull; ZERO LEAKS
+            </div>
+            <div class="js-headline" style="font-size:20px;font-weight:900;margin-top:10px;letter-spacing:-0.02em">Your Connection is Private</div>
+            <div class="mono js-ip" style="font-size:12.5px;color:var(--text-muted);font-weight:700;margin-top:4px">Virtual IP: 104.28.194.112</div>
+          </div>
+
+          <!-- Lower-Center Thumb-Zone Power Orb -->
+          <div class="power-orb-wrap">
+            <button class="power-orb js-orb" onclick="toggleCycleState()" aria-label="Toggle VPN Connection">
+              <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg>
+              <span class="mono js-orb-label" style="font-size:12px;font-weight:900;letter-spacing:0.06em">CONNECTED</span>
+            </button>
+          </div>
+
+          <!-- Bottom Location Pill + Mini Telemetry Bar -->
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div style="background:var(--card-bg);border:1.5px solid var(--card-border-strong);border-radius:22px;padding:13px 16px;display:flex;align-items:center;justify-content:space-between;text-align:left">
+              <div style="display:flex;align-items:center;gap:12px">
+                <span class="flag-svg"><svg viewBox="0 0 60 40"><rect width="60" height="40" fill="#B22234"/><rect y="6" width="60" height="5" fill="#fff"/><rect y="16" width="60" height="5" fill="#fff"/><rect y="26" width="60" height="5" fill="#fff"/><rect width="26" height="22" fill="#3C3B6E"/></svg></span>
+                <div>
+                  <div style="font-size:10px;font-weight:800;color:var(--text-muted);text-transform:uppercase">Selected Location</div>
+                  <div style="font-size:14px;font-weight:900">United States &middot; New York</div>
+                </div>
+              </div>
+              <span style="padding:6px 10px;border-radius:10px;background:var(--card-sub);font-size:11.5px;font-weight:800">Change</span>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+              <div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:9px 12px;display:flex;justify-content:space-between;font-size:11.5px;font-weight:700">
+                <span style="color:var(--text-muted)">Speed</span>
+                <span class="mono">94.6 Mbps</span>
+              </div>
+              <div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:9px 12px;display:flex;justify-content:space-between;font-size:11.5px;font-weight:700">
+                <span style="color:var(--text-muted)">Ping</span>
+                <span class="mono" style="color:var(--accent-fg)">28 ms</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <nav class="b-nav">
+          <button class="b-nav-item active"><span>Connect</span></button>
+          <button class="b-nav-item"><span>Countries</span></button>
+          <button class="b-nav-item"><span>Shields</span></button>
+          <button class="b-nav-item"><span>Profile</span></button>
+        </nav>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         CONCEPT 4: SWISS HARDWARE TERMINAL (NOTHING OS / TEENAGE ENG INSPIRED)
+         ====================================================================== -->
+    <section class="concept-column" data-concept="d">
+      <div class="concept-header-card">
+        <span class="concept-tag">Concept 4 &bull; Cyber-Precision Engineering</span>
+        <div class="concept-title">Swiss Hardware Terminal</div>
+        <p class="concept-desc">High-contrast monospace telemetry grid, live packet bars, and a hardware-style ENGAGE rocker switch for transparency-focused users.</p>
+      </div>
+
+      <div class="phone">
+        <div class="tz-overlay"><div class="tz-1"><span>Top 18%</span><span>Sys Readout</span></div><div class="tz-2"><span>Mid 24%</span><span>Packet Matrix</span></div><div class="tz-3"><span>Bottom 58% Thumb Arc</span><span>Hardware Rocker + Node</span></div></div>
+        <div class="statusbar"><span class="mono">09:41</span><div class="island"><span class="dot js-di-dot" style="background:#10B981"></span><span class="mono js-di-text">WG0 • US-NYC • 28ms</span></div><span class="mono">5G</span></div>
+
+        <div class="screen-body" style="gap:10px">
+          <!-- Hardware Readout Top -->
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <span class="mono">SWEEPR // WG-KERNEL-2.4</span>
+              <span class="mono js-badge" style="color:var(--accent-fg)">[TUNNEL_UP]</span>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px" class="mono">
+              <div>
+                <div style="font-size:9.5px;color:var(--text-muted)">ENDPOINT_IPV4</div>
+                <div class="js-ip" style="font-size:12.5px;font-weight:800;margin-top:2px">104.28.194.112</div>
+              </div>
+              <div>
+                <div style="font-size:9.5px;color:var(--text-muted)">CIPHER_SUITE</div>
+                <div style="font-size:12px;font-weight:800;margin-top:2px">ChaCha20-Poly1305</div>
+              </div>
+              <div>
+                <div style="font-size:9.5px;color:var(--text-muted)">RTT_LATENCY</div>
+                <div style="font-size:12.5px;font-weight:800;color:var(--accent-fg);margin-top:2px">28.0 ms</div>
+              </div>
+              <div>
+                <div style="font-size:9.5px;color:var(--text-muted)">DNS_FIREWALL</div>
+                <div style="font-size:12.5px;font-weight:800;margin-top:2px">0 LEAKS (RAM)</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Packet Visualizer Card -->
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <span class="mono">LIVE THROUGHPUT</span>
+              <span class="mono">↓ 94.6M / ↑ 38.2M</span>
+            </div>
+            <div style="display:flex;align-items:flex-end;gap:4px;height:42px;padding-top:4px">
+              <div style="flex:1;height:35%;background:var(--accent);border-radius:2px"></div>
+              <div style="flex:1;height:55%;background:var(--accent);border-radius:2px"></div>
+              <div style="flex:1;height:45%;background:var(--accent);border-radius:2px"></div>
+              <div style="flex:1;height:80%;background:var(--accent);border-radius:2px"></div>
+              <div style="flex:1;height:65%;background:var(--accent);border-radius:2px"></div>
+              <div style="flex:1;height:95%;background:var(--accent);border-radius:2px"></div>
+              <div style="flex:1;height:75%;background:var(--accent);border-radius:2px"></div>
+              <div style="flex:1;height:88%;background:var(--accent);border-radius:2px"></div>
+              <div style="flex:1;height:60%;background:var(--accent);border-radius:2px"></div>
+              <div style="flex:1;height:92%;background:var(--accent);border-radius:2px"></div>
+            </div>
+          </div>
+
+          <!-- Thumb Arc Controls -->
+          <div style="margin-top:auto;display:flex;flex-direction:column;gap:10px">
+            <div class="terminal-card" style="display:flex;justify-content:space-between;align-items:center">
+              <div style="display:flex;align-items:center;gap:10px">
+                <span class="flag-svg"><svg viewBox="0 0 60 40"><rect width="60" height="40" fill="#B22234"/><rect y="6" width="60" height="5" fill="#fff"/><rect y="16" width="60" height="5" fill="#fff"/><rect y="26" width="60" height="5" fill="#fff"/><rect width="26" height="22" fill="#3C3B6E"/></svg></span>
+                <div class="mono">
+                  <div style="font-size:12.5px;font-weight:800">NODE: US-NYC-01</div>
+                  <div style="font-size:10px;color:var(--text-muted)">10Gbps WireGuard Gateway</div>
+                </div>
+              </div>
+              <span class="mono" style="font-size:11px;font-weight:800;color:var(--accent-fg)">[SELECT]</span>
+            </div>
+
+            <!-- Hardware Rocker CTA -->
+            <button onclick="toggleCycleState()" class="js-cta mono" style="width:100%;min-height:62px;border-radius:12px;border:2px solid var(--accent-border);background:var(--accent);color:#fff;font-size:13.5px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:0 16px">
+              <span class="js-cta-text">[TUNNEL ENGAGED — TAP TO HALT]</span>
+              <span>● ON</span>
+            </button>
+          </div>
+        </div>
+
+        <nav class="b-nav mono">
+          <button class="b-nav-item active"><span>[TUNNEL]</span></button>
+          <button class="b-nav-item"><span>[NODES]</span></button>
+          <button class="b-nav-item"><span>[RULES]</span></button>
+          <button class="b-nav-item"><span>[KEYS]</span></button>
+        </nav>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         CONCEPT 5: SOFT PORCELAIN & EMERALD AIR (DAYLIGHT CONSUMER UTILITY)
+         ====================================================================== -->
+    <section class="concept-column" data-concept="e">
+      <div class="concept-header-card">
+        <span class="concept-tag">Concept 5 &bull; Daylight-First Friendly Utility</span>
+        <div class="concept-title">Porcelain &amp; Emerald Air</div>
+        <p class="concept-desc">Built specifically for Light Mode by default—warm porcelain cards, zero technical jargon, plain-English privacy status, and effortless one-handed pills.</p>
+      </div>
+
+      <div class="phone">
+        <div class="tz-overlay"><div class="tz-1"><span>Top 18%</span><span>Friendly Greeting</span></div><div class="tz-2"><span>Mid 24%</span><span>Plain-English Card</span></div><div class="tz-3"><span>Bottom 58% Thumb Arc</span><span>Action Pill + Country Card</span></div></div>
+        <div class="statusbar"><span class="mono">09:41</span><div class="island"><span class="dot js-di-dot" style="background:#10B981"></span><span class="mono js-di-text">Protected • USA</span></div><span class="mono">5G</span></div>
+
+        <div class="screen-body">
+          <!-- Friendly Consumer Header -->
+          <div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+              <div style="font-size:17px;font-weight:900">SWEEPR <span style="color:var(--accent)">Privacy</span></div>
+              <span class="js-badge" style="padding:5px 12px;border-radius:99px;background:var(--accent-soft);color:var(--accent-fg);font-size:11px;font-weight:800">Protected ✓</span>
+            </div>
+
+            <div class="porcelain-card" style="text-align:left">
+              <div style="display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;color:var(--accent-fg);margin-bottom:6px">
+                <span class="dot" style="background:var(--accent)"></span> Browsing Privately in USA
+              </div>
+              <div class="js-headline" style="font-size:17px;font-weight:900;line-height:1.3">
+                Websites see you in New York, United States.
+              </div>
+              <p class="js-subline" style="font-size:12px;color:var(--text-muted);margin-top:6px;line-height:1.45">
+                Your real UK IP address is hidden and local Wi-Fi trackers are blocked automatically.
+              </p>
+              <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--card-border);display:flex;justify-content:space-between;font-size:11.5px;font-weight:700">
+                <span style="color:var(--text-muted)">Public IP: <strong class="mono js-ip" style="color:var(--text-main)">104.28.194.112</strong></span>
+                <span class="mono" style="color:var(--accent-fg)">Fast (28 ms)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom Thumb Zone -->
+          <div style="display:flex;flex-direction:column;gap:10px;margin-top:auto">
+            <!-- Country Card -->
+            <div class="porcelain-card" style="padding:14px 16px;display:flex;align-items:center;justify-content:space-between">
+              <div style="display:flex;align-items:center;gap:12px">
+                <span class="flag-svg"><svg viewBox="0 0 60 40"><rect width="60" height="40" fill="#B22234"/><rect y="6" width="60" height="5" fill="#fff"/><rect y="16" width="60" height="5" fill="#fff"/><rect y="26" width="60" height="5" fill="#fff"/><rect width="26" height="22" fill="#3C3B6E"/></svg></span>
+                <div>
+                  <div style="font-size:13.5px;font-weight:900">United States</div>
+                  <div style="font-size:11px;color:var(--text-muted);font-weight:600">New York &bull; Streaming Ready</div>
+                </div>
+              </div>
+              <span style="padding:7px 12px;border-radius:99px;background:var(--card-sub);font-size:11.5px;font-weight:800">Change</span>
+            </div>
+
+            <!-- Big Pill Connect Button -->
+            <button onclick="toggleCycleState()" class="js-cta" style="width:100%;min-height:62px;border-radius:999px;border:none;background:linear-gradient(135deg, #10B981, #059669);color:#fff;font-size:15px;font-weight:900;cursor:pointer;box-shadow:0 10px 24px rgba(16, 185, 129, 0.28);display:flex;align-items:center;justify-content:center;gap:10px">
+              <span class="js-cta-text">Privacy Shield is ON — Tap to Pause</span>
+            </button>
+          </div>
+        </div>
+
+        <nav class="b-nav">
+          <button class="b-nav-item active"><span>Home</span></button>
+          <button class="b-nav-item"><span>Location</span></button>
+          <button class="b-nav-item"><span>Wi-Fi Guard</span></button>
+          <button class="b-nav-item"><span>Settings</span></button>
+        </nav>
+      </div>
+    </section>
+
+  </main>
 
   <script>
     let currentState = 'connected';
-    let thumbVisible = false;
-    let leftHanded = false;
+    let showTz = false;
 
-    function triggerHaptic(label) {
-      const el = document.getElementById('hapticToast');
-      document.getElementById('hapticToastText').textContent = 'Haptic Fired: ' + label;
-      el.classList.add('show');
-      clearTimeout(el._t);
-      el._t = setTimeout(() => el.classList.remove('show'), 2200);
-    }
-
-    function setTheme(theme) {
+    function setGlobalTheme(theme) {
       document.documentElement.setAttribute('data-theme', theme);
-      document.getElementById('btnThemeDark').classList.toggle('active', theme === 'dark');
-      document.getElementById('btnThemeLight').classList.toggle('active', theme === 'light');
-      triggerHaptic('Selection Tick — Theme: ' + theme.toUpperCase());
+      document.getElementById('btnLight').classList.toggle('active', theme === 'light');
+      document.getElementById('btnDark').classList.toggle('active', theme === 'dark');
     }
 
-    function toggleThumbZone() {
-      thumbVisible = !thumbVisible;
-      document.getElementById('thumbOverlay').classList.toggle('visible', thumbVisible);
-      document.getElementById('btnThumbZone').classList.toggle('active', thumbVisible);
-      triggerHaptic('Thumb-Zone Heatmap ' + (thumbVisible ? 'Shown' : 'Hidden'));
+    function toggleGlobalThumbZone() {
+      showTz = !showTz;
+      document.getElementById('btnTz').classList.toggle('active', showTz);
+      document.querySelectorAll('.tz-overlay').forEach(el => el.classList.toggle('show', showTz));
     }
 
-    function toggleHandMode() {
-      leftHanded = !leftHanded;
-      document.getElementById('thumbOverlay').classList.toggle('left-hand', leftHanded);
-      document.getElementById('btnHandMode').textContent = leftHanded ? 'Left-Handed' : 'Right-Handed';
-      if (!thumbVisible) toggleThumbZone();
-    }
-
-    function switchScreen(screenId) {
-      ['home', 'servers', 'security', 'ftux', 'edge'].forEach(id => {
-        const el = document.getElementById('screen-' + id);
-        if (el) el.style.display = (id === screenId) ? 'flex' : 'none';
+    function filterConcepts(key) {
+      document.querySelectorAll('.concept-tab').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-filter') === key);
       });
-      document.querySelectorAll('.screen-tab').forEach(btn => {
-        btn.classList.toggle('active', btn.getAttribute('data-screen') === screenId);
-      });
-      document.querySelectorAll('.p-nav-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.getAttribute('data-nav') === screenId);
+      document.querySelectorAll('.concept-column').forEach(col => {
+        col.style.display = (key === 'all' || col.getAttribute('data-concept') === key) ? 'flex' : 'none';
       });
     }
 
-    function pickMockServer(name, ping) {
-      document.getElementById('homeServerName').textContent = name;
-      document.getElementById('pingDisplay').textContent = ping;
-      triggerHaptic('Selection Tick — ' + name);
-      switchScreen('home');
-      setVpnState('connected');
+    function toggleCycleState() {
+      setGlobalState(currentState === 'connected' ? 'disconnected' : 'connected');
     }
 
-    function cycleConnectState() {
-      if (currentState === 'connected') {
-        setVpnState('disconnected');
-      } else if (currentState === 'disconnected') {
-        setVpnState('connecting');
-        setTimeout(() => {
-          if (currentState === 'connecting') setVpnState('connected');
-        }, 1200);
-      } else {
-        setVpnState('connected');
-      }
-    }
-
-    function setVpnState(state) {
+    function setGlobalState(state) {
       currentState = state;
       ['disconnected', 'connecting', 'connected', 'killswitch'].forEach(s => {
-        const b = document.getElementById('st-' + s);
+        const b = document.getElementById('stBtn-' + s);
         if (b) b.classList.toggle('active', s === state);
       });
 
-      const pill = document.getElementById('topStatePill');
-      const pillTxt = document.getElementById('topStateText');
-      const deck = document.getElementById('connectDeck');
-      const headline = document.getElementById('heroHeadline');
-      const subline = document.getElementById('heroSubline');
-      const stepper = document.getElementById('handshakeStepper');
-      const ksAlert = document.getElementById('killswitchAlert');
-      const btn = document.getElementById('masterConnectBtn');
-      const btnLbl = document.getElementById('masterBtnLabel');
-      const btnRight = document.getElementById('masterBtnRight');
-      const ip = document.getElementById('ipDisplay');
-      const diDot = document.getElementById('diDot');
-      const diLbl = document.getElementById('diLabel');
+      const cfg = {
+        disconnected: {
+          badge: 'UNPROTECTED',
+          badgeBg: 'var(--card-sub)',
+          badgeFg: 'var(--text-muted)',
+          headline: 'Protection is Paused',
+          subline: 'Your real UK IP address is visible to websites',
+          ip: '82.132.248.19 (UK)',
+          ctaText: 'Tap to Connect Shield',
+          ctaBg: '#059669',
+          orbLabel: 'TAP TO START',
+          diColor: '#94A3B8',
+          diText: 'VPN • OFF'
+        },
+        connecting: {
+          badge: 'HANDSHAKING...',
+          badgeBg: 'var(--amber-soft)',
+          badgeFg: 'var(--amber-fg)',
+          headline: 'Securing WireGuard Tunnel...',
+          subline: 'Step 2/3: Assigning US-NYC Virtual IPv4',
+          ip: 'Assigning IP...',
+          ctaText: 'Connecting to New York...',
+          ctaBg: '#D97706',
+          orbLabel: 'SYNCING...',
+          diColor: '#F59E0B',
+          diText: 'VPN • SYNCING'
+        },
+        connected: {
+          badge: 'ENCRYPTED ✓',
+          badgeBg: 'var(--accent-soft)',
+          badgeFg: 'var(--accent-fg)',
+          headline: 'Websites see you in New York, USA',
+          subline: 'Full-Tunnel IPv4, IPv6 & DNS Shield Active',
+          ip: '104.28.194.112 (US)',
+          ctaText: 'Connected — Tap to Pause',
+          ctaBg: 'var(--accent)',
+          orbLabel: 'PROTECTED',
+          diColor: '#10B981',
+          diText: 'VPN • US-NYC • 28ms'
+        },
+        killswitch: {
+          badge: 'KILL SWITCH ACTIVE',
+          badgeBg: 'var(--red-soft)',
+          badgeFg: 'var(--red-fg)',
+          headline: 'Traffic Paused to Prevent Leak',
+          subline: 'Network handoff detected — real IP remains hidden',
+          ip: 'BLOCKED (0 Leaks)',
+          ctaText: 'Emergency Reconnect Now',
+          ctaBg: '#DC2626',
+          orbLabel: 'LOCKED',
+          diColor: '#EF4444',
+          diText: 'VPN • KILL SWITCH'
+        }
+      }[state];
 
-      stepper.classList.remove('visible');
-      ksAlert.classList.remove('visible');
-
-      if (state === 'disconnected') {
-        pill.style.background = 'var(--status-disconnected-bg)';
-        pill.style.borderColor = 'var(--status-disconnected-border)';
-        pill.style.color = 'var(--status-disconnected-fg)';
-        pillTxt.textContent = 'UNPROTECTED • EXPOSED';
-        deck.style.borderColor = 'var(--status-disconnected-border)';
-        headline.textContent = 'Tunnel Disconnected';
-        subline.textContent = 'Your ISP and local Wi-Fi can see your browsing';
-        btn.style.background = 'var(--status-secure-solid)';
-        btnLbl.textContent = '1-Tap Connect Shield';
-        btnRight.textContent = 'START';
-        ip.textContent = '82.132.248.19 (ISP)';
-        diDot.style.background = '#94A3B8';
-        diLbl.textContent = 'VPN • OFF';
-        triggerHaptic('Light Impact — Tunnel Disconnected');
-      } else if (state === 'connecting') {
-        pill.style.background = 'var(--status-connecting-bg)';
-        pill.style.borderColor = 'var(--status-connecting-border)';
-        pill.style.color = 'var(--status-connecting-fg)';
-        pillTxt.textContent = 'HANDSHAKING...';
-        deck.style.borderColor = 'var(--status-connecting-border)';
-        headline.textContent = 'Negotiating WireGuard Keys...';
-        subline.textContent = 'Verifying zero-knowledge peer handshake';
-        stepper.classList.add('visible');
-        btn.style.background = '#F59E0B';
-        btnLbl.textContent = 'Securing Tunnel...';
-        btnRight.textContent = 'STEP 2/3';
-        ip.textContent = 'Assigning IPv4...';
-        diDot.style.background = '#FBBF24';
-        diLbl.textContent = 'VPN • SYNCING';
-        triggerHaptic('Medium Impact — Initiating Handshake');
-      } else if (state === 'connected') {
-        pill.style.background = 'var(--status-secure-bg)';
-        pill.style.borderColor = 'var(--status-secure-border)';
-        pill.style.color = 'var(--status-secure-fg)';
-        pillTxt.textContent = 'ENCRYPTED & SAFE';
-        deck.style.borderColor = 'var(--status-secure-border)';
-        headline.textContent = 'Tunnel Active • Zero Leaks';
-        subline.textContent = 'DNS, IPv6 & Smart-TV WebRTC Shielded';
-        btn.style.background = 'var(--status-secure-solid)';
-        btnLbl.textContent = 'Connected — Tap to Pause';
-        btnRight.textContent = 'PROTECTED';
-        ip.textContent = '185.212.164.42';
-        diDot.style.background = '#10B981';
-        diLbl.textContent = 'VPN • UK-LON • 11ms';
-        triggerHaptic('Double-Tap Success — Tunnel Locked In');
-      } else if (state === 'killswitch') {
-        pill.style.background = 'var(--status-critical-bg)';
-        pill.style.borderColor = 'var(--status-critical-border)';
-        pill.style.color = 'var(--status-critical-fg)';
-        pillTxt.textContent = 'KILL SWITCH ACTIVE';
-        deck.style.borderColor = 'var(--status-critical-border)';
-        headline.textContent = 'Connection Drop Blocked';
-        subline.textContent = 'All network traffic paused to prevent IP exposure';
-        ksAlert.classList.add('visible');
-        btn.style.background = 'var(--status-critical-solid)';
-        btnLbl.textContent = 'Emergency Reconnect';
-        btnRight.textContent = 'LOCKED';
-        ip.textContent = 'BLOCKED (0 Leaks)';
-        diDot.style.background = '#EF4444';
-        diLbl.textContent = 'VPN • KILL SWITCH';
-        triggerHaptic('Heavy Warning Pulse — Kill Switch Engaged');
-      }
+      document.querySelectorAll('.js-badge').forEach(el => {
+        el.textContent = cfg.badge;
+        el.style.background = cfg.badgeBg;
+        el.style.color = cfg.badgeFg;
+      });
+      document.querySelectorAll('.js-headline').forEach(el => el.textContent = cfg.headline);
+      document.querySelectorAll('.js-subline').forEach(el => el.textContent = cfg.subline);
+      document.querySelectorAll('.js-ip').forEach(el => el.textContent = cfg.ip);
+      document.querySelectorAll('.js-cta-text').forEach(el => el.textContent = cfg.ctaText);
+      document.querySelectorAll('.js-cta').forEach(el => el.style.background = cfg.ctaBg);
+      document.querySelectorAll('.js-orb-label').forEach(el => el.textContent = cfg.orbLabel);
+      document.querySelectorAll('.js-di-dot').forEach(el => el.style.background = cfg.diColor);
+      document.querySelectorAll('.js-di-text').forEach(el => el.textContent = cfg.diText);
     }
   </script>
 </body>

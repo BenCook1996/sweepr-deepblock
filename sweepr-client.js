@@ -7,7 +7,7 @@ const crypto = require('node:crypto');
 class SweeprCrmClient {
   constructor(opts = {}) {
     this.projectId = String(opts.projectId || 'deepblock').trim().toLowerCase();
-    this.crmUrl = String(opts.crmUrl || process.env.SWEEPR_CRM_URL || 'http://localhost:8787').replace(/\/+$/, '');
+    this.crmUrl = String(opts.crmUrl || process.env.SWEEPR_CRM_URL || 'http://localhost:8788').replace(/\/+$/, '');
     this.apiKey =
       opts.apiKey ||
       process.env.SWEEPR_CRM_API_KEY ||
