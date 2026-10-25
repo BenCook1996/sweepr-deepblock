@@ -86,7 +86,19 @@ const PLATFORMS = [
   { slug: 'software-download-mirrors', shortName: 'Software Mirrors', name: 'Freeware & Software Download Directories', category: 'Software Distribution', issue: 'Deceptive bundled adware installers, misleading green download buttons, and browser hijackers' },
   { slug: 'local-classified-boards', shortName: 'Local Classifieds', name: 'Local Classifieds & Buy/Sell Boards', category: 'Local Marketplace', issue: 'Scam seller banners, fake phone verification prompts, and aggressive ad networks' },
   { slug: 'flight-tracker-radars', shortName: 'Flight Radars', name: 'Live Flight Radar & Tracker Portals', category: 'Aviation Utilities', issue: 'High-frequency programmatic display auctions, persistent battery drain, and intrusive map banners' },
-  { slug: 'online-chess-gaming', shortName: 'Chess Gaming', name: 'Online Chess & Board Game Portals', category: 'Board Games & Esports', issue: 'Video ad interstitials between matches, distracting animated banners, and tracking beacons' }
+  { slug: 'online-chess-gaming', shortName: 'Chess Gaming', name: 'Online Chess & Board Game Portals', category: 'Board Games & Esports', issue: 'Video ad interstitials between matches, distracting animated banners, and tracking beacons' },
+  { slug: 'rumble-video-streams', shortName: 'Rumble Video', name: 'Rumble Video & Livestreams', category: 'Alternative Video', issue: 'Unskippable pre-roll video ads, banner clutter, and intrusive notifications' },
+  { slug: 'fextralife-game-wikis', shortName: 'Fextralife Wikis', name: 'Fextralife RPG & Gaming Wikis', category: 'Gaming Reference', issue: 'Embedded Twitch autoplay stream takeovers, heavy sidebar video players, and high CPU usage' },
+  { slug: 'temu-aliexpress-shopping', shortName: 'Temu & AliExpress', name: 'Temu, AliExpress & Fast E-Commerce', category: 'Online Marketplace', issue: 'Deceptive spin-to-win discount wheels, aggressive tracking pixels, and fake countdown urgency banners' },
+  { slug: 'geeksforgeeks-dev-portals', shortName: 'GeeksforGeeks', name: 'GeeksforGeeks Coding Articles', category: 'Developer Knowledge Base', issue: 'Expanding full-page banner takeovers, sticky bottom overlays, and cross-site retargeting scripts' },
+  { slug: 'cnn-news-network', shortName: 'CNN News', name: 'CNN & Major US News Portals', category: 'News & Media', issue: 'Sticky floating video players, layout shifts during scroll, and invasive tracking scripts' },
+  { slug: 'forbes-business-media', shortName: 'Forbes Media', name: 'Forbes & Business Publications', category: 'Financial Media', issue: 'Full-screen interstitial ad gates, auto-playing video players, and heavy ad auction tags' },
+  { slug: 'bilibili-anime-video', shortName: 'Bilibili Web', name: 'Bilibili Web & Anime Streaming', category: 'Anime & Video', issue: 'Danmaku ad spam, unskippable video promotional banners, and tracking beacons' },
+  { slug: 'rapidgator-file-downloads', shortName: 'Rapidgator & File Hosts', name: 'Rapidgator & Premium File Hosts', category: 'File Sharing Portals', issue: 'Deceptive countdown timers, fake green download buttons, and malicious pop-under redirects' },
+  { slug: 'the-guardian-news', shortName: 'The Guardian', name: 'The Guardian & UK Press', category: 'News & Journalism', issue: 'Persistent supporter nag banners, cookie consent walls, and multi-network ad auctions' },
+  { slug: 'discord-web-community', shortName: 'Discord Web', name: 'Discord Web App & Server Directories', category: 'Community Chat', issue: 'Sponsored server listing banners, tracking telemetry scripts, and memory bloat' },
+  { slug: 'daily-mail-online', shortName: 'Daily Mail Online', name: 'Daily Mail & Tabloid News Sites', category: 'Tabloid News', issue: 'Dozens of high-frequency auction display slots, auto-refreshing video ads, and mobile tab freezing' },
+  { slug: 'canva-online-design', shortName: 'Canva Web', name: 'Canva & Free Design Tool Sites', category: 'Creative Web Apps', issue: 'Aggressive upsell overlays, marketing cookie banners, and cross-site tracking beacons' }
 ];
 
 const PROBLEMS = [
@@ -185,7 +197,13 @@ const SETUP_BROWSERS = [
   { slug: 'firefox-developer-edition', shortName: 'Firefox Dev', name: 'Mozilla Firefox Developer Edition', os: 'Windows, macOS & Linux', notes: 'Full cosmetic scriptlet injection, URL tracking parameter stripping (fbclid, gclid, utm_), and zero-telemetry browsing.' },
   { slug: 'cachyos-arch-chromium', shortName: 'CachyOS Chromium', name: 'CachyOS & Arch Linux Optimized Chromium', os: 'Arch Linux & CachyOS (x86-64-v3/v4)', notes: 'Ultra-high performance AVX-512 optimized browser setup paired with SWEEPR DeepBlock sub-50ms rule matching and RAM tamer.' },
   { slug: 'ladybird-browser-privacy', shortName: 'Ladybird Browser', name: 'Ladybird Browser (Next-Gen Engine)', os: 'Linux & macOS', notes: 'Independent engine privacy protection, stopping tracker beacons, malicious redirects, and intrusive cookie pop-up overlays.' },
-  { slug: 'brave-ios-iphone', shortName: 'Brave for iOS', name: 'Brave Browser for Apple iOS (iPhone & iPad)', os: 'iOS 17, 18+ & iPadOS', notes: 'Native mobile content blocking combined with SWEEPR DeepBlock instant cookie banner rejection and fake online store alerts.' }
+  { slug: 'brave-ios-iphone', shortName: 'Brave for iOS', name: 'Brave Browser for Apple iOS (iPhone & iPad)', os: 'iOS 17, 18+ & iPadOS', notes: 'Native mobile content blocking combined with SWEEPR DeepBlock instant cookie banner rejection and fake online store alerts.' },
+  { slug: 'edge-linux-desktop', shortName: 'Edge on Linux', name: 'Microsoft Edge on Linux (Ubuntu, Debian, Fedora)', os: 'Linux (Ubuntu, Debian, Fedora, Arch)', notes: 'Full Manifest V3 declarativeNetRequest support, auto-rejects CMP cookie consent pop-ups, and cleans Edge new tab clutter on Linux.' },
+  { slug: 'chrome-dev-canary-mv3', shortName: 'Chrome Dev & Canary', name: 'Google Chrome Dev & Canary (Manifest V3)', os: 'Windows, macOS & Linux', notes: 'Engineered for cutting-edge Chromium builds with 8/8 anti-detection test lab verification and zero-telemetry cosmetic scriptlets.' },
+  { slug: 'chromium-mac-apple-silicon', shortName: 'Chromium Mac Silicon', name: 'Chromium on Apple Silicon Mac (M1/M2/M3/M4)', os: 'macOS Sonoma & Sequoia', notes: 'Native ARM64 build optimization, sub-50ms cookie banner auto-rejection, and Total Tab & RAM Tamer memory hibernation.' },
+  { slug: 'brave-beta-nightly', shortName: 'Brave Beta & Nightly', name: 'Brave Browser (Beta & Nightly Channels)', os: 'Windows, macOS & Linux', notes: 'Adds automatic Cookie Consent "Reject All" clicking and Fake Online Shop scam detection on top of Brave Shields.' },
+  { slug: 'opera-one-ai-browser', shortName: 'Opera One Browser', name: 'Opera One & Opera Air Browser', os: 'Windows 11 & macOS', notes: 'Replaces weak native ad blocking with SWEEPR DeepStealth 8/8 anti-detection, sub-50ms cookie rejection, and AI slop cleansers.' },
+  { slug: 'arc-browser-mac-sequoia', shortName: 'Arc Mac Sequoia', name: 'Arc Browser on macOS Sequoia', os: 'macOS 15 Sequoia (Apple Silicon & Intel)', notes: 'Ultra-lightweight MV3 memory footprint designed specifically to preserve speed and battery on macOS Sequoia.' }
 ];
 
 const COMPETITORS = [
@@ -224,7 +242,13 @@ const COMPETITORS = [
   { slug: 'ghostery-dawn-desktop', shortName: 'Ghostery Suite', name: 'Ghostery Private Browser Desktop Suite', price: 'Free / Contributor Subscription', cookieReject: 'Basic Rule List', scamDetector: 'Not Included', aiSlopFilter: 'Not Included', ramTamer: 'Not Included' },
   { slug: 'f-secure-total-browsing', shortName: 'F-Secure Total', name: 'F-Secure Total Browsing Protection', price: '£59.99–£79.99/yr', cookieReject: 'Basic Filter', scamDetector: 'Domain Reputation List', aiSlopFilter: 'Not Included', ramTamer: 'Not Included' },
   { slug: 'trend-micro-check', shortName: 'Trend Micro Check', name: 'Trend Micro Check Web Guard', price: 'Free / £39.95/yr Premium', cookieReject: 'No', scamDetector: 'Basic URL Scanner', aiSlopFilter: 'No', ramTamer: 'No' },
-  { slug: 'kaspersky-standard-guard', shortName: 'Kaspersky Guard', name: 'Kaspersky Standard Web Protection', price: '£34.99–£54.99/yr', cookieReject: 'Limited', scamDetector: 'Anti-Phishing Signatures', aiSlopFilter: 'Not Included', ramTamer: 'Not Included' }
+  { slug: 'kaspersky-standard-guard', shortName: 'Kaspersky Guard', name: 'Kaspersky Standard Web Protection', price: '£34.99–£54.99/yr', cookieReject: 'Limited', scamDetector: 'Anti-Phishing Signatures', aiSlopFilter: 'Not Included', ramTamer: 'Not Included' },
+  { slug: 'privacy-badger-eff', shortName: 'Privacy Badger', name: 'EFF Privacy Badger', price: 'Free (No Ad Blocking by design)', cookieReject: 'No', scamDetector: 'No', aiSlopFilter: 'No', ramTamer: 'No' },
+  { slug: 'stands-fair-adblocker-mv3', shortName: 'Stands Fair Adblock', name: 'Stands Free AdBlocker MV3', price: 'Free / Data Monetization', cookieReject: 'Basic', scamDetector: 'No', aiSlopFilter: 'No', ramTamer: 'No' },
+  { slug: 'adaware-ad-blocker', shortName: 'Adaware Ad Block', name: 'Adaware Ad Block Extension', price: 'Free / Bundled Suite', cookieReject: 'No', scamDetector: 'Basic Malicious Domain List', aiSlopFilter: 'No', ramTamer: 'No' },
+  { slug: 'disconnect-me-privacy', shortName: 'Disconnect Privacy', name: 'Disconnect Privacy & Ad Blocker', price: 'Free / Premium Subscription', cookieReject: 'No', scamDetector: 'Domain Tracker List', aiSlopFilter: 'No', ramTamer: 'No' },
+  { slug: 'blur-ironvest-privacy', shortName: 'IronVest (Blur)', name: 'IronVest (Formerly Blur) Privacy', price: '£39–£79/yr', cookieReject: 'No', scamDetector: 'Form Masking Only', aiSlopFilter: 'No', ramTamer: 'No' },
+  { slug: 'adguard-safari-mac', shortName: 'AdGuard for Safari', name: 'AdGuard for Safari (macOS & iOS)', price: 'Free / £29.99/yr Premium', cookieReject: 'Filter Rules Only', scamDetector: 'Basic Phishing List', aiSlopFilter: 'Not Included', ramTamer: 'Not Included' }
 ];
 
 function escapeAttr(s) {
@@ -263,7 +287,13 @@ const GUIDES = [
   { slug: 'how-to-fix-high-fan-noise-from-browser-ad-auctions', shortTitle: 'Fix Laptop Fan Noise from Ads', title: 'How to Stop High Fan Noise and Laptop Overheating From Heavy Browser Ad Auctions', h1: 'How SWEEPR DeepBlock Cools Your Laptop by Halting Heavy Real-Time Ad Auction Loops', summary: 'Background real-time bidding auction scripts trigger CPU spikes and excessive laptop fan noise. SWEEPR DeepBlock stops auction loops instantly.' },
   { slug: 'how-to-stop-location-geolocation-popups', shortTitle: 'Stop Geolocation Permission Nags', title: 'How to Block Invasive Geolocation and Location Permission Popups Across the Web', h1: 'How SWEEPR DeepBlock Silently Blocks Invasive Browser Geolocation Requests', summary: 'Stop websites from demanding your physical location. SWEEPR DeepBlock silently blocks unauthorized geolocation queries and tracker beacons before they reach you.' },
   { slug: 'how-to-prevent-fingerprinting-with-deepstealth', shortTitle: 'Defeat Canvas Fingerprinting', title: 'How SWEEPR DeepStealth Engine Neutralizes Advanced Canvas and Audio Fingerprinting', h1: 'How SWEEPR DeepStealth Makes Canvas & AudioContext Fingerprinting Trackers Blind', summary: 'Learn how SWEEPR DeepStealth injects subtle cryptographic noise into HTML5 canvas, WebGL, and AudioContext APIs to make tracking bots blind.' },
-  { slug: 'how-to-block-sponsored-shopping-carousels-google', shortTitle: 'Block Google Shopping Carousels', title: 'How to Remove Sponsored Shopping Carousels and Disguised Ads on Google Search', h1: 'How to Remove Sponsored Shopping Carousels and Affiliate Clutter From Google Search', summary: 'Reclaim clean, relevant organic search results. SWEEPR DeepBlock filters out disguised sponsored product carousels, shopping ads, and AI slop.' }
+  { slug: 'how-to-block-sponsored-shopping-carousels-google', shortTitle: 'Block Google Shopping Carousels', title: 'How to Remove Sponsored Shopping Carousels and Disguised Ads on Google Search', h1: 'How to Remove Sponsored Shopping Carousels and Affiliate Clutter From Google Search', summary: 'Reclaim clean, relevant organic search results. SWEEPR DeepBlock filters out disguised sponsored product carousels, shopping ads, and AI slop.' },
+  { slug: 'how-to-stop-video-ad-audio-blasts', shortTitle: 'Stop Video Ad Audio Blasts', title: 'How to Prevent Sudden Loud Video Ad Audio Blasts on Web Browsers (2026)', h1: 'How to Block and Silence Loud Video Ad Audio Blasts Automatically', summary: 'Eliminate sudden ear-splitting audio ads. SWEEPR DeepBlock mutes and suppresses auto-playing audio ads and video interstitials before they play sound.' },
+  { slug: 'how-to-block-deceptive-click-allow-notification-traps', shortTitle: 'Block Click Allow Traps', title: 'How to Block Deceptive Click Allow Captcha Notification Traps in 2026', h1: 'How SWEEPR DeepBlock Defends Against Deceptive Click Allow Notification Traps', summary: 'Defend your browser against malicious notification traps disguised as robot verification captchas, stopping silent desktop push malware automatically.' },
+  { slug: 'how-to-block-sponsored-ai-overviews-google', shortTitle: 'Block AI Overview Ads Google', title: 'How to Remove Sponsored Links and AI Overviews From Google Search (2026)', h1: 'How to Remove Sponsored Ads and AI Overviews From Google Search Results', summary: 'Clean up your Google search page. SWEEPR DeepBlock strips sponsored links, affiliate recommendation carousels, and inaccurate AI Overview slop in one click.' },
+  { slug: 'how-to-fix-high-ram-usage-on-edge-windows-11', shortTitle: 'Fix Edge RAM Usage Win 11', title: 'How to Fix High RAM Usage and Speed Up Microsoft Edge on Windows 11', h1: 'How SWEEPR DeepBlock Fixes High RAM Usage on Microsoft Edge on Windows 11', summary: 'Cut Edge memory bloat by up to 62% by hibernating background tabs, terminating MSN news feed trackers, and stopping ad auction scripts.' },
+  { slug: 'how-to-bypass-anti-adblock-inspect-element-blockers-news', shortTitle: 'Bypass News Anti-Adblock (2026)', title: 'How to Bypass Anti-Adblock Walls and Soft Paywalls on Online News Sites (2026)', h1: 'How to Bypass Anti-Adblock Detection and Soft Paywalls on Online News Portals', summary: 'Read articles without nagging overlays. SWEEPR DeepStealth bypasses anti-adblock detection scripts, unfreezes scrollbars, and removes blur overlays.' },
+  { slug: 'how-to-stop-crypto-wallet-drainer-phishing-ads', shortTitle: 'Stop Wallet Drainer Phishing', title: 'How to Stop Crypto Wallet Drainer Phishing Ads and Fake Extensions in 2026', h1: 'How SWEEPR DeepBlock Detects and Blocks Crypto Wallet Drainer Phishing in 2026', summary: 'Protect your web3 assets. SWEEPR DeepBlock flags deceptive crypto drainer ads on Google Search and X (Twitter) and blocks malicious signature request modals.' }
 ];
 
 function buildPool() {
@@ -536,18 +566,19 @@ async function runDaily50DeepBlockPages(targetCount = 50, force = false) {
   }
 
   // Rebuild sitemap.xml from all pages on disk
-  const baseUrls = [
-    'https://sweeprdeepblock.com/',
-    'https://sweeprdeepblock.com/pricing',
-    'https://sweeprdeepblock.com/download',
-    'https://sweeprdeepblock.com/privacy',
-    'https://sweeprdeepblock.com/terms',
-    'https://sweeprdeepblock.com/refund',
-    'https://sweeprdeepblock.com/support',
-    'https://sweeprdeepblock.com/vs/total-adblock',
-    'https://sweeprdeepblock.com/test-lab',
-    'https://sweeprdeepblock.com/pad.xml'
+  const baseEntries = [
+    { loc: 'https://sweeprdeepblock.com/', changefreq: 'weekly', priority: '1.0' },
+    { loc: 'https://sweeprdeepblock.com/pricing', changefreq: 'weekly', priority: '0.9' },
+    { loc: 'https://sweeprdeepblock.com/download', changefreq: 'weekly', priority: '0.9' },
+    { loc: 'https://sweeprdeepblock.com/vs/total-adblock', changefreq: 'weekly', priority: '0.8' },
+    { loc: 'https://sweeprdeepblock.com/test-lab', changefreq: 'weekly', priority: '0.8' },
+    { loc: 'https://sweeprdeepblock.com/support', changefreq: 'monthly', priority: '0.6' },
+    { loc: 'https://sweeprdeepblock.com/refund', changefreq: 'monthly', priority: '0.5' },
+    { loc: 'https://sweeprdeepblock.com/privacy', changefreq: 'monthly', priority: '0.5' },
+    { loc: 'https://sweeprdeepblock.com/terms', changefreq: 'monthly', priority: '0.5' },
+    { loc: 'https://sweeprdeepblock.com/pad.xml', changefreq: 'monthly', priority: '0.5' }
   ];
+  const baseUrls = baseEntries.map((e) => e.loc);
 
   const allPseoUrls = [];
   for (const dir of ['solutions', 'setup', 'vs', 'guides']) {
@@ -562,9 +593,13 @@ async function runDaily50DeepBlockPages(targetCount = 50, force = false) {
   }
 
   const allUrls = [...baseUrls, ...allPseoUrls];
+  const allEntries = [
+    ...baseEntries,
+    ...allPseoUrls.map((loc) => ({ loc, changefreq: 'weekly', priority: '0.8' }))
+  ];
   const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${allUrls.map((u) => `  <url>\n    <loc>${u}</loc>\n    <lastmod>${todayStr}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.8</priority>\n  </url>`).join('\n')}
+${allEntries.map((e) => `  <url>\n    <loc>${e.loc}</loc>\n    <lastmod>${todayStr}</lastmod>\n    <changefreq>${e.changefreq}</changefreq>\n    <priority>${e.priority}</priority>\n  </url>`).join('\n')}
 </urlset>
 `;
   fs.writeFileSync(SITEMAP_PATH, sitemapXml, 'utf8');

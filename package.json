@@ -7,7 +7,8 @@
     "start": "node server.js",
     "seo:daily": "node scripts/daily-50-seo-pages.mjs 50",
     "seo:drip": "node scripts/deepblock-seo-drip.mjs 300",
-    "seo:audit": "node scripts/technical-seo-audit.mjs"
+    "seo:audit": "node scripts/technical-seo-audit.mjs",
+    "filters:daily": "node scripts/daily-ad-filter-pipeline.mjs 1000"
   },
   "engines": {
     "node": ">=22.23.4"

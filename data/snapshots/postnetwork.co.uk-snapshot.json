@@ -1,0 +1,18 @@
+{
+  "capturedAt": "2026-10-25T11:15:27.864Z",
+  "targetUrl": "https://postnetwork.co.uk",
+  "domain": "postnetwork.co.uk",
+  "leak": {
+    "adTypeDetected": "Script",
+    "offendingArtifact": "https://acdn.adnxs-simple.com/ast/ast.js",
+    "offendingHost": "acdn.adnxs-simple.com",
+    "resourceTypes": [
+      "script",
+      "xmlhttprequest",
+      "sub_frame"
+    ],
+    "reason": "Unblocked third-party script request to acdn.adnxs-simple.com (HTTP 200 OK) on postnetwork.co.uk"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://acdn.adnxs-simple.com/ast/ast.js\"></script>"
+}

@@ -297,10 +297,19 @@
       </p>
 
       <div class="key-section">
-        <div style="font-size:14px;font-weight:800;color:#10b981;">🔑 Enter Your License Key or 6-Digit Activation Code:</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+          <div style="font-size:14px;font-weight:800;color:#10b981;">🔑 Enter Your License Key or 6-Digit Activation Code:</div>
+          <button type="button" id="welcomeQrBtn" class="mini-btn" style="font-size:12px;">📱 Scan QR with Phone</button>
+        </div>
         <div class="key-row">
           <input type="text" id="welcomeLicenseInput" class="key-input" placeholder="e.g. SWEEPR-DB-XXXX-XXXX-XXXX or 6-digit code" autocomplete="off" spellcheck="false" />
           <button type="button" id="welcomeActivateBtn" class="key-btn">Activate Pro</button>
+        </div>
+        <div id="welcomeQrDrawer" style="display:none;margin-top:12px;padding:14px;border-radius:14px;background:var(--card-bg);border:1px solid var(--card-border);text-align:center;">
+          <div id="welcomeQrTitle" style="font-size:13px;font-weight:800;color:var(--text);margin-bottom:6px;">Scan with your phone camera (up to 3 devices total)</div>
+          <div id="welcomeQrSvg" style="width:156px;height:156px;margin:0 auto;padding:8px;background:#fff;border-radius:12px;border:1px solid var(--card-border);display:flex;align-items:center;justify-content:center;"></div>
+          <div id="welcomeQrStatus" style="font-size:12px;color:var(--muted);margin-top:6px;font-weight:700;">Waiting for scan...</div>
+          <button type="button" id="welcomeRefreshQrBtn" class="mini-btn" style="margin-top:6px;">Refresh QR Code</button>
         </div>
         <div id="welcomeKeyFeedback" style="font-size:12px;font-weight:700;margin-top:6px;display:none;"></div>
       </div>

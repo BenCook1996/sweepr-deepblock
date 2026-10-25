@@ -1,0 +1,17 @@
+{
+  "capturedAt": "2026-10-25T11:15:27.815Z",
+  "targetUrl": "https://cravestream.com",
+  "domain": "cravestream.com",
+  "leak": {
+    "adTypeDetected": "Script",
+    "offendingArtifact": "https://tag.wknd.ai/tag/audience-ad.js",
+    "offendingHost": "tag.wknd.ai",
+    "resourceTypes": [
+      "script",
+      "xmlhttprequest"
+    ],
+    "reason": "Unblocked third-party script request to tag.wknd.ai (HTTP 200 OK) on cravestream.com"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://tag.wknd.ai/tag/audience-ad.js\"></script>"
+}

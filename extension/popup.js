@@ -392,6 +392,25 @@ document.addEventListener('DOMContentLoaded', () => {
       stored && typeof stored.deviceId === 'string' && stored.deviceId.startsWith('ext_db_')
         ? stored.deviceId
         : `ext_db_${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36)}`;
+    if (key.startsWith('ptk_')) {
+      for (const origin of ['https://sweeprdeepblock.com', 'http://localhost:3000']) {
+        try {
+          const r = await fetch(`${origin}/api/device-link/redeem`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+            body: JSON.stringify({ token: key, device_id: deviceId, device_name: 'SWEEPR Deepblock Extension', platform: 'browser_extension' })
+          });
+          const d = await r.json().catch(() => ({}));
+          if (r.ok && d && d.ok && d.licenseKey) {
+            return directVerifyFromPopup(d.licenseKey);
+          }
+          if (d && (d.message || d.error)) {
+            return { ok: false, valid: false, error: d.message || d.error };
+          }
+        } catch (e) {}
+      }
+      return { ok: false, valid: false, error: 'Invalid or expired website QR pairing code.' };
+    }
     const endpoints = [
       'https://sweeprdeepblock.com/api/license-verify',
       'http://localhost:3000/api/license-verify'
@@ -519,6 +538,127 @@ document.addEventListener('DOMContentLoaded', () => {
       handlePopupActivate();
     }
   });
+
+  // Flow B: QR Challenge & Phone Approval Polling in Extension Popup
+  const popupShowQrBtn = document.getElementById('popupShowQrBtn');
+  const popupQrBox = document.getElementById('popupQrBox');
+  const popupQrSvg = document.getElementById('popupQrSvg');
+  const popupQrStatus = document.getElementById('popupQrStatus');
+  const popupRefreshQrBtn = document.getElementById('popupRefreshQrBtn');
+  let popupQrPollTimer = null;
+
+  async function startPopupQrChallenge() {
+    if (!popupQrBox || !popupQrSvg || !popupQrStatus) return;
+    popupQrBox.style.display = 'block';
+    popupQrSvg.innerHTML = '<span style="font-size:10px;color:#6b7280;">Generating...</span>';
+    popupQrStatus.textContent = 'Creating secure 120s QR challenge...';
+    if (popupQrPollTimer) clearInterval(popupQrPollTimer);
+
+    const stored = await chrome.storage.local.get(['deviceId']);
+    const deviceId =
+      stored && typeof stored.deviceId === 'string' && stored.deviceId.startsWith('ext_db_')
+        ? stored.deviceId
+        : `ext_db_${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36)}`;
+    await chrome.storage.local.set({ deviceId });
+
+    const baseOrigins = ['https://sweeprdeepblock.com', 'http://localhost:3000'];
+    let challengeData = null;
+    let activeOrigin = baseOrigins[0];
+
+    for (const origin of baseOrigins) {
+      try {
+        const res = await fetch(`${origin}/api/device-link/challenge`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({
+            device_id: deviceId,
+            device_name: 'SWEEPR Deepblock Extension',
+            platform: 'browser_extension'
+          })
+        });
+        const data = await res.json().catch(() => ({}));
+        if (res.ok && data && data.ok && data.challenge_id) {
+          challengeData = data;
+          activeOrigin = origin;
+          break;
+        }
+      } catch (e) {}
+    }
+
+    if (!challengeData) {
+      popupQrSvg.innerHTML = '<span style="font-size:10px;color:#ef4444;">Offline</span>';
+      popupQrStatus.textContent = 'Could not reach server. Try again.';
+      return;
+    }
+
+    popupQrSvg.innerHTML = challengeData.qr_svg || '';
+    const svgEl = popupQrSvg.querySelector('svg');
+    if (svgEl) {
+      svgEl.style.width = '100%';
+      svgEl.style.height = '100%';
+    }
+    let rem = Number(challengeData.expires_in) || 120;
+    popupQrStatus.textContent = `Scan with phone • Expires in ${rem}s`;
+
+    popupQrPollTimer = setInterval(async () => {
+      rem = Math.max(0, rem - 2);
+      if (rem <= 0) {
+        clearInterval(popupQrPollTimer);
+        popupQrStatus.textContent = 'QR expired — click Refresh QR.';
+        return;
+      }
+      popupQrStatus.textContent = `Scan with phone • Expires in ${rem}s`;
+      try {
+        const pollRes = await fetch(
+          `${activeOrigin}/api/device-link/poll?challenge_id=${encodeURIComponent(challengeData.challenge_id)}&poll_secret=${encodeURIComponent(challengeData.poll_secret)}`
+        );
+        const pollData = await pollRes.json().catch(() => ({}));
+        if (pollRes.ok && pollData && pollData.status === 'approved' && pollData.licenseKey) {
+          clearInterval(popupQrPollTimer);
+          const newSettings = {
+            cookieAutoClose: true,
+            hideSearchSpam: true,
+            fakeShopAlerts: true,
+            trackerProtection: true,
+            adBlocking: true,
+            silentMode: true,
+            autoRamTamer: true
+          };
+          await chrome.storage.local.set({
+            deviceId,
+            proActive: true,
+            ramTamerActive: Boolean(pollData.ramTamerAddon),
+            licenseKey: pollData.licenseKey,
+            draftLicenseKey: '',
+            licenseDrawerOpen: false,
+            crmAccountId: pollData.account_id || '',
+            subscriptionStatus: 'active',
+            licenseVerifiedAt: Date.now(),
+            encryptedDnsEnabled: true,
+            settings: newSettings
+          });
+          try {
+            if (chrome.declarativeNetRequest && chrome.declarativeNetRequest.updateEnabledRulesets) {
+              await chrome.declarativeNetRequest.updateEnabledRulesets({
+                enableRulesetIds: ['ads_and_trackers', 'cryptominers_and_heavy_scripts'],
+                disableRulesetIds: []
+              });
+            }
+          } catch (e) {}
+          currentState.proActive = true;
+          currentState.settings = newSettings;
+          popupQrBox.style.display = 'none';
+          licenseFeedbackEl.style.display = 'block';
+          licenseFeedbackEl.style.color = '#10b981';
+          licenseFeedbackEl.textContent = '✓ Linked via QR! Pro Protection Unlocked.';
+          renderState(currentState);
+        }
+      } catch (e) {}
+    }, 2000);
+  }
+
+  if (popupShowQrBtn) popupShowQrBtn.addEventListener('click', startPopupQrChallenge);
+  if (popupRefreshQrBtn) popupRefreshQrBtn.addEventListener('click', startPopupQrChallenge);
 
   function openFullDashboard() {
     if (chrome.runtime && typeof chrome.runtime.openOptionsPage === 'function') {

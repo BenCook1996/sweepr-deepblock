@@ -1,0 +1,18 @@
+{
+  "capturedAt": "2026-10-25T11:15:27.852Z",
+  "targetUrl": "https://bistroradar.au",
+  "domain": "bistroradar.au",
+  "leak": {
+    "adTypeDetected": "Script",
+    "offendingArtifact": "https://a.pub.network/core/pubfig.min.js",
+    "offendingHost": "a.pub.network",
+    "resourceTypes": [
+      "script",
+      "xmlhttprequest",
+      "sub_frame"
+    ],
+    "reason": "Unblocked third-party script request to a.pub.network (HTTP 200 OK) on bistroradar.au"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://a.pub.network/core/pubfig.min.js\"></script>"
+}

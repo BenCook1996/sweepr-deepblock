@@ -37,6 +37,9 @@ const results = {
 for (const filePath of htmlFiles) {
   const content = fs.readFileSync(filePath, 'utf8');
   const rel = path.relative(WEBSITE_DIR, filePath).replace(/\\/g, '/');
+  if (/meta\s+name=["']robots["']\s+content=["'][^"']*noindex/i.test(content)) {
+    continue;
+  }
 
   // Title tag
   const titleMatch = content.match(/<title>([^<]+)<\/title>/i);
@@ -191,6 +194,15 @@ if (fs.existsSync(robotsPath)) {
   if (!robotsTxt.includes('Sitemap: https://sweeprdeepblock.com/sitemap.xml')) {
     results.htmlIssues.push({ file: 'robots.txt', type: 'missing_sitemap_directive', msg: 'robots.txt missing standard Sitemap URL' });
   }
+  if (!robotsTxt.includes('LLMs-Txt: https://sweeprdeepblock.com/llms.txt')) {
+    results.htmlWarnings.push({ file: 'robots.txt', type: 'missing_llms_directive', msg: 'robots.txt missing LLMs-Txt directive' });
+  }
+  if (!robotsTxt.includes('LLMs-Full-Txt: https://sweeprdeepblock.com/llms-full.txt')) {
+    results.htmlWarnings.push({ file: 'robots.txt', type: 'missing_llms_full_directive', msg: 'robots.txt missing LLMs-Full-Txt directive' });
+  }
+  if (!robotsTxt.includes('Disallow: /extension-ux-prototype')) {
+    results.htmlWarnings.push({ file: 'robots.txt', type: 'missing_prototype_disallow', msg: 'robots.txt missing Disallow: /extension-ux-prototype' });
+  }
 } else {
   results.htmlIssues.push({ file: 'robots.txt', type: 'missing_robots', msg: 'robots.txt not found!' });
 }
@@ -232,6 +244,17 @@ if (fs.existsSync(llmsPath)) {
   results.htmlWarnings.push({ file: 'llms.txt', type: 'missing_llms_txt', msg: 'llms.txt not found!' });
 }
 
+// Check llms-full.txt (GEO / AEO Comprehensive Context)
+const llmsFullPath = path.join(WEBSITE_DIR, 'llms-full.txt');
+if (fs.existsSync(llmsFullPath)) {
+  const llmsFullTxt = fs.readFileSync(llmsFullPath, 'utf8');
+  if (!llmsFullTxt.includes('## 1. Executive Summary') || !llmsFullTxt.includes('## 3. Public Anti-Detection Test Lab')) {
+    results.htmlWarnings.push({ file: 'llms-full.txt', type: 'incomplete_llms_full_txt', msg: 'llms-full.txt missing critical technical architecture sections' });
+  }
+} else {
+  results.htmlIssues.push({ file: 'llms-full.txt', type: 'missing_llms_full_txt', msg: 'llms-full.txt not found for GEO/AEO optimization!' });
+}
+
 // Check indexing-queue.json
 const queuePath = path.join(WEBSITE_DIR, 'indexing-queue.json');
 if (fs.existsSync(queuePath)) {
@@ -263,7 +286,8 @@ results.serverAudit = {
   hasExtendedStaticCaching: serverCode.includes('max-age=604800'),
   hasBotHitTelemetry: serverCode.includes('BOT_UA_RE') && serverCode.includes('bot-hit'),
   hasPreconnectHeaders: serverCode.includes('rel=preconnect'),
-  hasPreloadHeaders: serverCode.includes('rel=preload')
+  hasPreloadHeaders: serverCode.includes('rel=preload'),
+  hasPrototypeNoIndex: serverCode.includes("'extension-ux-prototype.html'")
 };
 
 console.log('\n=== AUDIT SUMMARY ===');

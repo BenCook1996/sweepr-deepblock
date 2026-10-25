@@ -126,11 +126,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function markProActivated(licenseKey, settings) {
     dashboardState.proActive = true;
+    dashboardState.licenseKey = licenseKey || dashboardState.licenseKey || input.value.trim();
     if (settings) dashboardState.settings = settings;
     feedback.style.display = 'block';
     feedback.style.color = '#10b981';
     feedback.textContent =
-      '✓ Paid Pro Subscription Verified! All protection features are now active across your browser.';
+      '✓ Paid Pro Subscription Verified! All protection features are now active across your browser (up to 3 devices).';
     btn.textContent = '✓ Activated';
     btn.style.background = '#047857';
     if (badge) {
@@ -138,6 +139,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (licenseKey && !input.value) {
       input.value = licenseKey;
+    }
+    const welcomeQrBtn = document.getElementById('welcomeQrBtn');
+    if (welcomeQrBtn) {
+      welcomeQrBtn.textContent = '📱 Link Mobile or Another Browser via QR';
     }
     renderModuleSwitches(true, dashboardState.settings);
   }
@@ -387,4 +392,174 @@ document.addEventListener('DOMContentLoaded', () => {
       handleActivate();
     }
   });
+
+  // QR Code Device Linking (Flow B when unactivated, Flow A when Pro is active)
+  const welcomeQrBtn = document.getElementById('welcomeQrBtn');
+  const welcomeQrDrawer = document.getElementById('welcomeQrDrawer');
+  const welcomeQrTitle = document.getElementById('welcomeQrTitle');
+  const welcomeQrSvg = document.getElementById('welcomeQrSvg');
+  const welcomeQrStatus = document.getElementById('welcomeQrStatus');
+  const welcomeRefreshQrBtn = document.getElementById('welcomeRefreshQrBtn');
+  let welcomeQrTimer = null;
+
+  async function handleWelcomeQrAction() {
+    if (!welcomeQrDrawer || !welcomeQrSvg || !welcomeQrStatus) return;
+    welcomeQrDrawer.style.display = 'block';
+    welcomeQrSvg.innerHTML = '<span style="font-size:12px;color:#6b7280;">Generating QR...</span>';
+    if (welcomeQrTimer) clearInterval(welcomeQrTimer);
+
+    const stored = await chrome.storage.local.get(['deviceId', 'licenseKey', 'proActive']);
+    const deviceId =
+      stored && typeof stored.deviceId === 'string' && stored.deviceId.startsWith('ext_db_')
+        ? stored.deviceId
+        : `ext_db_${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36)}`;
+    await chrome.storage.local.set({ deviceId });
+
+    const baseOrigins = ['https://sweeprdeepblock.com', 'http://localhost:3000'];
+
+    if (dashboardState.proActive && (dashboardState.licenseKey || stored.licenseKey || input.value.trim())) {
+      // Flow A: Generate single-use QR pairing token to link mobile or another browser
+      const activeKey = dashboardState.licenseKey || stored.licenseKey || input.value.trim();
+      if (welcomeQrTitle) {
+        welcomeQrTitle.textContent = 'Scan with your phone to link another device (up to 3 devices total)';
+      }
+      welcomeQrStatus.textContent = 'Creating 120s single-use pairing QR...';
+      let tokenData = null;
+      for (const origin of baseOrigins) {
+        try {
+          const res = await fetch(`${origin}/api/device-link/create-token`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+            body: JSON.stringify({ key: activeKey, device_id: deviceId })
+          });
+          const data = await res.json().catch(() => ({}));
+          if (res.ok && data && data.ok && data.qr_svg) {
+            tokenData = data;
+            break;
+          } else if (res.status === 403 && data?.error === 'device_limit_reached') {
+            welcomeQrSvg.innerHTML = '<span style="font-size:11px;color:#ef4444;padding:6px;">3/3 Devices Active</span>';
+            welcomeQrStatus.textContent = data.message || 'Maximum of 3 devices reached. Remove a device in the Customer Portal.';
+            return;
+          }
+        } catch (e) {}
+      }
+      if (!tokenData) {
+        welcomeQrSvg.innerHTML = '<span style="font-size:12px;color:#ef4444;">Offline</span>';
+        welcomeQrStatus.textContent = 'Could not reach server.';
+        return;
+      }
+      welcomeQrSvg.innerHTML = tokenData.qr_svg;
+      const svgEl = welcomeQrSvg.querySelector('svg');
+      if (svgEl) {
+        svgEl.style.width = '100%';
+        svgEl.style.height = '100%';
+      }
+      let rem = Number(tokenData.expires_in) || 120;
+      welcomeQrStatus.textContent = `Expires in ${rem}s • Single-use QR (${tokenData.devices_used || 1}/${tokenData.devices_max || 3} devices used)`;
+      welcomeQrTimer = setInterval(() => {
+        rem -= 1;
+        if (rem <= 0) {
+          clearInterval(welcomeQrTimer);
+          welcomeQrStatus.textContent = 'QR expired — click Refresh QR Code.';
+        } else {
+          welcomeQrStatus.textContent = `Expires in ${rem}s • Single-use QR (${tokenData.devices_used || 1}/${tokenData.devices_max || 3} devices used)`;
+        }
+      }, 1000);
+      return;
+    }
+
+    // Flow B: Unactivated browser extension -> scan with phone to approve & unlock
+    if (welcomeQrTitle) {
+      welcomeQrTitle.textContent = 'Scan with your phone camera to approve & unlock this browser';
+    }
+    welcomeQrStatus.textContent = 'Creating 120s approval challenge...';
+    let challengeData = null;
+    let activeOrigin = baseOrigins[0];
+    for (const origin of baseOrigins) {
+      try {
+        const res = await fetch(`${origin}/api/device-link/challenge`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({
+            device_id: deviceId,
+            device_name: 'SWEEPR Deepblock Dashboard',
+            platform: 'browser_extension'
+          })
+        });
+        const data = await res.json().catch(() => ({}));
+        if (res.ok && data && data.ok && data.challenge_id) {
+          challengeData = data;
+          activeOrigin = origin;
+          break;
+        }
+      } catch (e) {}
+    }
+
+    if (!challengeData) {
+      welcomeQrSvg.innerHTML = '<span style="font-size:12px;color:#ef4444;">Offline</span>';
+      welcomeQrStatus.textContent = 'Could not reach server.';
+      return;
+    }
+    welcomeQrSvg.innerHTML = challengeData.qr_svg || '';
+    const svgEl = welcomeQrSvg.querySelector('svg');
+    if (svgEl) {
+      svgEl.style.width = '100%';
+      svgEl.style.height = '100%';
+    }
+    let rem = Number(challengeData.expires_in) || 120;
+    welcomeQrStatus.textContent = `Scan with phone to unlock • Expires in ${rem}s`;
+    welcomeQrTimer = setInterval(async () => {
+      rem = Math.max(0, rem - 2);
+      if (rem <= 0) {
+        clearInterval(welcomeQrTimer);
+        welcomeQrStatus.textContent = 'QR expired — click Refresh QR Code.';
+        return;
+      }
+      welcomeQrStatus.textContent = `Scan with phone to unlock • Expires in ${rem}s`;
+      try {
+        const pollRes = await fetch(
+          `${activeOrigin}/api/device-link/poll?challenge_id=${encodeURIComponent(challengeData.challenge_id)}&poll_secret=${encodeURIComponent(challengeData.poll_secret)}`
+        );
+        const pollData = await pollRes.json().catch(() => ({}));
+        if (pollRes.ok && pollData && pollData.status === 'approved' && pollData.licenseKey) {
+          clearInterval(welcomeQrTimer);
+          const settings = {
+            cookieAutoClose: true,
+            hideSearchSpam: true,
+            fakeShopAlerts: true,
+            trackerProtection: true,
+            adBlocking: true,
+            silentMode: true,
+            autoRamTamer: true
+          };
+          await chrome.storage.local.set({
+            deviceId,
+            proActive: true,
+            ramTamerActive: Boolean(pollData.ramTamerAddon),
+            licenseKey: pollData.licenseKey,
+            draftLicenseKey: '',
+            licenseDrawerOpen: false,
+            crmAccountId: pollData.account_id || '',
+            subscriptionStatus: 'active',
+            licenseVerifiedAt: Date.now(),
+            encryptedDnsEnabled: true,
+            settings
+          });
+          try {
+            if (chrome.declarativeNetRequest && chrome.declarativeNetRequest.updateEnabledRulesets) {
+              await chrome.declarativeNetRequest.updateEnabledRulesets({
+                enableRulesetIds: ['ads_and_trackers', 'cryptominers_and_heavy_scripts'],
+                disableRulesetIds: []
+              });
+            }
+          } catch (e) {}
+          welcomeQrDrawer.style.display = 'none';
+          markProActivated(pollData.licenseKey, settings);
+        }
+      } catch (e) {}
+    }, 2000);
+  }
+
+  if (welcomeQrBtn) welcomeQrBtn.addEventListener('click', handleWelcomeQrAction);
+  if (welcomeRefreshQrBtn) welcomeRefreshQrBtn.addEventListener('click', handleWelcomeQrAction);
 });

@@ -1,0 +1,19 @@
+{
+  "capturedAt": "2026-10-25T11:15:27.953Z",
+  "targetUrl": "https://makeuseof.com",
+  "domain": "makeuseof.com",
+  "leak": {
+    "adTypeDetected": "Network",
+    "offendingArtifact": "https://rtb.mfadsrvr.com/ortb/v2/auction",
+    "offendingHost": "rtb.mfadsrvr.com",
+    "resourceTypes": [
+      "xmlhttprequest",
+      "script",
+      "sub_frame",
+      "image"
+    ],
+    "reason": "Unblocked third-party network request to rtb.mfadsrvr.com (HTTP 200 OK) on makeuseof.com"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://rtb.mfadsrvr.com/ortb/v2/auction\"></script>"
+}

@@ -1,0 +1,72 @@
+[
+  {
+    "run_id": "adpipe-2026-10-25-3g109",
+    "timestamp": "2026-10-25T11:15:29.794Z",
+    "target_url": "https://questwatch.it",
+    "domain": "questwatch.it",
+    "ad_type_detected": "DOM",
+    "offending_artifact": ".springserve-vast-slot",
+    "generated_rule": "questwatch.it##.springserve-vast-slot",
+    "dnr_rule_json": null,
+    "fix_status": "Failed Verification - Needs Manual Review",
+    "verification_notes": "Rejected: DOM selector \".springserve-vast-slot\" lacks explicit ad-namespace specificity; queued for manual review.",
+    "commit_hash": "aff5a0a",
+    "crm_synced": 1
+  },
+  {
+    "run_id": "adpipe-2026-10-25-3g109",
+    "timestamp": "2026-10-25T11:15:29.794Z",
+    "target_url": "https://kernelplanet.de",
+    "domain": "kernelplanet.de",
+    "ad_type_detected": "DOM",
+    "offending_artifact": ".springserve-vast-slot",
+    "generated_rule": "kernelplanet.de##.springserve-vast-slot",
+    "dnr_rule_json": null,
+    "fix_status": "Failed Verification - Needs Manual Review",
+    "verification_notes": "Rejected: DOM selector \".springserve-vast-slot\" lacks explicit ad-namespace specificity; queued for manual review.",
+    "commit_hash": "aff5a0a",
+    "crm_synced": 1
+  },
+  {
+    "run_id": "adpipe-2026-10-25-3g109",
+    "timestamp": "2026-10-25T11:15:29.794Z",
+    "target_url": "https://foodiedigest.org",
+    "domain": "foodiedigest.org",
+    "ad_type_detected": "DOM",
+    "offending_artifact": ".springserve-vast-slot",
+    "generated_rule": "foodiedigest.org##.springserve-vast-slot",
+    "dnr_rule_json": null,
+    "fix_status": "Failed Verification - Needs Manual Review",
+    "verification_notes": "Rejected: DOM selector \".springserve-vast-slot\" lacks explicit ad-namespace specificity; queued for manual review.",
+    "commit_hash": "aff5a0a",
+    "crm_synced": 1
+  },
+  {
+    "run_id": "adpipe-2026-10-25-3g109",
+    "timestamp": "2026-10-25T11:15:29.794Z",
+    "target_url": "https://postzone.info",
+    "domain": "postzone.info",
+    "ad_type_detected": "DOM",
+    "offending_artifact": ".springserve-vast-slot",
+    "generated_rule": "postzone.info##.springserve-vast-slot",
+    "dnr_rule_json": null,
+    "fix_status": "Failed Verification - Needs Manual Review",
+    "verification_notes": "Rejected: DOM selector \".springserve-vast-slot\" lacks explicit ad-namespace specificity; queued for manual review.",
+    "commit_hash": "aff5a0a",
+    "crm_synced": 1
+  },
+  {
+    "run_id": "adpipe-2026-10-25-3g109",
+    "timestamp": "2026-10-25T11:15:29.793Z",
+    "target_url": "https://slashdot.org",
+    "domain": "slashdot.org",
+    "ad_type_detected": "DOM",
+    "offending_artifact": ".springserve-vast-slot",
+    "generated_rule": "slashdot.org##.springserve-vast-slot",
+    "dnr_rule_json": null,
+    "fix_status": "Failed Verification - Needs Manual Review",
+    "verification_notes": "Rejected: DOM selector \".springserve-vast-slot\" lacks explicit ad-namespace specificity; queued for manual review.",
+    "commit_hash": "aff5a0a",
+    "crm_synced": 1
+  }
+]

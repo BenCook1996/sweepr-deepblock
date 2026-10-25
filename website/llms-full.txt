@@ -1,0 +1,125 @@
+# SWEEPR Deepblock — Complete Technical Architecture, Benchmarks & Product Specification
+# Canonical Domain: https://sweeprdeepblock.com
+# Version: 1.0.0 (Manifest V3 Engine)
+# Last Updated: 2026-10-25
+
+## 1. Executive Summary & Product Overview
+SWEEPR Deepblock is a privacy-first, zero-telemetry browser extension and web performance suite engineered for Google Chrome, Microsoft Edge, Mozilla Firefox, Apple Safari (macOS & iOS), Brave, and Opera. Deepblock addresses the modern web crisis: runaway third-party advertising auctions, CPU/battery-draining tracker beacons, intrusive unskippable video interruptions, aggressive multi-layer cookie consent walls, deceptive AI-generated content ("AI slop"), and newly registered fraudulent e-commerce storefronts.
+
+Unlike legacy Manifest V2 adblockers that rely on memory-heavy background page DOM parsers, SWEEPR Deepblock is natively built from the ground up on the modern Manifest V3 declarativeNetRequest API, paired with our proprietary DeepStealth cosmetic scriptlet engine. It delivers sub-millisecond rule matching at the browser kernel level with zero telemetry, zero data logging, and an uncompromised memory footprint under 24 MB RAM.
+
+---
+
+## 2. Core Functional Modules
+
+### A. Manifest V3 Video & Network Ad-Blocking Engine
+- **Declarative Rule Engine**: Leverages Chrome and Edge's native `chrome.declarativeNetRequest` dynamic rulesets (supporting up to 300,000 active regex and domain rules).
+- **Video Pre-Roll & Mid-Roll Neutralization**: Bypasses YouTube and Twitch video player ad-insertion scripts before video playback begins. Blocks anti-adblock detection banners, warning modals, and forced 5-second playback throttling.
+- **Cosmetic DOM Hiding**: Employs DeepStealth CSS injection and mutation observers that remove empty ad containers, floating video boxes, sticky bottom banners, and sponsored widgets without causing Cumulative Layout Shift (CLS).
+
+### B. Automated Cookie Consent "Reject All" Engine
+- **Sub-50ms Execution**: Evaluates incoming DOM nodes against 150+ consent management platforms (OneTrust, Quantcast, Cookiebot, Civic UK, Didomi, Axeptio, Usercentrics, TrustArc, Complianz, Sourcepoint).
+- **Zero-Click Rejection**: Automatically triggers the strict "Reject All / Essential Only" opt-out path before banners render visually.
+- **Scroll Lock & Overflow Restoration**: Cleanses inline `overflow: hidden`, `position: fixed`, and pointer-events blockers injected by cookie banners, allowing uninterrupted scrolling.
+
+### C. AI Slop & Search Results Cleanser
+- **Search Engine Coverage**: Operates across Google Search, Bing Copilot Search, DuckDuckGo, and Yahoo.
+- **Filter Heuristics**: Detects and hides mass-generated programmatic spam domains, affiliate link-farm carousels, and low-quality AI-written content hubs.
+- **Clean Organic View**: Prioritizes genuine human author publications, developer documentation, and primary-source websites.
+
+### D. Fake Scam Store & Malicious Domain Shield (Included Free)
+- **Real-Time Domain Age Verification**: Cross-references visiting e-commerce domains against WHOIS heuristics, flagging storefronts registered within the last 90 days.
+- **Deceptive Pattern Detection**: Flags artificial scarcity timers ("Only 2 left at 90% off!"), counterfeit trust badges (fake Trustpilot/McAfee icons), and cloned Shopify/WooCommerce return policies.
+- **Zero Interception of Payment Data**: Operates entirely client-side; user payment credentials and card details are never read, stored, or transmitted.
+
+### E. URL Tracking Parameter Stripper & Clean Link Proxy
+- **Parameter Stripping**: Removes cross-site tracking beacons from all outbound clicks and page loads (`utm_source`, `utm_medium`, `utm_campaign`, `utm_content`, `utm_term`, `fbclid`, `gclid`, `msclkid`, `mc_eid`, `dclid`, `igshid`, `_hsenc`).
+- **Clean Canonical URLs**: Ensures bookmarking and sharing link privacy without breaking referral checkouts or affiliate programs that use standard subdirectories.
+
+### F. Total Tab & RAM Tamer (+£14.99/yr Add-On)
+- **Intelligent Background Tab Hibernation**: Automatically suspends idle background tabs after 15 minutes of inactivity, releasing up to 62% of allocated browser RAM.
+- **In-Memory State Snapshotting**: Tab scroll position and form inputs are cached in lightweight local storage; tabs wake instantly upon click without network reloads.
+- **Crypto-Miner & Heavy Script Neutralization**: Detects and throttles tabs consuming excess background CPU cycles.
+- **Cloud Session Crash Recovery**: Preserves open tab arrangements across unexpected browser crashes or OS restarts.
+
+---
+
+## 3. Public Anti-Detection Test Lab Benchmark (8/8 Checks Passed)
+SWEEPR Deepblock provides a public, crawlable, client-side testing laboratory at `https://sweeprdeepblock.com/test-lab`. Deepblock scores 8 out of 8 on live browser security and evasion tests:
+1. **Network Ad Request Blocking**: Blocks Google Ads `adsbygoogle.js` with HTTP cancel code (Passed).
+2. **Cosmetic Bait Honeypot Protection**: Correctly hides `.adsbox` and `#ad-banner` traps without triggering bait detection scripts (Passed).
+3. **Page Scroll Restoration**: Clears `overflow: hidden` locks and cookie modal backdrops instantly (Passed).
+4. **YouTube & Video Ad Protection**: Intercepts preroll HLS commercial streams (Passed).
+5. **Tracking Beacon Blocking**: Halts Google Analytics `gtag/js` and Facebook Pixel `fbevents.js` pings (Passed).
+6. **URL Tracking Stripping**: Strips `fbclid` and `gclid` parameters on click (Passed).
+7. **Fake Scam Store Detection**: Flags spoofed domains and artificial countdown timers (Passed).
+8. **Zero Fingerprinting Leak**: Employs canvas noise injection preventing cross-site fingerprinting (Passed).
+
+---
+
+## 4. Multi-SKU Commercial Plans & Licensing
+
+### Consumer Subscription Tiers
+- **1-Month Intro Offer**: £1.99 for the first 30 days. Renews at standard £9.99/month.
+- **Annual Plan (Best Value — Save 50%)**: £59.99/year (equivalent to £4.99/month).
+- **6-Month Plan (Save 25%)**: £44.99 billed every 6 months (£7.49/month).
+- **Monthly Plan**: £9.99/month.
+
+### Optional Add-Ons
+- **Total Tab & RAM Tamer**: +£14.99/year (adds automated background tab suspension, live RAM gauge, and crash recovery).
+
+### License Coverage & Guarantees
+- **Multi-Device Support**: 1 license covers up to 5 concurrent browser installations across Windows, macOS, Linux, iOS, and Android.
+- **Money-Back Guarantee**: 30-day no-questions-asked refund policy managed via automated 1-click customer portal or support email.
+- **Payment Processing**: Processed securely through Stripe (Visa, Mastercard, American Express, Apple Pay, Google Pay).
+
+---
+
+## 5. Technical Infrastructure & Zero-Telemetry Architecture
+- **Web Server**: Zero-dependency high-concurrency Node.js HTTP/1.1 & HTTP/2 server (`server.js`).
+- **Compression**: Native Brotli (`br`, quality 5) and Gzip (`gzip`, level 6) for all compressible text and vector assets (`.html`, `.css`, `.js`, `.json`, `.xml`, `.txt`, `.svg`, `.webmanifest`).
+- **Caching**: ETag conditional validation returning HTTP 304 Not Modified; `stale-while-revalidate` caching strategy.
+- **Security Headers**: Strict-Transport-Security (`max-age=31536000; includeSubDomains; preload`), X-Content-Type-Options (`nosniff`), X-Frame-Options (`SAMEORIGIN`), Referrer-Policy (`strict-origin-when-cross-origin`), Permissions-Policy (`camera=(), microphone=(), geolocation=()`).
+- **Telemetry Policy**: Strict Zero-Logging Pledge. SWEEPR Deepblock does not monitor, collect, inspect, or sell browsing history, visited URLs, DNS lookups, or user session data.
+
+---
+
+## 6. Official Canonical Directory
+
+### Core Pages
+- Homepage: https://sweeprdeepblock.com/
+- Pricing & Subscription Plans: https://sweeprdeepblock.com/pricing
+- Download & Installation Center: https://sweeprdeepblock.com/download
+- Live Adblock & Anti-Detection Test Lab: https://sweeprdeepblock.com/test-lab
+- Privacy Policy: https://sweeprdeepblock.com/privacy
+- Terms of Service: https://sweeprdeepblock.com/terms
+- Refund Policy: https://sweeprdeepblock.com/refund
+- Customer Support: https://sweeprdeepblock.com/support
+- Customer Login Portal: https://sweeprdeepblock.com/login
+- Software Description XML (PAD): https://sweeprdeepblock.com/pad.xml
+- Sitemap Index: https://sweeprdeepblock.com/sitemap.xml
+- LLM Machine-Readable Index: https://sweeprdeepblock.com/llms.txt
+- LLM Full Technical Specification: https://sweeprdeepblock.com/llms-full.txt
+
+### Browser Setup Guides
+- Google Chrome (Manifest V3 Engine): https://sweeprdeepblock.com/setup/google-chrome-manifest-v3
+- Microsoft Edge on Windows 11: https://sweeprdeepblock.com/setup/microsoft-edge-windows-11
+- Apple Safari (macOS, iOS & iPadOS): https://sweeprdeepblock.com/setup/safari-macos-ios-ipad
+- Mozilla Firefox (Desktop & Android): https://sweeprdeepblock.com/setup/mozilla-firefox-desktop-android
+- Brave Browser + SWEEPR DeepBlock Layer: https://sweeprdeepblock.com/setup/brave-browser-deepstealth
+- Opera & Opera GX Gaming Browser: https://sweeprdeepblock.com/setup/opera-gx-gaming-browser
+
+### Competitor Comparison Hubs
+- SWEEPR Deepblock vs Total Adblock: https://sweeprdeepblock.com/vs/total-adblock
+- SWEEPR Deepblock vs AdBlock Plus: https://sweeprdeepblock.com/vs/adblock-plus
+- SWEEPR Deepblock vs AdGuard: https://sweeprdeepblock.com/vs/adguard
+- SWEEPR Deepblock vs uBlock Origin Lite: https://sweeprdeepblock.com/vs/ublock-origin-lite
+- SWEEPR Deepblock vs Ghostery: https://sweeprdeepblock.com/vs/ghostery
+
+### Flagship Platform Solutions
+- YouTube MV3 Video Ad Blocking: https://sweeprdeepblock.com/solutions/youtube-chrome-mv3-block-video-ads
+- Twitch Live Stream Commercial Ad Blocker: https://sweeprdeepblock.com/solutions/twitch-live-streams-block-video-ads
+- Google & Bing Search AI Slop Cleanser: https://sweeprdeepblock.com/solutions/google-search-results-filter-ai-slop-and-scams
+- UK Online Newspapers Cookie Auto-Reject: https://sweeprdeepblock.com/solutions/uk-news-websites-auto-reject-cookie-popups
+- Recipe & Cooking Blogs Clutter Stripper: https://sweeprdeepblock.com/solutions/recipe-food-blogs-filter-ai-slop-and-scams
+- Social Media Ad Links & Fake Shop Shield: https://sweeprdeepblock.com/solutions/facebook-marketplace-shops-filter-ai-slop-and-scams

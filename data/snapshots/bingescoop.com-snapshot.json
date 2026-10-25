@@ -1,0 +1,18 @@
+{
+  "capturedAt": "2026-10-25T11:15:27.924Z",
+  "targetUrl": "https://bingescoop.com",
+  "domain": "bingescoop.com",
+  "leak": {
+    "adTypeDetected": "Script",
+    "offendingArtifact": "https://acdn.adnxs-simple.com/ast/ast.js",
+    "offendingHost": "acdn.adnxs-simple.com",
+    "resourceTypes": [
+      "script",
+      "xmlhttprequest",
+      "sub_frame"
+    ],
+    "reason": "Unblocked third-party script request to acdn.adnxs-simple.com (HTTP 200 OK) on bingescoop.com"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://acdn.adnxs-simple.com/ast/ast.js\"></script>"
+}

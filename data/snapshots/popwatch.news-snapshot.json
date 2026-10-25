@@ -1,0 +1,17 @@
+{
+  "capturedAt": "2026-10-25T11:15:27.862Z",
+  "targetUrl": "https://popwatch.news",
+  "domain": "popwatch.news",
+  "leak": {
+    "adTypeDetected": "Script",
+    "offendingArtifact": "https://cdn.snigelweb.com/adengine/snigel-ads.js",
+    "offendingHost": "cdn.snigelweb.com",
+    "resourceTypes": [
+      "script",
+      "xmlhttprequest"
+    ],
+    "reason": "Unblocked third-party script request to cdn.snigelweb.com (HTTP 200 OK) on popwatch.news"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://cdn.snigelweb.com/adengine/snigel-ads.js\"></script>"
+}

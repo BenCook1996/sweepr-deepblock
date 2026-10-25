@@ -206,13 +206,18 @@
             <span class="text-xs font-extrabold uppercase tracking-wider text-gray-800">Linked Devices (Any Mix of Desktop &amp; Mobile)</span>
             <span id="portalDevicesBadge" class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800">0 / 3 Active</span>
           </div>
+          <p class="text-[11.5px] text-gray-500">Purchased on desktop and downloaded the app separately on another device? Generate a one-time QR code below to activate your account on your separate device.</p>
           <div id="portalDevicesList" class="space-y-1.5 text-xs text-gray-700"></div>
           <button type="button" id="portalShowQrBtn" class="btn bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold w-full justify-center py-2.5 rounded-xl cursor-pointer">
-            📱 Link Browser or Mobile via QR Code
+            📱 Activate Separate Device via QR Code
           </button>
           <div id="portalQrDrawer" class="hidden rounded-xl border border-emerald-200 bg-white p-3.5 text-center space-y-2">
-            <div class="text-xs font-bold text-gray-900">Scan with your phone camera to link instantly</div>
+            <div class="text-xs font-bold text-gray-900">Scan on your separate device or copy the pairing code below</div>
             <div id="portalQrSvgBox" class="w-40 h-40 mx-auto p-2 rounded-xl border border-gray-200 bg-white flex items-center justify-center"></div>
+            <div id="portalQrTokenRow" class="hidden flex items-center justify-center gap-2">
+              <code id="portalQrTokenVal" class="text-[11px] font-mono font-bold bg-gray-50 border border-gray-200 px-2 py-1 rounded-lg text-gray-800"></code>
+              <button type="button" id="portalQrCopyBtn" class="text-[11px] font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 px-2 py-1 rounded-lg cursor-pointer">Copy Pairing Code</button>
+            </div>
             <div id="portalQrTimer" class="text-[11px] font-semibold text-emerald-700">Expires in 120s • Single-use token</div>
             <button type="button" id="portalRefreshQrBtn" class="text-xs font-bold text-emerald-600 hover:text-emerald-700 underline cursor-pointer">
               Generate Fresh QR Code
@@ -460,6 +465,20 @@
         if (svgEl) {
           svgEl.style.width = '100%';
           svgEl.style.height = '100%';
+        }
+        const tokenRow = document.getElementById('portalQrTokenRow');
+        const tokenVal = document.getElementById('portalQrTokenVal');
+        const copyBtn = document.getElementById('portalQrCopyBtn');
+        if (tokenRow && tokenVal && data.token) {
+          tokenVal.textContent = data.token;
+          tokenRow.classList.remove('hidden');
+          if (copyBtn) {
+            copyBtn.onclick = () => {
+              navigator.clipboard.writeText(data.token);
+              copyBtn.textContent = 'Copied ✓';
+              setTimeout(() => { copyBtn.textContent = 'Copy Pairing Code'; }, 2000);
+            };
+          }
         }
         let rem = Number(data.expires_in) || 120;
         timerEl.textContent = 'Expires in ' + rem + 's • Single-use token';

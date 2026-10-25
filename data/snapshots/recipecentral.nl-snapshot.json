@@ -1,0 +1,19 @@
+{
+  "capturedAt": "2026-10-25T11:15:27.797Z",
+  "targetUrl": "https://recipecentral.nl",
+  "domain": "recipecentral.nl",
+  "leak": {
+    "adTypeDetected": "Network",
+    "offendingArtifact": "https://vid.springserve.com/vast/vpaid-preroll.xml",
+    "offendingHost": "vid.springserve.com",
+    "resourceTypes": [
+      "xmlhttprequest",
+      "media",
+      "script",
+      "sub_frame"
+    ],
+    "reason": "Unblocked third-party network request to vid.springserve.com (HTTP 200 OK) on recipecentral.nl"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://vid.springserve.com/vast/vpaid-preroll.xml\"></script>"
+}

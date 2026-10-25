@@ -1,0 +1,62 @@
+name: SWEEPR DeepBlock — Daily 1,000-Site Ad-Filter Pipeline
+
+on:
+  schedule:
+    # Triggers at 00:00 UTC every 24 hours
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+    inputs:
+      sample_size:
+        description: 'Number of unique ad-heavy sites to sample (30-day deduplicated)'
+        required: false
+        default: '1000'
+      git_mode:
+        description: 'Git deployment mode (push | pr | commit | dry-run)'
+        required: false
+        default: 'push'
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  daily-ad-filter-scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout SWEEPR DeepBlock Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js 22+ (with built-in node:sqlite)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.23.4'
+
+      - name: Restore 30-Day SQLite Deduplication State Cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            data/ad-filter-pipeline.sqlite
+            data/tranco-ad-heavy-cache.json
+            website/ad-filter-pipeline-state.json
+          key: sweepr-deepblock-adpipe-state-${{ github.run_id }}
+          restore-keys: |
+            sweepr-deepblock-adpipe-state-
+
+      - name: Configure Git Bot Identity
+        run: |
+          git config user.name "SWEEPR DeepBlock Auto-Filter Bot"
+          git config user.email "bot@sweeprdeepblock.com"
+
+      - name: Execute Daily 1,000-Site Ad Detection, Self-Healing Rule Synthesis & CRM Sync
+        env:
+          SWEEPR_RAILWAY_CRM: ${{ secrets.SWEEPR_RAILWAY_CRM || 'https://sweepr-crm-production.up.railway.app' }}
+          CRM_ADMIN_USER: ${{ secrets.CRM_ADMIN_USER || 'admin' }}
+          CRM_ADMIN_PASSWORD: ${{ secrets.CRM_ADMIN_PASSWORD }}
+          CRM_WEBHOOK_URL: ${{ secrets.CRM_WEBHOOK_URL }}
+          PROXY_POOL_URLS: ${{ secrets.PROXY_POOL_URLS }}
+          GIT_DEPLOY_MODE: ${{ inputs.git_mode || 'push' }}
+        run: |
+          node scripts/daily-ad-filter-pipeline.mjs ${{ inputs.sample_size || '1000' }} --git-mode=${{ inputs.git_mode || 'push' }} --concurrency=20

@@ -1,0 +1,17 @@
+{
+  "capturedAt": "2026-10-25T11:15:27.860Z",
+  "targetUrl": "https://devwiki.us",
+  "domain": "devwiki.us",
+  "leak": {
+    "adTypeDetected": "Script",
+    "offendingArtifact": "https://www.ezojs.com/ezoic/sa.min.js",
+    "offendingHost": "www.ezojs.com",
+    "resourceTypes": [
+      "script",
+      "xmlhttprequest"
+    ],
+    "reason": "Unblocked third-party script request to www.ezojs.com (HTTP 200 OK) on devwiki.us"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://www.ezojs.com/ezoic/sa.min.js\"></script>"
+}

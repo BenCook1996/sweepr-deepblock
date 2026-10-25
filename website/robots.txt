@@ -8,6 +8,10 @@ Disallow: /logos
 Disallow: /mockups
 Disallow: /popup-mockups
 Disallow: /redesign-prototype
+Disallow: /extension-ux-prototype
+Disallow: /sweepr-vpn-mobile-redesign
+Disallow: /ios-app
+Disallow: /welcome
 
 # Explicitly permit AI Search and Answer Engines for LLM citations (GEO/AEO)
 User-agent: OAI-SearchBot
@@ -29,4 +33,5 @@ User-agent: Applebot-Extended
 Allow: /
 
 Sitemap: https://sweeprdeepblock.com/sitemap.xml
-# LLMs-Txt: https://sweeprdeepblock.com/llms.txt
+LLMs-Txt: https://sweeprdeepblock.com/llms.txt
+LLMs-Full-Txt: https://sweeprdeepblock.com/llms-full.txt

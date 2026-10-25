@@ -152,7 +152,9 @@ async function publishTelegraph(item, lang, runTag) {
   });
   const j = await r.json();
   if (!j.ok || !j.result?.url) {
-    cachedTelegraphToken = null;
+    if (j?.error && (j.error.includes('TOKEN') || j.error.includes('AUTH'))) {
+      cachedTelegraphToken = null;
+    }
     throw new Error('Telegraph createPage error: ' + (j?.error || 'unknown'));
   }
   const slug = j.result.url.split('/').pop() || runTag;
@@ -165,22 +167,65 @@ async function publishTelegraph(item, lang, runTag) {
   };
 }
 
+let dpasteAvailable = null;
+
 async function publishDpaste(item, lang, runTag) {
   const title = `[${lang.code}] ${lang.prefix} ${item.name} (${runTag})`;
   const md = `# ${title}\n\n- **Primary Guide:** [${item.name}](${item.url})\n- **Official Extension:** [${lang.cta}](https://sweeprdeepblock.com)\n- **8/8 Anti-Detection Test Lab:** [https://sweeprdeepblock.com/test-lab](https://sweeprdeepblock.com/test-lab)\n- **PAD 4.0 XML Feed:** [https://sweeprdeepblock.com/pad.xml](https://sweeprdeepblock.com/pad.xml)\n- **Pricing & Trial:** [https://sweeprdeepblock.com/pricing](https://sweeprdeepblock.com/pricing)\n`;
-  const body = new URLSearchParams({ content: md, lexer: '_markdown', format: 'url', expires: '31536000' });
-  const r = await fetch('https://dpaste.org/api/', { method: 'POST', body, signal: AbortSignal.timeout(15000) });
-  if (!r.ok) throw new Error(`dpaste HTTP ${r.status}`);
-  const url = (await r.text()).trim();
-  if (!url.startsWith('https://dpaste.org/')) throw new Error('dpaste returned unexpected body');
-  const pasteId = url.split('/').filter(Boolean).pop() || runTag;
-  return {
-    url,
-    who: `DPaste DeepBlock (${lang.code}) — ${item.name} [${pasteId}]`,
-    website: 'dpaste.org',
-    how: `Daily Drip Dofollow Markdown (${lang.code})`,
-    category: `[SWEEPR DeepBlock] ${title} -> ${item.url} (DR 74)`
-  };
+  
+  // Try dpaste.org (DR 74) if not marked unavailable
+  if (dpasteAvailable !== false) {
+    try {
+      const body = new URLSearchParams({ content: md, lexer: '_markdown', format: 'url', expires: '31536000' });
+      const r = await fetch('https://dpaste.org/api/', { method: 'POST', body, signal: AbortSignal.timeout(3000) });
+      if (r.ok) {
+        const url = (await r.text()).trim();
+        if (url.startsWith('https://dpaste.org/')) {
+          dpasteAvailable = true;
+          const pasteId = url.split('/').filter(Boolean).pop() || runTag;
+          return {
+            url,
+            who: `DPaste DeepBlock (${lang.code}) — ${item.name} [${pasteId}]`,
+            website: 'dpaste.org',
+            how: `Daily Drip Dofollow Markdown (${lang.code})`,
+            category: `[SWEEPR DeepBlock] ${title} -> ${item.url} (DR 74)`
+          };
+        } else {
+          dpasteAvailable = false;
+        }
+      } else {
+        dpasteAvailable = false;
+      }
+    } catch {
+      dpasteAvailable = false;
+    }
+  }
+
+  // High-DR Fallback 1: paste.rs (DR 71)
+  try {
+    const rPaste = await fetch('https://paste.rs/', {
+      method: 'POST',
+      body: md,
+      headers: { 'Content-Type': 'text/markdown; charset=utf-8' },
+      signal: AbortSignal.timeout(3000)
+    });
+    if (rPaste.ok) {
+      const pUrl = (await rPaste.text()).trim();
+      if (pUrl.startsWith('https://paste.rs/')) {
+        const pasteId = pUrl.split('/').filter(Boolean).pop() || runTag;
+        return {
+          url: pUrl,
+          who: `PasteRS DeepBlock (${lang.code}) — ${item.name} [${pasteId}]`,
+          website: 'paste.rs',
+          how: `Daily Drip Dofollow Markdown (${lang.code})`,
+          category: `[SWEEPR DeepBlock] ${title} -> ${item.url} (DR 71)`
+        };
+      }
+    }
+  } catch {}
+
+  // High-DR Fallback 2: Telegraph (DR 89)
+  return await publishTelegraph(item, lang, runTag);
 }
 
 async function syncToCrm(entry, sourceUrl) {
@@ -212,7 +257,7 @@ async function fetchDeepBlockCrmState(seed = []) {
     const how = String(r?.how || '').toLowerCase();
     const cat = String(r?.category || '');
     if (site && (how.includes('submit') || how.includes('form') || how.includes('directory') || how.includes('portal'))) {
-      if (!['telegra.ph', 'dpaste.org', 'files.catbox.moe'].includes(site)) {
+      if (!['telegra.ph', 'dpaste.org', 'paste.rs', 'files.catbox.moe'].includes(site)) {
         postedDirectoryDomains.add(site);
       }
     }

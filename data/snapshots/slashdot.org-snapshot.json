@@ -1,0 +1,14 @@
+{
+  "capturedAt": "2026-10-25T11:15:28.289Z",
+  "targetUrl": "https://slashdot.org",
+  "domain": "slashdot.org",
+  "leak": {
+    "adTypeDetected": "DOM",
+    "offendingArtifact": ".springserve-vast-slot",
+    "selector": ".springserve-vast-slot",
+    "dimensions": "300x250",
+    "reason": "Unblocked 300x250 DOM ad slot (.springserve-vast-slot) detected on slashdot.org"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<div class=\"springserve-vast-slot\" style=\"width:300px;height:250px;display:block\" aria-label=\"Sponsored Advertisement\"></div>"
+}
