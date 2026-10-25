@@ -902,6 +902,66 @@
     } catch (e) {}
   }
 
+  // Neutralize Nuvid / DrTuber / Proporn / HD21 / Winporn / Iceporn ads:
+  // 1. Bottom-right corner ad (rvp2p / p2p.init.js / rvmessage.online / rvrpushserv.com)
+  // 2. In-player pause banner & VAST pre-roll (htmlVideoPlayer: doNotShowInPlayerBannerWhenPause=1, hide_spot=true, spot_url='')
+  // 3. Popunders (TRAFF_TARGETS / jquery.shows2.min.js / _pnuvid.js / t.yequka.my)
+  // 4. NeverBlock / ExoLoader (CustomEvent('getexoloader') & window.ExoLoader)
+  safeDefine(window, 'rvp2p', function () {
+    return { init: noopFn };
+  });
+  safeDefine(window, 'SuShow', noopFn);
+  safeDefine(window, 'BetterJsPop', Object.freeze({ add: noopFn, config: noopFn, init: noopFn }));
+  safeDefine(window, 'hide_spot', true);
+  safeDefine(window, 'TRAFF_TARGETS', Object.freeze({ urls: [], under: 0, shows: 0 }));
+  safeDefine(window, 'TRAFF_TARGETS_SE', 0);
+  safeDefine(window, 'initTraffTargets', noopFn);
+
+  const exoLoaderStub = Object.freeze({
+    getDetector: () => ({ domain_base: '', detectCensorship: noopFn }),
+    addZone: noopFn,
+    serve: noopFn,
+    push: noopFn
+  });
+  safeDefine(window, 'ExoLoader', exoLoaderStub);
+
+  let realHtmlVideoPlayer = window.htmlVideoPlayer;
+  try {
+    Object.defineProperty(window, 'htmlVideoPlayer', {
+      get: () => {
+        if (typeof realHtmlVideoPlayer !== 'function') return realHtmlVideoPlayer;
+        return function (cfg) {
+          try {
+            if (isProEntitled() && cfg && typeof cfg === 'object') {
+              cfg.doNotShowInPlayerBannerWhenPause = 1;
+              cfg.hide_spot = true;
+              cfg.spot_url = '';
+              cfg.spot_bottom_url = '';
+              cfg.show_bottom_spot = false;
+              cfg.show_sponsored = false;
+              cfg.video_preroll = false;
+              cfg.video_preroll_data = null;
+              cfg.popups = [];
+            }
+          } catch (e) {}
+          return realHtmlVideoPlayer.apply(this, arguments);
+        };
+      },
+      set: (fn) => {
+        realHtmlVideoPlayer = fn;
+      },
+      configurable: true
+    });
+  } catch (e) {}
+
+  if (/(^|\.)(nuvid|drtuber|proporn|hd21|winporn|iceporn)\.com$/i.test(location.hostname)) {
+    try {
+      document.cookie = 'no_ads=1; path=/';
+      document.cookie = 'no_popups=1; path=/';
+      document.cookie = 'no_push_notice=1; path=/';
+    } catch (e) {}
+  }
+
   // Wrap JSON.parse globally to strip VAST pre-roll/post-roll tags, inplayer pause ads, fad.json, and adCodes
   const baseJsonParse = JSON.parse;
   JSON.parse = function (text, reviver) {
@@ -941,6 +1001,9 @@
         if ('clickFlow' in parsed) {
           parsed.clickFlow = undefined;
         }
+        if (Array.isArray(parsed.popups)) {
+          parsed.popups = [];
+        }
       }
     } catch (e) {}
     return parsed;
@@ -948,7 +1011,7 @@
 
   // Block popunders and ad-network URLs
   const POPUNDER_URL_REGEX =
-    /(\/zv3\/(b|url|cam)|\/link\/out\/|\/getape\/|\/prepop\.php|\/getadb\/|\/venor\.php|\/v1\/link\.php|\/splash\.php\?idzone=|banner-iframe|advertiserName=|tsyndicate\.com|contentsserved\.com|exoclick\.com|exosrv\.com|realsrv\.com|magsrv\.com|pemsrv\.com|orbsrv\.com|trafficjunky\.(net|com)|juicyads\.com|jads\.co|clickadu\.com|clickaine\.com|\/lv\/esnk\/|hilltopads\.net|adspyglass\.com|plugrush\.com|adxpansion\.com|crakrevenue\.com|ero-advertising\.com|twinrdsyn\.com|twinrdengine\.com|adtng\.com|etahub\.com|bngpt\.com|xlivrdr\.com|popads\.net|popcash\.net|propellerads\.com|cdn-fc\.com|meteorpomposity\.com|glutenmuttsensuous\.com|cupbearergrowllurch\.com|hollowgoal\.com|u5s5\.com|adplsr\.com|nomarax\.com|fh-wgt\.com|yomeno\.xyz|ahw2lok\.txxx\.com|zog\.link|iloptrex\.com|nereserv\.com|vidvas3\.com|tubecup\.net|fhgte\.com|faphouse4k\.com|tikbblove\.com|directsle\.com|g2fame\.com)/i;
+    /(\/zv3\/(b|url|cam)|\/link\/out\/|\/getape\/|\/prepop\.php|\/getadb\/|\/venor\.php|\/v1\/link\.php|\/splash\.php\?idzone=|banner-iframe|advertiserName=|tsyndicate\.com|contentsserved\.com|exoclick\.com|exosrv\.com|realsrv\.com|magsrv\.com|pemsrv\.com|orbsrv\.com|trafficjunky\.(net|com)|juicyads\.com|jads\.co|clickadu\.com|clickaine\.com|\/lv\/esnk\/|hilltopads\.net|adspyglass\.com|plugrush\.com|adxpansion\.com|crakrevenue\.com|ero-advertising\.com|twinrdsyn\.com|twinrdengine\.com|adtng\.com|etahub\.com|bngpt\.com|xlivrdr\.com|popads\.net|popcash\.net|propellerads\.com|cdn-fc\.com|meteorpomposity\.com|glutenmuttsensuous\.com|cupbearergrowllurch\.com|hollowgoal\.com|u5s5\.com|adplsr\.com|nomarax\.com|fh-wgt\.com|yomeno\.xyz|ahw2lok\.txxx\.com|zog\.link|iloptrex\.com|nereserv\.com|vidvas3\.com|tubecup\.net|fhgte\.com|faphouse4k\.com|tikbblove\.com|directsle\.com|g2fame\.com|rvmessage\.online|rvrpushserv\.com|yequka\.my|tophqcam\.com|doublepimp\.com|advnet\.xyz|nvdst\.com\/adx_|_pnuvid\.js|p2p\.init\.js|jquery\.shows2\.min\.js)/i;
 
   // Block dynamic popunder <script> injections via appendChild / insertBefore
   const isBlockedDynamicScript = (node) => {
@@ -991,10 +1054,13 @@
 
   // Block click-hijacking addEventListener registrations from popunder scripts
   const POPUNDER_LISTENER_REGEX =
-    /popMagic|venorShouldShow|findLinkToOpen|executeOnRedirect|EPpopConfig|EPeventFire|openPopunder|__videoPlayerData\.popunder|inVideoTabUnderSeenCookie|clickFlow|loadBannerContent|Popunder\b|adblockFallbackPending|syndication_host|exoJsPop101|zomhphp/i;
+    /popMagic|venorShouldShow|findLinkToOpen|executeOnRedirect|EPpopConfig|EPeventFire|openPopunder|__videoPlayerData\.popunder|inVideoTabUnderSeenCookie|clickFlow|loadBannerContent|Popunder\b|adblockFallbackPending|syndication_host|exoJsPop101|zomhphp|TRAFF_TARGETS|initTraffTargets/i;
 
   const origAddEventListener = EventTarget.prototype.addEventListener;
   EventTarget.prototype.addEventListener = function (type, listener, options) {
+    if (isProEntitled() && String(type).toLowerCase() === 'getexoloader') {
+      return;
+    }
     if (
       isProEntitled() &&
       listener &&
@@ -1065,6 +1131,15 @@
   // and programmatic <a target="_blank">.click() popunders
   const origDispatchEvent = EventTarget.prototype.dispatchEvent;
   EventTarget.prototype.dispatchEvent = function (event) {
+    if (isProEntitled() && event && String(event.type).toLowerCase() === 'getexoloader') {
+      try {
+        if (event.detail && typeof event.detail === 'object') {
+          event.detail.el = exoLoaderStub;
+        }
+      } catch (e) {}
+      notifyStealthBypass('exoloader-customevent-spoofed');
+      return false;
+    }
     if (
       isProEntitled() &&
       event &&

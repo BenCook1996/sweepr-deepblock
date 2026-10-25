@@ -1069,5 +1069,105 @@
       "urlFilter": "||infrapu.sh^",
       "resourceTypes": ["script", "xmlhttprequest", "ping"]
     }
+  },
+  {
+    "id": 141,
+    "priority": 5,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||nvdst.com/adx_",
+      "resourceTypes": ["sub_frame", "script", "xmlhttprequest", "image", "other"]
+    }
+  },
+  {
+    "id": 142,
+    "priority": 5,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||nvdst.com/*/ppdr/p2p.init.js",
+      "resourceTypes": ["script", "xmlhttprequest"]
+    }
+  },
+  {
+    "id": 143,
+    "priority": 5,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||nvdst.com/*/jquery.shows2.min.js",
+      "resourceTypes": ["script", "xmlhttprequest"]
+    }
+  },
+  {
+    "id": 144,
+    "priority": 5,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||nvdst.com/*/_pnuvid.js",
+      "resourceTypes": ["script", "xmlhttprequest"]
+    }
+  },
+  {
+    "id": 145,
+    "priority": 3,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||rvmessage.online^",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "xmlhttprequest", "image", "media", "websocket"]
+    }
+  },
+  {
+    "id": 146,
+    "priority": 3,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||rvrpushserv.com^",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "xmlhttprequest", "image", "media", "websocket"]
+    }
+  },
+  {
+    "id": 147,
+    "priority": 3,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||yequka.my^",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "xmlhttprequest", "image"]
+    }
+  },
+  {
+    "id": 148,
+    "priority": 3,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||tophqcam.com^",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "xmlhttprequest", "image", "media"]
+    }
+  },
+  {
+    "id": 149,
+    "priority": 3,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||doublepimp.com^",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "xmlhttprequest", "media"]
+    }
+  },
+  {
+    "id": 150,
+    "priority": 3,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "||advnet.xyz^",
+      "resourceTypes": ["main_frame", "sub_frame", "script", "xmlhttprequest", "media"]
+    }
+  },
+  {
+    "id": 151,
+    "priority": 5,
+    "action": { "type": "block" },
+    "condition": {
+      "regexFilter": "^https?://[^/]+/[A-Za-z0-9]{5}/[A-Za-z0-9]{10}\\.(js|php)(\\?|$)",
+      "initiatorDomains": ["nuvid.com", "drtuber.com", "proporn.com", "hd21.com", "winporn.com", "iceporn.com"],
+      "resourceTypes": ["script", "xmlhttprequest", "sub_frame"]
+    }
   }
 ]

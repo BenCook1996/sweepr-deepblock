@@ -613,7 +613,7 @@ async function updateActionBadge(passedStats, passedSettings) {
 }
 
 const POPUNDER_TAB_URL_REGEX =
-  /(\/zv3\/(b|url|cam)|\/link\/out\/|\/getape\/|\/prepop\.php|\/getadb\/|\/venor\.php|\/v1\/link\.php|\/splash\.php\?idzone=|tsyndicate\.com|contentsserved\.com|exoclick\.com|exosrv\.com|realsrv\.com|magsrv\.com|pemsrv\.com|orbsrv\.com|trafficjunky\.(net|com)|juicyads\.com|jads\.co|clickadu\.com|clickaine\.com|hilltopads\.net|adspyglass\.com|plugrush\.com|adxpansion\.com|crakrevenue\.com|ero-advertising\.com|twinrdsyn\.com|twinrdengine\.com|adtng\.com|etahub\.com|bngpt\.com|xlivrdr\.com|popads\.net|popcash\.net|propellerads\.com|u5s5\.com|stripchat\.com|chaturbate\.com|bongacams\.com|cam4\.com|myfreecams\.com|livejasmin\.com|jerkmate\.com|faphouse\.com)/i;
+  /(\/zv3\/(b|url|cam)|\/link\/out\/|\/getape\/|\/prepop\.php|\/getadb\/|\/venor\.php|\/v1\/link\.php|\/splash\.php\?idzone=|tsyndicate\.com|contentsserved\.com|exoclick\.com|exosrv\.com|realsrv\.com|magsrv\.com|pemsrv\.com|orbsrv\.com|trafficjunky\.(net|com)|juicyads\.com|jads\.co|clickadu\.com|clickaine\.com|hilltopads\.net|adspyglass\.com|plugrush\.com|adxpansion\.com|crakrevenue\.com|ero-advertising\.com|twinrdsyn\.com|twinrdengine\.com|adtng\.com|etahub\.com|bngpt\.com|xlivrdr\.com|popads\.net|popcash\.net|propellerads\.com|u5s5\.com|yequka\.my|rvmessage\.online|rvrpushserv\.com|tophqcam\.com|doublepimp\.com|advnet\.xyz|zog\.link|iloptrex\.com|vidvas3\.com|stripchat\.com|chaturbate\.com|bongacams\.com|cam4\.com|myfreecams\.com|livejasmin\.com|jerkmate\.com|faphouse\.com)/i;
 
 const STRICT_POPUNDER_OPENER_HOSTS = new Set([
   'pornoxo.com',
@@ -622,7 +622,12 @@ const STRICT_POPUNDER_OPENER_HOSTS = new Set([
   'eporner.com',
   'ashemaletube.com',
   'fetishpapa.com',
-  'boyfriendtv.com'
+  'boyfriendtv.com',
+  'nuvid.com',
+  'drtuber.com',
+  'proporn.com',
+  'txxx.me',
+  'txxx.com'
 ]);
 
 const newlySpawnedChildTabs = new Map();
