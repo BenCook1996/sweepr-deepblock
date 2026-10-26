@@ -1,8 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "SWEEPR Deepblock — Block Ads, Cookie Pop-Ups & Fake Shops",
+  "name": "SWEEPR Deepblock: Ad & Cookie Blocker",
   "short_name": "SWEEPR Deepblock",
   "version": "1.1.6",
+  "minimum_chrome_version": "116",
   "description": "Block YouTube & banner ads, automatically say No to cookie pop-ups, hide junk search results, and spot fake online shops.",
   "permissions": [
     "declarativeNetRequest",

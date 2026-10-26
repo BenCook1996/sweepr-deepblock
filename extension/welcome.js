@@ -1,12 +1,13 @@
 // SWEEPR Deepblock — Full-Tab Dashboard & Options Controller (v1.3 UX Audited)
+const isDevExtension = typeof chrome !== 'undefined' && chrome.runtime && !('update_url' in chrome.runtime.getManifest());
 const WELCOME_VERIFY_ENDPOINTS = [
   'https://sweeprdeepblock.com/api/license-verify',
-  'http://localhost:3000/api/license-verify'
+  ...(isDevExtension ? ['http://localhost:3000/api/license-verify'] : [])
 ];
 
 const WELCOME_REDEEM_ENDPOINTS = [
   'https://sweeprdeepblock.com/api/device-link/redeem-token',
-  'http://localhost:3000/api/device-link/redeem-token'
+  ...(isDevExtension ? ['http://localhost:3000/api/device-link/redeem-token'] : [])
 ];
 
 async function directVerifyAndPersistLicense(rawKey) {
@@ -478,10 +479,14 @@ document.addEventListener('DOMContentLoaded', () => {
         os: 'browser_extension'
       };
       const supportUrls = [
-        'http://127.0.0.1:8788/api/support/contact',
-        'http://localhost:8788/api/support/contact',
-        'http://localhost:3000/api/support',
-        'https://sweeprdeepblock.com/api/support'
+        'https://sweeprdeepblock.com/api/support',
+        ...(isDevExtension
+          ? [
+              'http://127.0.0.1:8788/api/support/contact',
+              'http://localhost:8788/api/support/contact',
+              'http://localhost:3000/api/support'
+            ]
+          : [])
       ];
       let sentOk = false;
       let ticketId = '';

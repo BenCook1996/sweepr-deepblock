@@ -2,7 +2,7 @@
 /**
  * SWEEPR Deepblock v1.1.6 — Cross-Browser Extension Store Packager
  * Generates store-ready MV3 ZIP archives with POSIX forward-slash entry paths:
- *   1. Microsoft Edge Add-ons & Chrome Web Store (`dist/sweepr-deepblock-edge-chrome-mv3.zip`)
+ *   1. Google Chrome Web Store (`dist/sweepr-deepblock-chrome-webstore-mv3.zip` & `dist/sweepr-deepblock-edge-chrome-mv3.zip`)
  *   2. Mozilla Firefox Add-ons / AMO (`dist/sweepr-deepblock-firefox-amo-mv3.zip`)
  */
 import fs from 'node:fs';
@@ -17,14 +17,33 @@ const DIST_DIR = path.join(ROOT_DIR, 'dist');
 
 fs.mkdirSync(DIST_DIR, { recursive: true });
 
-function copyDirSync(src, dest) {
+function sanitizeProdJs(code) {
+  return code
+    .replace(
+      /const isDevExtension\s*=\s*[^;]+;/g,
+      'const isDevExtension = false;'
+    )
+    .replace(/['"]http:\/\/(?:localhost|127\.0\.0\.1):\d+[^'"]*['"]\s*,?\s*/g, '')
+    .replace(
+      /\.\.\.\(isDevExtension\s*\?\s*\[[^\]]*\]\s*:\s*\[\]\)\s*,?\s*/g,
+      ''
+    );
+}
+
+function copyDirSync(src, dest, isStoreProd = true) {
   fs.mkdirSync(dest, { recursive: true });
   for (const entry of fs.readdirSync(src, { withFileTypes: true })) {
     if (entry.name === 'abp_filter_list.txt') continue;
     const s = path.join(src, entry.name);
     const d = path.join(dest, entry.name);
-    if (entry.isDirectory()) copyDirSync(s, d);
-    else fs.copyFileSync(s, d);
+    if (entry.isDirectory()) {
+      copyDirSync(s, d, isStoreProd);
+    } else if (isStoreProd && entry.name.endsWith('.js')) {
+      const raw = fs.readFileSync(s, 'utf8');
+      fs.writeFileSync(d, sanitizeProdJs(raw), 'utf8');
+    } else {
+      fs.copyFileSync(s, d);
+    }
   }
 }
 
@@ -49,26 +68,34 @@ function createPosixZip(sourceDir, outZip) {
 
 const baseManifest = JSON.parse(fs.readFileSync(path.join(EXT_DIR, 'manifest.json'), 'utf8'));
 
-// 1. Build Chromium / Microsoft Edge MV3 Package
-const edgeStaging = path.join(DIST_DIR, 'staging-edge');
-fs.rmSync(edgeStaging, { recursive: true, force: true });
-copyDirSync(EXT_DIR, edgeStaging);
+// 1. Build Google Chrome Web Store & Microsoft Edge MV3 Package
+const chromeStaging = path.join(DIST_DIR, 'staging-chrome');
+fs.rmSync(chromeStaging, { recursive: true, force: true });
+copyDirSync(EXT_DIR, chromeStaging, true);
 
-const edgeManifest = { ...baseManifest };
-delete edgeManifest.browser_specific_settings;
-edgeManifest.background = {
-  service_worker: 'background.js'
+const chromeManifest = {
+  ...baseManifest,
+  name: 'SWEEPR Deepblock: Ad & Cookie Blocker',
+  short_name: 'SWEEPR Deepblock',
+  minimum_chrome_version: '116',
+  background: {
+    service_worker: 'background.js'
+  }
 };
-fs.writeFileSync(path.join(edgeStaging, 'manifest.json'), JSON.stringify(edgeManifest, null, 2) + '\n', 'utf8');
+delete chromeManifest.browser_specific_settings;
 
+fs.writeFileSync(path.join(chromeStaging, 'manifest.json'), JSON.stringify(chromeManifest, null, 2) + '\n', 'utf8');
+
+const chromeZip = path.join(DIST_DIR, 'sweepr-deepblock-chrome-webstore-mv3.zip');
 const edgeZip = path.join(DIST_DIR, 'sweepr-deepblock-edge-chrome-mv3.zip');
-createPosixZip(edgeStaging, edgeZip);
-fs.rmSync(edgeStaging, { recursive: true, force: true });
+createPosixZip(chromeStaging, chromeZip);
+fs.copyFileSync(chromeZip, edgeZip);
+fs.rmSync(chromeStaging, { recursive: true, force: true });
 
 // 2. Build Mozilla Firefox AMO MV3 Package
 const ffStaging = path.join(DIST_DIR, 'staging-firefox');
 fs.rmSync(ffStaging, { recursive: true, force: true });
-copyDirSync(EXT_DIR, ffStaging);
+copyDirSync(EXT_DIR, ffStaging, true);
 
 const ffManifest = {
   ...baseManifest,
@@ -90,6 +117,7 @@ const ffManifest = {
     }
   }
 };
+delete ffManifest.minimum_chrome_version;
 fs.writeFileSync(path.join(ffStaging, 'manifest.json'), JSON.stringify(ffManifest, null, 2) + '\n', 'utf8');
 
 const ffZip = path.join(DIST_DIR, 'sweepr-deepblock-firefox-amo-mv3.zip');
@@ -97,5 +125,6 @@ createPosixZip(ffStaging, ffZip);
 fs.rmSync(ffStaging, { recursive: true, force: true });
 
 console.log('Built POSIX-compliant store packages:');
-console.log(' - Edge/Chrome MV3:', edgeZip, fs.statSync(edgeZip).size, 'bytes');
-console.log(' - Firefox AMO MV3:', ffZip, fs.statSync(ffZip).size, 'bytes');
+console.log(' - Chrome Web Store MV3:', chromeZip, fs.statSync(chromeZip).size, 'bytes');
+console.log(' - Edge/Chrome MV3:     ', edgeZip, fs.statSync(edgeZip).size, 'bytes');
+console.log(' - Firefox AMO MV3:     ', ffZip, fs.statSync(ffZip).size, 'bytes');

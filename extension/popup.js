@@ -561,7 +561,10 @@ document.addEventListener('DOMContentLoaded', () => {
         : `ext_db_${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36)}`;
     await chrome.storage.local.set({ deviceId });
 
-    const baseOrigins = ['https://sweeprdeepblock.com', 'http://localhost:3000'];
+    const baseOrigins = [
+      'https://sweeprdeepblock.com',
+      ...(isDevExtension ? ['http://localhost:3000'] : [])
+    ];
     let challengeData = null;
     let activeOrigin = baseOrigins[0];
 
