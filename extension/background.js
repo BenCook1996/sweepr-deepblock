@@ -88,11 +88,44 @@ function sanitizeTabUrlForBackup(rawUrl) {
   }
 }
 
+function isNewerSemverExt(latestVer, currentVer) {
+  const parse = (v) =>
+    String(v || '0.0.0')
+      .replace(/^v/i, '')
+      .split('-')[0]
+      .split('.')
+      .map((n) => parseInt(n, 10) || 0);
+  const l = parse(latestVer);
+  const c = parse(currentVer);
+  for (let i = 0; i < Math.max(l.length, c.length); i++) {
+    const lv = l[i] || 0;
+    const cv = c[i] || 0;
+    if (lv > cv) return true;
+    if (lv < cv) return false;
+  }
+  return false;
+}
+
+if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.onUpdateAvailable) {
+  chrome.runtime.onUpdateAvailable.addListener(() => {
+    try {
+      chrome.runtime.reload();
+    } catch (e) {}
+  });
+}
+
 async function syncRemoteFilterDelta() {
   try {
+    const currentVersion =
+      (typeof chrome !== 'undefined' &&
+        chrome.runtime &&
+        chrome.runtime.getManifest &&
+        chrome.runtime.getManifest().version) ||
+      '1.1.6';
+    const qs = `?current_version=${encodeURIComponent(currentVersion)}`;
     const endpoints = [
-      ...(isDevExtension ? ['http://localhost:3000/api/filters/delta'] : []),
-      'https://sweeprdeepblock.com/api/filters/delta',
+      ...(isDevExtension ? [`http://localhost:3000/api/filters/delta${qs}`] : []),
+      `https://sweeprdeepblock.com/api/filters/delta${qs}`,
       ...(typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getURL
         ? [chrome.runtime.getURL('rules/dynamic_delta.json')]
         : [])
@@ -116,6 +149,28 @@ async function syncRemoteFilterDelta() {
     }
     if (!data || !data.ok) return;
     const updates = {};
+    if (data.latestExtensionVersion || data.minExtensionVersion) {
+      const latestVersion = String(data.latestExtensionVersion || currentVersion).trim();
+      const minVersion = String(data.minExtensionVersion || '1.1.6').trim();
+      const updateAvailable = Boolean(data.updateAvailable || isNewerSemverExt(latestVersion, currentVersion));
+      const forceUpdate = Boolean(
+        (data.forceUpdate && updateAvailable) || isNewerSemverExt(minVersion, currentVersion)
+      );
+      updates.extensionUpdateStatus = {
+        currentVersion,
+        latestVersion,
+        minVersion,
+        updateAvailable,
+        forceUpdate,
+        updateUrl: String(data.storeUpdateUrl || 'https://sweeprdeepblock.com/download'),
+        checkedAt: Date.now()
+      };
+      if (updateAvailable && chrome.runtime && typeof chrome.runtime.requestUpdateCheck === 'function') {
+        try {
+          chrome.runtime.requestUpdateCheck(() => {});
+        } catch (e) {}
+      }
+    }
     if (data.featureFlags && typeof data.featureFlags === 'object') {
       updates.remoteFeatureFlags = data.featureFlags;
     }
@@ -1052,7 +1107,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 
   if (msg.type === 'GET_DASHBOARD_STATE') {
     Promise.all([
-      chrome.storage.local.get(Object.keys(DEFAULT_STATE)),
+      chrome.storage.local.get([...Object.keys(DEFAULT_STATE), 'extensionUpdateStatus']),
       getRamSpeedometerMetrics(),
       chrome.tabs.query({ active: true, currentWindow: true })
     ]).then(async ([store, ramMetrics, activeTabs]) => {
@@ -1071,7 +1126,8 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
         stats: { ...DEFAULT_STATE.stats, ...(store.stats || {}) },
         ramMetrics,
         currentTabScamDetected,
-        currentTabScamReasons
+        currentTabScamReasons,
+        extensionUpdateStatus: store.extensionUpdateStatus || null
       });
     });
     return true;

@@ -580,6 +580,24 @@
     <div id="licenseFeedback" style="font-size:9.5px;color:#10b981;font-weight:700;margin-top:4px;display:none;"></div>
   </div>
 
+  <!-- Optional Update Banner -->
+  <div id="extUpdateBanner" style="display:none;margin-top:6px;padding:7px 10px;border-radius:10px;background:#ecfdf5;border:1px solid #10b981;align-items:center;justify-content:space-between;gap:8px;">
+    <span id="extUpdateBannerText" style="font-size:10px;font-weight:800;color:#065f46;">New update available</span>
+    <button type="button" id="extUpdateBannerBtn" style="background:#059669;color:#fff;border:none;border-radius:6px;padding:4px 8px;font-size:9.5px;font-weight:800;cursor:pointer;">Update Now</button>
+  </div>
+
+  <!-- Non-Dismissible Mandatory Update Overlay -->
+  <div id="extForceUpdateOverlay" role="alertdialog" aria-modal="true" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(15,23,42,0.96);color:#f8fafc;padding:24px 18px;flex-direction:column;align-items:center;justify-content:center;text-align:center;">
+    <div style="width:44px;height:44px;border-radius:12px;background:rgba(16,185,129,0.2);border:1px solid #10b981;display:grid;place-items:center;font-size:22px;margin-bottom:12px;">🛡️</div>
+    <div style="font-size:15px;font-weight:900;margin-bottom:6px;">Mandatory Update Required</div>
+    <div id="extForceUpdateDesc" style="font-size:11.5px;color:#cbd5e1;line-height:1.45;margin-bottom:16px;">
+      A critical security and ad-blocking engine update is required to continue using SWEEPR Deepblock.
+    </div>
+    <button type="button" id="extForceUpdateBtn" style="width:100%;padding:11px 14px;border-radius:10px;border:none;background:#10b981;color:#052e16;font-size:12px;font-weight:900;cursor:pointer;">
+      Update SWEEPR Deepblock Now &rarr;
+    </button>
+  </div>
+
   <script src="popup.js"></script>
 </body>
 </html>

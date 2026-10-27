@@ -212,6 +212,55 @@ document.addEventListener('DOMContentLoaded', () => {
 
     updateSiteBarState();
     renderStoreSafety(currentState);
+
+    const upd = state.extensionUpdateStatus;
+    const extUpdateBanner = document.getElementById('extUpdateBanner');
+    const extUpdateBannerText = document.getElementById('extUpdateBannerText');
+    const extUpdateBannerBtn = document.getElementById('extUpdateBannerBtn');
+    const extForceUpdateOverlay = document.getElementById('extForceUpdateOverlay');
+    const extForceUpdateDesc = document.getElementById('extForceUpdateDesc');
+    const extForceUpdateBtn = document.getElementById('extForceUpdateBtn');
+    const triggerExtUpdate = () => {
+      const targetUrl = (upd && upd.updateUrl) || 'https://sweeprdeepblock.com/download';
+      if (chrome.runtime && typeof chrome.runtime.requestUpdateCheck === 'function') {
+        try {
+          chrome.runtime.requestUpdateCheck((status) => {
+            if (status === 'update_available') {
+              chrome.runtime.reload();
+            } else {
+              chrome.tabs.create({ url: targetUrl });
+            }
+          });
+          return;
+        } catch (e) {}
+      }
+      chrome.tabs.create({ url: targetUrl });
+    };
+    if (upd && upd.forceUpdate && upd.updateAvailable) {
+      if (extForceUpdateOverlay) {
+        extForceUpdateOverlay.style.display = 'flex';
+        if (extForceUpdateDesc) {
+          extForceUpdateDesc.textContent = `Version v${upd.latestVersion} is required to continue using SWEEPR Deepblock (current: v${upd.currentVersion}).`;
+        }
+        if (extForceUpdateBtn) {
+          extForceUpdateBtn.onclick = triggerExtUpdate;
+        }
+      }
+    } else if (upd && upd.updateAvailable) {
+      if (extForceUpdateOverlay) extForceUpdateOverlay.style.display = 'none';
+      if (extUpdateBanner) {
+        extUpdateBanner.style.display = 'flex';
+        if (extUpdateBannerText) {
+          extUpdateBannerText.textContent = `Update v${upd.latestVersion} available`;
+        }
+        if (extUpdateBannerBtn) {
+          extUpdateBannerBtn.onclick = triggerExtUpdate;
+        }
+      }
+    } else {
+      if (extForceUpdateOverlay) extForceUpdateOverlay.style.display = 'none';
+      if (extUpdateBanner) extUpdateBanner.style.display = 'none';
+    }
   }
 
   chrome.runtime.sendMessage({ type: 'GET_DASHBOARD_STATE' }, (response) => {

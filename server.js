@@ -1548,6 +1548,9 @@ const MIME_TYPES = {
   '.jpg': 'image/jpeg',
   '.jpeg': 'image/jpeg',
   '.ico': 'image/x-icon',
+  '.woff2': 'font/woff2',
+  '.woff': 'font/woff',
+  '.ttf': 'font/ttf',
   '.zip': 'application/zip',
   '.exe': 'application/vnd.microsoft.portable-executable',
   '.command': 'application/octet-stream',
@@ -1563,6 +1566,8 @@ const CLEAN_ROUTES = {
   '/checkout': 'order.html',
   '/login': 'login.html',
   '/ios-app': 'ios-app.html',
+  '/sweepr-vpn-concepts': 'sweepr-vpn-concepts.html',
+  '/sweepr-vpn-mobile-redesign': 'sweepr-vpn-mobile-redesign.html',
   '/extension-ux-prototype': 'extension-ux-prototype.html',
   '/privacy': 'privacy.html',
   '/refund': 'refund.html',
@@ -1677,7 +1682,7 @@ function serveStaticOptimized(req, res, fullPath) {
     const ext = path.extname(fullPath).toLowerCase();
     const isHtml = ext === '.html';
     const isInstallerBinary = ['.exe', '.zip', '.command', '.xpi', '.mobileconfig', '.apk'].includes(ext);
-    const isStaticAsset = ['.svg', '.png', '.webp', '.jpg', '.jpeg', '.ico', '.css', '.js'].includes(ext);
+    const isStaticAsset = ['.svg', '.png', '.webp', '.jpg', '.jpeg', '.ico', '.css', '.js', '.woff2', '.woff', '.ttf', '.webmanifest'].includes(ext);
     const isSeoMetaFile = ['.xml', '.txt'].includes(ext);
 
     // ETag & 304 Not Modified conditional cache verification
@@ -1735,7 +1740,10 @@ function serveStaticOptimized(req, res, fullPath) {
       'mockups.html',
       'popup-mockups.html',
       'redesign-prototype.html',
-      'extension-ux-prototype.html'
+      'extension-ux-prototype.html',
+      'ios-app.html',
+      'sweepr-vpn-concepts.html',
+      'sweepr-vpn-mobile-redesign.html'
     ]);
 
     if (isHtml) {
@@ -2095,14 +2103,69 @@ const server = http.createServer(async (req, res) => {
     });
   }
 
-  // API -1b: Dynamic Filter Delta & Remote Feature-Flag Kill-Switch Endpoint
+  // API -1b: Dynamic Filter Delta & Remote Feature-Flag Kill-Switch + Extension Version Gate Endpoint
+  const LATEST_EXTENSION_VERSION = String(process.env.LATEST_EXTENSION_VERSION || '1.1.6').trim();
+  const MIN_EXTENSION_VERSION = String(process.env.MIN_EXTENSION_VERSION || '1.1.6').trim();
+  const FORCE_EXTENSION_UPDATE = process.env.FORCE_EXTENSION_UPDATE === 'true';
+  const compareSemver = (latestVer, currentVer) => {
+    const parse = (v) =>
+      String(v || '0.0.0')
+        .replace(/^v/i, '')
+        .split('-')[0]
+        .split('.')
+        .map((n) => parseInt(n, 10) || 0);
+    const l = parse(latestVer);
+    const c = parse(currentVer);
+    for (let i = 0; i < Math.max(l.length, c.length); i++) {
+      const lv = l[i] || 0;
+      const cv = c[i] || 0;
+      if (lv > cv) return true;
+      if (lv < cv) return false;
+    }
+    return false;
+  };
+
+  if (req.method === 'GET' && (pathname === '/api/version' || pathname === '/v1/updates/latest.json')) {
+    const currentVer = String(parsedUrl.searchParams.get('current_version') || '').trim();
+    const updateAvailable = currentVer ? compareSemver(LATEST_EXTENSION_VERSION, currentVer) : false;
+    const forceUpdate = currentVer
+      ? compareSemver(MIN_EXTENSION_VERSION, currentVer) || (FORCE_EXTENSION_UPDATE && updateAvailable)
+      : FORCE_EXTENSION_UPDATE;
+    return sendJson(res, 200, {
+      ok: true,
+      version: LATEST_EXTENSION_VERSION,
+      latest_version: LATEST_EXTENSION_VERSION,
+      min_version: MIN_EXTENSION_VERSION,
+      update_available: updateAvailable,
+      force_update: forceUpdate,
+      notes:
+        process.env.LATEST_EXTENSION_NOTES ||
+        'Updated YouTube & anti-adblock stealth rules, faster cookie consent rejection, and RAM Tamer improvements.',
+      url: `${PUBLIC_URL}/download`,
+      store_update_url: `${PUBLIC_URL}/download`,
+      pub_date: new Date().toISOString()
+    });
+  }
+
   if (req.method === 'GET' && pathname === '/api/filters/delta') {
+    const currentVer = String(parsedUrl.searchParams.get('current_version') || '').trim();
+    const updateAvailable = currentVer ? compareSemver(LATEST_EXTENSION_VERSION, currentVer) : false;
+    const forceUpdate = currentVer
+      ? compareSemver(MIN_EXTENSION_VERSION, currentVer) || (FORCE_EXTENSION_UPDATE && updateAvailable)
+      : FORCE_EXTENSION_UPDATE;
+    const versionMeta = {
+      latestExtensionVersion: LATEST_EXTENSION_VERSION,
+      minExtensionVersion: MIN_EXTENSION_VERSION,
+      forceUpdate,
+      updateAvailable,
+      storeUpdateUrl: `${PUBLIC_URL}/download`
+    };
     const deltaPath = path.join(__dirname, 'extension', 'rules', 'dynamic_delta.json');
     if (fs.existsSync(deltaPath)) {
       try {
         const dynamicPayload = JSON.parse(fs.readFileSync(deltaPath, 'utf8'));
         if (dynamicPayload && typeof dynamicPayload === 'object') {
-          return sendJson(res, 200, { ok: true, ...dynamicPayload });
+          return sendJson(res, 200, { ok: true, ...dynamicPayload, ...versionMeta });
         }
       } catch {}
     }
@@ -2110,6 +2173,7 @@ const server = http.createServer(async (req, res) => {
       ok: true,
       version: '1.0.2',
       updatedAt: '2026-10-24T17:00:00Z',
+      ...versionMeta,
       featureFlags: {
         cookieAutoClose: true,
         hideSearchSpam: true,
@@ -4368,14 +4432,24 @@ const server = http.createServer(async (req, res) => {
   // 301 Canonical Redirect 1: Trailing slash normalization (e.g. /pricing/ -> /pricing)
   if ((req.method === 'GET' || req.method === 'HEAD') && parsedUrl.pathname.length > 1 && parsedUrl.pathname.endsWith('/')) {
     const cleanPath = parsedUrl.pathname.replace(/\/+$/, '') + (parsedUrl.search || '');
-    res.writeHead(301, { Location: cleanPath });
+    res.writeHead(301, {
+      Location: cleanPath,
+      'Cache-Control': 'public, max-age=604800, stale-while-revalidate=2592000',
+      'X-Content-Type-Options': 'nosniff',
+      'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload'
+    });
     return res.end();
   }
 
   // 301 Canonical Redirect 2: .html extension stripping to canonical clean URLs
   if ((req.method === 'GET' || req.method === 'HEAD') && parsedUrl.pathname.endsWith('.html')) {
     const cleanPath = (parsedUrl.pathname === '/index.html' ? '/' : parsedUrl.pathname.slice(0, -5)) + (parsedUrl.search || '');
-    res.writeHead(301, { Location: cleanPath });
+    res.writeHead(301, {
+      Location: cleanPath,
+      'Cache-Control': 'public, max-age=604800, stale-while-revalidate=2592000',
+      'X-Content-Type-Options': 'nosniff',
+      'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload'
+    });
     return res.end();
   }
 
