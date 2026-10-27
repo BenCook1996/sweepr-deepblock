@@ -1422,6 +1422,19 @@ function initDeepblockBlockedSitesRegistry() {
       notes: 'Core verified site'
     },
     {
+      domain: 'sports.yahoo.com',
+      target_url: 'https://sports.yahoo.com/articles/harry-kane-thanks-tottenham-hotspur-234609309.html',
+      category: 'news',
+      status: 'blocked',
+      ad_types_blocked: 'Ad-Shield BFA Anti-Adblock Wall, Yahoo Prebid/OpenRTB Auctions, Assertive Yield, Taboola Stream',
+      generated_rules: '||s.yimg.com/du/site/^, ||report.error-report.com^, ||pbs.yahoo.com^, DeepStealth thamba + gpt/taboola probe cloaking',
+      extension_version: '1.1.7',
+      commit_hash: 'stealth-v1.1.7',
+      leaks_found: 5,
+      leaks_patched: 5,
+      notes: 'Undetectable Ad-Shield BFA + Yahoo Next.js ad-shield-container bypass'
+    },
+    {
       domain: 'dailymail.co.uk',
       target_url: 'https://www.dailymail.co.uk/',
       category: 'news',
@@ -2104,7 +2117,7 @@ const server = http.createServer(async (req, res) => {
   }
 
   // API -1b: Dynamic Filter Delta & Remote Feature-Flag Kill-Switch + Extension Version Gate Endpoint
-  const LATEST_EXTENSION_VERSION = String(process.env.LATEST_EXTENSION_VERSION || '1.1.6').trim();
+  const LATEST_EXTENSION_VERSION = String(process.env.LATEST_EXTENSION_VERSION || '1.1.7').trim();
   const MIN_EXTENSION_VERSION = String(process.env.MIN_EXTENSION_VERSION || '1.1.6').trim();
   const FORCE_EXTENSION_UPDATE = process.env.FORCE_EXTENSION_UPDATE === 'true';
   const compareSemver = (latestVer, currentVer) => {

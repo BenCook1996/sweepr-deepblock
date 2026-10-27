@@ -128,3 +128,8 @@ console.log('Built POSIX-compliant store packages:');
 console.log(' - Chrome Web Store MV3:', chromeZip, fs.statSync(chromeZip).size, 'bytes');
 console.log(' - Edge/Chrome MV3:     ', edgeZip, fs.statSync(edgeZip).size, 'bytes');
 console.log(' - Firefox AMO MV3:     ', ffZip, fs.statSync(ffZip).size, 'bytes');
+
+fs.copyFileSync(chromeZip, path.join(ROOT_DIR, 'website', 'sweepr-deepblock-extension.zip'));
+fs.copyFileSync(ffZip, path.join(ROOT_DIR, 'website', 'sweepr-deepblock-firefox.xpi'));
+fs.copyFileSync(ffZip, path.join(ROOT_DIR, 'website', 'sweepr-deepblock.xpi'));
+console.log(' - Synced website/sweepr-deepblock-extension.zip and .xpi');

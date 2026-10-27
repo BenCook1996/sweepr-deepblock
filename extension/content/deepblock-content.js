@@ -709,6 +709,8 @@
     '[class*="adblock-overlay" i]',
     '[id*="adblock-notice" i]',
     '[class*="adblocker-modal" i]',
+    'iframe[src*="error-report.com"]',
+    'iframe[src*="html-load.com"]',
     'tp-yt-paper-dialog:has(ytd-enforcement-message-view-model)',
     'ytd-enforcement-message-view-model'
   ];
@@ -725,7 +727,10 @@
     '.text-ads',
     '.text-ad-links',
     '#ad-tester',
-    '#ad_tester'
+    '#ad_tester',
+    '#ad-unit',
+    '#taboola-stream-1',
+    '.jag8CityBio212023'
   ];
 
   function processAntiAdblockStealth() {
@@ -822,15 +827,20 @@
     [data-google-query-id],
     [data-ad-client],
     [data-ad-slot],
-    [id^="taboola-"],
+    [id^="taboola-"]:not(#taboola-stream-1),
     .trc_rbox_container,
-    .trc_related_container,
+    body .trc_related_container,
     .OUTBRAIN,
     [data-widget-id^="outbrain"],
     [id*="ScriptRoot"],
     .mgbox,
     amp-ad,
     amp-embed[type="taboola"],
+    /* Yahoo Sports / News / Finance SDA Ad Slots */
+    .sda-ssr-placeholder,
+    [data-ad-config],
+    [id^="sda-"],
+    .sda-ad,
     /* Streaming & Tube Ad Containers (Eporner, ExoClick, TrafficStars, TrafficJunky, JuicyAds, ClickAdu) */
     #movieplayer-box-adv,
     #movieplayer-box-adv-iframe,
@@ -999,6 +1009,19 @@
     #moviexxx {
       max-width: initial !important;
       max-height: initial !important;
+    }
+    /* Ensure anti-adblock bait probes in <head> (#ad-unit, #taboola-stream-1) always report visible geometry */
+    head > ins,
+    head > div,
+    #ad-unit,
+    #taboola-stream-1,
+    .jag8CityBio212023 {
+      display: inline-block !important;
+      visibility: visible !important;
+      height: 250px !important;
+      min-height: 250px !important;
+      width: 300px !important;
+      opacity: 1 !important;
     }
   `;
 

@@ -192,7 +192,7 @@
     "action": {
       "type": "redirect",
       "redirect": {
-        "url": "data:application/javascript;base64,d2luZG93LmNhblJ1bkFkcz10cnVlO3dpbmRvdy5pc0FkQmxvY2tBY3RpdmU9ZmFsc2U7d2luZG93Lmdvb2dsZV9hZF9zdGF0dXM9MTt3aW5kb3cuYWRzYnlnb29nbGU9d2luZG93LmFkc2J5Z29vZ2xlfHx7bG9hZGVkOnRydWUsYWRzYnlnb29nbGU6dHJ1ZSxwdXNoOmZ1bmN0aW9uKCl7fX07"
+        "url": "data:application/javascript;base64,d2luZG93Lmdvb2dsZXRhZz13aW5kb3cuZ29vZ2xldGFnfHx7Y21kOltdLGFwaVJlYWR5OnRydWUscHViYWRzUmVhZHk6dHJ1ZX07d2luZG93LmNhblJ1bkFkcz10cnVlO3dpbmRvdy5pc0FkQmxvY2tBY3RpdmU9ZmFsc2U7d2luZG93Lmdvb2dsZV9hZF9zdGF0dXM9MTt3aW5kb3cuYWRzYnlnb29nbGU9d2luZG93LmFkc2J5Z29vZ2xlfHx7bG9hZGVkOnRydWUsYWRzYnlnb29nbGU6dHJ1ZSxwdXNoOmZ1bmN0aW9uKCl7fX07"
       }
     },
     "condition": {
@@ -2851,6 +2851,113 @@
         "media",
         "ping",
         "other"
+      ]
+    }
+  },
+  {
+    "id": 176,
+    "priority": 5,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||report.error-report.com^",
+      "resourceTypes": [
+        "script",
+        "sub_frame",
+        "xmlhttprequest",
+        "ping",
+        "image",
+        "other"
+      ]
+    }
+  },
+  {
+    "id": 177,
+    "priority": 5,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||html-load.com^",
+      "resourceTypes": [
+        "script",
+        "sub_frame",
+        "xmlhttprequest",
+        "ping",
+        "image",
+        "other"
+      ]
+    }
+  },
+  {
+    "id": 178,
+    "priority": 5,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||s.yimg.com/du/site/",
+      "resourceTypes": [
+        "script",
+        "xmlhttprequest"
+      ]
+    }
+  },
+  {
+    "id": 179,
+    "priority": 5,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||s.yimg.com/du/finance/",
+      "resourceTypes": [
+        "script",
+        "xmlhttprequest"
+      ]
+    }
+  },
+  {
+    "id": 180,
+    "priority": 4,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||pbs.yahoo.com/openrtb2/auction",
+      "resourceTypes": [
+        "xmlhttprequest",
+        "ping",
+        "other"
+      ]
+    }
+  },
+  {
+    "id": 181,
+    "priority": 4,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||s.yimg.com/aaq/prebid/",
+      "resourceTypes": [
+        "script",
+        "xmlhttprequest"
+      ]
+    }
+  },
+  {
+    "id": 182,
+    "priority": 4,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||s.yimg.com/du/ay/",
+      "resourceTypes": [
+        "script",
+        "xmlhttprequest"
       ]
     }
   }
