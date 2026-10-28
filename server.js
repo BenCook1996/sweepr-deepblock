@@ -169,7 +169,7 @@ const STRIPE_PRICE_MONTHLY = (process.env.STRIPE_PRICE_MONTHLY || 'price_1USkjM1
 const STRIPE_COUPON = (process.env.STRIPE_COUPON || 'sweepr_intro_gbp_800').trim();
 
 const BOT_UA_RE =
-  /googlebot|bingbot|gptbot|oai-searchbot|chatgpt-user|claudebot|anthropic-ai|perplexitybot|applebot|duckduckbot|yandexbot|baiduspider|cohere-ai|facebookexternalhit|twitterbot|linkedinbot|meta-externalagent|bytespider|amazonbot|diffbot|google-inspectiontool|deepseek-ai|mistralai|qwenbot|semrushbot|ahrefsbot|google-extended|vertex-ai|youbot|brave-web-crawler|kagi-crawler|xai/i;
+  /googlebot|bingbot|gptbot|oai-searchbot|chatgpt-user|claudebot|anthropic-ai|perplexitybot|applebot|applebot-extended|duckduckbot|yandexbot|baiduspider|cohere-ai|facebookexternalhit|twitterbot|linkedinbot|meta-externalagent|meta-externalfetch|bytespider|amazonbot|diffbot|google-inspectiontool|deepseek-ai|mistralai|qwenbot|semrushbot|ahrefsbot|google-extended|vertex-ai|youbot|brave-web-crawler|kagi-crawler|xai|grok|exabot|petalbot|dotbot|rogerbot|blexbot|turnitinbot|ccbot|timpibot|seekr|feedfetcher-google|archive\.org_bot|screaming frog|siteaudit/i;
 
 // ============================================================================
 // Multi-Currency Geo-Pricing Engine (50% Annual Savings & .99 Charm Pricing)
@@ -1627,6 +1627,7 @@ function sendErrorResponse(res, statusCode, message = 'Error') {
     'Content-Type': 'text/plain; charset=utf-8',
     'X-Content-Type-Options': 'nosniff',
     'X-Frame-Options': 'SAMEORIGIN',
+    'X-Robots-Tag': 'noindex, nofollow',
     'Cache-Control': 'no-store, no-cache, must-revalidate, private',
     'Pragma': 'no-cache',
     'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload'
@@ -1667,7 +1668,7 @@ function sendHtml(res, statusCode, html, extraHeaders = {}) {
     'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
     'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',
     'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
-    'Link': '<https://fonts.googleapis.com>; rel=preconnect, <https://fonts.gstatic.com>; rel=preconnect; crossorigin, <https://cdn.tailwindcss.com>; rel=preconnect',
+    'Link': '<https://fonts.googleapis.com>; rel=preconnect, <https://fonts.gstatic.com>; rel=preconnect; crossorigin, <https://fonts.googleapis.com>; rel=dns-prefetch, <https://fonts.gstatic.com>; rel=dns-prefetch, <https://cdn.tailwindcss.com>; rel=preconnect, </style.css>; rel=preload; as=style, </logo.svg>; rel=preload; as=image',
     'Content-Security-Policy':
       "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://js.stripe.com https://pay.google.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https://api.stripe.com https://www.google-analytics.com https://api.country.is https://get.geojs.io; frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://pay.google.com; frame-ancestors 'self'; base-uri 'self'; object-src 'none'",
     ...extraHeaders
@@ -1683,6 +1684,7 @@ const COMPRESSIBLE_EXTS = new Set([
   '.xml',
   '.txt',
   '.svg',
+  '.ttf',
   '.webmanifest'
 ]);
 
@@ -1746,6 +1748,13 @@ function serveStaticOptimized(req, res, fullPath) {
       'Content-Security-Policy': "frame-ancestors 'self'; base-uri 'self'; object-src 'none'"
     };
 
+    if (isStaticAsset) {
+      headers['Timing-Allow-Origin'] = '*';
+    }
+    if (isInstallerBinary) {
+      headers['Accept-Ranges'] = 'bytes';
+    }
+
     const NON_INDEXABLE_PAGES = new Set([
       'order.html',
       'login.html',
@@ -1761,16 +1770,30 @@ function serveStaticOptimized(req, res, fullPath) {
 
     if (isHtml) {
       const fileNameLower = path.basename(fullPath).toLowerCase();
+      headers['Accept-CH'] = 'Sec-CH-UA-Platform, Sec-CH-UA-Mobile, Sec-CH-UA-Model, Sec-CH-UA-Arch';
+      headers['Vary'] = headers['Vary'] ? `${headers['Vary']}, Sec-CH-UA-Platform` : 'Accept-Encoding, Sec-CH-UA-Platform';
       if (NON_INDEXABLE_PAGES.has(fileNameLower)) {
         headers['X-Robots-Tag'] = 'noindex, nofollow';
       } else {
         headers['X-Robots-Tag'] = 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1';
       }
-      headers['Link'] =
+      const baseResourceHints =
         '<https://fonts.googleapis.com>; rel=preconnect, <https://fonts.gstatic.com>; rel=preconnect; crossorigin, <https://fonts.googleapis.com>; rel=dns-prefetch, <https://fonts.gstatic.com>; rel=dns-prefetch, <https://cdn.tailwindcss.com>; rel=preconnect, </style.css>; rel=preload; as=style, </logo.svg>; rel=preload; as=image';
+      if (!NON_INDEXABLE_PAGES.has(fileNameLower)) {
+        const relFromWebsite = path.relative(path.resolve(WEBSITE_DIR), fullPath).replace(/\\/g, '/');
+        const canonicalSlug = relFromWebsite === 'index.html' ? '' : relFromWebsite.replace(/\.html$/, '');
+        const canonicalUrl = `https://sweeprdeepblock.com/${canonicalSlug}`;
+        headers['Link'] = `<${canonicalUrl}>; rel="canonical", ` + baseResourceHints;
+      } else {
+        headers['Link'] = baseResourceHints;
+      }
     }
 
-    if (ext === '.zip' || ext === '.exe' || ext === '.command' || ext === '.apk' || ext === '.mobileconfig') {
+    if (path.basename(fullPath).toLowerCase() === 'pad.xml') {
+      headers['X-Robots-Tag'] = 'noindex, follow';
+    }
+    if (ext === '.zip' || ext === '.exe' || ext === '.command' || ext === '.apk' || ext === '.mobileconfig' || ext === '.xpi') {
+      headers['X-Robots-Tag'] = 'noindex, nofollow';
       headers['Content-Disposition'] = `attachment; filename="${path.basename(fullPath)}"`;
       headers['Content-Length'] = String(stats.size);
     }
@@ -4442,6 +4465,23 @@ const server = http.createServer(async (req, res) => {
     }
   }
 
+  if ((req.method === 'GET' || req.method === 'HEAD') && parsedUrl.pathname.startsWith('/cdn-cgi/l/email-protection')) {
+    res.writeHead(301, { Location: '/support', 'X-Robots-Tag': 'noindex, nofollow', 'X-Content-Type-Options': 'nosniff' });
+    return res.end();
+  }
+  if ((req.method === 'GET' || req.method === 'HEAD') && parsedUrl.pathname.length > 1 && /[).,\]]+$/.test(parsedUrl.pathname)) {
+    const cleanTarget = (parsedUrl.pathname.replace(/[).,\]]+$/, '') || '/') + (parsedUrl.search || '');
+    res.writeHead(301, { Location: cleanTarget, 'Cache-Control': 'public, max-age=604800', 'X-Content-Type-Options': 'nosniff' });
+    return res.end();
+  }
+  if ((req.method === 'GET' || req.method === 'HEAD') && parsedUrl.pathname === '/' && parsedUrl.searchParams.get('home') === '1') {
+    const uaStr = String(req.headers['user-agent'] || '');
+    const cookiesStr = String(req.headers.cookie || '');
+    if (BOT_UA_RE.test(uaStr) || !cookiesStr.includes('sweepr_order_draft')) {
+      res.writeHead(301, { Location: '/', 'Cache-Control': 'public, max-age=3600', 'X-Content-Type-Options': 'nosniff' });
+      return res.end();
+    }
+  }
   // 301 Canonical Redirect 1: Trailing slash normalization (e.g. /pricing/ -> /pricing)
   if ((req.method === 'GET' || req.method === 'HEAD') && parsedUrl.pathname.length > 1 && parsedUrl.pathname.endsWith('/')) {
     const cleanPath = parsedUrl.pathname.replace(/\/+$/, '') + (parsedUrl.search || '');
