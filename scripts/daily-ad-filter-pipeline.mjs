@@ -22,7 +22,8 @@
  *      - Sends per-site leak payloads + daily summary to the SWEEPR CRM API (`project=deepblock`) & custom webhook.
  */
 
-import { PipelineStateDB } from './ad-filter-pipeline/state-db.mjs';
+import { execFileSync } from 'node:child_process';
+import { PipelineStateDB, ROOT_DIR } from './ad-filter-pipeline/state-db.mjs';
 import { selectDailyTargetSites } from './ad-filter-pipeline/target-selector.mjs';
 import { AdLeakBrowserScanner } from './ad-filter-pipeline/browser-scanner.mjs';
 import { synthesizeBlockingRule, verifyCandidateRuleSelfHealing } from './ad-filter-pipeline/rule-generator.mjs';
@@ -165,13 +166,14 @@ export async function runDailyAdFilterPipeline(options = {}) {
     // STAGE 4: Project Filter List Update, OTA Delta & Git Deployment
     // ========================================================================
     const mergeStats = applyVerifiedRulesToProject(autoPatched, { runId });
-    const gitResult = await deployRulesViaGit({
-      gitMode,
-      runId,
-      autoPatchedCount: autoPatched.length
-    });
 
-    const commitRef = gitResult.prLink || gitResult.commitHash || 'local';
+    let currentHead = 'local';
+    try {
+      currentHead = execFileSync('git', ['rev-parse', '--short', 'HEAD'], {
+        cwd: ROOT_DIR,
+        encoding: 'utf8'
+      }).trim();
+    } catch {}
 
     appendPipelineAuditLog({
       runId,
@@ -182,9 +184,17 @@ export async function runDailyAdFilterPipeline(options = {}) {
       autoPatchedCount: autoPatched.length,
       manualReviewCount: manualReview.length,
       mergeStats,
-      commitHash: commitRef,
+      commitHash: currentHead,
       verifiedPatches: allEvaluatedLeaks
     });
+
+    const gitResult = await deployRulesViaGit({
+      gitMode,
+      runId,
+      autoPatchedCount: autoPatched.length
+    });
+
+    const commitRef = gitResult.prLink || gitResult.commitHash || currentHead;
 
     console.log(
       `[Stage 4/5 — Repository, Cross-Site Regression Guard & OTA Update] Added ${mergeStats.addedDnrRulesCount} new MV3 DNR rules & ${mergeStats.addedAbpRulesCount} ABP rules (Total MV3 DNR: ${mergeStats.totalStaticDnrRules} | Cross-Site Canaries: ${mergeStats.regressionAudit?.canariesPassed || 0}/${mergeStats.regressionAudit?.canariesTotal || 0} PASS | Commit Ref: ${commitRef})`

@@ -229,6 +229,17 @@ export class CrmPipelineReporter {
    */
   async registerBlockedSitesBatch(sites = []) {
     if (!Array.isArray(sites) || sites.length === 0) return true;
+    const CHUNK_SIZE = 100;
+    if (sites.length > CHUNK_SIZE) {
+      let allOk = true;
+      for (let i = 0; i < sites.length; i += CHUNK_SIZE) {
+        const slice = sites.slice(i, i + CHUNK_SIZE);
+        const ok = await this.registerBlockedSitesBatch(slice);
+        if (!ok) allOk = false;
+      }
+      return allOk;
+    }
+
     const body = { sites };
     const urls = [
       `${this.localCrmUrl}/v1/deepblock/blocked-sites`,

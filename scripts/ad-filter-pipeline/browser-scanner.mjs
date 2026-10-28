@@ -877,6 +877,86 @@ const EMERGING_AD_SERVERS_AND_SLOTS = [
     adType: 'Script',
     resourceTypes: ['script', 'xmlhttprequest', 'sub_frame'],
     selector: '.apnx-banner-300x250'
+  },
+  {
+    host: 'cdn.undertone.com',
+    urlFilter: '||undertone.com^',
+    samplePath: '/js/dist/undertone.js',
+    adType: 'Script',
+    resourceTypes: ['script', 'xmlhttprequest'],
+    selector: '.undertone-ad-slot'
+  },
+  {
+    host: 's.seedtag.com',
+    urlFilter: '||seedtag.com^',
+    samplePath: '/c/seedtag.js',
+    adType: 'Script',
+    resourceTypes: ['script', 'xmlhttprequest'],
+    selector: '.seedtag-ad-container'
+  },
+  {
+    host: 'k.krelay.com',
+    urlFilter: '||krelay.com^',
+    samplePath: '/delivery/invibes.js',
+    adType: 'Script',
+    resourceTypes: ['script', 'xmlhttprequest', 'sub_frame'],
+    selector: '.invibes-infeed-ad'
+  },
+  {
+    host: 'cdn.intergi.com',
+    urlFilter: '||intergi.com^',
+    samplePath: '/ramp/ramp.min.js',
+    adType: 'Script',
+    resourceTypes: ['script', 'xmlhttprequest'],
+    selector: '.playwire-ad-unit'
+  },
+  {
+    host: 'storage.cloud.kargo.com',
+    urlFilter: '||kargo.com^',
+    samplePath: '/ad/kargo.min.js',
+    adType: 'Script',
+    resourceTypes: ['script', 'xmlhttprequest'],
+    selector: '.kargo-ad-slot'
+  },
+  {
+    host: 'm2d.m2.ai',
+    urlFilter: '||m2.ai^',
+    samplePath: '/pg.min.js',
+    adType: 'Script',
+    resourceTypes: ['script', 'xmlhttprequest'],
+    selector: '.pubguru-ad-unit'
+  },
+  {
+    host: 'static.vidoomy.com',
+    urlFilter: '||vidoomy.com^',
+    samplePath: '/player.js',
+    adType: 'Script',
+    resourceTypes: ['script', 'xmlhttprequest', 'media', 'sub_frame'],
+    selector: '.vidoomy-video-ad'
+  },
+  {
+    host: 'cdn.adpushup.com',
+    urlFilter: '||adpushup.com^',
+    samplePath: '/adpushup.js',
+    adType: 'Script',
+    resourceTypes: ['script', 'xmlhttprequest'],
+    selector: '.adpushup-ad-slot'
+  },
+  {
+    host: 'delivery.adnuntius.com',
+    urlFilter: '||adnuntius.com^',
+    samplePath: '/i',
+    adType: 'Network',
+    resourceTypes: ['xmlhttprequest', 'script', 'sub_frame'],
+    selector: '.adnuntius-ad-box'
+  },
+  {
+    host: 'colossusssp.com',
+    urlFilter: '||colossusssp.com^',
+    samplePath: '/sp/bid',
+    adType: 'Network',
+    resourceTypes: ['xmlhttprequest', 'script'],
+    selector: '.colossus-ad-slot'
   }
 ];
 
