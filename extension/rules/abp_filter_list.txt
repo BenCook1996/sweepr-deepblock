@@ -1,7 +1,7 @@
 [Adblock Plus 2.0]
 ! Title: SWEEPR DeepBlock — Automated Daily Filter List (MV3 + Cosmetic)
-! Version: 202610270246
-! Last Modified: Tue, 27 Oct 2026 02:46:37 GMT
+! Version: 202610280018
+! Last Modified: Wed, 28 Oct 2026 00:18:43 GMT
 ! Expires: 1 day (update frequency)
 ! Homepage: https://sweeprdeepblock.com
 ! Syntax: uBlock Origin / Adblock Plus / Manifest V3 Compatible
@@ -20,10 +20,12 @@
 ||2mdn.net^$third-party
 ||3lift.com^$third-party
 ||adform.net^$third-party
+||adnuntius.com^$third-party
 ||adnxs-simple.com^$third-party
 ||adnxs-simple.com^$third-party,script,xmlhttprequest
 ||adnxs.com^$third-party
 ||adplsr.com^$third-party
+||adpushup.com^$third-party,script,xmlhttprequest
 ||adroll.com^$third-party
 ||ads-twitter.com^$third-party
 ||ads.yahoo.com^$third-party
@@ -50,6 +52,7 @@
 ||clarity.ms^$third-party
 ||clickadu.com^$third-party
 ||clickaine.com^$third-party
+||colossusssp.com^$third-party
 ||connatix.com^$third-party
 ||connect.facebook.net/*/fbevents.js$third-party
 ||contentsserved.com^$third-party
@@ -96,11 +99,15 @@
 ||imasdk.googleapis.com^$third-party
 ||indexww.com^$third-party
 ||infrapu.sh^$third-party
+||intergi.com^$third-party,script,xmlhttprequest
 ||jads.co^$third-party
 ||juicyads.com^$third-party
+||kargo.com^$third-party,script,xmlhttprequest
 ||koxk.com^$third-party
+||krelay.com^$third-party,script,xmlhttprequest
 ||lijit.com^$third-party
 ||lxax.com^$third-party
+||m2.ai^$third-party,script,xmlhttprequest
 ||magsrv.com^$third-party
 ||media.net^$third-party
 ||mediavine.com^$third-party
@@ -142,6 +149,7 @@
 ||rvmessage.online^$third-party
 ||rvrpushserv.com^$third-party
 ||scorecardresearch.com^$third-party
+||seedtag.com^$third-party,script,xmlhttprequest
 ||sharethrough.com^$third-party
 ||smartadserver.com^$third-party
 ||snigelweb.com^$third-party
@@ -163,6 +171,8 @@
 ||twinrdengine.com^$third-party
 ||twinrdsyn.com^$third-party
 ||u5s5.com^$third-party
+||undertone.com^$third-party,script,xmlhttprequest
+||vidoomy.com^$third-party,script,xmlhttprequest
 ||vidvas3.com^$third-party
 ||wknd.ai^$third-party
 ||wknd.ai^$third-party,script,xmlhttprequest
@@ -177,16 +187,46 @@
 ||zog.link^$third-party
 !
 ! --- DOM Cosmetic Hiding Rules ---
+animedigest.io##.vidoomy-video-ad
 arcademagazine.nl##.wknd-sponsored-box
 arenawatch.org##.wknd-sponsored-box
+bingejournal.jp##.kargo-ad-slot
 buzzbulletin.io##.apnx-banner-300x250
 bytefocus.gg##.apnx-banner-300x250
+byteindex.nl##.adnuntius-ad-box
+chroniclemirror.io##.undertone-ad-slot
+circuithub.io##.undertone-ad-slot
+circuitwatch.org##.undertone-ad-slot
+cloudcentral.nl##.invibes-infeed-ad
 commercialintegrator.com##.snigel-ad-unit
+cravenation.org##.vidoomy-video-ad
 doji.vn##.wknd-sponsored-box
+ebaypartnernetwork.com##.undertone-ad-slot
+gadgetmirror.net##.kargo-ad-slot
 gazettereview.fr##.mediaforce-ad-slot
 hdnux.com##.mediaforce-ad-slot
+heraldradar.org##.adnuntius-ad-box
+heraldreport.co##.undertone-ad-slot
+ibxads.com##.adnuntius-ad-box
+insiderplanet.info##.vidoomy-video-ad
 kitchenreport.info##.mediaforce-ad-slot
+kitchenwatch.news##.adnuntius-ad-box
 metrowatch.co.uk##.snigel-ad-unit
+nexusstandard.tv##.vidoomy-video-ad
+pantryplanet.info##.kargo-ad-slot
+pixeldigest.es##.adnuntius-ad-box
+pixelhub.de##.vidoomy-video-ad
 pixelzone.ca##.mediaforce-ad-slot
+postwire.news##.vidoomy-video-ad
 questbeacon.info##.freestar-ad-slot
+raidplanet.co##.kargo-ad-slot
 rawstory.com##.freestar-ad-slot
+recipetimes.co.uk##.vidoomy-video-ad
+respawnbeat.gg##.adnuntius-ad-box
+respawntimes.org##.invibes-infeed-ad
+savoryscoop.nl##.vidoomy-video-ad
+siliconmirror.gg##.invibes-infeed-ad
+skilletradar.es##.kargo-ad-slot
+spiceplanet.tv##.adnuntius-ad-box
+stackjournal.news##.vidoomy-video-ad
+todotorrents.com##.adnuntius-ad-box

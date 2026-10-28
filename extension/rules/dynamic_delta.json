@@ -1,7 +1,7 @@
 {
   "ok": true,
-  "version": "1.1.69197",
-  "updatedAt": "2026-10-27T02:46:37.590Z",
+  "version": "1.1.46723",
+  "updatedAt": "2026-10-28T00:18:43.005Z",
   "featureFlags": {
     "cookieAutoClose": true,
     "hideSearchSpam": true,
@@ -17,7 +17,12 @@
     ".snigel-ad-unit",
     ".wknd-sponsored-box",
     ".mediaforce-ad-slot",
-    ".apnx-banner-300x250"
+    ".apnx-banner-300x250",
+    ".kargo-ad-slot",
+    ".vidoomy-video-ad",
+    ".undertone-ad-slot",
+    ".invibes-infeed-ad",
+    ".adnuntius-ad-box"
   ],
   "dynamicDnrRules": [
     {
@@ -221,6 +226,160 @@
           "ping",
           "other"
         ]
+      }
+    },
+    {
+      "id": 80012,
+      "priority": 3,
+      "action": {
+        "type": "block"
+      },
+      "condition": {
+        "urlFilter": "||seedtag.com^",
+        "resourceTypes": [
+          "script",
+          "xmlhttprequest"
+        ],
+        "domainType": "thirdParty"
+      }
+    },
+    {
+      "id": 80013,
+      "priority": 3,
+      "action": {
+        "type": "block"
+      },
+      "condition": {
+        "urlFilter": "||colossusssp.com^",
+        "resourceTypes": [
+          "xmlhttprequest",
+          "script"
+        ],
+        "domainType": "thirdParty"
+      }
+    },
+    {
+      "id": 80014,
+      "priority": 3,
+      "action": {
+        "type": "block"
+      },
+      "condition": {
+        "urlFilter": "||kargo.com^",
+        "resourceTypes": [
+          "script",
+          "xmlhttprequest"
+        ],
+        "domainType": "thirdParty"
+      }
+    },
+    {
+      "id": 80015,
+      "priority": 3,
+      "action": {
+        "type": "block"
+      },
+      "condition": {
+        "urlFilter": "||adpushup.com^",
+        "resourceTypes": [
+          "script",
+          "xmlhttprequest"
+        ],
+        "domainType": "thirdParty"
+      }
+    },
+    {
+      "id": 80016,
+      "priority": 3,
+      "action": {
+        "type": "block"
+      },
+      "condition": {
+        "urlFilter": "||intergi.com^",
+        "resourceTypes": [
+          "script",
+          "xmlhttprequest"
+        ],
+        "domainType": "thirdParty"
+      }
+    },
+    {
+      "id": 80017,
+      "priority": 3,
+      "action": {
+        "type": "block"
+      },
+      "condition": {
+        "urlFilter": "||m2.ai^",
+        "resourceTypes": [
+          "script",
+          "xmlhttprequest"
+        ],
+        "domainType": "thirdParty"
+      }
+    },
+    {
+      "id": 80018,
+      "priority": 3,
+      "action": {
+        "type": "block"
+      },
+      "condition": {
+        "urlFilter": "||adnuntius.com^",
+        "resourceTypes": [
+          "xmlhttprequest",
+          "script",
+          "sub_frame"
+        ],
+        "domainType": "thirdParty"
+      }
+    },
+    {
+      "id": 80019,
+      "priority": 3,
+      "action": {
+        "type": "block"
+      },
+      "condition": {
+        "urlFilter": "||vidoomy.com^",
+        "resourceTypes": [
+          "script",
+          "xmlhttprequest",
+          "media",
+          "sub_frame"
+        ],
+        "domainType": "thirdParty"
+      }
+    },
+    {
+      "id": 80020,
+      "priority": 3,
+      "action": {
+        "type": "block"
+      },
+      "condition": {
+        "urlFilter": "||undertone.com^",
+        "resourceTypes": [
+          "script",
+          "xmlhttprequest"
+        ],
+        "domainType": "thirdParty"
+      }
+    },
+    {
+      "id": 80021,
+      "priority": 3,
+      "action": {
+        "type": "block"
+      },
+      "condition": {
+        "urlFilter": "||krelay.com^",
+        "resourceTypes": [
+          "script",
+          "xmlhttprequest",
+          "sub_frame"
+        ],
+        "domainType": "thirdParty"
       }
     }
   ]
