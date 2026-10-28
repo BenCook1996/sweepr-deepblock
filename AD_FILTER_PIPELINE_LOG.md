@@ -97,3 +97,13 @@ Automated daily 24-hour pipeline (`00:00 UTC`) sampling 1,000 unique ad-heavy do
 | `https://zappos.com` | Script | `||undertone.com^$third-party,script,xmlhttprequest` | **Auto-Patched** | Verified: ||undertone.com^$third-party,script,xmlhttprequest blocks undertone.com while preserving zappos.com first-party layout & scripts. |
 | `https://cloudcentral.nl` | DOM | `cloudcentral.nl##.invibes-infeed-ad` | **Auto-Patched** | Verified: Cosmetic rule cloudcentral.nl##.invibes-infeed-ad collapses ad container (.invibes-infeed-ad) with main content wrappers and scroll state intact. |
 
+## Run `adpipe-2026-10-28-orlby` — 2026-10-28T02:54:38.948Z
+- **Sites Sampled (30-Day Deduplicated):** 1000
+- **Sites Evaluated:** 1000
+- **Ad Leaks Detected:** 0
+- **Rules Auto-Patched (Verified Self-Healing):** 0
+- **Flagged for Manual Review:** 0
+- **Repository Ruleset Totals:** 192 MV3 Static DNR Rules | 221 ABP/uBO Rules | 22 OTA Delta Rules
+- **Cross-Site Non-Regression Suite:** PASS (15/15 Golden Network & DeepStealth Surrogate Canaries | 5/5 Legitimate Site Canaries Unblocked | 24 Cross-Module Selectors Protected)
+- **Git Commit / Deployment Ref:** `cd498e4`
+
