@@ -145,3 +145,29 @@ Automated daily 24-hour pipeline (`00:00 UTC`) sampling 1,000 unique ad-heavy do
 | `https://questplanet.es` | DOM | `questplanet.es##.monetag-push-ad` | **Auto-Patched** | Verified: Cosmetic rule questplanet.es##.monetag-push-ad collapses ad container (.monetag-push-ad) with main content wrappers and scroll state intact. |
 | `https://spicewire.com` | DOM | `spicewire.com##.brid-video-ad` | **Auto-Patched** | Verified: Cosmetic rule spicewire.com##.brid-video-ad collapses ad container (.brid-video-ad) with main content wrappers and scroll state intact. |
 
+## Run `adpipe-2026-10-29-1oxxe` — 2026-10-29T03:19:23.539Z
+- **Sites Sampled (30-Day Deduplicated):** 1000
+- **Sites Evaluated:** 1000
+- **Ad Leaks Detected:** 13
+- **Rules Auto-Patched (Verified Self-Healing):** 13
+- **Flagged for Manual Review:** 0
+- **Repository Ruleset Totals:** 210 MV3 Static DNR Rules | 268 ABP/uBO Rules | 40 OTA Delta Rules
+- **Cross-Site Non-Regression Suite:** PASS (15/15 Golden Network & DeepStealth Surrogate Canaries | 5/5 Legitimate Site Canaries Unblocked | 24 Cross-Module Selectors Protected)
+- **Git Commit / Deployment Ref:** `5889dae`
+
+| Target URL | Ad Type | Generated Rule | Fix Status | Verification Notes |
+| :--- | :--- | :--- | :--- | :--- |
+| `https://gazettepulse.it` | DOM | `gazettepulse.it##.targetspot-ad` | **Auto-Patched** | Verified: Cosmetic rule gazettepulse.it##.targetspot-ad collapses ad container (.targetspot-ad) with main content wrappers and scroll state intact. |
+| `https://devstream.org` | Network | `||targetspot.com^$third-party` | **Auto-Patched** | Verified: ||targetspot.com^$third-party blocks targetspot.com while preserving devstream.org first-party layout & scripts. |
+| `https://bingewatch.tv` | DOM | `bingewatch.tv##.targetspot-ad` | **Auto-Patched** | Verified: Cosmetic rule bingewatch.tv##.targetspot-ad collapses ad container (.targetspot-ad) with main content wrappers and scroll state intact. |
+| `https://raidglobe.news` | DOM | `raidglobe.news##.targetspot-ad` | **Auto-Patched** | Verified: Cosmetic rule raidglobe.news##.targetspot-ad collapses ad container (.targetspot-ad) with main content wrappers and scroll state intact. |
+| `https://skilletworld.gg` | DOM | `skilletworld.gg##.targetspot-ad` | **Auto-Patched** | Verified: Cosmetic rule skilletworld.gg##.targetspot-ad collapses ad container (.targetspot-ad) with main content wrappers and scroll state intact. |
+| `https://screenjournal.net` | DOM | `screenjournal.net##.targetspot-ad` | **Auto-Patched** | Verified: Cosmetic rule screenjournal.net##.targetspot-ad collapses ad container (.targetspot-ad) with main content wrappers and scroll state intact. |
+| `https://newsvine.com` | DOM | `newsvine.com##.targetspot-ad` | **Auto-Patched** | Verified: Cosmetic rule newsvine.com##.targetspot-ad collapses ad container (.targetspot-ad) with main content wrappers and scroll state intact. |
+| `https://tpb.vn` | DOM | `tpb.vn##.targetspot-ad` | **Auto-Patched** | Verified: Cosmetic rule tpb.vn##.targetspot-ad collapses ad container (.targetspot-ad) with main content wrappers and scroll state intact. |
+| `https://craveindex.news` | DOM | `craveindex.news##.targetspot-ad` | **Auto-Patched** | Verified: Cosmetic rule craveindex.news##.targetspot-ad collapses ad container (.targetspot-ad) with main content wrappers and scroll state intact. |
+| `https://craveguide.com` | DOM | `craveguide.com##.targetspot-ad` | **Auto-Patched** | Verified: Cosmetic rule craveguide.com##.targetspot-ad collapses ad container (.targetspot-ad) with main content wrappers and scroll state intact. |
+| `https://animeindex.ca` | DOM | `animeindex.ca##.targetspot-ad` | **Auto-Patched** | Verified: Cosmetic rule animeindex.ca##.targetspot-ad collapses ad container (.targetspot-ad) with main content wrappers and scroll state intact. |
+| `https://buzzworld.com` | DOM | `buzzworld.com##.targetspot-ad` | **Auto-Patched** | Verified: Cosmetic rule buzzworld.com##.targetspot-ad collapses ad container (.targetspot-ad) with main content wrappers and scroll state intact. |
+| `https://chroniclemedia.net` | DOM | `chroniclemedia.net##.targetspot-ad` | **Auto-Patched** | Verified: Cosmetic rule chroniclemedia.net##.targetspot-ad collapses ad container (.targetspot-ad) with main content wrappers and scroll state intact. |
+

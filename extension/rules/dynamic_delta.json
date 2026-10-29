@@ -1,7 +1,7 @@
 {
   "ok": true,
-  "version": "1.1.32330",
-  "updatedAt": "2026-10-29T00:05:30.191Z",
+  "version": "1.1.43963",
+  "updatedAt": "2026-10-29T03:19:23.509Z",
   "featureFlags": {
     "cookieAutoClose": true,
     "hideSearchSpam": true,
@@ -28,7 +28,8 @@
     ".inmobi-ad-unit",
     ".showheroes-ad-player",
     ".adtrue-banner",
-    ".conversant-ad-slot"
+    ".conversant-ad-slot",
+    ".targetspot-ad"
   ],
   "dynamicDnrRules": [
     {
@@ -642,6 +643,21 @@
         "resourceTypes": [
           "script",
           "xmlhttprequest"
+        ],
+        "domainType": "thirdParty"
+      }
+    },
+    {
+      "id": 80039,
+      "priority": 3,
+      "action": {
+        "type": "block"
+      },
+      "condition": {
+        "urlFilter": "||targetspot.com^",
+        "resourceTypes": [
+          "xmlhttprequest",
+          "script"
         ],
         "domainType": "thirdParty"
       }

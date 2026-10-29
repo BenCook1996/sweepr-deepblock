@@ -1,7 +1,7 @@
 [Adblock Plus 2.0]
 ! Title: SWEEPR DeepBlock — Automated Daily Filter List (MV3 + Cosmetic)
-! Version: 202610290005
-! Last Modified: Thu, 29 Oct 2026 00:05:30 GMT
+! Version: 202610290319
+! Last Modified: Thu, 29 Oct 2026 03:19:23 GMT
 ! Expires: 1 day (update frequency)
 ! Homepage: https://sweeprdeepblock.com
 ! Syntax: uBlock Origin / Adblock Plus / Manifest V3 Compatible
@@ -178,6 +178,7 @@
 ||sxyprn.com/player/p12.js$third-party
 ||sxyprn.net/js/fad.json$third-party
 ||taboola.com^$third-party
+||targetspot.com^$third-party
 ||teads.tv^$third-party
 ||tikbblove.com^$third-party
 ||tophqcam.com^$third-party
@@ -205,17 +206,21 @@
 !
 ! --- DOM Cosmetic Hiding Rules ---
 animedigest.io##.vidoomy-video-ad
+animeindex.ca##.targetspot-ad
 arcadeguide.ca##.invibes-infeed-ad
 arcademagazine.nl##.wknd-sponsored-box
 arenahub.fr##.showheroes-ad-player
 arenawatch.org##.wknd-sponsored-box
 bingejournal.jp##.kargo-ad-slot
+bingewatch.tv##.targetspot-ad
 buzzbulletin.io##.apnx-banner-300x250
 buzzreport.com##.inmobi-ad-unit
+buzzworld.com##.targetspot-ad
 bytefocus.gg##.apnx-banner-300x250
 byteindex.nl##.adnuntius-ad-box
 byteledger.net##.conversant-ad-slot
 celebnetwork.it##.conversant-ad-slot
+chroniclemedia.net##.targetspot-ad
 chroniclemirror.io##.undertone-ad-slot
 cinemaledger.me##.monetag-push-ad
 circuithub.io##.undertone-ad-slot
@@ -223,6 +228,8 @@ circuitwatch.org##.undertone-ad-slot
 cloudcentral.nl##.invibes-infeed-ad
 cloudstandard.nl##.monetag-push-ad
 commercialintegrator.com##.snigel-ad-unit
+craveguide.com##.targetspot-ad
+craveindex.news##.targetspot-ad
 cravenation.org##.vidoomy-video-ad
 cyberjournal.tv##.invibes-infeed-ad
 dailynetwork.news##.invibes-infeed-ad
@@ -230,6 +237,7 @@ doji.vn##.wknd-sponsored-box
 ebaypartnernetwork.com##.undertone-ad-slot
 gadgetdigest.au##.brid-video-ad
 gadgetmirror.net##.kargo-ad-slot
+gazettepulse.it##.targetspot-ad
 gazettereview.fr##.mediaforce-ad-slot
 hdnux.com##.mediaforce-ad-slot
 heraldradar.org##.adnuntius-ad-box
@@ -240,6 +248,7 @@ kitchenreport.info##.mediaforce-ad-slot
 kitchenwatch.news##.adnuntius-ad-box
 lootstream.fr##.brid-video-ad
 metrowatch.co.uk##.snigel-ad-unit
+newsvine.com##.targetspot-ad
 nexusstandard.tv##.vidoomy-video-ad
 pantryplanet.info##.kargo-ad-slot
 pixeldigest.es##.adnuntius-ad-box
@@ -249,6 +258,7 @@ popreport.com##.adtrue-banner
 postwire.news##.vidoomy-video-ad
 questbeacon.info##.freestar-ad-slot
 questplanet.es##.monetag-push-ad
+raidglobe.news##.targetspot-ad
 raidplanet.co##.kargo-ad-slot
 rawstory.com##.freestar-ad-slot
 recipereview.co.uk##.adtrue-banner
@@ -256,11 +266,14 @@ recipetimes.co.uk##.vidoomy-video-ad
 respawnbeat.gg##.adnuntius-ad-box
 respawntimes.org##.invibes-infeed-ad
 savoryscoop.nl##.vidoomy-video-ad
+screenjournal.net##.targetspot-ad
 siliconmirror.gg##.invibes-infeed-ad
 skilletradar.es##.kargo-ad-slot
+skilletworld.gg##.targetspot-ad
 spiceplanet.tv##.adnuntius-ad-box
 spicewire.com##.brid-video-ad
 stackjournal.news##.vidoomy-video-ad
 streamfocus.jp##.showheroes-ad-player
 todotorrents.com##.adnuntius-ad-box
+tpb.vn##.targetspot-ad
 tribunewatch.nl##.showheroes-ad-player

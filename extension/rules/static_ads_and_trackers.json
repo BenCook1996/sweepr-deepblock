@@ -3372,5 +3372,20 @@
       ],
       "domainType": "thirdParty"
     }
+  },
+  {
+    "id": 210,
+    "priority": 3,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||targetspot.com^",
+      "resourceTypes": [
+        "xmlhttprequest",
+        "script"
+      ],
+      "domainType": "thirdParty"
+    }
   }
 ]
