@@ -957,6 +957,150 @@ const EMERGING_AD_SERVERS_AND_SLOTS = [
     adType: 'Network',
     resourceTypes: ['xmlhttprequest', 'script'],
     selector: '.colossus-ad-slot'
+  },
+  {
+    host: 'w.inmobi.com',
+    urlFilter: '||inmobi.com^',
+    samplePath: '/page/inmobi.js',
+    adType: 'Script',
+    resourceTypes: ['script', 'xmlhttprequest'],
+    selector: '.inmobi-ad-unit'
+  },
+  {
+    host: 'des.smartclip.net',
+    urlFilter: '||smartclip.net^',
+    samplePath: '/ads/vpaid.xml',
+    adType: 'Network',
+    resourceTypes: ['xmlhttprequest', 'media', 'sub_frame'],
+    selector: '.smartclip-ad-player'
+  },
+  {
+    host: 'static.showheroes.com',
+    urlFilter: '||showheroes.com^',
+    samplePath: '/publishertag.js',
+    adType: 'Script',
+    resourceTypes: ['script', 'xmlhttprequest', 'media'],
+    selector: '.showheroes-ad-player'
+  },
+  {
+    host: 's.richaudience.com',
+    urlFilter: '||richaudience.com^',
+    samplePath: '/tag/rm-player.js',
+    adType: 'Script',
+    resourceTypes: ['script', 'xmlhttprequest', 'sub_frame'],
+    selector: '.richaudience-ad-slot'
+  },
+  {
+    host: 'services.brid.tv',
+    urlFilter: '||brid.tv^',
+    samplePath: '/player/build/brid.min.js',
+    adType: 'Script',
+    resourceTypes: ['script', 'xmlhttprequest'],
+    selector: '.brid-video-ad'
+  },
+  {
+    host: 'cdn.playstream.media',
+    urlFilter: '||playstream.media^',
+    samplePath: '/tag/ad-unit.js',
+    adType: 'Script',
+    resourceTypes: ['script', 'xmlhttprequest'],
+    selector: '.playstream-ad-box'
+  },
+  {
+    host: 'ms-ads.ogury.io',
+    urlFilter: '||ogury.io^',
+    samplePath: '/v1/interstitial',
+    adType: 'Network',
+    resourceTypes: ['xmlhttprequest', 'script'],
+    selector: '.ogury-ad-container'
+  },
+  {
+    host: 'ads.sublime.xyz',
+    urlFilter: '||sublime.xyz^',
+    samplePath: '/skin/format.js',
+    adType: 'Script',
+    resourceTypes: ['script', 'xmlhttprequest'],
+    selector: '.sublime-ad-wrapper'
+  },
+  {
+    host: 'cdn.adtrue.com',
+    urlFilter: '||adtrue.com^',
+    samplePath: '/rtb/loader.js',
+    adType: 'Script',
+    resourceTypes: ['script', 'xmlhttprequest'],
+    selector: '.adtrue-banner'
+  },
+  {
+    host: 'nodea.targetspot.com',
+    urlFilter: '||targetspot.com^',
+    samplePath: '/callback/uuid',
+    adType: 'Network',
+    resourceTypes: ['xmlhttprequest', 'script'],
+    selector: '.targetspot-ad'
+  },
+  {
+    host: 'alwingulla.com',
+    urlFilter: '||alwingulla.com^',
+    samplePath: '/tag.min.js',
+    adType: 'Script',
+    resourceTypes: ['script', 'xmlhttprequest'],
+    selector: '.monetag-push-ad'
+  },
+  {
+    host: 'ads.revive-adserver.net',
+    urlFilter: '||revive-adserver.net^',
+    samplePath: '/delivery/ajs.php',
+    adType: 'Script',
+    resourceTypes: ['script', 'xmlhttprequest'],
+    selector: '.revive-ad-zone'
+  },
+  {
+    host: 'ad.invibes.com',
+    urlFilter: '||invibes.com^',
+    samplePath: '/delivery/infeed.js',
+    adType: 'Script',
+    resourceTypes: ['script', 'xmlhttprequest'],
+    selector: '.invibes-infeed-ad'
+  },
+  {
+    host: 'apex.go.sonobi.com',
+    urlFilter: '||sonobi.com^',
+    samplePath: '/trinity.js',
+    adType: 'Script',
+    resourceTypes: ['script', 'xmlhttprequest'],
+    selector: '.sonobi-ad-unit'
+  },
+  {
+    host: 'media.fastclick.net',
+    urlFilter: '||fastclick.net^',
+    samplePath: '/w/get.ad',
+    adType: 'Network',
+    resourceTypes: ['script', 'xmlhttprequest'],
+    selector: '.conversant-ad-slot'
+  },
+  {
+    host: 'dsp.adkernel.com',
+    urlFilter: '||adkernel.com^',
+    samplePath: '/tag',
+    adType: 'Network',
+    resourceTypes: ['xmlhttprequest', 'script'],
+    selector: '.adkernel-banner-slot'
+  },
+  {
+    host: 'd3lcz8vpax4lo2.cloudfront.net',
+    urlFilter: '||insticator.com^',
+    samplePath: '/embed-scripts/insticator.js',
+    adType: 'Script',
+    resourceTypes: ['script', 'xmlhttprequest'],
+    selector: '.insticator-ad-unit'
+  },
+  {
+    host: 'assets.strossle.com',
+    urlFilter: '||strossle.com^',
+    samplePath: '/strossle-widget-sdk.js',
+    adType: 'Script',
+    resourceTypes: ['script', 'xmlhttprequest'],
+    selector: '.strossle-ad-widget'
   }
 ];
 

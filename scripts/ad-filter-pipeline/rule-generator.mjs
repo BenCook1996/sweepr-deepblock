@@ -284,7 +284,7 @@ export async function verifyCandidateRuleSelfHealing({
 
   // Guardrail 2B: Ensure selector has explicit ad/sponsor specificity
   const hasExplicitAdToken =
-    /ad|sponsor|dfp|taboola|outbrain|mgid|revcontent|ezoic|freestar|snigel|aniview|connatix|primis|triplelift|yieldmo|adform|teads|gumgum|wknd|apnx|ix-ad|mv-ad|ym-ad|cnx-ad/i.test(
+    /ad|sponsor|dfp|taboola|outbrain|mgid|revcontent|ezoic|freestar|snigel|aniview|connatix|primis|triplelift|yieldmo|adform|teads|gumgum|wknd|apnx|ix-ad|mv-ad|ym-ad|cnx-ad|smartclip|showheroes|richaudience|brid|playstream|ogury|sublime|targetspot|monetag|revive|sonobi|conversant|insticator|strossle/i.test(
       selector
     );
   if (!hasExplicitAdToken) {
