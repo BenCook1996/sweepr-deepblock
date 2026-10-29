@@ -5,7 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>SWEEPR Deepblock</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="SWEEPR DeepBlock mobile app and configuration companion for iOS and Android. Pair your device and manage network protection.">
+<title>SWEEPR DeepBlock iOS &amp; Mobile Web Companion App</title>
 <style>
   :root[data-theme="light"] {
     --bg: #f8fafc;
@@ -394,8 +396,36 @@
       <div style="font-size:17px;font-weight:900;margin-bottom:8px">Active Filter Modules</div>
       <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);font-size:13.5px;font-weight:700"><span>Video &amp; Pre-Roll Ad Blocker</span><span style="color:var(--accent-fg)">ACTIVE</span></div>
       <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);font-size:13.5px;font-weight:700"><span>Cookie Consent Auto-Closer</span><span style="color:var(--accent-fg)">ACTIVE</span></div>
-      <div style="display:flex;justify-content:space-between;padding:12px 0;font-size:13.5px;font-weight:700"><span>Fake Shop &amp; Phishing Guard</span><span style="color:var(--accent-fg)">ACTIVE</span></div>
+      <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);font-size:13.5px;font-weight:700"><span>Fake Shop &amp; Phishing Guard</span><span style="color:var(--accent-fg)">ACTIVE</span></div>
+      <div style="display:flex;justify-content:space-between;padding:12px 0;font-size:13.5px;font-weight:700"><span>RAM &amp; Tab Memory Tamer</span><span style="color:var(--accent-fg)">ACTIVE</span></div>
     </div>
+
+    <details class="card" style="padding:14px 16px">
+      <summary style="cursor:pointer;font-size:13.5px;font-weight:800;display:flex;justify-content:space-between;align-items:center;list-style:none">
+        <span>Site-Specific Stream &amp; RAM Shields</span>
+        <span class="mono" style="font-size:11px;color:var(--accent-fg)">7 Active ▾</span>
+      </summary>
+      <div style="margin-top:10px;font-size:12px;color:var(--muted);display:flex;flex-direction:column;gap:6px;line-height:1.4">
+        <div>• <strong>Fandom Wiki Video &amp; RAM Tamer:</strong> Blocks autoplay video player &amp; unloads rail bloat</div>
+        <div>• <strong>Crunchyroll &amp; SoundCloud:</strong> Pre-roll, mid-roll &amp; audio interruption blocker</div>
+        <div>• <strong>Roblox Web Memory Saver:</strong> Strips ad iframes &amp; telemetry beacons</div>
+        <div>• <strong>TikTok, Reddit &amp; Pinterest:</strong> Cookie auto-reject, promoted post &amp; signup-wall bypass</div>
+      </div>
+    </details>
+
+    <details class="card" style="padding:14px 16px">
+      <summary style="cursor:pointer;font-size:13.5px;font-weight:800;display:flex;justify-content:space-between;align-items:center;list-style:none">
+        <span>Enthusiast &amp; Privacy Browser Support</span>
+        <span id="detectedBrowserBadge" class="mono" style="font-size:11px;color:var(--accent-fg)">1-Click ▾</span>
+      </summary>
+      <div style="margin-top:10px;font-size:12px;color:var(--muted);line-height:1.45">
+        <p id="detectedBrowserNote" style="margin-bottom:8px">Native MV3 &amp; WebExtension builds verified for Chromium and Firefox forks:</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <a href="/sweepr-deepblock-extension.zip" style="text-decoration:none;text-align:center;padding:9px;border-radius:11px;background:var(--accent-soft);color:var(--accent-fg);font-weight:800;font-size:11.5px">Thorium / Arc / Kiwi / Orion (.zip)</a>
+          <a href="/sweepr-deepblock-firefox.xpi" style="text-decoration:none;text-align:center;padding:9px;border-radius:11px;background:var(--card-sub);color:var(--text);font-weight:800;font-size:11.5px">Floorp / Zen / LibreWolf (.xpi)</a>
+        </div>
+      </div>
+    </details>
   </section>
 
   <section id="view-dns" class="view">
@@ -535,6 +565,17 @@ async function activateDeepblock() {
 }
 
 (function init() {
+  const ua = navigator.userAgent || '';
+  const bBadge = document.getElementById('detectedBrowserBadge');
+  const bNote = document.getElementById('detectedBrowserNote');
+  if (bBadge && bNote) {
+    if (/Thorium/i.test(ua)) { bBadge.textContent = 'Thorium ▾'; bNote.textContent = 'Thorium Chromium detected — install the MV3 package below:'; }
+    else if (/Kiwi/i.test(ua)) { bBadge.textContent = 'Kiwi Android ▾'; bNote.textContent = 'Kiwi Browser (Android) detected — supports full desktop MV3 extensions:'; }
+    else if (/Orion/i.test(ua)) { bBadge.textContent = 'Orion ▾'; bNote.textContent = 'Orion Browser (macOS/iOS) detected — supports Chrome & Firefox extensions:'; }
+    else if (/Floorp/i.test(ua)) { bBadge.textContent = 'Floorp ▾'; bNote.textContent = 'Floorp Browser detected — install the signed Firefox .xpi package:'; }
+    else if (/Zen/i.test(ua)) { bBadge.textContent = 'Zen ▾'; bNote.textContent = 'Zen Browser detected — install the signed Firefox .xpi package:'; }
+    else if (/LibreWolf/i.test(ua)) { bBadge.textContent = 'LibreWolf ▾'; bNote.textContent = 'LibreWolf detected — install the signed Firefox .xpi package:'; }
+  }
   const savedTheme = localStorage.getItem('sweepr_db_theme') || 'light';
   applyTheme(savedTheme);
   if (localStorage.getItem('sweepr_db_key')) {
