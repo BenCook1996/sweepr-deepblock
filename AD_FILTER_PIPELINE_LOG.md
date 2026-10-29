@@ -107,3 +107,41 @@ Automated daily 24-hour pipeline (`00:00 UTC`) sampling 1,000 unique ad-heavy do
 - **Cross-Site Non-Regression Suite:** PASS (15/15 Golden Network & DeepStealth Surrogate Canaries | 5/5 Legitimate Site Canaries Unblocked | 24 Cross-Module Selectors Protected)
 - **Git Commit / Deployment Ref:** `cd498e4`
 
+## Run `adpipe-2026-10-29-vb4qy` — 2026-10-29T00:05:30.745Z
+- **Sites Sampled (30-Day Deduplicated):** 1000
+- **Sites Evaluated:** 1000
+- **Ad Leaks Detected:** 34
+- **Rules Auto-Patched (Verified Self-Healing):** 34
+- **Flagged for Manual Review:** 0
+- **Repository Ruleset Totals:** 209 MV3 Static DNR Rules | 255 ABP/uBO Rules | 39 OTA Delta Rules
+- **Cross-Site Non-Regression Suite:** PASS (15/15 Golden Network & DeepStealth Surrogate Canaries | 5/5 Legitimate Site Canaries Unblocked | 24 Cross-Module Selectors Protected)
+- **Git Commit / Deployment Ref:** `2de903e`
+
+| Target URL | Ad Type | Generated Rule | Fix Status | Verification Notes |
+| :--- | :--- | :--- | :--- | :--- |
+| `https://recipehub.co.uk` | Script | `||sublime.xyz^$third-party,script,xmlhttprequest` | **Auto-Patched** | Verified: ||sublime.xyz^$third-party,script,xmlhttprequest blocks sublime.xyz while preserving recipehub.co.uk first-party layout & scripts. |
+| `https://cloudstandard.nl` | DOM | `cloudstandard.nl##.monetag-push-ad` | **Auto-Patched** | Verified: Cosmetic rule cloudstandard.nl##.monetag-push-ad collapses ad container (.monetag-push-ad) with main content wrappers and scroll state intact. |
+| `https://arcadeguide.ca` | DOM | `arcadeguide.ca##.invibes-infeed-ad` | **Auto-Patched** | Verified: Cosmetic rule arcadeguide.ca##.invibes-infeed-ad collapses ad container (.invibes-infeed-ad) with main content wrappers and scroll state intact. |
+| `https://gadgetdigest.au` | DOM | `gadgetdigest.au##.brid-video-ad` | **Auto-Patched** | Verified: Cosmetic rule gadgetdigest.au##.brid-video-ad collapses ad container (.brid-video-ad) with main content wrappers and scroll state intact. |
+| `https://cyberzone.nl` | Script | `||sonobi.com^$third-party,script,xmlhttprequest` | **Auto-Patched** | Verified: ||sonobi.com^$third-party,script,xmlhttprequest blocks sonobi.com while preserving cyberzone.nl first-party layout & scripts. |
+| `https://buzzreport.com` | DOM | `buzzreport.com##.inmobi-ad-unit` | **Auto-Patched** | Verified: Cosmetic rule buzzreport.com##.inmobi-ad-unit collapses ad container (.inmobi-ad-unit) with main content wrappers and scroll state intact. |
+| `https://buzztoday.net` | Network | `||smartclip.net^$third-party` | **Auto-Patched** | Verified: ||smartclip.net^$third-party blocks smartclip.net while preserving buzztoday.net first-party layout & scripts. |
+| `https://cyberexpress.info` | Script | `||richaudience.com^$third-party,script,xmlhttprequest` | **Auto-Patched** | Verified: ||richaudience.com^$third-party,script,xmlhttprequest blocks richaudience.com while preserving cyberexpress.info first-party layout & scripts. |
+| `https://beygir.com` | Script | `||revive-adserver.net^$third-party,script,xmlhttprequest` | **Auto-Patched** | Verified: ||revive-adserver.net^$third-party,script,xmlhttprequest blocks revive-adserver.net while preserving beygir.com first-party layout & scripts. |
+| `https://bossbeacon.ca` | Script | `||strossle.com^$third-party,script,xmlhttprequest` | **Auto-Patched** | Verified: ||strossle.com^$third-party,script,xmlhttprequest blocks strossle.com while preserving bossbeacon.ca first-party layout & scripts. |
+| `https://buzzbulletin.de` | Network | `||adkernel.com^$third-party` | **Auto-Patched** | Verified: ||adkernel.com^$third-party blocks adkernel.com while preserving buzzbulletin.de first-party layout & scripts. |
+| `https://tribunedigest.net` | Script | `||inmobi.com^$third-party,script,xmlhttprequest` | **Auto-Patched** | Verified: ||inmobi.com^$third-party,script,xmlhttprequest blocks inmobi.com while preserving tribunedigest.net first-party layout & scripts. |
+| `https://recipespot.nl` | Script | `||invibes.com^$third-party,script,xmlhttprequest` | **Auto-Patched** | Verified: ||invibes.com^$third-party,script,xmlhttprequest blocks invibes.com while preserving recipespot.nl first-party layout & scripts. |
+| `https://kernelbeat.gg` | Script | `||playstream.media^$third-party,script,xmlhttprequest` | **Auto-Patched** | Verified: ||playstream.media^$third-party,script,xmlhttprequest blocks playstream.media while preserving kernelbeat.gg first-party layout & scripts. |
+| `https://lootstream.fr` | DOM | `lootstream.fr##.brid-video-ad` | **Auto-Patched** | Verified: Cosmetic rule lootstream.fr##.brid-video-ad collapses ad container (.brid-video-ad) with main content wrappers and scroll state intact. |
+| `https://gadgetnation.com` | Script | `||brid.tv^$third-party,script,xmlhttprequest` | **Auto-Patched** | Verified: ||brid.tv^$third-party,script,xmlhttprequest blocks brid.tv while preserving gadgetnation.com first-party layout & scripts. |
+| `https://dailynetwork.news` | DOM | `dailynetwork.news##.invibes-infeed-ad` | **Auto-Patched** | Verified: Cosmetic rule dailynetwork.news##.invibes-infeed-ad collapses ad container (.invibes-infeed-ad) with main content wrappers and scroll state intact. |
+| `https://showbiztoday.news` | Network | `||fastclick.net^$third-party` | **Auto-Patched** | Verified: ||fastclick.net^$third-party blocks fastclick.net while preserving showbiztoday.news first-party layout & scripts. |
+| `https://arenahub.fr` | DOM | `arenahub.fr##.showheroes-ad-player` | **Auto-Patched** | Verified: Cosmetic rule arenahub.fr##.showheroes-ad-player collapses ad container (.showheroes-ad-player) with main content wrappers and scroll state intact. |
+| `https://spicedigest.info` | Script | `||showheroes.com^$third-party,script,xmlhttprequest` | **Auto-Patched** | Verified: ||showheroes.com^$third-party,script,xmlhttprequest blocks showheroes.com while preserving spicedigest.info first-party layout & scripts. |
+| `https://cyberjournal.tv` | DOM | `cyberjournal.tv##.invibes-infeed-ad` | **Auto-Patched** | Verified: Cosmetic rule cyberjournal.tv##.invibes-infeed-ad collapses ad container (.invibes-infeed-ad) with main content wrappers and scroll state intact. |
+| `https://observerindex.org` | Script | `||alwingulla.com^$third-party,script,xmlhttprequest` | **Auto-Patched** | Verified: ||alwingulla.com^$third-party,script,xmlhttprequest blocks alwingulla.com while preserving observerindex.org first-party layout & scripts. |
+| `https://streamfocus.jp` | DOM | `streamfocus.jp##.showheroes-ad-player` | **Auto-Patched** | Verified: Cosmetic rule streamfocus.jp##.showheroes-ad-player collapses ad container (.showheroes-ad-player) with main content wrappers and scroll state intact. |
+| `https://questplanet.es` | DOM | `questplanet.es##.monetag-push-ad` | **Auto-Patched** | Verified: Cosmetic rule questplanet.es##.monetag-push-ad collapses ad container (.monetag-push-ad) with main content wrappers and scroll state intact. |
+| `https://spicewire.com` | DOM | `spicewire.com##.brid-video-ad` | **Auto-Patched** | Verified: Cosmetic rule spicewire.com##.brid-video-ad collapses ad container (.brid-video-ad) with main content wrappers and scroll state intact. |
+

@@ -1,7 +1,7 @@
 [Adblock Plus 2.0]
 ! Title: SWEEPR DeepBlock — Automated Daily Filter List (MV3 + Cosmetic)
-! Version: 202610280254
-! Last Modified: Wed, 28 Oct 2026 02:54:38 GMT
+! Version: 202610290005
+! Last Modified: Thu, 29 Oct 2026 00:05:30 GMT
 ! Expires: 1 day (update frequency)
 ! Homepage: https://sweeprdeepblock.com
 ! Syntax: uBlock Origin / Adblock Plus / Manifest V3 Compatible
@@ -20,6 +20,7 @@
 ||2mdn.net^$third-party
 ||3lift.com^$third-party
 ||adform.net^$third-party
+||adkernel.com^$third-party
 ||adnuntius.com^$third-party
 ||adnxs-simple.com^$third-party
 ||adnxs-simple.com^$third-party,script,xmlhttprequest
@@ -35,10 +36,12 @@
 ||adsrvr.org^$third-party
 ||adthrive.com^$third-party
 ||adtng.com^$third-party
+||adtrue.com^$third-party,script,xmlhttprequest
 ||advertising.com^$third-party
 ||advnet.xyz^$third-party
 ||adxpansion.com^$third-party
 ||ahw2lok.txxx.com^$third-party
+||alwingulla.com^$third-party,script,xmlhttprequest
 ||amazon-adsystem.com^$third-party
 ||aniview.com^$third-party
 ||bat.bing.com^$third-party
@@ -46,12 +49,14 @@
 ||blogherads.com^$third-party
 ||blogherads.com^$third-party,script,xmlhttprequest
 ||bngpt.com^$third-party
+||brid.tv^$third-party,script,xmlhttprequest
 ||casalemedia.com^$third-party
 ||cdn-fc.com^$third-party
 ||cdn77.pornoxo.com/pxo/www/js-v*/vast.min.js$third-party
 ||clarity.ms^$third-party
 ||clickadu.com^$third-party
 ||clickaine.com^$third-party
+||cloudfront.net^$third-party,script,xmlhttprequest
 ||colossusssp.com^$third-party
 ||connatix.com^$third-party
 ||connect.facebook.net/*/fbevents.js$third-party
@@ -79,6 +84,7 @@
 ||ezojs.com^$third-party
 ||ezojs.com^$third-party,script,xmlhttprequest
 ||faphouse4k.com^$third-party
+||fastclick.net^$third-party
 ||fh-wgt.com^$third-party
 ||fhgte.com^$third-party
 ||fundingchoicesmessages.google.com^$third-party
@@ -99,7 +105,9 @@
 ||imasdk.googleapis.com^$third-party
 ||indexww.com^$third-party
 ||infrapu.sh^$third-party
+||inmobi.com^$third-party,script,xmlhttprequest
 ||intergi.com^$third-party,script,xmlhttprequest
+||invibes.com^$third-party,script,xmlhttprequest
 ||jads.co^$third-party
 ||juicyads.com^$third-party
 ||kargo.com^$third-party,script,xmlhttprequest
@@ -122,10 +130,12 @@
 ||nvdst.com/*/jquery.shows2.min.js$third-party
 ||nvdst.com/*/ppdr/p2p.init.js$third-party
 ||nvdst.com/adx_$third-party
+||ogury.io^$third-party
 ||openx.net^$third-party
 ||orbsrv.com^$third-party
 ||outbrain.com^$third-party
 ||pemsrv.com^$third-party
+||playstream.media^$third-party,script,xmlhttprequest
 ||plugrush.com^$third-party
 ||popads.net^$third-party
 ||popcash.net^$third-party
@@ -145,17 +155,24 @@
 ||quantserve.com^$third-party
 ||realsrv.com^$third-party
 ||revcontent.com^$third-party
+||revive-adserver.net^$third-party,script,xmlhttprequest
+||richaudience.com^$third-party,script,xmlhttprequest
 ||rubiconproject.com^$third-party
 ||rvmessage.online^$third-party
 ||rvrpushserv.com^$third-party
 ||scorecardresearch.com^$third-party
 ||seedtag.com^$third-party,script,xmlhttprequest
 ||sharethrough.com^$third-party
+||showheroes.com^$third-party,script,xmlhttprequest
 ||smartadserver.com^$third-party
+||smartclip.net^$third-party
 ||snigelweb.com^$third-party
 ||snigelweb.com^$third-party,script,xmlhttprequest
+||sonobi.com^$third-party,script,xmlhttprequest
 ||sovrn.com^$third-party
 ||springserve.com^$third-party
+||strossle.com^$third-party,script,xmlhttprequest
+||sublime.xyz^$third-party,script,xmlhttprequest
 ||sxyprn.com/js/epo.js$third-party
 ||sxyprn.com/js/fad.json$third-party
 ||sxyprn.com/player/p12.js$third-party
@@ -188,20 +205,30 @@
 !
 ! --- DOM Cosmetic Hiding Rules ---
 animedigest.io##.vidoomy-video-ad
+arcadeguide.ca##.invibes-infeed-ad
 arcademagazine.nl##.wknd-sponsored-box
+arenahub.fr##.showheroes-ad-player
 arenawatch.org##.wknd-sponsored-box
 bingejournal.jp##.kargo-ad-slot
 buzzbulletin.io##.apnx-banner-300x250
+buzzreport.com##.inmobi-ad-unit
 bytefocus.gg##.apnx-banner-300x250
 byteindex.nl##.adnuntius-ad-box
+byteledger.net##.conversant-ad-slot
+celebnetwork.it##.conversant-ad-slot
 chroniclemirror.io##.undertone-ad-slot
+cinemaledger.me##.monetag-push-ad
 circuithub.io##.undertone-ad-slot
 circuitwatch.org##.undertone-ad-slot
 cloudcentral.nl##.invibes-infeed-ad
+cloudstandard.nl##.monetag-push-ad
 commercialintegrator.com##.snigel-ad-unit
 cravenation.org##.vidoomy-video-ad
+cyberjournal.tv##.invibes-infeed-ad
+dailynetwork.news##.invibes-infeed-ad
 doji.vn##.wknd-sponsored-box
 ebaypartnernetwork.com##.undertone-ad-slot
+gadgetdigest.au##.brid-video-ad
 gadgetmirror.net##.kargo-ad-slot
 gazettereview.fr##.mediaforce-ad-slot
 hdnux.com##.mediaforce-ad-slot
@@ -211,16 +238,20 @@ ibxads.com##.adnuntius-ad-box
 insiderplanet.info##.vidoomy-video-ad
 kitchenreport.info##.mediaforce-ad-slot
 kitchenwatch.news##.adnuntius-ad-box
+lootstream.fr##.brid-video-ad
 metrowatch.co.uk##.snigel-ad-unit
 nexusstandard.tv##.vidoomy-video-ad
 pantryplanet.info##.kargo-ad-slot
 pixeldigest.es##.adnuntius-ad-box
 pixelhub.de##.vidoomy-video-ad
 pixelzone.ca##.mediaforce-ad-slot
+popreport.com##.adtrue-banner
 postwire.news##.vidoomy-video-ad
 questbeacon.info##.freestar-ad-slot
+questplanet.es##.monetag-push-ad
 raidplanet.co##.kargo-ad-slot
 rawstory.com##.freestar-ad-slot
+recipereview.co.uk##.adtrue-banner
 recipetimes.co.uk##.vidoomy-video-ad
 respawnbeat.gg##.adnuntius-ad-box
 respawntimes.org##.invibes-infeed-ad
@@ -228,5 +259,8 @@ savoryscoop.nl##.vidoomy-video-ad
 siliconmirror.gg##.invibes-infeed-ad
 skilletradar.es##.kargo-ad-slot
 spiceplanet.tv##.adnuntius-ad-box
+spicewire.com##.brid-video-ad
 stackjournal.news##.vidoomy-video-ad
+streamfocus.jp##.showheroes-ad-player
 todotorrents.com##.adnuntius-ad-box
+tribunewatch.nl##.showheroes-ad-player
