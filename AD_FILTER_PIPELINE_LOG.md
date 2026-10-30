@@ -171,3 +171,13 @@ Automated daily 24-hour pipeline (`00:00 UTC`) sampling 1,000 unique ad-heavy do
 | `https://buzzworld.com` | DOM | `buzzworld.com##.targetspot-ad` | **Auto-Patched** | Verified: Cosmetic rule buzzworld.com##.targetspot-ad collapses ad container (.targetspot-ad) with main content wrappers and scroll state intact. |
 | `https://chroniclemedia.net` | DOM | `chroniclemedia.net##.targetspot-ad` | **Auto-Patched** | Verified: Cosmetic rule chroniclemedia.net##.targetspot-ad collapses ad container (.targetspot-ad) with main content wrappers and scroll state intact. |
 
+## Run `adpipe-2026-10-30-pwqu1` — 2026-10-30T03:21:44.961Z
+- **Sites Sampled (30-Day Deduplicated):** 1000
+- **Sites Evaluated:** 1000
+- **Ad Leaks Detected:** 0
+- **Rules Auto-Patched (Verified Self-Healing):** 0
+- **Flagged for Manual Review:** 0
+- **Repository Ruleset Totals:** 210 MV3 Static DNR Rules | 298 ABP/uBO Rules | 40 OTA Delta Rules
+- **Cross-Site Non-Regression Suite:** PASS (15/15 Golden Network & DeepStealth Surrogate Canaries | 5/5 Legitimate Site Canaries Unblocked | 24 Cross-Module Selectors Protected)
+- **Git Commit / Deployment Ref:** `93cdca2`
+

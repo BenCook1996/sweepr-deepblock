@@ -1,7 +1,7 @@
 [Adblock Plus 2.0]
 ! Title: SWEEPR DeepBlock — Automated Daily Filter List (MV3 + Cosmetic)
-! Version: 202610290319
-! Last Modified: Thu, 29 Oct 2026 03:19:23 GMT
+! Version: 202610300321
+! Last Modified: Fri, 30 Oct 2026 03:21:44 GMT
 ! Expires: 1 day (update frequency)
 ! Homepage: https://sweeprdeepblock.com
 ! Syntax: uBlock Origin / Adblock Plus / Manifest V3 Compatible
@@ -29,6 +29,7 @@
 ||adpushup.com^$third-party,script,xmlhttprequest
 ||adroll.com^$third-party
 ||ads-twitter.com^$third-party
+||ads.soundcloud.com^$third-party
 ||ads.yahoo.com^$third-party
 ||adservice.google.co.uk^$third-party
 ||adservice.google.com^$third-party
@@ -44,6 +45,7 @@
 ||alwingulla.com^$third-party,script,xmlhttprequest
 ||amazon-adsystem.com^$third-party
 ||aniview.com^$third-party
+||api-v2.soundcloud.com/ads*$xmlhttprequest
 ||bat.bing.com^$third-party
 ||bidswitch.net^$third-party
 ||blogherads.com^$third-party
@@ -64,11 +66,13 @@
 ||crakrevenue.com^$third-party
 ||criteo.com^$third-party
 ||criteo.net^$third-party
+||crunchyroll.com/*/ad_breaks$xmlhttprequest
 ||cupbearergrowllurch.com^$third-party
 ||demdex.net^$third-party
 ||directsle.com^$third-party
 ||doubleclick.net^$third-party
 ||doublepimp.com^$third-party
+||ecsv2.roblox.com^$third-party
 ||eporner.com/cppb/$third-party
 ||eporner.com/dot/dot.php$third-party
 ||eporner.com/dotm/$third-party
@@ -88,6 +92,7 @@
 ||fh-wgt.com^$third-party
 ||fhgte.com^$third-party
 ||fundingchoicesmessages.google.com^$third-party
+||fyber.com^$third-party
 ||getadmiral.com^$third-party
 ||gggpppht.com^$third-party
 ||glutenmuttsensuous.com^$third-party
@@ -106,6 +111,7 @@
 ||indexww.com^$third-party
 ||infrapu.sh^$third-party
 ||inmobi.com^$third-party,script,xmlhttprequest
+||innovid.com^$third-party
 ||intergi.com^$third-party,script,xmlhttprequest
 ||invibes.com^$third-party,script,xmlhttprequest
 ||jads.co^$third-party
@@ -162,6 +168,7 @@
 ||rvrpushserv.com^$third-party
 ||scorecardresearch.com^$third-party
 ||seedtag.com^$third-party,script,xmlhttprequest
+||services.fandom.com/icbm/api/*$third-party
 ||sharethrough.com^$third-party
 ||showheroes.com^$third-party,script,xmlhttprequest
 ||smartadserver.com^$third-party
@@ -182,6 +189,7 @@
 ||teads.tv^$third-party
 ||tikbblove.com^$third-party
 ||tophqcam.com^$third-party
+||tr.rbxcdn.com^$third-party
 ||trafficjunky.com^$third-party
 ||trafficjunky.net^$third-party
 ||tsyndicate.com^$third-party
@@ -190,6 +198,7 @@
 ||twinrdsyn.com^$third-party
 ||u5s5.com^$third-party
 ||undertone.com^$third-party,script,xmlhttprequest
+||vid.fandom.com^$third-party
 ||vidoomy.com^$third-party,script,xmlhttprequest
 ||vidvas3.com^$third-party
 ||wknd.ai^$third-party
@@ -231,10 +240,18 @@ commercialintegrator.com##.snigel-ad-unit
 craveguide.com##.targetspot-ad
 craveindex.news##.targetspot-ad
 cravenation.org##.vidoomy-video-ad
+crunchyroll.com##.erc-ad-banner
 cyberjournal.tv##.invibes-infeed-ad
 dailynetwork.news##.invibes-infeed-ad
 doji.vn##.wknd-sponsored-box
 ebaypartnernetwork.com##.undertone-ad-slot
+espn.com##.OutbrainWrapper
+espn.com##.ad-slot
+fandom.com###featured-video-player
+fandom.com##.bottom-ads-container
+fandom.com##.featured-video-player-container
+fandom.com##.rail-module.ad-slot
+fandom.com##.top-ads-container
 gadgetdigest.au##.brid-video-ad
 gadgetmirror.net##.kargo-ad-slot
 gazettepulse.it##.targetspot-ad
@@ -251,6 +268,9 @@ metrowatch.co.uk##.snigel-ad-unit
 newsvine.com##.targetspot-ad
 nexusstandard.tv##.vidoomy-video-ad
 pantryplanet.info##.kargo-ad-slot
+pinterest.com##[data-test-id="fullPageSignupModal"]
+pinterest.com##[data-test-id="giftWrap"]
+pinterest.com##[data-test-id="promoted-pin-badge"]
 pixeldigest.es##.adnuntius-ad-box
 pixelhub.de##.vidoomy-video-ad
 pixelzone.ca##.mediaforce-ad-slot
@@ -263,49 +283,27 @@ raidplanet.co##.kargo-ad-slot
 rawstory.com##.freestar-ad-slot
 recipereview.co.uk##.adtrue-banner
 recipetimes.co.uk##.vidoomy-video-ad
+reddit.com##.promotedlink
+reddit.com##shreddit-ad-post
 respawnbeat.gg##.adnuntius-ad-box
 respawntimes.org##.invibes-infeed-ad
+roblox.com###Leaderboard-Abp
+roblox.com###Skyscraper-Abp-Left
+roblox.com###Skyscraper-Abp-Right
+roblox.com##.abp-spacer
 savoryscoop.nl##.vidoomy-video-ad
 screenjournal.net##.targetspot-ad
 siliconmirror.gg##.invibes-infeed-ad
 skilletradar.es##.kargo-ad-slot
 skilletworld.gg##.targetspot-ad
+soundcloud.com##.adPlaceholder
+soundcloud.com##.l-listen-ad
 spiceplanet.tv##.adnuntius-ad-box
 spicewire.com##.brid-video-ad
 stackjournal.news##.vidoomy-video-ad
 streamfocus.jp##.showheroes-ad-player
+tiktok.com##[class*="DivCookieBanner"]
+tiktok.com##tiktok-cookie-banner
 todotorrents.com##.adnuntius-ad-box
 tpb.vn##.targetspot-ad
 tribunewatch.nl##.showheroes-ad-player
-
-! --- GSC Trending Site-Specific RAM Tamer, Stream & Cookie Rules ---
-||services.fandom.com/icbm/api/*$third-party
-||vid.fandom.com^$third-party
-fandom.com###featured-video-player
-fandom.com##.featured-video-player-container
-fandom.com##.top-ads-container
-fandom.com##.bottom-ads-container
-fandom.com##.rail-module.ad-slot
-||crunchyroll.com/*/ad_breaks$xmlhttprequest
-||fyber.com^$third-party
-||innovid.com^$third-party
-crunchyroll.com##.erc-ad-banner
-||api-v2.soundcloud.com/ads*$xmlhttprequest
-||ads.soundcloud.com^$third-party
-soundcloud.com##.adPlaceholder
-soundcloud.com##.l-listen-ad
-||tr.rbxcdn.com^$third-party
-||ecsv2.roblox.com^$third-party
-roblox.com##.abp-spacer
-roblox.com###Skyscraper-Abp-Left
-roblox.com###Skyscraper-Abp-Right
-roblox.com###Leaderboard-Abp
-tiktok.com##tiktok-cookie-banner
-tiktok.com##[class*="DivCookieBanner"]
-reddit.com##shreddit-ad-post
-reddit.com##.promotedlink
-pinterest.com##[data-test-id="giftWrap"]
-pinterest.com##[data-test-id="fullPageSignupModal"]
-pinterest.com##[data-test-id="promoted-pin-badge"]
-espn.com##.ad-slot
-espn.com##.OutbrainWrapper
