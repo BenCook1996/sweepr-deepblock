@@ -1,7 +1,7 @@
 [Adblock Plus 2.0]
 ! Title: SWEEPR DeepBlock — Automated Daily Filter List (MV3 + Cosmetic)
-! Version: 202610310704
-! Last Modified: Sat, 31 Oct 2026 07:04:35 GMT
+! Version: 202610310706
+! Last Modified: Sat, 31 Oct 2026 07:06:23 GMT
 ! Expires: 1 day (update frequency)
 ! Homepage: https://sweeprdeepblock.com
 ! Syntax: uBlock Origin / Adblock Plus / Manifest V3 Compatible
@@ -19,8 +19,12 @@
 /venor.php$third-party
 ||2mdn.net^$third-party
 ||3lift.com^$third-party
+||a-ads.com^$third-party,script,xmlhttprequest
+||adblade.com^$third-party,script,xmlhttprequest
 ||adform.net^$third-party
 ||adkernel.com^$third-party
+||admanmedia.com^$third-party,script,xmlhttprequest
+||admixer.net^$third-party
 ||adnuntius.com^$third-party
 ||adnxs-simple.com^$third-party
 ||adnxs-simple.com^$third-party,script,xmlhttprequest
@@ -33,8 +37,11 @@
 ||ads.yahoo.com^$third-party
 ||adservice.google.co.uk^$third-party
 ||adservice.google.com^$third-party
+||adspirit.de^$third-party,script,xmlhttprequest
 ||adspyglass.com^$third-party
 ||adsrvr.org^$third-party
+||adsterra.com^$third-party,script,xmlhttprequest
+||adtarget.me^$third-party
 ||adthrive.com^$third-party
 ||adtng.com^$third-party
 ||adtrue.com^$third-party,script,xmlhttprequest
@@ -52,6 +59,7 @@
 ||blogherads.com^$third-party,script,xmlhttprequest
 ||bngpt.com^$third-party
 ||brid.tv^$third-party,script,xmlhttprequest
+||carbonads.com^$third-party,script,xmlhttprequest
 ||casalemedia.com^$third-party
 ||cdn-fc.com^$third-party
 ||cdn77.pornoxo.com/pxo/www/js-v*/vast.min.js$third-party
@@ -59,9 +67,11 @@
 ||clickadu.com^$third-party
 ||clickaine.com^$third-party
 ||cloudfront.net^$third-party,script,xmlhttprequest
+||coinzilla.com^$third-party,script,xmlhttprequest
 ||colossusssp.com^$third-party
 ||connatix.com^$third-party
 ||connect.facebook.net/*/fbevents.js$third-party
+||contentexchange.me^$third-party,script,xmlhttprequest
 ||contentsserved.com^$third-party
 ||crakrevenue.com^$third-party
 ||criteo.com^$third-party
@@ -93,8 +103,10 @@
 ||fhgte.com^$third-party
 ||fundingchoicesmessages.google.com^$third-party
 ||fyber.com^$third-party
+||fyber.com^$third-party,script,xmlhttprequest
 ||getadmiral.com^$third-party
 ||gggpppht.com^$third-party
+||glispa.com^$third-party,script,xmlhttprequest
 ||glutenmuttsensuous.com^$third-party
 ||google-analytics.com^$third-party
 ||googlesyndication.com^$third-party
@@ -109,6 +121,7 @@
 ||iloptrex.com^$third-party
 ||imasdk.googleapis.com^$third-party
 ||indexww.com^$third-party
+||infolinks.com^$third-party,script,xmlhttprequest
 ||infrapu.sh^$third-party
 ||inmobi.com^$third-party,script,xmlhttprequest
 ||innovid.com^$third-party
@@ -120,6 +133,7 @@
 ||koxk.com^$third-party
 ||krelay.com^$third-party,script,xmlhttprequest
 ||lijit.com^$third-party
+||loopme.me^$third-party
 ||lxax.com^$third-party
 ||m2.ai^$third-party,script,xmlhttprequest
 ||magsrv.com^$third-party
@@ -162,6 +176,7 @@
 ||realsrv.com^$third-party
 ||revcontent.com^$third-party
 ||revive-adserver.net^$third-party,script,xmlhttprequest
+||richads.com^$third-party,script,xmlhttprequest
 ||richaudience.com^$third-party,script,xmlhttprequest
 ||rubiconproject.com^$third-party
 ||rvmessage.online^$third-party
@@ -171,8 +186,10 @@
 ||services.fandom.com/icbm/api/*$third-party
 ||sharethrough.com^$third-party
 ||showheroes.com^$third-party,script,xmlhttprequest
+||smaato.net^$third-party
 ||smartadserver.com^$third-party
 ||smartclip.net^$third-party
+||smartstream.tv^$third-party,script,xmlhttprequest
 ||snigelweb.com^$third-party
 ||snigelweb.com^$third-party,script,xmlhttprequest
 ||sonobi.com^$third-party,script,xmlhttprequest
@@ -180,12 +197,14 @@
 ||springserve.com^$third-party
 ||strossle.com^$third-party,script,xmlhttprequest
 ||sublime.xyz^$third-party,script,xmlhttprequest
+||sunmedia.tv^$third-party,script,xmlhttprequest
 ||sxyprn.com/js/epo.js$third-party
 ||sxyprn.com/js/fad.json$third-party
 ||sxyprn.com/player/p12.js$third-party
 ||sxyprn.net/js/fad.json$third-party
 ||taboola.com^$third-party
 ||targetspot.com^$third-party
+||targetvideo.com^$third-party,script,xmlhttprequest
 ||teads.tv^$third-party
 ||tikbblove.com^$third-party
 ||tophqcam.com^$third-party
@@ -205,6 +224,7 @@
 ||wknd.ai^$third-party,script,xmlhttprequest
 ||xlivrdr.com^$third-party
 ||yequka.my^$third-party
+||yieldlove.com^$third-party,script,xmlhttprequest
 ||yieldmo.com^$third-party
 ||yomeno.xyz^$third-party
 ||youtube.com/api/stats/ads$third-party
@@ -220,7 +240,10 @@ arcadeguide.ca##.invibes-infeed-ad
 arcademagazine.nl##.wknd-sponsored-box
 arenahub.fr##.showheroes-ad-player
 arenawatch.org##.wknd-sponsored-box
+bakezone.com##.fyber-ad-wrapper
+bingedaily.gg##.adblade-dyn-widget
 bingejournal.jp##.kargo-ad-slot
+bingepulse.info##.adspirit-ad-slot
 bingewatch.tv##.targetspot-ad
 buzzbulletin.io##.apnx-banner-300x250
 buzzreport.com##.inmobi-ad-unit
@@ -233,8 +256,10 @@ chroniclemedia.net##.targetspot-ad
 chroniclemirror.io##.undertone-ad-slot
 cinemaledger.me##.monetag-push-ad
 circuithub.io##.undertone-ad-slot
+circuitscoop.net##.adman-outstream-slot
 circuitwatch.org##.undertone-ad-slot
 cloudcentral.nl##.invibes-infeed-ad
+cloudonline.tv##.a-ads-banner
 cloudstandard.nl##.monetag-push-ad
 commercialintegrator.com##.snigel-ad-unit
 craveguide.com##.targetspot-ad
@@ -243,6 +268,7 @@ cravenation.org##.vidoomy-video-ad
 crunchyroll.com##.erc-ad-banner
 cyberjournal.tv##.invibes-infeed-ad
 dailynetwork.news##.invibes-infeed-ad
+devbulletin.org##.yieldlove-ad-slot
 doji.vn##.wknd-sponsored-box
 ebaypartnernetwork.com##.undertone-ad-slot
 espn.com##.OutbrainWrapper
@@ -260,6 +286,7 @@ hdnux.com##.mediaforce-ad-slot
 heraldradar.org##.adnuntius-ad-box
 heraldreport.co##.undertone-ad-slot
 ibxads.com##.adnuntius-ad-box
+insiderdigest.es##.coinzilla-ad
 insiderplanet.info##.vidoomy-video-ad
 kitchenreport.info##.mediaforce-ad-slot
 kitchenwatch.news##.adnuntius-ad-box
@@ -272,10 +299,12 @@ pinterest.com##[data-test-id="fullPageSignupModal"]
 pinterest.com##[data-test-id="giftWrap"]
 pinterest.com##[data-test-id="promoted-pin-badge"]
 pixeldigest.es##.adnuntius-ad-box
+pixeldigest.fr##.glispa-ad-container
 pixelhub.de##.vidoomy-video-ad
 pixelzone.ca##.mediaforce-ad-slot
 popreport.com##.adtrue-banner
 postwire.news##.vidoomy-video-ad
+qpic.cn##.yieldlove-ad-slot
 questbeacon.info##.freestar-ad-slot
 questplanet.es##.monetag-push-ad
 raidglobe.news##.targetspot-ad
@@ -292,7 +321,10 @@ roblox.com###Skyscraper-Abp-Left
 roblox.com###Skyscraper-Abp-Right
 roblox.com##.abp-spacer
 savoryscoop.nl##.vidoomy-video-ad
+savorystream.au###carbonads
 screenjournal.net##.targetspot-ad
+screentimes.org##.coinzilla-ad
+showbizledger.it##.infolinks-ad-unit
 siliconmirror.gg##.invibes-infeed-ad
 skilletradar.es##.kargo-ad-slot
 skilletworld.gg##.targetspot-ad

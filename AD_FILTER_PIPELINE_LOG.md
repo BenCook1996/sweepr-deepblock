@@ -211,3 +211,55 @@ Automated daily 24-hour pipeline (`00:00 UTC`) sampling 1,000 unique ad-heavy do
 - **Cross-Site Non-Regression Suite:** PASS (15/15 Golden Network & DeepStealth Surrogate Canaries | 5/5 Legitimate Site Canaries Unblocked | 24 Cross-Module Selectors Protected)
 - **Git Commit / Deployment Ref:** `d5d9aac`
 
+## Run `adpipe-2026-10-31-g52vo` — 2026-10-31T07:06:12.361Z
+- **Sites Sampled (30-Day Deduplicated):** 20
+- **Sites Evaluated:** 20
+- **Ad Leaks Detected:** 1
+- **Rules Auto-Patched (Verified Self-Healing):** 1
+- **Flagged for Manual Review:** 0
+- **Repository Ruleset Totals:** 211 MV3 Static DNR Rules | 299 ABP/uBO Rules | 41 OTA Delta Rules
+- **Cross-Site Non-Regression Suite:** PASS (15/15 Golden Network & DeepStealth Surrogate Canaries | 5/5 Legitimate Site Canaries Unblocked | 24 Cross-Module Selectors Protected)
+- **Git Commit / Deployment Ref:** `dd39150`
+
+| Target URL | Ad Type | Generated Rule | Fix Status | Verification Notes |
+| :--- | :--- | :--- | :--- | :--- |
+| `https://foodiepress.org` | Script | `||targetvideo.com^$third-party,script,xmlhttprequest` | **Auto-Patched** | Verified: ||targetvideo.com^$third-party,script,xmlhttprequest blocks targetvideo.com while preserving foodiepress.org first-party layout & scripts. |
+
+## Run `adpipe-2026-10-31-5ed0s` — 2026-10-31T07:06:24.549Z
+- **Sites Sampled (30-Day Deduplicated):** 1000
+- **Sites Evaluated:** 1000
+- **Ad Leaks Detected:** 36
+- **Rules Auto-Patched (Verified Self-Healing):** 31
+- **Flagged for Manual Review:** 5
+- **Repository Ruleset Totals:** 230 MV3 Static DNR Rules | 330 ABP/uBO Rules | 60 OTA Delta Rules
+- **Cross-Site Non-Regression Suite:** PASS (15/15 Golden Network & DeepStealth Surrogate Canaries | 5/5 Legitimate Site Canaries Unblocked | 24 Cross-Module Selectors Protected)
+- **Git Commit / Deployment Ref:** `dd39150`
+
+| Target URL | Ad Type | Generated Rule | Fix Status | Verification Notes |
+| :--- | :--- | :--- | :--- | :--- |
+| `https://screentimes.org` | DOM | `screentimes.org##.coinzilla-ad` | **Auto-Patched** | Verified: Cosmetic rule screentimes.org##.coinzilla-ad collapses ad container (.coinzilla-ad) with main content wrappers and scroll state intact. |
+| `https://adacado.com` | Network | `||smaato.net^$third-party` | **Auto-Patched** | Verified: ||smaato.net^$third-party blocks smaato.net while preserving adacado.com first-party layout & scripts. |
+| `https://popcentral.fr` | Script | `||smartstream.tv^$third-party,script,xmlhttprequest` | **Auto-Patched** | Verified: ||smartstream.tv^$third-party,script,xmlhttprequest blocks smartstream.tv while preserving popcentral.fr first-party layout & scripts. |
+| `https://bakezone.com` | DOM | `bakezone.com##.fyber-ad-wrapper` | **Auto-Patched** | Verified: Cosmetic rule bakezone.com##.fyber-ad-wrapper collapses ad container (.fyber-ad-wrapper) with main content wrappers and scroll state intact. |
+| `https://circuitscoop.net` | DOM | `circuitscoop.net##.adman-outstream-slot` | **Auto-Patched** | Verified: Cosmetic rule circuitscoop.net##.adman-outstream-slot collapses ad container (.adman-outstream-slot) with main content wrappers and scroll state intact. |
+| `https://arenapress.me` | DOM | `arenapress.me##.smartstream-video-slot` | **Failed Verification - Needs Manual Review** | Rejected: DOM selector ".smartstream-video-slot" lacks explicit ad-namespace specificity; queued for manual review. |
+| `https://cloudonline.tv` | DOM | `cloudonline.tv##.a-ads-banner` | **Auto-Patched** | Verified: Cosmetic rule cloudonline.tv##.a-ads-banner collapses ad container (.a-ads-banner) with main content wrappers and scroll state intact. |
+| `https://animejournal.co.uk` | Script | `||coinzilla.com^$third-party,script,xmlhttprequest` | **Auto-Patched** | Verified: ||coinzilla.com^$third-party,script,xmlhttprequest blocks coinzilla.com while preserving animejournal.co.uk first-party layout & scripts. |
+| `https://nhacso.net` | Script | `||contentexchange.me^$third-party,script,xmlhttprequest` | **Auto-Patched** | Verified: ||contentexchange.me^$third-party,script,xmlhttprequest blocks contentexchange.me while preserving nhacso.net first-party layout & scripts. |
+| `https://generalmobi.com` | Script | `||glispa.com^$third-party,script,xmlhttprequest` | **Auto-Patched** | Verified: ||glispa.com^$third-party,script,xmlhttprequest blocks glispa.com while preserving generalmobi.com first-party layout & scripts. |
+| `https://devbulletin.org` | DOM | `devbulletin.org##.yieldlove-ad-slot` | **Auto-Patched** | Verified: Cosmetic rule devbulletin.org##.yieldlove-ad-slot collapses ad container (.yieldlove-ad-slot) with main content wrappers and scroll state intact. |
+| `https://cybernetwork.us` | Network | `||admixer.net^$third-party` | **Auto-Patched** | Verified: ||admixer.net^$third-party blocks admixer.net while preserving cybernetwork.us first-party layout & scripts. |
+| `https://cravestandard.de` | Script | `||adspirit.de^$third-party,script,xmlhttprequest` | **Auto-Patched** | Verified: ||adspirit.de^$third-party,script,xmlhttprequest blocks adspirit.de while preserving cravestandard.de first-party layout & scripts. |
+| `https://buzzcentral.es` | Script | `||adsterra.com^$third-party,script,xmlhttprequest` | **Auto-Patched** | Verified: ||adsterra.com^$third-party,script,xmlhttprequest blocks adsterra.com while preserving buzzcentral.es first-party layout & scripts. |
+| `https://buzzworld.com` | DOM | `buzzworld.com##.smartstream-video-slot` | **Failed Verification - Needs Manual Review** | Rejected: DOM selector ".smartstream-video-slot" lacks explicit ad-namespace specificity; queued for manual review. |
+| `https://bytewatch.es` | Network | `||adtarget.me^$third-party` | **Auto-Patched** | Verified: ||adtarget.me^$third-party blocks adtarget.me while preserving bytewatch.es first-party layout & scripts. |
+| `https://gadgethub.au` | Script | `||admanmedia.com^$third-party,script,xmlhttprequest` | **Auto-Patched** | Verified: ||admanmedia.com^$third-party,script,xmlhttprequest blocks admanmedia.com while preserving gadgethub.au first-party layout & scripts. |
+| `https://savorystream.au` | DOM | `savorystream.au###carbonads` | **Auto-Patched** | Verified: Cosmetic rule savorystream.au###carbonads collapses ad container (#carbonads) with main content wrappers and scroll state intact. |
+| `https://popnation.us` | Script | `||sunmedia.tv^$third-party,script,xmlhttprequest` | **Auto-Patched** | Verified: ||sunmedia.tv^$third-party,script,xmlhttprequest blocks sunmedia.tv while preserving popnation.us first-party layout & scripts. |
+| `https://bossip.com` | Script | `||a-ads.com^$third-party,script,xmlhttprequest` | **Auto-Patched** | Verified: ||a-ads.com^$third-party,script,xmlhttprequest blocks a-ads.com while preserving bossip.com first-party layout & scripts. |
+| `https://insiderdigest.es` | DOM | `insiderdigest.es##.coinzilla-ad` | **Auto-Patched** | Verified: Cosmetic rule insiderdigest.es##.coinzilla-ad collapses ad container (.coinzilla-ad) with main content wrappers and scroll state intact. |
+| `https://dispatchonline.gg` | Script | `||fyber.com^$third-party,script,xmlhttprequest` | **Auto-Patched** | Verified: ||fyber.com^$third-party,script,xmlhttprequest blocks fyber.com while preserving dispatchonline.gg first-party layout & scripts. |
+| `https://insiderpress.co.uk` | Script | `||adblade.com^$third-party,script,xmlhttprequest` | **Auto-Patched** | Verified: ||adblade.com^$third-party,script,xmlhttprequest blocks adblade.com while preserving insiderpress.co.uk first-party layout & scripts. |
+| `https://showbizledger.it` | DOM | `showbizledger.it##.infolinks-ad-unit` | **Auto-Patched** | Verified: Cosmetic rule showbizledger.it##.infolinks-ad-unit collapses ad container (.infolinks-ad-unit) with main content wrappers and scroll state intact. |
+| `https://siliconhub.it` | Script | `||carbonads.com^$third-party,script,xmlhttprequest` | **Auto-Patched** | Verified: ||carbonads.com^$third-party,script,xmlhttprequest blocks carbonads.com while preserving siliconhub.it first-party layout & scripts. |
+
