@@ -4,8 +4,11 @@
 .env.*
 **/.env
 **/.env.*
-extension
+extension/*
+!extension/rules
+!extension/rules/**
 scripts
+dist
 node_modules
 **/node_modules
 *.log
