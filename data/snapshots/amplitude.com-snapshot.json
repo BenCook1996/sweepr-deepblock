@@ -1,0 +1,17 @@
+{
+  "capturedAt": "2026-10-31T07:06:23.687Z",
+  "targetUrl": "https://amplitude.com",
+  "domain": "amplitude.com",
+  "leak": {
+    "adTypeDetected": "Script",
+    "offendingArtifact": "https://glispa.com/sdk/glispa-loader.js",
+    "offendingHost": "glispa.com",
+    "resourceTypes": [
+      "script",
+      "xmlhttprequest"
+    ],
+    "reason": "Unblocked third-party script request to glispa.com (HTTP 200 OK) on amplitude.com"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://glispa.com/sdk/glispa-loader.js\"></script>"
+}

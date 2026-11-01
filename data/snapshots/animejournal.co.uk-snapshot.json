@@ -1,0 +1,18 @@
+{
+  "capturedAt": "2026-10-31T07:06:22.171Z",
+  "targetUrl": "https://animejournal.co.uk",
+  "domain": "animejournal.co.uk",
+  "leak": {
+    "adTypeDetected": "Script",
+    "offendingArtifact": "https://request.coinzilla.com/display/ad.js",
+    "offendingHost": "request.coinzilla.com",
+    "resourceTypes": [
+      "script",
+      "xmlhttprequest",
+      "sub_frame"
+    ],
+    "reason": "Unblocked third-party script request to request.coinzilla.com (HTTP 200 OK) on animejournal.co.uk"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://request.coinzilla.com/display/ad.js\"></script>"
+}

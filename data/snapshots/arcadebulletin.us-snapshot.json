@@ -1,0 +1,18 @@
+{
+  "capturedAt": "2026-10-29T00:05:29.840Z",
+  "targetUrl": "https://arcadebulletin.us",
+  "domain": "arcadebulletin.us",
+  "leak": {
+    "adTypeDetected": "Script",
+    "offendingArtifact": "https://s.richaudience.com/tag/rm-player.js",
+    "offendingHost": "s.richaudience.com",
+    "resourceTypes": [
+      "script",
+      "xmlhttprequest",
+      "sub_frame"
+    ],
+    "reason": "Unblocked third-party script request to s.richaudience.com (HTTP 200 OK) on arcadebulletin.us"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://s.richaudience.com/tag/rm-player.js\"></script>"
+}

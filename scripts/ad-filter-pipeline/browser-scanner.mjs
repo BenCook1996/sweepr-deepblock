@@ -1101,6 +1101,166 @@ const EMERGING_AD_SERVERS_AND_SLOTS = [
     adType: 'Script',
     resourceTypes: ['script', 'xmlhttprequest'],
     selector: '.strossle-ad-widget'
+  },
+  {
+    host: 'cdn.carbonads.com',
+    urlFilter: '||carbonads.com^',
+    samplePath: '/carbon.js?serve=CKYIK',
+    adType: 'Script',
+    resourceTypes: ['script', 'xmlhttprequest'],
+    selector: '#carbonads'
+  },
+  {
+    host: 'resources.infolinks.com',
+    urlFilter: '||infolinks.com^',
+    samplePath: '/js/infolinks_main.js',
+    adType: 'Script',
+    resourceTypes: ['script', 'xmlhttprequest'],
+    selector: '.infolinks-ad-unit'
+  },
+  {
+    host: 'ad.a-ads.com',
+    urlFilter: '||a-ads.com^',
+    samplePath: '/banner.js',
+    adType: 'Script',
+    resourceTypes: ['script', 'sub_frame', 'image'],
+    selector: '.a-ads-banner'
+  },
+  {
+    host: 'request.coinzilla.com',
+    urlFilter: '||coinzilla.com^',
+    samplePath: '/display/ad.js',
+    adType: 'Script',
+    resourceTypes: ['script', 'xmlhttprequest', 'sub_frame'],
+    selector: '.coinzilla-ad'
+  },
+  {
+    host: 'adsterra.com',
+    urlFilter: '||adsterra.com^',
+    samplePath: '/tag/adsterra.js',
+    adType: 'Script',
+    resourceTypes: ['script', 'xmlhttprequest', 'sub_frame'],
+    selector: '.adsterra-placement'
+  },
+  {
+    host: 'richads.com',
+    urlFilter: '||richads.com^',
+    samplePath: '/feed/native.js',
+    adType: 'Script',
+    resourceTypes: ['script', 'xmlhttprequest'],
+    selector: '.richads-native-box'
+  },
+  {
+    host: 'web.adblade.com',
+    urlFilter: '||adblade.com^',
+    samplePath: '/js/ads/show.js',
+    adType: 'Script',
+    resourceTypes: ['script', 'xmlhttprequest', 'sub_frame'],
+    selector: '.adblade-dyn-widget'
+  },
+  {
+    host: 'smartstream.tv',
+    urlFilter: '||smartstream.tv^',
+    samplePath: '/player/smartstream.min.js',
+    adType: 'Script',
+    resourceTypes: ['script', 'xmlhttprequest', 'media'],
+    selector: '.smartstream-video-slot'
+  },
+  {
+    host: 'cdn-b.yieldlove.com',
+    urlFilter: '||yieldlove.com^',
+    samplePath: '/yieldlove-loader.js',
+    adType: 'Script',
+    resourceTypes: ['script', 'xmlhttprequest'],
+    selector: '.yieldlove-ad-slot'
+  },
+  {
+    host: 'targetvideo.com',
+    urlFilter: '||targetvideo.com^',
+    samplePath: '/player/tv-player.js',
+    adType: 'Script',
+    resourceTypes: ['script', 'xmlhttprequest', 'media'],
+    selector: '.targetvideo-player-container'
+  },
+  {
+    host: 'adtarget.me',
+    urlFilter: '||adtarget.me^',
+    samplePath: '/rtb/bid.json',
+    adType: 'Network',
+    resourceTypes: ['xmlhttprequest', 'script'],
+    selector: '.adtarget-container'
+  },
+  {
+    host: 'inv-nets.admixer.net',
+    urlFilter: '||admixer.net^',
+    samplePath: '/adx/delivery.aspx',
+    adType: 'Network',
+    resourceTypes: ['xmlhttprequest', 'script', 'sub_frame'],
+    selector: '.admixer-ad-unit'
+  },
+  {
+    host: 'adspirit.de',
+    urlFilter: '||adspirit.de^',
+    samplePath: '/adscript.php',
+    adType: 'Script',
+    resourceTypes: ['script', 'xmlhttprequest', 'sub_frame'],
+    selector: '.adspirit-ad-slot'
+  },
+  {
+    host: 'contentexchange.me',
+    urlFilter: '||contentexchange.me^',
+    samplePath: '/ce_client.js',
+    adType: 'Script',
+    resourceTypes: ['script', 'xmlhttprequest'],
+    selector: '.contentexchange-widget'
+  },
+  {
+    host: 'sunmedia.tv',
+    urlFilter: '||sunmedia.tv^',
+    samplePath: '/sunmedia-video.js',
+    adType: 'Script',
+    resourceTypes: ['script', 'xmlhttprequest', 'media'],
+    selector: '.sunmedia-video-ad'
+  },
+  {
+    host: 'admanmedia.com',
+    urlFilter: '||admanmedia.com^',
+    samplePath: '/tag/adman.js',
+    adType: 'Script',
+    resourceTypes: ['script', 'xmlhttprequest'],
+    selector: '.adman-outstream-slot'
+  },
+  {
+    host: 'glispa.com',
+    urlFilter: '||glispa.com^',
+    samplePath: '/sdk/glispa-loader.js',
+    adType: 'Script',
+    resourceTypes: ['script', 'xmlhttprequest'],
+    selector: '.glispa-ad-container'
+  },
+  {
+    host: 'smaato.net',
+    urlFilter: '||smaato.net^',
+    samplePath: '/v2/auction',
+    adType: 'Network',
+    resourceTypes: ['xmlhttprequest', 'script'],
+    selector: '.smaato-ad-banner'
+  },
+  {
+    host: 'fyber.com',
+    urlFilter: '||fyber.com^',
+    samplePath: '/sdk/fyber.js',
+    adType: 'Script',
+    resourceTypes: ['script', 'xmlhttprequest', 'media'],
+    selector: '.fyber-ad-wrapper'
+  },
+  {
+    host: 'loopme.me',
+    urlFilter: '||loopme.me^',
+    samplePath: '/v1/ad/video.json',
+    adType: 'Network',
+    resourceTypes: ['xmlhttprequest', 'media', 'script'],
+    selector: '.loopme-interstitial-ad'
   }
 ];
 

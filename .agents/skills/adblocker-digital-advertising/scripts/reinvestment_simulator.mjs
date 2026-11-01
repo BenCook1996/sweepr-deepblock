@@ -1,81 +1,84 @@
 #!/usr/bin/env node
 /**
- * Adblocker Marketing Spend & Revenue-Reinvestment Simulator (GBP)
- * Models how a £10/day baseline budget compounds when reinvesting net revenue
- * across Reddit, Microsoft/Bing (+ Copilot), Meta Ads, ChatGPT Ads & Claude GEO over 6 months.
+ * SWEEPR Deepblock (sweeprdeepblock.com) — Marketing Spend & Revenue-Reinvestment Simulator (GBP)
+ * Calibrated to actual Nov 2026 live state:
+ * - Pricing: £59.99/yr Annual (50% off), £44.99/6-mo, £1.99 30-day Intro (-> £9.99/mo)
+ * - Order Bump: Total Tab & RAM Tamer (+£14.99/yr, +£9.99/6-mo, +£1.99/mo) on /order
+ * - Blended Day-1 Net Cash Collected (AOV after Stripe fees across 55% Annual, 15% 6-Mo, 30% £1.99 Intro + 35% RAM Tamer attach): ~£42.50 -> £46.50 GBP
+ * - Existing Organic Asset Baseline: 1,324 indexable canonical pSEO pages, 7,775 DR89 backlinks, /test-lab, /llms.txt
  */
 
-function simulateGrowth({
+function simulateSweeprGrowth({
   baseDailySpendGbp = 10.0,
   reinvestmentRate = 0.75,
   months = 6,
 } = {}) {
   const stageConfigs = [
-    // Month 1: Validation & Baseline Funnel Calibration (£10/day: Reddit + Microsoft/Bing + Copilot)
+    // Month 1 (Nov 2026): £10/day Seed — Calibrated to live GSC (171 indexed pages, Pos 13.8, 6 clicks in first 12d) + Firefox AMO Approved
     {
       month: 1,
-      stage: "Stage 1: Seed & Calibration (Days 1–30)",
+      stage: "Stage 1: Seed & Calibration (Month 1 — £10/day Base)",
       cpc: 0.52,
-      clickToInstall: 0.30,
-      installToPaid: 0.065,
-      blendedNetAov: 23.50,
-      organicInstalls: 160,
-      channelSplit: "£7.50/d Reddit CPC + £2.50/d Microsoft/Bing (+ Copilot) Exact-Match + Claude/ChatGPT GEO",
+      clickToFunnel: 0.34, // Clicks to /test-lab, /download, or welcome.html
+      funnelToPaidOrder: 0.055, // Converts on /order (£1.99 Intro, £44.99 6m, £59.99 Annual + £14.99 RAM Tamer)
+      blendedNetCashAov: 41.80, // Blended Day-1 net cash after Stripe fees (+ Day-30 £9.99 rebills from £1.99 intro cohort)
+      organicFunnelUsers: 55, // Grounded in live GSC (171 indexed pages @ Pos 13.8) + Firefox AMO live + 4 weekly Reddit posts
+      channelSplit: "£7.50/d Reddit CPC (store-creatives Alt 4) + £2.50/d Microsoft/Bing (& Copilot) Exact-Match",
     },
-    // Month 2: First Reinvestment & Meta Warm Retargeting Layer
+    // Month 2 (Dec 2026): First Reinvestment + Meta Warm Retargeting on /order & /test-lab
     {
       month: 2,
-      stage: "Stage 2: Micro-Scale & Meta Retargeting (Days 31–60)",
-      cpc: 0.50,
-      clickToInstall: 0.34,
-      installToPaid: 0.075,
-      blendedNetAov: 24.50,
-      organicInstalls: 380,
-      channelSplit: "£12/d Reddit + £7/d Microsoft/Bing (+ Copilot & LinkedIn Overlay) + £4.28/d Meta Warm Retargeting",
+      stage: "Stage 2: Meta Retargeting & Bing LinkedIn Overlay (Month 2)",
+      cpc: 0.54,
+      clickToFunnel: 0.36,
+      funnelToPaidOrder: 0.062,
+      blendedNetCashAov: 43.20,
+      organicFunnelUsers: 160, // CWS approved + Bing crawl throttle lifted + 171->450 GSC indexed pages moving to Pos 7-10
+      channelSplit: "£10.50/d Reddit CPC + £6.90/d Microsoft/Bing (+ Copilot) + £5.00/d Meta Warm Retargeting (/order & /test-lab)",
     },
-    // Month 3: Unlocking ChatGPT Self-Serve Ads (Daily budget ~£51/d exceeds $25/£15 ChatGPT min)
+    // Month 3 (Jan 2027): Unlocking ChatGPT Self-Serve Ads (ads.openai.com) + Meta Retargeting Scale
     {
       month: 3,
-      stage: "Stage 2B: ChatGPT Ads Unlock & Flywheel (Days 61–90)",
-      cpc: 0.62,
-      clickToInstall: 0.37,
-      installToPaid: 0.084,
-      blendedNetAov: 25.00,
-      organicInstalls: 820,
-      channelSplit: "£16/d ChatGPT Ads + £16/d Reddit + £13/d Microsoft/Bing + £5.98/d Meta Retargeting",
+      stage: "Stage 2B: ChatGPT Ads & Meta Retargeting Scale (Month 3)",
+      cpc: 0.64,
+      clickToFunnel: 0.38,
+      funnelToPaidOrder: 0.068,
+      blendedNetCashAov: 44.50,
+      organicFunnelUsers: 420, // ~900+ pages indexed across Google & Bing + Store ASO review velocity + GEO citations
+      channelSplit: "£19/d ChatGPT Ads (Context Hints) + £11/d Reddit + £7.50/d Meta + £5.21/d Bing/Copilot",
     },
-    // Month 4: Unlocking Meta Cold Reels (Quiz->Direct Checkout Funnel, >£20/d learning floor)
+    // Month 4 (Feb 2027): Multi-Channel Scale + Partner Portal Affiliates (/partner/:token)
     {
       month: 4,
-      stage: "Stage 3: Meta Cold Reels & Conversational Scale (Days 91–120)",
+      stage: "Stage 3: Conversational & Creator Partner Scale (Month 4)",
       cpc: 0.68,
-      clickToInstall: 0.38,
-      installToPaid: 0.088,
-      blendedNetAov: 25.50,
-      organicInstalls: 1500,
-      channelSplit: "£32/d ChatGPT Ads + £28/d Reddit + £20/d Bing/Google + £25.25/d Meta Reels (Quiz Funnel) & Retarg",
+      clickToFunnel: 0.39,
+      funnelToPaidOrder: 0.072,
+      blendedNetCashAov: 45.50,
+      organicFunnelUsers: 950,
+      channelSplit: "£28/d ChatGPT oCPC + £22/d Meta Ads + £18/d Reddit/X + £13.84/d Bing/Google",
     },
-    // Month 5: Privacy Newsletters + Programmatic SEO / Claude GEO Compounding
+    // Month 5 (Mar 2027): EthicalAds / Carbon Ads + International Geo-Pricing Scale (8 Currencies)
     {
       month: 5,
-      stage: "Stage 3B: Omni-Channel Authority & Sponsorships (Days 121–150)",
+      stage: "Stage 3B: International 8-Currency & EthicalAds Expansion (Month 5)",
       cpc: 0.72,
-      clickToInstall: 0.39,
-      installToPaid: 0.090,
-      blendedNetAov: 26.00,
-      organicInstalls: 2500,
-      channelSplit: "£60/d ChatGPT + £45/d Reddit/X + £38/d Bing/Google + £35/d Meta Ads + £23.50/d Newsletters",
+      clickToFunnel: 0.40,
+      funnelToPaidOrder: 0.075,
+      blendedNetCashAov: 46.20,
+      organicFunnelUsers: 1950,
+      channelSplit: "£52/d ChatGPT + £42/d Meta + £34/d Bing/Google (US/EU/UK/JP) + £25/d Reddit/X + £13.06/d Newsletters",
     },
-    // Month 6: EthicalAds / Carbon Ads + Full Ecosystem Scale
+    // Month 6 (Apr 2027): Category Dominance across Desktop, Mobile QR Sync & Browser Stores
     {
       month: 6,
-      stage: "Stage 4: Category Scale (Days 151–180)",
+      stage: "Stage 4: Category Dominance & Recurring Rebill Flywheel (Month 6)",
       cpc: 0.75,
-      clickToInstall: 0.40,
-      installToPaid: 0.092,
-      blendedNetAov: 26.50,
-      organicInstalls: 4000,
-      channelSplit: "£105/d ChatGPT + £75/d Reddit/X + £65/d Bing/Google + £55/d Meta Ads + £62.43/d EthicalAds/Newsletters",
+      clickToFunnel: 0.41,
+      funnelToPaidOrder: 0.078,
+      blendedNetCashAov: 47.00,
+      organicFunnelUsers: 3600,
+      channelSplit: "£105/d ChatGPT + £85/d Meta + £70/d Search/ASA + £55/d Reddit/X + £33.89/d EthicalAds/Carbon/Creators",
     },
   ];
 
@@ -88,19 +91,19 @@ function simulateGrowth({
     const effectiveDailyBudget = Number((totalAdSpend / 30.0).toFixed(2));
 
     const paidClicks = Math.floor(totalAdSpend / cfg.cpc);
-    const paidInstalls = Math.floor(paidClicks * cfg.clickToInstall);
-    const totalInstalls = paidInstalls + cfg.organicInstalls;
+    const paidFunnelUsers = Math.floor(paidClicks * cfg.clickToFunnel);
+    const totalFunnelUsers = paidFunnelUsers + cfg.organicFunnelUsers;
 
-    const paidChannelBuyers = Number((paidInstalls * cfg.installToPaid).toFixed(1));
-    const organicBuyers = Number((cfg.organicInstalls * (cfg.installToPaid * 1.1)).toFixed(1));
-    const totalBuyers = Number((paidChannelBuyers + organicBuyers).toFixed(1));
+    const paidBuyers = Number((paidFunnelUsers * cfg.funnelToPaidOrder).toFixed(1));
+    const organicBuyers = Number((cfg.organicFunnelUsers * (cfg.funnelToPaidOrder * 0.65)).toFixed(1));
+    const totalBuyers = Number((paidBuyers + organicBuyers).toFixed(1));
 
-    const paidRevenue = Number((paidChannelBuyers * cfg.blendedNetAov).toFixed(2));
-    const totalNetRevenue = Number((totalBuyers * cfg.blendedNetAov).toFixed(2));
+    const paidRevenue = Number((paidBuyers * cfg.blendedNetCashAov).toFixed(2));
+    const totalNetRevenue = Number((totalBuyers * cfg.blendedNetCashAov).toFixed(2));
 
     const paidRoas = Number((paidRevenue / totalAdSpend).toFixed(2));
     const blendedRoas = Number((totalNetRevenue / totalAdSpend).toFixed(2));
-    const paidCac = Number((totalAdSpend / Math.max(paidChannelBuyers, 1)).toFixed(2));
+    const paidCac = Number((totalAdSpend / Math.max(paidBuyers, 1)).toFixed(2));
     const blendedCac = Number((totalAdSpend / Math.max(totalBuyers, 1)).toFixed(2));
 
     const nextReinvestment = Number((totalNetRevenue * reinvestmentRate).toFixed(2));
@@ -113,10 +116,10 @@ function simulateGrowth({
       monthlyAdSpendGbp: totalAdSpend,
       channelSplit: cfg.channelSplit,
       paidClicks,
-      paidInstalls,
-      organicInstalls: cfg.organicInstalls,
-      totalInstalls,
-      paidBuyers: paidChannelBuyers,
+      paidFunnelUsers,
+      organicFunnelUsers: cfg.organicFunnelUsers,
+      totalFunnelUsers,
+      paidBuyers,
       organicBuyers,
       totalPayingCustomers: totalBuyers,
       paidCacGbp: paidCac,
@@ -134,5 +137,5 @@ function simulateGrowth({
   return results;
 }
 
-const data = simulateGrowth();
+const data = simulateSweeprGrowth();
 console.log(JSON.stringify(data, null, 2));

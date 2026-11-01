@@ -1,0 +1,18 @@
+{
+  "capturedAt": "2026-10-31T07:06:22.622Z",
+  "targetUrl": "https://dispatchonline.gg",
+  "domain": "dispatchonline.gg",
+  "leak": {
+    "adTypeDetected": "Script",
+    "offendingArtifact": "https://fyber.com/sdk/fyber.js",
+    "offendingHost": "fyber.com",
+    "resourceTypes": [
+      "script",
+      "xmlhttprequest",
+      "media"
+    ],
+    "reason": "Unblocked third-party script request to fyber.com (HTTP 200 OK) on dispatchonline.gg"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://fyber.com/sdk/fyber.js\"></script>"
+}

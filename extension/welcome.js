@@ -6,8 +6,8 @@ const WELCOME_VERIFY_ENDPOINTS = [
 ];
 
 const WELCOME_REDEEM_ENDPOINTS = [
-  'https://sweeprdeepblock.com/api/device-link/redeem-token',
-  ...(isDevExtension ? ['http://localhost:3000/api/device-link/redeem-token'] : [])
+  'https://sweeprdeepblock.com/api/device-link/redeem',
+  ...(isDevExtension ? ['http://localhost:3000/api/device-link/redeem'] : [])
 ];
 
 async function directVerifyAndPersistLicense(rawKey) {
@@ -37,7 +37,8 @@ async function directVerifyAndPersistLicense(rawKey) {
         });
         const d = await r.json().catch(() => ({}));
         if (r.ok && d && (d.ok || d.valid)) {
-          const canonicalKey = d.licenseKey || d.license_key || ptkMatch[0];
+          const canonicalKey = d.licenseKey || d.license_key || '';
+          if (!canonicalKey || canonicalKey.startsWith('ptk_')) continue;
           const settings = {
             cookieAutoClose: true,
             hideSearchSpam: true,
@@ -58,6 +59,9 @@ async function directVerifyAndPersistLicense(rawKey) {
             encryptedDnsEnabled: true,
             settings
           });
+          try {
+            chrome.runtime.sendMessage({ type: 'VERIFY_LICENSE', key: canonicalKey }).catch(() => {});
+          } catch (e) {}
           return { ok: true, valid: true, licenseKey: canonicalKey, settings };
         }
       } catch (e) {}
@@ -137,6 +141,12 @@ async function directVerifyAndPersistLicense(rawKey) {
 document.addEventListener('DOMContentLoaded', () => {
   const input = document.getElementById('welcomeLicenseInput');
   const btn = document.getElementById('welcomeActivateBtn');
+  const pasteBtn = document.getElementById('welcomePasteBtn');
+  const tabKeyBtn = document.getElementById('welcomeTabKey');
+  const tabBuyBtn = document.getElementById('welcomeTabBuy');
+  const panelKey = document.getElementById('welcomePanelKey');
+  const panelBuy = document.getElementById('welcomePanelBuy');
+  const inlineTrialBtn = document.getElementById('welcomeInlineTrialBtn');
   const feedback = document.getElementById('welcomeKeyFeedback');
   const badge = document.getElementById('welcomeStatusBadge');
   const fullSavedSessionsCount = document.getElementById('fullSavedSessionsCount');
@@ -147,6 +157,42 @@ document.addEventListener('DOMContentLoaded', () => {
   const neverSnoozeList = document.getElementById('neverSnoozeList');
   const customZappedCount = document.getElementById('customZappedCount');
   const customZappedList = document.getElementById('customZappedList');
+
+  function setActiveWelcomeTab(tab, focusInput = false) {
+    if (!tabKeyBtn || !tabBuyBtn || !panelKey || !panelBuy) return;
+    if (tab === 'key') {
+      tabKeyBtn.classList.add('active');
+      tabBuyBtn.classList.remove('active');
+      panelKey.classList.remove('hidden');
+      panelBuy.classList.add('hidden');
+      if (focusInput && input) input.focus();
+    } else {
+      tabBuyBtn.classList.add('active');
+      tabKeyBtn.classList.remove('active');
+      panelBuy.classList.remove('hidden');
+      panelKey.classList.add('hidden');
+    }
+  }
+
+  if (tabKeyBtn && tabBuyBtn && panelKey && panelBuy) {
+    tabKeyBtn.addEventListener('click', () => setActiveWelcomeTab('key', true));
+    tabBuyBtn.addEventListener('click', () => setActiveWelcomeTab('buy', false));
+  }
+
+  if (pasteBtn && input) {
+    pasteBtn.addEventListener('click', async () => {
+      try {
+        const text = await navigator.clipboard.readText();
+        if (text && text.trim()) {
+          input.value = text.trim();
+          input.dispatchEvent(new Event('input'));
+          input.focus();
+        }
+      } catch (e) {
+        input.focus();
+      }
+    });
+  }
 
   let dashboardState = {
     proActive: false,
@@ -178,6 +224,8 @@ document.addEventListener('DOMContentLoaded', () => {
     dashboardState.proActive = true;
     dashboardState.licenseKey = licenseKey || dashboardState.licenseKey || input.value.trim();
     if (settings) dashboardState.settings = settings;
+    setActiveWelcomeTab('key', false);
+    if (inlineTrialBtn) inlineTrialBtn.style.display = 'none';
     feedback.style.display = 'block';
     feedback.style.color = '#10b981';
     feedback.textContent =
@@ -348,8 +396,14 @@ document.addEventListener('DOMContentLoaded', () => {
       if (stored && stored.proActive && stored.licenseKey) {
         markProActivated(stored.licenseKey, stored.settings);
       } else {
-        if (stored && stored.draftLicenseKey && !input.value) {
-          input.value = stored.draftLicenseKey;
+        if (stored && (stored.licenseKey || stored.draftLicenseKey)) {
+          if (!input.value) {
+            input.value = stored.licenseKey || stored.draftLicenseKey;
+          }
+          setActiveWelcomeTab('key', false);
+        } else {
+          // Brand-new organic Web Store install with no license key or active web session: default to Tab B (Get Pro License)
+          setActiveWelcomeTab('buy', false);
         }
         renderModuleSwitches(false, {});
       }
@@ -389,7 +443,23 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   input.addEventListener('input', () => {
+    const raw = (input.value || '').trim();
     chrome.storage.local.set({ draftLicenseKey: input.value });
+    if (feedback && !dashboardState.proActive) {
+      if (/^\d{6}$/.test(raw)) {
+        feedback.style.display = 'block';
+        feedback.style.color = '#059669';
+        feedback.textContent = '✓ Valid 6-digit activation code format — click Activate Pro Protection';
+      } else if (/^SWEEPR-DB-[A-Z0-9-]{4,}$/i.test(raw) || /^ptk_[a-zA-Z0-9_-]{6,}$/.test(raw)) {
+        feedback.style.display = 'block';
+        feedback.style.color = '#059669';
+        feedback.textContent = '✓ Valid SWEEPR Pro license key format — click Activate Pro Protection';
+      } else {
+        feedback.style.display = 'block';
+        feedback.style.color = '#94a3b8';
+        feedback.textContent = 'Found in your welcome email or Customer Portal.';
+      }
+    }
   });
 
   async function handleActivate() {

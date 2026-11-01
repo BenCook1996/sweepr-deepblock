@@ -1,0 +1,17 @@
+{
+  "capturedAt": "2026-10-29T00:05:30.095Z",
+  "targetUrl": "https://bakeworld.it",
+  "domain": "bakeworld.it",
+  "leak": {
+    "adTypeDetected": "Script",
+    "offendingArtifact": "https://services.brid.tv/player/build/brid.min.js",
+    "offendingHost": "services.brid.tv",
+    "resourceTypes": [
+      "script",
+      "xmlhttprequest"
+    ],
+    "reason": "Unblocked third-party script request to services.brid.tv (HTTP 200 OK) on bakeworld.it"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://services.brid.tv/player/build/brid.min.js\"></script>"
+}

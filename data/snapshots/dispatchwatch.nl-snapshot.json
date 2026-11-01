@@ -1,0 +1,17 @@
+{
+  "capturedAt": "2026-10-29T00:05:30.056Z",
+  "targetUrl": "https://dispatchwatch.nl",
+  "domain": "dispatchwatch.nl",
+  "leak": {
+    "adTypeDetected": "Script",
+    "offendingArtifact": "https://ads.sublime.xyz/skin/format.js",
+    "offendingHost": "ads.sublime.xyz",
+    "resourceTypes": [
+      "script",
+      "xmlhttprequest"
+    ],
+    "reason": "Unblocked third-party script request to ads.sublime.xyz (HTTP 200 OK) on dispatchwatch.nl"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://ads.sublime.xyz/skin/format.js\"></script>"
+}

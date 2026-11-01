@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="color-scheme" content="light" />
+  <title>SWEEPR Deepblock — v2.2 Left + v2.1 Right Evolved Studio (Zero Pricing Clutter &amp; Zero Truncation)</title>
+  <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com/3.4.5"></script>
+  <link rel="stylesheet" href="/style.css" />
+  <style>
+    :root {
+      color-scheme: light;
+    }
+    body {
+      font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background-color: #f8fafc;
+      background-image:
+        radial-gradient(circle at 10% 15%, rgba(209, 250, 229, 0.7) 0%, rgba(248, 250, 252, 0) 45%),
+        radial-gradient(circle at 90% 85%, rgba(167, 243, 208, 0.5) 0%, rgba(248, 250, 252, 0) 45%);
+      background-attachment: fixed;
+      color: #0f172a;
+      margin: 0;
+      padding-top: 118px;
+      padding-bottom: 90px;
+      min-height: 100vh;
+    }
+    .mono {
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+    .pearl-surface {
+      background: rgba(255, 255, 255, 0.97);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      box-shadow: 0 24px 54px -12px rgba(6, 78, 59, 0.11), 0 4px 16px rgba(15, 23, 42, 0.04);
+    }
+    .obsidian-panel {
+      background:
+        radial-gradient(120% 90% at 15% 10%, rgba(16, 185, 129, 0.25) 0%, rgba(6, 78, 59, 0.12) 48%, transparent 100%),
+        linear-gradient(160deg, #071712 0%, #0b241c 55%, #06130e 100%);
+      color: #ffffff;
+    }
+    /* Executive Full-Width SVG Action Card (Zero Text Truncation) */
+    .pro-action-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      width: 100%;
+      text-align: left;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 14px 16px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 140ms cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.03);
+    }
+    .pro-action-btn:hover {
+      border-color: #10b981;
+      background: #f8fafc;
+      transform: translateY(-1px);
+      box-shadow: 0 10px 24px -8px rgba(5, 150, 105, 0.15);
+    }
+    .pro-action-btn:active {
+      transform: translateY(0) scale(0.995);
+    }
+    .pro-icon-box {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      color: #059669;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      transition: all 140ms ease;
+    }
+    .pro-action-btn:hover .pro-icon-box {
+      background: #059669;
+      border-color: #059669;
+      color: #ffffff;
+    }
+    .pro-chevron {
+      width: 30px;
+      height: 30px;
+      border-radius: 9px;
+      background: #f1f5f9;
+      color: #475569;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      transition: all 140ms ease;
+    }
+    .pro-action-btn:hover .pro-chevron {
+      background: #ecfdf5;
+      color: #059669;
+      transform: translateX(2px);
+    }
+    /* Native 360px Chrome Extension Popup Simulator Frame */
+    .popup-frame {
+      width: 360px;
+      max-width: 100%;
+      border-radius: 20px;
+      background: #f8fafc;
+      background-image: radial-gradient(circle at 12% 10%, rgba(209, 250, 229, 0.65) 0%, rgba(248, 250, 252, 0) 55%);
+      border: 1px solid rgba(15, 23, 42, 0.1);
+      box-shadow:
+        0 24px 48px -12px rgba(15, 23, 42, 0.16),
+        0 0 0 1px rgba(16, 185, 129, 0.12);
+      overflow: hidden;
+      transition: all 140ms cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+    .ux-switch {
+      width: 48px;
+      height: 26px;
+      border-radius: 999px;
+      background: #10b981;
+      border: none;
+      position: relative;
+      cursor: pointer;
+      padding: 0;
+      flex-shrink: 0;
+      transition: background 120ms cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.12);
+    }
+    .ux-switch::after {
+      content: "";
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #ffffff;
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      transform: translateX(22px);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      transition: transform 120ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .ux-switch.off {
+      background: #cbd5e1;
+    }
+    .ux-switch.off::after {
+      transform: translateX(0);
+    }
+    body.state-pro .unactivated-only {
+      display: none !important;
+    }
+    body.state-unactivated .pro-only {
+      display: none !important;
+    }
+    .concept-panel {
+      display: none;
+      animation: conceptIn 160ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .concept-panel.active {
+      display: block;
+    }
+    @keyframes conceptIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+  <!-- Google tag (gtag.js) - Sweepr Deepblock -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-01MNBQSL9K"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-01MNBQSL9K');
+  </script>
+</head>
+<body class="state-unactivated">
+
+  <!-- STICKY STUDIO CONTROL BAR -->
+  <div class="fixed top-0 left-0 right-0 z-50 bg-slate-900/95 backdrop-blur-md border-b border-slate-800 text-white shadow-xl">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 flex flex-col gap-2">
+      <!-- Top Row -->
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <img src="/logo.svg" alt="SWEEPR" class="w-7 h-7 rounded-lg shadow" />
+          <div>
+            <div class="text-xs sm:text-sm font-black tracking-tight flex items-center gap-2">
+              <span>SWEEPR <span class="text-emerald-400">Deepblock</span> — v2.2 Left + v2.1 Right Studio</span>
+              <span class="hidden md:inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                No Pin Step · Zero Text Truncation · Zero Pricing Clutter
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Surface Switcher -->
+        <div class="inline-flex items-center bg-slate-800 p-1 rounded-xl border border-slate-700">
+          <button type="button" id="surfaceBtnModal" onclick="setSurface('modal')" class="px-3 py-1.5 rounded-lg text-xs font-extrabold transition-all bg-emerald-500 text-slate-950 shadow">
+            🖥️ Part 2: 5 Evolved Mockups (v2.2 Left + v2.1 Right)
+          </button>
+          <button type="button" id="surfaceBtnPopup" onclick="setSurface('popup')" class="px-3 py-1.5 rounded-lg text-xs font-extrabold transition-all text-slate-300 hover:text-white">
+            🧩 Part 1: Selected Popup Alt 5
+          </button>
+        </div>
+
+        <!-- Live State Simulator -->
+        <div class="inline-flex items-center gap-1.5 bg-slate-800/90 p-1 rounded-xl border border-slate-700">
+          <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 px-2">Simulate State:</span>
+          <button type="button" id="stateBtnUnactivated" onclick="setSimState('unactivated')" class="px-2.5 py-1 rounded-lg text-[11px] font-extrabold bg-amber-400 text-slate-950 shadow">
+            🔒 Unactivated (Free Preview)
+          </button>
+          <button type="button" id="stateBtnPro" onclick="setSimState('pro')" class="px-2.5 py-1 rounded-lg text-[11px] font-extrabold text-slate-300 hover:text-white">
+            ✓ Pro Active (Unlocked)
+          </button>
+        </div>
+      </div>
+
+      <!-- Bottom Row: Version Selector Buttons -->
+      <div id="modalSelectorBar" class="flex items-center justify-between gap-2 pt-1.5 border-t border-slate-800/90 overflow-x-auto">
+        <div class="flex items-center gap-1.5">
+          <button type="button" onclick="selectConcept(1)" data-cbtn="1" class="cbtn px-3 py-1 rounded-lg text-xs font-extrabold bg-white text-slate-900 shadow-xs">
+            v3.1 · Pure v2.2 Left + v2.1 Right (Recommended)
+          </button>
+          <button type="button" onclick="selectConcept(2)" data-cbtn="2" class="cbtn px-3 py-1 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 hover:text-white">
+            v3.2 · Zero-Tab Unified Card
+          </button>
+          <button type="button" onclick="selectConcept(3)" data-cbtn="3" class="cbtn px-3 py-1 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 hover:text-white">
+            v3.3 · Expandable Inline QR Drawer
+          </button>
+          <button type="button" onclick="selectConcept(4)" data-cbtn="4" class="cbtn px-3 py-1 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 hover:text-white">
+            v3.4 · Dual Action Stack (QR + Shield Test)
+          </button>
+          <button type="button" onclick="selectConcept(5)" data-cbtn="5" class="cbtn px-3 py-1 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 hover:text-white">
+            v3.5 · Ultra-Clean Spotlight Card
+          </button>
+          <button type="button" onclick="selectConcept('all')" data-cbtn="all" class="cbtn px-3 py-1 rounded-lg text-xs font-extrabold bg-emerald-950 text-emerald-300 border border-emerald-700/60 hover:bg-emerald-900">
+            Compare All 5 ↓
+          </button>
+        </div>
+        <div class="hidden xl:flex items-center gap-3 text-[11px] text-slate-400 font-semibold shrink-0">
+          <span><strong class="text-emerald-400">Left:</strong> v2.2 2×2 Metrics + Shortcuts</span>
+          <span>·</span>
+          <span><strong class="text-emerald-400">Right:</strong> v2.1 Full-Width Mobile QR Card</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- SURFACE A: 5 EVOLVED VERSIONS OF (v2.2 LEFT + v2.1 RIGHT)                 -->
+  <!-- ========================================================================= -->
+  <div id="surfaceModal" class="max-w-6xl mx-auto px-4 sm:px-6 space-y-12">
+
+    <!-- ======================================================================= -->
+    <!-- VERSION 3.1: PURE v2.2 LEFT + v2.1 RIGHT (RECOMMENDED)                  -->
+    <!-- ======================================================================= -->
+    <section id="modal-concept-1" class="concept-panel active">
+      <div class="mb-4 flex flex-wrap items-center justify-between gap-2">
+        <div>
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-300">
+            ★ VERSION 3.1 (RECOMMENDED) · v2.2 LEFT STAGE + v2.1 SEGMENTED RIGHT CARD + FULL-WIDTH MOBILE QR SYNC
+          </span>
+          <h2 class="text-lg sm:text-xl font-black text-slate-900 mt-1">
+            Exact v2.2 Left Stage + v2.1 Right Card (No Pin Step, Zero Text Truncation, Zero Pricing Clutter)
+          </h2>
+        </div>
+        <div class="text-xs text-slate-500 font-medium">
+          Click between <strong class="text-slate-800">“I Have a License / Code”</strong> and <strong class="text-slate-800">“Get Pro License”</strong> to preview both tabs
+        </div>
+      </div>
+
+      <div class="rounded-3xl overflow-hidden border border-slate-200/90 shadow-2xl grid grid-cols-1 lg:grid-cols-12 bg-white">
+        <!-- LEFT SIDE OF v2.2 -->
+        <div class="obsidian-panel lg:col-span-5 p-7 sm:p-9 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center gap-2.5">
+              <img src="/logo.svg" alt="SWEEPR" class="w-8 h-8 rounded-lg shadow" />
+              <span class="font-black text-lg tracking-tight text-white">SWEEPR <span class="text-emerald-400">Deepblock</span></span>
+            </div>
+            <h3 class="text-2xl sm:text-3xl font-black tracking-tight text-white mt-5 leading-tight">
+              Complete Browser Privacy &amp; Speed.
+            </h3>
+            <p class="text-xs sm:text-sm text-emerald-100/80 mt-2 leading-relaxed">
+              Engineered for Chrome, Firefox, Edge, Safari, iOS &amp; Android with one unified Pro license key.
+            </p>
+
+            <!-- 2x2 Metric Grid from v2.2 -->
+            <div class="grid grid-cols-2 gap-3 mt-6">
+              <div class="bg-white/5 border border-white/10 rounded-xl p-3.5">
+                <div class="text-xl font-black text-emerald-400">&lt;50ms</div>
+                <div class="text-[11px] text-emerald-100/80 font-semibold mt-0.5">Cookie Banner Reject</div>
+              </div>
+              <div class="bg-white/5 border border-white/10 rounded-xl p-3.5">
+                <div class="text-xl font-black text-emerald-400">100%</div>
+                <div class="text-[11px] text-emerald-100/80 font-semibold mt-0.5">YouTube &amp; Pre-Roll Ads</div>
+              </div>
+              <div class="bg-white/5 border border-white/10 rounded-xl p-3.5">
+                <div class="text-xl font-black text-emerald-400">5 Devices</div>
+                <div class="text-[11px] text-emerald-100/80 font-semibold mt-0.5">Desktop + Mobile QR</div>
+              </div>
+              <div class="bg-white/5 border border-white/10 rounded-xl p-3.5">
+                <div class="text-xl font-black text-emerald-400">14-Day</div>
+                <div class="text-[11px] text-emerald-100/80 font-semibold mt-0.5">Money-Back Guarantee</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-6 pt-4 border-t border-white/10 flex flex-wrap items-center justify-between gap-2 text-xs text-emerald-200/80 font-semibold">
+            <span>Shortcuts: <kbd class="px-1.5 py-0.5 rounded bg-white/10 text-white mono text-[10px]">Alt+Shift+S</kbd> Site Shield</span>
+            <span><kbd class="px-1.5 py-0.5 rounded bg-white/10 text-white mono text-[10px]">Alt+Shift+Z</kbd> Snooze Tabs</span>
+          </div>
+        </div>
+
+        <!-- RIGHT SIDE OF v2.1 (No Step 1, Zero Truncation, Zero Pricing Clutter) -->
+        <div class="lg:col-span-7 p-7 sm:p-9 flex flex-col justify-between bg-white">
+          <div class="unactivated-only">
+            <!-- Segmented Switcher (Zero Pricing Clutter) -->
+            <div class="bg-slate-100 p-1.5 rounded-2xl grid grid-cols-2 gap-1.5 border border-slate-200/80 mb-6">
+              <button type="button" id="v31TabKey" onclick="switchTab('v31', 'key')" class="py-2.5 px-3 rounded-xl text-xs font-extrabold bg-white text-slate-900 shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer">
+                <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+                <span>I Have a License / Code</span>
+              </button>
+              <button type="button" id="v31TabBuy" onclick="switchTab('v31', 'buy')" class="py-2.5 px-3 rounded-xl text-xs font-extrabold text-slate-600 hover:text-slate-900 transition-all flex items-center justify-center gap-2 cursor-pointer">
+                <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                <span>Get Pro License</span>
+              </button>
+            </div>
+
+            <!-- Tab A: Enter License / 6-Digit Code -->
+            <div id="v31PanelKey">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <label class="text-xs font-extrabold uppercase tracking-wider text-slate-500">
+                  Enter License Key, 6-Digit Code, or Pairing Token
+                </label>
+                <span class="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-md border border-emerald-200">
+                  Instant Activation
+                </span>
+              </div>
+              <div class="relative flex items-center">
+                <input
+                  type="text"
+                  oninput="validateLiveInput(this, 'v31Feedback')"
+                  placeholder="SWEEPR-DB-XXXX or 6-digit code"
+                  class="mono w-full pl-4 pr-24 py-3.5 rounded-xl bg-slate-50 border-2 border-slate-200 text-sm font-bold text-slate-900 focus:outline-none focus:border-emerald-500 focus:bg-white transition-all"
+                />
+                <button
+                  type="button"
+                  onclick="demoPasteInto(this)"
+                  class="absolute right-2.5 px-3 py-1.5 rounded-lg bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-700 border border-slate-200 hover:border-emerald-300 text-xs font-extrabold transition-all flex items-center gap-1 shadow-2xs cursor-pointer"
+                >
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                  <span>Paste</span>
+                </button>
+              </div>
+              <div id="v31Feedback" class="text-xs font-semibold text-slate-400 mt-2">
+                Found in your welcome email or Customer Portal.
+              </div>
+
+              <button
+                type="button"
+                onclick="setSimState('pro')"
+                class="mt-4 w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-black text-sm shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-2 transition-all cursor-pointer"
+              >
+                <span>Activate Pro Protection</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+              </button>
+            </div>
+
+            <!-- Tab B: Clean, Clutter-Free Order Redirect (No Pricing Clutter) -->
+            <div id="v31PanelBuy" class="hidden">
+              <div class="rounded-2xl bg-emerald-50/60 border border-emerald-200/90 p-5">
+                <div class="text-base font-black text-slate-900">
+                  Unlock SWEEPR Deepblock Pro All-Access
+                </div>
+                <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                  Enable autonomous YouTube &amp; web ad blocking, automatic cookie consent rejection, scam store alerts, and background tab speed optimization across up to 5 devices.
+                </p>
+                <a
+                  href="/order"
+                  target="_blank"
+                  class="mt-4 w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-black text-sm shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-2 transition-all no-underline"
+                >
+                  <span>Get SWEEPR Deepblock Pro</span>
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- PRO ACTIVE VIEW -->
+          <div class="pro-only">
+            <div class="flex items-center justify-between bg-emerald-50 border border-emerald-200 rounded-2xl p-4 mb-5">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white grid place-items-center font-black">✓</div>
+                <div>
+                  <div class="text-sm font-black text-slate-900">SWEEPR Deepblock Pro Active</div>
+                  <div class="text-xs text-emerald-700 font-semibold">License verified · All 6 protection modules enabled</div>
+                </div>
+              </div>
+              <span class="mono text-xs font-extrabold text-emerald-800 bg-white px-3 py-1 rounded-lg border border-emerald-200">5/5 Devices Ready</span>
+            </div>
+          </div>
+
+          <!-- FULL-WIDTH EXECUTIVE MOBILE QR SYNC BUTTON (Step 1 Removed, Zero Truncation) -->
+          <div class="mt-6 pt-5 border-t border-slate-200/80">
+            <a href="/login" target="_blank" rel="noopener" class="pro-action-btn">
+              <div class="flex items-center gap-3.5">
+                <div class="pro-icon-box">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+                  </svg>
+                </div>
+                <div>
+                  <div class="flex flex-wrap items-center gap-2">
+                    <span class="text-xs sm:text-sm font-extrabold text-slate-900">Mobile QR Sync</span>
+                    <span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-200">iOS Safari &amp; Android</span>
+                  </div>
+                  <div class="text-xs text-slate-600 font-medium mt-0.5 leading-snug">
+                    Open Customer Portal to scan your QR code and link your mobile devices
+                  </div>
+                </div>
+              </div>
+              <div class="pro-chevron" title="Open Customer Portal">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================= -->
+    <!-- VERSION 3.2: ZERO-TAB UNIFIED RIGHT CARD (DIRECT INPUT + 1-CLICK ORDER)  -->
+    <!-- ======================================================================= -->
+    <section id="modal-concept-2" class="concept-panel">
+      <div class="mb-4 flex flex-wrap items-center justify-between gap-2">
+        <div>
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-slate-200 text-slate-800">
+            VERSION 3.2 · v2.2 LEFT STAGE + ZERO-TAB UNIFIED RIGHT CARD
+          </span>
+          <h2 class="text-lg sm:text-xl font-black text-slate-900 mt-1">
+            Since Pricing Clutter Is Gone, Both “Activate Code” &amp; “Get Pro License” Fit Cleanly Without Tabs
+          </h2>
+        </div>
+        <div class="text-xs text-slate-500 font-medium">
+          Fitts's Law: Saves 1 tab click for new users heading to the order page
+        </div>
+      </div>
+
+      <div class="rounded-3xl overflow-hidden border border-slate-200/90 shadow-2xl grid grid-cols-1 lg:grid-cols-12 bg-white">
+        <!-- LEFT SIDE OF v2.2 -->
+        <div class="obsidian-panel lg:col-span-5 p-7 sm:p-9 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center gap-2.5">
+              <img src="/logo.svg" alt="SWEEPR" class="w-8 h-8 rounded-lg shadow" />
+              <span class="font-black text-lg tracking-tight text-white">SWEEPR <span class="text-emerald-400">Deepblock</span></span>
+            </div>
+            <h3 class="text-2xl sm:text-3xl font-black tracking-tight text-white mt-5 leading-tight">
+              Complete Browser Privacy &amp; Speed.
+            </h3>
+            <p class="text-xs sm:text-sm text-emerald-100/80 mt-2 leading-relaxed">
+              Engineered for Chrome, Firefox, Edge, Safari, iOS &amp; Android with one unified Pro license key.
+            </p>
+
+            <div class="grid grid-cols-2 gap-3 mt-6">
+              <div class="bg-white/5 border border-white/10 rounded-xl p-3.5">
+                <div class="text-xl font-black text-emerald-400">&lt;50ms</div>
+                <div class="text-[11px] text-emerald-100/80 font-semibold mt-0.5">Cookie Banner Reject</div>
+              </div>
+              <div class="bg-white/5 border border-white/10 rounded-xl p-3.5">
+                <div class="text-xl font-black text-emerald-400">100%</div>
+                <div class="text-[11px] text-emerald-100/80 font-semibold mt-0.5">YouTube &amp; Pre-Roll Ads</div>
+              </div>
+              <div class="bg-white/5 border border-white/10 rounded-xl p-3.5">
+                <div class="text-xl font-black text-emerald-400">5 Devices</div>
+                <div class="text-[11px] text-emerald-100/80 font-semibold mt-0.5">Desktop + Mobile QR</div>
+              </div>
+              <div class="bg-white/5 border border-white/10 rounded-xl p-3.5">
+                <div class="text-xl font-black text-emerald-400">14-Day</div>
+                <div class="text-[11px] text-emerald-100/80 font-semibold mt-0.5">Money-Back Guarantee</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-6 pt-4 border-t border-white/10 flex flex-wrap items-center justify-between gap-2 text-xs text-emerald-200/80 font-semibold">
+            <span>Shortcuts: <kbd class="px-1.5 py-0.5 rounded bg-white/10 text-white mono text-[10px]">Alt+Shift+S</kbd> Site Shield</span>
+            <span><kbd class="px-1.5 py-0.5 rounded bg-white/10 text-white mono text-[10px]">Alt+Shift+Z</kbd> Snooze Tabs</span>
+          </div>
+        </div>
+
+        <!-- RIGHT SIDE: Zero-Tab Unified Card -->
+        <div class="lg:col-span-7 p-7 sm:p-9 flex flex-col justify-between bg-white">
+          <div class="space-y-5">
+            <div>
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <label class="text-xs font-extrabold uppercase tracking-wider text-slate-600">
+                  Enter Your License Key or 6-Digit Activation Code
+                </label>
+                <span class="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-md border border-emerald-200">
+                  Instant Activation
+                </span>
+              </div>
+              <div class="relative flex items-center">
+                <input
+                  type="text"
+                  oninput="validateLiveInput(this, 'v32Feedback')"
+                  placeholder="SWEEPR-DB-XXXX or 6-digit code"
+                  class="mono w-full pl-4 pr-24 py-3.5 rounded-xl bg-slate-50 border-2 border-slate-200 text-sm font-bold text-slate-900 focus:outline-none focus:border-emerald-500 focus:bg-white transition-all"
+                />
+                <button
+                  type="button"
+                  onclick="demoPasteInto(this)"
+                  class="absolute right-2.5 px-3 py-1.5 rounded-lg bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-700 border border-slate-200 hover:border-emerald-300 text-xs font-extrabold transition-all flex items-center gap-1 cursor-pointer"
+                >
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                  <span>Paste</span>
+                </button>
+              </div>
+              <div id="v32Feedback" class="text-xs font-semibold text-slate-400 mt-1.5">
+                Activates all 6 protection modules immediately upon verification.
+              </div>
+
+              <button
+                type="button"
+                onclick="setSimState('pro')"
+                class="mt-3.5 w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-black text-sm shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-2 transition-all cursor-pointer"
+              >
+                <span>Activate Pro Protection</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+              </button>
+            </div>
+
+            <!-- Clean Clutter-Free Order Redirect Row -->
+            <div class="rounded-2xl bg-slate-50 border border-slate-200/90 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <div class="text-xs sm:text-sm font-extrabold text-slate-900">New to SWEEPR Deepblock?</div>
+                <div class="text-xs text-slate-500 font-medium">Get your Pro license key to unlock full browser protection</div>
+              </div>
+              <a
+                href="/order"
+                target="_blank"
+                class="py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs shrink-0 flex items-center justify-center gap-1.5 no-underline transition-all"
+              >
+                <span>Get Pro License</span>
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+              </a>
+            </div>
+          </div>
+
+          <!-- Full-Width Mobile QR Sync Card -->
+          <div class="mt-5 pt-4 border-t border-slate-200/80">
+            <a href="/login" target="_blank" rel="noopener" class="pro-action-btn">
+              <div class="flex items-center gap-3.5">
+                <div class="pro-icon-box">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+                  </svg>
+                </div>
+                <div>
+                  <div class="flex flex-wrap items-center gap-2">
+                    <span class="text-xs sm:text-sm font-extrabold text-slate-900">Mobile QR Sync</span>
+                    <span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-200">iOS Safari &amp; Android</span>
+                  </div>
+                  <div class="text-xs text-slate-600 font-medium mt-0.5">
+                    Open Customer Portal to scan your QR code and link your mobile devices
+                  </div>
+                </div>
+              </div>
+              <div class="pro-chevron">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================= -->
+    <!-- VERSION 3.3: v2.1 RIGHT CARD + EXPANDABLE INLINE QR DRAWER              -->
+    <!-- ======================================================================= -->
+    <section id="modal-concept-3" class="concept-panel">
+      <div class="mb-4 flex flex-wrap items-center justify-between gap-2">
+        <div>
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-slate-200 text-slate-800">
+            VERSION 3.3 · v2.2 LEFT STAGE + v2.1 RIGHT CARD WITH EXPANDABLE INLINE QR DRAWER
+          </span>
+          <h2 class="text-lg sm:text-xl font-black text-slate-900 mt-1">
+            Clicking “Mobile QR Sync” Reveals an Instant Inline Scannable QR Drawer (&lt;80ms Doherty Response)
+          </h2>
+        </div>
+        <div class="text-xs text-slate-500 font-medium">
+          Click the <strong class="text-slate-800">Mobile QR Sync</strong> button below to toggle the inline QR drawer
+        </div>
+      </div>
+
+      <div class="rounded-3xl overflow-hidden border border-slate-200/90 shadow-2xl grid grid-cols-1 lg:grid-cols-12 bg-white">
+        <!-- LEFT SIDE OF v2.2 -->
+        <div class="obsidian-panel lg:col-span-5 p-7 sm:p-9 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center gap-2.5">
+              <img src="/logo.svg" alt="SWEEPR" class="w-8 h-8 rounded-lg shadow" />
+              <span class="font-black text-lg tracking-tight text-white">SWEEPR <span class="text-emerald-400">Deepblock</span></span>
+            </div>
+            <h3 class="text-2xl sm:text-3xl font-black tracking-tight text-white mt-5 leading-tight">
+              Complete Browser Privacy &amp; Speed.
+            </h3>
+            <p class="text-xs sm:text-sm text-emerald-100/80 mt-2 leading-relaxed">
+              Engineered for Chrome, Firefox, Edge, Safari, iOS &amp; Android with one unified Pro license key.
+            </p>
+
+            <div class="grid grid-cols-2 gap-3 mt-6">
+              <div class="bg-white/5 border border-white/10 rounded-xl p-3.5">
+                <div class="text-xl font-black text-emerald-400">&lt;50ms</div>
+                <div class="text-[11px] text-emerald-100/80 font-semibold mt-0.5">Cookie Banner Reject</div>
+              </div>
+              <div class="bg-white/5 border border-white/10 rounded-xl p-3.5">
+                <div class="text-xl font-black text-emerald-400">100%</div>
+                <div class="text-[11px] text-emerald-100/80 font-semibold mt-0.5">YouTube &amp; Pre-Roll Ads</div>
+              </div>
+              <div class="bg-white/5 border border-white/10 rounded-xl p-3.5">
+                <div class="text-xl font-black text-emerald-400">5 Devices</div>
+                <div class="text-[11px] text-emerald-100/80 font-semibold mt-0.5">Desktop + Mobile QR</div>
+              </div>
+              <div class="bg-white/5 border border-white/10 rounded-xl p-3.5">
+                <div class="text-xl font-black text-emerald-400">14-Day</div>
+                <div class="text-[11px] text-emerald-100/80 font-semibold mt-0.5">Money-Back Guarantee</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-6 pt-4 border-t border-white/10 flex flex-wrap items-center justify-between gap-2 text-xs text-emerald-200/80 font-semibold">
+            <span>Shortcuts: <kbd class="px-1.5 py-0.5 rounded bg-white/10 text-white mono text-[10px]">Alt+Shift+S</kbd> Site Shield</span>
+            <span><kbd class="px-1.5 py-0.5 rounded bg-white/10 text-white mono text-[10px]">Alt+Shift+Z</kbd> Snooze Tabs</span>
+          </div>
+        </div>
+
+        <!-- RIGHT SIDE OF v2.1 + Expandable QR Drawer -->
+        <div class="lg:col-span-7 p-7 sm:p-9 flex flex-col justify-between bg-white">
+          <div>
+            <div class="bg-slate-100 p-1.5 rounded-2xl grid grid-cols-2 gap-1.5 border border-slate-200/80 mb-6">
+              <button type="button" id="v33TabKey" onclick="switchTab('v33', 'key')" class="py-2.5 px-3 rounded-xl text-xs font-extrabold bg-white text-slate-900 shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer">
+                <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+                <span>I Have a License / Code</span>
+              </button>
+              <button type="button" id="v33TabBuy" onclick="switchTab('v33', 'buy')" class="py-2.5 px-3 rounded-xl text-xs font-extrabold text-slate-600 hover:text-slate-900 transition-all flex items-center justify-center gap-2 cursor-pointer">
+                <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                <span>Get Pro License</span>
+              </button>
+            </div>
+
+            <div id="v33PanelKey">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <label class="text-xs font-extrabold uppercase tracking-wider text-slate-500">
+                  Enter License Key, 6-Digit Code, or Pairing Token
+                </label>
+                <span class="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-md border border-emerald-200">
+                  Instant Activation
+                </span>
+              </div>
+              <div class="relative flex items-center">
+                <input
+                  type="text"
+                  oninput="validateLiveInput(this, 'v33Feedback')"
+                  placeholder="SWEEPR-DB-XXXX or 6-digit code"
+                  class="mono w-full pl-4 pr-24 py-3.5 rounded-xl bg-slate-50 border-2 border-slate-200 text-sm font-bold text-slate-900 focus:outline-none focus:border-emerald-500 focus:bg-white transition-all"
+                />
+                <button type="button" onclick="demoPasteInto(this)" class="absolute right-2.5 px-3 py-1.5 rounded-lg bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-700 border border-slate-200 text-xs font-extrabold flex items-center gap-1 cursor-pointer">
+                  <span>Paste</span>
+                </button>
+              </div>
+              <div id="v33Feedback" class="text-xs font-semibold text-slate-400 mt-2">
+                Found in your welcome email or Customer Portal.
+              </div>
+              <button type="button" onclick="setSimState('pro')" class="mt-4 w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-black text-sm shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-2 cursor-pointer">
+                <span>Activate Pro Protection</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+              </button>
+            </div>
+
+            <div id="v33PanelBuy" class="hidden">
+              <div class="rounded-2xl bg-emerald-50/60 border border-emerald-200/90 p-5">
+                <div class="text-base font-black text-slate-900">Unlock SWEEPR Deepblock Pro All-Access</div>
+                <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                  Complete ad &amp; pop-up blocking, automatic cookie consent rejection, scam store alerts, and background tab speed optimization across up to 5 devices.
+                </p>
+                <a href="/order" target="_blank" class="mt-4 w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-black text-sm shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-2 no-underline">
+                  <span>Get SWEEPR Deepblock Pro</span>
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Full-Width Mobile QR Sync Card + Expandable Inline QR Drawer -->
+          <div class="mt-6 pt-5 border-t border-slate-200/80">
+            <button type="button" onclick="toggleDrawer('v33QrDrawer')" class="pro-action-btn">
+              <div class="flex items-center gap-3.5">
+                <div class="pro-icon-box">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+                  </svg>
+                </div>
+                <div>
+                  <div class="flex flex-wrap items-center gap-2">
+                    <span class="text-xs sm:text-sm font-extrabold text-slate-900">Mobile QR Sync</span>
+                    <span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-200">iOS Safari &amp; Android</span>
+                  </div>
+                  <div class="text-xs text-slate-600 font-medium mt-0.5">
+                    Click to display your mobile pairing QR code or open the Customer Portal
+                  </div>
+                </div>
+              </div>
+              <div class="pro-chevron">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+              </div>
+            </button>
+
+            <div id="v33QrDrawer" class="mt-3 rounded-2xl bg-slate-50 border border-emerald-200 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div class="flex items-center gap-3.5">
+                <div class="w-14 h-14 rounded-xl bg-white border border-slate-200 p-1.5 grid place-items-center shrink-0 shadow-2xs">
+                  <svg viewBox="0 0 36 36" class="w-full h-full text-slate-900" fill="currentColor">
+                    <path d="M2 2h10v10H2V2zm2 2v6h6V4H4zm2 2h2v2H6V6zm18-4h10v10H24V2zm2 2v6h6V4h-6zm2 2h2v2h-2V6zM2 24h10v10H2V24zm2 2v6h6v-6H4zm2 2h2v2H6v-2zm10-24h4v4h-4V4zm4 4h2v6h-2V8zm-4 6h4v4h-4v-4zm6 2h4v4h-4v-4zm6 0h4v4h-4v-4zm-12 6h4v6h-4v-6zm6 4h6v4h-6v-4zm8-2h4v8h-4v-8z"/>
+                  </svg>
+                </div>
+                <div>
+                  <div class="text-xs font-extrabold text-slate-900">Scan with iOS or Android Camera</div>
+                  <div class="text-xs text-slate-500 mt-0.5">
+                    Links this browser extension with your mobile devices in one scan.
+                  </div>
+                </div>
+              </div>
+              <a href="/login" target="_blank" class="py-2 px-3.5 rounded-xl bg-white border border-slate-200 hover:border-emerald-400 text-xs font-extrabold text-emerald-700 shrink-0 no-underline text-center">
+                Open Customer Portal ↗
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================= -->
+    <!-- VERSION 3.4: DUAL FULL-WIDTH STACK (MOBILE QR SYNC + 8-POINT SHIELD)    -->
+    <!-- ======================================================================= -->
+    <section id="modal-concept-4" class="concept-panel">
+      <div class="mb-4 flex flex-wrap items-center justify-between gap-2">
+        <div>
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-slate-200 text-slate-800">
+            VERSION 3.4 · v2.2 LEFT STAGE + v2.1 RIGHT CARD + FULL-WIDTH UTILITY STACK
+          </span>
+          <h2 class="text-lg sm:text-xl font-black text-slate-900 mt-1">
+            Full-Width “Mobile QR Sync” + Full-Width “8-Point Shield Check” (Stacked So Zero Text Truncates)
+          </h2>
+        </div>
+      </div>
+
+      <div class="rounded-3xl overflow-hidden border border-slate-200/90 shadow-2xl grid grid-cols-1 lg:grid-cols-12 bg-white">
+        <!-- LEFT SIDE OF v2.2 -->
+        <div class="obsidian-panel lg:col-span-5 p-7 sm:p-9 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center gap-2.5">
+              <img src="/logo.svg" alt="SWEEPR" class="w-8 h-8 rounded-lg shadow" />
+              <span class="font-black text-lg tracking-tight text-white">SWEEPR <span class="text-emerald-400">Deepblock</span></span>
+            </div>
+            <h3 class="text-2xl sm:text-3xl font-black tracking-tight text-white mt-5 leading-tight">
+              Complete Browser Privacy &amp; Speed.
+            </h3>
+            <p class="text-xs sm:text-sm text-emerald-100/80 mt-2 leading-relaxed">
+              Engineered for Chrome, Firefox, Edge, Safari, iOS &amp; Android with one unified Pro license key.
+            </p>
+
+            <div class="grid grid-cols-2 gap-3 mt-6">
+              <div class="bg-white/5 border border-white/10 rounded-xl p-3.5">
+                <div class="text-xl font-black text-emerald-400">&lt;50ms</div>
+                <div class="text-[11px] text-emerald-100/80 font-semibold mt-0.5">Cookie Banner Reject</div>
+              </div>
+              <div class="bg-white/5 border border-white/10 rounded-xl p-3.5">
+                <div class="text-xl font-black text-emerald-400">100%</div>
+                <div class="text-[11px] text-emerald-100/80 font-semibold mt-0.5">YouTube &amp; Pre-Roll Ads</div>
+              </div>
+              <div class="bg-white/5 border border-white/10 rounded-xl p-3.5">
+                <div class="text-xl font-black text-emerald-400">5 Devices</div>
+                <div class="text-[11px] text-emerald-100/80 font-semibold mt-0.5">Desktop + Mobile QR</div>
+              </div>
+              <div class="bg-white/5 border border-white/10 rounded-xl p-3.5">
+                <div class="text-xl font-black text-emerald-400">14-Day</div>
+                <div class="text-[11px] text-emerald-100/80 font-semibold mt-0.5">Money-Back Guarantee</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-6 pt-4 border-t border-white/10 flex flex-wrap items-center justify-between gap-2 text-xs text-emerald-200/80 font-semibold">
+            <span>Shortcuts: <kbd class="px-1.5 py-0.5 rounded bg-white/10 text-white mono text-[10px]">Alt+Shift+S</kbd> Site Shield</span>
+            <span><kbd class="px-1.5 py-0.5 rounded bg-white/10 text-white mono text-[10px]">Alt+Shift+Z</kbd> Snooze Tabs</span>
+          </div>
+        </div>
+
+        <!-- RIGHT SIDE OF v2.1 + Dual Full-Width Stack -->
+        <div class="lg:col-span-7 p-7 sm:p-9 flex flex-col justify-between bg-white">
+          <div>
+            <div class="bg-slate-100 p-1.5 rounded-2xl grid grid-cols-2 gap-1.5 border border-slate-200/80 mb-6">
+              <button type="button" id="v34TabKey" onclick="switchTab('v34', 'key')" class="py-2.5 px-3 rounded-xl text-xs font-extrabold bg-white text-slate-900 shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer">
+                <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+                <span>I Have a License / Code</span>
+              </button>
+              <button type="button" id="v34TabBuy" onclick="switchTab('v34', 'buy')" class="py-2.5 px-3 rounded-xl text-xs font-extrabold text-slate-600 hover:text-slate-900 transition-all flex items-center justify-center gap-2 cursor-pointer">
+                <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                <span>Get Pro License</span>
+              </button>
+            </div>
+
+            <div id="v34PanelKey">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <label class="text-xs font-extrabold uppercase tracking-wider text-slate-500">
+                  Enter License Key, 6-Digit Code, or Pairing Token
+                </label>
+                <span class="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-md border border-emerald-200">
+                  Instant Activation
+                </span>
+              </div>
+              <div class="relative flex items-center">
+                <input
+                  type="text"
+                  oninput="validateLiveInput(this, 'v34Feedback')"
+                  placeholder="SWEEPR-DB-XXXX or 6-digit code"
+                  class="mono w-full pl-4 pr-24 py-3.5 rounded-xl bg-slate-50 border-2 border-slate-200 text-sm font-bold text-slate-900 focus:outline-none focus:border-emerald-500 focus:bg-white transition-all"
+                />
+                <button type="button" onclick="demoPasteInto(this)" class="absolute right-2.5 px-3 py-1.5 rounded-lg bg-white hover:bg-emerald-50 text-slate-700 border border-slate-200 text-xs font-extrabold cursor-pointer">
+                  Paste
+                </button>
+              </div>
+              <div id="v34Feedback" class="text-xs font-semibold text-slate-400 mt-2">
+                Found in your welcome email or Customer Portal.
+              </div>
+              <button type="button" onclick="setSimState('pro')" class="mt-4 w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-black text-sm shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-2 cursor-pointer">
+                <span>Activate Pro Protection</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+              </button>
+            </div>
+
+            <div id="v34PanelBuy" class="hidden">
+              <div class="rounded-2xl bg-emerald-50/60 border border-emerald-200/90 p-5">
+                <div class="text-base font-black text-slate-900">Unlock SWEEPR Deepblock Pro All-Access</div>
+                <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                  Enable all 6 protection engines across desktop and mobile devices from the official order page.
+                </p>
+                <a href="/order" target="_blank" class="mt-4 w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-black text-sm shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-2 no-underline">
+                  <span>Get SWEEPR Deepblock Pro</span>
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-6 pt-5 border-t border-slate-200/80 space-y-2.5">
+            <a href="/login" target="_blank" rel="noopener" class="pro-action-btn">
+              <div class="flex items-center gap-3.5">
+                <div class="pro-icon-box">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+                  </svg>
+                </div>
+                <div>
+                  <div class="flex flex-wrap items-center gap-2">
+                    <span class="text-xs sm:text-sm font-extrabold text-slate-900">Mobile QR Sync</span>
+                    <span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-200">iOS Safari &amp; Android</span>
+                  </div>
+                  <div class="text-xs text-slate-600 font-medium mt-0.5">
+                    Open Customer Portal to scan your QR code and sync up to 5 devices
+                  </div>
+                </div>
+              </div>
+              <div class="pro-chevron">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+              </div>
+            </a>
+
+            <a href="/test-lab" target="_blank" rel="noopener" class="pro-action-btn">
+              <div class="flex items-center gap-3.5">
+                <div class="pro-icon-box">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                  </svg>
+                </div>
+                <div>
+                  <div class="flex flex-wrap items-center gap-2">
+                    <span class="text-xs sm:text-sm font-extrabold text-slate-900">Run 8-Point Shield Check</span>
+                    <span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-slate-100 text-slate-600 border border-slate-200">Live Diagnostic</span>
+                  </div>
+                  <div class="text-xs text-slate-600 font-medium mt-0.5">
+                    Verify real-time ad, tracker, and cookie blocking in your browser
+                  </div>
+                </div>
+              </div>
+              <div class="pro-chevron">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================= -->
+    <!-- VERSION 3.5: ULTRA-CLEAN SPOTLIGHT CARD + COMPACT QR FOOTER BAR          -->
+    <!-- ======================================================================= -->
+    <section id="modal-concept-5" class="concept-panel">
+      <div class="mb-4 flex flex-wrap items-center justify-between gap-2">
+        <div>
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-slate-200 text-slate-800">
+            VERSION 3.5 · v2.2 LEFT STAGE + ULTRA-CLEAN v2.1 SPOTLIGHT RIGHT CARD
+          </span>
+          <h2 class="text-lg sm:text-xl font-black text-slate-900 mt-1">
+            Maximum Whitespace &amp; Breathing Room with a Sleek 1-Line Mobile QR Pill Footer
+          </h2>
+        </div>
+      </div>
+
+      <div class="rounded-3xl overflow-hidden border border-slate-200/90 shadow-2xl grid grid-cols-1 lg:grid-cols-12 bg-white">
+        <!-- LEFT SIDE OF v2.2 -->
+        <div class="obsidian-panel lg:col-span-5 p-7 sm:p-9 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center gap-2.5">
+              <img src="/logo.svg" alt="SWEEPR" class="w-8 h-8 rounded-lg shadow" />
+              <span class="font-black text-lg tracking-tight text-white">SWEEPR <span class="text-emerald-400">Deepblock</span></span>
+            </div>
+            <h3 class="text-2xl sm:text-3xl font-black tracking-tight text-white mt-5 leading-tight">
+              Complete Browser Privacy &amp; Speed.
+            </h3>
+            <p class="text-xs sm:text-sm text-emerald-100/80 mt-2 leading-relaxed">
+              Engineered for Chrome, Firefox, Edge, Safari, iOS &amp; Android with one unified Pro license key.
+            </p>
+
+            <div class="grid grid-cols-2 gap-3 mt-6">
+              <div class="bg-white/5 border border-white/10 rounded-xl p-3.5">
+                <div class="text-xl font-black text-emerald-400">&lt;50ms</div>
+                <div class="text-[11px] text-emerald-100/80 font-semibold mt-0.5">Cookie Banner Reject</div>
+              </div>
+              <div class="bg-white/5 border border-white/10 rounded-xl p-3.5">
+                <div class="text-xl font-black text-emerald-400">100%</div>
+                <div class="text-[11px] text-emerald-100/80 font-semibold mt-0.5">YouTube &amp; Pre-Roll Ads</div>
+              </div>
+              <div class="bg-white/5 border border-white/10 rounded-xl p-3.5">
+                <div class="text-xl font-black text-emerald-400">5 Devices</div>
+                <div class="text-[11px] text-emerald-100/80 font-semibold mt-0.5">Desktop + Mobile QR</div>
+              </div>
+              <div class="bg-white/5 border border-white/10 rounded-xl p-3.5">
+                <div class="text-xl font-black text-emerald-400">14-Day</div>
+                <div class="text-[11px] text-emerald-100/80 font-semibold mt-0.5">Money-Back Guarantee</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-6 pt-4 border-t border-white/10 flex flex-wrap items-center justify-between gap-2 text-xs text-emerald-200/80 font-semibold">
+            <span>Shortcuts: <kbd class="px-1.5 py-0.5 rounded bg-white/10 text-white mono text-[10px]">Alt+Shift+S</kbd> Site Shield</span>
+            <span><kbd class="px-1.5 py-0.5 rounded bg-white/10 text-white mono text-[10px]">Alt+Shift+Z</kbd> Snooze Tabs</span>
+          </div>
+        </div>
+
+        <!-- RIGHT SIDE: Ultra-Clean Spotlight -->
+        <div class="lg:col-span-7 p-8 sm:p-10 flex flex-col justify-between bg-white">
+          <div>
+            <div class="bg-slate-100 p-1.5 rounded-2xl grid grid-cols-2 gap-1.5 border border-slate-200/80 mb-7">
+              <button type="button" id="v35TabKey" onclick="switchTab('v35', 'key')" class="py-2.5 px-3 rounded-xl text-xs font-extrabold bg-white text-slate-900 shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer">
+                <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+                <span>I Have a License / Code</span>
+              </button>
+              <button type="button" id="v35TabBuy" onclick="switchTab('v35', 'buy')" class="py-2.5 px-3 rounded-xl text-xs font-extrabold text-slate-600 hover:text-slate-900 transition-all flex items-center justify-center gap-2 cursor-pointer">
+                <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                <span>Get Pro License</span>
+              </button>
+            </div>
+
+            <div id="v35PanelKey">
+              <h4 class="text-xl font-black text-slate-900 tracking-tight">Activate Your Extension</h4>
+              <p class="text-xs sm:text-sm text-slate-500 mt-1 mb-4">
+                Paste your license key or 6-digit code below to unlock full protection.
+              </p>
+              <div class="relative flex items-center">
+                <input
+                  type="text"
+                  oninput="validateLiveInput(this, 'v35Feedback')"
+                  placeholder="SWEEPR-DB-XXXX or 6-digit code"
+                  class="mono w-full pl-4 pr-24 py-4 rounded-xl bg-slate-50 border-2 border-slate-200 text-sm font-bold text-slate-900 focus:outline-none focus:border-emerald-500 focus:bg-white transition-all"
+                />
+                <button type="button" onclick="demoPasteInto(this)" class="absolute right-3 px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-xs font-extrabold text-slate-700 cursor-pointer">
+                  Paste
+                </button>
+              </div>
+              <div id="v35Feedback" class="text-xs font-semibold text-slate-400 mt-2">
+                Instant verification across all 6 protection engines.
+              </div>
+              <button type="button" onclick="setSimState('pro')" class="mt-4 w-full py-4 px-6 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-black text-sm shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-2 cursor-pointer">
+                <span>Activate Pro Protection</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+              </button>
+            </div>
+
+            <div id="v35PanelBuy" class="hidden">
+              <h4 class="text-xl font-black text-slate-900 tracking-tight">Get SWEEPR Deepblock Pro</h4>
+              <p class="text-xs sm:text-sm text-slate-500 mt-1 mb-5 leading-relaxed">
+                Complete your order on our secure checkout page to receive your instant license key and 6-digit activation code.
+              </p>
+              <a href="/order" target="_blank" class="w-full py-4 px-6 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-black text-sm shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-2 no-underline">
+                <span>Continue to Order Page</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+              </a>
+            </div>
+          </div>
+
+          <!-- Sleek 1-Line Mobile QR Sync Bar -->
+          <div class="mt-8 pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-2.5 text-xs font-bold text-slate-600">
+              <span class="w-7 h-7 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 grid place-items-center shrink-0">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg>
+              </span>
+              <span>Want protection on iOS Safari &amp; Android too?</span>
+            </div>
+            <a href="/login" target="_blank" rel="noopener" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-emerald-50 text-slate-800 hover:text-emerald-700 border border-slate-200 hover:border-emerald-300 text-xs font-extrabold no-underline transition-all">
+              Mobile QR Sync in Portal ↗
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- SURFACE B: SELECTED EXTENSION POPUP ALT 5 (ZERO PRICING CLUTTER)          -->
+  <!-- ========================================================================= -->
+  <div id="surfacePopup" class="hidden max-w-4xl mx-auto px-4 sm:px-6">
+    <div class="pearl-surface rounded-3xl p-7 sm:p-10">
+      <div class="flex flex-wrap items-center justify-between gap-4 mb-8 pb-5 border-b border-slate-200">
+        <div>
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-300">
+            ✓ APPLIED TO EXTENSION/POPUP.HTML · POPUP ALT 5 (ULTRA-MINIMAL 3-ROW ZERO-SCROLL CARD)
+          </span>
+          <h2 class="text-xl font-black text-slate-900 mt-1">
+            Selected Extension Toolbar Popup — Clean Order Page Redirect
+          </h2>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start justify-items-center">
+        <!-- Unactivated State -->
+        <div class="flex flex-col items-center">
+          <div class="text-xs font-extrabold uppercase tracking-wider text-amber-700 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full mb-3">
+            1. Unactivated State
+          </div>
+          <div class="popup-frame p-4">
+            <div class="flex items-center justify-between mb-2.5">
+              <div class="flex items-center gap-2 font-black text-[13px] text-slate-900">
+                <img src="/logo.svg" alt="SWEEPR" class="w-5 h-5 rounded-md shadow-xs" />
+                <span>SWEEPR <span class="text-emerald-600">Deepblock</span></span>
+              </div>
+              <span class="text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">Free Preview</span>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-xl p-3 shadow-2xs">
+              <div class="flex items-center justify-between gap-2">
+                <div>
+                  <div class="text-[13px] font-black text-slate-900">youtube.com</div>
+                  <div class="text-[10.5px] font-semibold text-slate-500">Unlock Pro below to enable Site Shield</div>
+                </div>
+                <span class="px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200 text-[9.5px] font-extrabold">🔒 PRO</span>
+              </div>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-xl px-3 py-2 mt-2 flex items-center justify-between text-[10.5px] font-bold text-slate-600">
+              <span>Ads: <strong class="text-emerald-600">0</strong> · Cookies: <strong class="text-emerald-600">0</strong> · <strong class="text-emerald-600">Fast</strong></span>
+              <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[9px] font-extrabold">SAFE</span>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-xl p-2.5 mt-2">
+              <div class="flex items-center gap-1.5">
+                <div class="relative flex-1 flex items-center">
+                  <input type="text" placeholder="Enter 6-digit code or key..." class="mono w-full pl-2.5 pr-12 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-[11px] font-bold text-slate-900" />
+                  <button type="button" class="absolute right-1.5 px-1.5 py-0.5 rounded bg-white border border-slate-200 text-[9px] font-extrabold text-slate-600">Paste</button>
+                </div>
+                <button type="button" class="px-2.5 py-1.5 rounded-lg bg-slate-900 text-white text-[11px] font-extrabold">Unlock</button>
+              </div>
+            </div>
+
+            <a href="/order" target="_blank" class="mt-2 w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-extrabold text-xs shadow-md shadow-emerald-600/20 flex items-center justify-center gap-1.5 no-underline">
+              <span>Get Pro Protection &rarr;</span>
+            </a>
+
+            <div class="mt-2.5 pt-2 border-t border-slate-100 flex items-center justify-between text-[10px] font-bold text-slate-500">
+              <span>All Settings &amp; Tabs ↗</span>
+              <span>Test Shield ↗</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pro Active State -->
+        <div class="flex flex-col items-center">
+          <div class="text-xs font-extrabold uppercase tracking-wider text-emerald-800 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full mb-3">
+            2. Pro Active State
+          </div>
+          <div class="popup-frame p-4">
+            <div class="flex items-center justify-between mb-2.5">
+              <div class="flex items-center gap-2 font-black text-[13px] text-slate-900">
+                <img src="/logo.svg" alt="SWEEPR" class="w-5 h-5 rounded-md shadow-xs" />
+                <span>SWEEPR <span class="text-emerald-600">Deepblock</span></span>
+              </div>
+              <span class="text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">Pro Active</span>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-xl p-3 shadow-2xs">
+              <div class="flex items-center justify-between gap-2">
+                <div>
+                  <div class="text-[13px] font-black text-slate-900">youtube.com</div>
+                  <div class="text-[10.5px] font-bold text-emerald-600">Site Shield ON · Ads &amp; Cookies Blocked</div>
+                </div>
+                <button type="button" onclick="this.classList.toggle('off')" class="ux-switch" aria-label="Toggle"></button>
+              </div>
+              <div class="grid grid-cols-2 gap-1.5 mt-2.5 pt-2 border-t border-slate-100">
+                <button type="button" class="py-1.5 px-2 rounded-lg bg-slate-50 hover:bg-emerald-50 border border-slate-200 text-[10px] font-extrabold text-slate-700">Pause 5m (Fix Page)</button>
+                <button type="button" class="py-1.5 px-2 rounded-lg bg-slate-50 hover:bg-emerald-50 border border-slate-200 text-[10px] font-extrabold text-slate-700">Hide Element</button>
+              </div>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-xl px-3 py-2 mt-2 flex items-center justify-between text-[10.5px] font-bold text-slate-600">
+              <span>Ads: <strong class="text-emerald-600">142</strong> · Cookies: <strong class="text-emerald-600">38</strong> · <strong class="text-emerald-600">⚡ 1.4 GB Saved</strong></span>
+              <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[9px] font-extrabold">SAFE</span>
+            </div>
+
+            <button type="button" onclick="this.textContent='✓ 6 Inactive Tabs Snoozed (+420 MB)'" class="mt-2 w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-extrabold text-xs shadow-md shadow-emerald-600/20 flex items-center justify-center gap-1.5 cursor-pointer">
+              ⚡ Free Up RAM Now
+            </button>
+
+            <div class="mt-2.5 pt-2 border-t border-slate-100 flex items-center justify-between text-[10px] font-bold text-slate-500">
+              <span>All Settings &amp; Tabs ↗</span>
+              <span>Test Shield ↗</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function setSurface(surface) {
+      const modalEl = document.getElementById('surfaceModal');
+      const popupEl = document.getElementById('surfacePopup');
+      const btnModal = document.getElementById('surfaceBtnModal');
+      const btnPopup = document.getElementById('surfaceBtnPopup');
+      const selectorBar = document.getElementById('modalSelectorBar');
+
+      if (surface === 'popup') {
+        modalEl.classList.add('hidden');
+        popupEl.classList.remove('hidden');
+        selectorBar.classList.add('hidden');
+        btnPopup.className = 'px-3 py-1.5 rounded-lg text-xs font-extrabold transition-all bg-emerald-500 text-slate-950 shadow';
+        btnModal.className = 'px-3 py-1.5 rounded-lg text-xs font-extrabold transition-all text-slate-300 hover:text-white';
+      } else {
+        popupEl.classList.add('hidden');
+        modalEl.classList.remove('hidden');
+        selectorBar.classList.remove('hidden');
+        btnModal.className = 'px-3 py-1.5 rounded-lg text-xs font-extrabold transition-all bg-emerald-500 text-slate-950 shadow';
+        btnPopup.className = 'px-3 py-1.5 rounded-lg text-xs font-extrabold transition-all text-slate-300 hover:text-white';
+      }
+    }
+
+    function setSimState(state) {
+      const b = document.body;
+      const btnU = document.getElementById('stateBtnUnactivated');
+      const btnP = document.getElementById('stateBtnPro');
+      if (state === 'pro') {
+        b.classList.remove('state-unactivated');
+        b.classList.add('state-pro');
+        btnP.className = 'px-2.5 py-1 rounded-lg text-[11px] font-extrabold bg-emerald-400 text-slate-950 shadow';
+        btnU.className = 'px-2.5 py-1 rounded-lg text-[11px] font-extrabold text-slate-300 hover:text-white';
+      } else {
+        b.classList.remove('state-pro');
+        b.classList.add('state-unactivated');
+        btnU.className = 'px-2.5 py-1 rounded-lg text-[11px] font-extrabold bg-amber-400 text-slate-950 shadow';
+        btnP.className = 'px-2.5 py-1 rounded-lg text-[11px] font-extrabold text-slate-300 hover:text-white';
+      }
+    }
+
+    function selectConcept(idx) {
+      const panels = document.querySelectorAll('.concept-panel');
+      panels.forEach((p, i) => {
+        if (idx === 'all' || (i + 1) === Number(idx)) {
+          p.classList.add('active');
+        } else {
+          p.classList.remove('active');
+        }
+      });
+      document.querySelectorAll('.cbtn').forEach((btn) => {
+        const active = String(btn.getAttribute('data-cbtn')) === String(idx);
+        if (active) {
+          btn.className = 'cbtn px-3 py-1 rounded-lg text-xs font-extrabold bg-white text-slate-900 shadow-xs';
+        } else if (btn.getAttribute('data-cbtn') === 'all') {
+          btn.className = 'cbtn px-3 py-1 rounded-lg text-xs font-extrabold bg-emerald-950 text-emerald-300 border border-emerald-700/60 hover:bg-emerald-900';
+        } else {
+          btn.className = 'cbtn px-3 py-1 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 hover:text-white';
+        }
+      });
+    }
+
+    function switchTab(prefix, tab) {
+      const keyPanel = document.getElementById(prefix + 'PanelKey');
+      const buyPanel = document.getElementById(prefix + 'PanelBuy');
+      const tabKey = document.getElementById(prefix + 'TabKey');
+      const tabBuy = document.getElementById(prefix + 'TabBuy');
+      if (!keyPanel || !buyPanel || !tabKey || !tabBuy) return;
+      if (tab === 'buy') {
+        keyPanel.classList.add('hidden');
+        buyPanel.classList.remove('hidden');
+        tabBuy.className = 'py-2.5 px-3 rounded-xl text-xs font-extrabold bg-white text-slate-900 shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer';
+        tabKey.className = 'py-2.5 px-3 rounded-xl text-xs font-extrabold text-slate-600 hover:text-slate-900 transition-all flex items-center justify-center gap-2 cursor-pointer';
+      } else {
+        buyPanel.classList.add('hidden');
+        keyPanel.classList.remove('hidden');
+        tabKey.className = 'py-2.5 px-3 rounded-xl text-xs font-extrabold bg-white text-slate-900 shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer';
+        tabBuy.className = 'py-2.5 px-3 rounded-xl text-xs font-extrabold text-slate-600 hover:text-slate-900 transition-all flex items-center justify-center gap-2 cursor-pointer';
+      }
+    }
+
+    function toggleDrawer(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.toggle('hidden');
+    }
+
+    function validateLiveInput(input, feedbackId) {
+      const val = (input.value || '').trim();
+      const fb = document.getElementById(feedbackId);
+      if (!fb) return;
+      if (/^\d{6}$/.test(val)) {
+        fb.textContent = '✓ Valid 6-digit activation code format — click Activate Pro Protection';
+        fb.className = 'text-xs font-extrabold text-emerald-600 mt-1.5';
+      } else if (/^SWEEPR-DB-[A-Z0-9-]{4,}$/i.test(val)) {
+        fb.textContent = '✓ Valid SWEEPR Pro license key format — click Activate Pro Protection';
+        fb.className = 'text-xs font-extrabold text-emerald-600 mt-1.5';
+      } else {
+        fb.textContent = 'Found in your welcome email or Customer Portal.';
+        fb.className = 'text-xs font-semibold text-slate-400 mt-1.5';
+      }
+    }
+
+    function demoPasteInto(btn) {
+      const wrap = btn.parentElement;
+      const input = wrap ? wrap.querySelector('input') : null;
+      if (!input) return;
+      input.value = 'SWEEPR-DB-8492-PRO';
+      input.dispatchEvent(new Event('input'));
+      input.focus();
+    }
+  </script>
+</body>
+</html>

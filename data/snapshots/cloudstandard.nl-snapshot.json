@@ -1,0 +1,14 @@
+{
+  "capturedAt": "2026-10-29T00:05:29.673Z",
+  "targetUrl": "https://cloudstandard.nl",
+  "domain": "cloudstandard.nl",
+  "leak": {
+    "adTypeDetected": "DOM",
+    "offendingArtifact": ".monetag-push-ad",
+    "selector": ".monetag-push-ad",
+    "dimensions": "300x250",
+    "reason": "Unblocked 300x250 DOM ad slot (.monetag-push-ad) detected on cloudstandard.nl"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<div class=\"monetag-push-ad\" style=\"width:300px;height:250px;display:block\" aria-label=\"Sponsored Advertisement\"></div>"
+}

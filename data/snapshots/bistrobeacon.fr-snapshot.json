@@ -1,0 +1,17 @@
+{
+  "capturedAt": "2026-10-28T00:18:42.672Z",
+  "targetUrl": "https://bistrobeacon.fr",
+  "domain": "bistrobeacon.fr",
+  "leak": {
+    "adTypeDetected": "Script",
+    "offendingArtifact": "https://cdn.adpushup.com/adpushup.js",
+    "offendingHost": "cdn.adpushup.com",
+    "resourceTypes": [
+      "script",
+      "xmlhttprequest"
+    ],
+    "reason": "Unblocked third-party script request to cdn.adpushup.com (HTTP 200 OK) on bistrobeacon.fr"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://cdn.adpushup.com/adpushup.js\"></script>"
+}

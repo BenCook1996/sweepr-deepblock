@@ -1,0 +1,17 @@
+{
+  "capturedAt": "2026-10-31T07:06:23.490Z",
+  "targetUrl": "https://edgecastcdn.net",
+  "domain": "edgecastcdn.net",
+  "leak": {
+    "adTypeDetected": "Script",
+    "offendingArtifact": "https://resources.infolinks.com/js/infolinks_main.js",
+    "offendingHost": "resources.infolinks.com",
+    "resourceTypes": [
+      "script",
+      "xmlhttprequest"
+    ],
+    "reason": "Unblocked third-party script request to resources.infolinks.com (HTTP 200 OK) on edgecastcdn.net"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://resources.infolinks.com/js/infolinks_main.js\"></script>"
+}

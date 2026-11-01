@@ -1,0 +1,17 @@
+{
+  "capturedAt": "2026-10-29T00:05:30.073Z",
+  "targetUrl": "https://heraldhub.tv",
+  "domain": "heraldhub.tv",
+  "leak": {
+    "adTypeDetected": "Network",
+    "offendingArtifact": "https://dsp.adkernel.com/tag",
+    "offendingHost": "dsp.adkernel.com",
+    "resourceTypes": [
+      "xmlhttprequest",
+      "script"
+    ],
+    "reason": "Unblocked third-party network request to dsp.adkernel.com (HTTP 200 OK) on heraldhub.tv"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://dsp.adkernel.com/tag\"></script>"
+}

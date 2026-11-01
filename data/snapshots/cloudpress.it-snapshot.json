@@ -1,0 +1,17 @@
+{
+  "capturedAt": "2026-10-29T00:05:29.948Z",
+  "targetUrl": "https://cloudpress.it",
+  "domain": "cloudpress.it",
+  "leak": {
+    "adTypeDetected": "Script",
+    "offendingArtifact": "https://apex.go.sonobi.com/trinity.js",
+    "offendingHost": "apex.go.sonobi.com",
+    "resourceTypes": [
+      "script",
+      "xmlhttprequest"
+    ],
+    "reason": "Unblocked third-party script request to apex.go.sonobi.com (HTTP 200 OK) on cloudpress.it"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://apex.go.sonobi.com/trinity.js\"></script>"
+}

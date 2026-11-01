@@ -43,9 +43,11 @@ class SweeprCrmClient {
             await new Promise((r) => setTimeout(r, delayMs));
             continue;
           }
-          this.consecutiveFailures += 1;
-          if (this.consecutiveFailures >= 3) {
-            this.circuitOpenUntil = Date.now() + 30000;
+          if (res.status >= 500) {
+            this.consecutiveFailures += 1;
+            if (this.consecutiveFailures >= 3) {
+              this.circuitOpenUntil = Date.now() + 30000;
+            }
           }
         } else {
           this.consecutiveFailures = 0;
@@ -281,6 +283,19 @@ class SweeprCrmClient {
         ...(keyOrCode ? { key: keyOrCode } : {})
       })
     });
+  }
+
+  async revokeDevice(accountId, deviceId) {
+    if (!accountId || !deviceId) return { ok: false };
+    return this._fetchWithRetry(
+      `${this.crmUrl}/api/account/devices/${encodeURIComponent(deviceId)}/revoke`,
+      {
+        method: 'POST',
+        headers: this.headers(),
+        body: JSON.stringify({ project_id: this.projectId, account_id: accountId, device_id: deviceId })
+      },
+      { timeoutMs: 3500, maxRetries: 0 }
+    );
   }
 }
 

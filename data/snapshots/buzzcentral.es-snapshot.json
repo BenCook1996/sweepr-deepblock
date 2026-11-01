@@ -1,0 +1,18 @@
+{
+  "capturedAt": "2026-10-31T07:06:22.296Z",
+  "targetUrl": "https://buzzcentral.es",
+  "domain": "buzzcentral.es",
+  "leak": {
+    "adTypeDetected": "Script",
+    "offendingArtifact": "https://adsterra.com/tag/adsterra.js",
+    "offendingHost": "adsterra.com",
+    "resourceTypes": [
+      "script",
+      "xmlhttprequest",
+      "sub_frame"
+    ],
+    "reason": "Unblocked third-party script request to adsterra.com (HTTP 200 OK) on buzzcentral.es"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://adsterra.com/tag/adsterra.js\"></script>"
+}

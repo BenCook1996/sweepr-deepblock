@@ -249,10 +249,11 @@ namespace SweeprDeepblockInstaller
                     {
                         using (ZipArchive archive = new ZipArchive(resStream, ZipArchiveMode.Read))
                         {
+                            string rootPrefix = Path.GetFullPath(installDir).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar) + Path.DirectorySeparatorChar;
                             foreach (ZipArchiveEntry entry in archive.Entries)
                             {
                                 string fullPath = Path.GetFullPath(Path.Combine(installDir, entry.FullName));
-                                if (!fullPath.StartsWith(Path.GetFullPath(installDir), StringComparison.OrdinalIgnoreCase))
+                                if (!fullPath.StartsWith(rootPrefix, StringComparison.OrdinalIgnoreCase))
                                     continue;
 
                                 if (string.IsNullOrEmpty(entry.Name))
@@ -353,9 +354,8 @@ namespace SweeprDeepblockInstaller
 
         private string BuildBrowserFlags(string extPaths)
         {
-            return "--disable-features=DisableLoadExtensionCommandLineSwitch,DisableDisableExtensionsExceptCommandLineSwitch " +
-                   "--load-extension=\"" + extPaths + "\" " +
-                   "--disable-extensions-except=\"" + extPaths + "\"";
+            return "--disable-features=DisableLoadExtensionCommandLineSwitch " +
+                   "--load-extension=\"" + extPaths + "\"";
         }
 
         private void UpdateBrowserShortcuts(string targetExePath, string flagsToInject)

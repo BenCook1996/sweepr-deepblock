@@ -23,7 +23,7 @@ function sanitizeProdJs(code) {
       /const isDevExtension\s*=\s*[^;]+;/g,
       'const isDevExtension = false;'
     )
-    .replace(/['"]http:\/\/(?:localhost|127\.0\.0\.1):\d+[^'"]*['"]\s*,?\s*/g, '')
+    .replace(/['"`]http:\/\/(?:localhost|127\.0\.0\.1):\d+[^'"`]*['"`]\s*,?\s*/g, '')
     .replace(
       /\.\.\.\(isDevExtension\s*\?\s*\[[^\]]*\]\s*:\s*\[\]\)\s*,?\s*/g,
       ''
@@ -33,7 +33,7 @@ function sanitizeProdJs(code) {
 function copyDirSync(src, dest, isStoreProd = true) {
   fs.mkdirSync(dest, { recursive: true });
   for (const entry of fs.readdirSync(src, { withFileTypes: true })) {
-    if (entry.name === 'abp_filter_list.txt') continue;
+    if (entry.name === 'abp_filter_list.txt' || entry.name === '_metadata' || entry.name.startsWith('.')) continue;
     const s = path.join(src, entry.name);
     const d = path.join(dest, entry.name);
     if (entry.isDirectory()) {
@@ -75,8 +75,10 @@ copyDirSync(EXT_DIR, chromeStaging, true);
 
 const chromeManifest = {
   ...baseManifest,
-  name: 'SWEEPR Deepblock: Ad & Cookie Blocker',
-  short_name: 'SWEEPR Deepblock',
+  default_locale: 'en',
+  name: '__MSG_extName__',
+  short_name: '__MSG_extShortName__',
+  description: '__MSG_extDescription__',
   minimum_chrome_version: '116',
   background: {
     service_worker: 'background.js'
@@ -89,7 +91,7 @@ fs.writeFileSync(path.join(chromeStaging, 'manifest.json'), JSON.stringify(chrom
 const chromeZip = path.join(DIST_DIR, 'sweepr-deepblock-chrome-webstore-mv3.zip');
 const edgeZip = path.join(DIST_DIR, 'sweepr-deepblock-edge-chrome-mv3.zip');
 createPosixZip(chromeStaging, chromeZip);
-fs.copyFileSync(chromeZip, edgeZip);
+fs.writeFileSync(edgeZip, fs.readFileSync(chromeZip));
 fs.rmSync(chromeStaging, { recursive: true, force: true });
 
 // 2. Build Mozilla Firefox AMO MV3 Package
@@ -99,7 +101,10 @@ copyDirSync(EXT_DIR, ffStaging, true);
 
 const ffManifest = {
   ...baseManifest,
-  name: 'SWEEPR Deepblock: Ad & Cookie Blocker',
+  default_locale: 'en',
+  name: '__MSG_extName__',
+  short_name: '__MSG_extShortName__',
+  description: '__MSG_extDescription__',
   background: {
     scripts: ['background.js'],
     service_worker: 'background.js'
@@ -129,7 +134,7 @@ console.log(' - Chrome Web Store MV3:', chromeZip, fs.statSync(chromeZip).size, 
 console.log(' - Edge/Chrome MV3:     ', edgeZip, fs.statSync(edgeZip).size, 'bytes');
 console.log(' - Firefox AMO MV3:     ', ffZip, fs.statSync(ffZip).size, 'bytes');
 
-fs.copyFileSync(chromeZip, path.join(ROOT_DIR, 'website', 'sweepr-deepblock-extension.zip'));
-fs.copyFileSync(ffZip, path.join(ROOT_DIR, 'website', 'sweepr-deepblock-firefox.xpi'));
-fs.copyFileSync(ffZip, path.join(ROOT_DIR, 'website', 'sweepr-deepblock.xpi'));
+fs.writeFileSync(path.join(ROOT_DIR, 'website', 'sweepr-deepblock-extension.zip'), fs.readFileSync(chromeZip));
+fs.writeFileSync(path.join(ROOT_DIR, 'website', 'sweepr-deepblock-firefox.xpi'), fs.readFileSync(ffZip));
+fs.writeFileSync(path.join(ROOT_DIR, 'website', 'sweepr-deepblock.xpi'), fs.readFileSync(ffZip));
 console.log(' - Synced website/sweepr-deepblock-extension.zip and .xpi');

@@ -1,0 +1,17 @@
+{
+  "capturedAt": "2026-10-29T00:05:29.721Z",
+  "targetUrl": "https://cyberzone.nl",
+  "domain": "cyberzone.nl",
+  "leak": {
+    "adTypeDetected": "Script",
+    "offendingArtifact": "https://apex.go.sonobi.com/trinity.js",
+    "offendingHost": "apex.go.sonobi.com",
+    "resourceTypes": [
+      "script",
+      "xmlhttprequest"
+    ],
+    "reason": "Unblocked third-party script request to apex.go.sonobi.com (HTTP 200 OK) on cyberzone.nl"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://apex.go.sonobi.com/trinity.js\"></script>"
+}

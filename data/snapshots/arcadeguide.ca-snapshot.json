@@ -1,0 +1,14 @@
+{
+  "capturedAt": "2026-10-29T00:05:29.691Z",
+  "targetUrl": "https://arcadeguide.ca",
+  "domain": "arcadeguide.ca",
+  "leak": {
+    "adTypeDetected": "DOM",
+    "offendingArtifact": ".invibes-infeed-ad",
+    "selector": ".invibes-infeed-ad",
+    "dimensions": "300x250",
+    "reason": "Unblocked 300x250 DOM ad slot (.invibes-infeed-ad) detected on arcadeguide.ca"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<div class=\"invibes-infeed-ad\" style=\"width:300px;height:250px;display:block\" aria-label=\"Sponsored Advertisement\"></div>"
+}

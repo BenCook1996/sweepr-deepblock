@@ -1,0 +1,17 @@
+{
+  "capturedAt": "2026-10-29T00:05:29.743Z",
+  "targetUrl": "https://bossbeacon.ca",
+  "domain": "bossbeacon.ca",
+  "leak": {
+    "adTypeDetected": "Script",
+    "offendingArtifact": "https://assets.strossle.com/strossle-widget-sdk.js",
+    "offendingHost": "assets.strossle.com",
+    "resourceTypes": [
+      "script",
+      "xmlhttprequest"
+    ],
+    "reason": "Unblocked third-party script request to assets.strossle.com (HTTP 200 OK) on bossbeacon.ca"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://assets.strossle.com/strossle-widget-sdk.js\"></script>"
+}

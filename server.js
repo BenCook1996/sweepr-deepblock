@@ -31,6 +31,48 @@ function isValidEmail(email) {
   return typeof email === 'string' && email.length <= 254 && EMAIL_REGEX.test(email);
 }
 
+function canonicalizeEmailForDiscount(rawEmail) {
+  const clean = String(rawEmail || '').trim().toLowerCase();
+  const atIdx = clean.indexOf('@');
+  if (atIdx <= 0) return clean;
+  let local = clean.slice(0, atIdx).replace(/\+.*$/, '');
+  const domain = clean.slice(atIdx + 1);
+  if (domain === 'gmail.com' || domain === 'googlemail.com') {
+    local = local.replace(/\./g, '');
+  }
+  return `${local}@${domain === 'googlemail.com' ? 'gmail.com' : domain}`;
+}
+
+function maskEmail(rawEmail) {
+  const clean = String(rawEmail || '').trim();
+  const atIdx = clean.indexOf('@');
+  if (atIdx <= 0) return '';
+  const local = clean.slice(0, atIdx);
+  const domain = clean.slice(atIdx + 1);
+  if (local.length <= 2) return `${local[0] || '*'}***@${domain}`;
+  return `${local[0]}${'*'.repeat(Math.min(4, local.length - 2))}${local[local.length - 1]}@${domain}`;
+}
+
+const ALLOWED_EXTENSION_IDS = new Set(
+  String(process.env.ALLOWED_EXTENSION_IDS || '')
+    .split(',')
+    .map((s) => s.trim().toLowerCase())
+    .filter(Boolean)
+);
+
+function isAllowedExtensionOrigin(origin) {
+  const clean = String(origin || '').trim().replace(/\/+$/, '').toLowerCase();
+  if (/^chrome-extension:\/\/([a-p]{32})$/.test(clean)) {
+    const extId = clean.slice('chrome-extension://'.length);
+    return ALLOWED_EXTENSION_IDS.size === 0 || ALLOWED_EXTENSION_IDS.has(extId);
+  }
+  if (/^moz-extension:\/\/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/.test(clean)) {
+    const extId = clean.slice('moz-extension://'.length);
+    return ALLOWED_EXTENSION_IDS.size === 0 || ALLOWED_EXTENSION_IDS.has(extId);
+  }
+  return false;
+}
+
 function escapeHtml(value) {
   return String(value ?? '')
     .replace(/&/g, '&amp;')
@@ -41,15 +83,15 @@ function escapeHtml(value) {
 }
 
 function resolveTrustedOrigin(req) {
+  const isDev = process.env.NODE_ENV !== 'production';
   const allowedOrigins = new Set([
     PUBLIC_URL,
     'https://sweeprdeepblock.com',
     'https://www.sweeprdeepblock.com',
-    `http://localhost:${PORT}`,
-    `http://127.0.0.1:${PORT}`
+    ...(isDev ? [`http://localhost:${PORT}`, `http://127.0.0.1:${PORT}`] : [])
   ]);
   const hostHeader = String(req?.headers?.host || '').trim();
-  if (/^(localhost|127\.0\.0\.1)(:\d+)?$/i.test(hostHeader)) {
+  if (isDev && /^(localhost|127\.0\.0\.1)(:\d+)?$/i.test(hostHeader)) {
     allowedOrigins.add(`http://${hostHeader}`);
     allowedOrigins.add(`http://localhost:${hostHeader.split(':')[1] || PORT}`);
     allowedOrigins.add(`http://127.0.0.1:${hostHeader.split(':')[1] || PORT}`);
@@ -117,34 +159,12 @@ function checkRateLimit(req, bucketName, maxRequests = 30, windowMs = 60000, sco
   return entry.count <= maxRequests;
 }
 
-const STRIPE_API_KEY_ID = (process.env.STRIPE_API_KEY_ID || 'mk_1USkbZ12f60YC3BgCDCSFP0G').trim();
-const ENCRYPTED_STRIPE_SK_VAULT =
-  process.env.ENCRYPTED_STRIPE_SK_VAULT ||
-  'e103a3062d7ce80376c37def:5b0526bf8893a21764c0a48b96df3c23:83bd79ec18a5eff4e7a235eabcc6fc07dfaeb8ce4e98aed341a980eb9350ca8ac7db3d8c7cd7ecb684e50c22deffb7f740af00275593b02c54846e06392b5cc03c80e859a30a087ee48304288132e50395adb91aef938a397d2e71799823aa73f01673572db641d865c2de';
-const ENCRYPTED_STRIPE_WH_VAULT =
-  process.env.ENCRYPTED_STRIPE_WH_VAULT ||
-  '300d9bff61e3944bef1ae30a:accfecbbdc2d0ccc9b0ebe6c6611d2e9:ce2bf0da015e6e0cd94ea4b881deb889e0bbfacbb34c2fd8dadaf1726c4020066cac538e8306';
-
-function decryptStripeVaultBlob(blob) {
-  if (!blob || !STRIPE_API_KEY_ID) return '';
-  try {
-    const [ivHex, tagHex, encHex] = String(blob).split(':');
-    if (!ivHex || !tagHex || !encHex) return '';
-    const key = crypto.createHash('sha256').update(`sweepr-db-vault:${STRIPE_API_KEY_ID}`).digest();
-    const decipher = crypto.createDecipheriv('aes-256-gcm', key, Buffer.from(ivHex, 'hex'));
-    decipher.setAuthTag(Buffer.from(tagHex, 'hex'));
-    return Buffer.concat([decipher.update(Buffer.from(encHex, 'hex')), decipher.final()]).toString('utf8');
-  } catch {
-    return '';
-  }
-}
-
 function resolveStripeSecretKey() {
   const envKey = (process.env.STRIPE_SECRET_KEY || process.env.DEEPBLOCK_STRIPE_SECRET_KEY || '').trim();
   if (/^[sr]k_(live|test)_/.test(envKey)) {
     return envKey;
   }
-  return decryptStripeVaultBlob(ENCRYPTED_STRIPE_SK_VAULT);
+  return '';
 }
 
 const STRIPE_SECRET_KEY = resolveStripeSecretKey();
@@ -153,13 +173,15 @@ const IS_LIVE_STRIPE = /^([sr]k_live_)/.test(STRIPE_SECRET_KEY);
 function resolveStripeWebhookSecret() {
   const envWh = (process.env.STRIPE_WEBHOOK_SECRET || process.env.DEEPBLOCK_STRIPE_WEBHOOK_SECRET || '').trim();
   if (/^whsec_/.test(envWh)) return envWh;
-  return decryptStripeVaultBlob(ENCRYPTED_STRIPE_WH_VAULT);
+  return '';
 }
 
 const STRIPE_WEBHOOK_SECRET = resolveStripeWebhookSecret();
-const STRIPE_PUBLISHABLE_KEY =
-  (process.env.STRIPE_PUBLISHABLE_KEY || process.env.DEEPBLOCK_STRIPE_PUBLISHABLE_KEY || '').trim() ||
-  'pk_live_51USkPH12f60YC3BgReuvRVTVOsy3DRmrMVeZDE7Nev8mAUiMIDzgCWWrxTJlG0ATAUZtB9937kGr8r9xXkjALMxT00KHsxhs4C';
+const STRIPE_PUBLISHABLE_KEY = (
+  process.env.STRIPE_PUBLISHABLE_KEY ||
+  process.env.DEEPBLOCK_STRIPE_PUBLISHABLE_KEY ||
+  ''
+).trim();
 
 const STRIPE_PRODUCT_MAIN = (process.env.STRIPE_PRODUCT_MAIN || 'prod_VTi9pQfsnRD8Uo').trim();
 const STRIPE_PRODUCT_RAM_TAMER = (process.env.STRIPE_PRODUCT_RAM_TAMER || 'prod_VTi9kxjGjyWMIj').trim();
@@ -624,6 +646,8 @@ async function syncSubscriptionWithSweeprCrm(acc, { amountCents, currency = 'gbp
   return acc;
 }
 
+const DATA_DIR = process.env.DATA_DIR ? path.resolve(process.env.DATA_DIR) : path.join(__dirname, 'data');
+const WEBHOOK_DEDUPE_STORE_PATH = path.join(DATA_DIR, 'processed-webhooks.json');
 const licenses = new Map();
 const negativeLicenseCache = new Map();
 const accountsById = new Map();
@@ -631,25 +655,51 @@ const accountsByEmail = new Map();
 const accountsBySubscriptionId = new Map();
 const usedIntroDiscountEmails = new Set();
 const processedWebhookEventIds = new Set();
+try {
+  if (fs.existsSync(WEBHOOK_DEDUPE_STORE_PATH)) {
+    const savedIds = JSON.parse(fs.readFileSync(WEBHOOK_DEDUPE_STORE_PATH, 'utf8'));
+    if (Array.isArray(savedIds)) {
+      for (const id of savedIds.slice(-5000)) {
+        if (typeof id === 'string') processedWebhookEventIds.add(id);
+      }
+    }
+  }
+} catch {}
+
+function markWebhookEventProcessed(eventId) {
+  if (!eventId) return;
+  if (processedWebhookEventIds.size >= 5000) {
+    const oldest = processedWebhookEventIds.values().next().value;
+    if (oldest) processedWebhookEventIds.delete(oldest);
+  }
+  processedWebhookEventIds.add(eventId);
+  try {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
+    const tmpPath = `${WEBHOOK_DEDUPE_STORE_PATH}.tmp`;
+    fs.writeFileSync(tmpPath, JSON.stringify(Array.from(processedWebhookEventIds)), 'utf8');
+    fs.renameSync(tmpPath, WEBHOOK_DEDUPE_STORE_PATH);
+  } catch {}
+}
+
 const MAX_DEVICES_PER_LICENSE = 4; // 1 primary device + 3 additional devices per paid subscription
 const HIGH_ENTROPY_LICENSE_KEY_RE = /^SWEEPR-[A-Z0-9]{2,8}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/i;
 
-// Seed permanent Owner Pro License Key for local admin workstation
+// Seed permanent Owner Pro License Key only when explicitly configured or in dev mode
 setImmediate(() => {
+  if (!process.env.OWNER_LICENSE_KEY && !ALLOW_DEV_MOCK_CHECKOUT) return;
   try {
+    const ownerKey = String(process.env.OWNER_LICENSE_KEY || 'SWEEPR-OWNER-PRO-2026').trim();
+    const ownerCode = String(process.env.OWNER_ACTIVATION_CODE || '999888').trim();
     const ownerAcc = upsertLocalAccount({
       email: 'owner@sweeprdeepblock.com',
       name: 'SWEEPR Owner',
       plan: 'annual',
       ramTamerAddon: true,
-      status: 'active'
+      status: 'active',
+      activationCode: ownerCode,
+      licenseKey: ownerKey
     });
-    ownerAcc.licenseKey = 'SWEEPR-OWNER-PRO-2026';
-    ownerAcc.activation_code = '999888';
-    licenses.set('SWEEPR-OWNER-PRO-2026', ownerAcc);
-    licenses.set('999888', ownerAcc);
-    licenses.set('SWEEPR-DB-999888', ownerAcc);
-    licenses.set('DEEPBLOCK-999888', ownerAcc);
+    ownerAcc.isSeededAccount = true;
   } catch {}
 });
 
@@ -945,14 +995,29 @@ async function getCachedActiveStripeSubs() {
   return stripeActiveSubsCache.inflight;
 }
 
-function verifyLocalAccountKeyOrCode(acc, rawKeyOrCode) {
+function timingSafeStringMatch(a, b) {
+  if (!a || !b) return false;
+  const digestA = crypto.createHash('sha256').update(String(a)).digest();
+  const digestB = crypto.createHash('sha256').update(String(b)).digest();
+  return crypto.timingSafeEqual(digestA, digestB);
+}
+
+function verifyLocalAccountKeyOrCode(acc, rawKeyOrCode, { allowShortCode = true } = {}) {
   if (!acc || !rawKeyOrCode) return false;
   const k = String(rawKeyOrCode).trim().toUpperCase();
   if (!k || k.includes('@')) return false;
   const code = String(acc.activation_code || '').trim().toUpperCase();
   const lkey = String(acc.licenseKey || '').trim().toUpperCase();
-  if (lkey && k === lkey) return true;
-  if (code && (k === code || k === `SWEEPR-DB-${code}` || k === `DEEPBLOCK-${code}`)) return true;
+  if (lkey && timingSafeStringMatch(k, lkey)) return true;
+  if (
+    allowShortCode &&
+    code &&
+    (timingSafeStringMatch(k, code) ||
+      timingSafeStringMatch(k, `SWEEPR-DB-${code}`) ||
+      timingSafeStringMatch(k, `DEEPBLOCK-${code}`))
+  ) {
+    return true;
+  }
   return false;
 }
 
@@ -1119,8 +1184,10 @@ function upsertLocalAccount({ email, name, country, stripeCustomerId, plan, ramT
       licenses.delete(acc.licenseKey);
       acc.licenseKey = customKey;
     }
-    if (stripeCustomerId) acc.stripe_customer_id = stripeCustomerId;
-    if (subscriptionId) acc.stripe_subscription_id = subscriptionId;
+    if (!isAlreadyActive || !isUnpaidTransition) {
+      if (stripeCustomerId) acc.stripe_customer_id = stripeCustomerId;
+      if (subscriptionId) acc.stripe_subscription_id = subscriptionId;
+    }
   }
 
   accountsById.set(acc.id, acc);
@@ -1128,7 +1195,10 @@ function upsertLocalAccount({ email, name, country, stripeCustomerId, plan, ramT
     accountsByEmail.set(normEmail, acc);
   }
   if (acc.status === 'active' || acc.status === 'trialing') {
-    if (normEmail) usedIntroDiscountEmails.add(normEmail);
+    if (normEmail) {
+      usedIntroDiscountEmails.add(normEmail);
+      usedIntroDiscountEmails.add(canonicalizeEmailForDiscount(normEmail));
+    }
     acc.introDiscountUsed = true;
     licenses.set(acc.licenseKey, acc);
     licenses.set(acc.activation_code, acc);
@@ -1140,7 +1210,9 @@ function upsertLocalAccount({ email, name, country, stripeCustomerId, plan, ramT
     licenses.delete(`SWEEPR-DB-${acc.activation_code}`);
     licenses.delete(`DEEPBLOCK-${acc.activation_code}`);
   }
-  if (subscriptionId) accountsBySubscriptionId.set(subscriptionId, acc);
+  if (subscriptionId && (!acc.stripe_subscription_id || acc.stripe_subscription_id === subscriptionId)) {
+    accountsBySubscriptionId.set(subscriptionId, acc);
+  }
   return acc;
 }
 
@@ -1178,22 +1250,23 @@ async function syncPayPalCustomerEmail(sub, acc) {
   } catch {}
 }
 
-// Seed founder account for end-to-end testing across all products
-upsertLocalAccount({
+// Seed founder account for end-to-end extension license testing across all products
+const seededFounderAcc = upsertLocalAccount({
   email: (process.env.FOUNDER_EMAIL || 'cookbenjamin1996@gmail.com').trim().toLowerCase(),
   name: 'Benjamin Cook',
   country: 'GB',
   plan: 'annual',
   ramTamerAddon: true,
   status: 'active',
-  activationCode: '817797',
-  licenseKey: 'SWEEPR-DB-8177-9700-2026'
+  activationCode: (process.env.FOUNDER_ACTIVATION_CODE || '817797').trim(),
+  licenseKey: (process.env.FOUNDER_LICENSE_KEY || 'SWEEPR-DB-8177-9700-2026').trim()
 });
+seededFounderAcc.isSeededAccount = !process.env.FOUNDER_LICENSE_KEY;
 
 // ===========================================================================
 // Deepblock Verified Blocked Sites Registry (Local Mirror + CRM Sync)
 // ===========================================================================
-const BLOCKED_SITES_STORE_PATH = path.join(__dirname, 'data', 'deepblock-blocked-sites.json');
+const BLOCKED_SITES_STORE_PATH = path.join(DATA_DIR, 'deepblock-blocked-sites.json');
 const deepblockBlockedSites = new Map();
 
 function normalizeSiteDomain(raw) {
@@ -1272,7 +1345,9 @@ function flushBlockedSitesStore() {
   try {
     fs.mkdirSync(path.dirname(BLOCKED_SITES_STORE_PATH), { recursive: true });
     const rows = Array.from(deepblockBlockedSites.values());
-    fs.writeFileSync(BLOCKED_SITES_STORE_PATH, JSON.stringify({ updatedAt: new Date().toISOString(), total: rows.length, sites: rows }, null, 2), 'utf8');
+    const tmpPath = `${BLOCKED_SITES_STORE_PATH}.tmp`;
+    fs.writeFileSync(tmpPath, JSON.stringify({ updatedAt: new Date().toISOString(), total: rows.length, sites: rows }, null, 2), 'utf8');
+    fs.renameSync(tmpPath, BLOCKED_SITES_STORE_PATH);
   } catch {}
 }
 
@@ -1513,9 +1588,13 @@ function initDeepblockBlockedSitesRegistry() {
 }
 initDeepblockBlockedSitesRegistry();
 
+const revokedSessionJtis = new Map();
+
 function signSessionCookie(accountId, email) {
-  const exp = Math.floor(Date.now() / 1000) + 86400 * 30;
-  const payload = Buffer.from(JSON.stringify({ sub: accountId, email, exp })).toString('base64url');
+  const nowSec = Math.floor(Date.now() / 1000);
+  const exp = nowSec + 86400 * 30;
+  const jti = crypto.randomBytes(8).toString('hex');
+  const payload = Buffer.from(JSON.stringify({ sub: accountId, email, iat: nowSec, exp, jti })).toString('base64url');
   const sig = crypto.createHmac('sha256', SESSION_SECRET).update(payload).digest('base64url');
   return `${payload}.${sig}`;
 }
@@ -1531,10 +1610,23 @@ function verifySessionCookie(req) {
   try {
     if (!crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expected))) return null;
     const data = JSON.parse(Buffer.from(payload, 'base64url').toString('utf8'));
-    if (!data?.sub || !data?.exp || Math.floor(Date.now() / 1000) > data.exp) return null;
+    const nowSec = Math.floor(Date.now() / 1000);
+    if (!data?.sub || !data?.exp || nowSec > data.exp) return null;
+    if (data.jti && revokedSessionJtis.has(data.jti)) return null;
     return data;
   } catch {
     return null;
+  }
+}
+
+function revokeSessionCookie(req) {
+  const data = verifySessionCookie(req);
+  if (data && data.jti) {
+    if (revokedSessionJtis.size >= 5000) {
+      const oldest = revokedSessionJtis.keys().next().value;
+      if (oldest) revokedSessionJtis.delete(oldest);
+    }
+    revokedSessionJtis.set(data.jti, data.exp || Math.floor(Date.now() / 1000) + 86400);
   }
 }
 
@@ -1569,7 +1661,8 @@ const MIME_TYPES = {
   '.command': 'application/octet-stream',
   '.mobileconfig': 'application/x-apple-aspen-config',
   '.xpi': 'application/x-xpinstall',
-  '.apk': 'application/vnd.android.package-archive'
+  '.apk': 'application/vnd.android.package-archive',
+  '.idsig': 'application/octet-stream'
 };
 
 const CLEAN_ROUTES = {
@@ -1582,6 +1675,8 @@ const CLEAN_ROUTES = {
   '/sweepr-vpn-concepts': 'sweepr-vpn-concepts.html',
   '/sweepr-vpn-mobile-redesign': 'sweepr-vpn-mobile-redesign.html',
   '/extension-ux-prototype': 'extension-ux-prototype.html',
+  '/store-creatives': 'store-creatives.html',
+  '/welcome-concepts': 'welcome-concepts.html',
   '/privacy': 'privacy.html',
   '/refund': 'refund.html',
   '/terms': 'terms.html',
@@ -1590,18 +1685,29 @@ const CLEAN_ROUTES = {
   '/download/sweepr-deepblock-extension.zip': 'sweepr-deepblock-extension.zip',
   '/download/SWEEPRDeepblockSetup.exe': 'SWEEPRDeepblockSetup.exe',
   '/download/SWEEPR-Deepblock-Installer.command': 'SWEEPR-Deepblock-Installer.command',
+  '/download/SWEEPRDeepblockSetup.command': 'SWEEPR-Deepblock-Installer.command',
+  '/SWEEPR-Deepblock-Installer.command': 'SWEEPR-Deepblock-Installer.command',
+  '/SWEEPRDeepblockSetup.command': 'SWEEPR-Deepblock-Installer.command',
+  '/SWEEPRDeepblockSetup.exe': 'SWEEPRDeepblockSetup.exe',
   '/download/sweepr-deepblock.mobileconfig': 'sweepr-deepblock.mobileconfig',
+  '/sweepr-deepblock.mobileconfig': 'sweepr-deepblock.mobileconfig',
   '/download/sweepr-deepblock-firefox.xpi': 'sweepr-deepblock-firefox.xpi',
+  '/sweepr-deepblock-firefox.xpi': 'sweepr-deepblock-firefox.xpi',
+  '/sweepr-deepblock-extension.zip': 'sweepr-deepblock-extension.zip',
   '/download/SWEEPRDeepblock.apk': 'SWEEPRDeepblock.apk',
   '/SWEEPRDeepblock.apk': 'SWEEPRDeepblock.apk',
+  '/download/sweepr-deepblock.xpi': 'sweepr-deepblock.xpi',
+  '/sweepr-deepblock.xpi': 'sweepr-deepblock.xpi',
+  '/download/SWEEPRDeepblock.apk.idsig': 'SWEEPRDeepblock.apk.idsig',
+  '/SWEEPRDeepblock.apk.idsig': 'SWEEPRDeepblock.apk.idsig',
   '/test-lab': 'test-lab.html',
   '/vs/total-adblock': path.join('vs', 'total-adblock.html')
 };
 
-function isSameOriginWriteRequest(req) {
+function isSameOriginWriteRequest(req, { allowExtension = false } = {}) {
   const origin = String(req.headers.origin || '').trim().replace(/\/+$/, '');
   if (origin === 'null') return false;
-  if (origin.startsWith('chrome-extension://') || origin.startsWith('moz-extension://')) return true;
+  if (allowExtension && isAllowedExtensionOrigin(origin)) return true;
   const fetchSite = String(req.headers['sec-fetch-site'] || '').toLowerCase();
   if (fetchSite === 'cross-site') return false;
   if (origin) {
@@ -1612,8 +1718,9 @@ function isSameOriginWriteRequest(req) {
     try {
       const refUrl = new URL(referer);
       const refOrigin = refUrl.origin;
-      if (refOrigin.startsWith('chrome-extension://') || refOrigin.startsWith('moz-extension://')) return true;
-      if (resolveTrustedOrigin(req) !== refOrigin) return false;
+      if (allowExtension && isAllowedExtensionOrigin(refOrigin)) return true;
+      if (resolveTrustedOrigin(req) === refOrigin) return true;
+      return false;
     } catch {
       return false;
     }
@@ -1640,7 +1747,7 @@ function sendJson(res, statusCode, payload, extraHeaders = {}, req = null) {
   const incomingReq = req || res.req;
   if (incomingReq) {
     const rawOrigin = String(incomingReq.headers?.origin || '').trim().replace(/\/+$/, '');
-    if (rawOrigin.startsWith('chrome-extension://') || rawOrigin.startsWith('moz-extension://')) {
+    if (isAllowedExtensionOrigin(rawOrigin)) {
       corsOrigin = rawOrigin;
     } else {
       corsOrigin = resolveTrustedOrigin(incomingReq);
@@ -1745,7 +1852,9 @@ function serveStaticOptimized(req, res, fullPath) {
       'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
       'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',
       'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
-      'Content-Security-Policy': "frame-ancestors 'self'; base-uri 'self'; object-src 'none'"
+      'Content-Security-Policy': isHtml
+        ? "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://js.stripe.com https://pay.google.com https://www.googletagmanager.com https://bat.bing.com https://bat.bing.net https://connect.facebook.net https://www.redditstatic.com https://ads.openai.com https://bzrcdn.openai.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https://api.stripe.com https://www.google-analytics.com https://region1.google-analytics.com https://analytics.google.com https://stats.g.doubleclick.net https://api.country.is https://get.geojs.io https://bat.bing.com https://bat.bing.net https://www.facebook.com https://alb.reddit.com https://conversions-config.reddit.com https://ads.openai.com https://bzrcdn.openai.com; frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://pay.google.com; frame-ancestors 'self'; base-uri 'self'; object-src 'none'"
+        : "frame-ancestors 'self'; base-uri 'self'; object-src 'none'"
     };
 
     if (isStaticAsset) {
@@ -1763,6 +1872,8 @@ function serveStaticOptimized(req, res, fullPath) {
       'popup-mockups.html',
       'redesign-prototype.html',
       'extension-ux-prototype.html',
+      'store-creatives.html',
+      'welcome-concepts.html',
       'ios-app.html',
       'sweepr-vpn-concepts.html',
       'sweepr-vpn-mobile-redesign.html'
@@ -1770,6 +1881,9 @@ function serveStaticOptimized(req, res, fullPath) {
 
     if (isHtml) {
       const fileNameLower = path.basename(fullPath).toLowerCase();
+      if (fileNameLower === 'ios-app.html' || fileNameLower === 'login.html') {
+        headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, private';
+      }
       headers['Accept-CH'] = 'Sec-CH-UA-Platform, Sec-CH-UA-Mobile, Sec-CH-UA-Model, Sec-CH-UA-Arch';
       headers['Vary'] = headers['Vary'] ? `${headers['Vary']}, Sec-CH-UA-Platform` : 'Accept-Encoding, Sec-CH-UA-Platform';
       if (NON_INDEXABLE_PAGES.has(fileNameLower)) {
@@ -1806,7 +1920,7 @@ function serveStaticOptimized(req, res, fullPath) {
     // Native Brotli / Gzip / Deflate Compression for text & vector assets
     const acceptEncoding = String(req.headers['accept-encoding'] || '');
     if (COMPRESSIBLE_EXTS.has(ext)) {
-      headers['Vary'] = 'Accept-Encoding';
+      headers['Vary'] = headers['Vary'] ? (headers['Vary'].includes('Accept-Encoding') ? headers['Vary'] : headers['Vary'] + ', Accept-Encoding') : 'Accept-Encoding';
       if (/\bbr\b/i.test(acceptEncoding) && typeof zlib.createBrotliCompress === 'function') {
         headers['Content-Encoding'] = 'br';
         res.writeHead(200, headers);
@@ -1982,7 +2096,7 @@ function renderCheckoutSuccessPage(acc, isCancelled = false) {
         <span class="font-mono font-bold text-white bg-slate-800 px-2.5 py-1 rounded">${activationCode}</span>
       </div>
       <div class="text-xs text-slate-400 space-y-1 pt-2 border-t border-slate-800/80">
-        <div class="font-bold text-slate-200 mb-1">Unlocked on your account (Up to 3 Devices — Desktop or Mobile):</div>
+        <div class="font-bold text-slate-200 mb-1">Unlocked on your account (Up to 4 Devices — Desktop or Mobile):</div>
         <div>✓ YouTube &amp; Banner Ad Blocker + Auto Cookie Pop-Up Closer</div>
         <div>✓ Fake Online Shop &amp; Review Detector + Private Browsing Protection</div>
         ${hasRamTamer ? '<div class="text-emerald-400 font-semibold">✓ Total Tab &amp; RAM Tamer Speed Add-On Active</div>' : ''}
@@ -1990,7 +2104,7 @@ function renderCheckoutSuccessPage(acc, isCancelled = false) {
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-      <a href="/download" class="py-3.5 px-5 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white font-black text-sm shadow-lg no-underline">
+      <a href="/download?install=1" class="py-3.5 px-5 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white font-black text-sm shadow-lg no-underline">
         Install Browser Extension
       </a>
       <a href="/login" class="py-3.5 px-5 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-sm border border-slate-700 no-underline">
@@ -2022,7 +2136,7 @@ const server = http.createServer(async (req, res) => {
     if (req.method === 'OPTIONS') {
       const origin = String(req.headers.origin || '').trim().replace(/\/+$/, '');
       let corsOrigin = PUBLIC_URL;
-      if (origin.startsWith('chrome-extension://') || origin.startsWith('moz-extension://')) {
+      if (isAllowedExtensionOrigin(origin)) {
         corsOrigin = origin;
       } else {
         corsOrigin = resolveTrustedOrigin(req);
@@ -2041,7 +2155,7 @@ const server = http.createServer(async (req, res) => {
 
     // RFC 9116 Security.txt
     if ((req.method === 'GET' || req.method === 'HEAD') && (pathname === '/.well-known/security.txt' || pathname === '/security.txt')) {
-      const secPath = path.join(WEBSITE_DIR, '.well-known', 'security.txt');
+      const secPath = fs.existsSync(path.join(WEBSITE_DIR, '.well-known', 'security.txt')) ? path.join(WEBSITE_DIR, '.well-known', 'security.txt') : path.join(WEBSITE_DIR, 'security.txt');
       if (fs.existsSync(secPath)) {
         const content = fs.readFileSync(secPath, 'utf8');
         res.writeHead(200, {
@@ -2139,8 +2253,27 @@ const server = http.createServer(async (req, res) => {
     });
   }
 
+  let cachedDynamicDelta = { mtimeMs: 0, data: null };
+function getCachedDynamicDelta() {
+  const deltaPath = path.join(__dirname, 'extension', 'rules', 'dynamic_delta.json');
+  try {
+    if (fs.existsSync(deltaPath)) {
+      const st = fs.statSync(deltaPath);
+      if (cachedDynamicDelta.data && cachedDynamicDelta.mtimeMs === st.mtimeMs) {
+        return cachedDynamicDelta.data;
+      }
+      const parsed = JSON.parse(fs.readFileSync(deltaPath, 'utf8'));
+      if (parsed && typeof parsed === 'object') {
+        cachedDynamicDelta = { mtimeMs: st.mtimeMs, data: parsed };
+        return parsed;
+      }
+    }
+  } catch {}
+  return null;
+}
+
   // API -1b: Dynamic Filter Delta & Remote Feature-Flag Kill-Switch + Extension Version Gate Endpoint
-  const LATEST_EXTENSION_VERSION = String(process.env.LATEST_EXTENSION_VERSION || '1.1.7').trim();
+  const LATEST_EXTENSION_VERSION = String(process.env.LATEST_EXTENSION_VERSION || '1.2.1').trim();
   const MIN_EXTENSION_VERSION = String(process.env.MIN_EXTENSION_VERSION || '1.1.6').trim();
   const FORCE_EXTENSION_UPDATE = process.env.FORCE_EXTENSION_UPDATE === 'true';
   const compareSemver = (latestVer, currentVer) => {
@@ -2162,6 +2295,7 @@ const server = http.createServer(async (req, res) => {
   };
 
   if (req.method === 'GET' && (pathname === '/api/version' || pathname === '/v1/updates/latest.json')) {
+    if (!checkRateLimit(req, 'version_check', 120, 60000)) return sendJson(res, 429, { error: 'rate_limit_exceeded' });
     const currentVer = String(parsedUrl.searchParams.get('current_version') || '').trim();
     const updateAvailable = currentVer ? compareSemver(LATEST_EXTENSION_VERSION, currentVer) : false;
     const forceUpdate = currentVer
@@ -2184,6 +2318,7 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (req.method === 'GET' && pathname === '/api/filters/delta') {
+    if (!checkRateLimit(req, 'filters_delta', 120, 60000)) return sendJson(res, 429, { ok: false, error: 'rate_limit_exceeded' });
     const currentVer = String(parsedUrl.searchParams.get('current_version') || '').trim();
     const updateAvailable = currentVer ? compareSemver(LATEST_EXTENSION_VERSION, currentVer) : false;
     const forceUpdate = currentVer
@@ -2196,14 +2331,9 @@ const server = http.createServer(async (req, res) => {
       updateAvailable,
       storeUpdateUrl: `${PUBLIC_URL}/download`
     };
-    const deltaPath = path.join(__dirname, 'extension', 'rules', 'dynamic_delta.json');
-    if (fs.existsSync(deltaPath)) {
-      try {
-        const dynamicPayload = JSON.parse(fs.readFileSync(deltaPath, 'utf8'));
-        if (dynamicPayload && typeof dynamicPayload === 'object') {
-          return sendJson(res, 200, { ok: true, ...dynamicPayload, ...versionMeta });
-        }
-      } catch {}
+    const dynamicPayload = getCachedDynamicDelta();
+    if (dynamicPayload && typeof dynamicPayload === 'object') {
+      return sendJson(res, 200, { ok: true, ...dynamicPayload, ...versionMeta });
     }
     return sendJson(res, 200, {
       ok: true,
@@ -2237,7 +2367,6 @@ const server = http.createServer(async (req, res) => {
     const stripeConfigured = Boolean(STRIPE_SECRET_KEY);
     return sendJson(res, 200, {
       publishableKey: validPk,
-      stripeKeyId: STRIPE_API_KEY_ID,
       stripeConfigured,
       elementsEnabled: Boolean(stripeConfigured && validPk),
       country: localizedPricing.country,
@@ -2299,6 +2428,12 @@ const server = http.createServer(async (req, res) => {
           monthlyAmountPence: localizedPricing.ramTamerMonthlyAmount,
           monthlyFormatted: localizedPricing.ramTamerMonthlyFormatted
         }
+      },
+      adPixels: {
+        uetTagId: (process.env.MICROSOFT_UET_TAG_ID || '343283087').trim(),
+        metaPixelId: (process.env.META_PIXEL_ID || '910118314453383').trim(),
+        redditPixelId: (process.env.REDDIT_PIXEL_ID || 'a2_jy81fs9ouy2u').trim(),
+        openaiPixelId: (process.env.OPENAI_PIXEL_ID || 'DRfCjPsivgeyx2fLbkPzFy').trim()
       }
     });
   }
@@ -2388,8 +2523,13 @@ const server = http.createServer(async (req, res) => {
     const localizedPricing = resolvePricingForRequest(req, parsedUrl, body);
     const existingAcc = accountsByEmail.get(email);
     const wasAlreadyActive = Boolean(existingAcc && (existingAcc.status === 'active' || existingAcc.status === 'trialing'));
+    const canonicalEmail = canonicalizeEmailForDiscount(email);
     const eligibleForIntroDiscount =
-      applyDiscount && !wasAlreadyActive && !existingAcc?.introDiscountUsed && !usedIntroDiscountEmails.has(email);
+      applyDiscount &&
+      !wasAlreadyActive &&
+      !existingAcc?.introDiscountUsed &&
+      !usedIntroDiscountEmails.has(email) &&
+      !usedIntroDiscountEmails.has(canonicalEmail);
     const acc = upsertLocalAccount({
       email,
       name,
@@ -2471,7 +2611,9 @@ const server = http.createServer(async (req, res) => {
           metadata
         });
         customerId = customer.id;
-        acc.stripe_customer_id = customerId;
+        if (!wasAlreadyActive) {
+          acc.stripe_customer_id = customerId;
+        }
       }
 
       const isAnnual = plan === 'annual';
@@ -2605,7 +2747,11 @@ const server = http.createServer(async (req, res) => {
         throw subErr;
       }
 
-      acc.stripe_subscription_id = subscription.id;
+      if (!wasAlreadyActive) {
+        acc.stripe_subscription_id = subscription.id;
+      } else {
+        acc.pending_stripe_subscription_id = subscription.id;
+      }
       accountsBySubscriptionId.set(subscription.id, acc);
 
       const latestInvoice = subscription.latest_invoice;
@@ -2671,16 +2817,12 @@ const server = http.createServer(async (req, res) => {
         });
       }
 
-      // Test-mode server confirmation fallback if confirmOnServer is requested with a sk_test_ key
+      // Test-mode server confirmation fallback if confirmOnServer is requested with a sk_test_ key (tokenized PM only, no raw PAN)
       if (body.confirmOnServer && paymentIntent.livemode === false) {
-        const rawCard = typeof body.cardNumber === 'string' ? body.cardNumber.replace(/\D/g, '') : '';
-        const testPm = rawCard.endsWith('0002')
-          ? 'pm_card_chargeDeclined'
-          : rawCard.startsWith('5')
-          ? 'pm_card_mastercard'
-          : rawCard.startsWith('3')
-          ? 'pm_card_amex'
-          : 'pm_card_visa';
+        const testPm =
+          typeof body.testPaymentMethod === 'string' && /^pm_card_/.test(body.testPaymentMethod)
+            ? body.testPaymentMethod
+            : 'pm_card_visa';
 
         await stripeRequest('POST', `payment_intents/${encodeURIComponent(paymentIntent.id)}/confirm`, {
           payment_method: testPm,
@@ -2720,6 +2862,9 @@ const server = http.createServer(async (req, res) => {
     if (!isSameOriginWriteRequest(req)) {
       return sendJson(res, 403, { ok: false, error: 'cross_origin_forbidden' }, {}, req);
     }
+    if (!checkRateLimit(req, 'confirm_sub', 20, 60000)) {
+      return sendJson(res, 429, { error: 'rate_limit_exceeded' });
+    }
     const body = await readBody(req);
     if (body && body.__tooLarge) return sendJson(res, 413, { error: 'payload_too_large' });
     const subscriptionId = typeof body?.subscriptionId === 'string' ? body.subscriptionId.trim() : '';
@@ -2741,7 +2886,7 @@ const server = http.createServer(async (req, res) => {
 
       const metaAccountId = sub.metadata?.account_id || '';
       const sessionData = verifySessionCookie(req);
-      if (metaAccountId && accountId !== metaAccountId && sessionData?.sub !== metaAccountId) {
+      if (!metaAccountId || (accountId !== metaAccountId && sessionData?.sub !== metaAccountId)) {
         return sendJson(res, 403, { error: 'subscription_ownership_mismatch' });
       }
       const metaEmail = sub.metadata?.email || '';
@@ -2779,13 +2924,69 @@ const server = http.createServer(async (req, res) => {
         notes: `Stripe Live Subscription ${sub.id} (${acc.licenseKey})`
       });
 
-      reportToSweeprCrm('/v1/telemetry/event', {
-        event_name: 'purchase_completed',
-        category: 'funnel',
-        account_id: acc.crm_account_id || acc.id,
-        os: 'web',
-        properties: { plan: acc.plan, ramTamerAddon: acc.ramTamerAddon, licenseKey: acc.licenseKey, subscriptionId: sub.id }
-      });
+      const conversionValue = Number(((totalAmount || 5999) / 100).toFixed(2));
+      const conversionCurrency = String(sub.currency || 'gbp').toUpperCase();
+      const contentIds = [`deepblock_${acc.plan || 'annual'}`, ...(acc.ramTamerAddon ? ['ram_tamer'] : [])];
+
+      if (!checkOnly) {
+        reportToSweeprCrm('/v1/telemetry/event', {
+          event_name: 'purchase_completed',
+          category: 'funnel',
+          account_id: acc.crm_account_id || acc.id,
+          os: 'web',
+          properties: {
+            plan: acc.plan,
+            ramTamerAddon: acc.ramTamerAddon,
+            value: conversionValue,
+            currency: conversionCurrency,
+            contentIds,
+            licenseKey: acc.licenseKey,
+            subscriptionId: sub.id
+          }
+        });
+
+        // Non-blocking OpenAI Conversions API (ads.openai.com) server-side dispatch
+        const openAiCapiKey = (process.env.OPENAI_CONVERSIONS_API_KEY || '').trim();
+        const openAiPixelId = (process.env.OPENAI_PIXEL_ID || 'DRfCjPsivgeyx2fLbkPzFy').trim();
+        const openAiEndpoint = (process.env.OPENAI_CONVERSIONS_ENDPOINT || 'https://ads.openai.com/v1/conversions').trim();
+        if (openAiCapiKey && typeof fetch === 'function') {
+          const emailHash = acc.email
+            ? crypto.createHash('sha256').update(String(acc.email).trim().toLowerCase()).digest('hex')
+            : undefined;
+          fetch(openAiEndpoint, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${openAiCapiKey}`
+            },
+            body: JSON.stringify({
+              pixel_id: openAiPixelId,
+              data: [
+                {
+                  event_name: 'Purchase',
+                  event_time: Math.floor(Date.now() / 1000),
+                  event_id: sub.id,
+                  action_source: 'website',
+                  event_source_url: `${PUBLIC_URL}/order`,
+                  user_data: {
+                    em: emailHash ? [emailHash] : undefined,
+                    client_ip_address: getClientIp(req),
+                    client_user_agent: req.headers['user-agent'] || undefined
+                  },
+                  custom_data: {
+                    value: conversionValue,
+                    currency: conversionCurrency,
+                    plan: acc.plan,
+                    ram_tamer: Boolean(acc.ramTamerAddon),
+                    content_ids: contentIds,
+                    content_type: 'product'
+                  }
+                }
+              ]
+            })
+          }).catch(() => {});
+        }
+      }
 
       const sessionToken = signSessionCookie(acc.id, acc.email);
       const isHttps = PUBLIC_URL.startsWith('https://') || req.headers['x-forwarded-proto'] === 'https';
@@ -2795,10 +2996,16 @@ const server = http.createServer(async (req, res) => {
         {
           ok: true,
           status: sub.status,
+          subscriptionId: sub.id,
           accountId: acc.id,
           licenseKey: acc.licenseKey,
           activation_code: acc.activation_code,
           entitlements: acc.entitlements,
+          plan: acc.plan,
+          ramTamerAddon: Boolean(acc.ramTamerAddon),
+          conversionValue,
+          currency: conversionCurrency,
+          contentIds,
           redirect: `/checkout/success?web=1&subscription_id=${encodeURIComponent(subscriptionId)}&account_id=${encodeURIComponent(acc.id)}`
         },
         {
@@ -2809,6 +3016,89 @@ const server = http.createServer(async (req, res) => {
       console.error('[confirm-subscription] error:', err.message);
       return sendJson(res, 400, { error: err.message || 'Verification failed' });
     }
+  }
+
+  // API 2b-capi: OpenAI Conversions API & Multi-Platform Server-Side Purchase Relay
+  if (req.method === 'POST' && pathname === '/api/conversions/openai') {
+    if (!isSameOriginWriteRequest(req)) {
+      return sendJson(res, 403, { ok: false, error: 'cross_origin_forbidden' }, {}, req);
+    }
+    if (!checkRateLimit(req, 'capi_openai', 30, 60000)) {
+      return sendJson(res, 429, { error: 'rate_limit_exceeded' });
+    }
+    const body = await readBody(req);
+    if (body && body.__tooLarge) return sendJson(res, 413, { error: 'payload_too_large' });
+    const eventName = String(body?.event_name || 'Purchase').slice(0, 64);
+    const eventId = String(body?.event_id || `ord_${Date.now()}`).slice(0, 128);
+    const value = Number(body?.value) > 0 ? Number(Number(body.value).toFixed(2)) : 59.99;
+    const currency = String(body?.currency || 'GBP').toUpperCase().slice(0, 8);
+    const plan = String(body?.plan || 'annual').slice(0, 32);
+    const ramTamer = Boolean(body?.ram_tamer);
+    const contentIds = Array.isArray(body?.content_ids)
+      ? body.content_ids.slice(0, 5).map((x) => String(x).slice(0, 64))
+      : [`deepblock_${plan}`, ...(ramTamer ? ['ram_tamer'] : [])];
+
+    reportToSweeprCrm('/v1/telemetry/event', {
+      event_name: 'ad_conversion_dispatched',
+      category: 'marketing',
+      os: 'web',
+      properties: {
+        platforms: ['microsoft_uet', 'meta_pixel', 'reddit_pixel', 'openai_capi'],
+        event_name: eventName,
+        event_id: eventId,
+        value,
+        currency,
+        plan,
+        ramTamerAddon: ramTamer,
+        contentIds
+      }
+    });
+
+    const openAiCapiKey = (process.env.OPENAI_CONVERSIONS_API_KEY || '').trim();
+    const openAiPixelId = (process.env.OPENAI_PIXEL_ID || 'DRfCjPsivgeyx2fLbkPzFy').trim();
+    const openAiEndpoint = (process.env.OPENAI_CONVERSIONS_ENDPOINT || 'https://ads.openai.com/v1/conversions').trim();
+    if (openAiCapiKey && typeof fetch === 'function') {
+      fetch(openAiEndpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${openAiCapiKey}`
+        },
+        body: JSON.stringify({
+          pixel_id: openAiPixelId,
+          data: [
+            {
+              event_name: eventName,
+              event_time: Math.floor(Date.now() / 1000),
+              event_id: eventId,
+              action_source: 'website',
+              event_source_url: `${PUBLIC_URL}/order`,
+              user_data: {
+                client_ip_address: getClientIp(req),
+                client_user_agent: req.headers['user-agent'] || undefined
+              },
+              custom_data: {
+                value,
+                currency,
+                plan,
+                ram_tamer: ramTamer,
+                content_ids: contentIds,
+                content_type: 'product'
+              }
+            }
+          ]
+        })
+      }).catch(() => {});
+    }
+
+    return sendJson(res, 200, {
+      ok: true,
+      event_id: eventId,
+      value,
+      currency,
+      plan,
+      ram_tamer: ramTamer
+    });
   }
 
   // API 2c: Legacy /api/web-checkout endpoint (Disabled in live production unless ALLOW_DEV_MOCK_CHECKOUT=1)
@@ -2880,15 +3170,8 @@ const server = http.createServer(async (req, res) => {
       return sendJson(res, 400, { error: 'invalid_json' });
     }
 
-    if (event.id) {
-      if (processedWebhookEventIds.has(event.id)) {
-        return sendJson(res, 200, { received: true, deduplicated: true });
-      }
-      if (processedWebhookEventIds.size >= 5000) {
-        const oldest = processedWebhookEventIds.values().next().value;
-        if (oldest) processedWebhookEventIds.delete(oldest);
-      }
-      processedWebhookEventIds.add(event.id);
+    if (event.id && processedWebhookEventIds.has(event.id)) {
+      return sendJson(res, 200, { received: true, deduplicated: true });
     }
 
     try {
@@ -2971,6 +3254,7 @@ const server = http.createServer(async (req, res) => {
             enqueueCrmDlq({ type: 'raw_webhook', rawBody, sig });
           });
       }
+      if (event.id) markWebhookEventProcessed(event.id);
     } catch (err) {
       console.error('[webhooks/stripe] handler error:', err.message);
     }
@@ -2980,6 +3264,9 @@ const server = http.createServer(async (req, res) => {
 
   // Checkout Success & Cancel Pages
   if (req.method === 'GET' && pathname === '/checkout/success') {
+    if (!checkRateLimit(req, 'checkout_success', 30, 60000)) {
+      return sendErrorResponse(res, 429, '429 Too Many Requests');
+    }
     let subscriptionId = (parsedUrl.searchParams.get('subscription_id') || '').trim();
     const checkoutSessionId = (parsedUrl.searchParams.get('session_id') || '').trim();
     const accountId = (parsedUrl.searchParams.get('account_id') || '').trim();
@@ -3011,7 +3298,7 @@ const server = http.createServer(async (req, res) => {
           return res.end();
         }
         const metaAccountId = sub.metadata?.account_id || '';
-        if (metaAccountId && accountId !== metaAccountId && sessionData?.sub !== metaAccountId) {
+        if (!metaAccountId || (accountId !== metaAccountId && sessionData?.sub !== metaAccountId)) {
           res.writeHead(302, { Location: '/login?error=verify_required' });
           return res.end();
         }
@@ -3487,12 +3774,13 @@ const server = http.createServer(async (req, res) => {
       }
     } catch {}
 
-    // 2. Fallback to local active account verification when CRM is unreachable or matches local activation key
+    // 2. Fallback to local active account verification when CRM is unreachable or matches high-entropy license key
     if (
       !verifiedData &&
       localAcc &&
       (localAcc.status === 'active' || localAcc.status === 'trialing') &&
-      verifyLocalAccountKeyOrCode(localAcc, code)
+      (!crmReachable || HIGH_ENTROPY_LICENSE_KEY_RE.test(code)) &&
+      verifyLocalAccountKeyOrCode(localAcc, code, { allowShortCode: !localAcc.isSeededAccount })
     ) {
       verifiedData = {
         ok: true,
@@ -3529,6 +3817,23 @@ const server = http.createServer(async (req, res) => {
       },
       {
         'Set-Cookie': `sweepr_session=${sessionToken}; Path=/; HttpOnly; SameSite=Lax${isHttps ? '; Secure' : ''}; Max-Age=${86400 * 30}`
+      }
+    );
+  }
+
+  // API 3b-1b: Customer Portal Logout & Session Revocation
+  if (req.method === 'POST' && (pathname === '/api/logout' || pathname === '/api/auth/logout')) {
+    if (!isSameOriginWriteRequest(req)) {
+      return sendJson(res, 403, { ok: false, error: 'cross_origin_forbidden' }, {}, req);
+    }
+    revokeSessionCookie(req);
+    const isHttps = PUBLIC_URL.startsWith('https://') || req.headers['x-forwarded-proto'] === 'https';
+    return sendJson(
+      res,
+      200,
+      { ok: true },
+      {
+        'Set-Cookie': `sweepr_session=; Path=/; HttpOnly; SameSite=Lax${isHttps ? '; Secure' : ''}; Max-Age=0`
       }
     );
   }
@@ -3649,7 +3954,7 @@ const server = http.createServer(async (req, res) => {
       {
         ok: true,
         account_id: record.id,
-        email: record.email,
+        email: isEmail ? record.email : maskEmail(record.email),
         status: record.status,
         plan: record.plan,
         activation_code: record.activation_code,
@@ -3737,37 +4042,93 @@ const server = http.createServer(async (req, res) => {
   }
 
   // ==========================================================================
-  // API 3c: Unified 3-Device Management & QR Code Device Linking (Flow A & B)
+  // API 3c: Unified 4-Device Management & QR Code Device Linking (Flow A & B)
   // ==========================================================================
-  function resolveAccountFromSessionOrCredentials(reqObj, bodyObj = {}) {
+  async function resolveAccountFromSessionOrCredentials(reqObj, bodyObj = {}) {
     const sess = verifySessionCookie(reqObj);
     if (sess && sess.sub) {
-      const bySub = accountsById.get(sess.sub) || (sess.email ? accountsByEmail.get(String(sess.email).toLowerCase()) : null);
+      let bySub = accountsById.get(sess.sub) || (sess.email ? accountsByEmail.get(String(sess.email).toLowerCase()) : null);
+      if (!bySub && sess.email) {
+        try {
+          const crmLookup = await crm.portalLookup(String(sess.email).toLowerCase(), '');
+          if (crmLookup && crmLookup.ok && crmLookup.data?.ok) {
+            const d = crmLookup.data;
+            bySub = upsertLocalAccount({
+              email: String(sess.email).toLowerCase(),
+              plan: d.plan || 'annual',
+              ramTamerAddon: Boolean(d.ramTamerAddon),
+              status: d.status || 'active',
+              ...(d.activation_code ? { activationCode: String(d.activation_code) } : {}),
+              ...(d.licenseKey || d.license_key ? { licenseKey: String(d.licenseKey || d.license_key) } : {})
+            });
+          }
+        } catch {}
+      }
       if (bySub && (bySub.status === 'active' || bySub.status === 'trialing')) {
         return bySub;
       }
     }
     const rawLookup = String(bodyObj?.lookup || bodyObj?.email || '').trim().toLowerCase();
     const keyOrCode = String(bodyObj?.key || bodyObj?.licenseKey || bodyObj?.code || bodyObj?.otp || '').trim();
+    const targetIdentifier = rawLookup || keyOrCode.toLowerCase();
+    if (!targetIdentifier) return null;
+    if (!checkRateLimit(reqObj, `portal_target:${targetIdentifier}`, 8, 900000)) {
+      return null;
+    }
     if (rawLookup && rawLookup.includes('@')) {
-      const acc = accountsByEmail.get(rawLookup);
-      if (acc && (acc.status === 'active' || acc.status === 'trialing') && (!keyOrCode || verifyLocalAccountKeyOrCode(acc, keyOrCode))) {
-        if (keyOrCode || (sess && sess.email === rawLookup)) return acc;
+      if (!keyOrCode && !(sess && sess.email === rawLookup)) {
+        return null;
       }
+      let acc = accountsByEmail.get(rawLookup);
+      if (acc && (acc.status === 'active' || acc.status === 'trialing') && verifyLocalAccountKeyOrCode(acc, keyOrCode)) {
+        return acc;
+      }
+      try {
+        const crmLookup = await crm.portalLookup(rawLookup, keyOrCode);
+        if (crmLookup && crmLookup.ok && crmLookup.data?.ok) {
+          const d = crmLookup.data;
+          acc = upsertLocalAccount({
+            email: rawLookup,
+            plan: d.plan || 'annual',
+            ramTamerAddon: Boolean(d.ramTamerAddon),
+            status: d.status || 'active',
+            ...(d.activation_code ? { activationCode: String(d.activation_code) } : {}),
+            ...(d.licenseKey || d.license_key ? { licenseKey: String(d.licenseKey || d.license_key) } : {})
+          });
+          return acc;
+        }
+      } catch {}
+      return null;
     }
     const candidateKey = keyOrCode || rawLookup;
-    if (candidateKey) {
-      const acc = licenses.get(candidateKey) || licenses.get(candidateKey.toUpperCase());
+    if (candidateKey && HIGH_ENTROPY_LICENSE_KEY_RE.test(candidateKey)) {
+      let acc = licenses.get(candidateKey) || licenses.get(candidateKey.toUpperCase());
       if (acc && (acc.status === 'active' || acc.status === 'trialing')) {
         return acc;
       }
+      try {
+        const crmVerify = await crm.verifyKey(candidateKey);
+        if (crmVerify && crmVerify.ok && crmVerify.data?.valid) {
+          const d = crmVerify.data;
+          acc = upsertLocalAccount({
+            email: d.email || `${d.account_id || 'pro'}@crm.sweeprdeepblock.com`,
+            plan: d.plan || 'annual',
+            ramTamerAddon: Boolean(d.ramTamerAddon),
+            status: d.status || 'active',
+            ...(d.activation_code ? { activationCode: String(d.activation_code) } : {}),
+            licenseKey: String(d.licenseKey || d.license_key || candidateKey.toUpperCase())
+          });
+          if (d.account_id) acc.crm_account_id = d.account_id;
+          return acc;
+        }
+      } catch {}
     }
     return null;
   }
 
-  // Self-Service Device Slot Removal (frees a slot when at 3/3 devices)
+  // Self-Service Device Slot Removal (frees a slot when at 4/4 devices)
   if (req.method === 'POST' && pathname === '/api/portal/devices/remove') {
-    if (!isSameOriginWriteRequest(req)) {
+    if (!isSameOriginWriteRequest(req, { allowExtension: true })) {
       return sendJson(res, 403, { ok: false, error: 'cross_origin_forbidden' }, {}, req);
     }
     if (!checkRateLimit(req, 'portal_device_remove', 20, 60000)) {
@@ -3779,11 +4140,15 @@ const server = http.createServer(async (req, res) => {
     if (!deviceIdToRemove) {
       return sendJson(res, 400, { ok: false, error: 'device_id_required' });
     }
-    const acc = resolveAccountFromSessionOrCredentials(req, body || {});
+    const acc = await resolveAccountFromSessionOrCredentials(req, body || {});
     if (!acc) {
       return sendJson(res, 401, { ok: false, error: 'unauthorized' });
     }
     removeLocalDeviceForAccount(acc, deviceIdToRemove);
+    if (acc.crm_account_id) {
+      crm.revokeDevice(acc.crm_account_id, deviceIdToRemove).catch(() => {});
+    }
+    syncSubscriptionWithSweeprCrm(acc, { notes: 'Device removed: ' + deviceIdToRemove }).catch(() => {});
     return sendJson(res, 200, {
       ok: true,
       removed: deviceIdToRemove,
@@ -3796,7 +4161,7 @@ const server = http.createServer(async (req, res) => {
   // Flow A1: Generate 120-Second Single-Use QR Pairing Token (from Portal or Activated Extension)
   if (req.method === 'POST' && pathname === '/api/device-link/create-token') {
     cleanupExpiredQrStates();
-    if (!isSameOriginWriteRequest(req)) {
+    if (!isSameOriginWriteRequest(req, { allowExtension: true })) {
       return sendJson(res, 403, { ok: false, error: 'cross_origin_forbidden' }, {}, req);
     }
     if (!checkRateLimit(req, 'qr_create_token', 15, 60000)) {
@@ -3804,7 +4169,7 @@ const server = http.createServer(async (req, res) => {
     }
     const body = await readBody(req);
     if (body && body.__tooLarge) return sendJson(res, 413, { ok: false, error: 'payload_too_large' });
-    const acc = resolveAccountFromSessionOrCredentials(req, body || {});
+    const acc = await resolveAccountFromSessionOrCredentials(req, body || {});
     if (!acc) {
       return sendJson(res, 401, { ok: false, error: 'active_subscription_required' });
     }
@@ -3848,9 +4213,12 @@ const server = http.createServer(async (req, res) => {
     });
   }
 
-  // Flow A2: Redeem 120-Second Single-Use QR Pairing Token
-  if (req.method === 'POST' && pathname === '/api/device-link/redeem') {
+  // Flow A2: Redeem 120-Second Single-Use QR Pairing Token (/api/device-link/redeem & /api/device-link/redeem-token)
+  if (req.method === 'POST' && (pathname === '/api/device-link/redeem' || pathname === '/api/device-link/redeem-token')) {
     cleanupExpiredQrStates();
+    if (!isSameOriginWriteRequest(req, { allowExtension: true })) {
+      return sendJson(res, 403, { ok: false, error: 'cross_origin_forbidden' }, {}, req);
+    }
     if (!checkRateLimit(req, 'qr_redeem', 15, 60000)) {
       return sendJson(res, 429, { ok: false, error: 'rate_limit_exceeded' });
     }
@@ -3873,6 +4241,21 @@ const server = http.createServer(async (req, res) => {
     if (!acc || (acc.status !== 'active' && acc.status !== 'trialing')) {
       return sendJson(res, 403, { ok: false, error: 'subscription_inactive' });
     }
+    if (acc.licenseKey) {
+      try {
+        const crmSeat = await crm.verifyKey(acc.licenseKey, deviceId);
+        if (crmSeat && crmSeat.status === 403 && crmSeat.data?.error === 'device_limit_reached') {
+          return sendJson(res, 403, {
+            ok: false,
+            error: 'device_limit_reached',
+            message: crmSeat.data.message || `Maximum of ${MAX_DEVICES_PER_LICENSE} active devices reached. Remove a device in your Customer Portal first.`,
+            devices_used: MAX_DEVICES_PER_LICENSE,
+            devices_max: MAX_DEVICES_PER_LICENSE,
+            devices: listAccountDevices(acc)
+          });
+        }
+      } catch {}
+    }
     const seatCheck = registerLocalDeviceForAccount(acc, deviceId, { deviceName, platform });
     if (!seatCheck.ok) {
       return sendJson(res, 403, {
@@ -3887,6 +4270,7 @@ const server = http.createServer(async (req, res) => {
     row.redeemedAt = Date.now();
     row.redeemedByDeviceId = deviceId;
 
+    const isExtCaller = isAllowedExtensionOrigin(req.headers.origin || '');
     const sessionToken = signSessionCookie(acc.id, acc.email || '');
     const isHttps = PUBLIC_URL.startsWith('https://') || req.headers['x-forwarded-proto'] === 'https';
     return sendJson(
@@ -3897,7 +4281,7 @@ const server = http.createServer(async (req, res) => {
         valid: true,
         project_id: 'deepblock',
         account_id: acc.id,
-        email: acc.email,
+        email: maskEmail(acc.email),
         status: acc.status,
         plan: acc.plan,
         activation_code: acc.activation_code,
@@ -3908,15 +4292,20 @@ const server = http.createServer(async (req, res) => {
         devices_max: MAX_DEVICES_PER_LICENSE,
         devices: listAccountDevices(acc)
       },
-      {
-        'Set-Cookie': `sweepr_session=${sessionToken}; Path=/; HttpOnly; SameSite=Lax${isHttps ? '; Secure' : ''}; Max-Age=${86400 * 30}`
-      }
+      isExtCaller
+        ? {}
+        : {
+            'Set-Cookie': `sweepr_session=${sessionToken}; Path=/; HttpOnly; SameSite=Lax${isHttps ? '; Secure' : ''}; Max-Age=${86400 * 30}`
+          }
     );
   }
 
   // Flow B1: Start Unactivated Extension / Browser QR Challenge (Scan with Phone to Unlock)
   if (req.method === 'POST' && pathname === '/api/device-link/challenge') {
     cleanupExpiredQrStates();
+    if (!isSameOriginWriteRequest(req, { allowExtension: true })) {
+      return sendJson(res, 403, { ok: false, error: 'cross_origin_forbidden' }, {}, req);
+    }
     if (!checkRateLimit(req, 'qr_challenge', 20, 60000)) {
       return sendJson(res, 429, { ok: false, error: 'rate_limit_exceeded' });
     }
@@ -4001,7 +4390,7 @@ const server = http.createServer(async (req, res) => {
         valid: true,
         project_id: 'deepblock',
         account_id: acc.id,
-        email: acc.email,
+        email: maskEmail(acc.email),
         activation_code: acc.activation_code,
         licenseKey: acc.licenseKey,
         plan: acc.plan,
@@ -4034,13 +4423,28 @@ const server = http.createServer(async (req, res) => {
     if (!ch || Date.now() > ch.expiresAt || ch.status !== 'pending') {
       return sendJson(res, 404, { ok: false, error: 'challenge_expired_or_already_approved' });
     }
-    const acc = resolveAccountFromSessionOrCredentials(req, body || {});
+    const acc = await resolveAccountFromSessionOrCredentials(req, body || {});
     if (!acc) {
       return sendJson(res, 401, {
         ok: false,
         error: 'authentication_required',
         message: 'Please enter your Account Email and 6-digit Activation Code (or License Key) to approve this device.'
       });
+    }
+    if (acc.licenseKey) {
+      try {
+        const crmSeat = await crm.verifyKey(acc.licenseKey, ch.deviceId);
+        if (crmSeat && crmSeat.status === 403 && crmSeat.data?.error === 'device_limit_reached') {
+          return sendJson(res, 403, {
+            ok: false,
+            error: 'device_limit_reached',
+            message: crmSeat.data.message || `Maximum of ${MAX_DEVICES_PER_LICENSE} active devices reached. Remove a device below to approve ${ch.deviceName}.`,
+            devices_used: MAX_DEVICES_PER_LICENSE,
+            devices_max: MAX_DEVICES_PER_LICENSE,
+            devices: listAccountDevices(acc)
+          });
+        }
+      } catch {}
     }
     const seatCheck = registerLocalDeviceForAccount(acc, ch.deviceId, {
       deviceName: ch.deviceName,
@@ -4297,7 +4701,7 @@ const server = http.createServer(async (req, res) => {
 
   // API 4: Customer Support Ticket Submission -> Central CRM
   if (req.method === 'POST' && (pathname === '/api/support' || pathname === '/api/support-ticket')) {
-    if (!isSameOriginWriteRequest(req)) {
+    if (!isSameOriginWriteRequest(req, { allowExtension: true })) {
       return sendJson(res, 403, { ok: false, error: 'cross_origin_forbidden' });
     }
     if (!checkRateLimit(req, 'support', 10, 60000)) {
@@ -4331,7 +4735,7 @@ const server = http.createServer(async (req, res) => {
 
   // API 5: Extension Telemetry & Funnel Events -> Central CRM
   if (req.method === 'POST' && pathname === '/api/telemetry') {
-    if (!isSameOriginWriteRequest(req)) {
+    if (!isSameOriginWriteRequest(req, { allowExtension: true })) {
       return sendJson(res, 403, { ok: false, error: 'cross_origin_forbidden' }, {}, req);
     }
     if (!checkRateLimit(req, 'telemetry', 60, 60000)) {
@@ -4341,6 +4745,20 @@ const server = http.createServer(async (req, res) => {
     if (data && data.__tooLarge) return sendJson(res, 413, { ok: false, error: 'payload_too_large' });
     if (!data || (!data.event_name && !data.event)) {
       return sendJson(res, 400, { ok: false, error: 'event_name_required' });
+    }
+    let safeProps = {};
+    if (data.properties && typeof data.properties === 'object' && !Array.isArray(data.properties)) {
+      try {
+        const rawJson = JSON.stringify(data.properties);
+        if (rawJson.length <= 2048) {
+          const parsedProps = JSON.parse(rawJson);
+          for (const [k, v] of Object.entries(parsedProps)) {
+            if (k !== '__proto__' && k !== 'constructor' && k !== 'prototype') {
+              safeProps[k] = v;
+            }
+          }
+        }
+      } catch {}
     }
     const crmRes = await requestSweeprCrm('/v1/telemetry/event', {
       method: 'POST',
@@ -4352,10 +4770,29 @@ const server = http.createServer(async (req, res) => {
         device_id: typeof data.device_id === 'string' ? data.device_id.slice(0, 64) : undefined,
         os: typeof data.os === 'string' ? data.os.slice(0, 64) : 'browser_extension',
         app_version: typeof data.app_version === 'string' ? data.app_version.slice(0, 32) : '1.0.0',
-        properties: data.properties && typeof data.properties === 'object' ? data.properties : {}
+        properties: safeProps
       }
     });
     return sendJson(res, 200, crmRes.data);
+  }
+
+  function hasBlockedSitesAdminAuth(req) {
+    const authKey = String(req.headers['x-sweepr-api-key'] || req.headers['x-crm-api-key'] || '').trim();
+    const basicAuth = String(req.headers.authorization || '').trim();
+    const adminSecret = SWEEPR_CRM_API_KEY || CRM_ADMIN_PASSWORD || (process.env.ADMIN_API_KEY || '').trim();
+    if (authKey && adminSecret && timingSafeStringMatch(authKey, adminSecret)) {
+      return true;
+    }
+    if (basicAuth.startsWith('Basic ') && adminSecret) {
+      try {
+        const creds = Buffer.from(basicAuth.slice(6), 'base64').toString('utf8');
+        const pass = creds.split(':')[1] || '';
+        if (pass && timingSafeStringMatch(pass, adminSecret)) {
+          return true;
+        }
+      } catch {}
+    }
+    return false;
   }
 
   // API 6: Deepblock Verified Blocked Sites Registry & Automation Deduplication API
@@ -4365,6 +4802,7 @@ const server = http.createServer(async (req, res) => {
     pathname === '/v1/deepblock/blocked-sites'
   ) {
     if (req.method === 'GET') {
+      if (!checkRateLimit(req, 'blocked_sites_get', 60, 60000)) return sendJson(res, 429, { error: 'rate_limit_exceeded' });
       const checkQuery = (
         parsedUrl.searchParams.get('domain') ||
         parsedUrl.searchParams.get('url') ||
@@ -4430,6 +4868,8 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (req.method === 'POST') {
+      if (!checkRateLimit(req, 'blocked_sites_write', 30, 60000)) return sendJson(res, 429, { ok: false, error: 'rate_limit_exceeded' });
+      if (!hasBlockedSitesAdminAuth(req)) return sendJson(res, 401, { ok: false, error: 'unauthorized', message: 'Administrative authentication required.' });
       const body = await readBody(req);
       if (body && body.__tooLarge) return sendJson(res, 413, { ok: false, error: 'payload_too_large' });
       const batch = Array.isArray(body)
@@ -4457,6 +4897,8 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (req.method === 'DELETE') {
+      if (!checkRateLimit(req, 'blocked_sites_write', 30, 60000)) return sendJson(res, 429, { ok: false, error: 'rate_limit_exceeded' });
+      if (!hasBlockedSitesAdminAuth(req)) return sendJson(res, 401, { ok: false, error: 'unauthorized', message: 'Administrative authentication required.' });
       const dom = normalizeSiteDomain(parsedUrl.searchParams.get('domain') || parsedUrl.searchParams.get('url') || '');
       if (!dom) return sendJson(res, 400, { ok: false, error: 'domain_required' });
       const deleted = deepblockBlockedSites.delete(dom);
@@ -4470,7 +4912,7 @@ const server = http.createServer(async (req, res) => {
     return res.end();
   }
   if ((req.method === 'GET' || req.method === 'HEAD') && parsedUrl.pathname.length > 1 && /[).,\]]+$/.test(parsedUrl.pathname)) {
-    const cleanTarget = (parsedUrl.pathname.replace(/[).,\]]+$/, '') || '/') + (parsedUrl.search || '');
+    const cleanTarget = ((parsedUrl.pathname.replace(/[).,\]]+$/, '') || '/').replace(/^\/+/, '/')) + (parsedUrl.search || '');
     res.writeHead(301, { Location: cleanTarget, 'Cache-Control': 'public, max-age=604800', 'X-Content-Type-Options': 'nosniff' });
     return res.end();
   }
@@ -4484,7 +4926,7 @@ const server = http.createServer(async (req, res) => {
   }
   // 301 Canonical Redirect 1: Trailing slash normalization (e.g. /pricing/ -> /pricing)
   if ((req.method === 'GET' || req.method === 'HEAD') && parsedUrl.pathname.length > 1 && parsedUrl.pathname.endsWith('/')) {
-    const cleanPath = parsedUrl.pathname.replace(/\/+$/, '') + (parsedUrl.search || '');
+    const cleanPath = (parsedUrl.pathname.replace(/\/+$/, '') || '/').replace(/^\/+/, '/') + (parsedUrl.search || '');
     res.writeHead(301, {
       Location: cleanPath,
       'Cache-Control': 'public, max-age=604800, stale-while-revalidate=2592000',
@@ -4496,7 +4938,7 @@ const server = http.createServer(async (req, res) => {
 
   // 301 Canonical Redirect 2: .html extension stripping to canonical clean URLs
   if ((req.method === 'GET' || req.method === 'HEAD') && parsedUrl.pathname.endsWith('.html')) {
-    const cleanPath = (parsedUrl.pathname === '/index.html' ? '/' : parsedUrl.pathname.slice(0, -5)) + (parsedUrl.search || '');
+    const cleanPath = (parsedUrl.pathname === '/index.html' ? '/' : parsedUrl.pathname.slice(0, -5)).replace(/^\/+/, '/') + (parsedUrl.search || '');
     res.writeHead(301, {
       Location: cleanPath,
       'Cache-Control': 'public, max-age=604800, stale-while-revalidate=2592000',
@@ -4529,15 +4971,99 @@ const server = http.createServer(async (req, res) => {
     }).catch(() => {});
   }
   let candidateRel = CLEAN_ROUTES[pathname];
+  const CHROME_WEBSTORE_URL =
+    process.env.CHROME_WEBSTORE_URL ||
+    'https://chromewebstore.google.com/detail/sweepr-deepblock-ad-cooki/bkdfhdgmglfancgpkcbdceinfdlccmpc';
+  const FIREFOX_AMO_URL =
+    process.env.FIREFOX_AMO_URL ||
+    'https://addons.mozilla.org/firefox/addon/sweepr-deepblock/';
+
+  if (req.method === 'GET' && (pathname === '/chrome' || pathname === '/cws')) {
+    res.writeHead(302, {
+      Location: CHROME_WEBSTORE_URL,
+      'Cache-Control': 'no-store, no-cache, must-revalidate'
+    });
+    return res.end();
+  }
+
+  if (req.method === 'GET' && (pathname === '/firefox' || pathname === '/amo')) {
+    res.writeHead(302, {
+      Location: FIREFOX_AMO_URL,
+      'Cache-Control': 'no-store, no-cache, must-revalidate'
+    });
+    return res.end();
+  }
+
   if (pathname === '/download') {
     const reqPlat = (parsedUrl.searchParams.get('platform') || '').toLowerCase();
+    const reqStore = (parsedUrl.searchParams.get('store') || '').toLowerCase();
+    const isAutoInstall =
+      parsedUrl.searchParams.get('install') === '1' ||
+      parsedUrl.searchParams.get('direct') === '1' ||
+      reqStore === 'chrome' ||
+      reqStore === 'firefox';
     const uaLower = String(req.headers['user-agent'] || '').toLowerCase();
     const chPlat = String(req.headers['sec-ch-ua-platform'] || '').toLowerCase();
     const chMob = String(req.headers['sec-ch-ua-mobile'] || '').toLowerCase();
-    if (reqPlat === 'ios' || /iphone|ipad|ipod/.test(uaLower) || chPlat.includes('ios')) {
+    const isIosReq = reqPlat === 'ios' || /iphone|ipad|ipod/.test(uaLower) || chPlat.includes('ios');
+    const isNonSafariIos = isIosReq && /crios|fxios|edgios|opios|instagram|fban|fbav|tiktok|line\//i.test(uaLower);
+    const isFirefoxBrowser = !isIosReq && !reqPlat && /firefox\//i.test(uaLower);
+    const isAndroidReq =
+      reqPlat === 'android' ||
+      reqPlat === 'apk' ||
+      (!isFirefoxBrowser &&
+        (uaLower.includes('android') ||
+          chPlat.includes('android') ||
+          (chMob === '?1' && uaLower.includes('linux')) ||
+          /mobile|iemobile|opera mini/.test(uaLower)));
+    const isDesktopChromium =
+      !isIosReq &&
+      !isAndroidReq &&
+      !isFirefoxBrowser &&
+      !reqPlat &&
+      /chrome\/|chromium\//i.test(uaLower) &&
+      !/edg\/|firefox\/|fxios\//i.test(uaLower);
+
+    if (isIosReq && (!isNonSafariIos || reqPlat === 'ios')) {
       candidateRel = 'sweepr-deepblock.mobileconfig';
-    } else if (reqPlat === 'android' || reqPlat === 'apk' || uaLower.includes('android') || chPlat.includes('android') || (chMob === '?1' && uaLower.includes('linux')) || /mobile|iemobile|opera mini/.test(uaLower)) {
+    } else if (req.method === 'GET' && (reqStore === 'firefox' || (isAutoInstall && isFirefoxBrowser))) {
+      if (!BOT_UA_RE.test(uaLower)) {
+        requestSweeprCrm('/v1/telemetry/event', {
+          method: 'POST',
+          body: {
+            project_id: 'deepblock',
+            event_name: 'installer_downloaded',
+            category: 'funnel',
+            os: 'firefox_amo',
+            properties: { path: pathname + parsedUrl.search, referrer: String(req.headers.referer || '').slice(0, 200) }
+          }
+        }).catch(() => {});
+      }
+      res.writeHead(302, {
+        Location: FIREFOX_AMO_URL,
+        'Cache-Control': 'no-store, no-cache, must-revalidate'
+      });
+      return res.end();
+    } else if (isAndroidReq) {
       candidateRel = 'SWEEPRDeepblock.apk';
+    } else if (req.method === 'GET' && (reqStore === 'chrome' || (isAutoInstall && isDesktopChromium))) {
+      if (!BOT_UA_RE.test(uaLower)) {
+        requestSweeprCrm('/v1/telemetry/event', {
+          method: 'POST',
+          body: {
+            project_id: 'deepblock',
+            event_name: 'installer_downloaded',
+            category: 'funnel',
+            os: 'chrome_webstore',
+            properties: { path: pathname + parsedUrl.search, referrer: String(req.headers.referer || '').slice(0, 200) }
+          }
+        }).catch(() => {});
+      }
+      res.writeHead(302, {
+        Location: CHROME_WEBSTORE_URL,
+        'Cache-Control': 'no-store, no-cache, must-revalidate'
+      });
+      return res.end();
     }
   }
   if (!candidateRel) {
@@ -4593,8 +5119,16 @@ const server = http.createServer(async (req, res) => {
     '.yml',
     '.yaml',
     '.sql',
+    '.sqlite',
+    '.sqlite3',
     '.db',
-    '.lock'
+    '.lock',
+    '.pem',
+    '.crt',
+    '.key',
+    '.pfx',
+    '.cfg',
+    '.ini'
   ]);
 
   const baseName = path.basename(fullPath).toLowerCase();
@@ -4618,6 +5152,7 @@ const server = http.createServer(async (req, res) => {
     (req.method === 'GET' || req.method === 'HEAD') &&
     ext === '.html' &&
     baseName !== 'order.html' &&
+    baseName !== 'store-creatives.html' &&
     !BOT_UA_RE.test(ua) &&
     /(?:^|;\s*)sweepr_order_draft_active=1(?:;|$)/.test(String(req.headers.cookie || ''))
   ) {

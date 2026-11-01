@@ -1,0 +1,18 @@
+{
+  "capturedAt": "2026-10-31T07:06:23.691Z",
+  "targetUrl": "https://bosswire.tv",
+  "domain": "bosswire.tv",
+  "leak": {
+    "adTypeDetected": "Script",
+    "offendingArtifact": "https://web.adblade.com/js/ads/show.js",
+    "offendingHost": "web.adblade.com",
+    "resourceTypes": [
+      "script",
+      "xmlhttprequest",
+      "sub_frame"
+    ],
+    "reason": "Unblocked third-party script request to web.adblade.com (HTTP 200 OK) on bosswire.tv"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://web.adblade.com/js/ads/show.js\"></script>"
+}

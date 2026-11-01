@@ -1,0 +1,14 @@
+{
+  "capturedAt": "2026-10-28T00:18:42.817Z",
+  "targetUrl": "https://cloudcentral.nl",
+  "domain": "cloudcentral.nl",
+  "leak": {
+    "adTypeDetected": "DOM",
+    "offendingArtifact": ".invibes-infeed-ad",
+    "selector": ".invibes-infeed-ad",
+    "dimensions": "300x250",
+    "reason": "Unblocked 300x250 DOM ad slot (.invibes-infeed-ad) detected on cloudcentral.nl"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<div class=\"invibes-infeed-ad\" style=\"width:300px;height:250px;display:block\" aria-label=\"Sponsored Advertisement\"></div>"
+}

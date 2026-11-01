@@ -1,0 +1,17 @@
+{
+  "capturedAt": "2026-10-29T00:05:29.664Z",
+  "targetUrl": "https://recipehub.co.uk",
+  "domain": "recipehub.co.uk",
+  "leak": {
+    "adTypeDetected": "Script",
+    "offendingArtifact": "https://ads.sublime.xyz/skin/format.js",
+    "offendingHost": "ads.sublime.xyz",
+    "resourceTypes": [
+      "script",
+      "xmlhttprequest"
+    ],
+    "reason": "Unblocked third-party script request to ads.sublime.xyz (HTTP 200 OK) on recipehub.co.uk"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://ads.sublime.xyz/skin/format.js\"></script>"
+}

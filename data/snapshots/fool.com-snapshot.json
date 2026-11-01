@@ -1,0 +1,17 @@
+{
+  "capturedAt": "2026-10-29T00:05:30.025Z",
+  "targetUrl": "https://fool.com",
+  "domain": "fool.com",
+  "leak": {
+    "adTypeDetected": "Script",
+    "offendingArtifact": "https://ads.revive-adserver.net/delivery/ajs.php",
+    "offendingHost": "ads.revive-adserver.net",
+    "resourceTypes": [
+      "script",
+      "xmlhttprequest"
+    ],
+    "reason": "Unblocked third-party script request to ads.revive-adserver.net (HTTP 200 OK) on fool.com"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://ads.revive-adserver.net/delivery/ajs.php\"></script>"
+}

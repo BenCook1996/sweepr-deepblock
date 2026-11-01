@@ -1,0 +1,18 @@
+{
+  "capturedAt": "2026-10-29T00:05:29.835Z",
+  "targetUrl": "https://recipehub.es",
+  "domain": "recipehub.es",
+  "leak": {
+    "adTypeDetected": "Network",
+    "offendingArtifact": "https://des.smartclip.net/ads/vpaid.xml",
+    "offendingHost": "des.smartclip.net",
+    "resourceTypes": [
+      "xmlhttprequest",
+      "media",
+      "sub_frame"
+    ],
+    "reason": "Unblocked third-party network request to des.smartclip.net (HTTP 200 OK) on recipehub.es"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://des.smartclip.net/ads/vpaid.xml\"></script>"
+}

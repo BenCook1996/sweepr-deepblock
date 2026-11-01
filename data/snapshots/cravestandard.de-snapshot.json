@@ -1,0 +1,18 @@
+{
+  "capturedAt": "2026-10-31T07:06:22.293Z",
+  "targetUrl": "https://cravestandard.de",
+  "domain": "cravestandard.de",
+  "leak": {
+    "adTypeDetected": "Script",
+    "offendingArtifact": "https://adspirit.de/adscript.php",
+    "offendingHost": "adspirit.de",
+    "resourceTypes": [
+      "script",
+      "xmlhttprequest",
+      "sub_frame"
+    ],
+    "reason": "Unblocked third-party script request to adspirit.de (HTTP 200 OK) on cravestandard.de"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://adspirit.de/adscript.php\"></script>"
+}

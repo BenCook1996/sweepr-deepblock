@@ -1,0 +1,17 @@
+{
+  "capturedAt": "2026-10-28T00:18:42.660Z",
+  "targetUrl": "https://metroradar.net",
+  "domain": "metroradar.net",
+  "leak": {
+    "adTypeDetected": "Script",
+    "offendingArtifact": "https://storage.cloud.kargo.com/ad/kargo.min.js",
+    "offendingHost": "storage.cloud.kargo.com",
+    "resourceTypes": [
+      "script",
+      "xmlhttprequest"
+    ],
+    "reason": "Unblocked third-party script request to storage.cloud.kargo.com (HTTP 200 OK) on metroradar.net"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://storage.cloud.kargo.com/ad/kargo.min.js\"></script>"
+}

@@ -1,0 +1,17 @@
+{
+  "capturedAt": "2026-10-31T07:06:22.136Z",
+  "targetUrl": "https://pantrytribune.au",
+  "domain": "pantrytribune.au",
+  "leak": {
+    "adTypeDetected": "Network",
+    "offendingArtifact": "https://smaato.net/v2/auction",
+    "offendingHost": "smaato.net",
+    "resourceTypes": [
+      "xmlhttprequest",
+      "script"
+    ],
+    "reason": "Unblocked third-party network request to smaato.net (HTTP 200 OK) on pantrytribune.au"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://smaato.net/v2/auction\"></script>"
+}

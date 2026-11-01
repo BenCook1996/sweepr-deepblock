@@ -9,11 +9,16 @@ Disallow: /mockups
 Disallow: /popup-mockups
 Disallow: /redesign-prototype
 Disallow: /extension-ux-prototype
+Disallow: /store-creatives
+Disallow: /sweepr-vpn-concepts
 Disallow: /sweepr-vpn-mobile-redesign
 Disallow: /ios-app
 Disallow: /welcome
 
 # Explicitly permit AI Search and Answer Engines for LLM citations (GEO/AEO)
+User-agent: GPTBot
+Allow: /
+
 User-agent: OAI-SearchBot
 Allow: /
 
@@ -26,10 +31,40 @@ Allow: /
 User-agent: ClaudeBot
 Allow: /
 
+User-agent: Claude-Web
+Allow: /
+
+User-agent: Anthropic-AI
+Allow: /
+
 User-agent: Google-Extended
 Allow: /
 
 User-agent: Applebot-Extended
+Allow: /
+
+User-agent: Cohere-AI
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+User-agent: Brave-Web-Crawler
+Allow: /
+
+User-agent: Kagi-Crawler
+Allow: /
+
+User-agent: Meta-ExternalAgent
+Allow: /
+
+User-agent: Meta-ExternalFetch
+Allow: /
+
+User-agent: DeepSeek-AI
+Allow: /
+
+User-agent: MistralAI
 Allow: /
 
 Sitemap: https://sweeprdeepblock.com/sitemap.xml

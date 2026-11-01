@@ -152,7 +152,19 @@ export function rebuildAllBrowserAndDevicePackages() {
     const rawFiles = collectExtensionFiles(extDir);
 
     // 1. Build Chromium MV3 ZIP (Chrome, Edge, Brave, Opera, Vivaldi, Kiwi/Edge Android, macOS)
-    const zipBuf = buildZipBufferFromEntries(rawFiles.map(({ name, data }) => ({ name, data })));
+    const chromiumEntries = rawFiles.map(({ name, data }) => {
+      if (name === 'manifest.json') {
+        try {
+          const manifestObj = JSON.parse(data.toString('utf8'));
+          delete manifestObj.browser_specific_settings;
+          return { name, data: Buffer.from(JSON.stringify(manifestObj, null, 2) + '\n', 'utf8') };
+        } catch {
+          return { name, data };
+        }
+      }
+      return { name, data };
+    });
+    const zipBuf = buildZipBufferFromEntries(chromiumEntries);
     fs.mkdirSync(webDir, { recursive: true });
     fs.writeFileSync(zipPath, zipBuf);
     result.chromiumZipRebuilt = true;
@@ -162,6 +174,7 @@ export function rebuildAllBrowserAndDevicePackages() {
       if (name === 'manifest.json') {
         try {
           const manifestObj = JSON.parse(data.toString('utf8'));
+          delete manifestObj.minimum_chrome_version;
           manifestObj.background = {
             service_worker: 'background.js',
             scripts: ['background.js']
@@ -169,7 +182,10 @@ export function rebuildAllBrowserAndDevicePackages() {
           manifestObj.browser_specific_settings = {
             gecko: {
               id: 'extension@sweeprdeepblock.com',
-              strict_min_version: '128.0'
+              strict_min_version: '128.0',
+              data_collection_permissions: {
+                required: ['none']
+              }
             },
             gecko_android: {
               strict_min_version: '128.0'
@@ -211,10 +227,8 @@ export function rebuildAllBrowserAndDevicePackages() {
       } catch {}
     }
 
-    // 4. Sync local installed extension directory (`%LOCALAPPDATA%\SWEEPR\Deepblock\Extension`) if present
-    // Pre-activates the local admin workstation with Owner Pro key ('SWEEPR-OWNER-PRO-2026') while
-    // keeping all distributable customer packages locked (`proActive: false`) until paid activation.
-    const localAppData = process.env.LOCALAPPDATA;
+    // 4. Sync local installed extension directory (`%LOCALAPPDATA%\SWEEPR\Deepblock\Extension`) only when ALLOW_LOCAL_OWNER_PREACTIVATION=1
+    const localAppData = process.env.ALLOW_LOCAL_OWNER_PREACTIVATION === '1' ? process.env.LOCALAPPDATA : '';
     if (localAppData) {
       const installedExtDir = path.join(localAppData, 'SWEEPR', 'Deepblock', 'Extension');
       if (fs.existsSync(installedExtDir)) {
@@ -543,7 +557,10 @@ export async function deployRulesViaGit({
     'website/sweepr-deepblock-firefox.xpi',
     'website/sweepr-deepblock.xpi',
     'website/SWEEPRDeepblockSetup.exe',
-    'AD_FILTER_PIPELINE_LOG.md'
+    'AD_FILTER_PIPELINE_LOG.md',
+    'data/ad-filter-pipeline.sqlite',
+    'website/ad-filter-pipeline-state.json',
+    'data/deepblock-blocked-sites.json'
   ].filter((rel) => fs.existsSync(path.join(ROOT_DIR, rel)));
 
   let currentHead = 'uncommitted';

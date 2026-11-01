@@ -1,0 +1,17 @@
+{
+  "capturedAt": "2026-10-28T00:18:42.912Z",
+  "targetUrl": "https://raidledger.co.uk",
+  "domain": "raidledger.co.uk",
+  "leak": {
+    "adTypeDetected": "Network",
+    "offendingArtifact": "https://colossusssp.com/sp/bid",
+    "offendingHost": "colossusssp.com",
+    "resourceTypes": [
+      "xmlhttprequest",
+      "script"
+    ],
+    "reason": "Unblocked third-party network request to colossusssp.com (HTTP 200 OK) on raidledger.co.uk"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://colossusssp.com/sp/bid\"></script>"
+}

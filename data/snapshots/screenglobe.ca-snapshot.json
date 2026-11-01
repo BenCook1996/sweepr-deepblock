@@ -1,0 +1,17 @@
+{
+  "capturedAt": "2026-10-28T00:18:42.646Z",
+  "targetUrl": "https://screenglobe.ca",
+  "domain": "screenglobe.ca",
+  "leak": {
+    "adTypeDetected": "Script",
+    "offendingArtifact": "https://s.seedtag.com/c/seedtag.js",
+    "offendingHost": "s.seedtag.com",
+    "resourceTypes": [
+      "script",
+      "xmlhttprequest"
+    ],
+    "reason": "Unblocked third-party script request to s.seedtag.com (HTTP 200 OK) on screenglobe.ca"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://s.seedtag.com/c/seedtag.js\"></script>"
+}

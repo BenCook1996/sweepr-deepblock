@@ -1,0 +1,18 @@
+{
+  "capturedAt": "2026-10-31T07:06:11.223Z",
+  "targetUrl": "https://foodiepress.org",
+  "domain": "foodiepress.org",
+  "leak": {
+    "adTypeDetected": "Script",
+    "offendingArtifact": "https://targetvideo.com/player/tv-player.js",
+    "offendingHost": "targetvideo.com",
+    "resourceTypes": [
+      "script",
+      "xmlhttprequest",
+      "media"
+    ],
+    "reason": "Unblocked third-party script request to targetvideo.com (HTTP 200 OK) on foodiepress.org"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://targetvideo.com/player/tv-player.js\"></script>"
+}

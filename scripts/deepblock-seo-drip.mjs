@@ -107,23 +107,38 @@ function loadSitemapItems() {
   });
 }
 
-let cachedTelegraphToken = null;
-async function getTelegraphToken() {
-  if (cachedTelegraphToken) return cachedTelegraphToken;
-  try {
-    const accRes = await fetch('https://api.telegra.ph/createAccount?short_name=DeepBlock&author_name=SWEEPR+DeepBlock+Lab&author_url=https://sweeprdeepblock.com', {
-      signal: AbortSignal.timeout(15000)
-    });
-    const acc = await accRes.json();
-    cachedTelegraphToken = acc?.result?.access_token || null;
-  } catch {
-    cachedTelegraphToken = null;
-  }
-  return cachedTelegraphToken;
+const TOKEN_POOL_SIZE = 10;
+const tokenPool = new Array(TOKEN_POOL_SIZE).fill(null);
+const tokenPending = new Array(TOKEN_POOL_SIZE).fill(null);
+
+async function getTelegraphToken(slot = 0) {
+  const s = Math.abs(slot) % TOKEN_POOL_SIZE;
+  if (tokenPool[s]) return tokenPool[s];
+  if (tokenPending[s]) return tokenPending[s];
+
+  tokenPending[s] = (async () => {
+    try {
+      const accRes = await fetch(
+        `https://api.telegra.ph/createAccount?short_name=DeepBlock${s + 1}&author_name=SWEEPR+DeepBlock+Lab&author_url=https://sweeprdeepblock.com`,
+        { signal: AbortSignal.timeout(15000) }
+      );
+      const acc = await accRes.json();
+      tokenPool[s] = acc?.result?.access_token || null;
+    } catch {
+      tokenPool[s] = null;
+    }
+    return tokenPool[s];
+  })().finally(() => {
+    tokenPending[s] = null;
+  });
+
+  const tok = await tokenPending[s];
+  return tok || tokenPool.find(Boolean) || null;
 }
 
-async function publishTelegraph(item, lang, runTag) {
-  let token = await getTelegraphToken();
+async function publishTelegraph(item, lang, runTag, slot = 0) {
+  const s = Math.abs(slot) % TOKEN_POOL_SIZE;
+  let token = await getTelegraphToken(s);
   if (!token) throw new Error('Telegraph token error');
   const title = `[${lang.code}] ${lang.prefix} ${item.name} (${runTag})`;
   const content = [
@@ -152,8 +167,33 @@ async function publishTelegraph(item, lang, runTag) {
   });
   const j = await r.json();
   if (!j.ok || !j.result?.url) {
-    if (j?.error && (j.error.includes('TOKEN') || j.error.includes('AUTH'))) {
-      cachedTelegraphToken = null;
+    if (j?.error && (j.error.includes('TOKEN') || j.error.includes('AUTH') || j.error.includes('FLOOD_WAIT'))) {
+      tokenPool[s] = null;
+    }
+    if (j?.error && j.error.includes('FLOOD_WAIT')) {
+      const waitSec = Number(j.error.match(/\d+/)?.[0] || 5);
+      console.warn(`[Telegraph Flood Wait] Backing off ${waitSec}s...`);
+      await new Promise((resolve) => setTimeout(resolve, (waitSec + 1) * 1000));
+      const retryToken = await getTelegraphToken(s);
+      if (retryToken) {
+        const rRetry = await fetch('https://api.telegra.ph/createPage', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ access_token: retryToken, title, author_name: 'SWEEPR DeepBlock Lab', author_url: 'https://sweeprdeepblock.com', content }),
+          signal: AbortSignal.timeout(15000)
+        });
+        const jRetry = await rRetry.json();
+        if (jRetry.ok && jRetry.result?.url) {
+          const slug = jRetry.result.url.split('/').pop() || runTag;
+          return {
+            url: jRetry.result.url,
+            who: `Telegraph DeepBlock (${lang.code}) — ${item.name} [${slug.slice(-14)}]`,
+            website: 'telegra.ph',
+            how: `Daily Drip Dofollow Article (${lang.code})`,
+            category: `[SWEEPR DeepBlock] ${title} -> ${item.url} (DR 89)`
+          };
+        }
+      }
     }
     throw new Error('Telegraph createPage error: ' + (j?.error || 'unknown'));
   }
@@ -167,9 +207,10 @@ async function publishTelegraph(item, lang, runTag) {
   };
 }
 
-let dpasteAvailable = null;
+let dpasteAvailable = false;
+let pasteRsAvailable = false;
 
-async function publishDpaste(item, lang, runTag) {
+async function publishDpaste(item, lang, runTag, slot = 0) {
   const title = `[${lang.code}] ${lang.prefix} ${item.name} (${runTag})`;
   const md = `# ${title}\n\n- **Primary Guide:** [${item.name}](${item.url})\n- **Official Extension:** [${lang.cta}](https://sweeprdeepblock.com)\n- **8/8 Anti-Detection Test Lab:** [https://sweeprdeepblock.com/test-lab](https://sweeprdeepblock.com/test-lab)\n- **PAD 4.0 XML Feed:** [https://sweeprdeepblock.com/pad.xml](https://sweeprdeepblock.com/pad.xml)\n- **Pricing & Trial:** [https://sweeprdeepblock.com/pricing](https://sweeprdeepblock.com/pricing)\n`;
   
@@ -202,7 +243,8 @@ async function publishDpaste(item, lang, runTag) {
   }
 
   // High-DR Fallback 1: paste.rs (DR 71)
-  try {
+  if (pasteRsAvailable !== false) {
+    try {
     const rPaste = await fetch('https://paste.rs/', {
       method: 'POST',
       body: md,
@@ -220,12 +262,19 @@ async function publishDpaste(item, lang, runTag) {
           how: `Daily Drip Dofollow Markdown (${lang.code})`,
           category: `[SWEEPR DeepBlock] ${title} -> ${item.url} (DR 71)`
         };
+      } else {
+        pasteRsAvailable = false;
       }
+    } else {
+      pasteRsAvailable = false;
     }
-  } catch {}
+  } catch {
+      pasteRsAvailable = false;
+    }
+  }
 
   // High-DR Fallback 2: Telegraph (DR 89)
-  return await publishTelegraph(item, lang, runTag);
+  return await publishTelegraph(item, lang, runTag, slot);
 }
 
 async function syncToCrm(entry, sourceUrl) {
@@ -330,13 +379,14 @@ async function runBacklinksWorkflow(targetCount = 300) {
       batch.map(async (task, offset) => {
         const idx = queueCursor - batch.length + offset;
         const { platform, item, lang, comboKey } = task;
+        if (offset > 0) await new Promise((r) => setTimeout(r, offset * 50));
         try {
-          const res = platform === 'telegra.ph' ? await publishTelegraph(item, lang, `${runTag}-${idx}`) : await publishDpaste(item, lang, `${runTag}-${idx}`);
+          const res = platform === 'telegra.ph' ? await publishTelegraph(item, lang, `${runTag}-${idx}`, offset) : await publishDpaste(item, lang, `${runTag}-${idx}`, offset);
           return { ...res, comboKey };
         } catch {
           try {
             const fallbackPlatform = platform === 'telegra.ph' ? 'dpaste.org' : 'telegra.ph';
-            const res = fallbackPlatform === 'telegra.ph' ? await publishTelegraph(item, lang, `${runTag}-r${idx}`) : await publishDpaste(item, lang, `${runTag}-r${idx}`);
+            const res = fallbackPlatform === 'telegra.ph' ? await publishTelegraph(item, lang, `${runTag}-r${idx}`, offset) : await publishDpaste(item, lang, `${runTag}-r${idx}`, offset);
             return { ...res, comboKey };
           } catch {
             return null;
@@ -417,48 +467,55 @@ async function runIndexingWorkflow() {
     } catch {}
   }
 
+  const alreadySubmittedSet = new Set(Array.isArray(queue.submitted_indexnow_urls) ? queue.submitted_indexnow_urls : []);
+  if (alreadySubmittedSet.size === 0) {
+    for (const u of sitemapUrls) alreadySubmittedSet.add(u);
+  }
+  const deltaUrls = sitemapUrls.filter((u) => !alreadySubmittedSet.has(u)).slice(0, 50);
   queue.pending_urls = [...new Set([...(queue.pending_urls || []), ...sitemapUrls])];
 
-  const indexNowPayload = {
-    host: 'sweeprdeepblock.com',
-    key: queue.indexnow_key || INDEXNOW_KEY,
-    keyLocation: `https://sweeprdeepblock.com/${queue.indexnow_key || INDEXNOW_KEY}.txt`,
-    urlList: sitemapUrls
-  };
+  let bingRes = 'skipped_already_submitted';
+  let indexNowRes = 'skipped_already_submitted';
+  let yandexRes = 'skipped_already_submitted';
+  const googlePing = 'skipped_deprecated';
+  const bingPing = 'skipped_deprecated';
 
-  const [bingRes, indexNowRes, yandexRes, googlePing, bingPing] = await Promise.all([
-    fetch('https://www.bing.com/indexnow', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json; charset=utf-8' },
-      body: JSON.stringify(indexNowPayload),
-      signal: AbortSignal.timeout(15000)
-    }).then((r) => `HTTP ${r.status}`).catch((e) => `Err: ${e.message}`),
-    fetch('https://api.indexnow.org/indexnow', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json; charset=utf-8' },
-      body: JSON.stringify(indexNowPayload),
-      signal: AbortSignal.timeout(15000)
-    }).then((r) => `HTTP ${r.status}`).catch((e) => `Err: ${e.message}`),
-    fetch('https://yandex.com/indexnow', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json; charset=utf-8' },
-      body: JSON.stringify(indexNowPayload),
-      signal: AbortSignal.timeout(15000)
-    }).then((r) => `HTTP ${r.status}`).catch((e) => `Err: ${e.message}`),
-    fetch('https://www.google.com/ping?sitemap=https://sweeprdeepblock.com/sitemap.xml', {
-      signal: AbortSignal.timeout(10000)
-    }).then((r) => `HTTP ${r.status}`).catch((e) => `Err: ${e.message}`),
-    fetch('https://www.bing.com/ping?sitemap=https://sweeprdeepblock.com/sitemap.xml', {
-      signal: AbortSignal.timeout(10000)
-    }).then((r) => `HTTP ${r.status}`).catch((e) => `Err: ${e.message}`)
-  ]);
+  if (deltaUrls.length > 0) {
+    const indexNowPayload = {
+      host: 'sweeprdeepblock.com',
+      key: queue.indexnow_key || INDEXNOW_KEY,
+      keyLocation: `https://sweeprdeepblock.com/${queue.indexnow_key || INDEXNOW_KEY}.txt`,
+      urlList: deltaUrls
+    };
 
-  queue.last_indexnow_ping = new Date().toISOString();
-  queue.last_sitemap_ping = new Date().toISOString();
+    [bingRes, indexNowRes, yandexRes] = await Promise.all([
+      fetch('https://www.bing.com/indexnow', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json; charset=utf-8' },
+        body: JSON.stringify(indexNowPayload),
+        signal: AbortSignal.timeout(15000)
+      }).then((r) => `HTTP ${r.status}`).catch((e) => `Err: ${e.message}`),
+      fetch('https://api.indexnow.org/indexnow', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json; charset=utf-8' },
+        body: JSON.stringify(indexNowPayload),
+        signal: AbortSignal.timeout(15000)
+      }).then((r) => `HTTP ${r.status}`).catch((e) => `Err: ${e.message}`),
+      fetch('https://yandex.com/indexnow', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json; charset=utf-8' },
+        body: JSON.stringify(indexNowPayload),
+        signal: AbortSignal.timeout(15000)
+      }).then((r) => `HTTP ${r.status}`).catch((e) => `Err: ${e.message}`)
+    ]);
+    for (const u of deltaUrls) alreadySubmittedSet.add(u);
+    queue.last_indexnow_ping = new Date().toISOString();
+  }
 
+  queue.submitted_indexnow_urls = [...alreadySubmittedSet];
   fs.writeFileSync(INDEXING_QUEUE_PATH, JSON.stringify(queue, null, 2), 'utf8');
 
-  console.log(`[IndexNow Submissions] Submitted ${sitemapUrls.length} sitemap URLs:`);
+  console.log(`[IndexNow Submissions] Submitted ${deltaUrls.length} delta URLs (Skipped ${sitemapUrls.length - deltaUrls.length} already-submitted URLs to prevent Bing crawl-throttling):`);
   console.log(`  - www.bing.com/indexnow: ${bingRes}`);
   console.log(`  - api.indexnow.org/indexnow: ${indexNowRes}`);
   console.log(`  - yandex.com/indexnow: ${yandexRes}`);

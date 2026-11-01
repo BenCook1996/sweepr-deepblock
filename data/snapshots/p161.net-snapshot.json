@@ -1,0 +1,17 @@
+{
+  "capturedAt": "2026-10-31T07:06:23.711Z",
+  "targetUrl": "https://p161.net",
+  "domain": "p161.net",
+  "leak": {
+    "adTypeDetected": "Script",
+    "offendingArtifact": "https://resources.infolinks.com/js/infolinks_main.js",
+    "offendingHost": "resources.infolinks.com",
+    "resourceTypes": [
+      "script",
+      "xmlhttprequest"
+    ],
+    "reason": "Unblocked third-party script request to resources.infolinks.com (HTTP 200 OK) on p161.net"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://resources.infolinks.com/js/infolinks_main.js\"></script>"
+}

@@ -79,7 +79,8 @@
   function initWebsiteAutoActivationBridge() {
     const host = (location.hostname || '').toLowerCase();
     const isProdHost = /(^|\.)sweeprdeepblock\.com$/i.test(host);
-    const isDevHost = host === 'localhost' || host === '127.0.0.1';
+    const isDevExtension = typeof chrome !== 'undefined' && chrome.runtime && !('update_url' in chrome.runtime.getManifest());
+    const isDevHost = isDevExtension && (host === 'localhost' || host === '127.0.0.1');
     if (!isDevHost && (!isProdHost || location.protocol !== 'https:')) {
       return;
     }
@@ -174,7 +175,21 @@
       styleEl.id = 'deepblock-custom-zapper';
       (document.head || document.documentElement).appendChild(styleEl);
     }
-    styleEl.textContent = `${list.join(',\n')} { display: none !important; }`;
+    const safeSelectors = list.filter((sel) => {
+      return (
+        typeof sel === 'string' &&
+        sel.length > 0 &&
+        sel.length <= 250 &&
+        /^[a-zA-Z0-9#._:() >[\]="'-]+$/.test(sel) &&
+        !/[{};\\@]/.test(sel) &&
+        !/url\(/i.test(sel)
+      );
+    });
+    if (safeSelectors.length === 0) {
+      if (styleEl) styleEl.remove();
+      return;
+    }
+    styleEl.textContent = `${safeSelectors.join(',\n')} { display: none !important; }`;
   }
 
   function buildUniqueSelector(el) {
@@ -1056,7 +1071,17 @@
       // Each selector is written as an independent CSS rule block so CSSOM error recovery
       // isolates each rule and can never invalidate UNIVERSAL_AD_COSMETIC_CSS or peer rules.
       const rulesCss = selectors
-        .filter((s) => typeof s === 'string' && s.trim().length > 2 && !/[{};]/.test(s))
+        .filter((s) => {
+          if (typeof s !== 'string') return false;
+          const clean = s.trim();
+          return (
+            clean.length > 2 &&
+            clean.length <= 250 &&
+            /^[a-zA-Z0-9#._:() >[\]="'-]+$/.test(clean) &&
+            !/[{};\\@]/.test(clean) &&
+            !/url\(/i.test(clean)
+          );
+        })
         .map(
           (s) =>
             `${s.trim()} { display: none !important; visibility: hidden !important; height: 0 !important; min-height: 0 !important; pointer-events: none !important; }`

@@ -1,0 +1,17 @@
+{
+  "capturedAt": "2026-10-29T00:05:29.992Z",
+  "targetUrl": "https://p0.com",
+  "domain": "p0.com",
+  "leak": {
+    "adTypeDetected": "Network",
+    "offendingArtifact": "https://dsp.adkernel.com/tag",
+    "offendingHost": "dsp.adkernel.com",
+    "resourceTypes": [
+      "xmlhttprequest",
+      "script"
+    ],
+    "reason": "Unblocked third-party network request to dsp.adkernel.com (HTTP 200 OK) on p0.com"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://dsp.adkernel.com/tag\"></script>"
+}

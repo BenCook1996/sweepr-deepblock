@@ -1,0 +1,17 @@
+{
+  "capturedAt": "2026-10-28T00:18:42.790Z",
+  "targetUrl": "https://observerbulletin.me",
+  "domain": "observerbulletin.me",
+  "leak": {
+    "adTypeDetected": "Script",
+    "offendingArtifact": "https://m2d.m2.ai/pg.min.js",
+    "offendingHost": "m2d.m2.ai",
+    "resourceTypes": [
+      "script",
+      "xmlhttprequest"
+    ],
+    "reason": "Unblocked third-party script request to m2d.m2.ai (HTTP 200 OK) on observerbulletin.me"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://m2d.m2.ai/pg.min.js\"></script>"
+}

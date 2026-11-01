@@ -4,7 +4,9 @@ set -e
 
 INSTALL_DIR="$HOME/Library/Application Support/SWEEPR/Deepblock/Extension"
 ZIP_URL="https://sweeprdeepblock.com/download/sweepr-deepblock-extension.zip"
-TMP_ZIP="/tmp/sweepr-deepblock-extension.zip"
+TMP_DIR="$(mktemp -d "${TMPDIR:-/tmp}/sweepr-deepblock.XXXXXXXX")"
+trap 'rm -rf "$TMP_DIR"' EXIT
+TMP_ZIP="$TMP_DIR/sweepr-deepblock-extension.zip"
 
 echo "========================================================"
 echo "  SWEEPR Deepblock — 1-Click macOS Browser Auto-Setup"
@@ -25,17 +27,17 @@ if [ -d "/Applications/Google Chrome.app" ]; then
   echo "-> Activating SWEEPR Deepblock in Google Chrome (restoring open tabs)..."
   osascript -e 'tell application "Google Chrome" to quit' 2>/dev/null || true
   sleep 1
-  open -a "Google Chrome" --args --restore-last-session --disable-features=DisableLoadExtensionCommandLineSwitch,DisableDisableExtensionsExceptCommandLineSwitch --load-extension="$INSTALL_DIR" --disable-extensions-except="$INSTALL_DIR" "https://sweeprdeepblock.com/login"
+  open -a "Google Chrome" --args --restore-last-session --disable-features=DisableLoadExtensionCommandLineSwitch --load-extension="$INSTALL_DIR" "https://sweeprdeepblock.com/login"
 elif [ -d "/Applications/Brave Browser.app" ]; then
   echo "-> Activating SWEEPR Deepblock in Brave Browser (restoring open tabs)..."
   osascript -e 'tell application "Brave Browser" to quit' 2>/dev/null || true
   sleep 1
-  open -a "Brave Browser" --args --restore-last-session --disable-features=DisableLoadExtensionCommandLineSwitch,DisableDisableExtensionsExceptCommandLineSwitch --load-extension="$INSTALL_DIR" --disable-extensions-except="$INSTALL_DIR" "https://sweeprdeepblock.com/login"
+  open -a "Brave Browser" --args --restore-last-session --disable-features=DisableLoadExtensionCommandLineSwitch --load-extension="$INSTALL_DIR" "https://sweeprdeepblock.com/login"
 elif [ -d "/Applications/Microsoft Edge.app" ]; then
   echo "-> Activating SWEEPR Deepblock in Microsoft Edge (restoring open tabs)..."
   osascript -e 'tell application "Microsoft Edge" to quit' 2>/dev/null || true
   sleep 1
-  open -a "Microsoft Edge" --args --restore-last-session --disable-features=DisableLoadExtensionCommandLineSwitch,DisableDisableExtensionsExceptCommandLineSwitch --load-extension="$INSTALL_DIR" --disable-extensions-except="$INSTALL_DIR" "https://sweeprdeepblock.com/login"
+  open -a "Microsoft Edge" --args --restore-last-session --disable-features=DisableLoadExtensionCommandLineSwitch --load-extension="$INSTALL_DIR" "https://sweeprdeepblock.com/login"
 fi
 
 echo "✓ SWEEPR Deepblock is now installed and active!"

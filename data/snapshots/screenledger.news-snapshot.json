@@ -1,0 +1,17 @@
+{
+  "capturedAt": "2026-10-29T00:05:29.858Z",
+  "targetUrl": "https://screenledger.news",
+  "domain": "screenledger.news",
+  "leak": {
+    "adTypeDetected": "Network",
+    "offendingArtifact": "https://media.fastclick.net/w/get.ad",
+    "offendingHost": "media.fastclick.net",
+    "resourceTypes": [
+      "script",
+      "xmlhttprequest"
+    ],
+    "reason": "Unblocked third-party network request to media.fastclick.net (HTTP 200 OK) on screenledger.news"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://media.fastclick.net/w/get.ad\"></script>"
+}

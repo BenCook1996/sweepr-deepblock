@@ -1,0 +1,18 @@
+{
+  "capturedAt": "2026-10-31T07:06:22.508Z",
+  "targetUrl": "https://popnation.us",
+  "domain": "popnation.us",
+  "leak": {
+    "adTypeDetected": "Script",
+    "offendingArtifact": "https://sunmedia.tv/sunmedia-video.js",
+    "offendingHost": "sunmedia.tv",
+    "resourceTypes": [
+      "script",
+      "xmlhttprequest",
+      "media"
+    ],
+    "reason": "Unblocked third-party script request to sunmedia.tv (HTTP 200 OK) on popnation.us"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://sunmedia.tv/sunmedia-video.js\"></script>"
+}

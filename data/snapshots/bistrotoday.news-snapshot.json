@@ -1,0 +1,17 @@
+{
+  "capturedAt": "2026-10-29T00:05:29.901Z",
+  "targetUrl": "https://bistrotoday.news",
+  "domain": "bistrotoday.news",
+  "leak": {
+    "adTypeDetected": "Script",
+    "offendingArtifact": "https://ads.revive-adserver.net/delivery/ajs.php",
+    "offendingHost": "ads.revive-adserver.net",
+    "resourceTypes": [
+      "script",
+      "xmlhttprequest"
+    ],
+    "reason": "Unblocked third-party script request to ads.revive-adserver.net (HTTP 200 OK) on bistrotoday.news"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://ads.revive-adserver.net/delivery/ajs.php\"></script>"
+}

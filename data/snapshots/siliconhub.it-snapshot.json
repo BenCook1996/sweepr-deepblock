@@ -1,0 +1,17 @@
+{
+  "capturedAt": "2026-10-31T07:06:22.740Z",
+  "targetUrl": "https://siliconhub.it",
+  "domain": "siliconhub.it",
+  "leak": {
+    "adTypeDetected": "Script",
+    "offendingArtifact": "https://cdn.carbonads.com/carbon.js?serve=CKYIK",
+    "offendingHost": "cdn.carbonads.com",
+    "resourceTypes": [
+      "script",
+      "xmlhttprequest"
+    ],
+    "reason": "Unblocked third-party script request to cdn.carbonads.com (HTTP 200 OK) on siliconhub.it"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://cdn.carbonads.com/carbon.js?serve=CKYIK\"></script>"
+}

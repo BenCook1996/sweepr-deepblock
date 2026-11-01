@@ -1,0 +1,17 @@
+{
+  "capturedAt": "2026-10-29T00:05:30.105Z",
+  "targetUrl": "https://raidspot.tv",
+  "domain": "raidspot.tv",
+  "leak": {
+    "adTypeDetected": "Script",
+    "offendingArtifact": "https://cdn.adtrue.com/rtb/loader.js",
+    "offendingHost": "cdn.adtrue.com",
+    "resourceTypes": [
+      "script",
+      "xmlhttprequest"
+    ],
+    "reason": "Unblocked third-party script request to cdn.adtrue.com (HTTP 200 OK) on raidspot.tv"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://cdn.adtrue.com/rtb/loader.js\"></script>"
+}

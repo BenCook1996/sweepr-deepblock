@@ -226,7 +226,7 @@
         </div>
 
         <div class="flex flex-col gap-2.5 pt-2">
-          <a href="/download" class="btn btn-go w-full justify-center text-xs font-bold">Install Browser Extension</a>
+          <a href="/download?install=1" class="btn btn-go w-full justify-center text-xs font-bold">Install Browser Extension</a>
           <button type="button" onclick="cancelInOneClick()" id="cancelBtn" class="btn bg-red-50 hover:bg-red-100 text-red-700 border-red-200 text-xs font-bold w-full justify-center">
             1-Click Cancel Auto-Renewal
           </button>
@@ -418,7 +418,7 @@
             });
             const resData = await r.json().catch(() => ({}));
             if (r.ok && resData.ok) {
-              renderPortalDevices(resData.devices || [], resData.devices_used || 0, resData.devices_max || 3);
+              renderPortalDevices(resData.devices || [], resData.devices_used || 0, resData.devices_max || 4);
             } else {
               rmBtn.disabled = false;
               rmBtn.textContent = 'Remove';
@@ -453,18 +453,27 @@
         });
         const data = await res.json().catch(() => ({}));
         if (!res.ok || !data.ok) {
-          svgBox.innerHTML = '<span class="text-xs text-red-600 font-semibold px-2">' + (data.message || data.error || 'Could not create QR') + '</span>';
-          timerEl.textContent = 'Remove an active device above if you are at 3/3 devices.';
+          svgBox.textContent = '';
+          const errSpan = document.createElement('span');
+          errSpan.className = 'text-xs text-red-600 font-semibold px-2';
+          errSpan.textContent = data.message || data.error || 'Could not create QR';
+          svgBox.appendChild(errSpan);
+          timerEl.textContent = 'Remove an active device above if you are at 4/4 devices.';
           if (Array.isArray(data.devices)) {
-            renderPortalDevices(data.devices, data.devices_used || 3, data.devices_max || 3);
+            renderPortalDevices(data.devices, data.devices_used || 4, data.devices_max || 4);
           }
           return;
         }
-        svgBox.innerHTML = data.qr_svg || '';
-        const svgEl = svgBox.querySelector('svg');
-        if (svgEl) {
-          svgEl.style.width = '100%';
-          svgEl.style.height = '100%';
+        svgBox.textContent = '';
+        if (typeof data.qr_svg === 'string' && data.qr_svg.trim().startsWith('<svg')) {
+          const parsedDoc = new DOMParser().parseFromString(data.qr_svg, 'image/svg+xml');
+          const parsedSvg = parsedDoc.documentElement;
+          if (parsedSvg && parsedSvg.tagName.toLowerCase() === 'svg' && !parsedSvg.querySelector('script, foreignObject')) {
+            const safeSvg = document.importNode(parsedSvg, true);
+            safeSvg.style.width = '100%';
+            safeSvg.style.height = '100%';
+            svgBox.appendChild(safeSvg);
+          }
         }
         const tokenRow = document.getElementById('portalQrTokenRow');
         const tokenVal = document.getElementById('portalQrTokenVal');

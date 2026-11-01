@@ -1,4 +1,5 @@
 // SWEEPR Deepblock — Zero-Scroll 360x500px Unified Popup Controller (v2.0 UX Architect Refactored)
+const isDevExtension = typeof chrome !== 'undefined' && chrome.runtime && !('update_url' in chrome.runtime.getManifest());
 document.addEventListener('DOMContentLoaded', () => {
   const adsCountEl = document.getElementById('adsCount');
   const cookieCountEl = document.getElementById('cookieCount');
@@ -58,10 +59,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (licenseKeyInput) {
     licenseKeyInput.addEventListener('input', () => {
+      const raw = (licenseKeyInput.value || '').trim();
       chrome.storage.local.set({
         draftLicenseKey: licenseKeyInput.value,
         licenseDrawerOpen: true
       });
+      if (licenseFeedbackEl) {
+        if (/^\d{6}$/.test(raw)) {
+          licenseFeedbackEl.style.display = 'block';
+          licenseFeedbackEl.style.color = '#059669';
+          licenseFeedbackEl.textContent = '✓ 6-digit code ready — click Unlock';
+        } else if (/^SWEEPR-DB-[A-Z0-9-]{4,}$/i.test(raw) || /^ptk_[a-zA-Z0-9_-]{6,}$/.test(raw)) {
+          licenseFeedbackEl.style.display = 'block';
+          licenseFeedbackEl.style.color = '#059669';
+          licenseFeedbackEl.textContent = '✓ Valid key format — click Unlock';
+        } else if (!raw) {
+          licenseFeedbackEl.style.display = 'none';
+        }
+      }
+    });
+  }
+
+  const pasteKeyBtn = document.getElementById('pasteKeyBtn');
+  if (pasteKeyBtn && licenseKeyInput) {
+    pasteKeyBtn.addEventListener('click', async () => {
+      try {
+        const text = await navigator.clipboard.readText();
+        if (text && text.trim()) {
+          licenseKeyInput.value = text.trim();
+          licenseKeyInput.dispatchEvent(new Event('input'));
+          licenseKeyInput.focus();
+        }
+      } catch (e) {
+        licenseKeyInput.focus();
+      }
     });
   }
 
@@ -83,10 +114,10 @@ document.addEventListener('DOMContentLoaded', () => {
     licenseDrawerEl.classList.add('open');
     chrome.storage.local.set({ licenseDrawerOpen: true });
     licenseFeedbackEl.style.display = 'block';
-    licenseFeedbackEl.style.color = '#f59e0b';
+    licenseFeedbackEl.style.color = '#d97706';
     licenseFeedbackEl.textContent =
       customMsg ||
-      '🔒 Unlock Pro (£1.99 1st mo) or enter your 6-digit code below.';
+      '🔒 Unlock Pro or enter your 6-digit activation code above.';
     licenseKeyInput.focus();
   }
 
@@ -198,20 +229,60 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (isPro) {
+      document.body.classList.add('pro-mode');
+      document.body.classList.remove('unactivated-mode');
       tierBadgeEl.textContent = 'Pro Active';
       tierBadgeEl.classList.add('pro');
       upgradeCtaBtn.style.display = 'none';
       toggleLicenseDrawerBtn.style.display = 'none';
       licenseDrawerEl.classList.remove('open');
     } else {
+      document.body.classList.add('unactivated-mode');
+      document.body.classList.remove('pro-mode');
       tierBadgeEl.textContent = 'Free Preview';
       tierBadgeEl.classList.remove('pro');
-      upgradeCtaBtn.style.display = 'block';
+      upgradeCtaBtn.style.display = 'flex';
       toggleLicenseDrawerBtn.style.display = 'inline-flex';
+      licenseDrawerEl.classList.add('open');
     }
 
     updateSiteBarState();
     renderStoreSafety(currentState);
+
+    const reviewMilestoneBanner = document.getElementById('reviewMilestoneBanner');
+    const reviewMilestoneText = document.getElementById('reviewMilestoneText');
+    const reviewRateBtn = document.getElementById('reviewRateBtn');
+    const reviewDismissBtn = document.getElementById('reviewDismissBtn');
+    if (reviewMilestoneBanner) {
+      const totalBlocked = ads + cookies;
+      chrome.storage.local.get(['reviewPromptDismissed'], (rStore) => {
+        if (!rStore?.reviewPromptDismissed && isPro && totalBlocked >= 250) {
+          if (reviewMilestoneText) {
+            reviewMilestoneText.textContent = `🎉 ${totalBlocked.toLocaleString()} ads & pop-ups blocked! Enjoying Deepblock?`;
+          }
+          reviewMilestoneBanner.style.display = 'flex';
+          if (reviewRateBtn) {
+            reviewRateBtn.onclick = () => {
+              chrome.storage.local.set({ reviewPromptDismissed: true });
+              reviewMilestoneBanner.style.display = 'none';
+              const isFirefox = typeof navigator !== 'undefined' && /Firefox\//i.test(navigator.userAgent);
+              const reviewUrl = isFirefox
+                ? 'https://addons.mozilla.org/en-US/firefox/addon/sweepr-deepblock/reviews/'
+                : 'https://chromewebstore.google.com/detail/bkdfhdgmglfancgpkcbdceinfdlccmpc/reviews';
+              chrome.tabs.create({ url: reviewUrl });
+            };
+          }
+          if (reviewDismissBtn) {
+            reviewDismissBtn.onclick = () => {
+              chrome.storage.local.set({ reviewPromptDismissed: true });
+              reviewMilestoneBanner.style.display = 'none';
+            };
+          }
+        } else {
+          reviewMilestoneBanner.style.display = 'none';
+        }
+      });
+    }
 
     const upd = state.extensionUpdateStatus;
     const extUpdateBanner = document.getElementById('extUpdateBanner');
@@ -358,7 +429,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (upgradeCtaBtn) {
     upgradeCtaBtn.addEventListener('click', () => {
-      chrome.tabs.create({ url: 'https://sweeprdeepblock.com/order?discount=intro&addon=ram_tamer' });
+      chrome.tabs.create({ url: 'https://sweeprdeepblock.com/order' });
     });
   }
 
@@ -442,7 +513,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ? stored.deviceId
         : `ext_db_${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36)}`;
     if (key.startsWith('ptk_')) {
-      for (const origin of ['https://sweeprdeepblock.com', 'http://localhost:3000']) {
+      for (const origin of ['https://sweeprdeepblock.com', ...(isDevExtension ? ['http://localhost:3000'] : [])]) {
         try {
           const r = await fetch(`${origin}/api/device-link/redeem`, {
             method: 'POST',
@@ -462,7 +533,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     const endpoints = [
       'https://sweeprdeepblock.com/api/license-verify',
-      'http://localhost:3000/api/license-verify'
+      ...(isDevExtension ? ['http://localhost:3000/api/license-verify'] : [])
     ];
     for (const baseUrl of endpoints) {
       try {
@@ -483,7 +554,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 addonsList.includes('ram_tamer') ||
                 addonsList.includes('sweepr_secure_bundle')
             );
-            const canonicalKey = data.licenseKey || data.license_key || key;
+            const canonicalKey = data.licenseKey || data.license_key || '';
+            if (!canonicalKey || canonicalKey.startsWith('ptk_')) {
+              return { ok: false, valid: false, error: 'Server did not return a valid license key.' };
+            }
             const newSettings = {
               cookieAutoClose: true,
               hideSearchSpam: true,
@@ -514,6 +588,9 @@ document.addEventListener('DOMContentLoaded', () => {
                   disableRulesetIds: []
                 });
               }
+            } catch (e) {}
+            try {
+              chrome.runtime.sendMessage({ type: 'VERIFY_LICENSE', key: canonicalKey }).catch(() => {});
             } catch (e) {}
             return { ok: true, valid: true, licenseKey: canonicalKey, ramTamerActive, settings: newSettings };
           }
@@ -596,10 +673,20 @@ document.addEventListener('DOMContentLoaded', () => {
   const popupRefreshQrBtn = document.getElementById('popupRefreshQrBtn');
   let popupQrPollTimer = null;
 
+  function setPopupQrPlaceholder(text, color) {
+    if (!popupQrSvg) return;
+    popupQrSvg.textContent = '';
+    const span = document.createElement('span');
+    span.style.fontSize = '10px';
+    span.style.color = color;
+    span.textContent = text;
+    popupQrSvg.appendChild(span);
+  }
+
   async function startPopupQrChallenge() {
     if (!popupQrBox || !popupQrSvg || !popupQrStatus) return;
     popupQrBox.style.display = 'block';
-    popupQrSvg.innerHTML = '<span style="font-size:10px;color:#6b7280;">Generating...</span>';
+    setPopupQrPlaceholder('Generating...', '#6b7280');
     popupQrStatus.textContent = 'Creating secure 120s QR challenge...';
     if (popupQrPollTimer) clearInterval(popupQrPollTimer);
 
@@ -638,16 +725,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (!challengeData) {
-      popupQrSvg.innerHTML = '<span style="font-size:10px;color:#ef4444;">Offline</span>';
+      setPopupQrPlaceholder('Offline', '#ef4444');
       popupQrStatus.textContent = 'Could not reach server. Try again.';
       return;
     }
 
-    popupQrSvg.innerHTML = challengeData.qr_svg || '';
-    const svgEl = popupQrSvg.querySelector('svg');
-    if (svgEl) {
-      svgEl.style.width = '100%';
-      svgEl.style.height = '100%';
+    popupQrSvg.textContent = '';
+    if (typeof challengeData.qr_svg === 'string' && challengeData.qr_svg.includes('<svg')) {
+      try {
+        const parsedDoc = new DOMParser().parseFromString(challengeData.qr_svg, 'image/svg+xml');
+        const parsedSvg = parsedDoc.querySelector('svg');
+        if (parsedSvg && !parsedDoc.querySelector('parsererror') && !parsedSvg.querySelector('script, foreignObject')) {
+          parsedSvg.style.width = '100%';
+          parsedSvg.style.height = '100%';
+          popupQrSvg.appendChild(document.importNode(parsedSvg, true));
+        }
+      } catch (e) {}
     }
     let rem = Number(challengeData.expires_in) || 120;
     popupQrStatus.textContent = `Scan with phone • Expires in ${rem}s`;
@@ -696,6 +789,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 disableRulesetIds: []
               });
             }
+          } catch (e) {}
+          try {
+            chrome.runtime.sendMessage({ type: 'VERIFY_LICENSE', key: pollData.licenseKey }).catch(() => {});
           } catch (e) {}
           currentState.proActive = true;
           currentState.settings = newSettings;

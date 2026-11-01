@@ -1,0 +1,17 @@
+{
+  "capturedAt": "2026-10-31T07:06:23.017Z",
+  "targetUrl": "https://lootdigest.it",
+  "domain": "lootdigest.it",
+  "leak": {
+    "adTypeDetected": "Script",
+    "offendingArtifact": "https://cdn-b.yieldlove.com/yieldlove-loader.js",
+    "offendingHost": "cdn-b.yieldlove.com",
+    "resourceTypes": [
+      "script",
+      "xmlhttprequest"
+    ],
+    "reason": "Unblocked third-party script request to cdn-b.yieldlove.com (HTTP 200 OK) on lootdigest.it"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://cdn-b.yieldlove.com/yieldlove-loader.js\"></script>"
+}

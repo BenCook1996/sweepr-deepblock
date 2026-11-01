@@ -1,0 +1,17 @@
+{
+  "capturedAt": "2026-10-31T07:06:23.697Z",
+  "targetUrl": "https://dailytoday.fr",
+  "domain": "dailytoday.fr",
+  "leak": {
+    "adTypeDetected": "Script",
+    "offendingArtifact": "https://admanmedia.com/tag/adman.js",
+    "offendingHost": "admanmedia.com",
+    "resourceTypes": [
+      "script",
+      "xmlhttprequest"
+    ],
+    "reason": "Unblocked third-party script request to admanmedia.com (HTTP 200 OK) on dailytoday.fr"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://admanmedia.com/tag/adman.js\"></script>"
+}

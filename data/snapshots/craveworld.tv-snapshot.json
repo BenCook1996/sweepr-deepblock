@@ -1,0 +1,17 @@
+{
+  "capturedAt": "2026-10-29T00:05:29.805Z",
+  "targetUrl": "https://craveworld.tv",
+  "domain": "craveworld.tv",
+  "leak": {
+    "adTypeDetected": "Network",
+    "offendingArtifact": "https://dsp.adkernel.com/tag",
+    "offendingHost": "dsp.adkernel.com",
+    "resourceTypes": [
+      "xmlhttprequest",
+      "script"
+    ],
+    "reason": "Unblocked third-party network request to dsp.adkernel.com (HTTP 200 OK) on craveworld.tv"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://dsp.adkernel.com/tag\"></script>"
+}

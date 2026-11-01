@@ -1,0 +1,18 @@
+{
+  "capturedAt": "2026-10-31T07:06:23.443Z",
+  "targetUrl": "https://bossreview.fr",
+  "domain": "bossreview.fr",
+  "leak": {
+    "adTypeDetected": "Network",
+    "offendingArtifact": "https://loopme.me/v1/ad/video.json",
+    "offendingHost": "loopme.me",
+    "resourceTypes": [
+      "xmlhttprequest",
+      "media",
+      "script"
+    ],
+    "reason": "Unblocked third-party network request to loopme.me (HTTP 200 OK) on bossreview.fr"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://loopme.me/v1/ad/video.json\"></script>"
+}

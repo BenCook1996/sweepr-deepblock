@@ -1,0 +1,17 @@
+{
+  "capturedAt": "2026-10-31T07:06:23.589Z",
+  "targetUrl": "https://recipeindex.net",
+  "domain": "recipeindex.net",
+  "leak": {
+    "adTypeDetected": "Script",
+    "offendingArtifact": "https://richads.com/feed/native.js",
+    "offendingHost": "richads.com",
+    "resourceTypes": [
+      "script",
+      "xmlhttprequest"
+    ],
+    "reason": "Unblocked third-party script request to richads.com (HTTP 200 OK) on recipeindex.net"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://richads.com/feed/native.js\"></script>"
+}

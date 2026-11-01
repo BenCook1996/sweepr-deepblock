@@ -1,0 +1,18 @@
+{
+  "capturedAt": "2026-10-28T00:18:42.932Z",
+  "targetUrl": "https://dell.com",
+  "domain": "dell.com",
+  "leak": {
+    "adTypeDetected": "Network",
+    "offendingArtifact": "https://delivery.adnuntius.com/i",
+    "offendingHost": "delivery.adnuntius.com",
+    "resourceTypes": [
+      "xmlhttprequest",
+      "script",
+      "sub_frame"
+    ],
+    "reason": "Unblocked third-party network request to delivery.adnuntius.com (HTTP 200 OK) on dell.com"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://delivery.adnuntius.com/i\"></script>"
+}

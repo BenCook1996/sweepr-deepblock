@@ -1,0 +1,17 @@
+{
+  "capturedAt": "2026-10-28T00:18:42.822Z",
+  "targetUrl": "https://cinemahub.fr",
+  "domain": "cinemahub.fr",
+  "leak": {
+    "adTypeDetected": "Script",
+    "offendingArtifact": "https://cdn.undertone.com/js/dist/undertone.js",
+    "offendingHost": "cdn.undertone.com",
+    "resourceTypes": [
+      "script",
+      "xmlhttprequest"
+    ],
+    "reason": "Unblocked third-party script request to cdn.undertone.com (HTTP 200 OK) on cinemahub.fr"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://cdn.undertone.com/js/dist/undertone.js\"></script>"
+}

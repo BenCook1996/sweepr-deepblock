@@ -1,0 +1,17 @@
+{
+  "capturedAt": "2026-10-29T00:05:29.998Z",
+  "targetUrl": "https://cmail2.com",
+  "domain": "cmail2.com",
+  "leak": {
+    "adTypeDetected": "Script",
+    "offendingArtifact": "https://assets.strossle.com/strossle-widget-sdk.js",
+    "offendingHost": "assets.strossle.com",
+    "resourceTypes": [
+      "script",
+      "xmlhttprequest"
+    ],
+    "reason": "Unblocked third-party script request to assets.strossle.com (HTTP 200 OK) on cmail2.com"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://assets.strossle.com/strossle-widget-sdk.js\"></script>"
+}

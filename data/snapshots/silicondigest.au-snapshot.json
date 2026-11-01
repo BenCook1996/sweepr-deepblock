@@ -1,0 +1,17 @@
+{
+  "capturedAt": "2026-10-29T00:05:29.790Z",
+  "targetUrl": "https://silicondigest.au",
+  "domain": "silicondigest.au",
+  "leak": {
+    "adTypeDetected": "Script",
+    "offendingArtifact": "https://cdn.playstream.media/tag/ad-unit.js",
+    "offendingHost": "cdn.playstream.media",
+    "resourceTypes": [
+      "script",
+      "xmlhttprequest"
+    ],
+    "reason": "Unblocked third-party script request to cdn.playstream.media (HTTP 200 OK) on silicondigest.au"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://cdn.playstream.media/tag/ad-unit.js\"></script>"
+}

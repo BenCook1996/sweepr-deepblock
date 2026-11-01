@@ -1,0 +1,17 @@
+{
+  "capturedAt": "2026-10-29T00:05:30.085Z",
+  "targetUrl": "https://circuitscoop.co",
+  "domain": "circuitscoop.co",
+  "leak": {
+    "adTypeDetected": "Script",
+    "offendingArtifact": "https://assets.strossle.com/strossle-widget-sdk.js",
+    "offendingHost": "assets.strossle.com",
+    "resourceTypes": [
+      "script",
+      "xmlhttprequest"
+    ],
+    "reason": "Unblocked third-party script request to assets.strossle.com (HTTP 200 OK) on circuitscoop.co"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://assets.strossle.com/strossle-widget-sdk.js\"></script>"
+}

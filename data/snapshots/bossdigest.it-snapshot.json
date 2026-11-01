@@ -1,0 +1,18 @@
+{
+  "capturedAt": "2026-10-28T00:18:42.825Z",
+  "targetUrl": "https://bossdigest.it",
+  "domain": "bossdigest.it",
+  "leak": {
+    "adTypeDetected": "Script",
+    "offendingArtifact": "https://k.krelay.com/delivery/invibes.js",
+    "offendingHost": "k.krelay.com",
+    "resourceTypes": [
+      "script",
+      "xmlhttprequest",
+      "sub_frame"
+    ],
+    "reason": "Unblocked third-party script request to k.krelay.com (HTTP 200 OK) on bossdigest.it"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://k.krelay.com/delivery/invibes.js\"></script>"
+}

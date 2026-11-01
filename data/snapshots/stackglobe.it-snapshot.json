@@ -1,0 +1,19 @@
+{
+  "capturedAt": "2026-10-28T00:18:42.907Z",
+  "targetUrl": "https://stackglobe.it",
+  "domain": "stackglobe.it",
+  "leak": {
+    "adTypeDetected": "Script",
+    "offendingArtifact": "https://static.vidoomy.com/player.js",
+    "offendingHost": "static.vidoomy.com",
+    "resourceTypes": [
+      "script",
+      "xmlhttprequest",
+      "media",
+      "sub_frame"
+    ],
+    "reason": "Unblocked third-party script request to static.vidoomy.com (HTTP 200 OK) on stackglobe.it"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://static.vidoomy.com/player.js\"></script>"
+}

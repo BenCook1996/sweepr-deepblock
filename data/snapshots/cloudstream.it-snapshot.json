@@ -1,0 +1,17 @@
+{
+  "capturedAt": "2026-10-29T00:05:30.040Z",
+  "targetUrl": "https://cloudstream.it",
+  "domain": "cloudstream.it",
+  "leak": {
+    "adTypeDetected": "Script",
+    "offendingArtifact": "https://d3lcz8vpax4lo2.cloudfront.net/embed-scripts/insticator.js",
+    "offendingHost": "d3lcz8vpax4lo2.cloudfront.net",
+    "resourceTypes": [
+      "script",
+      "xmlhttprequest"
+    ],
+    "reason": "Unblocked third-party script request to d3lcz8vpax4lo2.cloudfront.net (HTTP 200 OK) on cloudstream.it"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://d3lcz8vpax4lo2.cloudfront.net/embed-scripts/insticator.js\"></script>"
+}

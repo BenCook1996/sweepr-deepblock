@@ -30,16 +30,36 @@ const results = {
   htmlIssues: [],
   htmlWarnings: [],
   pagesAnalyzed: htmlFiles.length,
+  indexablePages: 0,
+  nonIndexablePages: 0,
   serverAudit: {},
   scriptsAudit: {}
 };
 
+// Build index of clean routes
+const existingCleanRoutes = new Set();
+for (const f of htmlFiles) {
+  const rel = path.relative(WEBSITE_DIR, f).replace(/\\/g, '/');
+  const clean = rel === 'index.html' ? '/' : '/' + rel.replace(/\.html$/, '');
+  existingCleanRoutes.add(clean);
+}
+// Add website static assets & download files
+const websiteRootFiles = fs.readdirSync(WEBSITE_DIR);
+for (const rf of websiteRootFiles) {
+  existingCleanRoutes.add('/' + rf);
+  existingCleanRoutes.add('/download/' + rf);
+}
+
 for (const filePath of htmlFiles) {
   const content = fs.readFileSync(filePath, 'utf8');
   const rel = path.relative(WEBSITE_DIR, filePath).replace(/\\/g, '/');
-  if (/meta\s+name=["']robots["']\s+content=["'][^"']*noindex/i.test(content)) {
+  const isNoIndex = /meta\s+name=["']robots["']\s+content=["'][^"']*noindex/i.test(content);
+
+  if (isNoIndex) {
+    results.nonIndexablePages++;
     continue;
   }
+  results.indexablePages++;
 
   // Title tag
   const titleMatch = content.match(/<title>([^<]+)<\/title>/i);
@@ -48,8 +68,8 @@ for (const filePath of htmlFiles) {
     results.htmlIssues.push({ file: rel, type: 'missing_title', msg: 'Missing <title> tag' });
   } else {
     const decodedTitle = title.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'");
-    if (decodedTitle.length > 70) {
-      results.htmlWarnings.push({ file: rel, type: 'long_title', msg: `Title exceeds 70 chars (${decodedTitle.length} chars): "${decodedTitle}"` });
+    if (title.length > 70) {
+      results.htmlWarnings.push({ file: rel, type: 'long_title', msg: `Title exceeds 70 chars (${title.length} chars): "${title}"` });
     }
     if (decodedTitle.length < 25) {
       results.htmlWarnings.push({ file: rel, type: 'short_title', msg: `Title under 25 chars (${decodedTitle.length} chars): "${decodedTitle}"` });
@@ -91,6 +111,11 @@ for (const filePath of htmlFiles) {
     if (!canHref.startsWith('https://sweeprdeepblock.com')) {
       results.htmlIssues.push({ file: rel, type: 'non_production_canonical', msg: `Canonical link does not start with https://sweeprdeepblock.com: "${canHref}"` });
     }
+    const expectedSlug = rel === 'index.html' ? '' : rel.replace(/\.html$/, '');
+    const expectedUrl = `https://sweeprdeepblock.com/${expectedSlug}`;
+    if (canHref !== expectedUrl) {
+      results.htmlIssues.push({ file: rel, type: 'canonical_mismatch', msg: `Canonical href "${canHref}" does not match expected "${expectedUrl}"` });
+    }
   }
 
   // Viewport
@@ -107,6 +132,22 @@ for (const filePath of htmlFiles) {
   const langMatch = content.match(/<html[^>]*lang=["']([^"']+)["']/i);
   if (!langMatch) {
     results.htmlIssues.push({ file: rel, type: 'missing_lang', msg: 'Missing lang attribute on <html>' });
+  }
+
+  // Theme color & Webmanifest
+  if (!content.includes('name="theme-color"')) {
+    results.htmlWarnings.push({ file: rel, type: 'missing_theme_color', msg: 'Missing theme-color meta tag' });
+  }
+  if (!content.includes('rel="manifest"') && !content.includes("rel='manifest'")) {
+    results.htmlWarnings.push({ file: rel, type: 'missing_manifest_link', msg: 'Missing link to site.webmanifest' });
+  }
+  if (!content.includes('rel="icon"') && !content.includes("rel='icon'")) {
+    results.htmlWarnings.push({ file: rel, type: 'missing_favicon', msg: 'Missing favicon link tag' });
+  }
+
+  // Resource hints
+  if (!content.includes('rel="preconnect"')) {
+    results.htmlWarnings.push({ file: rel, type: 'missing_preconnect', msg: 'Missing preconnect resource hints for PageSpeed' });
   }
 
   // H1 tag
@@ -141,7 +182,7 @@ for (const filePath of htmlFiles) {
     });
   }
 
-  // JSON-LD structured data
+  // JSON-LD structured data (Merchant Listings / Product / SoftwareApplication)
   const jsonLdMatches = content.match(/<script\s+type=["']application\/ld\+json["']>([\s\S]*?)<\/script>/gi);
   if (!jsonLdMatches || jsonLdMatches.length === 0) {
     results.htmlWarnings.push({ file: rel, type: 'missing_json_ld', msg: 'Missing JSON-LD structured data' });
@@ -149,14 +190,66 @@ for (const filePath of htmlFiles) {
     for (const tag of jsonLdMatches) {
       const raw = tag.replace(/<script[^>]*>|<\/script>/gi, '').trim();
       try {
-        JSON.parse(raw);
+        const parsed = JSON.parse(raw);
+        const items = Array.isArray(parsed) ? parsed : (parsed['@graph'] || [parsed]);
+        for (const item of items) {
+          if (item['@type'] === 'SoftwareApplication' || item['@type'] === 'Product') {
+            if (!item.offers) {
+              results.htmlWarnings.push({ file: rel, type: 'json_ld_missing_offers', msg: 'Schema missing offers field' });
+            } else {
+              const offers = Array.isArray(item.offers) ? item.offers : [item.offers];
+              for (const off of offers) {
+                if (!off.priceValidUntil) {
+                  results.htmlWarnings.push({ file: rel, type: 'offers_missing_priceValidUntil', msg: 'Offer missing priceValidUntil for Merchant Listings' });
+                }
+                if (!off.validFrom) {
+                  results.htmlWarnings.push({ file: rel, type: 'offers_missing_validFrom', msg: 'Offer missing validFrom for Merchant Listings' });
+                }
+              }
+            }
+            if (!item.aggregateRating) {
+              results.htmlWarnings.push({ file: rel, type: 'missing_aggregateRating', msg: 'Schema missing aggregateRating for rich snippets' });
+            }
+          }
+        }
       } catch (err) {
         results.htmlIssues.push({ file: rel, type: 'invalid_json_ld', msg: `Invalid JSON-LD syntax: ${err.message}` });
       }
     }
   }
 
-  // Images without alt, width/height, or loading="lazy"
+  // Internal Links check
+  const aMatches = content.matchAll(/<a\s+[^>]*href=["']([^"'#]+)(?:#[^"']*)?["'][^>]*>/gi);
+  for (const m of aMatches) {
+    const href = m[1].trim();
+    if (href.startsWith('http://') || href.startsWith('https://')) {
+      if (href.startsWith('https://sweeprdeepblock.com')) {
+        const urlObj = new URL(href);
+        const p = urlObj.pathname;
+        if (p.endsWith('.html')) {
+          results.htmlIssues.push({ file: rel, type: 'link_has_html', msg: `Internal link with .html extension: ${href}` });
+        }
+        if (p.length > 1 && p.endsWith('/')) {
+          results.htmlIssues.push({ file: rel, type: 'link_has_trailing_slash', msg: `Internal link with trailing slash: ${href}` });
+        }
+      }
+    } else if (href.startsWith('/')) {
+      if (href.endsWith('.html')) {
+        results.htmlIssues.push({ file: rel, type: 'link_has_html', msg: `Internal link with .html extension: ${href}` });
+      }
+      if (href.length > 1 && href.endsWith('/')) {
+        results.htmlIssues.push({ file: rel, type: 'link_has_trailing_slash', msg: `Internal link with trailing slash: ${href}` });
+      }
+      const cleanPath = href.split('?')[0];
+      if (cleanPath !== '/' && !existingCleanRoutes.has(cleanPath)) {
+        if (!cleanPath.startsWith('/api/') && !cleanPath.startsWith('/checkout') && !cleanPath.startsWith('/cdn-cgi')) {
+          results.htmlIssues.push({ file: rel, type: 'broken_internal_link', msg: `Internal link to non-existent route: ${href}` });
+        }
+      }
+    }
+  }
+
+  // Images without alt, width/height
   const imgMatches = content.match(/<img[^>]+>/gi) || [];
   for (const img of imgMatches) {
     if (!/alt=["'][^"']*["']/i.test(img)) {
@@ -177,11 +270,18 @@ if (fs.existsSync(sitemapPath)) {
   sitemapUrls = locMatches.map(m => m.replace(/<\/?loc>/g, '').trim());
   console.log(`[AUDIT] Found ${sitemapUrls.length} URLs in sitemap.xml`);
 
-  // Check if any sitemap URLs 404 or have .html
   for (const u of sitemapUrls) {
     if (u.endsWith('.html') && !u.endsWith('pad.xml')) {
       results.htmlIssues.push({ file: 'sitemap.xml', type: 'sitemap_url_with_html', msg: `Sitemap contains .html extension: ${u}` });
     }
+  }
+
+  if (sitemapUrls.length !== results.indexablePages) {
+    results.htmlIssues.push({
+      file: 'sitemap.xml',
+      type: 'sitemap_count_mismatch',
+      msg: `Sitemap URL count (${sitemapUrls.length}) does not match indexable HTML pages (${results.indexablePages})`
+    });
   }
 } else {
   results.htmlIssues.push({ file: 'sitemap.xml', type: 'missing_sitemap', msg: 'sitemap.xml not found!' });
@@ -202,6 +302,12 @@ if (fs.existsSync(robotsPath)) {
   }
   if (!robotsTxt.includes('Disallow: /extension-ux-prototype')) {
     results.htmlWarnings.push({ file: 'robots.txt', type: 'missing_prototype_disallow', msg: 'robots.txt missing Disallow: /extension-ux-prototype' });
+  }
+  if (!robotsTxt.includes('Disallow: /sweepr-vpn-concepts')) {
+    results.htmlWarnings.push({ file: 'robots.txt', type: 'missing_vpn_concepts_disallow', msg: 'robots.txt missing Disallow: /sweepr-vpn-concepts' });
+  }
+  if (!robotsTxt.includes('User-agent: ClaudeBot') || !robotsTxt.includes('User-agent: GPTBot') || !robotsTxt.includes('User-agent: PerplexityBot')) {
+    results.htmlWarnings.push({ file: 'robots.txt', type: 'missing_ai_crawlers', msg: 'robots.txt missing explicit directives for ClaudeBot, GPTBot, or PerplexityBot' });
   }
 } else {
   results.htmlIssues.push({ file: 'robots.txt', type: 'missing_robots', msg: 'robots.txt not found!' });
@@ -244,7 +350,7 @@ if (fs.existsSync(llmsPath)) {
   results.htmlWarnings.push({ file: 'llms.txt', type: 'missing_llms_txt', msg: 'llms.txt not found!' });
 }
 
-// Check llms-full.txt (GEO / AEO Comprehensive Context)
+// Check llms-full.txt
 const llmsFullPath = path.join(WEBSITE_DIR, 'llms-full.txt');
 if (fs.existsSync(llmsFullPath)) {
   const llmsFullTxt = fs.readFileSync(llmsFullPath, 'utf8');
@@ -287,13 +393,20 @@ results.serverAudit = {
   hasBotHitTelemetry: serverCode.includes('BOT_UA_RE') && serverCode.includes('bot-hit'),
   hasPreconnectHeaders: serverCode.includes('rel=preconnect'),
   hasPreloadHeaders: serverCode.includes('rel=preload'),
-  hasPrototypeNoIndex: serverCode.includes("'extension-ux-prototype.html'")
+  hasPrototypeNoIndex: serverCode.includes("'extension-ux-prototype.html'"),
+  hasInstallerCleanAliases: serverCode.includes('SWEEPRDeepblockSetup.command') && serverCode.includes('sweepr-deepblock-extension.zip'),
+  hasSecurityTxtRfc9116: serverCode.includes('security.txt') && serverCode.includes('/.well-known/security.txt'),
+  hasVaryPreservation: serverCode.includes("headers['Vary']") && serverCode.includes('Accept-Encoding'),
+  hasIdSigSupport: serverCode.includes('.idsig') && serverCode.includes('application/octet-stream')
 };
 
 console.log('\n=== AUDIT SUMMARY ===');
 console.log(`Total HTML files scanned: ${results.pagesAnalyzed}`);
+console.log(`Indexable pages: ${results.indexablePages}`);
+console.log(`Non-indexable pages: ${results.nonIndexablePages}`);
 console.log(`Total Errors / Issues: ${results.htmlIssues.length}`);
 console.log(`Total Warnings / Non-Optimized: ${results.htmlWarnings.length}`);
+
 console.log('\n--- Server Capabilities ---');
 console.log(JSON.stringify(results.serverAudit, null, 2));
 
@@ -318,4 +431,10 @@ if (results.htmlIssues.length > 0) {
 if (results.htmlWarnings.length > 0) {
   console.log('\nSample Warnings (first 10):');
   console.log(JSON.stringify(results.htmlWarnings.slice(0, 10), null, 2));
+}
+
+if (results.htmlIssues.length > 0) {
+  process.exit(1);
+} else {
+  console.log('\n[PASS] All Technical SEO, Crawlability, and PageSpeed checks passed with 100% compliance.');
 }

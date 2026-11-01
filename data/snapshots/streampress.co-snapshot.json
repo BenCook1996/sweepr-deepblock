@@ -1,0 +1,18 @@
+{
+  "capturedAt": "2026-10-31T07:06:22.790Z",
+  "targetUrl": "https://streampress.co",
+  "domain": "streampress.co",
+  "leak": {
+    "adTypeDetected": "Script",
+    "offendingArtifact": "https://ad.a-ads.com/banner.js",
+    "offendingHost": "ad.a-ads.com",
+    "resourceTypes": [
+      "script",
+      "sub_frame",
+      "image"
+    ],
+    "reason": "Unblocked third-party script request to ad.a-ads.com (HTTP 200 OK) on streampress.co"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://ad.a-ads.com/banner.js\"></script>"
+}

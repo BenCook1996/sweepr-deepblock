@@ -1,0 +1,17 @@
+{
+  "capturedAt": "2026-10-29T00:05:30.028Z",
+  "targetUrl": "https://bostonherald.com",
+  "domain": "bostonherald.com",
+  "leak": {
+    "adTypeDetected": "Network",
+    "offendingArtifact": "https://ms-ads.ogury.io/v1/interstitial",
+    "offendingHost": "ms-ads.ogury.io",
+    "resourceTypes": [
+      "xmlhttprequest",
+      "script"
+    ],
+    "reason": "Unblocked third-party network request to ms-ads.ogury.io (HTTP 200 OK) on bostonherald.com"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://ms-ads.ogury.io/v1/interstitial\"></script>"
+}

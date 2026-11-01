@@ -1,0 +1,18 @@
+{
+  "capturedAt": "2026-10-29T00:05:29.928Z",
+  "targetUrl": "https://otakubeat.co.uk",
+  "domain": "otakubeat.co.uk",
+  "leak": {
+    "adTypeDetected": "Script",
+    "offendingArtifact": "https://static.showheroes.com/publishertag.js",
+    "offendingHost": "static.showheroes.com",
+    "resourceTypes": [
+      "script",
+      "xmlhttprequest",
+      "media"
+    ],
+    "reason": "Unblocked third-party script request to static.showheroes.com (HTTP 200 OK) on otakubeat.co.uk"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://static.showheroes.com/publishertag.js\"></script>"
+}

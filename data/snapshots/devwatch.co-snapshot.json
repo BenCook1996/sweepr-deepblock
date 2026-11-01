@@ -1,0 +1,17 @@
+{
+  "capturedAt": "2026-10-29T05:51:13.061Z",
+  "targetUrl": "https://devwatch.co",
+  "domain": "devwatch.co",
+  "leak": {
+    "adTypeDetected": "Network",
+    "offendingArtifact": "https://nodea.targetspot.com/callback/uuid",
+    "offendingHost": "nodea.targetspot.com",
+    "resourceTypes": [
+      "xmlhttprequest",
+      "script"
+    ],
+    "reason": "Unblocked third-party network request to nodea.targetspot.com (HTTP 200 OK) on devwatch.co"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://nodea.targetspot.com/callback/uuid\"></script>"
+}

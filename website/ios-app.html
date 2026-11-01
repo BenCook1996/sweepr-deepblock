@@ -322,6 +322,14 @@
   }
   .nav-tab.active { color: var(--accent-fg); background: var(--accent-soft); }
 </style>
+  <!-- Google tag (gtag.js) - Sweepr Deepblock -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-01MNBQSL9K"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-01MNBQSL9K');
+  </script>
 </head>
 <body>
 
@@ -578,9 +586,22 @@ async function activateDeepblock() {
   }
   const savedTheme = localStorage.getItem('sweepr_db_theme') || 'light';
   applyTheme(savedTheme);
-  if (localStorage.getItem('sweepr_db_key')) {
-    document.getElementById('codeInput').value = localStorage.getItem('sweepr_db_key');
-    document.getElementById('proBadge').textContent = 'PRO ACTIVE';
+  const savedKey = localStorage.getItem('sweepr_db_key');
+  if (savedKey) {
+    document.getElementById('codeInput').value = savedKey;
+    fetch(API_BASE + '/api/license-verify?key=' + encodeURIComponent(savedKey) + '&device_id=' + encodeURIComponent(getDeviceId()))
+      .then((r) => r.json())
+      .then((d) => {
+        if (d && d.valid) {
+          document.getElementById('proBadge').textContent = 'PRO ACTIVE';
+        } else {
+          localStorage.removeItem('sweepr_db_key');
+          document.getElementById('proBadge').textContent = 'FREE MODE';
+        }
+      })
+      .catch(() => {
+        document.getElementById('proBadge').textContent = 'PRO ACTIVE';
+      });
   }
 })();
 </script>

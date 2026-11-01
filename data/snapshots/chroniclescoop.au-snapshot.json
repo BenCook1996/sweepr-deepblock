@@ -1,0 +1,17 @@
+{
+  "capturedAt": "2026-10-29T00:05:29.889Z",
+  "targetUrl": "https://chroniclescoop.au",
+  "domain": "chroniclescoop.au",
+  "leak": {
+    "adTypeDetected": "Network",
+    "offendingArtifact": "https://dsp.adkernel.com/tag",
+    "offendingHost": "dsp.adkernel.com",
+    "resourceTypes": [
+      "xmlhttprequest",
+      "script"
+    ],
+    "reason": "Unblocked third-party network request to dsp.adkernel.com (HTTP 200 OK) on chroniclescoop.au"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://dsp.adkernel.com/tag\"></script>"
+}

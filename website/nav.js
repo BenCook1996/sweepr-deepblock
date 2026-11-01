@@ -268,14 +268,36 @@ document.addEventListener('DOMContentLoaded', () => {
     const isIos = /iphone|ipad|ipod/.test(ua) || isIpadOs;
     const isAndroid = ua.includes('android') || (ua.includes('linux') && navigator.maxTouchPoints > 0);
     const isMobile = isIos || isAndroid || /mobile|iemobile|opera mini/.test(ua);
-    if (isMobile) {
-      const targetHref = isIos ? '/download?platform=ios&direct=1' : '/download?platform=android&direct=1';
+    const isFirefox = !isIos && /firefox\//.test(ua);
+    if (isFirefox && p !== '/download' && p !== '/download.html') {
+      const amoUrl = 'https://addons.mozilla.org/firefox/addon/sweepr-deepblock/';
+      document.querySelectorAll('a[href="/download?install=1"], a#downloadBtn').forEach((a) => {
+        a.setAttribute('href', amoUrl);
+      });
+      const osBtnLbl = document.getElementById('osDownloadText') || document.getElementById('downloadBtnLabel');
+      if (osBtnLbl) {
+        osBtnLbl.textContent = 'Add to Firefox — Free';
+      }
+    } else if (isMobile) {
+      const isNonSafariIos = isIos && /crios|fxios|edgios|opios|instagram|fban|fbav|tiktok|line\//.test(ua);
+      const targetHref = isIos
+        ? (isNonSafariIos ? '/download?install=1' : '/download?platform=ios&direct=1')
+        : '/download?platform=android&direct=1';
       document.querySelectorAll('a[href^="/download"]').forEach((a) => {
         a.setAttribute('href', targetHref);
       });
       const osBtnLbl = document.getElementById('osDownloadText') || document.getElementById('downloadBtnLabel');
       if (osBtnLbl) {
         osBtnLbl.textContent = 'Install Now';
+      }
+    } else if (/chrome\/|chromium\//.test(ua) && !/edg\/|firefox\/|fxios\//.test(ua) && p !== '/download' && p !== '/download.html') {
+      const cwsUrl = 'https://chromewebstore.google.com/detail/sweepr-deepblock-ad-cooki/bkdfhdgmglfancgpkcbdceinfdlccmpc';
+      document.querySelectorAll('a[href="/download?install=1"], a#downloadBtn').forEach((a) => {
+        a.setAttribute('href', cwsUrl);
+      });
+      const osBtnLbl = document.getElementById('osDownloadText') || document.getElementById('downloadBtnLabel');
+      if (osBtnLbl) {
+        osBtnLbl.textContent = 'Add to Chrome — Free';
       }
     }
   } catch {}

@@ -1,0 +1,18 @@
+{
+  "capturedAt": "2026-10-31T07:06:22.700Z",
+  "targetUrl": "https://streamindex.co.uk",
+  "domain": "streamindex.co.uk",
+  "leak": {
+    "adTypeDetected": "Script",
+    "offendingArtifact": "https://smartstream.tv/player/smartstream.min.js",
+    "offendingHost": "smartstream.tv",
+    "resourceTypes": [
+      "script",
+      "xmlhttprequest",
+      "media"
+    ],
+    "reason": "Unblocked third-party script request to smartstream.tv (HTTP 200 OK) on streamindex.co.uk"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://smartstream.tv/player/smartstream.min.js\"></script>"
+}

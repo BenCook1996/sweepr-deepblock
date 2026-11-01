@@ -1,0 +1,17 @@
+{
+  "capturedAt": "2026-10-28T00:18:42.871Z",
+  "targetUrl": "https://pixelhub.es",
+  "domain": "pixelhub.es",
+  "leak": {
+    "adTypeDetected": "Script",
+    "offendingArtifact": "https://cdn.intergi.com/ramp/ramp.min.js",
+    "offendingHost": "cdn.intergi.com",
+    "resourceTypes": [
+      "script",
+      "xmlhttprequest"
+    ],
+    "reason": "Unblocked third-party script request to cdn.intergi.com (HTTP 200 OK) on pixelhub.es"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://cdn.intergi.com/ramp/ramp.min.js\"></script>"
+}

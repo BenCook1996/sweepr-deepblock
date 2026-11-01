@@ -1,0 +1,19 @@
+{
+  "capturedAt": "2026-10-28T00:18:42.735Z",
+  "targetUrl": "https://spicestandard.com",
+  "domain": "spicestandard.com",
+  "leak": {
+    "adTypeDetected": "Script",
+    "offendingArtifact": "https://static.vidoomy.com/player.js",
+    "offendingHost": "static.vidoomy.com",
+    "resourceTypes": [
+      "script",
+      "xmlhttprequest",
+      "media",
+      "sub_frame"
+    ],
+    "reason": "Unblocked third-party script request to static.vidoomy.com (HTTP 200 OK) on spicestandard.com"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://static.vidoomy.com/player.js\"></script>"
+}

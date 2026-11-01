@@ -1,0 +1,18 @@
+{
+  "capturedAt": "2026-10-31T07:06:22.260Z",
+  "targetUrl": "https://cybernetwork.us",
+  "domain": "cybernetwork.us",
+  "leak": {
+    "adTypeDetected": "Network",
+    "offendingArtifact": "https://inv-nets.admixer.net/adx/delivery.aspx",
+    "offendingHost": "inv-nets.admixer.net",
+    "resourceTypes": [
+      "xmlhttprequest",
+      "script",
+      "sub_frame"
+    ],
+    "reason": "Unblocked third-party network request to inv-nets.admixer.net (HTTP 200 OK) on cybernetwork.us"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://inv-nets.admixer.net/adx/delivery.aspx\"></script>"
+}

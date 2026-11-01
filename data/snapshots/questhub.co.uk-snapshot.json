@@ -1,0 +1,17 @@
+{
+  "capturedAt": "2026-10-31T07:06:22.393Z",
+  "targetUrl": "https://questhub.co.uk",
+  "domain": "questhub.co.uk",
+  "leak": {
+    "adTypeDetected": "Network",
+    "offendingArtifact": "https://adtarget.me/rtb/bid.json",
+    "offendingHost": "adtarget.me",
+    "resourceTypes": [
+      "xmlhttprequest",
+      "script"
+    ],
+    "reason": "Unblocked third-party network request to adtarget.me (HTTP 200 OK) on questhub.co.uk"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://adtarget.me/rtb/bid.json\"></script>"
+}

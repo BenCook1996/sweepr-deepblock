@@ -1,0 +1,17 @@
+{
+  "capturedAt": "2026-10-28T00:18:42.752Z",
+  "targetUrl": "https://otakupress.gg",
+  "domain": "otakupress.gg",
+  "leak": {
+    "adTypeDetected": "Script",
+    "offendingArtifact": "https://cdn.intergi.com/ramp/ramp.min.js",
+    "offendingHost": "cdn.intergi.com",
+    "resourceTypes": [
+      "script",
+      "xmlhttprequest"
+    ],
+    "reason": "Unblocked third-party script request to cdn.intergi.com (HTTP 200 OK) on otakupress.gg"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://cdn.intergi.com/ramp/ramp.min.js\"></script>"
+}

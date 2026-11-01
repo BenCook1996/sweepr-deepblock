@@ -1,0 +1,17 @@
+{
+  "capturedAt": "2026-10-28T00:18:42.901Z",
+  "targetUrl": "https://savoryjournal.io",
+  "domain": "savoryjournal.io",
+  "leak": {
+    "adTypeDetected": "Network",
+    "offendingArtifact": "https://colossusssp.com/sp/bid",
+    "offendingHost": "colossusssp.com",
+    "resourceTypes": [
+      "xmlhttprequest",
+      "script"
+    ],
+    "reason": "Unblocked third-party network request to colossusssp.com (HTTP 200 OK) on savoryjournal.io"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://colossusssp.com/sp/bid\"></script>"
+}

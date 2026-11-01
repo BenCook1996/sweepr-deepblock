@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-01T00:03:55.146Z",
+  "updatedAt": "2026-11-01T18:43:57.232Z",
   "total": 9218,
   "sites": [
     {
@@ -17,7 +17,7 @@
       "scan_count": 1,
       "notes": "Verified blocked: neutralized AdSpyglass window.__NA, fluidPlayer VAST pre-rolls, and eliminated ERR_BLOCKED_BY_CLIENT main_frame screen on fhgte.com",
       "first_blocked_at": 1792927729,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "nuvid.com",
@@ -34,7 +34,7 @@
       "scan_count": 1,
       "notes": "Verified blocked: wrapped window.htmlVideoPlayer to disable pause overlay banner and blocked rvp2p / ExoLoader",
       "first_blocked_at": 1792927729,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "drtuber.com",
@@ -51,7 +51,7 @@
       "scan_count": 1,
       "notes": "Verified blocked: shared player engine with nuvid.com (htmlVideoPlayer + rvp2p + ExoLoader)",
       "first_blocked_at": 1792927729,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "txxx.me",
@@ -68,7 +68,7 @@
       "scan_count": 1,
       "notes": "Verified blocked: neutralized TubeCorporate AdManager 5s VAST pre-roll, in-player CPA button, and bottom-right inpage skin",
       "first_blocked_at": 1792927729,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "txxx.com",
@@ -85,7 +85,7 @@
       "scan_count": 1,
       "notes": "Verified blocked: TubeCorporate network rules & DeepStealth player hooks",
       "first_blocked_at": 1792927729,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "pornoxo.com",
@@ -102,7 +102,7 @@
       "scan_count": 1,
       "notes": "Verified blocked: stripped clickFlow tab-under & preRoll config while keeping main video tab intact",
       "first_blocked_at": 1792927729,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "sxyprn.com",
@@ -119,7 +119,7 @@
       "scan_count": 1,
       "notes": "Verified blocked: intercepted ExoClick popMagic reverse tab-under and disabled player VAST flags",
       "first_blocked_at": 1792927729,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "eporner.com",
@@ -136,7 +136,7 @@
       "scan_count": 1,
       "notes": "Verified blocked: blocked first-party /dot/ ad loader, VAST pre-rolls, and EP.ads pause overlays",
       "first_blocked_at": 1792927729,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "youtube.com",
@@ -153,7 +153,7 @@
       "scan_count": 1,
       "notes": "Core verified site: MAIN-world player response sanitizer + 16x mute fast-forward",
       "first_blocked_at": 1792927729,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "twitch.tv",
@@ -170,7 +170,7 @@
       "scan_count": 1,
       "notes": "Core verified site",
       "first_blocked_at": 1792927729,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "forbes.com",
@@ -187,7 +187,7 @@
       "scan_count": 1,
       "notes": "Core verified site",
       "first_blocked_at": 1792927729,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "dailymail.co.uk",
@@ -204,7 +204,7 @@
       "scan_count": 1,
       "notes": "Core verified site",
       "first_blocked_at": 1792927729,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "hdnux.com",
@@ -221,7 +221,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule hdnux.com##.mediaforce-ad-slot collapses ad container (.mediaforce-ad-slot) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1792927729,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "gazettereview.fr",
@@ -238,7 +238,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule gazettereview.fr##.mediaforce-ad-slot collapses ad container (.mediaforce-ad-slot) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1792927729,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "questwatch.it",
@@ -255,7 +255,7 @@
       "scan_count": 1,
       "notes": "Rejected: DOM selector \".springserve-vast-slot\" lacks explicit ad-namespace specificity; queued for manual review.",
       "first_blocked_at": 1792927729,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "kernelplanet.de",
@@ -272,7 +272,7 @@
       "scan_count": 1,
       "notes": "Rejected: DOM selector \".springserve-vast-slot\" lacks explicit ad-namespace specificity; queued for manual review.",
       "first_blocked_at": 1792927729,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "arenawatch.org",
@@ -289,7 +289,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule arenawatch.org##.wknd-sponsored-box collapses ad container (.wknd-sponsored-box) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1792927729,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "pixelzone.ca",
@@ -306,7 +306,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule pixelzone.ca##.mediaforce-ad-slot collapses ad container (.mediaforce-ad-slot) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1792927729,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "foodiedigest.org",
@@ -323,7 +323,7 @@
       "scan_count": 1,
       "notes": "Rejected: DOM selector \".springserve-vast-slot\" lacks explicit ad-namespace specificity; queued for manual review.",
       "first_blocked_at": 1792927729,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "postzone.info",
@@ -340,7 +340,7 @@
       "scan_count": 1,
       "notes": "Rejected: DOM selector \".springserve-vast-slot\" lacks explicit ad-namespace specificity; queued for manual review.",
       "first_blocked_at": 1792927729,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "bytefocus.gg",
@@ -357,7 +357,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule bytefocus.gg##.apnx-banner-300x250 collapses ad container (.apnx-banner-300x250) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1792927729,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "buzzbulletin.io",
@@ -374,7 +374,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule buzzbulletin.io##.apnx-banner-300x250 collapses ad container (.apnx-banner-300x250) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1792927729,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "kitchenreport.info",
@@ -391,7 +391,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule kitchenreport.info##.mediaforce-ad-slot collapses ad container (.mediaforce-ad-slot) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1792927729,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "metrowatch.co.uk",
@@ -408,7 +408,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule metrowatch.co.uk##.snigel-ad-unit collapses ad container (.snigel-ad-unit) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1792927729,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "cravestream.com",
@@ -425,7 +425,7 @@
       "scan_count": 1,
       "notes": "Verified: ||wknd.ai^$third-party,script,xmlhttprequest blocks wknd.ai while preserving cravestream.com first-party layout & scripts.",
       "first_blocked_at": 1792927729,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "arcademagazine.nl",
@@ -442,7 +442,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule arcademagazine.nl##.wknd-sponsored-box collapses ad container (.wknd-sponsored-box) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1792927729,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "questbeacon.info",
@@ -459,7 +459,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule questbeacon.info##.freestar-ad-slot collapses ad container (.freestar-ad-slot) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1792927729,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "doji.vn",
@@ -476,7 +476,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule doji.vn##.wknd-sponsored-box collapses ad container (.wknd-sponsored-box) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1792927729,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "commercialintegrator.com",
@@ -493,7 +493,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule commercialintegrator.com##.snigel-ad-unit collapses ad container (.snigel-ad-unit) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1792927729,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "bistrobeacon.de",
@@ -510,7 +510,7 @@
       "scan_count": 1,
       "notes": "Verified: ||ezojs.com^$third-party,script,xmlhttprequest blocks ezojs.com while preserving bistrobeacon.de first-party layout & scripts.",
       "first_blocked_at": 1792927729,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "cars.com",
@@ -527,7 +527,7 @@
       "scan_count": 1,
       "notes": "Verified: ||adnxs-simple.com^$third-party,script,xmlhttprequest blocks adnxs-simple.com while preserving cars.com first-party layout & scripts.",
       "first_blocked_at": 1792927729,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "slashdot.org",
@@ -544,7 +544,7 @@
       "scan_count": 1,
       "notes": "Rejected: DOM selector \".springserve-vast-slot\" lacks explicit ad-namespace specificity; queued for manual review.",
       "first_blocked_at": 1792927729,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "flightradar24.com",
@@ -561,7 +561,7 @@
       "scan_count": 1,
       "notes": "Verified: ||pub.network^$third-party,script,xmlhttprequest blocks pub.network while preserving flightradar24.com first-party layout & scripts.",
       "first_blocked_at": 1792927729,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "makeuseof.com",
@@ -578,7 +578,7 @@
       "scan_count": 1,
       "notes": "Verified: ||mfadsrvr.com^$third-party blocks mfadsrvr.com while preserving makeuseof.com first-party layout & scripts.",
       "first_blocked_at": 1792927729,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "variety.com",
@@ -595,7 +595,7 @@
       "scan_count": 1,
       "notes": "Verified: ||blogherads.com^$third-party,script,xmlhttprequest blocks blogherads.com while preserving variety.com first-party layout & scripts.",
       "first_blocked_at": 1792927729,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "metacritic.com",
@@ -19244,7 +19244,7 @@
       "scan_count": 1,
       "notes": "Verified: ||seedtag.com^$third-party,script,xmlhttprequest blocks seedtag.com while preserving appsflyer.com first-party layout & scripts.",
       "first_blocked_at": 1793146690,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "circuittribune.fr",
@@ -36448,7 +36448,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule bingejournal.jp##.kargo-ad-slot collapses ad container (.kargo-ad-slot) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1793146877,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "codemedia.co.uk",
@@ -37026,7 +37026,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule pixelhub.de##.vidoomy-video-ad collapses ad container (.vidoomy-video-ad) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1793146877,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "streamreview.it",
@@ -37230,7 +37230,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule circuitwatch.org##.undertone-ad-slot collapses ad container (.undertone-ad-slot) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1793146877,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "bytenetwork.us",
@@ -37349,7 +37349,7 @@
       "scan_count": 1,
       "notes": "Verified: ||seedtag.com^$third-party,script,xmlhttprequest blocks seedtag.com while preserving screenglobe.ca first-party layout & scripts.",
       "first_blocked_at": 1793146877,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "bytehub.it",
@@ -37621,7 +37621,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule raidplanet.co##.kargo-ad-slot collapses ad container (.kargo-ad-slot) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1793146877,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "cloudwiki.it",
@@ -37706,7 +37706,7 @@
       "scan_count": 1,
       "notes": "Verified: ||colossusssp.com^$third-party blocks colossusssp.com while preserving popwire.it first-party layout & scripts.",
       "first_blocked_at": 1793146877,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "hdonline.vn",
@@ -37825,7 +37825,7 @@
       "scan_count": 1,
       "notes": "Verified: ||kargo.com^$third-party,script,xmlhttprequest blocks kargo.com while preserving metroradar.net first-party layout & scripts.",
       "first_blocked_at": 1793146877,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "nexusbulletin.me",
@@ -38573,7 +38573,7 @@
       "scan_count": 1,
       "notes": "Verified: ||adpushup.com^$third-party,script,xmlhttprequest blocks adpushup.com while preserving bistrobeacon.fr first-party layout & scripts.",
       "first_blocked_at": 1793146877,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "questreport.ca",
@@ -38811,7 +38811,7 @@
       "scan_count": 1,
       "notes": "Verified: ||intergi.com^$third-party,script,xmlhttprequest blocks intergi.com while preserving bakeplanet.io first-party layout & scripts.",
       "first_blocked_at": 1793146877,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "circuitplanet.co.uk",
@@ -40137,7 +40137,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule siliconmirror.gg##.invibes-infeed-ad collapses ad container (.invibes-infeed-ad) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1793146878,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "arenamirror.fr",
@@ -40596,7 +40596,7 @@
       "scan_count": 1,
       "notes": "Verified: ||m2.ai^$third-party,script,xmlhttprequest blocks m2.ai while preserving savorymedia.de first-party layout & scripts.",
       "first_blocked_at": 1793146878,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "bakescoop.it",
@@ -41191,7 +41191,7 @@
       "scan_count": 1,
       "notes": "Verified: ||adnuntius.com^$third-party blocks adnuntius.com while preserving nexushub.me first-party layout & scripts.",
       "first_blocked_at": 1793146878,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "dailywire.ca",
@@ -41769,7 +41769,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule cravenation.org##.vidoomy-video-ad collapses ad container (.vidoomy-video-ad) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1793146878,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "spiceplanet.news",
@@ -42330,7 +42330,7 @@
       "scan_count": 1,
       "notes": "Verified: ||vidoomy.com^$third-party,script,xmlhttprequest blocks vidoomy.com while preserving spicestandard.com first-party layout & scripts.",
       "first_blocked_at": 1793146878,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "skilletreport.au",
@@ -43588,7 +43588,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule heraldradar.org##.adnuntius-ad-box collapses ad container (.adnuntius-ad-box) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1793146878,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "cinemaradar.es",
@@ -43724,7 +43724,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule pixeldigest.es##.adnuntius-ad-box collapses ad container (.adnuntius-ad-box) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1793146878,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "cloudcentral.info",
@@ -43792,7 +43792,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule todotorrents.com##.adnuntius-ad-box collapses ad container (.adnuntius-ad-box) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1793146878,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "esportsbulletin.io",
@@ -44336,7 +44336,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule byteindex.nl##.adnuntius-ad-box collapses ad container (.adnuntius-ad-box) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1793146878,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "showbizmedia.ca",
@@ -44863,7 +44863,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule gadgetmirror.net##.kargo-ad-slot collapses ad container (.kargo-ad-slot) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1793146878,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "byteexpress.io",
@@ -45747,7 +45747,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule savoryscoop.nl##.vidoomy-video-ad collapses ad container (.vidoomy-video-ad) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1793146878,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "dispatchworld.es",
@@ -45883,7 +45883,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule skilletradar.es##.kargo-ad-slot collapses ad container (.kargo-ad-slot) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1793146878,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "pantrycentral.io",
@@ -46070,7 +46070,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule spiceplanet.tv##.adnuntius-ad-box collapses ad container (.adnuntius-ad-box) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1793146878,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "postwatch.jp",
@@ -46223,7 +46223,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule animedigest.io##.vidoomy-video-ad collapses ad container (.vidoomy-video-ad) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1793146878,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "zappos.com",
@@ -46240,7 +46240,7 @@
       "scan_count": 1,
       "notes": "Verified: ||undertone.com^$third-party,script,xmlhttprequest blocks undertone.com while preserving zappos.com first-party layout & scripts.",
       "first_blocked_at": 1793146878,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "backupgrid.net",
@@ -46529,7 +46529,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule cloudcentral.nl##.invibes-infeed-ad collapses ad container (.invibes-infeed-ad) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1793146878,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "byteledger.it",
@@ -47022,7 +47022,7 @@
       "scan_count": 1,
       "notes": "Verified: ||krelay.com^$third-party,script,xmlhttprequest blocks krelay.com while preserving bossdigest.it first-party layout & scripts.",
       "first_blocked_at": 1793146878,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "dailyreview.jp",
@@ -47107,7 +47107,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule ebaypartnernetwork.com##.undertone-ad-slot collapses ad container (.undertone-ad-slot) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1793146878,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "kernelnetwork.net",
@@ -47753,7 +47753,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule insiderplanet.info##.vidoomy-video-ad collapses ad container (.vidoomy-video-ad) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1793146878,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "raidguide.fr",
@@ -47821,7 +47821,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule kitchenwatch.news##.adnuntius-ad-box collapses ad container (.adnuntius-ad-box) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1793146878,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "beringmedia.com",
@@ -48314,7 +48314,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule stackjournal.news##.vidoomy-video-ad collapses ad container (.vidoomy-video-ad) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1793146878,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "bingebulletin.nl",
@@ -48603,7 +48603,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule ibxads.com##.adnuntius-ad-box collapses ad container (.adnuntius-ad-box) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1793146878,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "arenaonline.au",
@@ -49589,7 +49589,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule recipetimes.co.uk##.vidoomy-video-ad collapses ad container (.vidoomy-video-ad) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1793146878,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "bytecentral.us",
@@ -49657,7 +49657,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule heraldreport.co##.undertone-ad-slot collapses ad container (.undertone-ad-slot) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1793146878,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "dailywire.co.uk",
@@ -50014,7 +50014,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule respawnbeat.gg##.adnuntius-ad-box collapses ad container (.adnuntius-ad-box) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1793146878,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "digitaltarget.ru",
@@ -50388,7 +50388,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule postwire.news##.vidoomy-video-ad collapses ad container (.vidoomy-video-ad) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1793146878,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "kitchennation.tv",
@@ -50796,7 +50796,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule circuithub.io##.undertone-ad-slot collapses ad container (.undertone-ad-slot) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1793146878,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "circuitnation.org",
@@ -52122,7 +52122,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule respawntimes.org##.invibes-infeed-ad collapses ad container (.invibes-infeed-ad) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1793146878,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "dell.com",
@@ -52564,7 +52564,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule chroniclemirror.io##.undertone-ad-slot collapses ad container (.undertone-ad-slot) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1793146878,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "kitchennation.co.uk",
@@ -52836,7 +52836,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule nexusstandard.tv##.vidoomy-video-ad collapses ad container (.vidoomy-video-ad) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1793146878,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "dispatchreport.nl",
@@ -52955,7 +52955,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule pantryplanet.info##.kargo-ad-slot collapses ad container (.kargo-ad-slot) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1793146878,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "dispatchfocus.com",
@@ -53431,7 +53431,7 @@
       "scan_count": 1,
       "notes": "Undetectable Ad-Shield BFA + Yahoo Next.js ad-shield-container bypass",
       "first_blocked_at": 1793220986,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "chronicletribune.it",
@@ -53550,7 +53550,7 @@
       "scan_count": 1,
       "notes": "Verified: ||playstream.media^$third-party,script,xmlhttprequest blocks playstream.media while preserving animescoop.de first-party layout & scripts.",
       "first_blocked_at": 1793232301,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "buzzspot.gg",
@@ -53703,7 +53703,7 @@
       "scan_count": 1,
       "notes": "Verified: ||sublime.xyz^$third-party,script,xmlhttprequest blocks sublime.xyz while preserving recipehub.co.uk first-party layout & scripts.",
       "first_blocked_at": 1793232339,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "stackmedia.tv",
@@ -54026,7 +54026,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule cloudstandard.nl##.monetag-push-ad collapses ad container (.monetag-push-ad) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1793232339,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "streamtoday.jp",
@@ -54791,7 +54791,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule arcadeguide.ca##.invibes-infeed-ad collapses ad container (.invibes-infeed-ad) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1793232339,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "dispatchtoday.it",
@@ -55454,7 +55454,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule gadgetdigest.au##.brid-video-ad collapses ad container (.brid-video-ad) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1793232339,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "stackhub.info",
@@ -56270,7 +56270,7 @@
       "scan_count": 1,
       "notes": "Verified: ||sonobi.com^$third-party,script,xmlhttprequest blocks sonobi.com while preserving cyberzone.nl first-party layout & scripts.",
       "first_blocked_at": 1793232339,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "cravepulse.es",
@@ -56508,7 +56508,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule buzzreport.com##.inmobi-ad-unit collapses ad container (.inmobi-ad-unit) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1793232339,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "buzztoday.net",
@@ -56525,7 +56525,7 @@
       "scan_count": 1,
       "notes": "Verified: ||smartclip.net^$third-party blocks smartclip.net while preserving buzztoday.net first-party layout & scripts.",
       "first_blocked_at": 1793232339,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "animespot.de",
@@ -56627,7 +56627,7 @@
       "scan_count": 1,
       "notes": "Verified: ||richaudience.com^$third-party,script,xmlhttprequest blocks richaudience.com while preserving cyberexpress.info first-party layout & scripts.",
       "first_blocked_at": 1793232339,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "ngaynay.vn",
@@ -56780,7 +56780,7 @@
       "scan_count": 1,
       "notes": "Verified: ||revive-adserver.net^$third-party,script,xmlhttprequest blocks revive-adserver.net while preserving beygir.com first-party layout & scripts.",
       "first_blocked_at": 1793232339,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "inclk.com",
@@ -56865,7 +56865,7 @@
       "scan_count": 1,
       "notes": "Verified: ||strossle.com^$third-party,script,xmlhttprequest blocks strossle.com while preserving bossbeacon.ca first-party layout & scripts.",
       "first_blocked_at": 1793232339,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "esportscentral.org",
@@ -57545,7 +57545,7 @@
       "scan_count": 1,
       "notes": "Verified: ||adkernel.com^$third-party blocks adkernel.com while preserving buzzbulletin.de first-party layout & scripts.",
       "first_blocked_at": 1793232339,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "bossradar.io",
@@ -57698,7 +57698,7 @@
       "scan_count": 1,
       "notes": "Verified: ||inmobi.com^$third-party,script,xmlhttprequest blocks inmobi.com while preserving tribunedigest.net first-party layout & scripts.",
       "first_blocked_at": 1793232339,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "dailydigest.io",
@@ -57766,7 +57766,7 @@
       "scan_count": 1,
       "notes": "Verified: ||invibes.com^$third-party,script,xmlhttprequest blocks invibes.com while preserving recipespot.nl first-party layout & scripts.",
       "first_blocked_at": 1793232339,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "gadgetstandard.io",
@@ -57936,7 +57936,7 @@
       "scan_count": 1,
       "notes": "Verified: ||playstream.media^$third-party,script,xmlhttprequest blocks playstream.media while preserving kernelbeat.gg first-party layout & scripts.",
       "first_blocked_at": 1793232339,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "kitchenjournal.tv",
@@ -59483,7 +59483,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule lootstream.fr##.brid-video-ad collapses ad container (.brid-video-ad) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1793232340,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "otakuwire.me",
@@ -59568,7 +59568,7 @@
       "scan_count": 1,
       "notes": "Verified: ||brid.tv^$third-party,script,xmlhttprequest blocks brid.tv while preserving gadgetnation.com first-party layout & scripts.",
       "first_blocked_at": 1793232340,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "siliconportal.org",
@@ -60112,7 +60112,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule dailynetwork.news##.invibes-infeed-ad collapses ad container (.invibes-infeed-ad) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1793232340,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "showbiztoday.news",
@@ -60129,7 +60129,7 @@
       "scan_count": 1,
       "notes": "Verified: ||fastclick.net^$third-party blocks fastclick.net while preserving showbiztoday.news first-party layout & scripts.",
       "first_blocked_at": 1793232340,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "postbeat.jp",
@@ -60333,7 +60333,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule arenahub.fr##.showheroes-ad-player collapses ad container (.showheroes-ad-player) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1793232340,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "celebexpress.net",
@@ -60622,7 +60622,7 @@
       "scan_count": 1,
       "notes": "Verified: ||showheroes.com^$third-party,script,xmlhttprequest blocks showheroes.com while preserving spicedigest.info first-party layout & scripts.",
       "first_blocked_at": 1793232340,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "streammirror.nl",
@@ -61285,7 +61285,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule cyberjournal.tv##.invibes-infeed-ad collapses ad container (.invibes-infeed-ad) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1793232340,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "wordego.com",
@@ -62237,7 +62237,7 @@
       "scan_count": 1,
       "notes": "Verified: ||alwingulla.com^$third-party,script,xmlhttprequest blocks alwingulla.com while preserving observerindex.org first-party layout & scripts.",
       "first_blocked_at": 1793232340,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "dailytribune.nl",
@@ -62322,7 +62322,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule streamfocus.jp##.showheroes-ad-player collapses ad container (.showheroes-ad-player) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1793232340,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "chronicletribune.me",
@@ -64209,7 +64209,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule questplanet.es##.monetag-push-ad collapses ad container (.monetag-push-ad) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1793232340,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "cloudpress.it",
@@ -64294,7 +64294,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule spicewire.com##.brid-video-ad collapses ad container (.brid-video-ad) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1793232340,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "nexuswiki.me",
@@ -65229,7 +65229,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule recipereview.co.uk##.adtrue-banner collapses ad container (.adtrue-banner) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1793232340,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "dispatchdigest.nl",
@@ -65382,7 +65382,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule byteledger.net##.conversant-ad-slot collapses ad container (.conversant-ad-slot) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1793232340,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "cinemaledger.me",
@@ -65399,7 +65399,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule cinemaledger.me##.monetag-push-ad collapses ad container (.monetag-push-ad) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1793232340,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "pixelwire.nl",
@@ -65569,7 +65569,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule celebnetwork.it##.conversant-ad-slot collapses ad container (.conversant-ad-slot) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1793232340,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "cyberworld.fr",
@@ -66759,7 +66759,7 @@
       "scan_count": 1,
       "notes": "Verified: ||ogury.io^$third-party blocks ogury.io while preserving bostonherald.com first-party layout & scripts.",
       "first_blocked_at": 1793232340,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "boredpanda.com",
@@ -67235,7 +67235,7 @@
       "scan_count": 1,
       "notes": "Verified: ||cloudfront.net^$third-party,script,xmlhttprequest blocks cloudfront.net while preserving cloudstream.it first-party layout & scripts.",
       "first_blocked_at": 1793232340,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "lootnetwork.fr",
@@ -68323,7 +68323,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule tribunewatch.nl##.showheroes-ad-player collapses ad container (.showheroes-ad-player) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1793232340,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "bakescoop.au",
@@ -68578,7 +68578,7 @@
       "scan_count": 1,
       "notes": "Verified: Cosmetic rule popreport.com##.adtrue-banner collapses ad container (.adtrue-banner) with main content wrappers and scroll state intact.",
       "first_blocked_at": 1793232340,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "dishanywhere.com",
@@ -69870,7 +69870,7 @@
       "scan_count": 1,
       "notes": "Verified: ||adtrue.com^$third-party,script,xmlhttprequest blocks adtrue.com while preserving raidspot.tv first-party layout & scripts.",
       "first_blocked_at": 1793232340,
-      "last_verified_at": 1793318576
+      "last_verified_at": 1793558637
     },
     {
       "domain": "foodiecentral.com",
@@ -122458,17 +122458,17 @@
       "target_url": "https://foodiepress.org",
       "category": "recipes",
       "status": "auto_patched",
-      "ad_types_blocked": "Script",
+      "ad_types_blocked": "Script (https://targetvideo.com/player/tv-player.js)",
       "generated_rules": "||targetvideo.com^$third-party,script,xmlhttprequest",
       "extension_version": "1.1.6",
       "commit_hash": "dd39150",
-      "run_id": "manual-verified",
+      "run_id": "adpipe-2026-10-31-g52vo",
       "leaks_found": 1,
       "leaks_patched": 1,
       "scan_count": 1,
       "notes": "Verified: ||targetvideo.com^$third-party,script,xmlhttprequest blocks targetvideo.com while preserving foodiepress.org first-party layout & scripts.",
       "first_blocked_at": 1793430372,
-      "last_verified_at": 1793430372
+      "last_verified_at": 1793558637
     },
     {
       "domain": "mixpanel.com",

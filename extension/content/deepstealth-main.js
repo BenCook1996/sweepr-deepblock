@@ -41,14 +41,12 @@
     if (stealthBypassNotified || !isProEntitled()) return;
     stealthBypassNotified = true;
     try {
-      const targetOrigin =
-        window.location && window.location.origin && window.location.origin !== 'null'
-          ? window.location.origin
-          : '*';
-      window.postMessage(
-        { source: 'sweepr-deepstealth', type: 'STEALTH_BYPASS_TRIGGERED', detail: detail || '' },
-        targetOrigin
-      );
+      if (window.location && window.location.origin && window.location.origin !== 'null') {
+        window.postMessage(
+          { source: 'sweepr-deepstealth', type: 'STEALTH_BYPASS_TRIGGERED', detail: detail || '' },
+          window.location.origin
+        );
+      }
     } catch (e) {}
   }
 
@@ -455,7 +453,7 @@
     if (BAIT_CLASS_REGEX.test(cls) || BAIT_ID_REGEX.test(id)) return true;
     // Also detect classic 1x1 or &nbsp; empty bait divs with "ad" in class/id
     if (/\bad(s|vert|banner|box|slot|zone)?\b/i.test(cls + ' ' + id)) {
-      if (el.children.length === 0 && (el.innerHTML === '&nbsp;' || el.innerHTML.trim() === '')) {
+      if (el.children.length === 0 && (el.textContent || '').replace(/\u00a0/g, '').trim() === '') {
         return true;
       }
     }

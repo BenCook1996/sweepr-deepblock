@@ -1,0 +1,17 @@
+{
+  "capturedAt": "2026-10-31T07:06:23.721Z",
+  "targetUrl": "https://buzzfocus.io",
+  "domain": "buzzfocus.io",
+  "leak": {
+    "adTypeDetected": "Script",
+    "offendingArtifact": "https://contentexchange.me/ce_client.js",
+    "offendingHost": "contentexchange.me",
+    "resourceTypes": [
+      "script",
+      "xmlhttprequest"
+    ],
+    "reason": "Unblocked third-party script request to contentexchange.me (HTTP 200 OK) on buzzfocus.io"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://contentexchange.me/ce_client.js\"></script>"
+}

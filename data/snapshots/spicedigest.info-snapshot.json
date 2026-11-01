@@ -1,0 +1,18 @@
+{
+  "capturedAt": "2026-10-29T00:05:29.849Z",
+  "targetUrl": "https://spicedigest.info",
+  "domain": "spicedigest.info",
+  "leak": {
+    "adTypeDetected": "Script",
+    "offendingArtifact": "https://static.showheroes.com/publishertag.js",
+    "offendingHost": "static.showheroes.com",
+    "resourceTypes": [
+      "script",
+      "xmlhttprequest",
+      "media"
+    ],
+    "reason": "Unblocked third-party script request to static.showheroes.com (HTTP 200 OK) on spicedigest.info"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://static.showheroes.com/publishertag.js\"></script>"
+}

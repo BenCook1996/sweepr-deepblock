@@ -1,0 +1,17 @@
+{
+  "capturedAt": "2026-10-29T00:05:29.892Z",
+  "targetUrl": "https://observerindex.org",
+  "domain": "observerindex.org",
+  "leak": {
+    "adTypeDetected": "Script",
+    "offendingArtifact": "https://alwingulla.com/tag.min.js",
+    "offendingHost": "alwingulla.com",
+    "resourceTypes": [
+      "script",
+      "xmlhttprequest"
+    ],
+    "reason": "Unblocked third-party script request to alwingulla.com (HTTP 200 OK) on observerindex.org"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://alwingulla.com/tag.min.js\"></script>"
+}

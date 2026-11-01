@@ -1,0 +1,17 @@
+{
+  "capturedAt": "2026-10-29T00:05:30.021Z",
+  "targetUrl": "https://bossmedia.de",
+  "domain": "bossmedia.de",
+  "leak": {
+    "adTypeDetected": "Script",
+    "offendingArtifact": "https://w.inmobi.com/page/inmobi.js",
+    "offendingHost": "w.inmobi.com",
+    "resourceTypes": [
+      "script",
+      "xmlhttprequest"
+    ],
+    "reason": "Unblocked third-party script request to w.inmobi.com (HTTP 200 OK) on bossmedia.de"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://w.inmobi.com/page/inmobi.js\"></script>"
+}

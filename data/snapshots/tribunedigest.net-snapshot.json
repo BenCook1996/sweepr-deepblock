@@ -1,0 +1,17 @@
+{
+  "capturedAt": "2026-10-29T00:05:29.764Z",
+  "targetUrl": "https://tribunedigest.net",
+  "domain": "tribunedigest.net",
+  "leak": {
+    "adTypeDetected": "Script",
+    "offendingArtifact": "https://w.inmobi.com/page/inmobi.js",
+    "offendingHost": "w.inmobi.com",
+    "resourceTypes": [
+      "script",
+      "xmlhttprequest"
+    ],
+    "reason": "Unblocked third-party script request to w.inmobi.com (HTTP 200 OK) on tribunedigest.net"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://w.inmobi.com/page/inmobi.js\"></script>"
+}

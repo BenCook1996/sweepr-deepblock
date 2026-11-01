@@ -1,0 +1,17 @@
+{
+  "capturedAt": "2026-10-29T05:51:13.050Z",
+  "targetUrl": "https://otakuwiki.us",
+  "domain": "otakuwiki.us",
+  "leak": {
+    "adTypeDetected": "Network",
+    "offendingArtifact": "https://nodea.targetspot.com/callback/uuid",
+    "offendingHost": "nodea.targetspot.com",
+    "resourceTypes": [
+      "xmlhttprequest",
+      "script"
+    ],
+    "reason": "Unblocked third-party network request to nodea.targetspot.com (HTTP 200 OK) on otakuwiki.us"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://nodea.targetspot.com/callback/uuid\"></script>"
+}

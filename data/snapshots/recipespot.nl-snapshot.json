@@ -1,0 +1,17 @@
+{
+  "capturedAt": "2026-10-29T00:05:29.767Z",
+  "targetUrl": "https://recipespot.nl",
+  "domain": "recipespot.nl",
+  "leak": {
+    "adTypeDetected": "Script",
+    "offendingArtifact": "https://ad.invibes.com/delivery/infeed.js",
+    "offendingHost": "ad.invibes.com",
+    "resourceTypes": [
+      "script",
+      "xmlhttprequest"
+    ],
+    "reason": "Unblocked third-party script request to ad.invibes.com (HTTP 200 OK) on recipespot.nl"
+  },
+  "simulatedViewport": "1440x900",
+  "domSnippet": "<script async src=\"https://ad.invibes.com/delivery/infeed.js\"></script>"
+}
