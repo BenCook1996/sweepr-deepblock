@@ -263,3 +263,13 @@ Automated daily 24-hour pipeline (`00:00 UTC`) sampling 1,000 unique ad-heavy do
 | `https://showbizledger.it` | DOM | `showbizledger.it##.infolinks-ad-unit` | **Auto-Patched** | Verified: Cosmetic rule showbizledger.it##.infolinks-ad-unit collapses ad container (.infolinks-ad-unit) with main content wrappers and scroll state intact. |
 | `https://siliconhub.it` | Script | `||carbonads.com^$third-party,script,xmlhttprequest` | **Auto-Patched** | Verified: ||carbonads.com^$third-party,script,xmlhttprequest blocks carbonads.com while preserving siliconhub.it first-party layout & scripts. |
 
+## Run `adpipe-2026-11-01-4rzx0` — 2026-11-01T00:03:51.897Z
+- **Sites Sampled (30-Day Deduplicated):** 1000
+- **Sites Evaluated:** 1000
+- **Ad Leaks Detected:** 0
+- **Rules Auto-Patched (Verified Self-Healing):** 0
+- **Flagged for Manual Review:** 0
+- **Repository Ruleset Totals:** 230 MV3 Static DNR Rules | 330 ABP/uBO Rules | 60 OTA Delta Rules
+- **Cross-Site Non-Regression Suite:** PASS (15/15 Golden Network & DeepStealth Surrogate Canaries | 5/5 Legitimate Site Canaries Unblocked | 24 Cross-Module Selectors Protected)
+- **Git Commit / Deployment Ref:** `2c985e5`
+
