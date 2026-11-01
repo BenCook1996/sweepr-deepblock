@@ -1,0 +1,51 @@
+name: SWEEPR DeepBlock — Daily 50 Programmatic SEO Pages & IndexNow Drip
+
+on:
+  schedule:
+    # Triggers at 06:00 UTC every 24 hours
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+    inputs:
+      batch_size:
+        description: 'Number of new programmatic SEO pages to generate'
+        required: false
+        default: '50'
+
+permissions:
+  contents: write
+
+jobs:
+  daily-seo-generation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout SWEEPR DeepBlock Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js 22+
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.23.4'
+
+      - name: Generate Daily 50 Programmatic SEO Pages & Delta IndexNow Ping
+        run: |
+          node scripts/daily-50-seo-pages.mjs ${{ inputs.batch_size || '50' }}
+
+      - name: Run Technical SEO Audit (Verify 0 Errors / 0 Warnings)
+        run: |
+          node scripts/technical-seo-audit.mjs
+
+      - name: Commit & Push New SEO Pages to Production
+        run: |
+          git config user.name "SWEEPR DeepBlock SEO Bot"
+          git config user.email "bot@sweeprdeepblock.com"
+          git add website/ TECHNICAL_SEO_AUDIT_LOG.md
+          if git diff --staged --quiet; then
+            echo "No new SEO pages generated today (pool complete or already generated)."
+          else
+            git commit -m "chore(seo): auto-generate daily programmatic SEO pages + update sitemap.xml"
+            git pull --rebase -X ours origin main
+            git push origin main
+          fi

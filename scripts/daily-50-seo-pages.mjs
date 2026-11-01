@@ -257,6 +257,106 @@ const PROBLEMS = [
     beforeStat: 'Full-Session Cross-Site Tracking Beacons',
     afterStat: 'Clean Canonical URLs Stripped of Trackers',
     perfStat: 'Sub-Millisecond URL Sanitize'
+  },
+  {
+    slug: 'bypass-anti-adblock-walls',
+    shortTitle: 'Bypass Anti-Adblock Walls',
+    h1Prefix: 'How to Bypass Anti-Adblock Detection Walls on',
+    h1Suffix: 'in 2026',
+    metaDescPrefix: 'Stop anti-adblock warning popups and playback blocks on',
+    beforeStat: 'Blocked by Anti-Adblock Detection Modals',
+    afterStat: '8/8 DeepStealth Undetectable Filtering',
+    perfStat: 'Zero-Signature MV3 Scriptlets'
+  },
+  {
+    slug: 'stop-autoplay-floating-videos',
+    shortTitle: 'Stop Autoplay Floating Videos',
+    h1Prefix: 'How to Stop Autoplay Floating Video Players on',
+    h1Suffix: 'Automatically',
+    metaDescPrefix: 'Block sticky floating video players and unexpected audio blasts on',
+    beforeStat: 'Sticky Video Players Following Page Scroll',
+    afterStat: 'Clean Page Layout & Muted Autoplay Bloat',
+    perfStat: 'Instant DOM Clutter Stripper'
+  },
+  {
+    slug: 'block-crypto-miners-cpu-drain',
+    shortTitle: 'Block Crypto Miners & CPU Spikes',
+    h1Prefix: 'How to Block Hidden Scripts & High CPU Usage on',
+    h1Suffix: 'in 2026',
+    metaDescPrefix: 'Stop WebAssembly crypto miners, runaway ad auction loops, and laptop fan noise on',
+    beforeStat: 'High CPU Spikes & Laptop Battery Drain',
+    afterStat: '100% Background Script & Miner Shield',
+    perfStat: 'Real-Time CPU & Thermal Guard'
+  },
+  {
+    slug: 'prevent-canvas-webrtc-fingerprinting',
+    shortTitle: 'Stop Canvas & WebRTC Tracking',
+    h1Prefix: 'How to Stop Canvas & WebRTC Device Fingerprinting on',
+    h1Suffix: 'Permanently',
+    metaDescPrefix: 'Neutralize HTML5 Canvas, AudioContext, and WebRTC IP leak fingerprinting on',
+    beforeStat: 'Tracked Across Incognito via Hardware ID',
+    afterStat: 'Cryptographic Entropy Fingerprint Shield',
+    perfStat: 'DeepStealth Identity Isolation'
+  },
+  {
+    slug: 'encrypted-dns-doh-protection',
+    shortTitle: 'Encrypted DNS Tracker Shield',
+    h1Prefix: 'How to Enable Encrypted DNS & Tracker Filtering for',
+    h1Suffix: 'in 2026',
+    metaDescPrefix: 'Prevent ISP snooping and DNS-level ad tracker lookups when browsing',
+    beforeStat: 'Unencrypted DNS Lookups & CNAME Trackers',
+    afterStat: 'Encrypted DoH + CNAME Uncloaking Active',
+    perfStat: 'Zero-Log DNS Privacy Layer'
+  },
+  {
+    slug: 'clean-reader-distraction-free',
+    shortTitle: 'Clean Distraction-Free View',
+    h1Prefix: 'How to Get a Clean, Clutter-Free View on',
+    h1Suffix: 'Without Sticky Overlays',
+    metaDescPrefix: 'Remove newsletter nags, app install banners, and sticky sidebar clutter on',
+    beforeStat: '40%+ Screen Covered by Sticky Overlays',
+    afterStat: '100% Clean Distraction-Free Layout',
+    perfStat: 'Scroll-Safe DOM Sanitizer'
+  },
+  {
+    slug: 'block-sponsored-feed-carousels',
+    shortTitle: 'Block Sponsored Feed Carousels',
+    h1Prefix: 'How to Hide Disguised Sponsored Posts & Carousels on',
+    h1Suffix: 'Automatically',
+    metaDescPrefix: 'Strip native promoted posts, sponsored shopping grids, and affiliate widgets on',
+    beforeStat: 'Every 4th Item Is a Disguised Ad',
+    afterStat: '100% Organic Chronological Feed',
+    perfStat: 'Semantic Sponsored-Node Filter'
+  },
+  {
+    slug: 'stop-notification-permission-spam',
+    shortTitle: 'Stop Push Notification Spam',
+    h1Prefix: 'How to Block Push Notification Prompts & Location Popups on',
+    h1Suffix: 'in Under 50ms',
+    metaDescPrefix: 'Auto-dismiss browser push notification spam, geolocation prompts, and sign-in walls on',
+    beforeStat: 'Constant Allow Notifications Browser Popups',
+    afterStat: 'Silently Blocked Before Render (<50ms)',
+    perfStat: 'Permission-Prompt Firewall'
+  },
+  {
+    slug: 'hibernate-idle-background-tabs',
+    shortTitle: 'Hibernate Idle Tabs & Save RAM',
+    h1Prefix: 'How to Auto-Hibernate Idle',
+    h1Suffix: 'Tabs Without Losing Your Session',
+    metaDescPrefix: 'Automatically snooze background tabs and stop memory leaks when multitasking on',
+    beforeStat: 'Background Tabs Leaking 800MB+ RAM/Hour',
+    afterStat: 'Instant Zero-Memory Tab Hibernation',
+    perfStat: 'Alt+Shift+Z Session Recovery'
+  },
+  {
+    slug: 'protect-checkout-fake-shop-shield',
+    shortTitle: 'Fake Store & Checkout Shield',
+    h1Prefix: 'How to Spot Scam Links & Fake Stores on',
+    h1Suffix: 'in Real Time',
+    metaDescPrefix: 'Detect newly registered scam domains, cloned checkouts, and fake reviews linked from',
+    beforeStat: 'Exposed to Cloned Dropshipping Scam Links',
+    afterStat: 'Real-Time Domain Age & Merchant Verification',
+    perfStat: 'Live UK/EU Scam Store Alert'
   }
 ];
 
