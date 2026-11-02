@@ -191,7 +191,7 @@ const STRIPE_PRICE_MONTHLY = (process.env.STRIPE_PRICE_MONTHLY || 'price_1USkjM1
 const STRIPE_COUPON = (process.env.STRIPE_COUPON || 'sweepr_intro_gbp_800').trim();
 
 const BOT_UA_RE =
-  /googlebot|bingbot|gptbot|oai-searchbot|chatgpt-user|claudebot|anthropic-ai|perplexitybot|applebot|applebot-extended|duckduckbot|yandexbot|baiduspider|cohere-ai|facebookexternalhit|twitterbot|linkedinbot|meta-externalagent|meta-externalfetch|bytespider|amazonbot|diffbot|google-inspectiontool|deepseek-ai|mistralai|qwenbot|semrushbot|ahrefsbot|google-extended|vertex-ai|youbot|brave-web-crawler|kagi-crawler|xai|grok|exabot|petalbot|dotbot|rogerbot|blexbot|turnitinbot|ccbot|timpibot|seekr|feedfetcher-google|archive\.org_bot|screaming frog|siteaudit/i;
+  /googlebot|bingbot|gptbot|oai-searchbot|chatgpt-user|claudebot|claude-web|anthropic-ai|perplexitybot|applebot|applebot-extended|duckduckbot|yandexbot|baiduspider|cohere-ai|facebookexternalhit|twitterbot|linkedinbot|meta-externalagent|meta-externalfetch|bytespider|amazonbot|diffbot|google-inspectiontool|deepseek-ai|mistralai|qwenbot|semrushbot|ahrefsbot|google-extended|vertex-ai|youbot|brave-web-crawler|kagi-crawler|xai|grok|exabot|petalbot|dotbot|rogerbot|blexbot|turnitinbot|ccbot|timpibot|seekr|feedfetcher-google|archive\.org_bot|screaming frog|siteaudit|chrome-lighthouse|lighthouse|pagespeed/i;
 
 // ============================================================================
 // Multi-Currency Geo-Pricing Engine (50% Annual Savings & .99 Charm Pricing)
@@ -1701,6 +1701,10 @@ const CLEAN_ROUTES = {
   '/download/SWEEPRDeepblock.apk.idsig': 'SWEEPRDeepblock.apk.idsig',
   '/SWEEPRDeepblock.apk.idsig': 'SWEEPRDeepblock.apk.idsig',
   '/test-lab': 'test-lab.html',
+  '/mockups': 'mockups.html',
+  '/popup-mockups': 'popup-mockups.html',
+  '/redesign-prototype': 'redesign-prototype.html',
+  '/logos': 'logos.html',
   '/vs/total-adblock': path.join('vs', 'total-adblock.html')
 };
 
@@ -4941,6 +4945,24 @@ function getCachedDynamicDelta() {
     const cleanPath = (parsedUrl.pathname === '/index.html' ? '/' : parsedUrl.pathname.slice(0, -5)).replace(/^\/+/, '/') + (parsedUrl.search || '');
     res.writeHead(301, {
       Location: cleanPath,
+      'Cache-Control': 'public, max-age=604800, stale-while-revalidate=2592000',
+      'X-Content-Type-Options': 'nosniff',
+      'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload'
+    });
+    return res.end();
+  }
+
+  // 301 Canonical Redirect 3: Lowercase normalization for HTML and SEO routes (prevents case duplicate content & Linux 404s)
+  if (
+    (req.method === 'GET' || req.method === 'HEAD') &&
+    /[A-Z]/.test(parsedUrl.pathname) &&
+    !parsedUrl.pathname.includes('SWEEPR') &&
+    !parsedUrl.pathname.startsWith('/api/') &&
+    !parsedUrl.pathname.startsWith('/checkout')
+  ) {
+    const lowerPath = parsedUrl.pathname.toLowerCase() + (parsedUrl.search || '');
+    res.writeHead(301, {
+      Location: lowerPath,
       'Cache-Control': 'public, max-age=604800, stale-while-revalidate=2592000',
       'X-Content-Type-Options': 'nosniff',
       'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload'

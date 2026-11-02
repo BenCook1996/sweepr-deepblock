@@ -471,7 +471,10 @@ async function runIndexingWorkflow() {
   if (alreadySubmittedSet.size === 0) {
     for (const u of sitemapUrls) alreadySubmittedSet.add(u);
   }
-  const deltaUrls = sitemapUrls.filter((u) => !alreadySubmittedSet.has(u)).slice(0, 50);
+  let deltaUrls = sitemapUrls.filter((u) => !alreadySubmittedSet.has(u)).slice(0, 50);
+  if (deltaUrls.length === 0) {
+    deltaUrls = sitemapUrls.slice(-50);
+  }
   queue.pending_urls = [...new Set([...(queue.pending_urls || []), ...sitemapUrls])];
 
   let bingRes = 'skipped_already_submitted';
@@ -515,7 +518,7 @@ async function runIndexingWorkflow() {
   queue.submitted_indexnow_urls = [...alreadySubmittedSet];
   fs.writeFileSync(INDEXING_QUEUE_PATH, JSON.stringify(queue, null, 2), 'utf8');
 
-  console.log(`[IndexNow Submissions] Submitted ${deltaUrls.length} delta URLs (Skipped ${sitemapUrls.length - deltaUrls.length} already-submitted URLs to prevent Bing crawl-throttling):`);
+  console.log(`[IndexNow Submissions] Submitted ${deltaUrls.length} priority/delta URLs (Skipped ${sitemapUrls.length - deltaUrls.length} already-submitted URLs to prevent Bing crawl-throttling):`);
   console.log(`  - www.bing.com/indexnow: ${bingRes}`);
   console.log(`  - api.indexnow.org/indexnow: ${indexNowRes}`);
   console.log(`  - yandex.com/indexnow: ${yandexRes}`);

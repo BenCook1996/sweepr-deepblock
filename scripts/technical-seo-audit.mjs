@@ -397,7 +397,9 @@ results.serverAudit = {
   hasInstallerCleanAliases: serverCode.includes('SWEEPRDeepblockSetup.command') && serverCode.includes('sweepr-deepblock-extension.zip'),
   hasSecurityTxtRfc9116: serverCode.includes('security.txt') && serverCode.includes('/.well-known/security.txt'),
   hasVaryPreservation: serverCode.includes("headers['Vary']") && serverCode.includes('Accept-Encoding'),
-  hasIdSigSupport: serverCode.includes('.idsig') && serverCode.includes('application/octet-stream')
+  hasIdSigSupport: serverCode.includes('.idsig') && serverCode.includes('application/octet-stream'),
+  hasLowercaseRedirect: serverCode.includes('pathname.toLowerCase()') && serverCode.includes('/[A-Z]/.test'),
+  hasPageSpeedLighthouseTelemetry: serverCode.includes('chrome-lighthouse') && serverCode.includes('pagespeed')
 };
 
 console.log('\n=== AUDIT SUMMARY ===');
