@@ -552,9 +552,9 @@ async function runIndexingWorkflow() {
 }
 
 async function main() {
-  const countArg = Number(process.argv[2]) || 300;
+  const countArg = Number(process.argv[2]) || 50;
   console.log('==========================================================================');
-  console.log(`  STARTING 6-HOURLY SWEEPR DEEPBLOCK WORKFLOW (COUNT = ${countArg})`);
+  console.log(`  STARTING DAILY SWEEPR DEEPBLOCK AUTHORITY & INDEXING WORKFLOW (COUNT = ${countArg})`);
   console.log('  DOMAIN: sweeprdeepblock.com | PROJECT: deepblock');
   console.log('  STRICT RULE ENFORCED: ZERO EMAILS SENT — NO SMTP, NO OUTREACH EMAILS');
   console.log('==========================================================================');

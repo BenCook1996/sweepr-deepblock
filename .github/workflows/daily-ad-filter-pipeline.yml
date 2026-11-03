@@ -1,9 +1,9 @@
 name: SWEEPR DeepBlock — Daily 1,000-Site Ad-Filter Pipeline
 
 on:
-  schedule:
-    # Triggers at 00:00 UTC every 24 hours
-    - cron: '0 0 * * *'
+  # Automatic 00:00 UTC schedule is handled by the local Antigravity sidecar
+  # (sweepr-deepblock-daily-ad-filter-pipeline) with full headless Chrome & local profile access.
+  # Keep this GitHub Action as manual workflow_dispatch to prevent duplicate 00:00 UTC git push collisions.
   workflow_dispatch:
     inputs:
       sample_size:

@@ -557,10 +557,13 @@ function getPillarCardMeta(rec) {
   return { urlPath: rec.urlPath, badge, cardTitle: rawTitle };
 }
 
+const modifiedFilePaths = new Set();
+
 function writeFileSafe(filePath, content) {
   for (let attempt = 0; attempt < 5; attempt++) {
     try {
       fs.writeFileSync(filePath, content, 'utf8');
+      modifiedFilePaths.add(path.resolve(filePath));
       return;
     } catch (err) {
       if (attempt === 4) throw err;
@@ -735,7 +738,16 @@ for (let i = 0; i < pseoRingPages.length; i++) {
 console.log(`[CONSOLIDATE] Rewired internal link mesh on ${meshUpdatedCount} pages to point exclusively to the ${M} PSEO Pillar Pages.`);
 
 // Third pass: Rebuild website/sitemap.xml with ONLY the Authoritative Indexable Pillar Pages
+// while preserving existing <lastmod> dates on unchanged pages (zero fake <lastmod> churn)
 const todayStr = new Date().toISOString().slice(0, 10);
+const existingLastModMap = new Map();
+if (fs.existsSync(SITEMAP_PATH)) {
+  const prevSm = fs.readFileSync(SITEMAP_PATH, 'utf8');
+  for (const m of prevSm.matchAll(/<url>\s*<loc>([^<]+)<\/loc>\s*<lastmod>([^<]+)<\/lastmod>/g)) {
+    existingLastModMap.set(m[1].trim(), m[2].trim());
+  }
+}
+
 const priorityMap = {
   '/': { changefreq: 'weekly', priority: '1.0' },
   '/pricing': { changefreq: 'weekly', priority: '0.9' },
@@ -767,9 +779,11 @@ const sitemapEntries = orderedPillarPages.map((p) => {
     changefreq: 'weekly',
     priority: GSC_PROVEN_PATHS.includes(p.urlPath) ? '0.85' : '0.8'
   };
+  const loc = `https://sweeprdeepblock.com${p.urlPath}`;
+  const wasModified = modifiedFilePaths.has(path.resolve(p.filePath));
   return {
-    loc: `https://sweeprdeepblock.com${p.urlPath}`,
-    lastmod: todayStr,
+    loc,
+    lastmod: wasModified ? todayStr : (existingLastModMap.get(loc) || todayStr),
     changefreq: meta.changefreq,
     priority: meta.priority
   };

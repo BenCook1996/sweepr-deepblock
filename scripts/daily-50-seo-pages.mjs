@@ -1303,6 +1303,16 @@ async function runDaily50DeepBlockPages(targetCount = 0, force = false) {
     }
   }
 
+  // Preserve existing <lastmod> dates in sitemap.xml for unchanged URLs (prevents fake <lastmod> churn)
+  const existingLastModMap = new Map();
+  if (fs.existsSync(SITEMAP_PATH)) {
+    const prevSm = fs.readFileSync(SITEMAP_PATH, 'utf8');
+    for (const m of prevSm.matchAll(/<url>\s*<loc>([^<]+)<\/loc>\s*<lastmod>([^<]+)<\/lastmod>/g)) {
+      existingLastModMap.set(m[1].trim(), m[2].trim());
+    }
+  }
+  const newUrlSet = new Set(newUrls);
+
   const allUrls = [...baseUrls, ...allPseoUrls];
   const allEntries = [
     ...baseEntries,
@@ -1310,7 +1320,10 @@ async function runDaily50DeepBlockPages(targetCount = 0, force = false) {
   ];
   const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${allEntries.map((e) => `  <url>\n    <loc>${e.loc}</loc>\n    <lastmod>${todayStr}</lastmod>\n    <changefreq>${e.changefreq}</changefreq>\n    <priority>${e.priority}</priority>\n  </url>`).join('\n')}
+${allEntries.map((e) => {
+  const lastmod = (newUrlSet.has(e.loc) || regenerateAll) ? todayStr : (existingLastModMap.get(e.loc) || todayStr);
+  return `  <url>\n    <loc>${e.loc}</loc>\n    <lastmod>${lastmod}</lastmod>\n    <changefreq>${e.changefreq}</changefreq>\n    <priority>${e.priority}</priority>\n  </url>`;
+}).join('\n')}
 </urlset>
 `;
   fs.writeFileSync(SITEMAP_PATH, sitemapXml, 'utf8');
