@@ -547,6 +547,72 @@ pageRecords.sort((a, b) => a.urlPath.localeCompare(b.urlPath));
 const pillarPages = pageRecords.filter((p) => p.isPillar);
 const pseoPillarPages = pillarPages.filter((p) => p.cluster !== 'root');
 
+const PROBLEM_SUFFIXES = [
+  '-block-video-ads',
+  '-auto-reject-cookie-popups',
+  '-filter-ai-slop-and-scams',
+  '-protect-checkout-fake-shop-shield',
+  '-remove-page-clutter-and-ram-bloat',
+  '-reduce-browser-ram-usage',
+  '-stop-malvertising-popunders',
+  '-strip-tracking-parameters',
+  '-bypass-anti-adblock-walls',
+  '-stop-autoplay-floating-videos'
+];
+
+const PROBLEM_FALLBACK_PILLAR = {
+  '-block-video-ads': '/solutions/youtube-chrome-mv3-block-video-ads',
+  '-auto-reject-cookie-popups': '/solutions/uk-news-websites-auto-reject-cookie-popups',
+  '-filter-ai-slop-and-scams': '/solutions/google-search-results-filter-ai-slop-and-scams',
+  '-protect-checkout-fake-shop-shield': '/solutions/facebook-marketplace-shops-filter-ai-slop-and-scams',
+  '-remove-page-clutter-and-ram-bloat': '/solutions/fandom-game-wikis-reduce-browser-ram-usage',
+  '-reduce-browser-ram-usage': '/solutions/fandom-game-wikis-reduce-browser-ram-usage',
+  '-stop-malvertising-popunders': '/solutions/dex-token-screeners-stop-malvertising-popunders',
+  '-strip-tracking-parameters': '/solutions/x-twitter-feed-ads-strip-tracking-parameters',
+  '-bypass-anti-adblock-walls': '/guides/how-to-bypass-anti-adblock-inspect-element-blockers',
+  '-stop-autoplay-floating-videos': '/guides/how-to-auto-mute-and-block-autoplay-video-ads'
+};
+
+// Map platform prefix -> primary Pillar URL in /solutions/*
+const platformToPillarUrl = new Map();
+for (const p of pseoPillarPages) {
+  if (p.cluster === 'solutions') {
+    const slug = p.urlPath.replace(/^\/solutions\//, '');
+    for (const suf of PROBLEM_SUFFIXES) {
+      if (slug.endsWith(suf)) {
+        const platPrefix = slug.slice(0, -suf.length);
+        if (!platformToPillarUrl.has(platPrefix)) {
+          platformToPillarUrl.set(platPrefix, p.urlPath);
+        }
+        break;
+      }
+    }
+  }
+}
+
+function resolveConsolidatingPillarPath(rec) {
+  if (rec.isPillar) return rec.urlPath;
+  if (rec.cluster === 'solutions') {
+    const slug = rec.urlPath.replace(/^\/solutions\//, '');
+    for (const suf of PROBLEM_SUFFIXES) {
+      if (slug.endsWith(suf)) {
+        const platPrefix = slug.slice(0, -suf.length);
+        if (platformToPillarUrl.has(platPrefix)) {
+          return platformToPillarUrl.get(platPrefix);
+        }
+        if (PROBLEM_FALLBACK_PILLAR[suf] && PILLAR_SET.has(PROBLEM_FALLBACK_PILLAR[suf])) {
+          return PROBLEM_FALLBACK_PILLAR[suf];
+        }
+      }
+    }
+    return '/solutions/youtube-chrome-mv3-block-video-ads';
+  }
+  if (rec.cluster === 'setup') return '/setup/google-chrome-manifest-v3';
+  if (rec.cluster === 'vs') return '/vs/total-adblock';
+  if (rec.cluster === 'guides') return '/guides/best-manifest-v3-adblockers-for-google-chrome-2026';
+  return '/';
+}
+
 console.log(`[CONSOLIDATE] Total HTML files: ${pageRecords.length}`);
 console.log(`[CONSOLIDATE] Authoritative Indexable Pillar Pages: ${pillarPages.length}`);
 console.log(`[CONSOLIDATE] Consolidated Secondary Pages (noindex, follow): ${pageRecords.length - pillarPages.length}`);
@@ -591,7 +657,7 @@ for (const rec of pageRecords) {
   const origHtml = fs.readFileSync(rec.filePath, 'utf8');
   let html = origHtml;
 
-  // 1. Update robots meta tag based on whether page is in the Authoritative Pillar Set
+  // 1. Update robots meta tag & canonical tag based on whether page is in the Authoritative Pillar Set
   if (rec.isPillar) {
     if (/meta\s+name=["']robots["']/i.test(html)) {
       html = html.replace(
@@ -599,6 +665,11 @@ for (const rec of pageRecords) {
         '<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />'
       );
     }
+    const selfCanUrl = `https://sweeprdeepblock.com${rec.urlPath === '/' ? '/' : rec.urlPath}`;
+    html = html.replace(
+      /<link\s+rel=["']canonical["']\s+href=["'][^"']+["']\s*\/?>/i,
+      `<link rel="canonical" href="${selfCanUrl}" />`
+    );
   } else {
     if (/meta\s+name=["']robots["']/i.test(html)) {
       html = html.replace(
@@ -611,6 +682,12 @@ for (const rec of pageRecords) {
         '</title>\n  <meta name="robots" content="noindex, follow" />'
       );
     }
+    const parentPillarPath = resolveConsolidatingPillarPath(rec);
+    const parentCanUrl = `https://sweeprdeepblock.com${parentPillarPath}`;
+    html = html.replace(
+      /<link\s+rel=["']canonical["']\s+href=["'][^"']+["']\s*\/?>/i,
+      `<link rel="canonical" href="${parentCanUrl}" />`
+    );
   }
 
   // 2. Apply Exact-Query CTR Surgery if this page is in EXACT_QUERY_SURGERY or customQuerySurgery
@@ -705,20 +782,32 @@ console.log(`[CONSOLIDATE] Applied Exact-Query CTR Surgery to ${exactSurgeryAppl
 // Precompute card metadata for all PSEO pillar pages (excluding custom /vs/total-adblock which has its own layout)
 const pseoRingPages = pseoPillarPages.filter((rec) => rec.urlPath !== '/vs/total-adblock');
 const pseoPillarCards = pseoRingPages.map((rec) => getPillarCardMeta(rec));
+const pillarCardByPath = new Map(pseoPillarCards.map((c) => [c.urlPath, c]));
 
-// Second pass: Rewire the 8-link internal link mesh on all PSEO Pillar Pages so 100% of Pillar Pages link in a closed ring
+// Second pass: Rewire the 8-link internal link mesh on ALL PSEO pages (both the 285 Pillar pages AND the 1,293 noindex, follow secondary pages)
+// so 100% of outgoing links across the entire site point EXCLUSIVELY to the 285 indexable Pillar Pages (zero links to noindex pages)
 const M = pseoPillarCards.length;
 const OFFSETS = [1, 2, 3, 5, 11, 23, 47, 89];
 let meshUpdatedCount = 0;
 
-for (let i = 0; i < pseoRingPages.length; i++) {
-  const rec = pseoRingPages[i];
+const allPseoPages = pageRecords.filter((rec) => rec.cluster !== 'root' && rec.urlPath !== '/vs/total-adblock');
+for (let i = 0; i < allPseoPages.length; i++) {
+  const rec = allPseoPages[i];
   const origHtml = fs.readFileSync(rec.filePath, 'utf8');
   let html = origHtml;
 
   const relatedCards = [];
   const seen = new Set([rec.urlPath]);
+  if (!rec.isPillar) {
+    const parentPillarPath = resolveConsolidatingPillarPath(rec);
+    const parentCard = pillarCardByPath.get(parentPillarPath);
+    if (parentCard && !seen.has(parentCard.urlPath)) {
+      seen.add(parentCard.urlPath);
+      relatedCards.push(parentCard);
+    }
+  }
   for (const off of OFFSETS) {
+    if (relatedCards.length >= 8) break;
     const target = pseoPillarCards[(i + off) % M];
     if (target && !seen.has(target.urlPath)) {
       seen.add(target.urlPath);

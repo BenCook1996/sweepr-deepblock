@@ -36,13 +36,20 @@ const results = {
   scriptsAudit: {}
 };
 
-// Build index of clean routes
+// Build index of clean routes & track noindex PSEO routes
 const existingCleanRoutes = new Set();
+const noIndexPseoRoutes = new Set();
 const incomingInternalLinks = new Map();
 for (const f of htmlFiles) {
   const rel = path.relative(WEBSITE_DIR, f).replace(/\\/g, '/');
   const clean = rel === 'index.html' ? '/' : '/' + rel.replace(/\.html$/, '');
   existingCleanRoutes.add(clean);
+  if (/^(solutions|setup|vs|guides)\//i.test(rel)) {
+    const raw = fs.readFileSync(f, 'utf8');
+    if (/meta\s+name=["']robots["']\s+content=["'][^"']*noindex/i.test(raw)) {
+      noIndexPseoRoutes.add(clean);
+    }
+  }
 }
 // Add website static assets & download files
 const websiteRootFiles = fs.readdirSync(WEBSITE_DIR);
@@ -58,6 +65,27 @@ for (const filePath of htmlFiles) {
 
   if (isNoIndex) {
     results.nonIndexablePages++;
+    if (/^(solutions|setup|vs|guides)\//i.test(rel)) {
+      const canMatchNoIdx = content.match(/<link\s+rel=["']canonical["']\s+href=["']([^"']+)["']/i);
+      const selfUrl = `https://sweeprdeepblock.com/${rel.replace(/\.html$/, '')}`;
+      if (!canMatchNoIdx || canMatchNoIdx[1].trim() === selfUrl) {
+        results.htmlWarnings.push({
+          file: rel,
+          type: 'noindex_self_canonical',
+          msg: 'Consolidated noindex PSEO page should canonicalize to its parent Pillar URL'
+        });
+      }
+      for (const m of content.matchAll(/<a\s+[^>]*href=["'](\/(?:solutions|setup|vs|guides)\/[a-z0-9-]+)["']/gi)) {
+        if (noIndexPseoRoutes.has(m[1])) {
+          results.htmlWarnings.push({
+            file: rel,
+            type: 'link_to_noindex_page',
+            msg: `Consolidated page links to another noindex URL: ${m[1]}`
+          });
+          break;
+        }
+      }
+    }
     continue;
   }
   results.indexablePages++;
