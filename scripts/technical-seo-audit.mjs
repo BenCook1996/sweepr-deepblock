@@ -459,7 +459,15 @@ results.serverAudit = {
   hasIdSigSupport: serverCode.includes('.idsig') && serverCode.includes('application/octet-stream'),
   hasLowercaseRedirect: serverCode.includes('pathname.toLowerCase()') && serverCode.includes('/[A-Z]/.test'),
   hasPageSpeedLighthouseTelemetry: serverCode.includes('chrome-lighthouse') && serverCode.includes('pagespeed'),
-  hasConsolidatedNoIndexHeaderParity: serverCode.includes('isConsolidatedNoIndex') && serverCode.includes('__deepblockHtmlSeoCache')
+  hasConsolidatedNoIndexHeaderParity: serverCode.includes('isConsolidatedNoIndex') && serverCode.includes('__deepblockHtmlSeoCache'),
+  hasFirstPartyGa4Proxy:
+    serverCode.includes("pathname === '/metrics/js'") &&
+    serverCode.includes("pathname === '/metrics/g/collect'") &&
+    serverCode.includes("pathname === '/api/analytics/event'"),
+  hasServerSideGa4PurchaseRelay:
+    serverCode.includes('region1.google-analytics.com/g/collect') &&
+    serverCode.includes("en: 'purchase'"),
+  hasNoOrderDraftRedirectTrap: !serverCode.includes('sweepr_order_draft_active=1(?:;|$)/.test')
 };
 
 if (!results.serverAudit.hasConsolidatedNoIndexHeaderParity) {
@@ -468,6 +476,103 @@ if (!results.serverAudit.hasConsolidatedNoIndexHeaderParity) {
     type: 'missing_consolidated_noindex_header_parity',
     msg: 'server.js must sync X-Robots-Tag and Link canonical headers with HTML <meta name="robots"> on consolidated noindex pages'
   });
+}
+if (!results.serverAudit.hasFirstPartyGa4Proxy) {
+  results.htmlIssues.push({
+    file: 'server.js',
+    type: 'missing_first_party_ga4_proxy',
+    msg: 'server.js must expose /metrics/js, /metrics/g/collect, and /api/analytics/event for first-party GA4 telemetry'
+  });
+}
+if (!results.serverAudit.hasServerSideGa4PurchaseRelay) {
+  results.htmlIssues.push({
+    file: 'server.js',
+    type: 'missing_server_side_ga4_purchase_relay',
+    msg: 'server.js must relay purchase events server-side to region1.google-analytics.com/g/collect'
+  });
+}
+if (!results.serverAudit.hasNoOrderDraftRedirectTrap) {
+  results.htmlIssues.push({
+    file: 'server.js',
+    type: 'order_draft_redirect_trap_detected',
+    msg: 'server.js must not forcibly 302 redirect users with sweepr_order_draft_active=1 back to /order'
+  });
+}
+
+// GA4 & Self-Blocking Regression Guard: Check extension/rules/static_ads_and_trackers.json & core funnel files
+const staticRulesPath = path.join(ROOT_DIR, 'extension', 'rules', 'static_ads_and_trackers.json');
+if (fs.existsSync(staticRulesPath)) {
+  try {
+    const dnrRules = JSON.parse(fs.readFileSync(staticRulesPath, 'utf8'));
+    const rule6 = dnrRules.find((r) => r.id === 6);
+    const rule43 = dnrRules.find((r) => r.id === 43);
+    const rule44 = dnrRules.find((r) => r.id === 44);
+    if (!rule6?.condition?.excludedRequestDomains?.includes('sweeprdeepblock.com')) {
+      results.htmlIssues.push({
+        file: 'extension/rules/static_ads_and_trackers.json',
+        type: 'self_blocking_utm_rule_6',
+        msg: 'Rule #6 (queryTransform removeParams) must exclude sweeprdeepblock.com in excludedRequestDomains'
+      });
+    }
+    if (
+      !rule43?.condition?.excludedInitiatorDomains?.includes('sweeprdeepblock.com') ||
+      !rule44?.condition?.excludedInitiatorDomains?.includes('sweeprdeepblock.com')
+    ) {
+      results.htmlIssues.push({
+        file: 'extension/rules/static_ads_and_trackers.json',
+        type: 'self_blocking_ga4_rules_43_44',
+        msg: 'Rules #43 (google-analytics.com) and #44 (googletagmanager.com) must exclude sweeprdeepblock.com in excludedInitiatorDomains'
+      });
+    }
+  } catch (err) {
+    results.htmlIssues.push({
+      file: 'extension/rules/static_ads_and_trackers.json',
+      type: 'invalid_static_dnr_json',
+      msg: `Failed to parse static_ads_and_trackers.json: ${err.message}`
+    });
+  }
+}
+
+const navJsPath = path.join(WEBSITE_DIR, 'nav.js');
+if (fs.existsSync(navJsPath)) {
+  const navJs = fs.readFileSync(navJsPath, 'utf8');
+  if (!navJs.includes('window.sweeprTrackEvent') || !navJs.includes('extension_install_started')) {
+    results.htmlIssues.push({
+      file: 'nav.js',
+      type: 'missing_ga4_funnel_dispatcher',
+      msg: 'website/nav.js must define window.sweeprTrackEvent and track extension_install_started'
+    });
+  }
+  if (navJs.includes("window.location.replace('/order')")) {
+    results.htmlIssues.push({
+      file: 'nav.js',
+      type: 'order_draft_redirect_trap_in_nav',
+      msg: 'website/nav.js must not forcibly redirect visitors to /order via window.location.replace'
+    });
+  }
+}
+
+const funnelChecks = [
+  { file: 'index.html', required: ['/metrics/js?id=G-01MNBQSL9K', 'heroLiveScannerCard'] },
+  { file: 'order.html', required: ['/metrics/js?id=G-01MNBQSL9K', 'begin_checkout', 'order_payment_error', "'purchase'"] },
+  { file: 'download.html', required: ['/metrics/js?id=G-01MNBQSL9K', 'extension_install_started'] },
+  { file: 'test-lab.html', required: ['/metrics/js?id=G-01MNBQSL9K', 'test_lab_benchmark_completed'] },
+  { file: 'pricing.html', required: ['/metrics/js?id=G-01MNBQSL9K', 'view_item_list'] }
+];
+for (const fc of funnelChecks) {
+  const fp = path.join(WEBSITE_DIR, fc.file);
+  if (fs.existsSync(fp)) {
+    const content = fs.readFileSync(fp, 'utf8');
+    for (const token of fc.required) {
+      if (!content.includes(token)) {
+        results.htmlIssues.push({
+          file: fc.file,
+          type: 'missing_ga4_funnel_token',
+          msg: `${fc.file} is missing required GA4/CRO token: ${token}`
+        });
+      }
+    }
+  }
 }
 
 console.log('\n=== AUDIT SUMMARY ===');

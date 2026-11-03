@@ -231,6 +231,24 @@ export const PROTECTED_LEGITIMATE_NETWORK_CANARIES = [
     url: 'https://files.finsweet.com/lottieflow/smartgrid4.js',
     resourceType: 'script',
     initiator: 'finsweet.com'
+  },
+  {
+    name: 'SWEEPR DeepBlock Own-Domain GA4 Collect Ping (Rule #43 Exclusion)',
+    url: 'https://region1.google-analytics.com/g/collect?v=2&tid=G-01MNBQSL9K',
+    resourceType: 'ping',
+    initiator: 'sweeprdeepblock.com'
+  },
+  {
+    name: 'SWEEPR DeepBlock Own-Domain GTM Script (Rule #44 Exclusion)',
+    url: 'https://www.googletagmanager.com/gtag/js?id=G-01MNBQSL9K',
+    resourceType: 'script',
+    initiator: 'sweeprdeepblock.com'
+  },
+  {
+    name: 'SWEEPR DeepBlock Own-Domain First-Party Metrics Proxy',
+    url: 'https://sweeprdeepblock.com/metrics/g/collect?v=2&tid=G-01MNBQSL9K',
+    resourceType: 'ping',
+    initiator: 'sweeprdeepblock.com'
   }
 ];
 
@@ -346,6 +364,22 @@ export function evaluateDnrRulesForRequest(rules, { url, resourceType, initiator
         return initHost === cleanD || initHost.endsWith(`.${cleanD}`);
       });
       if (exclMatch) continue;
+    }
+
+    // Check requestDomains / excludedRequestDomains
+    if (Array.isArray(cond.requestDomains) && cond.requestDomains.length > 0) {
+      const reqMatch = cond.requestDomains.some((d) => {
+        const cleanD = d.toLowerCase();
+        return reqHost === cleanD || reqHost.endsWith(`.${cleanD}`);
+      });
+      if (!reqMatch) continue;
+    }
+    if (Array.isArray(cond.excludedRequestDomains) && cond.excludedRequestDomains.length > 0) {
+      const exclReqMatch = cond.excludedRequestDomains.some((d) => {
+        const cleanD = d.toLowerCase();
+        return reqHost === cleanD || reqHost.endsWith(`.${cleanD}`);
+      });
+      if (exclReqMatch) continue;
     }
 
     // Check urlFilter or regexFilter
@@ -591,6 +625,20 @@ export function runFullCrossSiteRegressionSuite({ baselineStaticRules = null } =
     if (winner && winner.action?.type === 'block') {
       issues.push(`Legitimate canary "${legit.name}" (${legit.url}) was falsely blocked by Rule #${winner.id}`);
     }
+  }
+
+  // 6b. Verify Own-Domain GA4 & UTM Exclusions on Rules #6, #43, and #44 remain intact
+  const rule6 = staticRules.find((r) => r.id === 6);
+  const rule43 = staticRules.find((r) => r.id === 43);
+  const rule44 = staticRules.find((r) => r.id === 44);
+  if (!rule6?.condition?.excludedRequestDomains?.includes('sweeprdeepblock.com')) {
+    issues.push('Rule #6 (UTM queryTransform stripper) is missing sweeprdeepblock.com in excludedRequestDomains');
+  }
+  if (!rule43?.condition?.excludedInitiatorDomains?.includes('sweeprdeepblock.com')) {
+    issues.push('Rule #43 (google-analytics.com) is missing sweeprdeepblock.com in excludedInitiatorDomains');
+  }
+  if (!rule44?.condition?.excludedInitiatorDomains?.includes('sweeprdeepblock.com')) {
+    issues.push('Rule #44 (googletagmanager.com) is missing sweeprdeepblock.com in excludedInitiatorDomains');
   }
 
   // 7. Verify Cosmetic CSS selectors in deepblock-content.js & dynamic_delta.json
