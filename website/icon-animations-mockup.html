@@ -1,0 +1,1481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>SWEEPR Deepblock — Interactive Icon Animation Lab (Finsweet LottieFlow · Lordicon · Iconsax)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js"></script>
+  <script src="https://cdn.lordicon.com/lordicon.js"></script>
+  <style>
+    :root {
+      --bg: #06130e;
+      --surface: #0b2119;
+      --surface-elevated: #102d22;
+      --card-light: #ffffff;
+      --emerald-400: #34d399;
+      --emerald-500: #10b981;
+      --emerald-600: #059669;
+      --emerald-700: #047857;
+      --slate-900: #0f172a;
+      --slate-700: #334155;
+      --slate-500: #64748b;
+      --border-dark: rgba(52, 211, 153, 0.18);
+      --border-light: #e2e8f0;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(900px 500px at 15% 0%, rgba(16, 185, 129, 0.18) 0%, transparent 70%),
+        radial-gradient(800px 500px at 85% 10%, rgba(56, 189, 248, 0.10) 0%, transparent 70%),
+        #06130e;
+      color: #f8fafc;
+      line-height: 1.5;
+      padding-bottom: 90px;
+    }
+
+    /* Emerald SVG recolor filter for black-stroked LottieFlow JSON animations */
+    .lottie-emerald svg path,
+    .lottie-emerald svg circle,
+    .lottie-emerald svg rect,
+    .lottie-emerald svg line,
+    .lottie-emerald svg polyline,
+    .lottie-emerald svg polygon {
+      stroke: #10b981 !important;
+    }
+    .lottie-emerald-fill svg path,
+    .lottie-emerald-fill svg circle,
+    .lottie-emerald-fill svg rect {
+      fill: #10b981 !important;
+      stroke: #10b981 !important;
+    }
+    .lottie-white svg path,
+    .lottie-white svg circle,
+    .lottie-white svg rect,
+    .lottie-white svg line,
+    .lottie-white svg polyline,
+    .lottie-white svg polygon {
+      stroke: #ffffff !important;
+    }
+    .lottie-amber svg path,
+    .lottie-amber svg circle,
+    .lottie-amber svg rect,
+    .lottie-amber svg line,
+    .lottie-amber svg polyline {
+      stroke: #f59e0b !important;
+    }
+
+    /* Sticky Top Navigation Bar */
+    .top-bar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(16px);
+      background: rgba(6, 19, 14, 0.86);
+      border-bottom: 1px solid var(--border-dark);
+      padding: 14px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 900;
+      font-size: 17px;
+      letter-spacing: -0.02em;
+    }
+    .brand-badge {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: rgba(16, 185, 129, 0.16);
+      color: var(--emerald-400);
+      border: 1px solid rgba(52, 211, 153, 0.3);
+    }
+    .nav-pills {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .nav-pill {
+      color: #cbd5e1;
+      text-decoration: none;
+      font-size: 12.5px;
+      font-weight: 700;
+      padding: 7px 13px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.04);
+      transition: all 150ms ease;
+    }
+    .nav-pill:hover {
+      border-color: var(--emerald-400);
+      color: #ffffff;
+      background: rgba(16, 185, 129, 0.18);
+    }
+
+    .container {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 36px 24px 0;
+    }
+
+    /* Hero Header */
+    .hero {
+      text-align: center;
+      max-width: 860px;
+      margin: 0 auto 42px;
+    }
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(16, 185, 129, 0.14);
+      border: 1px solid rgba(52, 211, 153, 0.3);
+      color: var(--emerald-400);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 14px;
+    }
+    .hero h1 {
+      font-size: clamp(28px, 4vw, 44px);
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      margin: 0 0 12px;
+      line-height: 1.12;
+    }
+    .hero h1 span {
+      background: linear-gradient(135deg, #34d399 0%, #38bdf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero p {
+      color: #94a3b8;
+      font-size: 15.5px;
+      margin: 0 auto 22px;
+      max-width: 720px;
+    }
+    .source-badges {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .source-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 14px;
+      border-radius: 10px;
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #e2e8f0;
+    }
+    .source-tag strong { color: var(--emerald-400); }
+
+    /* Section Headers */
+    .section-block {
+      margin-bottom: 56px;
+      scroll-margin-top: 84px;
+    }
+    .section-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .section-num {
+      font-size: 11.5px;
+      font-weight: 800;
+      color: var(--emerald-400);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 4px;
+    }
+    .section-title {
+      font-size: 23px;
+      font-weight: 900;
+      margin: 0;
+      letter-spacing: -0.02em;
+    }
+    .section-desc {
+      color: #94a3b8;
+      font-size: 13.5px;
+      margin: 4px 0 0;
+    }
+    .placement-pill {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 11.5px;
+      background: rgba(16, 185, 129, 0.12);
+      color: #6ee7b7;
+      border: 1px solid rgba(52, 211, 153, 0.28);
+      padding: 6px 12px;
+      border-radius: 8px;
+      white-space: nowrap;
+    }
+
+    /* Two-Column Stage */
+    .stage-grid {
+      display: grid;
+      grid-template-columns: 400px 1fr;
+      gap: 28px;
+      align-items: start;
+    }
+    @media (max-width: 920px) {
+      .stage-grid { grid-template-columns: 1fr; }
+    }
+
+    /* =========================================================================
+       MOCKUP 1: LIVE 360px EXTENSION POPUP SIMULATOR
+       ========================================================================= */
+    .popup-frame-wrap {
+      background: linear-gradient(145deg, rgba(16, 185, 129, 0.14), rgba(15, 23, 42, 0.8));
+      border: 1px solid var(--border-dark);
+      border-radius: 22px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .frame-caption {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--emerald-400);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .ext-popup-sim {
+      width: 360px;
+      max-width: 100%;
+      background-color: #f8fafc;
+      background-image: radial-gradient(circle at 12% 10%, rgba(209, 250, 229, 0.65) 0%, rgba(248, 250, 252, 0) 55%);
+      color: #0f172a;
+      border-radius: 16px;
+      padding: 14px 16px;
+      box-shadow: 0 24px 48px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(15, 23, 42, 0.12);
+    }
+    .ext-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .ext-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 900;
+      font-size: 13px;
+      color: #0f172a;
+    }
+    .ext-logo-wrap {
+      width: 26px;
+      height: 26px;
+      border-radius: 7px;
+      background: #059669;
+      display: grid;
+      place-items: center;
+      box-shadow: 0 2px 8px rgba(5, 150, 105, 0.3);
+      position: relative;
+      cursor: pointer;
+    }
+    .ext-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .ext-status-pill {
+      font-size: 9px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: #ecfdf5;
+      color: #047857;
+      border: 1px solid #a7f3d0;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .ext-icon-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      background: #ffffff;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      padding: 0;
+      transition: all 140ms ease;
+    }
+    .ext-icon-btn:hover {
+      border-color: #10b981;
+      background: #ecfdf5;
+      transform: translateY(-1px);
+    }
+    .ext-site-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 12px 13px;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+      transition: all 180ms ease;
+    }
+    .ext-site-card.paused {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+    }
+    .ext-site-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .ext-domain-row {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+    .shield-orb {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      display: grid;
+      place-items: center;
+      position: relative;
+      transition: all 200ms ease;
+    }
+    .ext-site-card.paused .shield-orb {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+    }
+    .ext-domain {
+      font-size: 13.5px;
+      font-weight: 900;
+      color: #0f172a;
+    }
+    .ext-sub {
+      font-size: 10.5px;
+      color: #059669;
+      font-weight: 700;
+      margin-top: 2px;
+      transition: color 150ms ease;
+    }
+    .ext-site-card.paused .ext-sub {
+      color: #64748b;
+    }
+    .ext-escape-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-top: 9px;
+      padding-top: 8px;
+      border-top: 1px solid #f1f5f9;
+    }
+    .ext-chip {
+      background: #f8fafc;
+      color: #334155;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 5px 8px;
+      font-size: 10px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      transition: all 140ms ease;
+    }
+    .ext-chip:hover {
+      border-color: #10b981;
+      color: #047857;
+      background: #ecfdf5;
+    }
+    .ext-telemetry-row {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 8px 11px;
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 10.5px;
+      font-weight: 700;
+      color: #334155;
+    }
+    .ext-ram-btn {
+      width: 100%;
+      min-height: 44px;
+      margin-top: 8px;
+      padding: 10px 14px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 12.5px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 6px 16px rgba(5, 150, 105, 0.25);
+      transition: all 150ms ease;
+    }
+    .ext-ram-btn:hover {
+      box-shadow: 0 8px 22px rgba(5, 150, 105, 0.36);
+      transform: translateY(-1px);
+    }
+
+    /* Annotation Spec Cards on Right Side */
+    .spec-list {
+      display: grid;
+      gap: 14px;
+    }
+    .spec-card {
+      background: rgba(11, 33, 25, 0.85);
+      border: 1px solid var(--border-dark);
+      border-radius: 16px;
+      padding: 16px 18px;
+      display: grid;
+      grid-template-columns: 56px 1fr auto;
+      align-items: center;
+      gap: 16px;
+      transition: all 160ms ease;
+    }
+    .spec-card:hover {
+      border-color: var(--emerald-400);
+      background: rgba(16, 45, 34, 0.9);
+    }
+    .spec-preview-box {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(52, 211, 153, 0.28);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      overflow: hidden;
+    }
+    .spec-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: #ffffff;
+      margin: 0 0 3px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .lib-tag {
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 6px;
+      background: rgba(56, 189, 248, 0.15);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      text-transform: uppercase;
+    }
+    .lib-tag.finsweet {
+      background: rgba(16, 185, 129, 0.16);
+      color: #34d399;
+      border-color: rgba(52, 211, 153, 0.35);
+    }
+    .lib-tag.lordicon {
+      background: rgba(168, 85, 247, 0.16);
+      color: #c084fc;
+      border-color: rgba(168, 85, 247, 0.35);
+    }
+    .spec-sub {
+      font-size: 12.5px;
+      color: #94a3b8;
+      margin: 0;
+    }
+    .try-btn {
+      background: rgba(255, 255, 255, 0.06);
+      color: #e2e8f0;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 9px;
+      padding: 7px 12px;
+      font-size: 11.5px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 140ms ease;
+      white-space: nowrap;
+    }
+    .try-btn:hover {
+      background: var(--emerald-600);
+      border-color: var(--emerald-400);
+      color: #ffffff;
+    }
+
+    /* =========================================================================
+       MOCKUP 2: DASHBOARD 6 PROTECTION MODULES (ICONSAX DUOTONE + LOTTIEFLOW)
+       ========================================================================= */
+    .modules-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 16px;
+    }
+    .module-card {
+      background: #ffffff;
+      color: #0f172a;
+      border-radius: 16px;
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.25);
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: all 160ms ease;
+    }
+    .module-card:hover {
+      border-color: #10b981;
+      transform: translateY(-2px);
+    }
+    .module-left {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+    }
+    .iconsax-box {
+      width: 46px;
+      height: 46px;
+      border-radius: 13px;
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      transition: all 200ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .module-card:hover .iconsax-box {
+      background: #d1fae5;
+      transform: scale(1.07) rotate(-3deg);
+    }
+    .module-card.off .iconsax-box {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+      filter: grayscale(1);
+      opacity: 0.65;
+    }
+    .module-name {
+      font-size: 14px;
+      font-weight: 800;
+      color: #0f172a;
+    }
+    .module-desc {
+      font-size: 11.5px;
+      color: #64748b;
+      margin-top: 2px;
+    }
+
+    /* Iconsax Micro-Animations */
+    @keyframes radarSweep {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .module-card:hover .radar-beam {
+      transform-origin: 12px 12px;
+      animation: radarSweep 1.6s linear infinite;
+    }
+    @keyframes boltPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.18); }
+    }
+    .module-card:hover .bolt-core {
+      transform-origin: center;
+      animation: boltPulse 0.7s ease-in-out infinite;
+    }
+
+    /* =========================================================================
+       MOCKUP 3 & 4: WEBSITE CTAs, MOBILE MENU, FAQ ACCORDION & SCAM ALERT
+       ========================================================================= */
+    .web-showcase-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 22px;
+    }
+    .web-card {
+      background: rgba(11, 33, 25, 0.88);
+      border: 1px solid var(--border-dark);
+      border-radius: 20px;
+      padding: 24px;
+    }
+    .web-card h3 {
+      margin: 0 0 6px;
+      font-size: 17px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .web-card p {
+      margin: 0 0 18px;
+      font-size: 13px;
+      color: #94a3b8;
+    }
+
+    /* Interactive Website Hero CTA Button */
+    .hero-cta-demo {
+      width: 100%;
+      padding: 14px 20px;
+      border-radius: 14px;
+      border: none;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: #ffffff;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      box-shadow: 0 10px 25px rgba(5, 150, 105, 0.35);
+      transition: all 160ms ease;
+    }
+    .hero-cta-demo:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 30px rgba(5, 150, 105, 0.48);
+    }
+
+    /* FAQ Accordion Demo */
+    .faq-item {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 13px;
+      margin-bottom: 10px;
+      overflow: hidden;
+      transition: border-color 150ms ease;
+    }
+    .faq-item.open {
+      border-color: var(--emerald-500);
+      background: rgba(16, 185, 129, 0.07);
+    }
+    .faq-btn {
+      width: 100%;
+      background: none;
+      border: none;
+      color: #ffffff;
+      padding: 13px 16px;
+      font-size: 13.5px;
+      font-weight: 800;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-family: inherit;
+    }
+    .faq-body {
+      display: none;
+      padding: 0 16px 14px;
+      font-size: 12.5px;
+      color: #cbd5e1;
+      line-height: 1.55;
+    }
+    .faq-item.open .faq-body {
+      display: block;
+    }
+
+    /* Fake Shop Alert Demo Banner */
+    .scam-toast-demo {
+      background: #fffbeb;
+      border: 2px solid #f59e0b;
+      border-radius: 14px;
+      padding: 13px 15px;
+      color: #78350f;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
+    }
+
+    /* =========================================================================
+       LIVE GALLERY OF CURATED ANIMATIONS FROM ALL 3 SITES
+       ========================================================================= */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 16px;
+    }
+    .gallery-card {
+      background: rgba(11, 33, 25, 0.85);
+      border: 1px solid var(--border-dark);
+      border-radius: 16px;
+      padding: 18px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      cursor: pointer;
+      transition: all 160ms ease;
+    }
+    .gallery-card:hover {
+      border-color: var(--emerald-400);
+      transform: translateY(-3px);
+      background: rgba(16, 45, 34, 0.95);
+    }
+    .gallery-stage {
+      width: 68px;
+      height: 68px;
+      border-radius: 16px;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(52, 211, 153, 0.22);
+      display: grid;
+      place-items: center;
+      margin-bottom: 12px;
+    }
+    .gallery-name {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 4px;
+    }
+    .gallery-use {
+      font-size: 11.5px;
+      color: #94a3b8;
+      line-height: 1.4;
+      margin-bottom: 10px;
+    }
+    .gallery-trigger-pill {
+      font-size: 10px;
+      font-weight: 800;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.06);
+      color: #cbd5e1;
+    }
+
+    /* Floating Scroll-To-Top Button with Finsweet LottieFlow scroll-top-09 */
+    .floating-top-btn {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 90;
+      background: #10b981;
+      border: 2px solid #a7f3d0;
+      border-radius: 16px;
+      padding: 10px 14px;
+      color: #052e16;
+      font-weight: 900;
+      font-size: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 12px 28px rgba(5, 150, 105, 0.45);
+      transition: all 160ms ease;
+    }
+    .floating-top-btn:hover {
+      transform: translateY(-3px);
+      background: #34d399;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Sticky Bar -->
+  <header class="top-bar">
+    <div class="brand">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="28" height="28" fill="none">
+        <rect width="64" height="64" rx="16" fill="#059669"/>
+        <path d="M32 10L50 17.5V31C50 43.2 42.3 51.8 32 55.5C21.7 51.8 14 43.2 14 31V17.5L32 10Z" fill="white" fill-opacity="0.2" stroke="#a7f3d0" stroke-width="2.8" stroke-linejoin="round"/>
+        <path d="M23.5 32.5L29.5 38.5L42.5 23.5" stroke="#ffffff" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>SWEEPR <span style="color:#34d399">Deepblock</span></span>
+      <span class="brand-badge">Interactive Icon Animation Mockup</span>
+    </div>
+    <nav class="nav-pills">
+      <a href="#mockup-popup" class="nav-pill">1. Extension Popup</a>
+      <a href="#mockup-dashboard" class="nav-pill">2. Dashboard &amp; Modules</a>
+      <a href="#mockup-website" class="nav-pill">3. Website &amp; FAQ</a>
+      <a href="#mockup-gallery" class="nav-pill">4. Full 16-Icon Library</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <!-- Hero Intro -->
+    <section class="hero">
+      <div class="hero-eyebrow">✨ Micro-Interaction &amp; Responsiveness Upgrade Plan</div>
+      <h1>Make SWEEPR Deepblock Feel <span>Instantly Responsive</span></h1>
+      <p>
+        Interactive HTML mockup combining real Lottie JSON animations from <strong>Finsweet LottieFlow</strong>, interactive Web Components from <strong>Lordicon</strong>, and <strong>Iconsax Emerald Duotone</strong> micro-physics across the Extension Popup, Options Dashboard, and Website.
+      </p>
+      <div class="source-badges">
+        <div class="source-tag"><strong>Finsweet LottieFlow:</strong> Morphing Toggles, Loaders, Accordions &amp; Success States</div>
+        <div class="source-tag"><strong>Lordicon:</strong> Hover-Triggered Search, Menu &amp; CTA Micro-Icons</div>
+        <div class="source-tag"><strong>Iconsax Duotone:</strong> 6 Core Protection Module Badges</div>
+      </div>
+    </section>
+
+    <!-- =======================================================================
+         SECTION 1: LIVE 360px EXTENSION POPUP SIMULATOR
+         ======================================================================= -->
+    <section id="mockup-popup" class="section-block">
+      <div class="section-head">
+        <div>
+          <div class="section-num">Placement 01 · Browser Extension Popup (extension/popup.html)</div>
+          <h2 class="section-title">Interactive 360px Popup with Tactile State Feedback</h2>
+          <p class="section-desc">Click the Site Shield switch, hover the Settings gear, or click "Free Up RAM Now" inside the popup below to experience the live animations.</p>
+        </div>
+        <span class="placement-pill">extension/popup.html</span>
+      </div>
+
+      <div class="stage-grid">
+        <!-- Left: Live Interactive 360px Extension Popup -->
+        <div class="popup-frame-wrap">
+          <div class="frame-caption">● Live Interactive Simulator — Click Elements Below</div>
+          <div class="ext-popup-sim">
+            <!-- Header -->
+            <div class="ext-header">
+              <div class="ext-brand">
+                <div class="ext-logo-wrap" title="Hover to pulse shield">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="20" height="20" fill="none">
+                    <path d="M32 8L52 16.5V31C52 44.5 43.3 53.8 32 58C20.7 53.8 12 44.5 12 31V16.5L32 8Z" fill="white" fill-opacity="0.22" stroke="#a7f3d0" stroke-width="3.2" stroke-linejoin="round"/>
+                    <path d="M23 32.5L29.5 39L43 23" stroke="#ffffff" stroke-width="4.8" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+                <span>SWEEPR <span style="color:#059669">Deepblock</span></span>
+              </div>
+              <div class="ext-header-actions">
+                <span class="ext-status-pill">
+                  <span id="popupHeaderCheckLottie" class="lottie-emerald" style="width:14px;height:14px;display:inline-block;"></span>
+                  PRO ACTIVE
+                </span>
+                <button type="button" id="simSettingsBtn" class="ext-icon-btn" title="Finsweet LottieFlow: chat-17-7 (Settings Gear smooth spin on hover/click)">
+                  <div id="popupSettingsLottie" class="lottie-emerald" style="width:18px;height:18px;"></div>
+                </button>
+              </div>
+            </div>
+
+            <!-- Row 1: Master Site Shield Card -->
+            <div id="simSiteCard" class="ext-site-card">
+              <div class="ext-site-top">
+                <div class="ext-domain-row">
+                  <div class="shield-orb" id="simShieldOrb" title="Iconsax Shield-Tick + LottieFlow Morph">
+                    <div id="popupShieldLottie" class="lottie-emerald" style="width:24px;height:24px;"></div>
+                  </div>
+                  <div>
+                    <div class="ext-domain">youtube.com</div>
+                    <div class="ext-sub" id="simSiteSub">Site Shield ON · Ads &amp; Cookies Blocked</div>
+                  </div>
+                </div>
+                <!-- Finsweet LottieFlow Radio/Switch Morph -->
+                <button type="button" id="simToggleSwitch" style="background:none;border:none;padding:0;cursor:pointer;width:44px;height:32px;display:grid;place-items:center;" title="Click to toggle Site Shield (Finsweet LottieFlow radio-08)">
+                  <div id="popupRadioLottie" class="lottie-emerald" style="width:40px;height:40px;"></div>
+                </button>
+              </div>
+              <div class="ext-escape-row">
+                <button type="button" id="simPause5mBtn" class="ext-chip">
+                  <span id="popupCountdownLottie" class="lottie-emerald" style="width:14px;height:14px;display:inline-block;"></span>
+                  <span id="simPause5mText">Pause 5m (Fix Page)</span>
+                </button>
+                <button type="button" id="simZapperBtn" class="ext-chip">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="#10b981" fill-opacity="0.25" stroke="#059669" stroke-width="2" stroke-linejoin="round"/></svg>
+                  <span id="simZapperText">Hide Element</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Row 2: Telemetry Pill -->
+            <div class="ext-telemetry-row">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span>Ads: <strong style="color:#059669" id="simAdsCount">42</strong></span>
+                <span style="color:#cbd5e1">·</span>
+                <span>Cookies: <strong style="color:#059669">3</strong></span>
+                <span style="color:#cbd5e1">·</span>
+                <span id="simRamStatus" style="color:#059669;font-weight:800;">Fast (140 MB saved)</span>
+              </div>
+              <span style="font-size:9px;font-weight:800;padding:2px 7px;border-radius:999px;background:#ecfdf5;color:#047857;border:1px solid #a7f3d0;">SAFE</span>
+            </div>
+
+            <!-- Row 3: 1-Click RAM Boost Button with Live Loader -> Checkmark Morph -->
+            <button type="button" id="simRamBoostBtn" class="ext-ram-btn">
+              <div id="popupRamBtnLottie" class="lottie-white" style="width:20px;height:20px;"></div>
+              <span id="simRamBtnLabel">Free Up RAM Now</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Right: Breakdown of the 4 Popup Micro-Animations -->
+        <div class="spec-list">
+          <div class="spec-card">
+            <div class="spec-preview-box" onclick="replaySpec('specSettings')">
+              <div id="specSettings" class="lottie-emerald" style="width:34px;height:34px;"></div>
+            </div>
+            <div>
+              <div class="spec-title">
+                1. Header Settings Gear Spin &amp; Morph
+                <span class="lib-tag finsweet">Finsweet · chat-17-7</span>
+              </div>
+              <p class="spec-sub">Replaces the static SVG gear on <code>#openDashboardBtn</code>. Smoothly rotates and settles when the user hovers or clicks to open Full Settings.</p>
+            </div>
+            <button class="try-btn" onclick="replaySpec('specSettings')">Replay ↻</button>
+          </div>
+
+          <div class="spec-card">
+            <div class="spec-preview-box" onclick="document.getElementById('simToggleSwitch').click()">
+              <div id="specRadio" class="lottie-emerald" style="width:38px;height:38px;"></div>
+            </div>
+            <div>
+              <div class="spec-title">
+                2. Master Site Shield Toggle &amp; Confirmation Check
+                <span class="lib-tag finsweet">Finsweet · radio-08 + success-09</span>
+              </div>
+              <p class="spec-sub">When toggling protection for the active domain, the switch morphs fluidly and plays a crisp emerald checkmark confirmation inside the Shield Orb.</p>
+            </div>
+            <button class="try-btn" onclick="document.getElementById('simToggleSwitch').click()">Toggle Shield</button>
+          </div>
+
+          <div class="spec-card">
+            <div class="spec-preview-box" onclick="document.getElementById('simRamBoostBtn').click()">
+              <div id="specLoader" class="lottie-emerald" style="width:34px;height:34px;"></div>
+            </div>
+            <div>
+              <div class="spec-title">
+                3. "Free Up RAM Now" 3-Stage Action Feedback
+                <span class="lib-tag finsweet">Finsweet · loading-08 → success-01</span>
+              </div>
+              <p class="spec-sub">Clicking <code>#reclaimRamBtn</code> transitions from an energetic bolt into a 600ms vector loader while hibernating background tabs, finishing with a morphing checkmark ("380 MB Reclaimed!").</p>
+            </div>
+            <button class="try-btn" onclick="document.getElementById('simRamBoostBtn').click()">Test RAM Boost</button>
+          </div>
+
+          <div class="spec-card">
+            <div class="spec-preview-box" onclick="replaySpec('specCountdown')">
+              <div id="specCountdown" class="lottie-emerald" style="width:34px;height:34px;"></div>
+            </div>
+            <div>
+              <div class="spec-title">
+                4. "Pause 5m (Fix Page)" Live Timer Indicator
+                <span class="lib-tag finsweet">Finsweet · countdown-13-5</span>
+              </div>
+              <p class="spec-sub">Gives immediate visual feedback that the 5-minute temporary site pause timer has started counting down and will auto-resume protection.</p>
+            </div>
+            <button class="try-btn" onclick="document.getElementById('simPause5mBtn').click()">Test 5m Pause</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =======================================================================
+         SECTION 2: DASHBOARD 6 PROTECTION MODULES (ICONSAX DUOTONE + LOTTIEFLOW)
+         ======================================================================= -->
+    <section id="mockup-dashboard" class="section-block">
+      <div class="section-head">
+        <div>
+          <div class="section-num">Placement 02 · Extension Options &amp; Welcome Dashboard (extension/welcome.html)</div>
+          <h2 class="section-title">Iconsax Emerald Duotone + LottieFlow Module Cards</h2>
+          <p class="section-desc">Hover or click any of the 6 Protection Module cards below to test the Iconsax Duotone micro-animations + LottieFlow toggle switches.</p>
+        </div>
+        <span class="placement-pill">extension/welcome.html#modulesSection</span>
+      </div>
+
+      <div class="modules-grid">
+        <!-- Module 1: Video & Page Ad Blocking -->
+        <div class="module-card" onclick="toggleModuleCard(this, 0)">
+          <div class="module-left">
+            <div class="iconsax-box">
+              <!-- Iconsax shield-tick Bulk/Duotone -->
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+                <path d="M12 2L4 5.4V11.5C4 16.8 7.4 20.8 12 22C16.6 20.8 20 16.8 20 11.5V5.4L12 2Z" fill="#10b981" fill-opacity="0.22" stroke="#059669" stroke-width="1.8"/>
+                <path class="bolt-core" d="M8.5 12.2L10.9 14.6L15.8 9.7" stroke="#047857" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div>
+              <div class="module-name">Video &amp; Page Ad Blocking</div>
+              <div class="module-desc">Iconsax <code>shield-tick</code> Duotone + LottieFlow Check</div>
+            </div>
+          </div>
+          <div class="mod-lottie lottie-emerald" data-idx="0" style="width:34px;height:34px;"></div>
+        </div>
+
+        <!-- Module 2: Auto-Decline Cookie Pop-Ups -->
+        <div class="module-card" onclick="toggleModuleCard(this, 1)">
+          <div class="module-left">
+            <div class="iconsax-box">
+              <!-- Iconsax flash-circle Bulk/Duotone -->
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="9.5" fill="#10b981" fill-opacity="0.22" stroke="#059669" stroke-width="1.8"/>
+                <path class="bolt-core" d="M13.2 6.5L8.2 12.6H12.2L10.8 17.5L15.8 11.4H11.8L13.2 6.5Z" fill="#059669" stroke="#047857" stroke-width="1.4" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div>
+              <div class="module-name">Auto-Decline Cookie Pop-Ups</div>
+              <div class="module-desc">Iconsax <code>flash-circle</code> Duotone (&lt;50ms reject)</div>
+            </div>
+          </div>
+          <div class="mod-lottie lottie-emerald" data-idx="1" style="width:34px;height:34px;"></div>
+        </div>
+
+        <!-- Module 3: Hide Search Engine Spam -->
+        <div class="module-card" onclick="toggleModuleCard(this, 2)">
+          <div class="module-left">
+            <div class="iconsax-box">
+              <div id="modSearchLottie" class="lottie-emerald" style="width:26px;height:26px;"></div>
+            </div>
+            <div>
+              <div class="module-name">Hide Search Engine Spam</div>
+              <div class="module-desc">Finsweet LottieFlow <code>search-08</code> animated loupe</div>
+            </div>
+          </div>
+          <div class="mod-lottie lottie-emerald" data-idx="2" style="width:34px;height:34px;"></div>
+        </div>
+
+        <!-- Module 4: Scam Online Shop Alerts -->
+        <div class="module-card" onclick="toggleModuleCard(this, 3)">
+          <div class="module-left">
+            <div class="iconsax-box">
+              <div id="modShopLottie" class="lottie-emerald" style="width:28px;height:28px;"></div>
+            </div>
+            <div>
+              <div class="module-name">Scam Online Shop Alerts</div>
+              <div class="module-desc">Finsweet LottieFlow <code>ecommerce-14-9</code> animated cart</div>
+            </div>
+          </div>
+          <div class="mod-lottie lottie-emerald" data-idx="3" style="width:34px;height:34px;"></div>
+        </div>
+
+        <!-- Module 5: Tracker-Free Links & DNS -->
+        <div class="module-card" onclick="toggleModuleCard(this, 4)">
+          <div class="module-left">
+            <div class="iconsax-box">
+              <!-- Iconsax radar-2 Duotone with animated sweep -->
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="9.5" fill="#10b981" fill-opacity="0.18" stroke="#059669" stroke-width="1.8"/>
+                <circle cx="12" cy="12" r="5" stroke="#059669" stroke-width="1.5" stroke-dasharray="3 2"/>
+                <path class="radar-beam" d="M12 12L18.5 5.5" stroke="#047857" stroke-width="2.2" stroke-linecap="round"/>
+                <circle cx="12" cy="12" r="2" fill="#047857"/>
+              </svg>
+            </div>
+            <div>
+              <div class="module-name">Tracker-Free Links &amp; DoH Proxy</div>
+              <div class="module-desc">Iconsax <code>radar-2</code> Duotone with live sweep</div>
+            </div>
+          </div>
+          <div class="mod-lottie lottie-emerald" data-idx="4" style="width:34px;height:34px;"></div>
+        </div>
+
+        <!-- Module 6: 100% Silent Mode -->
+        <div class="module-card" onclick="toggleModuleCard(this, 5)">
+          <div class="module-left">
+            <div class="iconsax-box">
+              <!-- Iconsax eye-slash Duotone -->
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+                <path d="M2.5 12C4.5 7.5 8 5 12 5C16 5 19.5 7.5 21.5 12C19.5 16.5 16 19 12 19C8 19 4.5 16.5 2.5 12Z" fill="#10b981" fill-opacity="0.22" stroke="#059669" stroke-width="1.8"/>
+                <circle cx="12" cy="12" r="3" fill="#059669"/>
+                <path class="bolt-core" d="M4 20L20 4" stroke="#047857" stroke-width="2.2" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <div class="module-name">100% Silent Mode</div>
+              <div class="module-desc">Iconsax <code>eye-slash</code> Duotone stealth badge</div>
+            </div>
+          </div>
+          <div class="mod-lottie lottie-emerald" data-idx="5" style="width:34px;height:34px;"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =======================================================================
+         SECTION 3: WEBSITE CTAs, MOBILE MENU, FAQ ACCORDION & SCAM STORE TOAST
+         ======================================================================= -->
+    <section id="mockup-website" class="section-block">
+      <div class="section-head">
+        <div>
+          <div class="section-num">Placement 03 · Marketing Website &amp; On-Page Overlays (website/index.html)</div>
+          <h2 class="section-title">Website CTAs, Morphing Accordions &amp; Scam Alerts</h2>
+          <p class="section-desc">Interactive website components powered by Finsweet LottieFlow and Lordicon hover/click triggers.</p>
+        </div>
+        <span class="placement-pill">website/index.html · pricing.html</span>
+      </div>
+
+      <div class="web-showcase-grid">
+        <!-- Card A: Hero CTA + Mobile Hamburger Menu -->
+        <div class="web-card">
+          <h3>
+            <span>1. Hero CTA &amp; Mobile Nav Morph</span>
+            <span class="lib-tag finsweet">Finsweet · cta-01-1 + menu-nav-08</span>
+          </h3>
+          <p>Hover the primary CTA button below to trigger the animated glide arrow, or click the Mobile Menu button to morph between Hamburger and Close (X).</p>
+
+          <button type="button" id="webHeroCtaBtn" class="hero-cta-demo">
+            <span>Install SWEEPR Deepblock Free</span>
+            <div id="webCtaArrowLottie" class="lottie-white" style="width:28px;height:28px;"></div>
+          </button>
+
+          <div style="margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:space-between;">
+            <div>
+              <div style="font-size:13.5px;font-weight:800;">Responsive Mobile Navbar Button</div>
+              <div style="font-size:12px;color:#94a3b8;">Click the icon button to morph state (Hamburger ↔ X)</div>
+            </div>
+            <button type="button" id="mobileMenuBtn" style="width:46px;height:46px;border-radius:12px;background:rgba(16,185,129,0.15);border:1px solid #34d399;display:grid;place-items:center;cursor:pointer;">
+              <div id="mobileMenuLottie" class="lottie-emerald" style="width:28px;height:28px;"></div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Card B: Interactive FAQ Accordion -->
+        <div class="web-card">
+          <h3>
+            <span>2. Reversible FAQ Accordion Chevrons</span>
+            <span class="lib-tag finsweet">Finsweet · dropdown-08</span>
+          </h3>
+          <p>Click each question below—the Lottie chevron animates forward on open and reverses smoothly on close.</p>
+
+          <div class="faq-item open" onclick="toggleFaq(this, 0)">
+            <button type="button" class="faq-btn">
+              <span>Does Deepblock still block YouTube pre-roll ads on Manifest V3?</span>
+              <div class="faq-lottie lottie-emerald" data-faq="0" style="width:22px;height:22px;flex-shrink:0;"></div>
+            </button>
+            <div class="faq-body">
+              Yes—DeepStealth's MAIN-world player response sanitizer strips <code>adPlacements</code> and <code>adSlots</code> before playback begins.
+            </div>
+          </div>
+
+          <div class="faq-item" onclick="toggleFaq(this, 1)">
+            <button type="button" class="faq-btn">
+              <span>Will animated icons slow down page load or extension popup open time?</span>
+              <div class="faq-lottie lottie-emerald" data-faq="1" style="width:22px;height:22px;flex-shrink:0;"></div>
+            </button>
+            <div class="faq-body">
+              No—each Lottie JSON is only 2 KB–4 KB and renders natively as inline SVG at 60 FPS with zero layout shift.
+            </div>
+          </div>
+        </div>
+
+        <!-- Card C: Scam Store Warning Toast + Lordicon Search Bar -->
+        <div class="web-card">
+          <h3>
+            <span>3. Scam Store Alert &amp; Lordicon Search</span>
+            <span class="lib-tag lordicon">Lordicon + Finsweet · attention-07</span>
+          </h3>
+          <p>Used in the on-page Fake E-Commerce Store Detector toast and the Tracker-Free Search bar.</p>
+
+          <div class="scam-toast-demo" onmouseenter="replaySpec('scamAlertLottie')">
+            <div id="scamAlertLottie" class="lottie-amber" style="width:38px;height:38px;flex-shrink:0;"></div>
+            <div style="flex:1;">
+              <div style="font-size:13px;font-weight:900;color:#92400e;">High-Risk Scam Store Warning</div>
+              <div style="font-size:11.5px;color:#b45309;">Fake urgency countdown timer &amp; synthetic review patterns detected on this domain.</div>
+            </div>
+          </div>
+
+          <!-- Lordicon Interactive Search Input -->
+          <div style="margin-top:14px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);border-radius:12px;padding:8px 12px;display:flex;align-items:center;gap:10px;" class="search-demo-box">
+            <lord-icon
+              src="https://media.lordicon.com/assets/icons/slot-search/search.json"
+              trigger="hover"
+              target=".search-demo-box"
+              style="width:24px;height:24px;filter:invert(63%) sepia(78%) saturate(427%) hue-rotate(111deg) brightness(95%) contrast(88%);">
+            </lord-icon>
+            <input type="text" placeholder="Hover or type: Tracker-Free Encrypted Search (Lordicon search.json)..." style="background:none;border:none;color:#fff;font-size:12.5px;width:100%;outline:none;font-family:inherit;" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =======================================================================
+         SECTION 4: FULL 16-ICON INTERACTIVE GALLERY (CLICK TO REPLAY)
+         ======================================================================= -->
+    <section id="mockup-gallery" class="section-block">
+      <div class="section-head">
+        <div>
+          <div class="section-num">Curated Asset Matrix · Click Any Card to Trigger Animation</div>
+          <h2 class="section-title">16 Curated Animations Mapped to SWEEPR Touchpoints</h2>
+          <p class="section-desc">Every card below runs the live vector animation from Finsweet LottieFlow, Lordicon, or Iconsax. Click or hover any card to test.</p>
+        </div>
+        <span class="placement-pill">2.1 KB avg payload · 60 FPS SVG</span>
+      </div>
+
+      <div class="gallery-grid" id="galleryGrid"></div>
+    </section>
+  </div>
+
+  <!-- Floating Scroll-to-Top Button using Finsweet scroll-top-09 -->
+  <button type="button" class="floating-top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Finsweet LottieFlow: scroll-top-09">
+    <div id="floatingTopLottie" style="width:22px;height:22px;"></div>
+    <span>Back to Top</span>
+  </button>
+
+  <script>
+    // Curated Finsweet LottieFlow JSON URLs verified from https://finsweet.com/lottieflow/explore
+    const LOTTIE_URLS = {
+      settingsGear: 'https://cdn.prod.website-files.com/5d829bf092d4644f5c42e0ea/5e8f5693386677e56b2dba71_settings%20smooth.json',
+      successCheck: 'https://cdn.prod.website-files.com/5d829bf092d4644f5c42e0ea/5def871cca4d3b3d86d6ee1b_Success-Pack9-smooth.json',
+      successCircle: 'https://cdn.prod.website-files.com/5d829bf092d4644f5c42e0ea/5dc230d79dcd8eb663a121b2_success.json',
+      checkboxMorph: 'https://cdn.prod.website-files.com/5d829bf092d4644f5c42e0ea/5dc233f293b9a5730bfedc8e_checkbox.json',
+      radioToggle: 'https://cdn.prod.website-files.com/5d829bf092d4644f5c42e0ea/5def7cda4707451dc0305398_Radio-Pack8-smooth.json',
+      loaderSmooth: 'https://cdn.prod.website-files.com/5d829bf092d4644f5c42e0ea/5def7c44ab4fffa70313a5fa_Loader-Pack8-smooth.json',
+      loaderRing: 'https://cdn.prod.website-files.com/5d829bf092d4644f5c42e0ea/5d8a1816b4e4f756fd0008e2_loader.json',
+      searchLoupe: 'https://cdn.prod.website-files.com/5d829bf092d4644f5c42e0ea/5def7d99b4a1745f5e579c78_Search-Pack8-smooth.json',
+      ecommerceCart: 'https://cdn.prod.website-files.com/5d829bf092d4644f5c42e0ea/5e5544e8c28cb60735ce4b9e_ecommercePack_cart2%20smooth.json',
+      dropdownChevron: 'https://cdn.prod.website-files.com/5d829bf092d4644f5c42e0ea/5def7c10b4a174d9f7570a1f_Dropdown-Pack8-smooth.json',
+      menuHamburger: 'https://cdn.prod.website-files.com/5d829bf092d4644f5c42e0ea/5def7c837834abb99445b019_Menu-Pack8-smooth.json',
+      ctaArrow: 'https://cdn.prod.website-files.com/5d829bf092d4644f5c42e0ea/5e8ccf674215039ee233737c_cta%2001-1%20smooth.json',
+      attentionBell: 'https://cdn.prod.website-files.com/5d829bf092d4644f5c42e0ea/5deecc94025581baf5b86d3c_Attention%20Grabbers-Pack7-smooth.json',
+      countdownTimer: 'https://cdn.prod.website-files.com/5d829bf092d4644f5c42e0ea/5e386e4988867266df482f71_countdown5.json',
+      scrollDownMouse: 'https://cdn.prod.website-files.com/5d829bf092d4644f5c42e0ea/5def7d0647074535d1306485_Scroll%20Down-Pack8-smooth.json',
+      scrollTopArrow: 'https://cdn.prod.website-files.com/5d829bf092d4644f5c42e0ea/5def86739d0c5f63bcc32047_Scroll%20Top-Pack9-smooth.json',
+      astronaut404: 'https://cdn.prod.website-files.com/5d829bf092d4644f5c42e0ea/5e319685578a74dc015c5b23_astronaut%20404%202.json',
+      shareNodes: 'https://cdn.prod.website-files.com/5d829bf092d4644f5c42e0ea/5e8f56b1968392ee814aa80e_share%20smooth.json'
+    };
+
+    const instances = {};
+
+    function mountLottie(id, url, { loop = false, autoplay = true } = {}) {
+      const el = typeof id === 'string' ? document.getElementById(id) : id;
+      if (!el) return null;
+      const anim = lottie.loadAnimation({
+        container: el,
+        renderer: 'svg',
+        loop,
+        autoplay,
+        path: url
+      });
+      if (typeof id === 'string') instances[id] = anim;
+      return anim;
+    }
+
+    function replaySpec(id) {
+      const anim = instances[id];
+      if (anim) {
+        anim.goToAndPlay(0, true);
+      }
+    }
+
+    // 1. Mount Extension Popup Simulator Animations
+    mountLottie('popupHeaderCheckLottie', LOTTIE_URLS.successCheck, { loop: false, autoplay: true });
+    const settingsAnim = mountLottie('popupSettingsLottie', LOTTIE_URLS.settingsGear, { loop: false, autoplay: true });
+    const shieldAnim = mountLottie('popupShieldLottie', LOTTIE_URLS.successCircle, { loop: false, autoplay: true });
+    const radioAnim = mountLottie('popupRadioLottie', LOTTIE_URLS.radioToggle, { loop: false, autoplay: true });
+    const countdownAnim = mountLottie('popupCountdownLottie', LOTTIE_URLS.countdownTimer, { loop: false, autoplay: true });
+    let ramBtnAnim = mountLottie('popupRamBtnLottie', LOTTIE_URLS.ctaArrow, { loop: true, autoplay: true });
+
+    document.getElementById('simSettingsBtn').addEventListener('mouseenter', () => settingsAnim && settingsAnim.goToAndPlay(0, true));
+    document.getElementById('simSettingsBtn').addEventListener('click', () => settingsAnim && settingsAnim.goToAndPlay(0, true));
+
+    // Toggle Master Site Shield
+    let shieldOn = true;
+    document.getElementById('simToggleSwitch').addEventListener('click', () => {
+      shieldOn = !shieldOn;
+      const card = document.getElementById('simSiteCard');
+      const sub = document.getElementById('simSiteSub');
+      card.classList.toggle('paused', !shieldOn);
+      sub.textContent = shieldOn
+        ? 'Site Shield ON · Ads & Cookies Blocked'
+        : 'Protection Paused on youtube.com';
+      if (radioAnim) {
+        radioAnim.setDirection(shieldOn ? 1 : -1);
+        radioAnim.play();
+      }
+      if (shieldOn && shieldAnim) {
+        shieldAnim.goToAndPlay(0, true);
+      }
+      if (instances.specRadio) {
+        instances.specRadio.goToAndPlay(0, true);
+      }
+    });
+
+    // Pause 5m button interaction
+    document.getElementById('simPause5mBtn').addEventListener('click', () => {
+      if (countdownAnim) countdownAnim.goToAndPlay(0, true);
+      if (instances.specCountdown) instances.specCountdown.goToAndPlay(0, true);
+      const lbl = document.getElementById('simPause5mText');
+      lbl.textContent = 'Paused (4:59 remaining)';
+      setTimeout(() => { lbl.textContent = 'Pause 5m (Fix Page)'; }, 3500);
+    });
+
+    // 1-Click RAM Boost 3-Stage Animation (Idle Arrow -> Loader-Pack8 -> Success Checkmark)
+    let ramBoosting = false;
+    document.getElementById('simRamBoostBtn').addEventListener('click', () => {
+      if (ramBoosting) return;
+      ramBoosting = true;
+      const btnLabel = document.getElementById('simRamBtnLabel');
+      const ramStatus = document.getElementById('simRamStatus');
+      const container = document.getElementById('popupRamBtnLottie');
+
+      if (instances.specLoader) instances.specLoader.goToAndPlay(0, true);
+
+      container.innerHTML = '';
+      ramBtnAnim = lottie.loadAnimation({
+        container,
+        renderer: 'svg',
+        loop: true,
+        autoplay: true,
+        path: LOTTIE_URLS.loaderSmooth
+      });
+      btnLabel.textContent = 'Hibernating Background Tabs...';
+
+      setTimeout(() => {
+        container.innerHTML = '';
+        ramBtnAnim = lottie.loadAnimation({
+          container,
+          renderer: 'svg',
+          loop: false,
+          autoplay: true,
+          path: LOTTIE_URLS.successCheck
+        });
+        btnLabel.textContent = '380 MB RAM Reclaimed!';
+        ramStatus.textContent = 'Fast (520 MB saved)';
+
+        setTimeout(() => {
+          container.innerHTML = '';
+          ramBtnAnim = lottie.loadAnimation({
+            container,
+            renderer: 'svg',
+            loop: true,
+            autoplay: true,
+            path: LOTTIE_URLS.ctaArrow
+          });
+          btnLabel.textContent = 'Free Up RAM Now';
+          ramBoosting = false;
+        }, 2200);
+      }, 950);
+    });
+
+    // Mount Spec Preview Boxes
+    mountLottie('specSettings', LOTTIE_URLS.settingsGear, { loop: false, autoplay: true });
+    mountLottie('specRadio', LOTTIE_URLS.radioToggle, { loop: false, autoplay: true });
+    mountLottie('specLoader', LOTTIE_URLS.loaderSmooth, { loop: true, autoplay: true });
+    mountLottie('specCountdown', LOTTIE_URLS.countdownTimer, { loop: false, autoplay: true });
+
+    // 2. Mount Dashboard 6 Module Switches
+    mountLottie('modSearchLottie', LOTTIE_URLS.searchLoupe, { loop: true, autoplay: true });
+    mountLottie('modShopLottie', LOTTIE_URLS.ecommerceCart, { loop: true, autoplay: true });
+
+    const modSwitchAnims = [];
+    document.querySelectorAll('.mod-lottie').forEach((el, idx) => {
+      const anim = lottie.loadAnimation({
+        container: el,
+        renderer: 'svg',
+        loop: false,
+        autoplay: true,
+        path: LOTTIE_URLS.checkboxMorph
+      });
+      modSwitchAnims[idx] = { anim, active: true };
+    });
+
+    window.toggleModuleCard = function(card, idx) {
+      const item = modSwitchAnims[idx];
+      if (!item) return;
+      item.active = !item.active;
+      card.classList.toggle('off', !item.active);
+      item.anim.setDirection(item.active ? 1 : -1);
+      item.anim.play();
+    };
+
+    // 3. Website Hero CTA, Mobile Hamburger, FAQ Accordions & Scam Alert
+    const webCtaAnim = mountLottie('webCtaArrowLottie', LOTTIE_URLS.ctaArrow, { loop: false, autoplay: true });
+    document.getElementById('webHeroCtaBtn').addEventListener('mouseenter', () => webCtaAnim && webCtaAnim.goToAndPlay(0, true));
+    document.getElementById('webHeroCtaBtn').addEventListener('click', () => webCtaAnim && webCtaAnim.goToAndPlay(0, true));
+
+    const mobileMenuAnim = mountLottie('mobileMenuLottie', LOTTIE_URLS.menuHamburger, { loop: false, autoplay: false });
+    let menuOpen = false;
+    document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+      menuOpen = !menuOpen;
+      if (mobileMenuAnim) {
+        mobileMenuAnim.setDirection(menuOpen ? 1 : -1);
+        mobileMenuAnim.play();
+      }
+    });
+
+    const faqAnims = [];
+    document.querySelectorAll('.faq-lottie').forEach((el, idx) => {
+      const anim = lottie.loadAnimation({
+        container: el,
+        renderer: 'svg',
+        loop: false,
+        autoplay: idx === 0,
+        path: LOTTIE_URLS.dropdownChevron
+      });
+      faqAnims[idx] = anim;
+    });
+
+    window.toggleFaq = function(itemEl, idx) {
+      const isOpen = itemEl.classList.toggle('open');
+      const anim = faqAnims[idx];
+      if (anim) {
+        anim.setDirection(isOpen ? 1 : -1);
+        anim.play();
+      }
+    };
+
+    mountLottie('scamAlertLottie', LOTTIE_URLS.attentionBell, { loop: true, autoplay: true });
+    mountLottie('floatingTopLottie', LOTTIE_URLS.scrollTopArrow, { loop: true, autoplay: true });
+
+    // 4. Populate 16-Icon Interactive Gallery
+    const GALLERY_ITEMS = [
+      { name: 'Success Checkmark (success-09)', use: 'Popup License Unlock & RAM Reclaim Confirmation', src: 'Finsweet LottieFlow', url: LOTTIE_URLS.successCheck },
+      { name: 'Smooth Loader (loading-08)', use: '1-Click RAM Hibernation & OTA Filter Sync Spinner', src: 'Finsweet LottieFlow', url: LOTTIE_URLS.loaderSmooth, loop: true },
+      { name: 'Settings Gear (chat-17-7)', use: 'Extension Popup Top-Right Settings Button', src: 'Finsweet LottieFlow', url: LOTTIE_URLS.settingsGear },
+      { name: 'Morphing Checkbox (checkbox-02)', use: 'Dashboard 6 Protection Module Toggles', src: 'Finsweet LottieFlow', url: LOTTIE_URLS.checkboxMorph },
+      { name: 'Radio Switch (radio-08)', use: 'Popup Master Site Shield ON/OFF Switch', src: 'Finsweet LottieFlow', url: LOTTIE_URLS.radioToggle },
+      { name: 'Search Magnifier (search-08)', use: 'Tracker-Free Search Bar & AI Slop Cleanser', src: 'Finsweet LottieFlow', url: LOTTIE_URLS.searchLoupe },
+      { name: 'E-Commerce Cart (ecommerce-14-9)', use: 'Fake E-Commerce Store & Review Detector Badge', src: 'Finsweet LottieFlow', url: LOTTIE_URLS.ecommerceCart },
+      { name: 'Attention Bell (attention-07)', use: 'High-Risk Scam Shop On-Page Warning Toast', src: 'Finsweet LottieFlow', url: LOTTIE_URLS.attentionBell },
+      { name: 'Dropdown Accordion (dropdown-08)', use: 'Website FAQ & Pricing Comparison Expanders', src: 'Finsweet LottieFlow', url: LOTTIE_URLS.dropdownChevron },
+      { name: 'Menu Hamburger ↔ X (menu-nav-08)', use: 'Website Mobile Header Navigation Drawer', src: 'Finsweet LottieFlow', url: LOTTIE_URLS.menuHamburger },
+      { name: 'CTA Glide Arrow (cta-01-1)', use: 'Hero "Install Free Extension" & Trial Buttons', src: 'Finsweet LottieFlow', url: LOTTIE_URLS.ctaArrow },
+      { name: 'Countdown Timer (countdown-13-5)', use: '"Pause 5m (Fix Page)" Temporary Whitelist Chip', src: 'Finsweet LottieFlow', url: LOTTIE_URLS.countdownTimer },
+      { name: 'Scroll Down Mouse (scroll-down-08)', use: 'Website Hero Bottom Scroll Prompt', src: 'Finsweet LottieFlow', url: LOTTIE_URLS.scrollDownMouse, loop: true },
+      { name: 'Scroll Top Rocket (scroll-top-09)', use: 'Website Floating Back-to-Top Button', src: 'Finsweet LottieFlow', url: LOTTIE_URLS.scrollTopArrow, loop: true },
+      { name: 'Share Network Nodes (chat-17-8)', use: 'Referral / Multi-Device 5-Seat Sharing Card', src: 'Finsweet LottieFlow', url: LOTTIE_URLS.shareNodes },
+      { name: 'Astronaut 404 (404-12-1)', use: 'Website 404 Page & Blocked Phishing Interstitial', src: 'Finsweet LottieFlow', url: LOTTIE_URLS.astronaut404, loop: true }
+    ];
+
+    const grid = document.getElementById('galleryGrid');
+    GALLERY_ITEMS.forEach((item, i) => {
+      const card = document.createElement('div');
+      card.className = 'gallery-card';
+      card.innerHTML = `
+        <div class="gallery-stage lottie-emerald" id="galLottie_${i}"></div>
+        <div class="gallery-name">${item.name}</div>
+        <div class="gallery-use">${item.use}</div>
+        <span class="gallery-trigger-pill">${item.src} · Click to Replay</span>
+      `;
+      grid.appendChild(card);
+      const anim = mountLottie(`galLottie_${i}`, item.url, { loop: Boolean(item.loop), autoplay: true });
+      card.addEventListener('mouseenter', () => anim && anim.goToAndPlay(0, true));
+      card.addEventListener('click', () => anim && anim.goToAndPlay(0, true));
+    });
+  </script>
+</body>
+</html>

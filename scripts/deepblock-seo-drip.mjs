@@ -96,9 +96,33 @@ async function verifyAndProbePadXml() {
   return { programName, version, cost, currency, sizeBytes, sizeMb, specUrl, primaryDl, liveStatus };
 }
 
+const GSC_PRIORITY_URLS = new Set([
+  'https://sweeprdeepblock.com/',
+  'https://sweeprdeepblock.com/pricing',
+  'https://sweeprdeepblock.com/download',
+  'https://sweeprdeepblock.com/test-lab',
+  'https://sweeprdeepblock.com/vs/total-adblock',
+  'https://sweeprdeepblock.com/setup/opera-gx-gaming-adblocker',
+  'https://sweeprdeepblock.com/solutions/twitch-live-streams-block-video-ads',
+  'https://sweeprdeepblock.com/vs/pie-adblock-rewards-extension',
+  'https://sweeprdeepblock.com/solutions/google-search-results-filter-ai-slop-and-scams',
+  'https://sweeprdeepblock.com/solutions/recipe-food-blogs-remove-page-clutter-and-ram-bloat',
+  'https://sweeprdeepblock.com/solutions/reddit-promoted-posts-remove-page-clutter-and-ram-bloat',
+  'https://sweeprdeepblock.com/guides/detect-fake-online-shops-and-scam-stores',
+  'https://sweeprdeepblock.com/guides/browser-tab-ram-tamer-memory-saver',
+  'https://sweeprdeepblock.com/setup/chrome-manifest-v3-adblocker',
+  'https://sweeprdeepblock.com/vs/ublock-origin-lite-mv3',
+  'https://sweeprdeepblock.com/vs/adguard-browser-extension',
+  'https://sweeprdeepblock.com/vs/ghostery-tracker-ad-blocker'
+]);
+
 function loadSitemapItems() {
   const xml = fs.readFileSync(SITEMAP_PATH, 'utf8');
-  const urls = [...xml.matchAll(/<loc>(.*?)<\/loc>/g)].map((m) => m[1].trim());
+  const rawUrls = [...xml.matchAll(/<loc>(.*?)<\/loc>/g)].map((m) => m[1].trim());
+  const urls = [
+    ...rawUrls.filter((u) => GSC_PRIORITY_URLS.has(u)),
+    ...rawUrls.filter((u) => !GSC_PRIORITY_URLS.has(u))
+  ];
   return urls.map((url) => {
     const pathname = new URL(url).pathname;
     const slug = pathname === '/' ? 'sweepr-deepblock-ad-and-cookie-blocker' : pathname.replace(/^\/+/, '').replace(/\//g, '-');
@@ -472,10 +496,8 @@ async function runIndexingWorkflow() {
     for (const u of sitemapUrls) alreadySubmittedSet.add(u);
   }
   let deltaUrls = sitemapUrls.filter((u) => !alreadySubmittedSet.has(u)).slice(0, 50);
-  if (deltaUrls.length === 0) {
-    deltaUrls = sitemapUrls.slice(-50);
-  }
-  queue.pending_urls = [...new Set([...(queue.pending_urls || []), ...sitemapUrls])];
+  const sitemapSet = new Set(sitemapUrls);
+  queue.pending_urls = [...new Set([...(queue.pending_urls || []).filter((u) => sitemapSet.has(u)), ...sitemapUrls])];
 
   let bingRes = 'skipped_already_submitted';
   let indexNowRes = 'skipped_already_submitted';

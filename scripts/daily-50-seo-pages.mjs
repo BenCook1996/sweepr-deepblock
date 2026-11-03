@@ -1197,8 +1197,9 @@ function renderHtml(cand, existingPool = [], existingIdx = 0) {
 </html>`;
 }
 
-async function runDaily50DeepBlockPages(targetCount = 50, force = false) {
+async function runDaily50DeepBlockPages(targetCount = 0, force = false) {
   const todayStr = new Date().toISOString().slice(0, 10);
+  const allowCartesian = process.argv.includes('--allow-cartesian');
   let state = { lastRunDate: null, totalGenerated: 0, batches: [] };
   if (fs.existsSync(DAILY_STATE_PATH)) {
     try { state = { ...state, ...JSON.parse(fs.readFileSync(DAILY_STATE_PATH, 'utf8')) }; } catch {}
@@ -1211,9 +1212,18 @@ async function runDaily50DeepBlockPages(targetCount = 50, force = false) {
   const pool = buildPool();
   let reRenderedCount = 0;
 
+  // Guardrail (GSC Crawl-Budget Protection): Only allow generating new pillar pages (setup, vs, guides,
+  // or primary platform flagship '-block-video-ads' solutions) unless --allow-cartesian is explicitly set.
+  const isPillarCandidate = (cand) => {
+    if (cand.cluster === 'setup' || cand.cluster === 'vs' || cand.cluster === 'guides') return true;
+    if (cand.urlPath && cand.urlPath.endsWith('-block-video-ads')) return true;
+    return allowCartesian;
+  };
+
   const selected = [];
   if (targetCount > 0) {
     for (const cand of pool) {
+      if (!isPillarCandidate(cand)) continue;
       const absPath = path.join(WEBSITE_DIR, cand.relPath);
       if (!fs.existsSync(absPath)) {
         selected.push(cand);
@@ -1225,13 +1235,28 @@ async function runDaily50DeepBlockPages(targetCount = 50, force = false) {
   const existingPool = pool.filter((c) => fs.existsSync(path.join(WEBSITE_DIR, c.relPath)) || selectedSet.has(c.urlPath));
   const existingIdxMap = new Map(existingPool.map((c, i) => [c.urlPath, i]));
 
-  // If force or regenerate-all is passed, re-render all existing files with the optimized template
+  // If force or regenerate-all is passed, re-render existing files while preserving consolidated noindex/canonical tags
   const regenerateAll = force || process.argv.includes('--regenerate-all');
   if (regenerateAll) {
     for (const cand of existingPool) {
       const absPath = path.join(WEBSITE_DIR, cand.relPath);
       if (fs.existsSync(absPath)) {
-        const html = renderHtml(cand, existingPool, existingIdxMap.get(cand.urlPath) || 0);
+        const prevHtml = fs.readFileSync(absPath, 'utf8');
+        const wasNoIndex = /<meta\s+name=["']robots["']\s+content=["'][^"']*noindex/i.test(prevHtml);
+        const prevCanMatch = prevHtml.match(/<link\s+rel=["']canonical["']\s+href=["']([^"']+)["']/i);
+        let html = renderHtml(cand, existingPool, existingIdxMap.get(cand.urlPath) || 0);
+        if (wasNoIndex) {
+          html = html.replace(
+            /<meta\s+name=["']robots["']\s+content=["'][^"']*["']\s*\/?>/i,
+            '<meta name="robots" content="noindex, follow" />'
+          );
+          if (prevCanMatch && prevCanMatch[1]) {
+            html = html.replace(
+              /<link\s+rel=["']canonical["']\s+href=["'][^"']+["']\s*\/?>/i,
+              `<link rel="canonical" href="${prevCanMatch[1]}" />`
+            );
+          }
+        }
         fs.writeFileSync(absPath, html, 'utf8');
         reRenderedCount++;
       }
@@ -1245,12 +1270,13 @@ async function runDaily50DeepBlockPages(targetCount = 50, force = false) {
     newUrls.push(`https://sweeprdeepblock.com${cand.urlPath}`);
   }
 
-  // Rebuild sitemap.xml from all pages on disk
+  // Rebuild sitemap.xml strictly from indexable (non-noindex) pillar pages on disk
   const baseEntries = [
     { loc: 'https://sweeprdeepblock.com/', changefreq: 'weekly', priority: '1.0' },
     { loc: 'https://sweeprdeepblock.com/pricing', changefreq: 'weekly', priority: '0.9' },
     { loc: 'https://sweeprdeepblock.com/download', changefreq: 'weekly', priority: '0.9' },
     { loc: 'https://sweeprdeepblock.com/vs/total-adblock', changefreq: 'weekly', priority: '0.8' },
+    { loc: 'https://sweeprdeepblock.com/alternatives/total-adblock', changefreq: 'weekly', priority: '0.8' },
     { loc: 'https://sweeprdeepblock.com/test-lab', changefreq: 'weekly', priority: '0.8' },
     { loc: 'https://sweeprdeepblock.com/support', changefreq: 'monthly', priority: '0.6' },
     { loc: 'https://sweeprdeepblock.com/refund', changefreq: 'monthly', priority: '0.5' },
@@ -1260,6 +1286,7 @@ async function runDaily50DeepBlockPages(targetCount = 50, force = false) {
   const baseUrls = baseEntries.map((e) => e.loc);
 
   const allPseoUrls = [];
+  let consolidatedNoIndexCount = 0;
   for (const dir of ['solutions', 'setup', 'vs', 'guides']) {
     const dirAbs = path.join(WEBSITE_DIR, dir);
     if (!fs.existsSync(dirAbs)) continue;
@@ -1267,6 +1294,11 @@ async function runDaily50DeepBlockPages(targetCount = 50, force = false) {
       if (!f.endsWith('.html')) continue;
       const slug = f.replace(/\.html$/, '');
       if (dir === 'vs' && slug === 'total-adblock') continue;
+      const fileContent = fs.readFileSync(path.join(dirAbs, f), 'utf8');
+      if (/<meta\s+name=["']robots["']\s+content=["'][^"']*noindex/i.test(fileContent)) {
+        consolidatedNoIndexCount++;
+        continue;
+      }
       allPseoUrls.push(`https://sweeprdeepblock.com/${dir}/${slug}`);
     }
   }
@@ -1324,7 +1356,8 @@ ${allEntries.map((e) => `  <url>\n    <loc>${e.loc}</loc>\n    <lastmod>${todayS
     }
   }
   const deltaUrls = newUrls.filter((u) => !alreadySubmittedSet.has(u));
-  queue.pending_urls = [...new Set([...(queue.pending_urls || []), ...allUrls])];
+  const allUrlSet = new Set(allUrls);
+  queue.pending_urls = [...new Set([...(queue.pending_urls || []).filter((u) => allUrlSet.has(u)), ...allUrls])];
 
   // Submit ONLY newly created URLs to Bing IndexNow and IndexNow.org (prevents IndexNow crawl-throttling)
   let indexNowStatus = 'skipped_no_new_urls';
@@ -1366,6 +1399,7 @@ ${allEntries.map((e) => `  <url>\n    <loc>${e.loc}</loc>\n    <lastmod>${todayS
     reRendered: reRenderedCount,
     newGenerated: newUrls.length,
     totalPseoPages: allPseoUrls.length,
+    consolidatedNoIndexExcluded: consolidatedNoIndexCount,
     indexNowStatus
   });
   for (let attempt = 0; attempt < 3; attempt++) {
@@ -1378,9 +1412,9 @@ ${allEntries.map((e) => `  <url>\n    <loc>${e.loc}</loc>\n    <lastmod>${todayS
     }
   }
 
-  console.log(`[SWEEPR DeepBlock Daily 50 SEO Pages] Re-rendered: ${reRenderedCount} | Generated: ${newUrls.length} new pages | Total pSEO Pages: ${allPseoUrls.length} | Sitemap URLs: ${allUrls.length} | IndexNow: ${indexNowStatus}`);
+  console.log(`[SWEEPR DeepBlock Pillar SEO Sync] Re-rendered: ${reRenderedCount} | Generated: ${newUrls.length} new pillar pages | Indexable pSEO Pillars: ${allPseoUrls.length} (Consolidated NoIndex Excluded: ${consolidatedNoIndexCount}) | Sitemap URLs: ${allUrls.length} | IndexNow: ${indexNowStatus}`);
 }
 
-const countArg = process.argv[2] !== undefined && !process.argv[2].startsWith('--') ? Number(process.argv[2]) : 50;
+const countArg = process.argv[2] !== undefined && !process.argv[2].startsWith('--') ? Number(process.argv[2]) : 0;
 const forceFlag = process.argv.includes('--force') || process.argv.includes('--regenerate-all');
 runDaily50DeepBlockPages(countArg, forceFlag).catch(console.error);
