@@ -153,7 +153,7 @@
       Privacy Policy &amp; <span class="gradient-text">Data Protection</span>
     </h1>
     <p class="text-gray-500 text-base md:text-lg max-w-2xl mx-auto">
-      Last Updated: April 2026 • SWEEPR Global Limited
+      Last Updated: November 2026 • SWEEPR Global Limited
     </p>
   </header>
 
@@ -167,38 +167,70 @@
       <div>
         <h2 class="text-lg font-extrabold text-gray-900">100% Local On-Device Blocking Guarantee</h2>
         <p class="text-xs md:text-sm text-gray-600 mt-1">
-          <strong>SWEEPR Deepblock</strong> blocks ads, closes cookie pop-ups, strips URL trackers, and inspects pages <strong>locally inside your browser</strong>. We never upload, read, store, or sell your browsing history, search queries, form inputs, passwords, or personal data.
+          <strong>SWEEPR Deepblock</strong> blocks ads, closes cookie pop-ups, strips URL trackers, and inspects pages <strong>locally inside your browser</strong>. While we collect minimal account, billing, and website analytics data on <code class="text-emerald-800 font-semibold">sweeprdeepblock.com</code> to operate our service (disclosed in full below), our browser extension never uploads, reads, stores, or sells your browsing history, search queries, form inputs, passwords, or personal files.
         </p>
       </div>
     </div>
 
     <div class="holo-card p-8 md:p-10 space-y-8 text-sm text-gray-600 leading-relaxed">
 
-      <section>
-        <h2 class="text-xl font-extrabold text-gray-900 mb-3">1. Information We Collect (And What We Never Collect)</h2>
+      <section id="user-data-collection">
+        <h2 class="text-xl font-extrabold text-gray-900 mb-3">1. User Data We Collect (And What We Never Collect)</h2>
         <p class="mb-3">
-          We practice strict data minimization. We only collect the minimum data necessary to deliver your software license, process payments, and provide customer support:
+          <strong>Yes, we collect limited user data on our website and licensing servers.</strong> We practice strict data minimization and only collect the user data required to deliver your software license, authenticate your account, process payments, provide customer support, and measure aggregate website performance:
         </p>
         <ul class="list-disc pl-6 space-y-2 text-gray-700">
-          <li><strong>Account &amp; Licensing Information:</strong> When you purchase a Pro subscription or sign in to the Customer Portal, we collect your email address, billing country, and a cryptographic hardware/device identifier (a one-way hash used solely to enforce the 5-device seat limit).</li>
-          <li><strong>Payment Processing (Stripe &amp; PayPal):</strong> All credit card, Apple Pay, Google Pay, and PayPal transactions are processed directly by <strong>Stripe, Inc.</strong> or <strong>PayPal</strong> under PCI-DSS Level 1 encryption. SWEEPR never sees or stores your raw credit card number or CVV.</li>
-          <li><strong>What Your Browser Extension Never Sends Us:</strong> SWEEPR Deepblock never transmits the URLs you visit, webpage content, search engine queries, cookies, passwords, or private browsing data to our servers.</li>
+          <li><strong>Account, Licensing &amp; Authentication Data:</strong> When you purchase a Pro subscription, activate a trial, or sign in to the Customer Portal (<code class="text-emerald-700 font-semibold">/login</code>), we collect your email address, subscription plan tier, one-time passcode (OTP) login verification records, and a one-way cryptographic hardware/device identifier hash (used solely to enforce your 5-device seat limit).</li>
+          <li><strong>Billing, Currency &amp; Payment Data:</strong> When you check out, we collect your billing country, currency preference, and transaction status. All credit/debit card, Apple Pay, Google Pay, Link, and PayPal payment details are collected and processed directly by <strong>Stripe, Inc.</strong> or <strong>PayPal</strong> under PCI-DSS Level 1 encryption—SWEEPR never sees or stores your raw card number or CVV.</li>
+          <li><strong>Website Analytics, Cookies &amp; Attribution Data:</strong> When you visit <code class="text-emerald-700 font-semibold">sweeprdeepblock.com</code>, we collect aggregate usage telemetry (pages visited, referral URLs, browser/OS type, approximate country derived from IP address, and ad-campaign conversion events) using first-party session storage and third-party analytics/attribution cookies disclosed in Section 4.</li>
+          <li><strong>Customer Support &amp; Diagnostic Inquiries:</strong> When you contact us via our Support Center or email, we collect your name, email address, and the contents of your message so we can resolve your inquiry.</li>
+          <li><strong>What Your Browser Extension Never Collects or Sends Us:</strong> The SWEEPR Deepblock browser extension never transmits the URLs you visit, webpage content, search engine queries, cookies, passwords, or private browsing data to our servers.</li>
         </ul>
       </section>
 
-      <section>
+      <section id="how-we-use-data">
         <h2 class="text-xl font-extrabold text-gray-900 mb-3">2. How We Use Your Information</h2>
-        <p class="mb-3">We use your account and licensing information exclusively to:</p>
+        <p class="mb-3">We use the user data we collect exclusively to:</p>
         <ul class="list-disc pl-6 space-y-2 text-gray-700">
-          <li>Deliver your 6-digit activation code, extension license key, and signed Ed25519 license token.</li>
-          <li>Send transactional billing receipts, renewal notices, and support replies.</li>
+          <li>Deliver your 6-digit activation code, extension license key, and cryptographically signed Ed25519 license token.</li>
+          <li>Send transactional billing receipts, trial/renewal notices, OTP login codes, and customer support replies.</li>
           <li>Verify active subscription status and manage your up to 5 licensed devices or browsers.</li>
-          <li>Measure aggregate website traffic via Google Analytics on <code class="text-emerald-700 font-semibold">sweeprdeepblock.com</code> (only on our marketing website, never inside your browser extension).</li>
+          <li>Display accurate regional pricing (<code class="text-xs">GBP</code>, <code class="text-xs">USD</code>, <code class="text-xs">EUR</code>) and measure aggregate website traffic and marketing campaign conversions on <code class="text-emerald-700 font-semibold">sweeprdeepblock.com</code>.</li>
         </ul>
       </section>
 
-      <section>
-        <h2 class="text-xl font-extrabold text-gray-900 mb-3">3. Browser Extension Permissions &amp; Chrome Web Store Limited Use</h2>
+      <section id="ai-disclosure">
+        <h2 class="text-xl font-extrabold text-gray-900 mb-3">3. How We Use Artificial Intelligence (AI) &amp; Automated Heuristics</h2>
+        <p class="mb-3">
+          <strong>Yes, we use Artificial Intelligence (AI) and machine-assisted heuristic systems</strong> across our threat-intelligence pipeline, in-browser protection modules, and customer operations:
+        </p>
+        <ul class="list-disc pl-6 space-y-2 text-gray-700">
+          <li><strong>On-Device AI Slop &amp; Scam Store Detection:</strong> SWEEPR Deepblock uses AI-trained heuristic classifiers and pattern-scoring rules that execute <strong>100% locally inside your browser</strong> to detect and filter low-quality AI-generated content farms ("AI Slop") on search engines (Google, Bing, DuckDuckGo) and to flag fraudulent e-commerce scam stores and manipulated product reviews before you shop.</li>
+          <li><strong>Automated AI Ad-Filter Synthesis Pipeline:</strong> Our backend engineering pipeline uses automated headless browsers and AI-assisted DOM analysis across 1,000+ public websites daily to identify new ad-injection scripts, cookie consent walls, and tracking parameters. Those findings are compiled into static <code class="text-emerald-700 font-semibold">declarativeNetRequest</code> filter rules delivered to your extension.</li>
+          <li><strong>AI-Assisted Customer Support &amp; Diagnostics:</strong> We may use AI-assisted tools internally to help triage support inquiries, summarize technical bug reports, and improve documentation accuracy.</li>
+          <li><strong>Strict AI Privacy Guarantee (Zero AI Training on User Data):</strong> We never transmit your browsing history, webpage DOM contents, search queries, or personal data to external AI providers, and we <strong>never</strong> use customer personal data to train or fine-tune external AI or large language models (LLMs).</li>
+        </ul>
+      </section>
+
+      <section id="third-party-data-collectors">
+        <h2 class="text-xl font-extrabold text-gray-900 mb-3">4. Third-Party Data Collectors, Analytics &amp; Named Sub-Processors</h2>
+        <p class="mb-3">
+          <strong>Yes, we use third-party data collectors and infrastructure sub-processors on our website (<code class="text-emerald-700 font-semibold">sweeprdeepblock.com</code>) and billing backend.</strong> The SWEEPR Deepblock browser extension itself contains <strong>zero</strong> third-party analytics SDKs, ad networks, or trackers. On our website and licensing backend, we share or process limited data only with the following named third parties:
+        </p>
+        <ul class="list-disc pl-6 space-y-2.5 text-gray-700">
+          <li><strong>Google LLC (Google Analytics 4 — Measurement ID <code class="text-xs">G-01MNBQSL9K</code>):</strong> Used on <code class="text-emerald-700 font-semibold">sweeprdeepblock.com</code> to collect aggregate website traffic, page views, session duration, and checkout conversion telemetry. You can opt out at any time using the Google Analytics Opt-out Browser Add-on or by blocking analytics scripts in your browser.</li>
+          <li><strong>Stripe, Inc. &amp; PayPal (Europe) S.à r.l. et Cie, S.C.A.:</strong> Third-party PCI-DSS Level 1 payment processors that collect and process your payment card details, Apple Pay, Google Pay, Link, PayPal account details, billing address, and fraud-prevention signals during checkout.</li>
+          <li><strong>Advertising &amp; Conversion Attribution Providers (Marketing Website Only):</strong> To measure the performance of our own paid advertising campaigns on our public website and checkout pages, we may load conversion attribution pixels from <strong>Microsoft Corporation (Microsoft Bing Ads — <code class="text-xs">bat.bing.com</code>)</strong>, <strong>Reddit, Inc. (<code class="text-xs">redditstatic.com</code> / <code class="text-xs">alb.reddit.com</code>)</strong>, <strong>Meta Platforms, Inc. (<code class="text-xs">connect.facebook.net</code>)</strong>, and <strong>OpenAI, L.L.C. (<code class="text-xs">ads.openai.com</code>)</strong>. These scripts operate strictly on <code class="text-emerald-700 font-semibold">sweeprdeepblock.com</code> and never run inside the browser extension.</li>
+          <li><strong>Cloudflare, Inc. &amp; Railway Corp.:</strong> Cloud infrastructure, Content Delivery Network (CDN), DDoS mitigation, TLS 1.3 termination, and backend hosting providers that process incoming HTTP request headers and IP addresses to serve our website and licensing API securely.</li>
+          <li><strong>Country.is (<code class="text-xs">api.country.is</code>) &amp; GeoJS (<code class="text-xs">get.geojs.io</code>):</strong> Privacy-preserving IP-to-country lookup endpoints used on our pricing and checkout pages solely to display your local currency (<code class="text-xs">GBP</code>, <code class="text-xs">USD</code>, or <code class="text-xs">EUR</code>).</li>
+        </ul>
+        <p class="mt-3">
+          We never sell, rent, or trade your personal information to data brokers or third-party marketers.
+        </p>
+      </section>
+
+      <section id="extension-permissions">
+        <h2 class="text-xl font-extrabold text-gray-900 mb-3">5. Browser Extension Permissions &amp; Chrome Web Store Limited Use</h2>
         <p class="mb-3">
           Every permission requested in our browser extension manifest (<code class="text-emerald-700 font-semibold">manifest.json</code>) is strictly scoped to a single user-facing privacy, adblocking, or performance feature:
         </p>
@@ -213,22 +245,22 @@
         </p>
       </section>
 
-      <section>
-        <h2 class="text-xl font-extrabold text-gray-900 mb-3">4. Data Retention &amp; Security</h2>
+      <section id="data-retention">
+        <h2 class="text-xl font-extrabold text-gray-900 mb-3">6. Data Retention &amp; Security</h2>
         <p>
           All communication between the SWEEPR Deepblock license verifier and our licensing API is encrypted via TLS 1.3, and license tokens are cryptographically signed using Ed25519 keys. Billing records are retained only as long as your subscription is active or as required by UK/EU tax and accounting regulations.
         </p>
       </section>
 
-      <section>
-        <h2 class="text-xl font-extrabold text-gray-900 mb-3">5. Your Rights Under GDPR, UK DPA 2018 &amp; CCPA</h2>
+      <section id="privacy-rights">
+        <h2 class="text-xl font-extrabold text-gray-900 mb-3">7. Your Rights Under GDPR, UK DPA 2018 &amp; CCPA</h2>
         <p class="mb-3">
           Depending on your location, you have the right to:
         </p>
         <ul class="list-disc pl-6 space-y-2 text-gray-700">
           <li><strong>Access &amp; Portability:</strong> Request a copy of the account and billing records associated with your email address.</li>
           <li><strong>Correction &amp; Erasure ("Right to be Forgotten"):</strong> Request deletion of your account data and de-registration of your device hashes.</li>
-          <li><strong>No Sale of Personal Information:</strong> SWEEPR Global Limited never sells, rents, or trades personal information to third parties or data brokers.</li>
+          <li><strong>Opt-Out of Analytics &amp; No Sale of Personal Information:</strong> Opt out of website analytics cookies and confirm that SWEEPR Global Limited never sells, rents, or trades personal information to third parties or data brokers.</li>
         </ul>
         <p class="mt-3">
           To exercise any of your privacy rights, please submit a request via our <a href="/support" class="text-emerald-600 underline font-semibold">Support Center</a> or email <a href="mailto:support@sweeprdeepblock.com" class="text-emerald-600 underline font-semibold">support@sweeprdeepblock.com</a>.
