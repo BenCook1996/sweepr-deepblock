@@ -98,30 +98,79 @@ async function verifyAndProbePadXml() {
 
 const GSC_PRIORITY_URLS = new Set([
   'https://sweeprdeepblock.com/',
+  'https://sweeprdeepblock.com/test-lab',
   'https://sweeprdeepblock.com/pricing',
   'https://sweeprdeepblock.com/download',
-  'https://sweeprdeepblock.com/test-lab',
+  'https://sweeprdeepblock.com/setup/thorium-chromium-browser',
+  'https://sweeprdeepblock.com/setup/orion-browser-macos-ios',
+  'https://sweeprdeepblock.com/setup/floorp-browser-firefox-fork',
+  'https://sweeprdeepblock.com/setup/arc-browser-windows-mac',
+  'https://sweeprdeepblock.com/setup/zen-browser-privacy-tabs',
+  'https://sweeprdeepblock.com/setup/kiwi-browser-android',
+  'https://sweeprdeepblock.com/setup/ungoogled-chromium-desktop',
+  'https://sweeprdeepblock.com/setup/brave-macos-apple-silicon',
+  'https://sweeprdeepblock.com/setup/librewolf-hardened-firefox',
+  'https://sweeprdeepblock.com/solutions/crunchyroll-anime-streams-block-video-ads',
+  'https://sweeprdeepblock.com/solutions/fandom-game-wikis-reduce-browser-ram-usage',
+  'https://sweeprdeepblock.com/solutions/webtoon-manhwa-readers-block-video-ads',
+  'https://sweeprdeepblock.com/solutions/manga-webnovel-portals-block-video-ads',
+  'https://sweeprdeepblock.com/solutions/linkedin-feed-ads-block-video-ads',
+  'https://sweeprdeepblock.com/solutions/soundcloud-audio-player-block-video-ads',
+  'https://sweeprdeepblock.com/solutions/dex-token-screeners-filter-ai-slop-and-scams',
+  'https://sweeprdeepblock.com/solutions/geeksforgeeks-coding-portals-remove-page-clutter-and-ram-bloat',
+  'https://sweeprdeepblock.com/solutions/roblox-web-community-filter-ai-slop-and-scams',
+  'https://sweeprdeepblock.com/solutions/rumble-video-platform-block-video-ads',
+  'https://sweeprdeepblock.com/solutions/tumblr-blog-network-remove-page-clutter-and-ram-bloat',
+  'https://sweeprdeepblock.com/vs/avast-secure-browser-guard',
   'https://sweeprdeepblock.com/vs/total-adblock',
-  'https://sweeprdeepblock.com/setup/opera-gx-gaming-adblocker',
-  'https://sweeprdeepblock.com/solutions/twitch-live-streams-block-video-ads',
-  'https://sweeprdeepblock.com/vs/pie-adblock-rewards-extension',
-  'https://sweeprdeepblock.com/solutions/google-search-results-filter-ai-slop-and-scams',
-  'https://sweeprdeepblock.com/solutions/recipe-food-blogs-remove-page-clutter-and-ram-bloat',
-  'https://sweeprdeepblock.com/solutions/reddit-promoted-posts-remove-page-clutter-and-ram-bloat',
-  'https://sweeprdeepblock.com/guides/detect-fake-online-shops-and-scam-stores',
-  'https://sweeprdeepblock.com/guides/browser-tab-ram-tamer-memory-saver',
-  'https://sweeprdeepblock.com/setup/chrome-manifest-v3-adblocker',
-  'https://sweeprdeepblock.com/vs/ublock-origin-lite-mv3',
-  'https://sweeprdeepblock.com/vs/adguard-browser-extension',
-  'https://sweeprdeepblock.com/vs/ghostery-tracker-ad-blocker'
+  'https://sweeprdeepblock.com/vs/ublock-origin-lite',
+  'https://sweeprdeepblock.com/vs/adguard-extension',
+  'https://sweeprdeepblock.com/vs/ghostery-privacy-ad-blocker',
+  'https://sweeprdeepblock.com/guides/how-to-pass-adblock-tester-100-score',
+  'https://sweeprdeepblock.com/guides/how-to-reduce-chrome-ram-usage-by-60-percent',
+  'https://sweeprdeepblock.com/guides/how-to-spot-fake-online-shops-2026'
 ]);
+
+function loadLiveRuleStats() {
+  let staticCount = 220;
+  let deltaCount = 38;
+  try {
+    const s = JSON.parse(fs.readFileSync(path.join(ROOT_DIR, 'extension/rules/static_ads_and_trackers.json'), 'utf8'));
+    if (Array.isArray(s)) staticCount = s.length;
+  } catch {}
+  try {
+    const d = JSON.parse(fs.readFileSync(path.join(ROOT_DIR, 'extension/rules/dynamic_delta.json'), 'utf8'));
+    const rules = Array.isArray(d) ? d : d.rules || [];
+    deltaCount = rules.length;
+  } catch {}
+  return { staticCount, deltaCount };
+}
+
+function loadRecentlyUpdatedUrls() {
+  const statePath = path.join(WEBSITE_DIR, 'pillar-enrichment-state.json');
+  const recent = new Set();
+  if (!fs.existsSync(statePath)) return recent;
+  try {
+    const st = JSON.parse(fs.readFileSync(statePath, 'utf8'));
+    const map = st.titleUpdatedAt || {};
+    const entries = Object.entries(map).sort((a, b) => new Date(b[1]).getTime() - new Date(a[1]).getTime());
+    for (const [p] of entries) {
+      const full = p.startsWith('http') ? p : `https://sweeprdeepblock.com${p.startsWith('/') ? '' : '/'}${p}`;
+      recent.add(full);
+    }
+  } catch {}
+  return recent;
+}
+
+const LIVE_RULE_STATS = loadLiveRuleStats();
 
 function loadSitemapItems() {
   const xml = fs.readFileSync(SITEMAP_PATH, 'utf8');
   const rawUrls = [...xml.matchAll(/<loc>(.*?)<\/loc>/g)].map((m) => m[1].trim());
+  const recentSet = loadRecentlyUpdatedUrls();
   const urls = [
-    ...rawUrls.filter((u) => GSC_PRIORITY_URLS.has(u)),
-    ...rawUrls.filter((u) => !GSC_PRIORITY_URLS.has(u))
+    ...rawUrls.filter((u) => recentSet.has(u) || GSC_PRIORITY_URLS.has(u)),
+    ...rawUrls.filter((u) => !recentSet.has(u) && !GSC_PRIORITY_URLS.has(u))
   ];
   return urls.map((url) => {
     const pathname = new URL(url).pathname;
@@ -170,15 +219,15 @@ async function publishTelegraph(item, lang, runTag, slot = 0) {
       tag: 'p',
       children: [
         { tag: 'a', attrs: { href: 'https://sweeprdeepblock.com' }, children: [lang.cta] },
-        ' blocks YouTube & Twitch video ads, automatically clicks "Reject All" on cookie pop-ups in under 50ms, filters AI search slop, and warns shoppers about fake scam stores.'
+        ` runs ${LIVE_RULE_STATS.staticCount} static Manifest V3 declarativeNetRequest rules + ${LIVE_RULE_STATS.deltaCount} live OTA delta rules to block YouTube & Twitch video ads, automatically click "Reject All" on cookie pop-ups in under 50ms, filter AI search slop, and warn shoppers about fake scam stores.`
       ]
     },
     {
       tag: 'ul',
       children: [
         { tag: 'li', children: [{ tag: 'a', attrs: { href: item.url }, children: [`${item.name} — Official Technical Guide`] }] },
+        { tag: 'li', children: [{ tag: 'a', attrs: { href: 'https://sweeprdeepblock.com/test-lab' }, children: [`Run Live 8/8 Ad & Tracker Leak Benchmark (${LIVE_RULE_STATS.staticCount + LIVE_RULE_STATS.deltaCount} Verified MV3 Rules)`] }] },
         { tag: 'li', children: [{ tag: 'a', attrs: { href: 'https://sweeprdeepblock.com/download' }, children: ['Install SWEEPR DeepBlock (Chrome, Edge, Brave, Firefox, Safari)'] }] },
-        { tag: 'li', children: [{ tag: 'a', attrs: { href: 'https://sweeprdeepblock.com/test-lab' }, children: ['Run 8-Point Adblock & Anti-Detection Test Lab'] }] },
         { tag: 'li', children: [{ tag: 'a', attrs: { href: 'https://sweeprdeepblock.com/pad.xml' }, children: ['SWEEPR DeepBlock PAD 4.0 XML Specification'] }] }
       ]
     }
@@ -236,7 +285,7 @@ let pasteRsAvailable = false;
 
 async function publishDpaste(item, lang, runTag, slot = 0) {
   const title = `[${lang.code}] ${lang.prefix} ${item.name} (${runTag})`;
-  const md = `# ${title}\n\n- **Primary Guide:** [${item.name}](${item.url})\n- **Official Extension:** [${lang.cta}](https://sweeprdeepblock.com)\n- **8/8 Anti-Detection Test Lab:** [https://sweeprdeepblock.com/test-lab](https://sweeprdeepblock.com/test-lab)\n- **PAD 4.0 XML Feed:** [https://sweeprdeepblock.com/pad.xml](https://sweeprdeepblock.com/pad.xml)\n- **Pricing & Trial:** [https://sweeprdeepblock.com/pricing](https://sweeprdeepblock.com/pricing)\n`;
+  const md = `# ${title}\n\n- **Primary Guide:** [${item.name}](${item.url})\n- **Official Extension:** [${lang.cta}](https://sweeprdeepblock.com)\n- **Live MV3 Rule Telemetry:** ${LIVE_RULE_STATS.staticCount} Static DNR Rules + ${LIVE_RULE_STATS.deltaCount} Daily OTA Delta Rules\n- **8/8 Anti-Detection Test Lab:** [https://sweeprdeepblock.com/test-lab](https://sweeprdeepblock.com/test-lab)\n- **PAD 4.0 XML Feed:** [https://sweeprdeepblock.com/pad.xml](https://sweeprdeepblock.com/pad.xml)\n- **Pricing & Trial:** [https://sweeprdeepblock.com/pricing](https://sweeprdeepblock.com/pricing)\n`;
   
   // Try dpaste.org (DR 74) if not marked unavailable
   if (dpasteAvailable !== false) {
@@ -497,7 +546,10 @@ async function runIndexingWorkflow() {
   }
   let deltaUrls = sitemapUrls.filter((u) => !alreadySubmittedSet.has(u)).slice(0, 50);
   const sitemapSet = new Set(sitemapUrls);
-  queue.pending_urls = [...new Set([...(queue.pending_urls || []).filter((u) => sitemapSet.has(u)), ...sitemapUrls])];
+  const recentSet = loadRecentlyUpdatedUrls();
+  const gscDoneSet = new Set(Array.isArray(queue.gsc_requested) ? queue.gsc_requested : []);
+  const priorityFirst = sitemapUrls.filter((u) => (recentSet.has(u) || GSC_PRIORITY_URLS.has(u)) && !gscDoneSet.has(u));
+  queue.pending_urls = [...new Set([...priorityFirst, ...(queue.pending_urls || []).filter((u) => sitemapSet.has(u)), ...sitemapUrls])];
 
   let bingRes = 'skipped_already_submitted';
   let indexNowRes = 'skipped_already_submitted';
