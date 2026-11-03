@@ -156,12 +156,23 @@
   <script src="/nav.js" defer></script>
   <script src="/i18n.js" defer></script>
   <!-- Google tag (gtag.js) - Sweepr Deepblock -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-01MNBQSL9K"></script>
+  <script async src="/metrics/js?id=G-01MNBQSL9K"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-    gtag('config', 'G-01MNBQSL9K');
+    gtag('config', 'G-01MNBQSL9K', {
+      transport_url: window.location.origin + '/metrics',
+      first_party_collection: true
+    });
+    window.addEventListener('DOMContentLoaded', function() {
+      if (typeof window.sweeprTrackEvent === 'function') {
+        window.sweeprTrackEvent('view_item_list', {
+          item_list_name: 'SWEEPR Deepblock Pricing Plans',
+          currency: 'GBP'
+        });
+      }
+    });
   </script>
 </head>
 <body class="text-gray-800">

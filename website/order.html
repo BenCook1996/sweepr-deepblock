@@ -310,13 +310,17 @@
       }
     } catch (e) {}
   </script>
+  <script src="/nav.js" defer></script>
   <!-- Google tag (gtag.js) - Sweepr Deepblock -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-01MNBQSL9K"></script>
+  <script async src="/metrics/js?id=G-01MNBQSL9K"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-    gtag('config', 'G-01MNBQSL9K');
+    gtag('config', 'G-01MNBQSL9K', {
+      transport_url: window.location.origin + '/metrics',
+      first_party_collection: true
+    });
   </script>
 </head>
 <body class="bg-[#f8fafc] text-gray-800 min-h-screen flex flex-col font-sans antialiased">
@@ -1240,6 +1244,13 @@
         try { sessionStorage.setItem('deepblock_selected_plan', plan); } catch (e) {}
         updateOrderUI();
         if (orderDraftTouched) saveOrderDraft(true, false);
+        if (typeof window.sweeprTrackEvent === 'function') {
+          window.sweeprTrackEvent('order_plan_switched', {
+            plan: selectedPlan,
+            value: Number((calculateTotalPence() / 100).toFixed(2)),
+            currency: String(checkoutConfig?.currencyCode || 'GBP').toUpperCase()
+          });
+        }
       }
     }
 
@@ -1249,6 +1260,16 @@
       if (cb) cb.checked = isRamTamerAdded;
       updateOrderUI();
       if (orderDraftTouched) saveOrderDraft(true, false);
+      if (typeof window.sweeprTrackEvent === 'function') {
+        window.sweeprTrackEvent('add_to_cart', {
+          item_id: 'ram_tamer',
+          item_name: 'Total Tab & RAM Tamer Add-On',
+          added: isRamTamerAdded,
+          plan: selectedPlan,
+          value: Number((calculateTotalPence() / 100).toFixed(2)),
+          currency: String(checkoutConfig?.currencyCode || 'GBP').toUpperCase()
+        });
+      }
     }
 
     let selectedLogoMethod = 'card';
@@ -1535,6 +1556,32 @@
           });
         }
 
+        // 5. Google Analytics 4 (GA4 E-Commerce purchase + first-party server relay)
+        if (typeof window.gtag === 'function') {
+          window.gtag('event', 'purchase', {
+            transaction_id: transactionId,
+            value: value,
+            currency: currency,
+            items: [
+              {
+                item_id: `deepblock_${plan}`,
+                item_name: `SWEEPR Deepblock Pro (${plan})`,
+                price: value,
+                quantity: 1
+              }
+            ]
+          });
+        }
+        if (typeof window.sweeprTrackEvent === 'function') {
+          window.sweeprTrackEvent('purchase', {
+            transaction_id: transactionId,
+            value: value,
+            currency: currency,
+            plan: plan,
+            ram_tamer: ramTamer
+          });
+        }
+
         await fetch('/api/conversions/openai', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -1626,6 +1673,15 @@
       } else {
         selectedPlan = 'annual';
         updateOrderUI();
+      }
+
+      if (typeof window.sweeprTrackEvent === 'function') {
+        window.sweeprTrackEvent('begin_checkout', {
+          plan: selectedPlan,
+          ram_tamer: Boolean(isRamTamerAdded),
+          value: Number((calculateTotalPence() / 100).toFixed(2)),
+          currency: String(checkoutConfig?.currencyCode || 'GBP').toUpperCase()
+        });
       }
     }
 
@@ -2284,6 +2340,13 @@
       errBox.textContent = msg;
       errBox.classList.remove('hidden');
       errBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      if (typeof window.sweeprTrackEvent === 'function') {
+        window.sweeprTrackEvent('order_payment_error', {
+          error_message: String(msg || '').slice(0, 100),
+          plan: selectedPlan,
+          payment_method: selectedLogoMethod || 'card'
+        });
+      }
     }
 
     // Capture lead in CRM as soon as visitor enters a valid email on the order page
@@ -2295,6 +2358,15 @@
       if (!email || email === lastCapturedLeadEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return;
       lastCapturedLeadEmail = email;
       const name = (nameEl?.value || '').trim() || undefined;
+      if (typeof window.sweeprTrackEvent === 'function') {
+        window.sweeprTrackEvent('add_payment_info', {
+          step: 'email_entered',
+          plan: selectedPlan,
+          ram_tamer: Boolean(isRamTamerAdded),
+          value: Number((calculateTotalPence() / 100).toFixed(2)),
+          currency: String(checkoutConfig?.currencyCode || 'GBP').toUpperCase()
+        });
+      }
       fetch('/api/lead', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

@@ -1,6 +1,72 @@
-// Navigation & Dropdown Controller (Compare & Guides + Language Selector + Mobile Hamburger Drawer)
-(function checkActiveOrderDraftRedirect() {
-  function runOrderDraftCheck() {
+// Navigation, First-Party GA4 Funnel Telemetry & OS/Browser Smart CTA Controller
+(function initSweeprAnalyticsAndDraftBanner() {
+  function getClientId() {
+    try {
+      const m = document.cookie.match(/(?:^|;\s*)_ga=GA\d+\.\d+\.(\d+\.\d+)/);
+      if (m && m[1]) return m[1];
+      let cid = localStorage.getItem('sweepr_ga4_cid');
+      if (!cid) {
+        cid = Math.floor(100000000 + Math.random() * 900000000) + '.' + Math.floor(Date.now() / 1000);
+        localStorage.setItem('sweepr_ga4_cid', cid);
+      }
+      return cid;
+    } catch (e) {
+      return '100000001.' + Math.floor(Date.now() / 1000);
+    }
+  }
+
+  window.sweeprTrackEvent = function sweeprTrackEvent(eventName, params) {
+    if (!eventName) return;
+    const safeParams = Object.assign({}, params || {});
+    try {
+      if (typeof window.gtag === 'function') {
+        window.gtag('event', eventName, safeParams);
+      }
+    } catch (e) {}
+    try {
+      const payload = JSON.stringify({
+        event: eventName,
+        params: safeParams,
+        clientId: getClientId(),
+        path: window.location.pathname || '/',
+        url: window.location.href,
+        title: document.title || 'SWEEPR Deepblock',
+        referrer: document.referrer || ''
+      });
+      if (navigator.sendBeacon) {
+        const blob = new Blob([payload], { type: 'application/json' });
+        navigator.sendBeacon('/api/analytics/event', blob);
+      } else if (typeof fetch === 'function') {
+        fetch('/api/analytics/event', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          keepalive: true,
+          body: payload
+        }).catch(() => {});
+      }
+    } catch (e) {}
+  };
+
+  // Ensure first-party GA4 collection works even in Brave, Thorium, Floorp, or strict tracker-blocking browsers
+  try {
+    window.dataLayer = window.dataLayer || [];
+    if (typeof window.gtag !== 'function') {
+      window.gtag = function gtag() { window.dataLayer.push(arguments); };
+    }
+    window.gtag('config', 'G-01MNBQSL9K', {
+      transport_url: window.location.origin + '/metrics',
+      first_party_collection: true
+    });
+    const hasFirstPartyTag = document.querySelector('script[src*="/metrics/js"]');
+    if (!hasFirstPartyTag) {
+      const s = document.createElement('script');
+      s.async = true;
+      s.src = '/metrics/js?id=G-01MNBQSL9K';
+      document.head.appendChild(s);
+    }
+  } catch (e) {}
+
+  function checkActiveOrderDraftBanner() {
     try {
       const path = (window.location.pathname || '/').replace(/\/+$/, '') || '/';
       if (path === '/order' || path === '/order.html' || path === '/checkout' || path.startsWith('/checkout/')) {
@@ -11,15 +77,18 @@
       const draft = JSON.parse(raw);
       const ttlMs = 30 * 60 * 1000;
       if (draft && draft.hasDetails && draft.updatedAt && (Date.now() - Number(draft.updatedAt) <= ttlMs)) {
-        window.location.replace('/order');
+        const banner = document.getElementById('resumeOrderBanner');
+        if (banner) {
+          banner.classList.remove('hidden');
+        }
       } else {
         localStorage.removeItem('sweepr_order_draft');
         document.cookie = 'sweepr_order_draft_active=; path=/; max-age=0; SameSite=Lax';
       }
     } catch (e) {}
   }
-  runOrderDraftCheck();
-  window.addEventListener('pageshow', runOrderDraftCheck);
+  window.addEventListener('DOMContentLoaded', checkActiveOrderDraftBanner);
+  window.addEventListener('pageshow', checkActiveOrderDraftBanner);
 })();
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -269,7 +338,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const isAndroid = ua.includes('android') || (ua.includes('linux') && navigator.maxTouchPoints > 0);
     const isMobile = isIos || isAndroid || /mobile|iemobile|opera mini/.test(ua);
     const isFirefox = !isIos && /firefox\//.test(ua);
-    if (isFirefox && p !== '/download' && p !== '/download.html') {
+    const detectedPlatform = isIos ? 'ios' : isAndroid ? 'android' : isFirefox ? 'firefox' : /edg\//.test(ua) ? 'edge' : /chrome\/|chromium\//.test(ua) ? 'chrome' : 'other';
+
+    if (isFirefox && currentPath !== '/download' && currentPath !== '/download.html') {
       const amoUrl = 'https://addons.mozilla.org/firefox/addon/sweepr-deepblock/';
       document.querySelectorAll('a[href="/download?install=1"], a#downloadBtn').forEach((a) => {
         a.setAttribute('href', amoUrl);
@@ -284,13 +355,15 @@ document.addEventListener('DOMContentLoaded', () => {
         ? (isNonSafariIos ? '/download?install=1' : '/download?platform=ios&direct=1')
         : '/download?platform=android&direct=1';
       document.querySelectorAll('a[href^="/download"]').forEach((a) => {
-        a.setAttribute('href', targetHref);
+        if (!a.getAttribute('download')) {
+          a.setAttribute('href', targetHref);
+        }
       });
       const osBtnLbl = document.getElementById('osDownloadText') || document.getElementById('downloadBtnLabel');
       if (osBtnLbl) {
-        osBtnLbl.textContent = 'Install Now';
+        osBtnLbl.textContent = isIos ? 'Activate on iPhone & iPad — Free' : 'Activate on Android — Free';
       }
-    } else if (/chrome\/|chromium\//.test(ua) && !/edg\/|firefox\/|fxios\//.test(ua) && p !== '/download' && p !== '/download.html') {
+    } else if (/chrome\/|chromium\//.test(ua) && !/edg\/|firefox\/|fxios\//.test(ua) && currentPath !== '/download' && currentPath !== '/download.html') {
       const cwsUrl = 'https://chromewebstore.google.com/detail/sweepr-deepblock-ad-cooki/bkdfhdgmglfancgpkcbdceinfdlccmpc';
       document.querySelectorAll('a[href="/download?install=1"], a#downloadBtn').forEach((a) => {
         a.setAttribute('href', cwsUrl);
@@ -300,5 +373,54 @@ document.addEventListener('DOMContentLoaded', () => {
         osBtnLbl.textContent = 'Add to Chrome — Free';
       }
     }
+
+    // Fire server-backed page_view on PSEO & key funnel pages so privacy browsers are never invisible in GA4
+    if (typeof window.sweeprTrackEvent === 'function') {
+      const urlParams = new URLSearchParams(window.location.search || '');
+      window.sweeprTrackEvent('page_view_verified', {
+        page_path: currentPath,
+        platform_detected: detectedPlatform,
+        utm_source: urlParams.get('utm_source') || '(direct)',
+        utm_medium: urlParams.get('utm_medium') || '(none)',
+        utm_campaign: urlParams.get('utm_campaign') || ''
+      });
+    }
+
+    // Global Funnel CTA Click & Install Started Instrumentation
+    document.addEventListener('click', (ev) => {
+      const link = ev.target && ev.target.closest ? ev.target.closest('a, button') : null;
+      if (!link || typeof window.sweeprTrackEvent !== 'function') return;
+      const href = String(link.getAttribute('href') || '');
+      const id = String(link.id || '');
+      const text = String(link.textContent || '').trim().slice(0, 60);
+
+      if (
+        href.includes('chromewebstore.google.com') ||
+        href.includes('addons.mozilla.org') ||
+        href.startsWith('/download') ||
+        id === 'downloadBtn' ||
+        id === 'addToBrowserBtn'
+      ) {
+        const isStore = href.includes('chromewebstore.google.com') || href.includes('addons.mozilla.org');
+        window.sweeprTrackEvent('extension_install_started', {
+          browser_detected: detectedPlatform,
+          install_method: isStore ? 'official_store' : 'direct_installer',
+          source_page: currentPath,
+          cta_text: text
+        });
+      } else if (href.startsWith('/order')) {
+        window.sweeprTrackEvent('select_item', {
+          source_page: currentPath,
+          destination: href,
+          cta_text: text
+        });
+      } else if (href.startsWith('/test-lab') || href.startsWith('/pricing')) {
+        window.sweeprTrackEvent('cta_click', {
+          source_page: currentPath,
+          destination: href,
+          cta_text: text
+        });
+      }
+    });
   } catch {}
 });

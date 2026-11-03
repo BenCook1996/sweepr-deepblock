@@ -2065,6 +2065,8 @@ function renderCheckoutSuccessPage(acc, isCancelled = false) {
     acc?.plan === 'annual' ? 'Annual Plan' : acc?.plan === 'six_month' ? '6-Month Plan' : 'Monthly Plan'
   );
   const hasRamTamer = Boolean(acc?.ramTamerAddon);
+  const purchaseValue = acc?.plan === 'annual' ? (hasRamTamer ? 74.98 : 59.99) : acc?.plan === 'six_month' ? (hasRamTamer ? 54.98 : 44.99) : (hasRamTamer ? 3.98 : 1.99);
+  const txId = escapeHtml(acc?.stripe_subscription_id || acc?.id || `ord_${Date.now()}`);
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -2075,8 +2077,33 @@ function renderCheckoutSuccessPage(acc, isCancelled = false) {
   <title>You're Activated 🎉 — SWEEPR Deepblock Pro</title>
   <link rel="icon" type="image/svg+xml" href="/logo.svg">
   <script src="https://cdn.tailwindcss.com/3.4.5"></script>
+  <script async src="/metrics/js?id=G-01MNBQSL9K"></script>
   <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-01MNBQSL9K', {
+      transport_url: window.location.origin + '/metrics',
+      first_party_collection: true
+    });
     try {
+      const txKey = 'sweepr_ga4_purchased_' + ${JSON.stringify(txId)};
+      if (!sessionStorage.getItem(txKey)) {
+        sessionStorage.setItem(txKey, '1');
+        gtag('event', 'purchase', {
+          transaction_id: ${JSON.stringify(txId)},
+          value: ${Number(purchaseValue)},
+          currency: 'GBP',
+          items: [
+            {
+              item_id: ${JSON.stringify('deepblock_' + (acc?.plan || 'annual'))},
+              item_name: ${JSON.stringify('SWEEPR Deepblock Pro (' + planLabel + ')')},
+              price: ${Number(purchaseValue)},
+              quantity: 1
+            }
+          ]
+        });
+      }
       localStorage.removeItem('deepblock_visited_order');
       localStorage.removeItem('sweepr_visited_order');
       localStorage.removeItem('sweepr_order_draft');
@@ -3070,7 +3097,7 @@ function getCachedDynamicDelta() {
       category: 'marketing',
       os: 'web',
       properties: {
-        platforms: ['microsoft_uet', 'meta_pixel', 'reddit_pixel', 'openai_capi'],
+        platforms: ['ga4', 'microsoft_uet', 'meta_pixel', 'reddit_pixel', 'openai_capi'],
         event_name: eventName,
         event_id: eventId,
         value,
@@ -3080,6 +3107,36 @@ function getCachedDynamicDelta() {
         contentIds
       }
     });
+
+    // Server-side GA4 purchase hit relay (ensures 100% conversion attribution even when client adblockers are active)
+    try {
+      const gaCookieMatch = String(req.headers.cookie || '').match(/(?:^|;\s*)_ga=GA\d+\.\d+\.(\d+\.\d+)/);
+      const cid = gaCookieMatch
+        ? gaCookieMatch[1]
+        : `${Math.abs(crypto.createHash('sha256').update(getClientIp(req) + String(req.headers['user-agent'] || '')).digest().readInt32BE(0))}.${Math.floor(Date.now() / 1000)}`;
+      const gaParams = new URLSearchParams({
+        v: '2',
+        tid: 'G-01MNBQSL9K',
+        cid,
+        en: 'purchase',
+        'ep.transaction_id': eventId,
+        'ep.currency': currency,
+        'epn.value': String(value),
+        'ep.plan': plan,
+        'ep.ram_tamer': String(ramTamer),
+        dl: `${PUBLIC_URL}/checkout/success`,
+        dt: 'SWEEPR Deepblock Pro Purchase',
+        _uip: getClientIp(req)
+      });
+      fetch(`https://region1.google-analytics.com/g/collect?${gaParams.toString()}`, {
+        method: 'POST',
+        headers: {
+          'User-Agent': req.headers['user-agent'] || 'Mozilla/5.0',
+          'X-Forwarded-For': getClientIp(req)
+        },
+        signal: AbortSignal.timeout(3000)
+      }).catch(() => {});
+    } catch {}
 
     const openAiCapiKey = (process.env.OPENAI_CONVERSIONS_API_KEY || '').trim();
     const openAiPixelId = (process.env.OPENAI_PIXEL_ID || 'DRfCjPsivgeyx2fLbkPzFy').trim();
@@ -4948,13 +5005,117 @@ function getCachedDynamicDelta() {
     res.writeHead(301, { Location: cleanTarget, 'Cache-Control': 'public, max-age=604800', 'X-Content-Type-Options': 'nosniff' });
     return res.end();
   }
-  if ((req.method === 'GET' || req.method === 'HEAD') && parsedUrl.pathname === '/' && parsedUrl.searchParams.get('home') === '1') {
-    const uaStr = String(req.headers['user-agent'] || '');
-    const cookiesStr = String(req.headers.cookie || '');
-    if (BOT_UA_RE.test(uaStr) || !cookiesStr.includes('sweepr_order_draft')) {
-      res.writeHead(301, { Location: '/', 'Cache-Control': 'public, max-age=3600', 'X-Content-Type-Options': 'nosniff' });
-      return res.end();
+  // First-Party GA4 Script & Measurement Proxy (/metrics/js, /metrics/g/collect, /metrics/collect, /api/analytics/event)
+  if ((req.method === 'GET' || req.method === 'HEAD') && pathname === '/metrics/js') {
+    const tagId = (parsedUrl.searchParams.get('id') || 'G-01MNBQSL9K').replace(/[^A-Za-z0-9_-]/g, '');
+    try {
+      if (!global.__ga4ScriptCache || Date.now() - global.__ga4ScriptCache.ts > 3600000) {
+        const upstream = await fetch(`https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(tagId)}`, {
+          headers: { 'User-Agent': req.headers['user-agent'] || 'Mozilla/5.0' },
+          signal: AbortSignal.timeout(4000)
+        });
+        if (upstream.ok) {
+          const rawJs = await upstream.text();
+          global.__ga4ScriptCache = { ts: Date.now(), body: rawJs };
+        }
+      }
+      if (global.__ga4ScriptCache && global.__ga4ScriptCache.body) {
+        res.writeHead(200, {
+          'Content-Type': 'application/javascript; charset=utf-8',
+          'Cache-Control': 'public, max-age=3600, stale-while-revalidate=86400',
+          'X-Content-Type-Options': 'nosniff'
+        });
+        return res.end(req.method === 'HEAD' ? undefined : global.__ga4ScriptCache.body);
+      }
+    } catch {}
+    res.writeHead(200, { 'Content-Type': 'application/javascript; charset=utf-8', 'Cache-Control': 'no-store' });
+    return res.end('/* first-party analytics fallback */');
+  }
+
+  if (
+    (req.method === 'GET' || req.method === 'POST') &&
+    (pathname === '/metrics/g/collect' || pathname === '/metrics/collect')
+  ) {
+    try {
+      const rawPost = req.method === 'POST' ? await readRawBody(req, 64 * 1024).catch(() => '') : '';
+      const clientIp = getClientIp(req);
+      const qs = new URLSearchParams(parsedUrl.search || '');
+      if (clientIp && !qs.has('_uip')) qs.set('_uip', clientIp);
+      const targetUrl = `https://region1.google-analytics.com/g/collect?${qs.toString()}`;
+      fetch(targetUrl, {
+        method: req.method,
+        headers: {
+          'User-Agent': req.headers['user-agent'] || 'Mozilla/5.0',
+          'Content-Type': req.headers['content-type'] || 'text/plain;charset=UTF-8',
+          'X-Forwarded-For': clientIp
+        },
+        body: req.method === 'POST' && rawPost ? rawPost : undefined,
+        signal: AbortSignal.timeout(3000)
+      }).catch(() => {});
+    } catch {}
+    res.writeHead(204, {
+      'Cache-Control': 'no-store, no-cache, must-revalidate',
+      'Access-Control-Allow-Origin': PUBLIC_URL
+    });
+    return res.end();
+  }
+
+  if (req.method === 'POST' && pathname === '/api/analytics/event') {
+    if (!checkRateLimit(req, 'analytics_event', 90, 60000)) {
+      return sendJson(res, 429, { ok: false });
     }
+    const body = await readBody(req, 16 * 1024);
+    if (!body || body.__tooLarge) return sendJson(res, 400, { ok: false });
+    const eventName = String(body.event || '').replace(/[^a-zA-Z0-9_]/g, '').slice(0, 40);
+    if (!eventName) return sendJson(res, 400, { ok: false });
+    const params = body.params && typeof body.params === 'object' ? body.params : {};
+    const clientIp = getClientIp(req);
+    const ua = String(req.headers['user-agent'] || 'Mozilla/5.0');
+    const gaCookieMatch = String(req.headers.cookie || '').match(/(?:^|;\s*)_ga=GA\d+\.\d+\.(\d+\.\d+)/);
+    const cid = String(
+      body.clientId ||
+      (gaCookieMatch ? gaCookieMatch[1] : `${Math.abs(crypto.createHash('sha256').update(clientIp + ua).digest().readInt32BE(0))}.${Math.floor(Date.now() / 1000)}`)
+    ).slice(0, 64);
+
+    const gaQs = new URLSearchParams({
+      v: '2',
+      tid: 'G-01MNBQSL9K',
+      cid,
+      en: eventName,
+      dl: String(body.url || `${PUBLIC_URL}${body.path || '/'}`).slice(0, 300),
+      dt: String(body.title || 'SWEEPR Deepblock').slice(0, 120),
+      _uip: clientIp
+    });
+    if (body.referrer) gaQs.set('dr', String(body.referrer).slice(0, 300));
+    for (const [k, v] of Object.entries(params)) {
+      const cleanKey = String(k).replace(/[^a-zA-Z0-9_]/g, '').slice(0, 32);
+      if (!cleanKey || v === undefined || v === null) continue;
+      if (typeof v === 'number' && Number.isFinite(v)) {
+        gaQs.set(`epn.${cleanKey}`, String(v));
+      } else {
+        gaQs.set(`ep.${cleanKey}`, String(v).slice(0, 100));
+      }
+    }
+    fetch(`https://region1.google-analytics.com/g/collect?${gaQs.toString()}`, {
+      method: 'POST',
+      headers: { 'User-Agent': ua, 'X-Forwarded-For': clientIp },
+      signal: AbortSignal.timeout(3000)
+    }).catch(() => {});
+
+    if (!BOT_UA_RE.test(ua)) {
+      reportToSweeprCrm('/v1/telemetry/event', {
+        event_name: `ga4_${eventName}`,
+        category: 'funnel',
+        os: 'web',
+        properties: { path: String(body.path || '/').slice(0, 120), ...params }
+      });
+    }
+    return sendJson(res, 200, { ok: true });
+  }
+
+  if ((req.method === 'GET' || req.method === 'HEAD') && parsedUrl.pathname === '/' && parsedUrl.searchParams.get('home') === '1') {
+    res.writeHead(301, { Location: '/', 'Cache-Control': 'public, max-age=3600', 'X-Content-Type-Options': 'nosniff' });
+    return res.end();
   }
   // 301 Canonical Redirect 1: Trailing slash normalization (e.g. /pricing/ -> /pricing)
   if ((req.method === 'GET' || req.method === 'HEAD') && parsedUrl.pathname.length > 1 && parsedUrl.pathname.endsWith('/')) {
@@ -5195,22 +5356,6 @@ function getCachedDynamicDelta() {
     (ext === '.json' && baseName !== 'manifest.json' && baseName !== 'site.webmanifest')
   ) {
     return sendErrorResponse(res, 403, '403 Forbidden');
-  }
-
-  // Redirect returning visitors with an active 30-minute order draft straight back to /order
-  if (
-    (req.method === 'GET' || req.method === 'HEAD') &&
-    ext === '.html' &&
-    baseName !== 'order.html' &&
-    baseName !== 'store-creatives.html' &&
-    !BOT_UA_RE.test(ua) &&
-    /(?:^|;\s*)sweepr_order_draft_active=1(?:;|$)/.test(String(req.headers.cookie || ''))
-  ) {
-    res.writeHead(302, {
-      Location: '/order',
-      'Cache-Control': 'no-store, no-cache, must-revalidate, private'
-    });
-    return res.end();
   }
 
   return serveStaticOptimized(req, res, fullPath);

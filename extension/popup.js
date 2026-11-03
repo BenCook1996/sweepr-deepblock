@@ -429,7 +429,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (upgradeCtaBtn) {
     upgradeCtaBtn.addEventListener('click', () => {
-      chrome.tabs.create({ url: 'https://sweeprdeepblock.com/order' });
+      chrome.tabs.create({ url: 'https://sweeprdeepblock.com/order?utm_source=extension&utm_medium=popup' });
     });
   }
 
@@ -822,7 +822,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (openTestLabBtn) {
     openTestLabBtn.addEventListener('click', () => {
-      chrome.tabs.create({ url: 'https://sweeprdeepblock.com/test-lab' });
+      chrome.tabs.create({ url: 'https://sweeprdeepblock.com/test-lab?utm_source=extension&utm_medium=popup' });
     });
   }
 });
