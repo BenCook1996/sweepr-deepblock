@@ -1,15 +1,14 @@
 name: SWEEPR DeepBlock — Daily 50 Programmatic SEO Pages & IndexNow Drip
 
 on:
-  schedule:
-    # Triggers at 06:00 UTC every 24 hours
-    - cron: '0 6 * * *'
+  # Paused automatic daily schedule to prevent Cartesian index bloat and protect GSC crawl budget.
+  # Use manual workflow_dispatch only after domain authority scales.
   workflow_dispatch:
     inputs:
       batch_size:
         description: 'Number of new programmatic SEO pages to generate'
         required: false
-        default: '50'
+        default: '10'
 
 permissions:
   contents: write
