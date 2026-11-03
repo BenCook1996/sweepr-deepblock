@@ -1,7 +1,7 @@
 {
   "ok": true,
-  "version": "1.2.30001",
-  "updatedAt": "2026-11-03T08:32:11.122Z",
+  "version": "1.2.40001",
+  "updatedAt": "2026-11-03T20:16:13.779Z",
   "featureFlags": {
     "cookieAutoClose": true,
     "hideSearchSpam": true,
@@ -13,6 +13,19 @@
   "extraCmpSelectors": [],
   "extraAntiAdblockSelectors": [],
   "extraCosmeticSelectors": [
+    "#vast-ad-block",
+    "#vast-ad-block-button",
+    ".invideoBlock",
+    ".invideoBlockLabel",
+    ".fluid_html_on_pause",
+    ".block-advert",
+    ".col-12.col-lg-auto:has(.block-advert)",
+    ".m-l-ntvb",
+    ".card-deck-promotion",
+    ".ib-300-250",
+    "#banner_iframe",
+    "#ag-agegate",
+    "#ag-cookiebar",
     ".top-bar-xx-style",
     "div:has(> a.top-bar-xx-style)",
     ".magic-sites",
@@ -1160,6 +1173,60 @@
           "image",
           "xmlhttprequest",
           "ping"
+        ]
+      }
+    },
+    {
+      "id": 80069,
+      "priority": 5,
+      "action": {
+        "type": "block"
+      },
+      "condition": {
+        "urlFilter": "||statserv.net^",
+        "resourceTypes": [
+          "script",
+          "sub_frame",
+          "image",
+          "xmlhttprequest",
+          "media",
+          "ping",
+          "other"
+        ]
+      }
+    },
+    {
+      "id": 80070,
+      "priority": 5,
+      "action": {
+        "type": "block"
+      },
+      "condition": {
+        "urlFilter": "/ads/prebid-ads",
+        "resourceTypes": [
+          "script",
+          "sub_frame",
+          "image",
+          "xmlhttprequest",
+          "ping",
+          "other"
+        ]
+      }
+    },
+    {
+      "id": 80071,
+      "priority": 5,
+      "action": {
+        "type": "block"
+      },
+      "condition": {
+        "urlFilter": "||pornoeggs.com/away/",
+        "resourceTypes": [
+          "sub_frame",
+          "script",
+          "xmlhttprequest",
+          "ping",
+          "other"
         ]
       }
     }

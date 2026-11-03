@@ -241,6 +241,9 @@
 ||traffichunt.com^$third-party
 ||velvetloom.net^$third-party
 ||waust.at^$third-party
+/ads/prebid-ads$third-party,first-party
+||pornoeggs.com/away/$subdocument,script,xmlhttprequest,ping
+||statserv.net^$third-party
 !
 ! --- DOM Cosmetic Hiding Rules ---
 animedigest.io##.vidoomy-video-ad
@@ -365,3 +368,18 @@ erothots.co,erothots1.com,erothots.is,erothots.xyz##.section.fh-videos:has(.odw)
 erothots.co,erothots1.com,erothots.is,erothots.xyz##.eroslider
 erothots.co,erothots1.com,erothots.is,erothots.xyz##a.no-taps[href*="camsoda"]
 erothots.co,erothots1.com,erothots.is,erothots.xyz##.section.text-center:has(iframe[src*="adtng.com"])
+pornoeggs.com###vast-ad-block
+pornoeggs.com###vast-ad-block-button
+pornoeggs.com##.invideoBlock
+pornoeggs.com##.fluid_html_on_pause
+pornoeggs.com##.block-advert
+pornoeggs.com##.col-12.col-lg-auto:has(.block-advert)
+pornoeggs.com##.m-l-ntvb
+pornoeggs.com##.card-deck-promotion
+pornoeggs.com##.ib-300-250
+pornoeggs.com###banner_iframe
+pornoeggs.com###ag-agegate
+pornoeggs.com###ag-cookiebar
+pornoeggs.com##a[href*="/away/pop"]
+pornoeggs.com##a[href*="/away/tab"]
+pornoeggs.com##li:has(> a[href*="/away/tab"])

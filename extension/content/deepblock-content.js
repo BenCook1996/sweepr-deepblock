@@ -796,7 +796,7 @@
         removedGridAd = true;
       });
       const promoNodes = document.querySelectorAll(
-        'a.top-bar-xx-style, .magic-sites, .list-btn.bnr, .bnr, .bnrs, a.bartab, .video-player .caption.bottom-right, .odw, [data-odw], .ourdreamai-native, .eroslider, a.no-taps[href*="camsoda"], img.camsoda-logo'
+        'a.top-bar-xx-style, .magic-sites, .list-btn.bnr, .bnr, .bnrs, a.bartab, .video-player .caption.bottom-right, .odw, [data-odw], .ourdreamai-native, .eroslider, a.no-taps[href*="camsoda"], img.camsoda-logo, #vast-ad-block, #vast-ad-block-button, .invideoBlock, .fluid_html_on_pause, [id*="_ad_html_on_pause"], .block-advert, .m-l-ntvb, .card-deck-promotion, .ib-300-250, #banner_iframe, #ag-agegate, #ag-cookiebar'
       );
       promoNodes.forEach((node) => {
         const parent = node.parentElement;
@@ -1075,7 +1075,27 @@
     iframe[src*="velvetloom.net"],
     iframe[src*="smartfloralab.com"],
     iframe[src*="realxxx.com"],
-    iframe[src*="traffichunt.com"] {
+    iframe[src*="traffichunt.com"],
+    /* Pornoeggs / FluidPlayer Pause Banner / VAST Corner Slider / StatServ Ad Slots */
+    #vast-ad-block,
+    #vast-ad-block-button,
+    .invideoBlock,
+    .invideoBlockLabel,
+    .fluid_html_on_pause,
+    [id*="_ad_html_on_pause"],
+    .block-advert,
+    .col-12.col-lg-auto:has(.block-advert),
+    .m-l-ntvb,
+    .card-deck-promotion,
+    .ib-300-250,
+    #banner_iframe,
+    #ag-agegate,
+    #ag-cookiebar,
+    a[href*="/away/pop"],
+    a[href*="/away/tab"],
+    li:has(> a[href*="/away/tab"]),
+    iframe[src*="statserv.net"],
+    iframe[src*="/ads/prebid-ads"] {
       display: none !important;
       visibility: hidden !important;
       height: 0 !important;

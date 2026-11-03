@@ -3862,5 +3862,59 @@
       ],
       "domainType": "thirdParty"
     }
+  },
+  {
+    "id": 240,
+    "priority": 5,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||statserv.net^",
+      "resourceTypes": [
+        "script",
+        "sub_frame",
+        "image",
+        "xmlhttprequest",
+        "media",
+        "ping",
+        "other"
+      ]
+    }
+  },
+  {
+    "id": 241,
+    "priority": 5,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "/ads/prebid-ads",
+      "resourceTypes": [
+        "script",
+        "sub_frame",
+        "image",
+        "xmlhttprequest",
+        "ping",
+        "other"
+      ]
+    }
+  },
+  {
+    "id": 242,
+    "priority": 5,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||pornoeggs.com/away/",
+      "resourceTypes": [
+        "sub_frame",
+        "script",
+        "xmlhttprequest",
+        "ping",
+        "other"
+      ]
+    }
   }
 ]

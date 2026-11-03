@@ -74,7 +74,7 @@
 
   // Common ad/tracker domain & path patterns used by anti-adblock probes
   const AD_PROBE_URL_REGEX =
-    /(googlesyndication\.com|doubleclick\.net|google-analytics\.com|googletagmanager\.com|imasdk\.googleapis\.com|adnxs\.com|adsrvr\.org|criteo\.(com|net)|rubiconproject\.com|pubmatic\.com|openx\.net|taboola\.com|outbrain\.com|amazon-adsystem\.com|moatads\.com|scorecardresearch\.com|quantserve\.com|ads-twitter\.com|connect\.facebook\.net\/.*\/fbevents|admiral\.com|getadmiral\.com|fundingchoicesmessages\.google\.com|pagefair\.com|applzr\.com|goadserver\.com|sacdnssedge\.com|magsrv\.com|exoclick\.com|adtng\.com|dreamserve\.dev|velvetloom\.net|creepy-frame\.com|smartfloralab\.com|realxxx\.com|traffichunt\.com|camsoda\.ai|livemediahost\.com|s\.yimg\.com\/(aaq\/(vzm\/cs|prebid|f10d509c)|ss\/analytics|du\/)|opus\.analytics\.yahoo\.com|consent\.cmp\.oath\.com|pbs\.yahoo\.com|udc\.yahoo\.com|\/pagead\/gen_204|\/ads\.js(\?|$)|\/adframe\.js(\?|$)|\/adblock-detect|\/show_ads\.js|\/adsbygoogle\.js)/i;
+    /(googlesyndication\.com|doubleclick\.net|google-analytics\.com|googletagmanager\.com|imasdk\.googleapis\.com|adnxs\.com|adsrvr\.org|criteo\.(com|net)|rubiconproject\.com|pubmatic\.com|openx\.net|taboola\.com|outbrain\.com|amazon-adsystem\.com|moatads\.com|scorecardresearch\.com|quantserve\.com|ads-twitter\.com|connect\.facebook\.net\/.*\/fbevents|admiral\.com|getadmiral\.com|fundingchoicesmessages\.google\.com|pagefair\.com|applzr\.com|goadserver\.com|sacdnssedge\.com|magsrv\.com|exoclick\.com|adtng\.com|dreamserve\.dev|velvetloom\.net|creepy-frame\.com|smartfloralab\.com|realxxx\.com|traffichunt\.com|camsoda\.ai|livemediahost\.com|statserv\.net|\/ads\/prebid-ads|s\.yimg\.com\/(aaq\/(vzm\/cs|prebid|f10d509c)|ss\/analytics|du\/)|opus\.analytics\.yahoo\.com|consent\.cmp\.oath\.com|pbs\.yahoo\.com|udc\.yahoo\.com|\/pagead\/gen_204|\/ads\.js(\?|$)|\/adframe\.js(\?|$)|\/adblock-detect|\/show_ads\.js|\/adsbygoogle\.js)/i;
 
   // ============================================================================
   // LAYER 1B: <script/img onerror> -> <script/img onload> Alchemist
@@ -1176,6 +1176,11 @@
           try {
             if (isProEntitled() && options && typeof options === 'object') {
               options.vastOptions = {};
+              if (options.layoutControls && typeof options.layoutControls === 'object') {
+                delete options.layoutControls.htmlOnPauseBlock;
+                delete options.layoutControls.playerInitCallback;
+                options.layoutControls.htmlOnPauseBlock = { html: null, height: 0, width: 0 };
+              }
             }
           } catch (e) {}
           return realFluidPlayer.apply(this, arguments);
@@ -1187,6 +1192,38 @@
       configurable: true
     });
   } catch (e) {}
+
+  // Neutralize pornoeggs.com & sister network ads:
+  // 1. Bottom-right corner VAST player (#vast-ad-block / initVastAdPlayer / playAd / VASTPlayer)
+  // 2. In-player pause banner (htmlOnPauseBlock / .invideoBlock / statserv.net / adsbox_ops)
+  // 3. Click/pause popunder & reverse tab-under (makePopunder / doPopunder / pop_target / allow_chrome / pop_clicked / /away/pop)
+  // 4. Age-gate & ad-release queue (__agGate / agWhenAdsAllowed)
+  safeDefine(window, 'pop_target', '');
+  safeDefine(window, 'allow_chrome', 0);
+  safeDefine(window, 'pop_clicked', 1);
+  safeDefine(window, 'makePopunder', noopFn);
+  safeDefine(window, 'doPopunder', noopFn);
+  safeDefine(window, 'initVastAdPlayer', noopFn);
+  safeDefine(window, 'playAd', noopFn);
+  safeDefine(window, 'playAdByIndex', noopFn);
+  safeDefine(window, 'VASTPlayer', function () {
+    this.once = noopFn;
+    this.load = function () {
+      return { then: function () { return { catch: noopFn }; } };
+    };
+  });
+  safeDefine(window, '__agGate', undefined);
+  safeDefine(window, 'agWhenAdsAllowed', noopFn);
+  safeDefine(window, 'adsbox_ops', Object.freeze({ w: 0, h: 0, id: 0 }));
+
+  if (/(^|\.)pornoeggs\.com$/i.test(location.hostname)) {
+    try {
+      document.cookie = 'rpuShownDesktop=9999999999999; path=/';
+      document.cookie = 'rpuShownMobile=9999999999999; path=/';
+      document.cookie = 'age_verified=1; path=/';
+      document.cookie = 'cookie_consent=1; path=/';
+    } catch (e) {}
+  }
 
   if (/(^|\.)videosection\.com$/i.test(location.hostname)) {
     try {
@@ -1383,19 +1420,35 @@
 
   // Block popunders and ad-network URLs
   const POPUNDER_URL_REGEX =
-    /(\/zv3\/(b|url|cam)|\/link\/out\/|\/getape\/|\/prepop\.php|\/getadb\/|\/venor\.php|\/v1\/link\.php|\/splash\.php\?idzone=|\/api\/spots\/|\/api\/click\/|\/agent\.php\?spot=|\/loadeactrl\.go|\/vast\.go|\/click\.go|banner-iframe|advertiserName=|tsyndicate\.com|contentsserved\.com|exoclick\.com|exosrv\.com|realsrv\.com|magsrv\.com|pemsrv\.com|orbsrv\.com|trafficjunky\.(net|com)|juicyads\.com|jads\.co|clickadu\.com|clickaine\.com|\/lv\/esnk\/|hilltopads\.net|adspyglass\.com|plugrush\.com|adxpansion\.com|crakrevenue\.com|ero-advertising\.com|twinrdsyn\.com|twinrdengine\.com|adtng\.com|dreamserve\.dev|velvetloom\.net|creepy-frame\.com|smartfloralab\.com|realxxx\.com|traffichunt\.com|camsoda\.ai|livemediahost\.com|etahub\.com|bngpt\.com|xlivrdr\.com|popads\.net|popcash\.net|propellerads\.com|cdn-fc\.com|meteorpomposity\.com|glutenmuttsensuous\.com|cupbearergrowllurch\.com|hollowgoal\.com|u5s5\.com|adplsr\.com|nomarax\.com|fh-wgt\.com|yomeno\.xyz|ahw2lok\.txxx\.com|zog\.link|iloptrex\.com|nereserv\.com|vidvas3\.com|tubecup\.net|fhgte\.com|faphouse4k\.com|tikbblove\.com|directsle\.com|g2fame\.com|rvmessage\.online|rvrpushserv\.com|yequka\.my|tophqcam\.com|doublepimp\.com|advnet\.xyz|hotadultcontent\.com|hotxxxcontent\.com|qoqh\.com|hqpornpro\.com|lxax\.com|koxk\.com|applzr\.com|goadserver\.com|sacdnssedge\.com|kol88\.freeporn8\.com|Y1l0oxvJ\.js|nvdst\.com\/adx_|_pnuvid\.js|p2p\.init\.js|jquery\.shows2\.min\.js)/i;
+    /(\/zv3\/(b|url|cam)|\/link\/out\/|\/away\/(pop|tab)|\/ads\/prebid-ads|\/getape\/|\/prepop\.php|\/getadb\/|\/venor\.php|\/v1\/link\.php|\/splash\.php\?idzone=|\/api\/spots\/|\/api\/click\/|\/agent\.php\?spot=|\/loadeactrl\.go|\/vast\.go|\/click\.go|banner-iframe|advertiserName=|tsyndicate\.com|contentsserved\.com|exoclick\.com|exosrv\.com|realsrv\.com|magsrv\.com|pemsrv\.com|orbsrv\.com|trafficjunky\.(net|com)|juicyads\.com|jads\.co|clickadu\.com|clickaine\.com|\/lv\/esnk\/|hilltopads\.net|adspyglass\.com|plugrush\.com|adxpansion\.com|crakrevenue\.com|ero-advertising\.com|twinrdsyn\.com|twinrdengine\.com|adtng\.com|dreamserve\.dev|velvetloom\.net|creepy-frame\.com|smartfloralab\.com|realxxx\.com|traffichunt\.com|camsoda\.ai|livemediahost\.com|statserv\.net|etahub\.com|bngpt\.com|xlivrdr\.com|popads\.net|popcash\.net|propellerads\.com|cdn-fc\.com|meteorpomposity\.com|glutenmuttsensuous\.com|cupbearergrowllurch\.com|hollowgoal\.com|u5s5\.com|adplsr\.com|nomarax\.com|fh-wgt\.com|yomeno\.xyz|ahw2lok\.txxx\.com|zog\.link|iloptrex\.com|nereserv\.com|vidvas3\.com|tubecup\.net|fhgte\.com|faphouse4k\.com|tikbblove\.com|directsle\.com|g2fame\.com|rvmessage\.online|rvrpushserv\.com|yequka\.my|tophqcam\.com|doublepimp\.com|advnet\.xyz|hotadultcontent\.com|hotxxxcontent\.com|qoqh\.com|hqpornpro\.com|lxax\.com|koxk\.com|applzr\.com|goadserver\.com|sacdnssedge\.com|kol88\.freeporn8\.com|Y1l0oxvJ\.js|nvdst\.com\/adx_|_pnuvid\.js|p2p\.init\.js|jquery\.shows2\.min\.js)/i;
 
   // Block dynamic popunder <script>, Ad-Shield BFA loaders/modals, and videoslider container injections via appendChild / insertBefore
   const isBlockedDynamicScript = (node) => {
     if (!isProEntitled() || !node || node.nodeType !== 1) return false;
     const tag = String(node.tagName || '').toUpperCase();
     const id = String(node.id || '');
-    if (tag === 'DIV' && (/^vl_[0-9]+(_content)?$/i.test(id) || node.classList && (node.classList.contains('sldr_right_right') || node.classList.contains('eroslider') || node.classList.contains('ourdreamai-native')))) {
+    if (
+      tag === 'DIV' &&
+      (/^vl_[0-9]+(_content)?$/i.test(id) ||
+        id === 'vast-ad-block' ||
+        id === 'vast-ad-block-button' ||
+        id === 'ag-agegate' ||
+        (node.classList &&
+          (node.classList.contains('sldr_right_right') ||
+            node.classList.contains('eroslider') ||
+            node.classList.contains('ourdreamai-native') ||
+            node.classList.contains('invideoBlock'))))
+    ) {
       return true;
     }
     if (tag === 'IFRAME') {
       const iframeSrc = String(node.src || node.getAttribute('src') || '');
-      if (/(report\.error-report\.com|html-load\.com|adtng\.com|dreamserve\.dev|velvetloom\.net|smartfloralab\.com|realxxx\.com|traffichunt\.com)/i.test(iframeSrc)) {
+      if (
+        id === 'banner_iframe' ||
+        /(report\.error-report\.com|html-load\.com|adtng\.com|dreamserve\.dev|velvetloom\.net|smartfloralab\.com|realxxx\.com|traffichunt\.com|statserv\.net|\/ads\/prebid-ads)/i.test(
+          iframeSrc
+        )
+      ) {
         return true;
       }
     }
@@ -1450,9 +1503,35 @@
   markNative(wrappedInsertBefore, 'insertBefore');
   Node.prototype.insertBefore = wrappedInsertBefore;
 
-  // Block click-hijacking addEventListener registrations from popunder scripts
+  // Block click-hijacking addEventListener & .onclick registrations from popunder scripts
   const POPUNDER_LISTENER_REGEX =
-    /popMagic|venorShouldShow|findLinkToOpen|executeOnRedirect|EPpopConfig|EPeventFire|openPopunder|__videoPlayerData\.popunder|inVideoTabUnderSeenCookie|clickFlow|loadBannerContent|Popunder\b|adblockFallbackPending|syndication_host|exoJsPop101|zomhphp|TRAFF_TARGETS|initTraffTargets|__NA|renderSpot|asgtbndr|AsgInterop|_asg_was_tabunder|adMoxyCtrl|eaPopn|loadeactrl|creepy-frame|smartfloralab/i;
+    /popMagic|venorShouldShow|findLinkToOpen|executeOnRedirect|EPpopConfig|EPeventFire|openPopunder|makePopunder|doPopunder|isPopunderOpened|pop_isRightButtonClicked|rpuShownDesktop|pop_clicked|__videoPlayerData\.popunder|inVideoTabUnderSeenCookie|clickFlow|loadBannerContent|Popunder\b|adblockFallbackPending|syndication_host|exoJsPop101|zomhphp|TRAFF_TARGETS|initTraffTargets|__NA|renderSpot|asgtbndr|AsgInterop|_asg_was_tabunder|adMoxyCtrl|eaPopn|loadeactrl|creepy-frame|smartfloralab/i;
+
+  for (const ClickProto of [HTMLElement.prototype, Document.prototype]) {
+    try {
+      const origOnclickDesc = Object.getOwnPropertyDescriptor(ClickProto, 'onclick');
+      if (origOnclickDesc && origOnclickDesc.set) {
+        Object.defineProperty(ClickProto, 'onclick', {
+          get: function () {
+            return origOnclickDesc.get ? origOnclickDesc.get.call(this) : null;
+          },
+          set: function (fn) {
+            if (isProEntitled() && typeof fn === 'function') {
+              try {
+                const fnSrc = Function.prototype.toString.call(fn);
+                if (fnSrc && POPUNDER_LISTENER_REGEX.test(fnSrc)) {
+                  notifyStealthBypass('popunder-onclick-setter-blocked');
+                  return;
+                }
+              } catch (e) {}
+            }
+            return origOnclickDesc.set.call(this, fn);
+          },
+          configurable: true
+        });
+      }
+    } catch (e) {}
+  }
 
   const origAddEventListener = EventTarget.prototype.addEventListener;
   EventTarget.prototype.addEventListener = function (type, listener, options) {
@@ -1493,7 +1572,7 @@
 
   // Capture-phase shield: prevent clicks on invisible video player ad overlays or /link/out/ popunder links
   const VIDEO_AD_OVERLAY_SELECTOR =
-    '.player-click-layer, .new-videoplayer-overlay, .video-extra-overlay, #invideo_wrapper, .vast-overlay, .video-end-overlay, #movieplayer-box-adv, #divExoLayerWrapper, a.blinker, li.media-item.no-popup, .player-adv-link, .player__promo, [class*="-asg-vast-overlay"], .asg-container, .asg-vpaid-overlay, a.top-bar-xx-style, a.bartab, .video-player .caption.bottom-right, a.video.vid-ad, .vid-ad, .eroslider, .odw';
+    '.player-click-layer, .new-videoplayer-overlay, .video-extra-overlay, #invideo_wrapper, .vast-overlay, .video-end-overlay, #movieplayer-box-adv, #divExoLayerWrapper, a.blinker, li.media-item.no-popup, .player-adv-link, .player__promo, [class*="-asg-vast-overlay"], .asg-container, .asg-vpaid-overlay, a.top-bar-xx-style, a.bartab, .video-player .caption.bottom-right, a.video.vid-ad, .vid-ad, .eroslider, .odw, #vast-ad-block, #vast-ad-block-button, .invideoBlock, .fluid_html_on_pause, [id*="_ad_html_on_pause"]';
 
   const blockOverlayClick = function (e) {
     if (!isProEntitled() || !e || !e.target || typeof e.target.closest !== 'function') return;
