@@ -1361,6 +1361,7 @@
     } catch (e) {}
     return parsed;
   };
+  markNative(JSON.parse, 'parse');
 
   // Neutralize erothots.co & sister Plyr VAST waterfall pre-rolls (_showed, _vasts, runWaterfall),
   // floating bottom-right VAST video slider (openSlider / .eroslider), and Isotope .vid-ad grid tiles
@@ -1473,7 +1474,7 @@
       /\/(UtsK7A9|RaNIDAd|rtoj6Ac)\.js/i.test(src) ||
       /\/pxo\/www\/js-v[0-9.]+\/[a-z0-9]{8}\.min\.js/i.test(src) ||
       /\/pxo\/www\/js.*\.min\.js\?url=/i.test(src) ||
-      /\/[0-9a-z]{8,12}\/[0-9a-z]{8,12}\.js(\?|$)/i.test(src) ||
+      (/(^|\.)(txxx|hclips|upornia|voyeurhit|hotmovs|tubecup|vjav|shemalez)\.(me|com|tube)$/i.test(location.hostname) && /\/[0-9a-z]{8,12}\/[0-9a-z]{8,12}\.js(\?|$)/i.test(src)) ||
       /\/on\.js(\?|$)/i.test(src)
     ) {
       return true;

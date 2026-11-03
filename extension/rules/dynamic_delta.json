@@ -1,7 +1,7 @@
 {
   "ok": true,
-  "version": "1.2.40001",
-  "updatedAt": "2026-11-03T20:16:13.779Z",
+  "version": "1.2.50001",
+  "updatedAt": "2026-11-03T21:14:35.192Z",
   "featureFlags": {
     "cookieAutoClose": true,
     "hideSearchSpam": true,
@@ -664,7 +664,7 @@
         "type": "block"
       },
       "condition": {
-        "urlFilter": "||cloudfront.net^",
+        "urlFilter": "||d3lcz8vpax4lo2.cloudfront.net^",
         "resourceTypes": [
           "script",
           "xmlhttprequest"

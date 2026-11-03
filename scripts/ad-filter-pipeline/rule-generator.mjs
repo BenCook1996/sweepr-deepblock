@@ -36,7 +36,20 @@ const PROTECTED_FIRST_PARTY_AND_CDNS = new Set([
   'shopify.com',
   'cdn.shopify.com',
   'tailwindcss.com',
-  'cdn.tailwindcss.com'
+  'cdn.tailwindcss.com',
+  'cloudfront.net',
+  'd3e54v103j8qbb.cloudfront.net',
+  'amazonaws.com',
+  'website-files.com',
+  'cdn.prod.website-files.com',
+  'webflow.com',
+  'finsweet.com',
+  'files.finsweet.com',
+  'fastly.net',
+  'akamaized.net',
+  'akamaihd.net',
+  'azureedge.net',
+  'b-cdn.net'
 ]);
 
 const FORBIDDEN_BROAD_DOM_SELECTORS = new Set([

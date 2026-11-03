@@ -219,6 +219,18 @@ export const PROTECTED_LEGITIMATE_NETWORK_CANARIES = [
     url: 'https://js.stripe.com/v3/',
     resourceType: 'script',
     initiator: 'sweeprdeepblock.com'
+  },
+  {
+    name: 'Webflow CloudFront jQuery CDN (Finsweet / Webflow Sites)',
+    url: 'https://d3e54v103j8qbb.cloudfront.net/js/jquery-3.5.1.min.dc5e7f18c8.js?site=5d76680dc57fa0f42dcfe0c5',
+    resourceType: 'script',
+    initiator: 'finsweet.com'
+  },
+  {
+    name: 'Finsweet LottieFlow SmartGrid Script',
+    url: 'https://files.finsweet.com/lottieflow/smartgrid4.js',
+    resourceType: 'script',
+    initiator: 'finsweet.com'
   }
 ];
 
