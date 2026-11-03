@@ -4911,6 +4911,11 @@ function getCachedDynamicDelta() {
     }
   }
 
+  if ((req.method === 'GET' || req.method === 'HEAD') && (parsedUrl.pathname === '/apple-app-site-association' || parsedUrl.pathname === '/.well-known/apple-app-site-association')) {
+    const aasaBody = JSON.stringify({ applinks: { apps: [], details: [] }, webcredentials: { apps: ['SWEEPR.sweeprdeepblock.com'] } });
+    res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'public, max-age=86400', 'X-Robots-Tag': 'noindex, nofollow', 'X-Content-Type-Options': 'nosniff' });
+    return res.end(req.method === 'HEAD' ? undefined : aasaBody);
+  }
   if ((req.method === 'GET' || req.method === 'HEAD') && parsedUrl.pathname.startsWith('/cdn-cgi/l/email-protection')) {
     res.writeHead(301, { Location: '/support', 'X-Robots-Tag': 'noindex, nofollow', 'X-Content-Type-Options': 'nosniff' });
     return res.end();

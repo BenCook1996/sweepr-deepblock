@@ -38,6 +38,7 @@ const results = {
 
 // Build index of clean routes
 const existingCleanRoutes = new Set();
+const incomingInternalLinks = new Map();
 for (const f of htmlFiles) {
   const rel = path.relative(WEBSITE_DIR, f).replace(/\\/g, '/');
   const clean = rel === 'index.html' ? '/' : '/' + rel.replace(/\.html$/, '');
@@ -93,6 +94,9 @@ for (const filePath of htmlFiles) {
     }
     if (desc.length < 50) {
       results.htmlWarnings.push({ file: rel, type: 'short_description', msg: `Description under 50 chars (${desc.length} chars)` });
+    }
+    if (desc.endsWith('...') || desc.endsWith('…')) {
+      results.htmlWarnings.push({ file: rel, type: 'truncated_description', msg: `Description contains trailing ellipses: "${desc}"` });
     }
   }
 
@@ -241,6 +245,7 @@ for (const filePath of htmlFiles) {
         results.htmlIssues.push({ file: rel, type: 'link_has_trailing_slash', msg: `Internal link with trailing slash: ${href}` });
       }
       const cleanPath = href.split('?')[0];
+      incomingInternalLinks.set(cleanPath, (incomingInternalLinks.get(cleanPath) || 0) + 1);
       if (cleanPath !== '/' && !existingCleanRoutes.has(cleanPath)) {
         if (!cleanPath.startsWith('/api/') && !cleanPath.startsWith('/checkout') && !cleanPath.startsWith('/cdn-cgi')) {
           results.htmlIssues.push({ file: rel, type: 'broken_internal_link', msg: `Internal link to non-existent route: ${href}` });
@@ -260,6 +265,20 @@ for (const filePath of htmlFiles) {
     }
   }
 }
+
+// Check for orphan indexable pages (0 incoming internal links)
+let orphanPagesCount = 0;
+for (const filePath of htmlFiles) {
+  const content = fs.readFileSync(filePath, 'utf8');
+  if (/meta\s+name=["']robots["']\s+content=["'][^"']*noindex/i.test(content)) continue;
+  const rel = path.relative(WEBSITE_DIR, filePath).replace(/\\/g, '/');
+  const clean = rel === 'index.html' ? '/' : '/' + rel.replace(/\.html$/, '');
+  if (clean !== '/' && (incomingInternalLinks.get(clean) || 0) === 0) {
+    orphanPagesCount++;
+    results.htmlWarnings.push({ file: rel, type: 'orphan_page', msg: `Indexable page has 0 incoming internal links: ${clean}` });
+  }
+}
+console.log(`[AUDIT] Orphan indexable pages (0 incoming internal links): ${orphanPagesCount}`);
 
 // Check sitemap.xml
 const sitemapPath = path.join(WEBSITE_DIR, 'sitemap.xml');
@@ -294,11 +313,12 @@ if (fs.existsSync(robotsPath)) {
   if (!robotsTxt.includes('Sitemap: https://sweeprdeepblock.com/sitemap.xml')) {
     results.htmlIssues.push({ file: 'robots.txt', type: 'missing_sitemap_directive', msg: 'robots.txt missing standard Sitemap URL' });
   }
-  if (!robotsTxt.includes('LLMs-Txt: https://sweeprdeepblock.com/llms.txt')) {
-    results.htmlWarnings.push({ file: 'robots.txt', type: 'missing_llms_directive', msg: 'robots.txt missing LLMs-Txt directive' });
-  }
-  if (!robotsTxt.includes('LLMs-Full-Txt: https://sweeprdeepblock.com/llms-full.txt')) {
-    results.htmlWarnings.push({ file: 'robots.txt', type: 'missing_llms_full_directive', msg: 'robots.txt missing LLMs-Full-Txt directive' });
+  for (const [idx, rawLine] of robotsTxt.split(/\r?\n/).entries()) {
+    const line = rawLine.trim();
+    if (!line || line.startsWith('#')) continue;
+    if (!/^(User-agent|Allow|Disallow|Sitemap|Crawl-delay):/i.test(line)) {
+      results.htmlIssues.push({ file: 'robots.txt', type: 'invalid_rfc9309_directive', msg: `Line ${idx + 1} invalid RFC 9309 directive: "${line}"` });
+    }
   }
   if (!robotsTxt.includes('Disallow: /extension-ux-prototype')) {
     results.htmlWarnings.push({ file: 'robots.txt', type: 'missing_prototype_disallow', msg: 'robots.txt missing Disallow: /extension-ux-prototype' });
