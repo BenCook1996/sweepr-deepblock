@@ -267,10 +267,19 @@ if (fs.existsSync(llmsPath)) {
   }
 }
 
+const ENRICHMENT_STATE_PATH = path.join(WEBSITE_DIR, 'pillar-enrichment-state.json');
+let enrichmentState = { titleUpdatedAt: {}, customQuerySurgery: {}, discoveredGscPaths: [], gscRecoveryHistory: [] };
+if (fs.existsSync(ENRICHMENT_STATE_PATH)) {
+  try {
+    enrichmentState = { ...enrichmentState, ...JSON.parse(fs.readFileSync(ENRICHMENT_STATE_PATH, 'utf8')) };
+  } catch {}
+}
+
 const PILLAR_SET = new Set([
   ...GSC_PROVEN_PATHS,
   ...STRATEGIC_PILLAR_PATHS,
-  ...llmsReferencedPaths
+  ...llmsReferencedPaths,
+  ...(Array.isArray(enrichmentState.discoveredGscPaths) ? enrichmentState.discoveredGscPaths : [])
 ]);
 
 // 3. Exact-Query CTR & Technical Differentiation Overrides for the Top Proven GSC Pages
@@ -604,8 +613,12 @@ for (const rec of pageRecords) {
     }
   }
 
-  // 2. Apply Exact-Query CTR Surgery if this page is in EXACT_QUERY_SURGERY
-  const surgery = EXACT_QUERY_SURGERY[rec.urlPath];
+  // 2. Apply Exact-Query CTR Surgery if this page is in EXACT_QUERY_SURGERY or customQuerySurgery
+  // Never overwrite a page whose title was dynamically updated after the baseline date unless customQuerySurgery is provided
+  const customSurgery = enrichmentState.customQuerySurgery && enrichmentState.customQuerySurgery[rec.urlPath];
+  const updatedIso = enrichmentState.titleUpdatedAt && enrichmentState.titleUpdatedAt[rec.urlPath];
+  const wasDynamicallyUpdatedAfterBaseline = updatedIso && new Date(updatedIso).getTime() > new Date('2026-11-04T00:00:00Z').getTime();
+  const surgery = customSurgery || (wasDynamicallyUpdatedAfterBaseline ? null : EXACT_QUERY_SURGERY[rec.urlPath]);
   if (surgery) {
     const safeTitle = escapeHtml(surgery.title);
     const safeDesc = escapeHtml(surgery.desc);

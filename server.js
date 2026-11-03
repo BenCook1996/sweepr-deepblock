@@ -1880,7 +1880,8 @@ function serveStaticOptimized(req, res, fullPath) {
       'welcome-concepts.html',
       'ios-app.html',
       'sweepr-vpn-concepts.html',
-      'sweepr-vpn-mobile-redesign.html'
+      'sweepr-vpn-mobile-redesign.html',
+      'icon-animations-mockup.html'
     ]);
 
     if (isHtml) {
@@ -1890,8 +1891,30 @@ function serveStaticOptimized(req, res, fullPath) {
       }
       headers['Accept-CH'] = 'Sec-CH-UA-Platform, Sec-CH-UA-Mobile, Sec-CH-UA-Model, Sec-CH-UA-Arch';
       headers['Vary'] = headers['Vary'] ? `${headers['Vary']}, Sec-CH-UA-Platform` : 'Accept-Encoding, Sec-CH-UA-Platform';
+
+      if (!global.__deepblockHtmlSeoCache) global.__deepblockHtmlSeoCache = new Map();
+      let cachedSeo = global.__deepblockHtmlSeoCache.get(fullPath);
+      if (!cachedSeo || cachedSeo.mtimeMs !== stats.mtimeMs) {
+        let robotsMeta = null;
+        let canonicalHref = null;
+        try {
+          const headChunk = fs.readFileSync(fullPath, 'utf8').slice(0, 6144);
+          const rm = headChunk.match(/<meta\s+name=["']robots["']\s+content=["']([^"']+)["']/i) ||
+                     headChunk.match(/<meta\s+content=["']([^"']+)["']\s+name=["']robots["']/i);
+          if (rm && rm[1]) robotsMeta = rm[1].trim();
+          const cm = headChunk.match(/<link\s+rel=["']canonical["']\s+href=["']([^"']+)["']/i) ||
+                     headChunk.match(/<link\s+href=["']([^"']+)["']\s+rel=["']canonical["']/i);
+          if (cm && cm[1]) canonicalHref = cm[1].trim();
+        } catch {}
+        cachedSeo = { mtimeMs: stats.mtimeMs, robotsMeta, canonicalHref };
+        global.__deepblockHtmlSeoCache.set(fullPath, cachedSeo);
+      }
+
+      const isConsolidatedNoIndex = Boolean(cachedSeo.robotsMeta && /\bnoindex\b/i.test(cachedSeo.robotsMeta));
       if (NON_INDEXABLE_PAGES.has(fileNameLower)) {
         headers['X-Robots-Tag'] = 'noindex, nofollow';
+      } else if (isConsolidatedNoIndex) {
+        headers['X-Robots-Tag'] = cachedSeo.robotsMeta;
       } else {
         headers['X-Robots-Tag'] = 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1';
       }
@@ -1900,7 +1923,7 @@ function serveStaticOptimized(req, res, fullPath) {
       if (!NON_INDEXABLE_PAGES.has(fileNameLower)) {
         const relFromWebsite = path.relative(path.resolve(WEBSITE_DIR), fullPath).replace(/\\/g, '/');
         const canonicalSlug = relFromWebsite === 'index.html' ? '' : relFromWebsite.replace(/\.html$/, '');
-        const canonicalUrl = `https://sweeprdeepblock.com/${canonicalSlug}`;
+        const canonicalUrl = cachedSeo.canonicalHref || `https://sweeprdeepblock.com/${canonicalSlug}`;
         headers['Link'] = `<${canonicalUrl}>; rel="canonical", ` + baseResourceHints;
       } else {
         headers['Link'] = baseResourceHints;

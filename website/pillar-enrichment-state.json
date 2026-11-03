@@ -1,6 +1,6 @@
 {
   "cooldownDays": 14,
-  "lastRunAt": "2026-11-03T22:19:53.266Z",
+  "lastRunAt": "2026-11-03T22:47:52.989Z",
   "titleUpdatedAt": {
     "/setup/thorium-chromium-browser": "2026-11-03T20:45:00.000Z",
     "/setup/orion-browser-macos-ios": "2026-11-03T20:45:00.000Z",
@@ -31,6 +31,31 @@
     "/solutions/fextralife-game-wikis-block-video-ads": "2026-11-03T20:45:00.000Z",
     "/solutions/twitch-vod-replay-block-video-ads": "2026-11-03T20:45:00.000Z"
   },
+  "customQuerySurgery": {},
+  "discoveredGscPaths": [],
+  "gscRecoveryHistory": [
+    {
+      "date": "2026-10-28",
+      "impressions": 119,
+      "clicks": 1,
+      "indexedPages": 171,
+      "note": "Peak honeymoon serving before Cartesian 404 shockwave"
+    },
+    {
+      "date": "2026-11-01",
+      "impressions": 1,
+      "clicks": 0,
+      "indexedPages": 171,
+      "note": "Trough after Scaled Content demotion (1,575 pages)"
+    },
+    {
+      "date": "2026-11-03",
+      "impressions": null,
+      "clicks": null,
+      "indexedPages": 295,
+      "note": "Consolidated 1,588 -> 295 Pillar URLs, applied 28-page CTR surgery & Live MV3 Rule Proof"
+    }
+  ],
   "proofUpdatedAt": {
     "/setup/arc-browser-windows-mac": "2026-11-03T22:19:53.266Z",
     "/setup/brave-browser-deepstealth": "2026-11-03T22:19:53.266Z",
@@ -316,7 +341,8 @@
     "/guides/how-to-stop-silent-web-push-notification-spam": "2026-11-03T22:19:53.266Z",
     "/guides/how-to-stop-streaming-site-click-jacking-redirects": "2026-11-03T22:19:53.266Z",
     "/guides/how-to-stop-temu-shein-scam-popups-and-tracking": "2026-11-03T22:19:53.266Z",
-    "/guides/how-to-stop-video-ad-audio-blasts": "2026-11-03T22:19:53.266Z"
+    "/guides/how-to-stop-video-ad-audio-blasts": "2026-11-03T22:19:53.266Z",
+    "/guides/strip-utm-fbclid-gclid-tracking-links": "2026-11-03T22:47:52.989Z"
   },
   "contentHashes": {
     "/setup/arc-browser-windows-mac": "1267d7de7ae40f5d",
@@ -603,6 +629,7 @@
     "/guides/how-to-stop-silent-web-push-notification-spam": "3216cb45ce2e825f",
     "/guides/how-to-stop-streaming-site-click-jacking-redirects": "0631da3d69cc79ec",
     "/guides/how-to-stop-temu-shein-scam-popups-and-tracking": "6d15253e96cc849c",
-    "/guides/how-to-stop-video-ad-audio-blasts": "6d04ee32edf7a381"
+    "/guides/how-to-stop-video-ad-audio-blasts": "6d04ee32edf7a381",
+    "/guides/strip-utm-fbclid-gclid-tracking-links": "cc5cb80083b69292"
   }
 }

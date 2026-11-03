@@ -84,6 +84,13 @@ function loadEnrichmentState() {
     cooldownDays: 14,
     lastRunAt: null,
     titleUpdatedAt: {},
+    customQuerySurgery: {},
+    discoveredGscPaths: [],
+    gscRecoveryHistory: [
+      { date: '2026-10-28', impressions: 119, clicks: 1, indexedPages: 171, note: 'Peak honeymoon serving before Cartesian 404 shockwave' },
+      { date: '2026-11-01', impressions: 1, clicks: 0, indexedPages: 171, note: 'Trough after Scaled Content demotion (1,575 pages)' },
+      { date: '2026-11-03', impressions: null, clicks: null, indexedPages: 295, note: 'Consolidated 1,588 -> 295 Pillar URLs, applied 28-page CTR surgery & Live MV3 Rule Proof' }
+    ],
     proofUpdatedAt: {},
     contentHashes: {}
   };

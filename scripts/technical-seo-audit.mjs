@@ -162,6 +162,17 @@ for (const filePath of htmlFiles) {
     results.htmlWarnings.push({ file: rel, type: 'multiple_h1', msg: `Contains ${h1Matches.length} <h1> tags` });
   }
 
+  // Live MV3 Rule Proof check on indexable PSEO Pillar pages
+  if (/^(solutions|setup|vs|guides)\//i.test(rel) && rel !== 'vs/total-adblock.html') {
+    if (!content.includes('id="deepblock-live-rule-proof"')) {
+      results.htmlWarnings.push({
+        file: rel,
+        type: 'missing_live_rule_proof',
+        msg: 'Indexable PSEO Pillar page is missing #deepblock-live-rule-proof telemetry section'
+      });
+    }
+  }
+
   // Open Graph
   const hasOgTitle = /property=["']og:title["']/i.test(content);
   const hasOgDesc = /property=["']og:description["']/i.test(content);
@@ -419,8 +430,17 @@ results.serverAudit = {
   hasVaryPreservation: serverCode.includes("headers['Vary']") && serverCode.includes('Accept-Encoding'),
   hasIdSigSupport: serverCode.includes('.idsig') && serverCode.includes('application/octet-stream'),
   hasLowercaseRedirect: serverCode.includes('pathname.toLowerCase()') && serverCode.includes('/[A-Z]/.test'),
-  hasPageSpeedLighthouseTelemetry: serverCode.includes('chrome-lighthouse') && serverCode.includes('pagespeed')
+  hasPageSpeedLighthouseTelemetry: serverCode.includes('chrome-lighthouse') && serverCode.includes('pagespeed'),
+  hasConsolidatedNoIndexHeaderParity: serverCode.includes('isConsolidatedNoIndex') && serverCode.includes('__deepblockHtmlSeoCache')
 };
+
+if (!results.serverAudit.hasConsolidatedNoIndexHeaderParity) {
+  results.htmlIssues.push({
+    file: 'server.js',
+    type: 'missing_consolidated_noindex_header_parity',
+    msg: 'server.js must sync X-Robots-Tag and Link canonical headers with HTML <meta name="robots"> on consolidated noindex pages'
+  });
+}
 
 console.log('\n=== AUDIT SUMMARY ===');
 console.log(`Total HTML files scanned: ${results.pagesAnalyzed}`);
