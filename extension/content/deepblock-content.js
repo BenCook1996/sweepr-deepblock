@@ -785,6 +785,38 @@
       }
       reportMetric('antiAdblockBypassed', 1);
     }
+
+    // Actively scrub disguised in-grid video ad tiles (.vid-ad) and sticky bars on erothots & streaming grids,
+    // then dispatch resize so Isotope/Masonry grids reflow cleanly with zero empty gaps.
+    try {
+      let removedGridAd = false;
+      const gridAdNodes = document.querySelectorAll('a.video.vid-ad, .videos .vid-ad, .vid-ad');
+      gridAdNodes.forEach((node) => {
+        node.remove();
+        removedGridAd = true;
+      });
+      const promoNodes = document.querySelectorAll(
+        'a.top-bar-xx-style, .magic-sites, .list-btn.bnr, .bnr, .bnrs, a.bartab, .video-player .caption.bottom-right, .odw, [data-odw], .ourdreamai-native, .eroslider, a.no-taps[href*="camsoda"], img.camsoda-logo'
+      );
+      promoNodes.forEach((node) => {
+        const parent = node.parentElement;
+        if (
+          node.classList &&
+          node.classList.contains('top-bar-xx-style') &&
+          parent &&
+          parent.tagName === 'DIV' &&
+          parent.children.length === 1
+        ) {
+          parent.remove();
+        } else {
+          node.remove();
+        }
+      });
+      if (removedGridAd) {
+        window.dispatchEvent(new Event('resize'));
+        reportMetric('adsBlocked', gridAdNodes.length);
+      }
+    } catch (e) {}
   }
 
   let stealthBypassReported = false;
@@ -1014,7 +1046,36 @@
     iframe[src*="pemsrv.com"],
     iframe[src*="trafficjunky."],
     iframe[src*="juicyads.com"],
-    iframe[src*="jads.co"] {
+    iframe[src*="jads.co"],
+    /* Erothots & Plyr / OurDream / DreamServe / SmartFlora / RealXXX / TrafficHunt Ad Slots */
+    a.top-bar-xx-style,
+    div:has(> a.top-bar-xx-style),
+    .magic-sites,
+    .list-btn.bnr,
+    .bnr,
+    .bnrs,
+    a.bartab,
+    .video-player .caption.bottom-right,
+    a.video.vid-ad,
+    .vid-ad,
+    .odw,
+    [data-odw],
+    .ourdreamai-native,
+    .section.fh-videos:has(.odw),
+    .eroslider,
+    img.camsoda-logo,
+    a.no-taps[href*="camsoda"],
+    a[href*="smartfloralab.com"],
+    a[href*="adtng.com"],
+    a[href*="traffichunt.com"],
+    a[href*="realxxx.com"],
+    .section.text-center:has(iframe[src*="adtng.com"]),
+    iframe[src*="adtng.com"],
+    iframe[src*="dreamserve.dev"],
+    iframe[src*="velvetloom.net"],
+    iframe[src*="smartfloralab.com"],
+    iframe[src*="realxxx.com"],
+    iframe[src*="traffichunt.com"] {
       display: none !important;
       visibility: hidden !important;
       height: 0 !important;

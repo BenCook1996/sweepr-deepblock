@@ -1,7 +1,7 @@
 {
   "ok": true,
-  "version": "1.1.80013",
-  "updatedAt": "2026-11-03T04:26:53.000Z",
+  "version": "1.2.30001",
+  "updatedAt": "2026-11-03T08:32:11.122Z",
   "featureFlags": {
     "cookieAutoClose": true,
     "hideSearchSpam": true,
@@ -13,6 +13,23 @@
   "extraCmpSelectors": [],
   "extraAntiAdblockSelectors": [],
   "extraCosmeticSelectors": [
+    ".top-bar-xx-style",
+    "div:has(> a.top-bar-xx-style)",
+    ".magic-sites",
+    ".list-btn.bnr",
+    ".bnr",
+    ".bnrs",
+    "a.bartab",
+    ".video-player .caption.bottom-right",
+    "a.video.vid-ad",
+    ".vid-ad",
+    ".odw",
+    "[data-odw]",
+    ".ourdreamai-native",
+    ".section.fh-videos:has(.odw)",
+    ".eroslider",
+    "img.camsoda-logo",
+    "a.no-taps:has(img.camsoda-logo)",
     ".freestar-ad-slot",
     ".snigel-ad-unit",
     ".wknd-sponsored-box",
@@ -981,6 +998,169 @@
           "xmlhttprequest"
         ],
         "domainType": "thirdParty"
+      }
+    },
+    {
+      "id": 80060,
+      "priority": 5,
+      "action": {
+        "type": "block"
+      },
+      "condition": {
+        "urlFilter": "||dreamserve.dev^",
+        "resourceTypes": [
+          "script",
+          "sub_frame",
+          "image",
+          "xmlhttprequest",
+          "media",
+          "ping",
+          "other"
+        ]
+      }
+    },
+    {
+      "id": 80061,
+      "priority": 5,
+      "action": {
+        "type": "block"
+      },
+      "condition": {
+        "urlFilter": "||velvetloom.net^",
+        "resourceTypes": [
+          "script",
+          "sub_frame",
+          "image",
+          "xmlhttprequest",
+          "media",
+          "ping",
+          "other"
+        ]
+      }
+    },
+    {
+      "id": 80062,
+      "priority": 5,
+      "action": {
+        "type": "block"
+      },
+      "condition": {
+        "urlFilter": "||creepy-frame.com^",
+        "resourceTypes": [
+          "script",
+          "sub_frame",
+          "image",
+          "xmlhttprequest",
+          "ping",
+          "other"
+        ]
+      }
+    },
+    {
+      "id": 80063,
+      "priority": 5,
+      "action": {
+        "type": "block"
+      },
+      "condition": {
+        "urlFilter": "||smartfloralab.com^",
+        "resourceTypes": [
+          "script",
+          "sub_frame",
+          "image",
+          "xmlhttprequest",
+          "media",
+          "ping",
+          "other"
+        ]
+      }
+    },
+    {
+      "id": 80064,
+      "priority": 5,
+      "action": {
+        "type": "block"
+      },
+      "condition": {
+        "urlFilter": "||realxxx.com^",
+        "resourceTypes": [
+          "script",
+          "sub_frame",
+          "image",
+          "xmlhttprequest",
+          "media",
+          "ping",
+          "other"
+        ]
+      }
+    },
+    {
+      "id": 80065,
+      "priority": 5,
+      "action": {
+        "type": "block"
+      },
+      "condition": {
+        "urlFilter": "||traffichunt.com^",
+        "resourceTypes": [
+          "script",
+          "sub_frame",
+          "image",
+          "xmlhttprequest",
+          "media",
+          "ping",
+          "other"
+        ]
+      }
+    },
+    {
+      "id": 80066,
+      "priority": 5,
+      "action": {
+        "type": "block"
+      },
+      "condition": {
+        "urlFilter": "||camsoda.ai^",
+        "resourceTypes": [
+          "script",
+          "sub_frame",
+          "image",
+          "xmlhttprequest",
+          "ping"
+        ]
+      }
+    },
+    {
+      "id": 80067,
+      "priority": 5,
+      "action": {
+        "type": "block"
+      },
+      "condition": {
+        "urlFilter": "||livemediahost.com^",
+        "resourceTypes": [
+          "script",
+          "sub_frame",
+          "image",
+          "xmlhttprequest",
+          "media"
+        ]
+      }
+    },
+    {
+      "id": 80068,
+      "priority": 5,
+      "action": {
+        "type": "block"
+      },
+      "condition": {
+        "urlFilter": "||waust.at^",
+        "resourceTypes": [
+          "script",
+          "image",
+          "xmlhttprequest",
+          "ping"
+        ]
       }
     }
   ]

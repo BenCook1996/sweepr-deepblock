@@ -3698,5 +3698,169 @@
       ],
       "domainType": "thirdParty"
     }
+  },
+  {
+    "id": 231,
+    "priority": 5,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||dreamserve.dev^",
+      "resourceTypes": [
+        "script",
+        "sub_frame",
+        "image",
+        "xmlhttprequest",
+        "media",
+        "ping",
+        "other"
+      ]
+    }
+  },
+  {
+    "id": 232,
+    "priority": 5,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||velvetloom.net^",
+      "resourceTypes": [
+        "script",
+        "sub_frame",
+        "image",
+        "xmlhttprequest",
+        "media",
+        "ping",
+        "other"
+      ]
+    }
+  },
+  {
+    "id": 233,
+    "priority": 5,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||creepy-frame.com^",
+      "resourceTypes": [
+        "script",
+        "sub_frame",
+        "image",
+        "xmlhttprequest",
+        "ping",
+        "other"
+      ]
+    }
+  },
+  {
+    "id": 234,
+    "priority": 5,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||smartfloralab.com^",
+      "resourceTypes": [
+        "script",
+        "sub_frame",
+        "image",
+        "xmlhttprequest",
+        "media",
+        "ping",
+        "other"
+      ]
+    }
+  },
+  {
+    "id": 235,
+    "priority": 5,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||realxxx.com^",
+      "resourceTypes": [
+        "script",
+        "sub_frame",
+        "image",
+        "xmlhttprequest",
+        "media",
+        "ping",
+        "other"
+      ]
+    }
+  },
+  {
+    "id": 236,
+    "priority": 5,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||traffichunt.com^",
+      "resourceTypes": [
+        "script",
+        "sub_frame",
+        "image",
+        "xmlhttprequest",
+        "media",
+        "ping",
+        "other"
+      ]
+    }
+  },
+  {
+    "id": 237,
+    "priority": 5,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||camsoda.ai^",
+      "resourceTypes": [
+        "script",
+        "sub_frame",
+        "image",
+        "xmlhttprequest",
+        "ping"
+      ]
+    }
+  },
+  {
+    "id": 238,
+    "priority": 5,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||livemediahost.com^",
+      "resourceTypes": [
+        "script",
+        "sub_frame",
+        "image",
+        "xmlhttprequest",
+        "media"
+      ]
+    }
+  },
+  {
+    "id": 239,
+    "priority": 3,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||waust.at^",
+      "resourceTypes": [
+        "script",
+        "image",
+        "xmlhttprequest",
+        "ping"
+      ],
+      "domainType": "thirdParty"
+    }
   }
 ]
