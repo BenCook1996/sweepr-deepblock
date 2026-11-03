@@ -2277,7 +2277,7 @@ function getCachedDynamicDelta() {
 }
 
   // API -1b: Dynamic Filter Delta & Remote Feature-Flag Kill-Switch + Extension Version Gate Endpoint
-  const LATEST_EXTENSION_VERSION = String(process.env.LATEST_EXTENSION_VERSION || '1.2.1').trim();
+  const LATEST_EXTENSION_VERSION = String(process.env.LATEST_EXTENSION_VERSION || '1.2.3').trim();
   const MIN_EXTENSION_VERSION = String(process.env.MIN_EXTENSION_VERSION || '1.1.6').trim();
   const FORCE_EXTENSION_UPDATE = process.env.FORCE_EXTENSION_UPDATE === 'true';
   const compareSemver = (latestVer, currentVer) => {
