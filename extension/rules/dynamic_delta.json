@@ -1,7 +1,7 @@
 {
   "ok": true,
-  "version": "1.1.50702",
-  "updatedAt": "2026-11-04T00:56:00.000Z",
+  "version": "1.1.50703",
+  "updatedAt": "2026-11-04T01:14:00.000Z",
   "featureFlags": {
     "cookieAutoClose": true,
     "hideSearchSpam": true,
@@ -13,6 +13,27 @@
   "extraCmpSelectors": [],
   "extraAntiAdblockSelectors": [],
   "extraCosmeticSelectors": [
+    ".upkeep > .promotion",
+    "#spot_video_ntv_a",
+    "#spot_video_ntv_b",
+    "#spot_video_ntv_c",
+    "#spot_video_inside_player",
+    ".drt-spot-box",
+    ".drt-spot-bottom-box",
+    "#spot_video_underplayer_livecams",
+    "#spot_video_livecams",
+    ".stem:has(#spot_video_livecams)",
+    ".spot-live-cam",
+    ".ID_live_cam_wrapper",
+    ".ID-viptube-before-ad-video",
+    ".download_adv_text_video",
+    ".button-under-video:has(.download_adv_text_video)",
+    "#rvt-p2p-0",
+    "[id^=\"rvt-p2p\"]",
+    "#rvt-element",
+    "a[data-model-item]",
+    "a[href*=\"/linkout/livecams/\"]",
+    "li:has(> div.item2 > a[href*=\"/linkout/livecams/\"])",
     ".block-video#block-chat > .table",
     ".block-video > .table:has(.opt)",
     ".block-video .opt",
@@ -1463,6 +1484,195 @@
           "script",
           "xmlhttprequest",
           "ping",
+          "other"
+        ]
+      }
+    },
+    {
+      "id": 80084,
+      "priority": 5,
+      "action": {
+        "type": "block"
+      },
+      "condition": {
+        "urlFilter": "||superwebhub.cyou^",
+        "resourceTypes": [
+          "script",
+          "sub_frame",
+          "image",
+          "xmlhttprequest",
+          "ping",
+          "other"
+        ]
+      }
+    },
+    {
+      "id": 80085,
+      "priority": 5,
+      "action": {
+        "type": "block"
+      },
+      "condition": {
+        "urlFilter": "||fozekikikiminu.com^",
+        "resourceTypes": [
+          "script",
+          "sub_frame",
+          "image",
+          "xmlhttprequest",
+          "media",
+          "ping",
+          "other"
+        ]
+      }
+    },
+    {
+      "id": 80086,
+      "priority": 5,
+      "action": {
+        "type": "block"
+      },
+      "condition": {
+        "urlFilter": "||janusaent.com^",
+        "resourceTypes": [
+          "script",
+          "sub_frame",
+          "image",
+          "xmlhttprequest",
+          "ping",
+          "other"
+        ]
+      }
+    },
+    {
+      "id": 80087,
+      "priority": 5,
+      "action": {
+        "type": "block"
+      },
+      "condition": {
+        "urlFilter": "||growcdnssedge.com^",
+        "resourceTypes": [
+          "script",
+          "sub_frame",
+          "image",
+          "xmlhttprequest",
+          "media",
+          "other"
+        ]
+      }
+    },
+    {
+      "id": 80088,
+      "priority": 5,
+      "action": {
+        "type": "block"
+      },
+      "condition": {
+        "urlFilter": "||saawsedge.com^",
+        "resourceTypes": [
+          "script",
+          "sub_frame",
+          "image",
+          "xmlhttprequest",
+          "media",
+          "other"
+        ]
+      }
+    },
+    {
+      "id": 80089,
+      "priority": 5,
+      "action": {
+        "type": "block"
+      },
+      "condition": {
+        "urlFilter": "||doppiocdn.com^",
+        "resourceTypes": [
+          "script",
+          "sub_frame",
+          "image",
+          "xmlhttprequest",
+          "media",
+          "other"
+        ]
+      }
+    },
+    {
+      "id": 80090,
+      "priority": 5,
+      "action": {
+        "type": "block"
+      },
+      "condition": {
+        "urlFilter": "||rvrpushserv.com^",
+        "resourceTypes": [
+          "script",
+          "sub_frame",
+          "image",
+          "xmlhttprequest",
+          "ping",
+          "other"
+        ]
+      }
+    },
+    {
+      "id": 80091,
+      "priority": 5,
+      "action": {
+        "type": "block"
+      },
+      "condition": {
+        "urlFilter": "/player_right_ntv_",
+        "resourceTypes": [
+          "sub_frame",
+          "script",
+          "xmlhttprequest",
+          "other"
+        ]
+      }
+    },
+    {
+      "id": 80092,
+      "priority": 5,
+      "action": {
+        "type": "block"
+      },
+      "condition": {
+        "urlFilter": "/adx_iframe_",
+        "resourceTypes": [
+          "sub_frame",
+          "script",
+          "xmlhttprequest",
+          "other"
+        ]
+      }
+    },
+    {
+      "id": 80093,
+      "priority": 5,
+      "action": {
+        "type": "block"
+      },
+      "condition": {
+        "urlFilter": "/jquery.shows2.min.js",
+        "resourceTypes": [
+          "script",
+          "xmlhttprequest",
+          "other"
+        ]
+      }
+    },
+    {
+      "id": 80094,
+      "priority": 5,
+      "action": {
+        "type": "block"
+      },
+      "condition": {
+        "urlFilter": "/ppdr/p2p.init.js",
+        "resourceTypes": [
+          "script",
+          "xmlhttprequest",
           "other"
         ]
       }

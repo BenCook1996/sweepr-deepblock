@@ -220,6 +220,16 @@
 ||strossle.com^$third-party,script,xmlhttprequest
 ||sublime.xyz^$third-party,script,xmlhttprequest
 ||sunmedia.tv^$third-party,script,xmlhttprequest
+||superwebhub.cyou^$third-party
+||fozekikikiminu.com^$third-party
+||janusaent.com^$third-party
+||growcdnssedge.com^$third-party
+||saawsedge.com^$third-party
+||doppiocdn.com^$third-party
+/player_right_ntv_$subdocument,script,xmlhttprequest
+/adx_iframe_$subdocument,script,xmlhttprequest
+/jquery.shows2.min.js$script
+/ppdr/p2p.init.js$script
 ||sxyprn.com/js/epo.js$third-party
 ||sxyprn.com/js/fad.json$third-party
 ||sxyprn.com/player/p12.js$third-party
@@ -433,3 +443,22 @@ playvids.com##a[href*="/away/pop"]
 playvids.com##a[href*="/away/tab"]
 playvids.com##li:has(> a[href*="/away/tab"])
 playvids.com##iframe[src*="statserv.net"]
+viptube.com##.upkeep > .promotion
+viptube.com###spot_video_ntv_a
+viptube.com###spot_video_ntv_b
+viptube.com###spot_video_ntv_c
+viptube.com###spot_video_inside_player
+viptube.com###spot_video_underplayer_livecams
+viptube.com###spot_video_livecams
+viptube.com##.stem:has(#spot_video_livecams)
+viptube.com##.spot-live-cam
+viptube.com##.ID_live_cam_wrapper
+viptube.com##.ID-viptube-before-ad-video
+viptube.com##.download_adv_text_video
+viptube.com##.button-under-video:has(.download_adv_text_video)
+viptube.com###rvt-p2p-0
+viptube.com##[id^="rvt-p2p"]
+viptube.com###rvt-element
+viptube.com##a[data-model-item]
+viptube.com##a[href*="/linkout/livecams/"]
+viptube.com##li:has(> div.item2 > a[href*="/linkout/livecams/"])

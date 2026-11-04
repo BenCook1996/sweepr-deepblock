@@ -74,7 +74,7 @@
 
   // Common ad/tracker domain & path patterns used by anti-adblock probes
   const AD_PROBE_URL_REGEX =
-    /(googlesyndication\.com|doubleclick\.net|google-analytics\.com|googletagmanager\.com|imasdk\.googleapis\.com|adnxs\.com|adsrvr\.org|criteo\.(com|net)|rubiconproject\.com|pubmatic\.com|openx\.net|taboola\.com|outbrain\.com|amazon-adsystem\.com|moatads\.com|scorecardresearch\.com|quantserve\.com|ads-twitter\.com|connect\.facebook\.net\/.*\/fbevents|admiral\.com|getadmiral\.com|fundingchoicesmessages\.google\.com|pagefair\.com|applzr\.com|goadserver\.com|gsrv\.dev|aaaconnect\.info|onclckmn\.com|onclicka\.com|adsmediabox\.com|awmdelivery\.com|acquaintjokinglyscoring\.com|rmzsglng\.com|aivanta76\.com|bongacams2\.com|gotpd\.me|sacdnssedge\.com|magsrv\.com|exoclick\.com|adtng\.com|dreamserve\.dev|velvetloom\.net|creepy-frame\.com|smartfloralab\.com|realxxx\.com|traffichunt\.com|camsoda\.ai|livemediahost\.com|statserv\.net|\/ads\/prebid-ads|s\.yimg\.com\/(aaq\/(vzm\/cs|prebid|f10d509c)|ss\/analytics|du\/)|opus\.analytics\.yahoo\.com|consent\.cmp\.oath\.com|pbs\.yahoo\.com|udc\.yahoo\.com|\/pagead\/gen_204|\/ads\.js(\?|$)|\/adframe\.js(\?|$)|\/adblock-detect|\/show_ads\.js|\/adsbygoogle\.js)/i;
+    /(googlesyndication\.com|doubleclick\.net|google-analytics\.com|googletagmanager\.com|imasdk\.googleapis\.com|adnxs\.com|adsrvr\.org|criteo\.(com|net)|rubiconproject\.com|pubmatic\.com|openx\.net|taboola\.com|outbrain\.com|amazon-adsystem\.com|moatads\.com|scorecardresearch\.com|quantserve\.com|ads-twitter\.com|connect\.facebook\.net\/.*\/fbevents|admiral\.com|getadmiral\.com|fundingchoicesmessages\.google\.com|pagefair\.com|applzr\.com|goadserver\.com|gsrv\.dev|aaaconnect\.info|onclckmn\.com|onclicka\.com|adsmediabox\.com|awmdelivery\.com|acquaintjokinglyscoring\.com|rmzsglng\.com|aivanta76\.com|bongacams2\.com|gotpd\.me|superwebhub\.cyou|fozekikikiminu\.com|janusaent\.com|growcdnssedge\.com|saawsedge\.com|doppiocdn\.com|sacdnssedge\.com|magsrv\.com|exoclick\.com|adtng\.com|dreamserve\.dev|velvetloom\.net|creepy-frame\.com|smartfloralab\.com|realxxx\.com|traffichunt\.com|camsoda\.ai|livemediahost\.com|statserv\.net|\/ads\/prebid-ads|s\.yimg\.com\/(aaq\/(vzm\/cs|prebid|f10d509c)|ss\/analytics|du\/)|opus\.analytics\.yahoo\.com|consent\.cmp\.oath\.com|pbs\.yahoo\.com|udc\.yahoo\.com|\/pagead\/gen_204|\/ads\.js(\?|$)|\/adframe\.js(\?|$)|\/adblock-detect|\/show_ads\.js|\/adsbygoogle\.js)/i;
 
   // ============================================================================
   // LAYER 1B: <script/img onerror> -> <script/img onload> Alchemist
@@ -1108,6 +1108,28 @@
     return { init: noopFn };
   });
   safeDefine(window, 'SuShow', noopFn);
+  const liveCamsStub = function () {
+    this.init = noopFn;
+    this.isValidModel = () => false;
+    this.mixRelatedLiveCams = noopFn;
+  };
+  liveCamsStub.prototype = {
+    init: noopFn,
+    isValidModel: () => false,
+    mixRelatedLiveCams: noopFn
+  };
+  safeDefine(window, 'LiveCams', liveCamsStub);
+  safeDefine(
+    window,
+    'ADX',
+    Object.freeze({
+      ads: {},
+      utils: Object.freeze({
+        loadJS: noopFn,
+        cookie: Object.freeze({ write: noopFn, read: () => '1' })
+      })
+    })
+  );
   safeDefine(window, 'BetterJsPop', Object.freeze({ add: noopFn, config: noopFn, init: noopFn }));
   safeDefine(window, 'hide_spot', true);
   safeDefine(window, 'TRAFF_TARGETS', Object.freeze({ urls: [], under: 0, shows: 0 }));
@@ -1151,11 +1173,12 @@
     });
   } catch (e) {}
 
-  if (/(^|\.)(nuvid|drtuber|proporn|hd21|winporn|iceporn)\.com$/i.test(location.hostname)) {
+  if (/(^|\.)(nuvid|drtuber|proporn|hd21|winporn|iceporn|viptube)\.com$/i.test(location.hostname)) {
     try {
       document.cookie = 'no_ads=1; path=/';
       document.cookie = 'no_popups=1; path=/';
       document.cookie = 'no_push_notice=1; path=/';
+      document.cookie = 'rvt_p2p_cnt=999; path=/';
     } catch (e) {}
   }
 
@@ -1464,7 +1487,7 @@
 
   // Block popunders and ad-network URLs
   const POPUNDER_URL_REGEX =
-    /(\/zv3\/(b|url|cam)|\/link\/out\/|\/away\/(pop|tab)|\/ads\/prebid-ads|\/getape\/|\/prepop\.php|\/getadb\/|\/venor\.php|\/v1\/link\.php|\/splash\.php\?idzone=|\/api\/spots\/|\/api\/click\/|\/agent\.php\?spot=|\/loadeactrl\.go|\/vast\.go|\/click\.go|\/pop\.go|\/banner\.go|banner-iframe|advertiserName=|tsyndicate\.com|contentsserved\.com|exoclick\.com|exosrv\.com|realsrv\.com|magsrv\.com|pemsrv\.com|orbsrv\.com|trafficjunky\.(net|com)|juicyads\.com|jads\.co|clickadu\.com|clickaine\.com|\/lv\/esnk\/|hilltopads\.net|adspyglass\.com|plugrush\.com|adxpansion\.com|crakrevenue\.com|ero-advertising\.com|twinrdsyn\.com|twinrdengine\.com|adtng\.com|dreamserve\.dev|velvetloom\.net|creepy-frame\.com|smartfloralab\.com|realxxx\.com|traffichunt\.com|camsoda\.ai|livemediahost\.com|statserv\.net|etahub\.com|bngpt\.com|xlivrdr\.com|popads\.net|popcash\.net|propellerads\.com|cdn-fc\.com|meteorpomposity\.com|glutenmuttsensuous\.com|cupbearergrowllurch\.com|hollowgoal\.com|u5s5\.com|adplsr\.com|nomarax\.com|fh-wgt\.com|yomeno\.xyz|ahw2lok\.txxx\.com|zog\.link|iloptrex\.com|nereserv\.com|vidvas3\.com|tubecup\.net|fhgte\.com|faphouse4k\.com|tikbblove\.com|directsle\.com|g2fame\.com|rvmessage\.online|rvrpushserv\.com|yequka\.my|tophqcam\.com|doublepimp\.com|advnet\.xyz|hotadultcontent\.com|hotxxxcontent\.com|qoqh\.com|hqpornpro\.com|lxax\.com|koxk\.com|applzr\.com|goadserver\.com|gsrv\.dev|aaaconnect\.info|onclckmn\.com|onclicka\.com|adsmediabox\.com|awmdelivery\.com|acquaintjokinglyscoring\.com|rmzsglng\.com|aivanta76\.com|bongacams2?\.com|gotpd\.me|landing\.brazzersnetwork\.com|sacdnssedge\.com|kol88\.freeporn8\.com|Y1l0oxvJ\.js|nvdst\.com\/adx_|_pnuvid\.js|p2p\.init\.js|jquery\.shows2\.min\.js)/i;
+    /(\/zv3\/(b|url|cam)|\/link\/out\/|\/linkout\/livecams\/|\/player_right_ntv_|\/adx_iframe_|\/away\/(pop|tab)|\/ads\/prebid-ads|\/getape\/|\/prepop\.php|\/getadb\/|\/venor\.php|\/v1\/link\.php|\/splash\.php\?idzone=|\/api\/spots\/|\/api\/click\/|\/agent\.php\?spot=|\/loadeactrl\.go|\/vast\.go|\/click\.go|\/pop\.go|\/banner\.go|banner-iframe|advertiserName=|tsyndicate\.com|contentsserved\.com|exoclick\.com|exosrv\.com|realsrv\.com|magsrv\.com|pemsrv\.com|orbsrv\.com|trafficjunky\.(net|com)|juicyads\.com|jads\.co|clickadu\.com|clickaine\.com|\/lv\/esnk\/|hilltopads\.net|adspyglass\.com|plugrush\.com|adxpansion\.com|crakrevenue\.com|ero-advertising\.com|twinrdsyn\.com|twinrdengine\.com|adtng\.com|dreamserve\.dev|velvetloom\.net|creepy-frame\.com|smartfloralab\.com|realxxx\.com|traffichunt\.com|camsoda\.ai|livemediahost\.com|statserv\.net|etahub\.com|bngpt\.com|xlivrdr\.com|popads\.net|popcash\.net|propellerads\.com|cdn-fc\.com|meteorpomposity\.com|glutenmuttsensuous\.com|cupbearergrowllurch\.com|hollowgoal\.com|u5s5\.com|adplsr\.com|nomarax\.com|fh-wgt\.com|yomeno\.xyz|ahw2lok\.txxx\.com|zog\.link|iloptrex\.com|nereserv\.com|vidvas3\.com|tubecup\.net|fhgte\.com|faphouse4k\.com|tikbblove\.com|directsle\.com|g2fame\.com|rvmessage\.online|rvrpushserv\.com|yequka\.my|tophqcam\.com|doublepimp\.com|advnet\.xyz|hotadultcontent\.com|hotxxxcontent\.com|qoqh\.com|hqpornpro\.com|lxax\.com|koxk\.com|applzr\.com|goadserver\.com|gsrv\.dev|aaaconnect\.info|onclckmn\.com|onclicka\.com|adsmediabox\.com|awmdelivery\.com|acquaintjokinglyscoring\.com|rmzsglng\.com|aivanta76\.com|bongacams2?\.com|gotpd\.me|superwebhub\.cyou|fozekikikiminu\.com|janusaent\.com|growcdnssedge\.com|saawsedge\.com|doppiocdn\.com|landing\.brazzersnetwork\.com|sacdnssedge\.com|kol88\.freeporn8\.com|Y1l0oxvJ\.js|nvdst\.com\/adx_|_pnuvid\.js|p2p\.init\.js|jquery\.shows2\.min\.js)/i;
 
   // Guard Element.prototype.setAttribute & HTMLAnchorElement.prototype.href setter against link-hijacking scripts
   // (e.g. SNSPAdManager rewriting $(this).attr('href', config.pop.adblockURL) when a user clicks a video/page link)
@@ -1517,6 +1540,8 @@
         id === 'vast-ad-block' ||
         id === 'vast-ad-block-button' ||
         id === 'ag-agegate' ||
+        id === 'rvt-element' ||
+        /^rvt-p2p/i.test(id) ||
         (node.classList &&
           (node.classList.contains('sldr_right_right') ||
             node.classList.contains('eroslider') ||
@@ -1530,7 +1555,9 @@
       const iframeSrc = String(node.src || node.getAttribute('src') || '');
       if (
         id === 'banner_iframe' ||
-        /(report\.error-report\.com|html-load\.com|adtng\.com|gsrv\.dev|aaaconnect\.info|awmdelivery\.com|onclckmn\.com|onclicka\.com|adsmediabox\.com|dreamserve\.dev|velvetloom\.net|smartfloralab\.com|realxxx\.com|traffichunt\.com|statserv\.net|\/ads\/prebid-ads)/i.test(
+        id === 'banner_iframe' ||
+        /^spot_video_ntv_/i.test(id) ||
+        /(report\.error-report\.com|html-load\.com|adtng\.com|gsrv\.dev|aaaconnect\.info|awmdelivery\.com|onclckmn\.com|onclicka\.com|adsmediabox\.com|dreamserve\.dev|velvetloom\.net|smartfloralab\.com|realxxx\.com|traffichunt\.com|statserv\.net|\/ads\/prebid-ads|\/player_right_ntv_|\/adx_iframe_|superwebhub\.cyou|fozekikikiminu\.com)/i.test(
           iframeSrc
         )
       ) {

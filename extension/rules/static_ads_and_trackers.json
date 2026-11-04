@@ -4169,5 +4169,194 @@
         "other"
       ]
     }
+  },
+  {
+    "id": 255,
+    "priority": 5,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||superwebhub.cyou^",
+      "resourceTypes": [
+        "script",
+        "sub_frame",
+        "image",
+        "xmlhttprequest",
+        "ping",
+        "other"
+      ]
+    }
+  },
+  {
+    "id": 256,
+    "priority": 5,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||fozekikikiminu.com^",
+      "resourceTypes": [
+        "script",
+        "sub_frame",
+        "image",
+        "xmlhttprequest",
+        "media",
+        "ping",
+        "other"
+      ]
+    }
+  },
+  {
+    "id": 257,
+    "priority": 5,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||janusaent.com^",
+      "resourceTypes": [
+        "script",
+        "sub_frame",
+        "image",
+        "xmlhttprequest",
+        "ping",
+        "other"
+      ]
+    }
+  },
+  {
+    "id": 258,
+    "priority": 5,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||growcdnssedge.com^",
+      "resourceTypes": [
+        "script",
+        "sub_frame",
+        "image",
+        "xmlhttprequest",
+        "media",
+        "other"
+      ]
+    }
+  },
+  {
+    "id": 259,
+    "priority": 5,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||saawsedge.com^",
+      "resourceTypes": [
+        "script",
+        "sub_frame",
+        "image",
+        "xmlhttprequest",
+        "media",
+        "other"
+      ]
+    }
+  },
+  {
+    "id": 260,
+    "priority": 5,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||doppiocdn.com^",
+      "resourceTypes": [
+        "script",
+        "sub_frame",
+        "image",
+        "xmlhttprequest",
+        "media",
+        "other"
+      ]
+    }
+  },
+  {
+    "id": 261,
+    "priority": 5,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||rvrpushserv.com^",
+      "resourceTypes": [
+        "script",
+        "sub_frame",
+        "image",
+        "xmlhttprequest",
+        "ping",
+        "other"
+      ]
+    }
+  },
+  {
+    "id": 262,
+    "priority": 5,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "/player_right_ntv_",
+      "resourceTypes": [
+        "sub_frame",
+        "script",
+        "xmlhttprequest",
+        "other"
+      ]
+    }
+  },
+  {
+    "id": 263,
+    "priority": 5,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "/adx_iframe_",
+      "resourceTypes": [
+        "sub_frame",
+        "script",
+        "xmlhttprequest",
+        "other"
+      ]
+    }
+  },
+  {
+    "id": 264,
+    "priority": 5,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "/jquery.shows2.min.js",
+      "resourceTypes": [
+        "script",
+        "xmlhttprequest",
+        "other"
+      ]
+    }
+  },
+  {
+    "id": 265,
+    "priority": 5,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "/ppdr/p2p.init.js",
+      "resourceTypes": [
+        "script",
+        "xmlhttprequest",
+        "other"
+      ]
+    }
   }
 ]
