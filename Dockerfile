@@ -7,9 +7,11 @@ WORKDIR /app
 COPY package.json ./
 COPY server.js sweepr-client.js outreach-seed-deepblock.json ./
 COPY website ./website
+COPY data ./data
+COPY scripts ./scripts
 COPY extension/rules ./extension/rules
 
-RUN mkdir -p /app/data && chown -R node:node /app/data /app/extension
+RUN mkdir -p /app/data/.cache && chown -R node:node /app/data /app/extension /app/scripts
 
 ENV NODE_ENV=production
 ENV PORT=3000
