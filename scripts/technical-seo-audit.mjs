@@ -58,6 +58,10 @@ for (const rf of websiteRootFiles) {
   existingCleanRoutes.add('/download/' + rf);
 }
 
+const seenTitles = new Map();
+const seenH1s = new Map();
+const seenTargetKeywords = new Map();
+
 for (const filePath of htmlFiles) {
   const content = fs.readFileSync(filePath, 'utf8');
   const rel = path.relative(WEBSITE_DIR, filePath).replace(/\\/g, '/');
@@ -105,6 +109,12 @@ for (const filePath of htmlFiles) {
     }
     if (decodedTitle.endsWith('...') || decodedTitle.endsWith('…')) {
       results.htmlWarnings.push({ file: rel, type: 'truncated_title', msg: `Title contains trailing ellipses: "${decodedTitle}"` });
+    }
+    const normTitleKey = decodedTitle.toLowerCase().replace(/\s+/g, ' ').trim();
+    if (seenTitles.has(normTitleKey)) {
+      results.htmlWarnings.push({ file: rel, type: 'duplicate_title', msg: `Duplicate <title> with ${seenTitles.get(normTitleKey)}: "${decodedTitle}"` });
+    } else {
+      seenTitles.set(normTitleKey, rel);
     }
   }
 
@@ -182,12 +192,31 @@ for (const filePath of htmlFiles) {
     results.htmlWarnings.push({ file: rel, type: 'missing_preconnect', msg: 'Missing preconnect resource hints for PageSpeed' });
   }
 
-  // H1 tag
+  // H1 tag & Cannibalization checks
   const h1Matches = content.match(/<h1[^>]*>([\s\S]*?)<\/h1>/gi) || [];
   if (h1Matches.length === 0) {
     results.htmlIssues.push({ file: rel, type: 'missing_h1', msg: 'Missing <h1> tag' });
   } else if (h1Matches.length > 1) {
     results.htmlWarnings.push({ file: rel, type: 'multiple_h1', msg: `Contains ${h1Matches.length} <h1> tags` });
+  } else {
+    const h1Text = h1Matches[0].replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().toLowerCase();
+    if (h1Text.length > 10) {
+      if (seenH1s.has(h1Text)) {
+        results.htmlWarnings.push({ file: rel, type: 'duplicate_h1', msg: `Duplicate <h1> with ${seenH1s.get(h1Text)}` });
+      } else {
+        seenH1s.set(h1Text, rel);
+      }
+    }
+  }
+
+  const kwMatch = content.match(/data-target-keyword=["']([^"']+)["']/i);
+  if (kwMatch && kwMatch[1]) {
+    const kwNorm = kwMatch[1].trim().toLowerCase();
+    if (seenTargetKeywords.has(kwNorm)) {
+      results.htmlWarnings.push({ file: rel, type: 'keyword_cannibalization', msg: `Duplicate data-target-keyword "${kwNorm}" with ${seenTargetKeywords.get(kwNorm)}` });
+    } else {
+      seenTargetKeywords.set(kwNorm, rel);
+    }
   }
 
   // Live MV3 Rule Proof check on indexable PSEO Pillar pages
@@ -197,6 +226,12 @@ for (const filePath of htmlFiles) {
         file: rel,
         type: 'missing_live_rule_proof',
         msg: 'Indexable PSEO Pillar page is missing #deepblock-live-rule-proof telemetry section'
+      });
+    } else if (!/#\d+/.test(content)) {
+      results.htmlWarnings.push({
+        file: rel,
+        type: 'empty_live_rule_proof',
+        msg: '#deepblock-live-rule-proof section contains 0 verified DNR rule rows'
       });
     }
   }
@@ -307,6 +342,7 @@ for (const filePath of htmlFiles) {
 
 // Check for orphan indexable pages (0 incoming internal links)
 let orphanPagesCount = 0;
+
 for (const filePath of htmlFiles) {
   const content = fs.readFileSync(filePath, 'utf8');
   if (/meta\s+name=["']robots["']\s+content=["'][^"']*noindex/i.test(content)) continue;
@@ -318,6 +354,27 @@ for (const filePath of htmlFiles) {
   }
 }
 console.log(`[AUDIT] Orphan indexable pages (0 incoming internal links): ${orphanPagesCount}`);
+
+// Verify Keyword Opportunity Matrix Connectivity (>= 3 incoming internal links on published keyword pages)
+const kwMatrixPath = path.join(ROOT_DIR, 'data', 'keyword-opportunity-matrix.json');
+if (fs.existsSync(kwMatrixPath)) {
+  try {
+    const kwMatrix = JSON.parse(fs.readFileSync(kwMatrixPath, 'utf8'));
+    for (const opp of kwMatrix.opportunities || []) {
+      if (!opp.relPath || !opp.targetRoute) continue;
+      const absOppPath = path.join(WEBSITE_DIR, opp.relPath);
+      if (!fs.existsSync(absOppPath)) continue;
+      const inLinks = incomingInternalLinks.get(opp.targetRoute) || 0;
+      if (inLinks < 3) {
+        results.htmlWarnings.push({
+          file: opp.relPath,
+          type: 'underlinked_keyword_page',
+          msg: `Published keyword page ${opp.targetRoute} has only ${inLinks} incoming internal links (minimum 3 required)`
+        });
+      }
+    }
+  } catch {}
+}
 
 // Check sitemap.xml (+ partitioned sitemap-sites.xml)
 const sitemapPath = path.join(WEBSITE_DIR, 'sitemap.xml');

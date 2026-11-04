@@ -5252,6 +5252,105 @@ function getCachedDynamicDelta() {
     }
   }
 
+  // Automated Transactional Keyword Research & Low-Competition Opportunity Matrix API
+  if (pathname === '/api/seo/keyword-opportunities' || pathname === '/api/seo/keyword-opportunities/refresh') {
+    const matrixPath = path.join(__dirname, 'data', 'keyword-opportunity-matrix.json');
+    const auditReportPath = path.join(__dirname, 'data', 'daily-seo-audit-report.json');
+
+    if (req.method === 'POST' && pathname === '/api/seo/keyword-opportunities/refresh') {
+      if (!checkRateLimit(req, 'seo_kw_refresh', 10, 60000)) {
+        return sendJson(res, 429, { ok: false, error: 'rate_limit_exceeded' });
+      }
+      if (!hasBlockedSitesAdminAuth(req)) {
+        return sendJson(res, 401, { ok: false, error: 'unauthorized', message: 'Administrative authentication required.' });
+      }
+      if (global.__kwEngineRunning && Date.now() - global.__kwEngineRunning < 60000) {
+        return sendJson(res, 202, { ok: true, status: 'already_running' });
+      }
+      global.__kwEngineRunning = Date.now();
+      const { execFile } = require('child_process');
+      execFile(
+        process.execPath,
+        [path.join(__dirname, 'scripts', 'keyword-research-engine.mjs')],
+        { timeout: 45000 },
+        () => {
+          global.__kwEngineRunning = 0;
+          global.__kwMatrixCache = null;
+        }
+      );
+      return sendJson(res, 202, { ok: true, status: 'refresh_triggered' });
+    }
+
+    if ((req.method === 'GET' || req.method === 'HEAD') && pathname === '/api/seo/keyword-opportunities') {
+      if (!checkRateLimit(req, 'seo_kw_matrix', 60, 60000)) {
+        return sendJson(res, 429, { ok: false, error: 'rate_limit_exceeded' });
+      }
+      try {
+        if (!fs.existsSync(matrixPath)) {
+          return sendJson(res, 404, { ok: false, error: 'matrix_not_generated_yet' });
+        }
+        const stat = fs.statSync(matrixPath);
+        if (!global.__kwMatrixCache || global.__kwMatrixCache.mtimeMs !== stat.mtimeMs) {
+          global.__kwMatrixCache = {
+            mtimeMs: stat.mtimeMs,
+            data: JSON.parse(fs.readFileSync(matrixPath, 'utf8'))
+          };
+        }
+        const matrix = global.__kwMatrixCache.data || {};
+        const clusterFilter = (parsedUrl.searchParams.get('cluster') || '').trim().toLowerCase();
+        const pillarFilter = (parsedUrl.searchParams.get('pillar') || '').trim().toUpperCase();
+        const statusFilter = (parsedUrl.searchParams.get('status') || '').trim().toLowerCase();
+        const maxKd = Number(parsedUrl.searchParams.get('max_kd') || 100);
+        const minScore = Number(parsedUrl.searchParams.get('min_score') || 0);
+        const limit = Math.max(1, Math.min(250, Number(parsedUrl.searchParams.get('limit') || 50)));
+
+        let items = Array.isArray(matrix.opportunities) ? matrix.opportunities : [];
+        items = items
+          .map((opp) => {
+            const isPub = Boolean(opp.relPath && fs.existsSync(path.join(WEBSITE_DIR, opp.relPath)));
+            return {
+              ...opp,
+              isPublishedOnDisk: isPub,
+              status: isPub ? 'published' : (opp.status || 'approved_for_generation')
+            };
+          })
+          .filter((opp) => {
+            if (clusterFilter && opp.cluster !== clusterFilter) return false;
+            if (pillarFilter && opp.pillar !== pillarFilter) return false;
+            if (statusFilter && statusFilter !== 'all' && opp.status !== statusFilter) return false;
+            if (!Number.isNaN(maxKd) && (opp.metrics?.estimatedKD ?? 0) > maxKd) return false;
+            if (!Number.isNaN(minScore) && (opp.metrics?.transactionalScore ?? 0) < minScore) return false;
+            return true;
+          });
+
+        let auditStatus = null;
+        if (fs.existsSync(auditReportPath)) {
+          try {
+            const ar = JSON.parse(fs.readFileSync(auditReportPath, 'utf8'));
+            auditStatus = {
+              generatedAt: ar.generatedAt,
+              status: ar.status,
+              pageSpeedCwvAudit: ar.pageSpeedCwvAudit
+            };
+          } catch {}
+        }
+
+        return sendJson(res, 200, {
+          ok: true,
+          generatedAt: matrix.generatedAt,
+          engineVersion: matrix.engineVersion,
+          summary: matrix.summary,
+          auditStatus,
+          filteredCount: items.length,
+          opportunities: items.slice(0, limit),
+          ctrEnrichmentQueue: Array.isArray(matrix.ctrEnrichmentQueue) ? matrix.ctrEnrichmentQueue.slice(0, 15) : []
+        });
+      } catch (err) {
+        return sendJson(res, 500, { ok: false, error: 'matrix_read_failed', message: String(err?.message || err) });
+      }
+    }
+  }
+
   if ((req.method === 'GET' || req.method === 'HEAD') && (parsedUrl.pathname === '/apple-app-site-association' || parsedUrl.pathname === '/.well-known/apple-app-site-association')) {
     const aasaBody = JSON.stringify({ applinks: { apps: [], details: [] }, webcredentials: { apps: ['SWEEPR.sweeprdeepblock.com'] } });
     res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'public, max-age=86400', 'X-Robots-Tag': 'noindex, nofollow', 'X-Content-Type-Options': 'nosniff' });
@@ -5645,6 +5744,26 @@ if (require.main === module) {
     altServer.on('error', () => {});
     altServer.listen(altPort, '0.0.0.0');
   }
+  // Non-blocking 12-hour background check to keep the Keyword Opportunity Matrix fresh (<24h old)
+  setInterval(() => {
+    try {
+      const matrixFile = path.join(__dirname, 'data', 'keyword-opportunity-matrix.json');
+      const needsRefresh = !fs.existsSync(matrixFile) || Date.now() - fs.statSync(matrixFile).mtimeMs > 24 * 60 * 60 * 1000;
+      if (needsRefresh && !global.__kwEngineRunning) {
+        global.__kwEngineRunning = Date.now();
+        const { execFile } = require('child_process');
+        execFile(
+          process.execPath,
+          [path.join(__dirname, 'scripts', 'keyword-research-engine.mjs')],
+          { timeout: 45000 },
+          () => {
+            global.__kwEngineRunning = 0;
+            global.__kwMatrixCache = null;
+          }
+        );
+      }
+    } catch {}
+  }, 12 * 60 * 60 * 1000).unref();
 }
 
 module.exports = server;

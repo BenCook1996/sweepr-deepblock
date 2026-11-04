@@ -6,6 +6,8 @@
   "scripts": {
     "start": "node server.js",
     "seo:daily": "node scripts/daily-50-seo-pages.mjs 0",
+    "seo:keywords": "node scripts/keyword-research-engine.mjs",
+    "seo:daily-audit": "node scripts/daily-seo-pagespeed-audit.mjs",
     "seo:intent-miner": "node scripts/search-intent-gap-miner.mjs",
     "seo:drip": "node scripts/deepblock-seo-drip.mjs 300",
     "seo:audit": "node scripts/technical-seo-audit.mjs",

@@ -79,7 +79,7 @@ const INITIAL_GSC_TITLE_SURGERY_PATHS = [
   '/solutions/twitch-vod-replay-block-video-ads'
 ];
 
-function loadEnrichmentState() {
+export function loadEnrichmentState() {
   let state = {
     cooldownDays: 14,
     lastRunAt: null,
@@ -115,7 +115,7 @@ export function canUpdatePillarTitle(urlPath, state = loadEnrichmentState()) {
   return elapsed >= FOURTEEN_DAYS_MS;
 }
 
-function loadLiveRules() {
+export function loadLiveRules() {
   const staticRaw = fs.existsSync(STATIC_RULES_PATH)
     ? JSON.parse(fs.readFileSync(STATIC_RULES_PATH, 'utf8'))
     : [];
@@ -206,7 +206,7 @@ function selectRulesForPillar(urlPath, slug, cluster, rulesData) {
   });
 }
 
-function buildProofSectionHtml(urlPath, slug, cluster, rulesData) {
+export function buildProofSectionHtml(urlPath, slug, cluster, rulesData) {
   const pickedRules = selectRulesForPillar(urlPath, slug, cluster, rulesData);
   const h = hashSlug(urlPath);
   const avgEvalUs = 14 + (h % 19); // 14-32 microseconds DNR evaluation
@@ -252,9 +252,9 @@ function buildProofSectionHtml(urlPath, slug, cluster, rulesData) {
     </section>`;
 }
 
-function runLiveProofEnrichment() {
-  const limitArg = process.argv[2] && !process.argv[2].startsWith('--') ? Number(process.argv[2]) : 285;
-  const forceProof = process.argv.includes('--force-proof');
+export function runLiveProofEnrichment(customLimit = null, customForce = false) {
+  const limitArg = customLimit !== null ? customLimit : (process.argv[2] && !process.argv[2].startsWith('--') ? Number(process.argv[2]) : 500);
+  const forceProof = customForce || process.argv.includes('--force-proof');
 
   const state = loadEnrichmentState();
   const rulesData = loadLiveRules();
@@ -340,4 +340,6 @@ function runLiveProofEnrichment() {
   );
 }
 
-runLiveProofEnrichment();
+if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(fileURLToPath(import.meta.url))) {
+  runLiveProofEnrichment();
+}

@@ -14,7 +14,9 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
+import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
+import { loadLiveRules, buildProofSectionHtml } from './enrich-pillars-with-live-proof.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = path.resolve(__dirname, '..');
@@ -24,7 +26,9 @@ const LLMS_PATH = path.join(WEBSITE_DIR, 'llms.txt');
 const LLMS_FULL_PATH = path.join(WEBSITE_DIR, 'llms-full.txt');
 const INDEXING_QUEUE_PATH = path.join(WEBSITE_DIR, 'indexing-queue.json');
 const DAILY_STATE_PATH = path.join(WEBSITE_DIR, 'daily-seo-pages-state.json');
+const KEYWORD_MATRIX_PATH = path.join(ROOT_DIR, 'data', 'keyword-opportunity-matrix.json');
 const INDEXNOW_KEY = '9a4e7b2c5d8f1a3e6b9c0d4f7a2e5b8c';
+const LIVE_RULES_DATA = loadLiveRules();
 
 const PLATFORMS = [
   { slug: 'youtube-chrome-mv3', shortName: 'YouTube (Chrome MV3)', name: 'YouTube on Google Chrome (Manifest V3)', category: 'Video Streaming', issue: 'Unskippable pre-roll ads, mid-roll interruptions, and anti-adblock warning modals' },
@@ -684,27 +688,77 @@ const GUIDES = [
   {"slug":"how-to-block-twitch-embedded-stream-takeovers-fandom","shortTitle":"Block Fandom Twitch Embeds","title":"How to Block Embedded Twitch Stream Takeovers on Fandom & Gaming Wikis (2026)","h1":"How SWEEPR DeepBlock Strips Autoplay Twitch Stream Embeds From Fandom Wikis","summary":"Fandom and gaming wikis embed background Twitch streams to inflate viewer counts, draining CPU and RAM. SWEEPR DeepBlock blocks embedded stream takeovers automatically."}
 ];
 
+function loadApprovedKeywordBlueprints() {
+  if (!fs.existsSync(KEYWORD_MATRIX_PATH)) return [];
+  try {
+    const raw = JSON.parse(fs.readFileSync(KEYWORD_MATRIX_PATH, 'utf8'));
+    const opps = Array.isArray(raw?.opportunities) ? raw.opportunities : [];
+    return opps.filter(
+      (opp) =>
+        opp &&
+        opp.targetRoute &&
+        opp.relPath &&
+        opp.pageBlueprint &&
+        ['solutions', 'setup', 'vs', 'guides'].includes(opp.cluster) &&
+        opp.cannibalization?.status === 'clean' &&
+        (opp.metrics?.estimatedKD ?? 50) <= 45 &&
+        (opp.metrics?.transactionalScore ?? 0) >= 65
+    );
+  } catch {
+    return [];
+  }
+}
+
 function buildPool() {
   const pool = [];
+  const seenUrls = new Set();
+
+  // 1. Prepend approved Low-Competition Transactional Keyword Blueprints first
+  const kwBlueprints = loadApprovedKeywordBlueprints();
+  for (const opp of kwBlueprints) {
+    if (seenUrls.has(opp.targetRoute)) continue;
+    seenUrls.add(opp.targetRoute);
+    pool.push({
+      isKeywordBlueprint: true,
+      kwOpp: opp,
+      cluster: opp.cluster,
+      relPath: opp.relPath,
+      urlPath: opp.targetRoute
+    });
+  }
+
+  // 2. Append static matrix candidates
   for (const p of PLATFORMS) {
     for (const prob of PROBLEMS) {
+      const urlPath = `/solutions/${p.slug}-${prob.slug}`;
+      if (seenUrls.has(urlPath)) continue;
+      seenUrls.add(urlPath);
       pool.push({
         cluster: 'solutions',
         relPath: `solutions/${p.slug}-${prob.slug}.html`,
-        urlPath: `/solutions/${p.slug}-${prob.slug}`,
+        urlPath,
         p,
         prob
       });
     }
   }
   for (const b of SETUP_BROWSERS) {
-    pool.push({ cluster: 'setup', relPath: `setup/${b.slug}.html`, urlPath: `/setup/${b.slug}`, b });
+    const urlPath = `/setup/${b.slug}`;
+    if (seenUrls.has(urlPath)) continue;
+    seenUrls.add(urlPath);
+    pool.push({ cluster: 'setup', relPath: `setup/${b.slug}.html`, urlPath, b });
   }
   for (const c of COMPETITORS) {
-    pool.push({ cluster: 'vs', relPath: `vs/${c.slug}.html`, urlPath: `/vs/${c.slug}`, c });
+    const urlPath = `/vs/${c.slug}`;
+    if (seenUrls.has(urlPath)) continue;
+    seenUrls.add(urlPath);
+    pool.push({ cluster: 'vs', relPath: `vs/${c.slug}.html`, urlPath, c });
   }
   for (const g of GUIDES) {
-    pool.push({ cluster: 'guides', relPath: `guides/${g.slug}.html`, urlPath: `/guides/${g.slug}`, g });
+    const urlPath = `/guides/${g.slug}`;
+    if (seenUrls.has(urlPath)) continue;
+    seenUrls.add(urlPath);
+    pool.push({ cluster: 'guides', relPath: `guides/${g.slug}.html`, urlPath, g });
   }
   return pool;
 }
@@ -734,6 +788,9 @@ function fitMetaDescription(candidates, fallbackTopic = 'SWEEPR DeepBlock') {
 }
 
 function getCandLinkTitle(c) {
+  if (c.isKeywordBlueprint && c.kwOpp?.pageBlueprint) {
+    return c.kwOpp.pageBlueprint.shortLinkTitle || c.kwOpp.pageBlueprint.title.replace(/ \|.*$/, '');
+  }
   if (c.cluster === 'solutions') {
     const shortP = c.p.shortName || c.p.name.split(' (')[0];
     return `${shortP}: ${c.prob.shortTitle.replace(' (2026)', '')}`;
@@ -748,6 +805,9 @@ function getCandLinkTitle(c) {
 }
 
 function getCandLinkBadge(c) {
+  if (c.isKeywordBlueprint && c.kwOpp?.pageBlueprint) {
+    return c.kwOpp.pageBlueprint.linkBadge || '2026 Verified Guide';
+  }
   if (c.cluster === 'solutions') return `${c.p.category} • ${c.prob.perfStat}`;
   if (c.cluster === 'setup') return `Browser Setup • ${c.b.os}`;
   if (c.cluster === 'vs') return '2026 Benchmark Comparison';
@@ -763,7 +823,80 @@ function renderHtml(cand, existingPool = [], existingIdx = 0) {
   let body = '';
   let faqs = [];
 
-  if (cand.cluster === 'solutions') {
+  if (cand.isKeywordBlueprint && cand.kwOpp?.pageBlueprint) {
+    const opp = cand.kwOpp;
+    const bp = opp.pageBlueprint;
+    title = bp.title;
+    desc = fitMetaDescription([bp.metaDescription], bp.shortLinkTitle || opp.keyword);
+    h1 = bp.h1;
+    lead = `${bp.painPointIssue}. Verified for 2026 Chromium & Firefox Manifest V3 with 242 C++ declarativeNetRequest rules (${bp.perfStat}), sub-50ms automatic cookie rejection, and up to 62% lower multi-tab RAM overhead.`;
+    const secKeywords = Array.isArray(opp.secondaryKeywords) ? opp.secondaryKeywords : [];
+    const widget = bp.recommendedToolWidget || {
+      toolRoute: '/tools/is-my-adblocker-working',
+      ctaHeadline: 'Test Your Browser Against 8 Live MV3 Ad & Tracker Vectors',
+      ctaButton: 'Run Free 8/8 MV3 Diagnostic →'
+    };
+    body = `
+    <h2>Why Standard Ad Blockers Struggle With "${escapeAttr(opp.keyword)}" in 2026</h2>
+    <p>When searching for <strong>${escapeAttr(opp.keyword)}</strong>, most legacy browser extensions fail because static Manifest V2 filter lists or CSS-only hiding rules are flagged by modern client-side anti-adblock scripts, leave <code>body { overflow: hidden }</code> scroll-locks intact, or charge surprise £99/yr auto-renewal fees.</p>
+    <p><strong>SWEEPR DeepBlock v1.2.7</strong> solves this natively using compiled C++ <code>declarativeNetRequest</code> rules (<strong>${escapeAttr(bp.perfStat)}</strong> average match latency) paired with local-first DeepStealth player and CMP sanitization.</p>
+
+    <div style="margin:22px 0;padding:18px 20px;background:#0f172a;border:1px solid #334155;border-left:4px solid #10b981;border-radius:10px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+      <div>
+        <div style="font-size:0.75rem;color:#10b981;font-weight:800;text-transform:uppercase;letter-spacing:0.05em;">Free Interactive Diagnostic Tool</div>
+        <div style="font-size:1rem;font-weight:700;color:#f8fafc;margin-top:2px;">${escapeAttr(widget.ctaHeadline)}</div>
+      </div>
+      <a href="${escapeAttr(widget.toolRoute)}" style="background:#10b981;color:#042f2e;font-weight:800;padding:9px 16px;border-radius:8px;text-decoration:none;font-size:0.88rem;">${escapeAttr(widget.ctaButton)}</a>
+    </div>
+
+    <h2>2026 Verification Benchmark: Legacy Extensions vs. SWEEPR DeepBlock v1.2.7</h2>
+    <div style="overflow-x:auto;margin:18px 0;">
+      <table style="width:100%;border-collapse:collapse;background:#111827;border:1px solid #1e293b;border-radius:10px;overflow:hidden;font-size:0.93rem;">
+        <thead>
+          <tr style="background:#1e293b;color:#f8fafc;text-align:left;">
+            <th style="padding:12px 14px;">Protection &amp; Pricing Metric</th>
+            <th style="padding:12px 14px;">Legacy / Basic Extensions</th>
+            <th style="padding:12px 14px;color:#10b981;">SWEEPR DeepBlock v1.2.7</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-top:1px solid #1e293b;">
+            <td style="padding:10px 14px;"><strong>Primary Outcome (${escapeAttr(bp.shortLinkTitle)})</strong></td>
+            <td style="padding:10px 14px;color:#94a3b8;">${escapeAttr(bp.beforeStat)}</td>
+            <td style="padding:10px 14px;color:#10b981;font-weight:700;">${escapeAttr(bp.afterStat)}</td>
+          </tr>
+          <tr style="border-top:1px solid #1e293b;">
+            <td style="padding:10px 14px;"><strong>Manifest V3 Anti-Detection Score</strong></td>
+            <td style="padding:10px 14px;color:#94a3b8;">2/8 to 5/8 (Frequently Detected)</td>
+            <td style="padding:10px 14px;color:#10b981;font-weight:700;">8/8 Verified (<a href="/test-lab" style="color:#34d399;">Live Test Lab</a>)</td>
+          </tr>
+          <tr style="border-top:1px solid #1e293b;">
+            <td style="padding:10px 14px;"><strong>GDPR / CMP Cookie Auto-Rejector</strong></td>
+            <td style="padding:10px 14px;color:#94a3b8;">CSS Hide Only (Breaks Scroll)</td>
+            <td style="padding:10px 14px;color:#10b981;font-weight:700;">&lt;50ms True "Reject All" (150+ CMPs)</td>
+          </tr>
+          <tr style="border-top:1px solid #1e293b;">
+            <td style="padding:10px 14px;"><strong>Annual Pricing &amp; Ecosystem Bundle</strong></td>
+            <td style="padding:10px 14px;color:#94a3b8;">Up to £99–£119/yr Auto-Renewal</td>
+            <td style="padding:10px 14px;color:#10b981;font-weight:700;">£29.99/yr Pro or £89.99/yr Complete Suite</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    ${secKeywords.length > 0 ? `<h2>Related Scenarios Covered (${secKeywords.slice(0, 2).map((s) => escapeAttr(s)).join(' &amp; ')})</h2>
+    <ul>
+      ${secKeywords.map((sk) => `<li><strong>${escapeAttr(sk)}:</strong> Handled automatically by SWEEPR DeepBlock's local-first DNR rule engine and OTA delta updates with zero manual filter configuration.</li>`).join('\n      ')}
+    </ul>` : ''}
+
+    <h2>3-Step Setup &amp; Verification</h2>
+    <ol>
+      <li><strong>Install SWEEPR DeepBlock v1.2.7:</strong> Download from <a href="/download">sweeprdeepblock.com/download</a> for Chrome, Edge, Firefox, Brave, Safari, Opera, Vivaldi, Thorium, Floorp, or Arc.</li>
+      <li><strong>Run the Live Diagnostic:</strong> Open <a href="${escapeAttr(widget.toolRoute)}">${escapeAttr(widget.toolRoute)}</a> or <a href="/test-lab">/test-lab</a> to verify 8/8 protection in real time.</li>
+      <li><strong>Upgrade to Pro or Complete Security Suite:</strong> Unlock all 6 browser modules for <a href="/order?plan=annual">£29.99/yr</a> or bundle <strong>DeepBlock Pro + Sweepr VPN + Sweepr Cleaner + RAM Tamer</strong> for <a href="/order?plan=suite_annual">£89.99/yr (Save 45%)</a>.</li>
+    </ol>`;
+    faqs = Array.isArray(bp.customFaqs) && bp.customFaqs.length > 0 ? bp.customFaqs : [];
+  } else if (cand.cluster === 'solutions') {
     const { p, prob } = cand;
     const shortP = p.shortName || p.name.split(' (')[0];
     title = `${shortP}: ${prob.shortTitle} | SWEEPR DeepBlock`;
@@ -1023,6 +1156,13 @@ function renderHtml(cand, existingPool = [], existingIdx = 0) {
       }
     }
   }
+  const slug = cand.urlPath.split('/').filter(Boolean).pop() || 'pillar';
+  const liveProofSectionHtml = buildProofSectionHtml(cand.urlPath, slug, cand.cluster, LIVE_RULES_DATA);
+  const targetKwAttr =
+    cand.isKeywordBlueprint && cand.kwOpp?.keyword
+      ? ` data-target-keyword="${escapeAttr(cand.kwOpp.keyword)}" data-opportunity-score="${escapeAttr(String(cand.kwOpp.metrics?.opportunityScore ?? ''))}"`
+      : '';
+
   const relatedSectionHtml = relatedLinks.length > 0 ? `
     <section style="margin-top:36px;padding-top:24px;border-top:1px solid #1e293b;">
       <h2 style="font-size:1.3rem;margin:0 0 8px;">Related Browser Setups, Platform Solutions &amp; Guides</h2>
@@ -1086,8 +1226,8 @@ function renderHtml(cand, existingPool = [], existingIdx = 0) {
       '@type': 'AggregateOffer',
       priceCurrency: 'GBP',
       lowPrice: '1.99',
-      highPrice: '59.99',
-      offerCount: '3',
+      highPrice: '89.99',
+      offerCount: '4',
       validFrom: '2026-01-01',
       priceValidUntil: '2027-12-31',
       availability: 'https://schema.org/InStock',
@@ -1136,7 +1276,7 @@ function renderHtml(cand, existingPool = [], existingIdx = 0) {
   <script type="application/ld+json">${JSON.stringify(appSchema)}</script>
   <link rel="stylesheet" href="/style.css" />
   <!-- Google tag (gtag.js) - Sweepr Deepblock -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-01MNBQSL9K"></script>
+  <script async src="/metrics/js?id=G-01MNBQSL9K"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
@@ -1154,8 +1294,8 @@ function renderHtml(cand, existingPool = [], existingIdx = 0) {
       <a href="/order?plan=annual" style="background:#10b981;color:#042f2e;font-weight:700;padding:8px 16px;border-radius:8px;text-decoration:none;">Get SWEEPR DeepBlock Pro &rarr;</a>
     </nav>
   </header>
-  <main style="max-width:960px;margin:0 auto;padding:42px 24px;">
-    <span style="display:inline-block;background:rgba(16,185,129,0.15);color:#10b981;padding:4px 12px;border-radius:999px;font-size:0.8rem;font-weight:700;margin-bottom:12px;">SWEEPR DeepBlock v1.2.2 • 2026 Verified Guide</span>
+  <main${targetKwAttr} style="max-width:960px;margin:0 auto;padding:42px 24px;">
+    <span style="display:inline-block;background:rgba(16,185,129,0.15);color:#10b981;padding:4px 12px;border-radius:999px;font-size:0.8rem;font-weight:700;margin-bottom:12px;">SWEEPR DeepBlock v1.2.7 • 2026 Verified Guide</span>
     <h1 style="font-size:2.1rem;line-height:1.22;margin:0 0 16px;">${h1}</h1>
     <p style="font-size:1.1rem;color:#94a3b8;margin-bottom:28px;">${lead}</p>
     ${body}
@@ -1164,14 +1304,15 @@ function renderHtml(cand, existingPool = [], existingIdx = 0) {
     <div style="margin-top:36px;padding:24px;background:#111827;border:1px solid #10b981;border-radius:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;">
       <div style="max-width:540px;">
         <strong style="font-size:1.1rem;">Zero Ads. Zero Cookie Pop-Ups. Cut Browser RAM by 62%.</strong>
-        <div style="color:#94a3b8;font-size:0.92rem;margin-top:4px;">Unlock all 6 Pro protection modules across 5 devices with <strong>SWEEPR DeepBlock Pro</strong> (£9.99/mo or save 50% on the <strong>£59.99/yr Annual Plan — £4.99/mo</strong>). Backed by our money-back guarantee.</div>
+        <div style="color:#94a3b8;font-size:0.92rem;margin-top:4px;">Unlock all 6 Pro protection modules across 4 devices with <strong>SWEEPR DeepBlock Pro</strong> (<strong>£29.99/yr Annual Plan</strong> — £2.50/mo eq.) or get the <strong>Sweepr Complete Security Suite</strong> (DeepBlock Pro + VPN + Cleaner + RAM Tamer for <strong>£89.99/yr</strong>). Backed by our 30-day money-back guarantee.</div>
       </div>
       <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
-        <a href="/order?plan=annual" style="background:#10b981;color:#042f2e;font-weight:800;padding:11px 20px;border-radius:8px;text-decoration:none;">Unlock Pro (£4.99/mo Annual) &rarr;</a>
-        <a href="/pricing" style="background:#1e293b;color:#f8fafc;border:1px solid #334155;font-weight:700;padding:10px 18px;border-radius:8px;text-decoration:none;">Compare Plans</a>
+        <a href="/order?plan=annual" style="background:#10b981;color:#042f2e;font-weight:800;padding:11px 20px;border-radius:8px;text-decoration:none;">Unlock Pro (£29.99/yr) &rarr;</a>
+        <a href="/order?plan=suite_annual" style="background:#f59e0b;color:#090d16;font-weight:800;padding:10px 18px;border-radius:8px;text-decoration:none;">Complete Suite (£89.99/yr) &rarr;</a>
         <a href="/download" style="color:#94a3b8;font-size:0.85rem;text-decoration:underline;padding:4px 8px;">Install Browser Extension</a>
       </div>
     </div>
+    ${liveProofSectionHtml}
     ${relatedSectionHtml}
     <footer style="margin-top:36px;padding-top:20px;border-top:1px solid #1e293b;color:#64748b;font-size:0.8rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;">
       <div>Publisher: <strong>SWEEPR</strong> (UK) • Requirements: Windows 10/11, macOS, iOS, Android (Chrome, Edge, Firefox, Safari, Brave, Opera) • Version 1.2.7 • No Browsing History Logged</div>
@@ -1180,6 +1321,8 @@ function renderHtml(cand, existingPool = [], existingIdx = 0) {
         <a href="/test-lab" style="color:#94a3b8;text-decoration:none;">8/8 Test Lab</a>
         <a href="/tools" style="color:#94a3b8;text-decoration:none;">Free Privacy Tools</a>
         <a href="/vs/total-adblock" style="color:#94a3b8;text-decoration:none;">vs Total Adblock</a>
+        <a href="/stories" style="color:#94a3b8;text-decoration:none;">Customer Stories</a>
+        <a href="/order?plan=suite_annual" style="color:#f59e0b;text-decoration:none;font-weight:700;">Complete Suite (£89.99/yr)</a>
         <a href="https://sweeprcleaner.com?utm_source=sweeprdeepblock&amp;utm_medium=footer" rel="noopener" style="color:#10b981;text-decoration:none;font-weight:600;">Sweepr Cleaner</a>
         <a href="https://sweeprvpn.com?utm_source=sweeprdeepblock&amp;utm_medium=footer" rel="noopener" style="color:#10b981;text-decoration:none;font-weight:600;">Sweepr VPN</a>
         <a href="/support" style="color:#94a3b8;text-decoration:none;">How to Uninstall / Cancel</a>
@@ -1193,9 +1336,12 @@ function renderHtml(cand, existingPool = [], existingIdx = 0) {
 </html>`;
 }
 
-async function runDaily50DeepBlockPages(targetCount = 0, force = false) {
+export async function runDaily50DeepBlockPages(targetCount = 0, force = false) {
   const todayStr = new Date().toISOString().slice(0, 10);
   const allowCartesian = process.argv.includes('--allow-cartesian');
+  const allowBulk = process.argv.includes('--allow-bulk');
+  const effectiveTargetCount = allowBulk ? targetCount : Math.min(targetCount, 10);
+
   let state = { lastRunDate: null, totalGenerated: 0, batches: [] };
   if (fs.existsSync(DAILY_STATE_PATH)) {
     try { state = { ...state, ...JSON.parse(fs.readFileSync(DAILY_STATE_PATH, 'utf8')) }; } catch {}
@@ -1208,27 +1354,40 @@ async function runDaily50DeepBlockPages(targetCount = 0, force = false) {
   const pool = buildPool();
   let reRenderedCount = 0;
 
-  // Guardrail (GSC Crawl-Budget Protection): Only allow generating new pillar pages (setup, vs, guides,
-  // or primary platform flagship '-block-video-ads' solutions) unless --allow-cartesian is explicitly set.
+  // Guardrail (GSC Crawl-Budget Protection): Allow verified keyword blueprints, setup, vs, guides,
+  // or primary platform flagship '-block-video-ads' solutions unless --allow-cartesian is explicitly set.
   const isPillarCandidate = (cand) => {
+    if (cand.isKeywordBlueprint) return true;
     if (cand.cluster === 'setup' || cand.cluster === 'vs' || cand.cluster === 'guides') return true;
     if (cand.urlPath && cand.urlPath.endsWith('-block-video-ads')) return true;
     return allowCartesian;
   };
 
   const selected = [];
-  if (targetCount > 0) {
+  if (effectiveTargetCount > 0) {
     for (const cand of pool) {
       if (!isPillarCandidate(cand)) continue;
       const absPath = path.join(WEBSITE_DIR, cand.relPath);
       if (!fs.existsSync(absPath)) {
         selected.push(cand);
-        if (selected.length >= targetCount) break;
+        if (selected.length >= effectiveTargetCount) break;
       }
     }
   }
   const selectedSet = new Set(selected.map((c) => c.urlPath));
-  const existingPool = pool.filter((c) => fs.existsSync(path.join(WEBSITE_DIR, c.relPath)) || selectedSet.has(c.urlPath));
+
+  // Build indexablePool strictly from indexable Pillar pages on disk (excluding consolidated noindex pages) + newly selected pages
+  const existingPool = pool.filter((c) => {
+    if (selectedSet.has(c.urlPath)) return true;
+    const absPath = path.join(WEBSITE_DIR, c.relPath);
+    if (!fs.existsSync(absPath)) return false;
+    try {
+      const html = fs.readFileSync(absPath, 'utf8');
+      return !/<meta\s+name=["']robots["']\s+content=["'][^"']*noindex/i.test(html);
+    } catch {
+      return false;
+    }
+  });
   const existingIdxMap = new Map(existingPool.map((c, i) => [c.urlPath, i]));
 
   // If force or regenerate-all is passed, re-render existing files while preserving consolidated noindex/canonical tags
@@ -1260,10 +1419,62 @@ async function runDaily50DeepBlockPages(targetCount = 0, force = false) {
   }
 
   const newUrls = [];
+  let donorLinksPatched = 0;
+
+  // Collect existing indexable donor Pillar files on disk for bidirectional anti-orphan linking
+  const donorCandidates = existingPool.filter(
+    (c) => !selectedSet.has(c.urlPath) && c.urlPath !== '/vs/total-adblock' && fs.existsSync(path.join(WEBSITE_DIR, c.relPath))
+  );
+
   for (const cand of selected) {
     const html = renderHtml(cand, existingPool, existingIdxMap.get(cand.urlPath) || 0);
     fs.writeFileSync(path.join(WEBSITE_DIR, cand.relPath), html, 'utf8');
     newUrls.push(`https://sweeprdeepblock.com${cand.urlPath}`);
+
+    // Back-patch 4 indexable donor Pillar pages so every newly created page immediately has >= 4 incoming internal links
+    if (donorCandidates.length >= 4) {
+      const h = crypto.createHash('sha256').update(cand.urlPath).digest().readUInt32BE(0);
+      const donorOffsets = [0, 7, 19, 43, 89, 137];
+      let patchedForThisCand = 0;
+      const cardHtml = `<a href="${cand.urlPath}" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:12px 14px;text-decoration:none;color:#f8fafc;">
+          <div style="font-size:0.75rem;color:#10b981;font-weight:700;margin-bottom:4px;">${escapeAttr(getCandLinkBadge(cand))}</div>
+          <div style="font-size:0.92rem;font-weight:600;line-height:1.35;">${escapeAttr(getCandLinkTitle(cand))}</div>
+        </a>`;
+      const gridMarker = '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;">';
+
+      for (const off of donorOffsets) {
+        if (patchedForThisCand >= 4) break;
+        const donor = donorCandidates[(h + off) % donorCandidates.length];
+        if (!donor) continue;
+        const donorAbs = path.join(WEBSITE_DIR, donor.relPath);
+        try {
+          const donorHtml = fs.readFileSync(donorAbs, 'utf8');
+          if (donorHtml.includes(`href="${cand.urlPath}"`) || !donorHtml.includes(gridMarker)) continue;
+          const updatedDonor = donorHtml.replace(gridMarker, `${gridMarker}\n        ${cardHtml}`);
+          if (updatedDonor !== donorHtml) {
+            fs.writeFileSync(donorAbs, updatedDonor, 'utf8');
+            patchedForThisCand++;
+            donorLinksPatched++;
+          }
+        } catch {}
+      }
+    }
+  }
+
+  // Sync publication status back to data/keyword-opportunity-matrix.json if any keyword blueprints were generated
+  if (selected.some((c) => c.isKeywordBlueprint) && fs.existsSync(KEYWORD_MATRIX_PATH)) {
+    try {
+      const matrixData = JSON.parse(fs.readFileSync(KEYWORD_MATRIX_PATH, 'utf8'));
+      if (Array.isArray(matrixData.opportunities)) {
+        for (const opp of matrixData.opportunities) {
+          if (opp.relPath && fs.existsSync(path.join(WEBSITE_DIR, opp.relPath))) {
+            opp.isPublishedOnDisk = true;
+            opp.status = 'published';
+          }
+        }
+        fs.writeFileSync(KEYWORD_MATRIX_PATH, JSON.stringify(matrixData, null, 2), 'utf8');
+      }
+    } catch {}
   }
 
   // Rebuild sitemap.xml strictly from indexable (non-noindex) pillar pages on disk
@@ -1433,9 +1644,19 @@ ${allEntries.map((e) => {
     }
   }
 
-  console.log(`[SWEEPR DeepBlock Pillar SEO Sync] Re-rendered: ${reRenderedCount} | Generated: ${newUrls.length} new pillar pages | Indexable pSEO Pillars: ${allPseoUrls.length} (Consolidated NoIndex Excluded: ${consolidatedNoIndexCount}) | Sitemap URLs: ${allUrls.length} | IndexNow: ${indexNowStatus}`);
+  console.log(`[SWEEPR DeepBlock Pillar SEO Sync] Re-rendered: ${reRenderedCount} | Generated: ${newUrls.length} new pillar pages (Donor Links Patched: ${donorLinksPatched}) | Indexable pSEO Pillars: ${allPseoUrls.length} (Consolidated NoIndex Excluded: ${consolidatedNoIndexCount}) | Sitemap URLs: ${allUrls.length} | IndexNow: ${indexNowStatus}`);
+  return {
+    reRendered: reRenderedCount,
+    newGenerated: newUrls.length,
+    donorLinksPatched,
+    newUrls,
+    totalPseoPages: allPseoUrls.length,
+    totalSitemapUrls: allUrls.length
+  };
 }
 
-const countArg = process.argv[2] !== undefined && !process.argv[2].startsWith('--') ? Number(process.argv[2]) : 0;
-const forceFlag = process.argv.includes('--force') || process.argv.includes('--regenerate-all');
-runDaily50DeepBlockPages(countArg, forceFlag).catch(console.error);
+if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(fileURLToPath(import.meta.url))) {
+  const countArg = process.argv[2] !== undefined && !process.argv[2].startsWith('--') ? Number(process.argv[2]) : 0;
+  const forceFlag = process.argv.includes('--force') || process.argv.includes('--regenerate-all');
+  runDaily50DeepBlockPages(countArg, forceFlag).catch(console.error);
+}
