@@ -1,7 +1,7 @@
 [Adblock Plus 2.0]
 ! Title: SWEEPR DeepBlock — Automated Daily Filter List (MV3 + Cosmetic)
-! Version: 202611030426
-! Last Modified: Tue, 03 Nov 2026 04:26:52 GMT
+! Version: 202611040005
+! Last Modified: Wed, 04 Nov 2026 00:05:01 GMT
 ! Expires: 1 day (update frequency)
 ! Homepage: https://sweeprdeepblock.com
 ! Syntax: uBlock Origin / Adblock Plus / Manifest V3 Compatible
@@ -9,6 +9,7 @@
 ! --- Network Blocking Rules ---
 /RaNIDAd.js$third-party
 /UtsK7A9.js$third-party
+/ads/prebid-ads$third-party,first-party
 /agent.php?spot=$third-party
 /api/click/$third-party
 /api/spots/$third-party
@@ -59,6 +60,7 @@
 ||blogherads.com^$third-party,script,xmlhttprequest
 ||bngpt.com^$third-party
 ||brid.tv^$third-party,script,xmlhttprequest
+||camsoda.ai^$third-party
 ||carbonads.com^$third-party,script,xmlhttprequest
 ||casalemedia.com^$third-party
 ||cdn-fc.com^$third-party
@@ -74,6 +76,7 @@
 ||contentexchange.me^$third-party,script,xmlhttprequest
 ||contentsserved.com^$third-party
 ||crakrevenue.com^$third-party
+||creepy-frame.com^$third-party
 ||criteo.com^$third-party
 ||criteo.net^$third-party
 ||crunchyroll.com/*/ad_breaks$xmlhttprequest
@@ -82,6 +85,7 @@
 ||directsle.com^$third-party
 ||doubleclick.net^$third-party
 ||doublepimp.com^$third-party
+||dreamserve.dev^$third-party
 ||ecsv2.roblox.com^$third-party
 ||eporner.com/cppb/$third-party
 ||eporner.com/dot/dot.php$third-party
@@ -133,6 +137,7 @@
 ||koxk.com^$third-party
 ||krelay.com^$third-party,script,xmlhttprequest
 ||lijit.com^$third-party
+||livemediahost.com^$third-party
 ||loopme.me^$third-party
 ||lxax.com^$third-party
 ||m2.ai^$third-party,script,xmlhttprequest
@@ -159,6 +164,7 @@
 ||plugrush.com^$third-party
 ||popads.net^$third-party
 ||popcash.net^$third-party
+||pornoeggs.com/away/$subdocument,script,xmlhttprequest,ping
 ||pornoxo.com/ads/$third-party
 ||pornoxo.com/api/r4mx$third-party
 ||pornoxo.com/api/tiles?*advertiserName=$third-party
@@ -174,6 +180,7 @@
 ||qoqh.com^$third-party
 ||quantserve.com^$third-party
 ||realsrv.com^$third-party
+||realxxx.com^$third-party
 ||revcontent.com^$third-party
 ||revive-adserver.net^$third-party,script,xmlhttprequest
 ||richads.com^$third-party,script,xmlhttprequest
@@ -189,12 +196,14 @@
 ||smaato.net^$third-party
 ||smartadserver.com^$third-party
 ||smartclip.net^$third-party
+||smartfloralab.com^$third-party
 ||smartstream.tv^$third-party,script,xmlhttprequest
 ||snigelweb.com^$third-party
 ||snigelweb.com^$third-party,script,xmlhttprequest
 ||sonobi.com^$third-party,script,xmlhttprequest
 ||sovrn.com^$third-party
 ||springserve.com^$third-party
+||statserv.net^$third-party
 ||strossle.com^$third-party,script,xmlhttprequest
 ||sublime.xyz^$third-party,script,xmlhttprequest
 ||sunmedia.tv^$third-party,script,xmlhttprequest
@@ -209,6 +218,7 @@
 ||tikbblove.com^$third-party
 ||tophqcam.com^$third-party
 ||tr.rbxcdn.com^$third-party
+||traffichunt.com^$third-party
 ||trafficjunky.com^$third-party
 ||trafficjunky.net^$third-party
 ||tsyndicate.com^$third-party
@@ -217,9 +227,11 @@
 ||twinrdsyn.com^$third-party
 ||u5s5.com^$third-party
 ||undertone.com^$third-party,script,xmlhttprequest
+||velvetloom.net^$third-party
 ||vid.fandom.com^$third-party
 ||vidoomy.com^$third-party,script,xmlhttprequest
 ||vidvas3.com^$third-party
+||waust.at^$third-party
 ||wknd.ai^$third-party
 ||wknd.ai^$third-party,script,xmlhttprequest
 ||xlivrdr.com^$third-party
@@ -232,18 +244,6 @@
 ||youtube.com/pagead/$third-party
 ||zemanta.com^$third-party
 ||zog.link^$third-party
-||camsoda.ai^$third-party
-||creepy-frame.com^$third-party
-||dreamserve.dev^$third-party
-||livemediahost.com^$third-party
-||realxxx.com^$third-party
-||smartfloralab.com^$third-party
-||traffichunt.com^$third-party
-||velvetloom.net^$third-party
-||waust.at^$third-party
-/ads/prebid-ads$third-party,first-party
-||pornoeggs.com/away/$subdocument,script,xmlhttprequest,ping
-||statserv.net^$third-party
 !
 ! --- DOM Cosmetic Hiding Rules ---
 animedigest.io##.vidoomy-video-ad
@@ -283,6 +283,23 @@ dailynetwork.news##.invibes-infeed-ad
 devbulletin.org##.yieldlove-ad-slot
 doji.vn##.wknd-sponsored-box
 ebaypartnernetwork.com##.undertone-ad-slot
+erothots.co,erothots1.com,erothots.is,erothots.xyz##.bnr
+erothots.co,erothots1.com,erothots.is,erothots.xyz##.bnrs
+erothots.co,erothots1.com,erothots.is,erothots.xyz##.eroslider
+erothots.co,erothots1.com,erothots.is,erothots.xyz##.list-btn.bnr
+erothots.co,erothots1.com,erothots.is,erothots.xyz##.magic-sites
+erothots.co,erothots1.com,erothots.is,erothots.xyz##.odw
+erothots.co,erothots1.com,erothots.is,erothots.xyz##.ourdreamai-native
+erothots.co,erothots1.com,erothots.is,erothots.xyz##.section.fh-videos:has(.odw)
+erothots.co,erothots1.com,erothots.is,erothots.xyz##.section.text-center:has(iframe[src*="adtng.com"])
+erothots.co,erothots1.com,erothots.is,erothots.xyz##.vid-ad
+erothots.co,erothots1.com,erothots.is,erothots.xyz##.video-player .caption.bottom-right
+erothots.co,erothots1.com,erothots.is,erothots.xyz##[data-odw]
+erothots.co,erothots1.com,erothots.is,erothots.xyz##a.bartab
+erothots.co,erothots1.com,erothots.is,erothots.xyz##a.no-taps[href*="camsoda"]
+erothots.co,erothots1.com,erothots.is,erothots.xyz##a.top-bar-xx-style
+erothots.co,erothots1.com,erothots.is,erothots.xyz##a.video.vid-ad
+erothots.co,erothots1.com,erothots.is,erothots.xyz##div:has(> a.top-bar-xx-style)
 espn.com##.OutbrainWrapper
 espn.com##.ad-slot
 fandom.com###featured-video-player
@@ -315,6 +332,21 @@ pixeldigest.fr##.glispa-ad-container
 pixelhub.de##.vidoomy-video-ad
 pixelzone.ca##.mediaforce-ad-slot
 popreport.com##.adtrue-banner
+pornoeggs.com###ag-agegate
+pornoeggs.com###ag-cookiebar
+pornoeggs.com###banner_iframe
+pornoeggs.com###vast-ad-block
+pornoeggs.com###vast-ad-block-button
+pornoeggs.com##.block-advert
+pornoeggs.com##.card-deck-promotion
+pornoeggs.com##.col-12.col-lg-auto:has(.block-advert)
+pornoeggs.com##.fluid_html_on_pause
+pornoeggs.com##.ib-300-250
+pornoeggs.com##.invideoBlock
+pornoeggs.com##.m-l-ntvb
+pornoeggs.com##a[href*="/away/pop"]
+pornoeggs.com##a[href*="/away/tab"]
+pornoeggs.com##li:has(> a[href*="/away/tab"])
 postwire.news##.vidoomy-video-ad
 qpic.cn##.yieldlove-ad-slot
 questbeacon.info##.freestar-ad-slot
@@ -351,35 +383,3 @@ tiktok.com##tiktok-cookie-banner
 todotorrents.com##.adnuntius-ad-box
 tpb.vn##.targetspot-ad
 tribunewatch.nl##.showheroes-ad-player
-erothots.co,erothots1.com,erothots.is,erothots.xyz##a.top-bar-xx-style
-erothots.co,erothots1.com,erothots.is,erothots.xyz##div:has(> a.top-bar-xx-style)
-erothots.co,erothots1.com,erothots.is,erothots.xyz##.magic-sites
-erothots.co,erothots1.com,erothots.is,erothots.xyz##.list-btn.bnr
-erothots.co,erothots1.com,erothots.is,erothots.xyz##.bnr
-erothots.co,erothots1.com,erothots.is,erothots.xyz##.bnrs
-erothots.co,erothots1.com,erothots.is,erothots.xyz##a.bartab
-erothots.co,erothots1.com,erothots.is,erothots.xyz##.video-player .caption.bottom-right
-erothots.co,erothots1.com,erothots.is,erothots.xyz##a.video.vid-ad
-erothots.co,erothots1.com,erothots.is,erothots.xyz##.vid-ad
-erothots.co,erothots1.com,erothots.is,erothots.xyz##.odw
-erothots.co,erothots1.com,erothots.is,erothots.xyz##[data-odw]
-erothots.co,erothots1.com,erothots.is,erothots.xyz##.ourdreamai-native
-erothots.co,erothots1.com,erothots.is,erothots.xyz##.section.fh-videos:has(.odw)
-erothots.co,erothots1.com,erothots.is,erothots.xyz##.eroslider
-erothots.co,erothots1.com,erothots.is,erothots.xyz##a.no-taps[href*="camsoda"]
-erothots.co,erothots1.com,erothots.is,erothots.xyz##.section.text-center:has(iframe[src*="adtng.com"])
-pornoeggs.com###vast-ad-block
-pornoeggs.com###vast-ad-block-button
-pornoeggs.com##.invideoBlock
-pornoeggs.com##.fluid_html_on_pause
-pornoeggs.com##.block-advert
-pornoeggs.com##.col-12.col-lg-auto:has(.block-advert)
-pornoeggs.com##.m-l-ntvb
-pornoeggs.com##.card-deck-promotion
-pornoeggs.com##.ib-300-250
-pornoeggs.com###banner_iframe
-pornoeggs.com###ag-agegate
-pornoeggs.com###ag-cookiebar
-pornoeggs.com##a[href*="/away/pop"]
-pornoeggs.com##a[href*="/away/tab"]
-pornoeggs.com##li:has(> a[href*="/away/tab"])
