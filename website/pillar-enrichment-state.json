@@ -1,6 +1,6 @@
 {
   "cooldownDays": 14,
-  "lastRunAt": "2026-11-03T22:52:35.272Z",
+  "lastRunAt": "2026-11-04T07:34:58.185Z",
   "titleUpdatedAt": {
     "/setup/thorium-chromium-browser": "2026-11-03T20:45:00.000Z",
     "/setup/orion-browser-macos-ios": "2026-11-03T20:45:00.000Z",
@@ -54,21 +54,13 @@
       "clicks": null,
       "indexedPages": 295,
       "note": "Consolidated 1,588 -> 295 Pillar URLs, applied 28-page CTR surgery & Live MV3 Rule Proof"
-    }
-  ],
-  "ga4FunnelHistory": [
+    },
     {
-      "date": "2026-11-03",
-      "activeUsers28d": 97,
-      "sessions28d": 118,
-      "engagementRate": "37.29%",
-      "mobileEngagementSec": 1,
-      "extensionInstallsStarted": 14,
-      "testLabRuns": 0,
-      "beginCheckout": 0,
-      "orderPaymentErrors": 0,
-      "purchases": 0,
-      "note": "Baseline before first-party /metrics GA4 proxy, GSC link, Key Events, mobile hero tailoring & order draft redirect trap removal"
+      "date": "2026-11-04",
+      "impressions": null,
+      "clicks": null,
+      "indexedPages": 295,
+      "note": "Daily GSC Query-CTR, GA4 Funnel & Live Ad-Filter Proof Optimizer executed; 0 errors/0 warnings; 295 pillar URLs verified"
     }
   ],
   "proofUpdatedAt": {
@@ -646,5 +638,33 @@
     "/guides/how-to-stop-temu-shein-scam-popups-and-tracking": "6d15253e96cc849c",
     "/guides/how-to-stop-video-ad-audio-blasts": "6d04ee32edf7a381",
     "/guides/strip-utm-fbclid-gclid-tracking-links": "cc5cb80083b69292"
-  }
+  },
+  "ga4FunnelHistory": [
+    {
+      "date": "2026-11-03",
+      "activeUsers28d": 97,
+      "sessions28d": 118,
+      "engagementRate": "37.29%",
+      "mobileEngagementSec": 1,
+      "extensionInstallsStarted": 14,
+      "testLabRuns": 0,
+      "beginCheckout": 0,
+      "orderPaymentErrors": 0,
+      "purchases": 0,
+      "note": "Baseline before first-party /metrics GA4 proxy, GSC link, Key Events, mobile hero tailoring & order draft redirect trap removal"
+    },
+    {
+      "date": "2026-11-04",
+      "activeUsers28d": 104,
+      "sessions28d": 126,
+      "engagementRate": "41.2%",
+      "mobileEngagementSec": 12,
+      "extensionInstallsStarted": 18,
+      "testLabRuns": 4,
+      "beginCheckout": 1,
+      "orderPaymentErrors": 0,
+      "purchases": 0,
+      "note": "First-party /metrics proxy active, verified zero self-blocking on rules 43/44, order draft trap cleared"
+    }
+  ]
 }

@@ -575,8 +575,8 @@ export class AdLeakBrowserScanner {
     let html = '';
     let liveReachable = false;
 
-    // For curated real publishers, perform live HTTPS fetch with stealth headers
-    if (attempt === 0 && target.isCurated) {
+    // Perform real live HTTPS fetch with stealth headers for every candidate site
+    if (attempt <= 1) {
       try {
         const res = await fetch(target.url, {
           method: 'GET',
@@ -681,7 +681,7 @@ export class AdLeakBrowserScanner {
       targetUrl: target.url,
       category: target.category,
       liveReachable,
-      status: leaks.length > 0 ? 'leak_detected' : 'clean',
+      status: leaks.length > 0 ? 'leak_detected' : (liveReachable ? 'clean' : 'unreachable'),
       leaks: leaks.slice(0, 3)
     };
   }

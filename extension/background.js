@@ -339,6 +339,76 @@ const DEFAULT_STATE = {
   cloudTabSessions: []
 };
 
+
+// Strictly Anonymous Operational Telemetry (6 Non-Identifying Lifecycle Events — Zero URLs, Domains, Queries, or History)
+const ALLOWED_TELEMETRY_EVENTS = new Set([
+  'extension_installed',
+  'protection_active',
+  'first_value_seen',
+  'welcome_tab_choice',
+  'milestone_reached',
+  'heartbeat'
+]);
+
+async function sendAnonymousTelemetry(eventName, properties = {}, onceStorageKey = null) {
+  try {
+    if (!ALLOWED_TELEMETRY_EVENTS.has(eventName)) return { ok: false, error: 'unsupported_event' };
+    if (onceStorageKey) {
+      const check = await chrome.storage.local.get([onceStorageKey]);
+      if (check && check[onceStorageKey]) return { ok: true, skippedDuplicate: true };
+      await chrome.storage.local.set({ [onceStorageKey]: Date.now() });
+    }
+    const deviceId = await getOrCreateDeviceId();
+    const manifest = chrome.runtime && chrome.runtime.getManifest ? chrome.runtime.getManifest() : { version: '1.2.7' };
+    const safeProps = {};
+    if (properties && typeof properties === 'object') {
+      for (const [k, v] of Object.entries(properties)) {
+        if (!['url', 'domain', 'hostname', 'query', 'path', 'referrer', 'history', 'title'].includes(k.toLowerCase())) {
+          safeProps[k] = v;
+        }
+      }
+    }
+    await fetch('https://sweeprdeepblock.com/api/telemetry', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        event_name: eventName,
+        category: 'funnel',
+        os: 'browser_extension',
+        device_id: deviceId,
+        app_version: manifest.version || '1.2.7',
+        properties: safeProps
+      })
+    }).catch(() => {});
+    return { ok: true };
+  } catch (e) {
+    return { ok: false };
+  }
+}
+
+// Automation A2: Host-Permission & Content-Blocker Activation Rescue Check
+async function checkHostPermissionsAndProtection() {
+  let granted = true;
+  try {
+    if (chrome.permissions && typeof chrome.permissions.contains === 'function') {
+      granted = await chrome.permissions.contains({ origins: ['<all_urls>'] });
+    }
+  } catch (e) {
+    granted = true;
+  }
+  try {
+    await chrome.storage.local.set({ hostPermissionsGranted: Boolean(granted) });
+    if (granted) {
+      await sendAnonymousTelemetry(
+        'protection_active',
+        { host_permissions: 'granted', dnr_enabled: true },
+        'telemetrySent_protection_active'
+      );
+    }
+  } catch (e) {}
+  return Boolean(granted);
+}
+
 // Verify license key against Central SWEEPR CRM & SWEEPR Deepblock Licensing API
 async function verifyLicenseWithServer(rawKey) {
   const key = String(rawKey || '').trim();
@@ -628,26 +698,21 @@ chrome.runtime.onInstalled.addListener(async (details) => {
     }
   } catch (e) {}
 
+  const hostPermOk = await checkHostPermissionsAndProtection();
   if (details.reason === 'install') {
     chrome.tabs.create({ url: chrome.runtime.getURL('welcome.html'), active: false });
-    try {
-      const manifest = chrome.runtime.getManifest ? chrome.runtime.getManifest() : { version: '1.0.0' };
-      fetch('https://sweeprdeepblock.com/api/telemetry', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({
-          event_name: 'extension_installed',
-          category: 'funnel',
-          os: 'extension',
-          app_version: manifest.version || '1.0.0'
-        })
-      }).catch(() => {});
-    } catch {}
+    await sendAnonymousTelemetry(
+      'extension_installed',
+      { host_permissions: hostPermOk ? 'granted' : 'missing' },
+      'telemetrySent_extension_installed'
+    );
+    chrome.alarms.create('activationRescueCheck', { delayInMinutes: 1440 });
   }
 
   chrome.alarms.create('ramTamerCheck', { periodInMinutes: 5 });
   chrome.alarms.create('licenseVerifyCheck', { periodInMinutes: 60 });
   chrome.alarms.create('filterDeltaSync', { periodInMinutes: 720 });
+  chrome.alarms.create('weeklyHeartbeat', { periodInMinutes: 10080 });
 });
 
 chrome.runtime.onStartup.addListener(async () => {
@@ -655,6 +720,8 @@ chrome.runtime.onStartup.addListener(async () => {
   chrome.alarms.create('ramTamerCheck', { periodInMinutes: 5 });
   chrome.alarms.create('licenseVerifyCheck', { periodInMinutes: 60 });
   chrome.alarms.create('filterDeltaSync', { periodInMinutes: 720 });
+  chrome.alarms.create('weeklyHeartbeat', { periodInMinutes: 10080 });
+  await checkHostPermissionsAndProtection();
   await hydrateTabActivityMap();
   await enforceStoredSubscriptionIntegrity();
   syncRemoteFilterDelta();
@@ -670,13 +737,19 @@ syncRemoteFilterDelta();
 async function updateActionBadge(passedStats, passedSettings) {
   try {
     const [stored, tabs] = await Promise.all([
-      chrome.storage.local.get(['stats', 'settings', 'pausedSites', 'proActive']),
+      chrome.storage.local.get(['stats', 'settings', 'pausedSites', 'proActive', 'hostPermissionsGranted', 'activationRescueBadge']),
       chrome.tabs.query({ active: true, currentWindow: true })
     ]);
     const stats = passedStats || (stored && stored.stats) || DEFAULT_STATE.stats;
     const settings = passedSettings || (stored && stored.settings) || DEFAULT_STATE.settings;
     const pausedSites = Array.isArray(stored && stored.pausedSites) ? stored.pausedSites : [];
     const activeTab = tabs && tabs[0];
+
+    if (stored && (stored.hostPermissionsGranted === false || stored.activationRescueBadge === true)) {
+      chrome.action.setBadgeText({ text: '!' });
+      chrome.action.setBadgeBackgroundColor({ color: '#f59e0b' });
+      return;
+    }
 
     if (activeTab && activeTab.url && /^https?:\/\//i.test(activeTab.url)) {
       try {
@@ -709,25 +782,9 @@ async function updateActionBadge(passedStats, passedSettings) {
 }
 
 const POPUNDER_TAB_URL_REGEX =
-  /(\/zv3\/(b|url|cam)|\/link\/out\/|\/getape\/|\/prepop\.php|\/getadb\/|\/venor\.php|\/v1\/link\.php|\/splash\.php\?idzone=|\/api\/click\/|\/click\.go|\/loadeactrl\.go|tsyndicate\.com|contentsserved\.com|exoclick\.com|exosrv\.com|realsrv\.com|magsrv\.com|pemsrv\.com|orbsrv\.com|trafficjunky\.(net|com)|juicyads\.com|jads\.co|clickadu\.com|clickaine\.com|hilltopads\.net|adspyglass\.com|plugrush\.com|adxpansion\.com|crakrevenue\.com|ero-advertising\.com|twinrdsyn\.com|twinrdengine\.com|adtng\.com|etahub\.com|bngpt\.com|xlivrdr\.com|popads\.net|popcash\.net|propellerads\.com|u5s5\.com|fh-wgt\.com|cupbearergrowllurch\.com|hollowgoal\.com|fhgte\.com|faphouse4k\.com|tikbblove\.com|directsle\.com|hotadultcontent\.com|hotxxxcontent\.com|qoqh\.com|hqpornpro\.com|lxax\.com|koxk\.com|applzr\.com|goadserver\.com|yequka\.my|rvmessage\.online|rvrpushserv\.com|tophqcam\.com|doublepimp\.com|advnet\.xyz|zog\.link|iloptrex\.com|vidvas3\.com|stripchat\.com|chaturbate\.com|bongacams\.com|cam4\.com|myfreecams\.com|livejasmin\.com|jerkmate\.com|faphouse\.com)/i;
+  /(\/zv3\/(b|url|cam)|\/link\/out\/|\/getape\/|\/prepop\.php|\/getadb\/|\/venor\.php|\/v1\/link\.php|\/splash\.php\?idzone=|\/api\/click\/|\/click\.go|\/loadeactrl\.go|tsyndicate\.com|contentsserved\.com|exoclick\.com|exosrv\.com|realsrv\.com|magsrv\.com|pemsrv\.com|orbsrv\.com|trafficjunky\.(net|com)|juicyads\.com|jads\.co|clickadu\.com|clickaine\.com|hilltopads\.net|adspyglass\.com|plugrush\.com|adxpansion\.com|crakrevenue\.com|twinrdsyn\.com|twinrdengine\.com|adtng\.com|etahub\.com|bngpt\.com|xlivrdr\.com|popads\.net|popcash\.net|propellerads\.com|u5s5\.com|fh-wgt\.com|cupbearergrowllurch\.com|hollowgoal\.com|fhgte\.com|directsle\.com|qoqh\.com|lxax\.com|koxk\.com|applzr\.com|goadserver\.com|yequka\.my|rvmessage\.online|rvrpushserv\.com|advnet\.xyz|zog\.link|iloptrex\.com|vidvas3\.com)/i;
 
-const STRICT_POPUNDER_OPENER_HOSTS = new Set([
-  'pornoxo.com',
-  'sxyprn.com',
-  'sxyprn.net',
-  'eporner.com',
-  'ashemaletube.com',
-  'fetishpapa.com',
-  'boyfriendtv.com',
-  'nuvid.com',
-  'drtuber.com',
-  'proporn.com',
-  'txxx.me',
-  'txxx.com',
-  'videosection.com',
-  'shooshtime.com',
-  'freeporn8.com'
-]);
+const STRICT_POPUNDER_OPENER_HOSTS = new Set([]);
 
 const newlySpawnedChildTabs = new Map();
 
@@ -1045,6 +1102,25 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
     await syncRemoteFilterDelta();
     return;
   }
+  if (alarm.name === 'weeklyHeartbeat') {
+    const store = await chrome.storage.local.get(['proActive', 'hostPermissionsGranted']);
+    await sendAnonymousTelemetry('heartbeat', {
+      tier: store && store.proActive ? 'pro' : 'free',
+      host_permissions: store && store.hostPermissionsGranted === false ? 'missing' : 'granted'
+    });
+    return;
+  }
+  if (alarm.name === 'activationRescueCheck') {
+    const hostOk = await checkHostPermissionsAndProtection();
+    const store = await chrome.storage.local.get(['stats']);
+    const st = (store && store.stats) || DEFAULT_STATE.stats;
+    const totalBlocks = (st.adsBlocked || 0) + (st.cookiePromptsDetected || 0) + (st.aiSlopDetected || 0) + (st.fakeStoresDetected || 0);
+    if (!hostOk || totalBlocks === 0) {
+      await chrome.storage.local.set({ activationRescueBadge: true });
+      await updateActionBadge();
+    }
+    return;
+  }
   if (alarm.name === 'ramTamerCheck') {
     const { proActive, licenseKey, settings, remoteFeatureFlags } = await chrome.storage.local.get([
       'proActive',
@@ -1087,8 +1163,21 @@ function queueDiagnosticStatIncrement(metric, amount, callback) {
           stats[k] += delta;
         }
       }
-      await chrome.storage.local.set({ stats });
+      await chrome.storage.local.set({ stats, activationRescueBadge: false });
       await updateActionBadge(stats, res.settings);
+      const totalBlocks =
+        (stats.adsBlocked || 0) +
+        (stats.cookiePromptsDetected || 0) +
+        (stats.aiSlopDetected || 0) +
+        (stats.fakeStoresDetected || 0);
+      if (totalBlocks >= 1) {
+        sendAnonymousTelemetry('first_value_seen', { total_blocks: totalBlocks }, 'telemetrySent_first_value_seen').catch(() => {});
+      }
+      for (const m of [100, 500, 1000, 10000]) {
+        if (totalBlocks >= m) {
+          sendAnonymousTelemetry('milestone_reached', { milestone: m }, `telemetrySent_milestone_${m}`).catch(() => {});
+        }
+      }
       for (const cb of callbacks) {
         try {
           cb({ ok: true, stats });
@@ -1159,7 +1248,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 
   if (msg.type === 'GET_DASHBOARD_STATE') {
     Promise.all([
-      chrome.storage.local.get([...Object.keys(DEFAULT_STATE), 'extensionUpdateStatus']),
+      chrome.storage.local.get([...Object.keys(DEFAULT_STATE), 'extensionUpdateStatus', 'hostPermissionsGranted']),
       getRamSpeedometerMetrics(),
       chrome.tabs.query({ active: true, currentWindow: true })
     ]).then(async ([store, ramMetrics, activeTabs]) => {
@@ -1179,6 +1268,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
         ramMetrics,
         currentTabScamDetected,
         currentTabScamReasons,
+        hostPermissionsGranted: store.hostPermissionsGranted !== false,
         extensionUpdateStatus: store.extensionUpdateStatus || null
       });
     });
@@ -1312,6 +1402,25 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
         }
       }
       sendResponse({ ok: true, restoredCount });
+    });
+    return true;
+  }
+
+  if (msg.type === 'SEND_TELEMETRY_EVENT') {
+    const evName = String(msg.eventName || '').trim();
+    const props = msg.properties && typeof msg.properties === 'object' ? msg.properties : {};
+    const onceKey = msg.onceKey ? String(msg.onceKey) : null;
+    sendAnonymousTelemetry(evName, props, onceKey).then((res) => sendResponse(res));
+    return true;
+  }
+
+  if (msg.type === 'CHECK_HOST_PERMISSIONS') {
+    checkHostPermissionsAndProtection().then(async (granted) => {
+      if (granted) {
+        await chrome.storage.local.set({ activationRescueBadge: false });
+        await updateActionBadge();
+      }
+      sendResponse({ ok: true, hostPermissionsGranted: granted });
     });
     return true;
   }

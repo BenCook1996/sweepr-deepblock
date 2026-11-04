@@ -1701,6 +1701,11 @@ const CLEAN_ROUTES = {
   '/download/SWEEPRDeepblock.apk.idsig': 'SWEEPRDeepblock.apk.idsig',
   '/SWEEPRDeepblock.apk.idsig': 'SWEEPRDeepblock.apk.idsig',
   '/test-lab': 'test-lab.html',
+  '/tools': path.join('tools', 'index.html'),
+  '/tools/is-my-adblocker-working': path.join('tools', 'is-my-adblocker-working.html'),
+  '/tools/dns-leak-test': path.join('tools', 'dns-leak-test.html'),
+  '/tools/browser-fingerprint-test': path.join('tools', 'browser-fingerprint-test.html'),
+  '/tools/is-this-shop-a-scam': path.join('tools', 'is-this-shop-a-scam.html'),
   '/mockups': 'mockups.html',
   '/popup-mockups': 'popup-mockups.html',
   '/redesign-prototype': 'redesign-prototype.html',
@@ -2222,6 +2227,74 @@ const server = http.createServer(async (req, res) => {
       }
     }
 
+    // IndexNow Verification Key Files (Served uncompressed with explicit Content-Length for Bing/IndexNow validators)
+    if ((req.method === 'GET' || req.method === 'HEAD') && /^\/[a-f0-9]{32}\.txt$/i.test(pathname)) {
+      const keyFile = path.join(WEBSITE_DIR, pathname.slice(1));
+      if (fs.existsSync(keyFile) && fs.statSync(keyFile).isFile()) {
+        const keyContent = fs.readFileSync(keyFile, 'utf8').trim();
+        const buf = Buffer.from(keyContent, 'utf8');
+        res.writeHead(200, {
+          'Content-Type': 'text/plain; charset=utf-8',
+          'Content-Length': String(buf.length),
+          'Cache-Control': 'public, max-age=3600',
+          'X-Content-Type-Options': 'nosniff'
+        });
+        return res.end(req.method === 'HEAD' ? undefined : buf);
+      }
+    }
+
+    // Shareable Interactive Diagnostic Scorecard (/test-lab/results/:slug)
+    if ((req.method === 'GET' || req.method === 'HEAD') && /^\/test-lab\/results\/[a-z0-9-]+$/i.test(pathname)) {
+      const slug = pathname.split('/').pop() || 'grade-a-score-100';
+      const gradeMatch = /grade-([a-f])/i.exec(slug);
+      const scoreMatch = /score-(\d{1,3})/i.exec(slug);
+      const grade = gradeMatch ? gradeMatch[1].toUpperCase() : 'A';
+      const score = scoreMatch ? Math.min(100, Math.max(0, parseInt(scoreMatch[1], 10))) : 100;
+      const badgeColor = score >= 90 ? '#10b981' : score >= 70 ? '#f59e0b' : '#f43f5e';
+      const shareHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Browser Protection Score: ${score}/100 (Grade ${grade}) — SWEEPR Deepblock Test Lab</title>
+  <meta name="description" content="Verified browser protection diagnostic score: ${score}/100 (Grade ${grade}). Test your own browser against ad scripts, DNS leaks, fingerprinting, and scam shops in 10 seconds.">
+  <meta name="robots" content="noindex, follow">
+  <link rel="canonical" href="${PUBLIC_URL}/tools/is-my-adblocker-working">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Browser Protection Score: ${score}/100 (Grade ${grade}) — SWEEPR Deepblock">
+  <meta property="og:description" content="Can your browser pass the 6-vector ad, tracker, DNS leak, and fingerprint diagnostic? Run the free 10-second test.">
+  <meta property="og:url" content="${PUBLIC_URL}${pathname}">
+  <meta property="og:image" content="${PUBLIC_URL}/og-image.png">
+  <link rel="icon" type="image/svg+xml" href="/logo.svg">
+  <script src="https://cdn.tailwindcss.com/3.4.5"></script>
+</head>
+<body class="bg-slate-950 text-white min-h-screen flex items-center justify-center p-6 font-sans antialiased">
+  <main class="max-w-xl w-full bg-slate-900 border border-slate-800 rounded-3xl p-8 text-center shadow-2xl space-y-6">
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-extrabold uppercase tracking-wider">
+      SWEEPR DeepBlock Diagnostic Scorecard
+    </div>
+    <div class="w-28 h-28 mx-auto rounded-3xl flex flex-col items-center justify-center border-2" style="border-color:${badgeColor};background:rgba(15,23,42,0.8)">
+      <span class="text-4xl font-black" style="color:${badgeColor}">${grade}</span>
+      <span class="text-xs font-bold text-slate-300">${score}/100</span>
+    </div>
+    <h1 class="text-2xl sm:text-3xl font-black">Browser Protection Score: ${score}/100</h1>
+    <p class="text-slate-300 text-sm leading-relaxed">
+      This browser was tested against live ad-injection vectors, GDPR cookie consent trackers, WebRTC/DNS leaks, and hardware canvas fingerprinting.
+    </p>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+      <a href="/tools/is-my-adblocker-working" class="py-3.5 px-5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-sm no-underline">
+        Run Your Own Free Test →
+      </a>
+      <a href="/download" class="py-3.5 px-5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm border border-slate-700 no-underline">
+        Get SWEEPR DeepBlock
+      </a>
+    </div>
+  </main>
+</body>
+</html>`;
+      return sendHtml(res, 200, shareHtml);
+    }
+
     // Apple Pay Domain Verification File (/.well-known/apple-developer-merchantid-domain-association)
   if ((req.method === 'GET' || req.method === 'HEAD') && pathname === '/.well-known/apple-developer-merchantid-domain-association') {
     const assocPath = path.join(WEBSITE_DIR, '.well-known', 'apple-developer-merchantid-domain-association');
@@ -2327,7 +2400,7 @@ function getCachedDynamicDelta() {
 }
 
   // API -1b: Dynamic Filter Delta & Remote Feature-Flag Kill-Switch + Extension Version Gate Endpoint
-  const LATEST_EXTENSION_VERSION = String(process.env.LATEST_EXTENSION_VERSION || '1.2.6').trim();
+  const LATEST_EXTENSION_VERSION = String(process.env.LATEST_EXTENSION_VERSION || '1.2.7').trim();
   const MIN_EXTENSION_VERSION = String(process.env.MIN_EXTENSION_VERSION || '1.1.6').trim();
   const FORCE_EXTENSION_UPDATE = process.env.FORCE_EXTENSION_UPDATE === 'true';
   const compareSemver = (latestVer, currentVer) => {
@@ -4821,7 +4894,7 @@ function getCachedDynamicDelta() {
     });
   }
 
-  // API 5: Extension Telemetry & Funnel Events -> Central CRM
+  // API 5: Extension Telemetry & Funnel Events -> Central CRM (Strict Local-First Privacy Filter: No URLs, Domains, Queries, or Browsing History)
   if (req.method === 'POST' && pathname === '/api/telemetry') {
     if (!isSameOriginWriteRequest(req, { allowExtension: true })) {
       return sendJson(res, 403, { ok: false, error: 'cross_origin_forbidden' }, {}, req);
@@ -4834,6 +4907,7 @@ function getCachedDynamicDelta() {
     if (!data || (!data.event_name && !data.event)) {
       return sendJson(res, 400, { ok: false, error: 'event_name_required' });
     }
+    const FORBIDDEN_PRIVACY_KEYS = new Set(['url', 'domain', 'hostname', 'origin', 'path', 'pathname', 'referrer', 'referer', 'query', 'search', 'history', 'title', 'email', 'ip']);
     let safeProps = {};
     if (data.properties && typeof data.properties === 'object' && !Array.isArray(data.properties)) {
       try {
@@ -4841,27 +4915,34 @@ function getCachedDynamicDelta() {
         if (rawJson.length <= 2048) {
           const parsedProps = JSON.parse(rawJson);
           for (const [k, v] of Object.entries(parsedProps)) {
-            if (k !== '__proto__' && k !== 'constructor' && k !== 'prototype') {
+            const lowerKey = String(k).toLowerCase();
+            if (k !== '__proto__' && k !== 'constructor' && k !== 'prototype' && !FORBIDDEN_PRIVACY_KEYS.has(lowerKey)) {
               safeProps[k] = v;
             }
           }
         }
       } catch {}
     }
+    const normalizedEventName = String(data.event_name || data.event).slice(0, 120);
     const crmRes = await requestSweeprCrm('/v1/telemetry/event', {
       method: 'POST',
       body: {
         project_id: 'deepblock',
-        event_name: String(data.event_name || data.event).slice(0, 120),
+        event_name: normalizedEventName,
         category: typeof data.category === 'string' ? data.category.slice(0, 64) : 'funnel',
         account_id: typeof data.account_id === 'string' ? data.account_id.slice(0, 64) : undefined,
         device_id: typeof data.device_id === 'string' ? data.device_id.slice(0, 64) : undefined,
         os: typeof data.os === 'string' ? data.os.slice(0, 64) : 'browser_extension',
-        app_version: typeof data.app_version === 'string' ? data.app_version.slice(0, 32) : '1.0.0',
+        app_version: typeof data.app_version === 'string' ? data.app_version.slice(0, 32) : LATEST_EXTENSION_VERSION,
         properties: safeProps
       }
     });
-    return sendJson(res, 200, crmRes.data);
+    return sendJson(res, 200, {
+      ok: true,
+      event_name: normalizedEventName,
+      privacy_filtered: true,
+      ...(crmRes.data && typeof crmRes.data === 'object' ? crmRes.data : {})
+    });
   }
 
   function hasBlockedSitesAdminAuth(req) {
@@ -5282,7 +5363,7 @@ function getCachedDynamicDelta() {
     }
   }
   if (!candidateRel) {
-    if (/^\/(solutions|setup|vs|guides)\/[a-z0-9-]+$/i.test(pathname)) {
+    if (/^\/(solutions|setup|vs|guides|tools)\/[a-z0-9-]+$/i.test(pathname)) {
       candidateRel = pathname.slice(1) + '.html';
     } else if (pathname.length > 1 && !path.extname(pathname)) {
       const htmlCandidate = pathname.slice(1) + '.html';

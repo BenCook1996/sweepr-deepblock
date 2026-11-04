@@ -1556,253 +1556,6 @@
     }
   },
   {
-    "id": 93,
-    "priority": 10,
-    "action": {
-      "type": "redirect",
-      "redirect": {
-        "url": "data:application/javascript;base64,d2luZG93LmV4bzk5SEwzOTAzampkeHRybkxvYWQ9dHJ1ZTt3aW5kb3cuaW5pdEVQTkI9ZnVuY3Rpb24oKXt9Ow=="
-      }
-    },
-    "condition": {
-      "urlFilter": "||eporner.com/dot/pop",
-      "resourceTypes": [
-        "script"
-      ]
-    }
-  },
-  {
-    "id": 94,
-    "priority": 5,
-    "action": {
-      "type": "block"
-    },
-    "condition": {
-      "urlFilter": "||eporner.com/dot/dot.php",
-      "resourceTypes": [
-        "xmlhttprequest",
-        "script",
-        "sub_frame",
-        "ping"
-      ]
-    }
-  },
-  {
-    "id": 95,
-    "priority": 5,
-    "action": {
-      "type": "block"
-    },
-    "condition": {
-      "urlFilter": "||eporner.com/static/popCode",
-      "resourceTypes": [
-        "script"
-      ]
-    }
-  },
-  {
-    "id": 96,
-    "priority": 5,
-    "action": {
-      "type": "block"
-    },
-    "condition": {
-      "urlFilter": "||eporner.com/getape/",
-      "resourceTypes": [
-        "sub_frame",
-        "script",
-        "xmlhttprequest"
-      ]
-    }
-  },
-  {
-    "id": 97,
-    "priority": 5,
-    "action": {
-      "type": "block"
-    },
-    "condition": {
-      "urlFilter": "||eporner.com/prepop.php",
-      "resourceTypes": [
-        "sub_frame",
-        "script",
-        "xmlhttprequest"
-      ]
-    }
-  },
-  {
-    "id": 98,
-    "priority": 5,
-    "action": {
-      "type": "block"
-    },
-    "condition": {
-      "urlFilter": "||eporner.com/getadb/",
-      "resourceTypes": [
-        "sub_frame",
-        "script",
-        "xmlhttprequest"
-      ]
-    }
-  },
-  {
-    "id": 99,
-    "priority": 5,
-    "action": {
-      "type": "block"
-    },
-    "condition": {
-      "urlFilter": "||pornoxo.com/link/out/",
-      "resourceTypes": [
-        "sub_frame",
-        "script",
-        "xmlhttprequest",
-        "ping"
-      ]
-    }
-  },
-  {
-    "id": 100,
-    "priority": 5,
-    "action": {
-      "type": "block"
-    },
-    "condition": {
-      "urlFilter": "||pornoxo.com/ads/",
-      "resourceTypes": [
-        "sub_frame",
-        "script",
-        "xmlhttprequest",
-        "image",
-        "media"
-      ]
-    }
-  },
-  {
-    "id": 101,
-    "priority": 5,
-    "action": {
-      "type": "block"
-    },
-    "condition": {
-      "urlFilter": "||pornoxo.com/pxo/www/js*.min.js?url=",
-      "resourceTypes": [
-        "script",
-        "xmlhttprequest"
-      ]
-    }
-  },
-  {
-    "id": 102,
-    "priority": 5,
-    "action": {
-      "type": "block"
-    },
-    "condition": {
-      "urlFilter": "||cdn77.pornoxo.com/pxo/www/js-v*/vast.min.js",
-      "resourceTypes": [
-        "script",
-        "xmlhttprequest"
-      ]
-    }
-  },
-  {
-    "id": 103,
-    "priority": 5,
-    "action": {
-      "type": "block"
-    },
-    "condition": {
-      "regexFilter": "^https?://cdn77\\.pornoxo\\.com/pxo/www/js-v[0-9.]+/[a-z0-9]{8}\\.min\\.js",
-      "resourceTypes": [
-        "script"
-      ]
-    }
-  },
-  {
-    "id": 104,
-    "priority": 5,
-    "action": {
-      "type": "block"
-    },
-    "condition": {
-      "urlFilter": "||pornoxo.com/api/tiles?*advertiserName=",
-      "resourceTypes": [
-        "xmlhttprequest",
-        "sub_frame"
-      ]
-    }
-  },
-  {
-    "id": 105,
-    "priority": 5,
-    "action": {
-      "type": "block"
-    },
-    "condition": {
-      "urlFilter": "||pornoxo.com/banner-iframe",
-      "resourceTypes": [
-        "sub_frame",
-        "script",
-        "xmlhttprequest"
-      ]
-    }
-  },
-  {
-    "id": 106,
-    "priority": 5,
-    "action": {
-      "type": "block"
-    },
-    "condition": {
-      "urlFilter": "||sxyprn.com/js/fad.json",
-      "resourceTypes": [
-        "xmlhttprequest",
-        "script"
-      ]
-    }
-  },
-  {
-    "id": 107,
-    "priority": 5,
-    "action": {
-      "type": "block"
-    },
-    "condition": {
-      "urlFilter": "||sxyprn.net/js/fad.json",
-      "resourceTypes": [
-        "xmlhttprequest",
-        "script"
-      ]
-    }
-  },
-  {
-    "id": 108,
-    "priority": 5,
-    "action": {
-      "type": "block"
-    },
-    "condition": {
-      "urlFilter": "||sxyprn.com/js/epo.js",
-      "resourceTypes": [
-        "script"
-      ]
-    }
-  },
-  {
-    "id": 109,
-    "priority": 5,
-    "action": {
-      "type": "block"
-    },
-    "condition": {
-      "urlFilter": "||sxyprn.com/player/p12.js",
-      "resourceTypes": [
-        "script"
-      ]
-    }
-  },
-  {
     "id": 110,
     "priority": 2,
     "action": {
@@ -1928,82 +1681,6 @@
     }
   },
   {
-    "id": 118,
-    "priority": 5,
-    "action": {
-      "type": "block"
-    },
-    "condition": {
-      "urlFilter": "||eporner.com/js/bowser.php",
-      "resourceTypes": [
-        "script",
-        "xmlhttprequest"
-      ]
-    }
-  },
-  {
-    "id": 119,
-    "priority": 5,
-    "action": {
-      "type": "block"
-    },
-    "condition": {
-      "urlFilter": "||eporner.com/cppb/",
-      "resourceTypes": [
-        "script",
-        "sub_frame",
-        "image",
-        "xmlhttprequest"
-      ]
-    }
-  },
-  {
-    "id": 120,
-    "priority": 5,
-    "action": {
-      "type": "block"
-    },
-    "condition": {
-      "urlFilter": "||eporner.com/dotm/",
-      "resourceTypes": [
-        "script",
-        "sub_frame",
-        "image",
-        "xmlhttprequest"
-      ]
-    }
-  },
-  {
-    "id": 121,
-    "priority": 5,
-    "action": {
-      "type": "block"
-    },
-    "condition": {
-      "urlFilter": "||pornoxo.com/zv3/",
-      "resourceTypes": [
-        "sub_frame",
-        "script",
-        "xmlhttprequest",
-        "ping"
-      ]
-    }
-  },
-  {
-    "id": 122,
-    "priority": 5,
-    "action": {
-      "type": "block"
-    },
-    "condition": {
-      "urlFilter": "||pornoxo.com/api/r4mx",
-      "resourceTypes": [
-        "xmlhttprequest",
-        "sub_frame"
-      ]
-    }
-  },
-  {
     "id": 123,
     "priority": 2,
     "action": {
@@ -2067,31 +1744,6 @@
     }
   },
   {
-    "id": 127,
-    "priority": 5,
-    "action": {
-      "type": "block"
-    },
-    "condition": {
-      "regexFilter": "^https?://[^/]+/[0-9a-z]{8,12}/[0-9a-z]{8,12}\\.js(\\?|$)",
-      "resourceTypes": [
-        "script",
-        "xmlhttprequest"
-      ],
-      "initiatorDomains": [
-        "txxx.me",
-        "txxx.com",
-        "hclips.com",
-        "upornia.com",
-        "voyeurhit.com",
-        "hotmovs.com",
-        "tubecup.com",
-        "vjav.com",
-        "shemalez.com"
-      ]
-    }
-  },
-  {
     "id": 128,
     "priority": 3,
     "action": {
@@ -2105,22 +1757,6 @@
         "xmlhttprequest",
         "media",
         "other"
-      ]
-    }
-  },
-  {
-    "id": 129,
-    "priority": 3,
-    "action": {
-      "type": "block"
-    },
-    "condition": {
-      "urlFilter": "||ahw2lok.txxx.com^",
-      "resourceTypes": [
-        "script",
-        "sub_frame",
-        "xmlhttprequest",
-        "media"
       ]
     }
   },
@@ -2213,22 +1849,6 @@
     },
     "condition": {
       "urlFilter": "||fhgte.com^",
-      "resourceTypes": [
-        "sub_frame",
-        "script",
-        "xmlhttprequest",
-        "image"
-      ]
-    }
-  },
-  {
-    "id": 136,
-    "priority": 3,
-    "action": {
-      "type": "block"
-    },
-    "condition": {
-      "urlFilter": "||faphouse4k.com^",
       "resourceTypes": [
         "sub_frame",
         "script",
@@ -2344,20 +1964,6 @@
     }
   },
   {
-    "id": 144,
-    "priority": 5,
-    "action": {
-      "type": "block"
-    },
-    "condition": {
-      "urlFilter": "||nvdst.com/*/_pnuvid.js",
-      "resourceTypes": [
-        "script",
-        "xmlhttprequest"
-      ]
-    }
-  },
-  {
     "id": 145,
     "priority": 3,
     "action": {
@@ -2459,29 +2065,6 @@
     }
   },
   {
-    "id": 151,
-    "priority": 5,
-    "action": {
-      "type": "block"
-    },
-    "condition": {
-      "regexFilter": "^https?://[^/]+/[A-Za-z0-9]{5}/[A-Za-z0-9]{10}\\.(js|php)(\\?|$)",
-      "initiatorDomains": [
-        "nuvid.com",
-        "drtuber.com",
-        "proporn.com",
-        "hd21.com",
-        "winporn.com",
-        "iceporn.com"
-      ],
-      "resourceTypes": [
-        "script",
-        "xmlhttprequest",
-        "sub_frame"
-      ]
-    }
-  },
-  {
     "id": 152,
     "priority": 4,
     "action": {
@@ -2501,25 +2084,6 @@
     }
   },
   {
-    "id": 153,
-    "priority": 4,
-    "action": {
-      "type": "block"
-    },
-    "condition": {
-      "urlFilter": "||hotxxxcontent.com^",
-      "resourceTypes": [
-        "sub_frame",
-        "script",
-        "xmlhttprequest",
-        "image",
-        "media",
-        "ping",
-        "other"
-      ]
-    }
-  },
-  {
     "id": 154,
     "priority": 4,
     "action": {
@@ -2527,25 +2091,6 @@
     },
     "condition": {
       "urlFilter": "||qoqh.com^",
-      "resourceTypes": [
-        "sub_frame",
-        "script",
-        "xmlhttprequest",
-        "image",
-        "media",
-        "ping",
-        "other"
-      ]
-    }
-  },
-  {
-    "id": 155,
-    "priority": 4,
-    "action": {
-      "type": "block"
-    },
-    "condition": {
-      "urlFilter": "||hqpornpro.com^",
       "resourceTypes": [
         "sub_frame",
         "script",
@@ -2840,25 +2385,6 @@
     },
     "condition": {
       "urlFilter": "||goadserver.com^",
-      "resourceTypes": [
-        "script",
-        "xmlhttprequest",
-        "sub_frame",
-        "image",
-        "media",
-        "ping",
-        "other"
-      ]
-    }
-  },
-  {
-    "id": 174,
-    "priority": 5,
-    "action": {
-      "type": "block"
-    },
-    "condition": {
-      "urlFilter": "||kol88.freeporn8.com^",
       "resourceTypes": [
         "script",
         "xmlhttprequest",
@@ -3810,25 +3336,6 @@
     }
   },
   {
-    "id": 235,
-    "priority": 5,
-    "action": {
-      "type": "block"
-    },
-    "condition": {
-      "urlFilter": "||realxxx.com^",
-      "resourceTypes": [
-        "script",
-        "sub_frame",
-        "image",
-        "xmlhttprequest",
-        "media",
-        "ping",
-        "other"
-      ]
-    }
-  },
-  {
     "id": 236,
     "priority": 5,
     "action": {
@@ -3929,23 +3436,6 @@
         "script",
         "sub_frame",
         "image",
-        "xmlhttprequest",
-        "ping",
-        "other"
-      ]
-    }
-  },
-  {
-    "id": 242,
-    "priority": 5,
-    "action": {
-      "type": "block"
-    },
-    "condition": {
-      "urlFilter": "||pornoeggs.com/away/",
-      "resourceTypes": [
-        "sub_frame",
-        "script",
         "xmlhttprequest",
         "ping",
         "other"
@@ -4107,24 +3597,6 @@
     },
     "condition": {
       "urlFilter": "||aivanta76.com^",
-      "resourceTypes": [
-        "script",
-        "sub_frame",
-        "image",
-        "xmlhttprequest",
-        "ping",
-        "other"
-      ]
-    }
-  },
-  {
-    "id": 252,
-    "priority": 5,
-    "action": {
-      "type": "block"
-    },
-    "condition": {
-      "urlFilter": "||bongacams2.com^",
       "resourceTypes": [
         "script",
         "sub_frame",

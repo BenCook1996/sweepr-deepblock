@@ -1,8 +1,32 @@
 {
-  "updatedAt": "2026-11-04T00:05:06.770Z",
+  "updatedAt": "2026-11-04T08:04:04.344Z",
   "dedupWindowDays": 30,
-  "totalTrackedDomains": 10100,
+  "totalTrackedDomains": 10110,
   "recentRuns": [
+    {
+      "run_id": "adpipe-2026-11-04-49aht",
+      "started_at": "2026-11-04T08:03:59.276Z",
+      "completed_at": "2026-11-04T08:04:04.344Z",
+      "sites_sampled": 5,
+      "sites_scanned": 5,
+      "leaks_detected": 0,
+      "rules_auto_patched": 0,
+      "manual_review_count": 0,
+      "commit_hash": "ac741d7",
+      "crm_synced": 1
+    },
+    {
+      "run_id": "adpipe-2026-11-04-nkeal",
+      "started_at": "2026-11-04T08:02:38.948Z",
+      "completed_at": "2026-11-04T08:03:05.353Z",
+      "sites_sampled": 5,
+      "sites_scanned": 5,
+      "leaks_detected": 0,
+      "rules_auto_patched": 0,
+      "manual_review_count": 0,
+      "commit_hash": "ac741d7",
+      "crm_synced": 1
+    },
     {
       "run_id": "adpipe-2026-11-04-wnrc0",
       "started_at": "2026-11-04T00:04:58.986Z",
@@ -71395,6 +71419,76 @@
       "lastScannedAt": 1793750703551,
       "scanCount": 1,
       "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "kernelmirror.org": {
+      "category": "blogs",
+      "lastScannedAt": 1793779363345,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "heraldexpress.me": {
+      "category": "news",
+      "lastScannedAt": 1793779363345,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "skilletonline.de": {
+      "category": "recipes",
+      "lastScannedAt": 1793779363345,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "gadgetradar.es": {
+      "category": "blogs",
+      "lastScannedAt": 1793779363345,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bakeradar.info": {
+      "category": "recipes",
+      "lastScannedAt": 1793779363345,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "hurriyetkampus.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793779443688,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "vaporcloudcomputing.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793779443688,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "shns.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793779443688,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "funweek.it": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793779443688,
+      "scanCount": 1,
+      "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "trafficmanager.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793779443688,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
       "leaksFound": 0
     }
   }

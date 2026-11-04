@@ -1,7 +1,7 @@
 {
   "ok": true,
-  "version": "1.1.50703",
-  "updatedAt": "2026-11-04T01:14:00.000Z",
+  "version": "1.1.79442",
+  "updatedAt": "2026-11-04T08:04:02.830Z",
   "featureFlags": {
     "cookieAutoClose": true,
     "hideSearchSpam": true,
@@ -298,25 +298,6 @@
     },
     {
       "id": 80011,
-      "priority": 5,
-      "action": {
-        "type": "block"
-      },
-      "condition": {
-        "urlFilter": "||kol88.freeporn8.com^",
-        "resourceTypes": [
-          "script",
-          "xmlhttprequest",
-          "sub_frame",
-          "image",
-          "media",
-          "ping",
-          "other"
-        ]
-      }
-    },
-    {
-      "id": 80012,
       "priority": 3,
       "action": {
         "type": "block"
@@ -331,7 +312,7 @@
       }
     },
     {
-      "id": 80013,
+      "id": 80012,
       "priority": 3,
       "action": {
         "type": "block"
@@ -346,7 +327,7 @@
       }
     },
     {
-      "id": 80014,
+      "id": 80013,
       "priority": 3,
       "action": {
         "type": "block"
@@ -361,7 +342,7 @@
       }
     },
     {
-      "id": 80015,
+      "id": 80014,
       "priority": 3,
       "action": {
         "type": "block"
@@ -376,7 +357,7 @@
       }
     },
     {
-      "id": 80016,
+      "id": 80015,
       "priority": 3,
       "action": {
         "type": "block"
@@ -391,7 +372,7 @@
       }
     },
     {
-      "id": 80017,
+      "id": 80016,
       "priority": 3,
       "action": {
         "type": "block"
@@ -406,7 +387,7 @@
       }
     },
     {
-      "id": 80018,
+      "id": 80017,
       "priority": 3,
       "action": {
         "type": "block"
@@ -422,7 +403,7 @@
       }
     },
     {
-      "id": 80019,
+      "id": 80018,
       "priority": 3,
       "action": {
         "type": "block"
@@ -439,7 +420,7 @@
       }
     },
     {
-      "id": 80020,
+      "id": 80019,
       "priority": 3,
       "action": {
         "type": "block"
@@ -454,7 +435,7 @@
       }
     },
     {
-      "id": 80021,
+      "id": 80020,
       "priority": 3,
       "action": {
         "type": "block"
@@ -470,7 +451,7 @@
       }
     },
     {
-      "id": 80022,
+      "id": 80021,
       "priority": 3,
       "action": {
         "type": "block"
@@ -485,7 +466,7 @@
       }
     },
     {
-      "id": 80023,
+      "id": 80022,
       "priority": 3,
       "action": {
         "type": "block"
@@ -500,7 +481,7 @@
       }
     },
     {
-      "id": 80024,
+      "id": 80023,
       "priority": 3,
       "action": {
         "type": "block"
@@ -516,7 +497,7 @@
       }
     },
     {
-      "id": 80025,
+      "id": 80024,
       "priority": 3,
       "action": {
         "type": "block"
@@ -532,7 +513,7 @@
       }
     },
     {
-      "id": 80026,
+      "id": 80025,
       "priority": 3,
       "action": {
         "type": "block"
@@ -547,7 +528,7 @@
       }
     },
     {
-      "id": 80027,
+      "id": 80026,
       "priority": 3,
       "action": {
         "type": "block"
@@ -562,7 +543,7 @@
       }
     },
     {
-      "id": 80028,
+      "id": 80027,
       "priority": 3,
       "action": {
         "type": "block"
@@ -577,7 +558,7 @@
       }
     },
     {
-      "id": 80029,
+      "id": 80028,
       "priority": 3,
       "action": {
         "type": "block"
@@ -592,7 +573,7 @@
       }
     },
     {
-      "id": 80030,
+      "id": 80029,
       "priority": 3,
       "action": {
         "type": "block"
@@ -607,7 +588,7 @@
       }
     },
     {
-      "id": 80031,
+      "id": 80030,
       "priority": 3,
       "action": {
         "type": "block"
@@ -622,7 +603,7 @@
       }
     },
     {
-      "id": 80032,
+      "id": 80031,
       "priority": 3,
       "action": {
         "type": "block"
@@ -637,7 +618,7 @@
       }
     },
     {
-      "id": 80033,
+      "id": 80032,
       "priority": 3,
       "action": {
         "type": "block"
@@ -652,7 +633,7 @@
       }
     },
     {
-      "id": 80034,
+      "id": 80033,
       "priority": 3,
       "action": {
         "type": "block"
@@ -668,7 +649,7 @@
       }
     },
     {
-      "id": 80035,
+      "id": 80034,
       "priority": 3,
       "action": {
         "type": "block"
@@ -683,7 +664,7 @@
       }
     },
     {
-      "id": 80036,
+      "id": 80035,
       "priority": 3,
       "action": {
         "type": "block"
@@ -698,7 +679,7 @@
       }
     },
     {
-      "id": 80037,
+      "id": 80036,
       "priority": 3,
       "action": {
         "type": "block"
@@ -713,7 +694,7 @@
       }
     },
     {
-      "id": 80038,
+      "id": 80037,
       "priority": 3,
       "action": {
         "type": "block"
@@ -728,7 +709,7 @@
       }
     },
     {
-      "id": 80039,
+      "id": 80038,
       "priority": 3,
       "action": {
         "type": "block"
@@ -743,7 +724,7 @@
       }
     },
     {
-      "id": 80040,
+      "id": 80039,
       "priority": 3,
       "action": {
         "type": "block"
@@ -759,7 +740,7 @@
       }
     },
     {
-      "id": 80041,
+      "id": 80040,
       "priority": 3,
       "action": {
         "type": "block"
@@ -774,7 +755,7 @@
       }
     },
     {
-      "id": 80042,
+      "id": 80041,
       "priority": 3,
       "action": {
         "type": "block"
@@ -790,7 +771,7 @@
       }
     },
     {
-      "id": 80043,
+      "id": 80042,
       "priority": 3,
       "action": {
         "type": "block"
@@ -806,7 +787,7 @@
       }
     },
     {
-      "id": 80044,
+      "id": 80043,
       "priority": 3,
       "action": {
         "type": "block"
@@ -821,7 +802,7 @@
       }
     },
     {
-      "id": 80045,
+      "id": 80044,
       "priority": 3,
       "action": {
         "type": "block"
@@ -836,7 +817,7 @@
       }
     },
     {
-      "id": 80046,
+      "id": 80045,
       "priority": 3,
       "action": {
         "type": "block"
@@ -852,7 +833,7 @@
       }
     },
     {
-      "id": 80047,
+      "id": 80046,
       "priority": 3,
       "action": {
         "type": "block"
@@ -868,7 +849,7 @@
       }
     },
     {
-      "id": 80048,
+      "id": 80047,
       "priority": 3,
       "action": {
         "type": "block"
@@ -884,7 +865,7 @@
       }
     },
     {
-      "id": 80049,
+      "id": 80048,
       "priority": 3,
       "action": {
         "type": "block"
@@ -899,7 +880,7 @@
       }
     },
     {
-      "id": 80050,
+      "id": 80049,
       "priority": 3,
       "action": {
         "type": "block"
@@ -914,7 +895,7 @@
       }
     },
     {
-      "id": 80051,
+      "id": 80050,
       "priority": 3,
       "action": {
         "type": "block"
@@ -930,7 +911,7 @@
       }
     },
     {
-      "id": 80052,
+      "id": 80051,
       "priority": 3,
       "action": {
         "type": "block"
@@ -946,7 +927,7 @@
       }
     },
     {
-      "id": 80053,
+      "id": 80052,
       "priority": 3,
       "action": {
         "type": "block"
@@ -962,7 +943,7 @@
       }
     },
     {
-      "id": 80054,
+      "id": 80053,
       "priority": 3,
       "action": {
         "type": "block"
@@ -978,7 +959,7 @@
       }
     },
     {
-      "id": 80055,
+      "id": 80054,
       "priority": 3,
       "action": {
         "type": "block"
@@ -993,7 +974,7 @@
       }
     },
     {
-      "id": 80056,
+      "id": 80055,
       "priority": 3,
       "action": {
         "type": "block"
@@ -1009,7 +990,7 @@
       }
     },
     {
-      "id": 80057,
+      "id": 80056,
       "priority": 3,
       "action": {
         "type": "block"
@@ -1024,7 +1005,7 @@
       }
     },
     {
-      "id": 80058,
+      "id": 80057,
       "priority": 3,
       "action": {
         "type": "block"
@@ -1039,7 +1020,7 @@
       }
     },
     {
-      "id": 80059,
+      "id": 80058,
       "priority": 3,
       "action": {
         "type": "block"
@@ -1054,7 +1035,7 @@
       }
     },
     {
-      "id": 80060,
+      "id": 80059,
       "priority": 5,
       "action": {
         "type": "block"
@@ -1073,7 +1054,7 @@
       }
     },
     {
-      "id": 80061,
+      "id": 80060,
       "priority": 5,
       "action": {
         "type": "block"
@@ -1092,7 +1073,7 @@
       }
     },
     {
-      "id": 80062,
+      "id": 80061,
       "priority": 5,
       "action": {
         "type": "block"
@@ -1110,7 +1091,7 @@
       }
     },
     {
-      "id": 80063,
+      "id": 80062,
       "priority": 5,
       "action": {
         "type": "block"
@@ -1129,26 +1110,7 @@
       }
     },
     {
-      "id": 80064,
-      "priority": 5,
-      "action": {
-        "type": "block"
-      },
-      "condition": {
-        "urlFilter": "||realxxx.com^",
-        "resourceTypes": [
-          "script",
-          "sub_frame",
-          "image",
-          "xmlhttprequest",
-          "media",
-          "ping",
-          "other"
-        ]
-      }
-    },
-    {
-      "id": 80065,
+      "id": 80063,
       "priority": 5,
       "action": {
         "type": "block"
@@ -1167,7 +1129,7 @@
       }
     },
     {
-      "id": 80066,
+      "id": 80064,
       "priority": 5,
       "action": {
         "type": "block"
@@ -1184,7 +1146,7 @@
       }
     },
     {
-      "id": 80067,
+      "id": 80065,
       "priority": 5,
       "action": {
         "type": "block"
@@ -1201,7 +1163,7 @@
       }
     },
     {
-      "id": 80068,
+      "id": 80066,
       "priority": 5,
       "action": {
         "type": "block"
@@ -1217,7 +1179,7 @@
       }
     },
     {
-      "id": 80069,
+      "id": 80067,
       "priority": 5,
       "action": {
         "type": "block"
@@ -1236,7 +1198,7 @@
       }
     },
     {
-      "id": 80070,
+      "id": 80068,
       "priority": 5,
       "action": {
         "type": "block"
@@ -1254,24 +1216,7 @@
       }
     },
     {
-      "id": 80071,
-      "priority": 5,
-      "action": {
-        "type": "block"
-      },
-      "condition": {
-        "urlFilter": "||pornoeggs.com/away/",
-        "resourceTypes": [
-          "sub_frame",
-          "script",
-          "xmlhttprequest",
-          "ping",
-          "other"
-        ]
-      }
-    },
-    {
-      "id": 80072,
+      "id": 80069,
       "priority": 5,
       "action": {
         "type": "block"
@@ -1290,7 +1235,7 @@
       }
     },
     {
-      "id": 80073,
+      "id": 80070,
       "priority": 5,
       "action": {
         "type": "block"
@@ -1309,7 +1254,7 @@
       }
     },
     {
-      "id": 80074,
+      "id": 80071,
       "priority": 5,
       "action": {
         "type": "block"
@@ -1327,7 +1272,7 @@
       }
     },
     {
-      "id": 80075,
+      "id": 80072,
       "priority": 5,
       "action": {
         "type": "block"
@@ -1345,7 +1290,7 @@
       }
     },
     {
-      "id": 80076,
+      "id": 80073,
       "priority": 5,
       "action": {
         "type": "block"
@@ -1363,7 +1308,7 @@
       }
     },
     {
-      "id": 80077,
+      "id": 80074,
       "priority": 5,
       "action": {
         "type": "block"
@@ -1382,7 +1327,7 @@
       }
     },
     {
-      "id": 80078,
+      "id": 80075,
       "priority": 5,
       "action": {
         "type": "block"
@@ -1400,7 +1345,7 @@
       }
     },
     {
-      "id": 80079,
+      "id": 80076,
       "priority": 5,
       "action": {
         "type": "block"
@@ -1418,7 +1363,7 @@
       }
     },
     {
-      "id": 80080,
+      "id": 80077,
       "priority": 5,
       "action": {
         "type": "block"
@@ -1436,25 +1381,7 @@
       }
     },
     {
-      "id": 80081,
-      "priority": 5,
-      "action": {
-        "type": "block"
-      },
-      "condition": {
-        "urlFilter": "||bongacams2.com^",
-        "resourceTypes": [
-          "script",
-          "sub_frame",
-          "image",
-          "xmlhttprequest",
-          "ping",
-          "other"
-        ]
-      }
-    },
-    {
-      "id": 80082,
+      "id": 80078,
       "priority": 5,
       "action": {
         "type": "block"
@@ -1472,7 +1399,7 @@
       }
     },
     {
-      "id": 80083,
+      "id": 80079,
       "priority": 5,
       "action": {
         "type": "block"
@@ -1489,7 +1416,7 @@
       }
     },
     {
-      "id": 80084,
+      "id": 80080,
       "priority": 5,
       "action": {
         "type": "block"
@@ -1507,7 +1434,7 @@
       }
     },
     {
-      "id": 80085,
+      "id": 80081,
       "priority": 5,
       "action": {
         "type": "block"
@@ -1526,7 +1453,7 @@
       }
     },
     {
-      "id": 80086,
+      "id": 80082,
       "priority": 5,
       "action": {
         "type": "block"
@@ -1544,7 +1471,7 @@
       }
     },
     {
-      "id": 80087,
+      "id": 80083,
       "priority": 5,
       "action": {
         "type": "block"
@@ -1562,7 +1489,7 @@
       }
     },
     {
-      "id": 80088,
+      "id": 80084,
       "priority": 5,
       "action": {
         "type": "block"
@@ -1580,7 +1507,7 @@
       }
     },
     {
-      "id": 80089,
+      "id": 80085,
       "priority": 5,
       "action": {
         "type": "block"
@@ -1598,7 +1525,7 @@
       }
     },
     {
-      "id": 80090,
+      "id": 80086,
       "priority": 5,
       "action": {
         "type": "block"
@@ -1616,7 +1543,7 @@
       }
     },
     {
-      "id": 80091,
+      "id": 80087,
       "priority": 5,
       "action": {
         "type": "block"
@@ -1632,7 +1559,7 @@
       }
     },
     {
-      "id": 80092,
+      "id": 80088,
       "priority": 5,
       "action": {
         "type": "block"
@@ -1648,7 +1575,7 @@
       }
     },
     {
-      "id": 80093,
+      "id": 80089,
       "priority": 5,
       "action": {
         "type": "block"
@@ -1663,7 +1590,7 @@
       }
     },
     {
-      "id": 80094,
+      "id": 80090,
       "priority": 5,
       "action": {
         "type": "block"

@@ -24,7 +24,7 @@ const LLMS_PATH = path.join(WEBSITE_DIR, 'llms.txt');
 const LLMS_FULL_PATH = path.join(WEBSITE_DIR, 'llms-full.txt');
 const INDEXING_QUEUE_PATH = path.join(WEBSITE_DIR, 'indexing-queue.json');
 const DAILY_STATE_PATH = path.join(WEBSITE_DIR, 'daily-seo-pages-state.json');
-const INDEXNOW_KEY = '8f9a2b4c6d1e3f5a7b9c0d2e4f6a8b0c';
+const INDEXNOW_KEY = '9a4e7b2c5d8f1a3e6b9c0d4f7a2e5b8c';
 
 const PLATFORMS = [
   { slug: 'youtube-chrome-mv3', shortName: 'YouTube (Chrome MV3)', name: 'YouTube on Google Chrome (Manifest V3)', category: 'Video Streaming', issue: 'Unskippable pre-roll ads, mid-roll interruptions, and anti-adblock warning modals' },
@@ -376,9 +376,9 @@ const SETUP_BROWSERS = [
   { slug: 'chromeos-chromebook-mv3', shortName: 'ChromeOS Chromebook', name: 'Chromebook & ChromeOS (Manifest V3)', os: 'ChromeOS & CloudReady', notes: 'Ultra-lightweight MV3 memory footprint designed specifically to preserve speed and battery on Chromebooks.' },
   { slug: 'firefox-android-mobile', shortName: 'Firefox Android', name: 'Mozilla Firefox on Android Mobile', os: 'Android 10, 11, 12, 13, 14+', notes: 'Mobile-optimized network filtering, instant cookie banner dismissal, and URL tracking parameter stripping on mobile.' },
   { slug: 'kiwi-browser-android', shortName: 'Kiwi Browser (Android)', name: 'Kiwi Browser for Android (MV3)', os: 'Android 10, 11, 12, 13, 14+', notes: 'Full Manifest V3 declarativeNetRequest support on mobile, blocking YouTube video ads, stopping redirect spam, and auto-rejecting cookie consent modals on Android.' },
-  { slug: 'orion-browser-macos-ios', shortName: 'Orion Browser', name: 'Orion Browser by Kagi (macOS & iOS)', os: 'macOS Sonoma/Sequoia & iOS', notes: 'Zero-telemetry WebKit browser supercharged with SWEEPR DeepBlock 8/8 anti-detection filtering, sub-50ms cookie rejection, and scam shop detection.' },
+  { slug: 'orion-browser-macos-ios', shortName: 'Orion Browser', name: 'Orion Browser by Kagi (macOS & iOS)', os: 'macOS Sonoma/Sequoia & iOS', notes: 'Privacy-first WebKit browser supercharged with SWEEPR DeepBlock 8/8 anti-detection filtering, sub-50ms cookie rejection, and scam shop detection.' },
   { slug: 'floorp-browser-firefox-fork', shortName: 'Floorp Browser', name: 'Floorp Privacy Browser', os: 'Windows, macOS & Linux', notes: 'Privacy-focused Gecko browser paired with SWEEPR DeepBlock cosmetic scriptlets, URL tracking parameter stripping, and tab memory hibernation.' },
-  { slug: 'waterfox-privacy-browser', shortName: 'Waterfox Browser', name: 'Waterfox 64-Bit Privacy Browser', os: 'Windows, macOS & Linux', notes: 'Fast, telemetry-free browser combined with SWEEPR DeepBlock sub-50ms rule matching, YouTube anti-detection, and automated cookie banner dismissal.' },
+  { slug: 'waterfox-privacy-browser', shortName: 'Waterfox Browser', name: 'Waterfox 64-Bit Privacy Browser', os: 'Windows, macOS & Linux', notes: 'Fast, privacy-first browser combined with SWEEPR DeepBlock sub-50ms rule matching, YouTube anti-detection, and automated cookie banner dismissal.' },
   { slug: 'zen-browser-privacy-tabs', shortName: 'Zen Browser', name: 'Zen Privacy Browser', os: 'Windows, macOS & Linux', notes: 'Next-generation vertical tabs browser enhanced with SWEEPR DeepBlock 8/8 anti-detection engine and Total Tab & RAM Tamer.' },
   { slug: 'ungoogled-chromium-mv3', shortName: 'Ungoogled Chromium', name: 'Ungoogled Chromium (Manifest V3)', os: 'Windows, macOS & Linux', notes: 'Chromium with all Google background tracking stripped out, paired with SWEEPR DeepBlock MV3 declarativeNetRequest dynamic rule sets.' },
   { slug: 'mullvad-browser-privacy', shortName: 'Mullvad Browser', name: 'Mullvad Privacy Browser', os: 'Windows, macOS & Linux', notes: 'Engineered with Tor Project protections plus SWEEPR DeepBlock automatic cookie banner auto-rejection and real-time fake scam store warnings.' },
@@ -386,35 +386,35 @@ const SETUP_BROWSERS = [
   { slug: 'safari-ios-iphone-mv3', shortName: 'Safari iOS', name: 'Apple Safari on iOS (iPhone & iPad)', os: 'iOS 17, 18+ & iPadOS', notes: 'Native Content Blocker engine with ultra-low battery impact, sub-50ms cookie banner auto-rejection, and mobile tracking parameter stripping.' },
   { slug: 'raspberry-pi-chromium', shortName: 'Raspberry Pi', name: 'Raspberry Pi Chromium (ARM Linux)', os: 'Raspberry Pi OS (ARM64)', notes: 'Cuts CPU and RAM overhead on low-resource ARM boards by halting heavy ad auction loops and blocking tracking scripts.' },
   { slug: 'brave-android-mobile', shortName: 'Brave Android', name: 'Brave Browser for Android Mobile', os: 'Android 10, 11, 12, 13, 14+', notes: 'Adds instant Cookie Consent "Reject All" clicking and Fake Scam Store warnings to Brave on Android.' },
-  { slug: 'sidekick-productivity-browser', shortName: 'Sidekick Work', name: 'Sidekick Work & Productivity Browser', os: 'Windows 10/11 & macOS', notes: 'Tab hibernation integration, sub-50ms rule matching, and zero-telemetry Manifest V3 filtering for high-performance multitasking.' },
+  { slug: 'sidekick-productivity-browser', shortName: 'Sidekick Work', name: 'Sidekick Work & Productivity Browser', os: 'Windows 10/11 & macOS', notes: 'Tab hibernation integration, sub-50ms rule matching, and local-first Manifest V3 filtering for high-performance multitasking.' },
   { slug: 'vivaldi-android-mobile', shortName: 'Vivaldi Android', name: 'Vivaldi Browser for Android (MV3)', os: 'Android 10, 11, 12, 13, 14+', notes: 'Blocks intrusive mobile banner networks, auto-rejects CMP cookie consent prompts in under 50ms, and strips mobile tracking parameters.' },
   { slug: 'brave-linux-desktop', shortName: 'Brave on Linux', name: 'Brave Browser on Linux (Ubuntu, Debian, Arch)', os: 'Linux (Ubuntu, Debian, Fedora, Arch)', notes: 'Enhances native Brave Shields with SWEEPR DeepStealth 8/8 anti-detection, sub-50ms cookie banner auto-rejection, and AI slop cleansers.' },
   { slug: 'chromium-linux-ubuntu', shortName: 'Chromium Linux', name: 'Chromium Browser on Ubuntu Linux', os: 'Ubuntu, Debian, Mint & Pop!_OS', notes: 'Full Manifest V3 declarativeNetRequest dynamic rule sets, sub-50ms cookie banner dismissal, and memory optimization.' },
   { slug: 'edge-macos-apple-silicon', shortName: 'Edge Mac Silicon', name: 'Microsoft Edge on Apple Silicon macOS', os: 'macOS Sonoma & Sequoia (M1/M2/M3/M4)', notes: 'Arm64-optimized adblocking, removes Edge start-page sponsored news bloat, and terminates tracking beacons.' },
-  { slug: 'firefox-developer-edition', shortName: 'Firefox Dev', name: 'Mozilla Firefox Developer Edition', os: 'Windows, macOS & Linux', notes: 'Full cosmetic scriptlet injection, URL tracking parameter stripping (fbclid, gclid, utm_), and zero-telemetry browsing.' },
+  { slug: 'firefox-developer-edition', shortName: 'Firefox Dev', name: 'Mozilla Firefox Developer Edition', os: 'Windows, macOS & Linux', notes: 'Full cosmetic scriptlet injection, URL tracking parameter stripping (fbclid, gclid, utm_), and no-browsing-history local filtering.' },
   { slug: 'cachyos-arch-chromium', shortName: 'CachyOS Chromium', name: 'CachyOS & Arch Linux Optimized Chromium', os: 'Arch Linux & CachyOS (x86-64-v3/v4)', notes: 'Ultra-high performance AVX-512 optimized browser setup paired with SWEEPR DeepBlock sub-50ms rule matching and RAM tamer.' },
   { slug: 'ladybird-browser-privacy', shortName: 'Ladybird Browser', name: 'Ladybird Browser (Next-Gen Engine)', os: 'Linux & macOS', notes: 'Independent engine privacy protection, stopping tracker beacons, malicious redirects, and intrusive cookie pop-up overlays.' },
   { slug: 'brave-ios-iphone', shortName: 'Brave for iOS', name: 'Brave Browser for Apple iOS (iPhone & iPad)', os: 'iOS 17, 18+ & iPadOS', notes: 'Native mobile content blocking combined with SWEEPR DeepBlock instant cookie banner rejection and fake online store alerts.' },
   { slug: 'edge-linux-desktop', shortName: 'Edge on Linux', name: 'Microsoft Edge on Linux (Ubuntu, Debian, Fedora)', os: 'Linux (Ubuntu, Debian, Fedora, Arch)', notes: 'Full Manifest V3 declarativeNetRequest support, auto-rejects CMP cookie consent pop-ups, and cleans Edge new tab clutter on Linux.' },
-  { slug: 'chrome-dev-canary-mv3', shortName: 'Chrome Dev & Canary', name: 'Google Chrome Dev & Canary (Manifest V3)', os: 'Windows, macOS & Linux', notes: 'Engineered for cutting-edge Chromium builds with 8/8 anti-detection test lab verification and zero-telemetry cosmetic scriptlets.' },
+  { slug: 'chrome-dev-canary-mv3', shortName: 'Chrome Dev & Canary', name: 'Google Chrome Dev & Canary (Manifest V3)', os: 'Windows, macOS & Linux', notes: 'Engineered for cutting-edge Chromium builds with 8/8 anti-detection test lab verification and local-first cosmetic scriptlets.' },
   { slug: 'chromium-mac-apple-silicon', shortName: 'Chromium Mac Silicon', name: 'Chromium on Apple Silicon Mac (M1/M2/M3/M4)', os: 'macOS Sonoma & Sequoia', notes: 'Native ARM64 build optimization, sub-50ms cookie banner auto-rejection, and Total Tab & RAM Tamer memory hibernation.' },
   { slug: 'brave-beta-nightly', shortName: 'Brave Beta & Nightly', name: 'Brave Browser (Beta & Nightly Channels)', os: 'Windows, macOS & Linux', notes: 'Adds automatic Cookie Consent "Reject All" clicking and Fake Online Shop scam detection on top of Brave Shields.' },
   { slug: 'opera-one-ai-browser', shortName: 'Opera One Browser', name: 'Opera One & Opera Air Browser', os: 'Windows 11 & macOS', notes: 'Replaces weak native ad blocking with SWEEPR DeepStealth 8/8 anti-detection, sub-50ms cookie rejection, and AI slop cleansers.' },
   { slug: 'arc-browser-mac-sequoia', shortName: 'Arc Mac Sequoia', name: 'Arc Browser on macOS Sequoia', os: 'macOS 15 Sequoia (Apple Silicon & Intel)', notes: 'Ultra-lightweight MV3 memory footprint designed specifically to preserve speed and battery on macOS Sequoia.' },
   { slug: 'tor-browser-deepstealth', shortName: 'Tor Browser', name: 'Tor Browser & Hardened Web', os: 'Windows, macOS & Linux', notes: 'Enhanced privacy filtering, sub-50ms cookie consent auto-rejection, URL tracker stripping, and fake scam shop warnings.' },
   { slug: 'brave-macos-intel', shortName: 'Brave on Intel Mac', name: 'Brave Browser on Intel macOS (x86_64)', os: 'macOS Monterey, Ventura & Sonoma', notes: 'Halts heavy ad auction loops, auto-rejects CMP cookie consent banners, and saves battery life on older Intel MacBooks.' },
-  { slug: 'chromium-fedora-redhat', shortName: 'Chromium on Fedora', name: 'Chromium on Fedora & Red Hat Linux', os: 'Fedora, RHEL, CentOS & AlmaLinux', notes: 'Full Manifest V3 declarativeNetRequest dynamic rule sets, sub-50ms cookie banner dismissal, and zero-telemetry memory optimization.' },
+  { slug: 'chromium-fedora-redhat', shortName: 'Chromium on Fedora', name: 'Chromium on Fedora & Red Hat Linux', os: 'Fedora, RHEL, CentOS & AlmaLinux', notes: 'Full Manifest V3 declarativeNetRequest dynamic rule sets, sub-50ms cookie banner dismissal, and local-first memory optimization.' },
   { slug: 'vivaldi-macos-apple-silicon', shortName: 'Vivaldi Mac Silicon', name: 'Vivaldi Browser on Apple Silicon Mac', os: 'macOS Sonoma & Sequoia (M1/M2/M3/M4)', notes: 'ARM64 optimized DeepStealth rules, sub-50ms cookie banner auto-rejection, and Total Tab & RAM Tamer memory hibernation.' },
   { slug: 'zen-browser-linux-wayland', shortName: 'Zen Browser Linux', name: 'Zen Privacy Browser on Linux (Wayland / X11)', os: 'Linux (Arch, Ubuntu, Fedora, Flatpak)', notes: 'Hardware-accelerated Gecko engine optimized with SWEEPR DeepStealth 8/8 anti-detection, sub-50ms cookie banner auto-rejection, and RAM tamer.' },
   { slug: 'thorium-avx2-windows-11', shortName: 'Thorium AVX2 Win 11', name: 'Thorium AVX2 / AVX-512 Browser on Windows 11', os: 'Windows 11 & Windows 10 (64-bit AVX2)', notes: 'Optimized compiler flags paired with SWEEPR DeepBlock sub-50ms rule matching, YouTube anti-detection, and background tab memory optimization.' },
-  { slug: 'firefox-esr-enterprise-privacy', shortName: 'Firefox ESR Enterprise', name: 'Mozilla Firefox ESR (Extended Support Release)', os: 'Windows, macOS & Linux', notes: 'Enterprise-grade Gecko browser paired with SWEEPR DeepBlock zero-telemetry rules, instant cookie banner auto-rejection, and fake scam shop shields.' },
+  { slug: 'firefox-esr-enterprise-privacy', shortName: 'Firefox ESR Enterprise', name: 'Mozilla Firefox ESR (Extended Support Release)', os: 'Windows, macOS & Linux', notes: 'Enterprise-grade Gecko browser paired with SWEEPR DeepBlock local-first rules, instant cookie banner auto-rejection, and fake scam shop shields.' },
   { slug: 'brave-ipad-ipados-privacy', shortName: 'Brave for iPadOS', name: 'Brave Browser for Apple iPadOS', os: 'iPadOS 17, 18+', notes: 'Tablet-optimized content filtering combined with SWEEPR DeepBlock sub-50ms cookie banner rejection, YouTube ad prevention, and fake store warnings.' },
   { slug: 'ghostery-dawn-macos-arm64', shortName: 'Ghostery Dawn Mac', name: 'Ghostery Dawn Privacy Browser on Apple Silicon', os: 'macOS Sonoma & Sequoia (M-Series)', notes: 'Enhances Ghostery Dawn with SWEEPR DeepStealth 8/8 video anti-detection, sub-50ms cookie banner auto-rejection, and tab RAM hibernation.' },
   { slug: 'brave-nightly-windows-11', shortName: 'Brave Nightly Win 11', name: 'Brave Nightly Channel on Windows 11', os: 'Windows 11 (64-bit)', notes: 'Pairs bleeding-edge Brave builds with SWEEPR DeepBlock automatic cookie consent auto-rejection, shopping scam alerts, and AI slop cleansers.' },
   { slug: 'waterfox-android-mobile', shortName: 'Waterfox Android', name: 'Waterfox Privacy Browser for Android', os: 'Android 11, 12, 13, 14+', notes: 'Gecko-based mobile browser paired with SWEEPR DeepBlock sub-50ms cookie banner auto-rejection, mobile ad blocking, and URL parameter stripping.' },
   { slug: 'chromium-arm64-windows-11', shortName: 'Snapdragon Chromium', name: 'Snapdragon X Elite Chromium on Windows 11 ARM', os: 'Windows 11 ARM64 (Qualcomm Snapdragon X)', notes: 'Native ARM64 Manifest V3 declarativeNetRequest performance, sub-50ms rule matching, and ultra-low battery consumption on Copilot+ PCs.' },
   { slug: 'whonix-workstation-browser', shortName: 'Whonix Workstation', name: 'Whonix Workstation Hardened Browser', os: 'Whonix Linux & Qubes OS', notes: 'Anonymity-focused isolated browsing environment paired with SWEEPR DeepBlock sub-50ms cookie banner auto-rejection and shopping scam detection.' },
-  { slug: 'qubes-os-dispvm-browser', shortName: 'Qubes OS DispVM', name: 'Qubes OS Disposable VM Web Browser', os: 'Qubes OS (Fedora/Debian DispVM)', notes: 'Ephemeral sandboxed browsing supercharged with SWEEPR DeepBlock Manifest V3 declarativeNetRequest dynamic rule sets and zero-telemetry protection.' },
+  { slug: 'qubes-os-dispvm-browser', shortName: 'Qubes OS DispVM', name: 'Qubes OS Disposable VM Web Browser', os: 'Qubes OS (Fedora/Debian DispVM)', notes: 'Ephemeral sandboxed browsing supercharged with SWEEPR DeepBlock Manifest V3 declarativeNetRequest dynamic rule sets and local-first protection.' },
   { slug: 'tails-amnesic-browser', shortName: 'Tails Amnesic Browser', name: 'Tails OS Amnesic Web Browser', os: 'Tails Amnesic Incognito Live System', notes: 'Zero-trace privacy browsing enhanced with SWEEPR DeepBlock automatic cookie banner auto-rejection, URL tracking parameter stripping, and RAM tamer.' },
   { slug: 'steam-deck-desktop-chromium', shortName: 'Steam Deck Desktop', name: 'Steam Deck Chromium Desktop Mode', os: 'SteamOS 3 (Arch Linux ARM/x86)', notes: 'Optimized handheld gaming browser setup cutting ad auction CPU loops, auto-rejecting cookie consent modals, and conserving Steam Deck battery life.' }
 ,
@@ -431,7 +431,7 @@ const SETUP_BROWSERS = [
   {"slug":"waterfox-g6-windows-11","shortName":"Waterfox G6 Win 11","name":"Waterfox G6 64-Bit on Windows 11","os":"Windows 11 (64-bit AVX2)","notes":"Combines Waterfox privacy protections with SWEEPR DeepStealth 8/8 anti-detection, sub-50ms cookie banner auto-rejection, and fake store warnings."},
   {"slug":"thorium-arm64-raspberry-pi","shortName":"Thorium Pi ARM64","name":"Thorium ARM64 Browser on Raspberry Pi 5","os":"Raspberry Pi OS Bookworm (ARM64)","notes":"Maximizes performance on low-resource ARM single-board computers by halting heavy ad auction loops, blocking tracking beacons, and cutting RAM bloat."},
   {"slug":"floorp-browser-windows-11","shortName":"Floorp Windows 11","name":"Floorp Privacy Browser on Windows 11","os":"Windows 11 & Windows 10 (64-bit)","notes":"Enhances Floorp customizable Gecko engine with SWEEPR DeepBlock automatic cookie consent auto-rejection, URL parameter cleaning, and memory hibernation."},
-  {"slug":"mullvad-browser-linux-rpm","shortName":"Mullvad Fedora RPM","name":"Mullvad Privacy Browser on Fedora & RHEL","os":"Fedora 40/41, RHEL 9 & CentOS Stream","notes":"Zero-telemetry Tor-uplift privacy browser paired with SWEEPR DeepBlock sub-50ms cookie rejection and fake online store scam detection."},
+  {"slug":"mullvad-browser-linux-rpm","shortName":"Mullvad Fedora RPM","name":"Mullvad Privacy Browser on Fedora & RHEL","os":"Fedora 40/41, RHEL 9 & CentOS Stream","notes":"Hardened Tor-uplift privacy browser paired with SWEEPR DeepBlock sub-50ms cookie rejection and fake online store scam detection."},
   {"slug":"brave-arm64-windows-11","shortName":"Brave Win 11 ARM","name":"Brave Browser on Windows 11 ARM64","os":"Windows 11 ARM64 (Snapdragon X Elite/Plus)","notes":"Native ARM64 ad blocking paired with SWEEPR DeepBlock automatic cookie consent rejection and Total Tab & RAM Tamer on Copilot+ PCs."},
   {"slug":"firefox-nightly-linux-wayland","shortName":"Firefox Linux Wayland","name":"Mozilla Firefox Nightly on Linux Wayland","os":"Linux (Wayland / PipeWire, Fedora, Arch, Ubuntu)","notes":"High-framerate hardware-accelerated Gecko filtering, URL tracking parameter stripping, and sub-50ms CMP cookie banner dismissal."},
   {"slug":"zen-browser-macos-intel","shortName":"Zen Intel Mac","name":"Zen Privacy Browser on Intel Mac","os":"macOS Monterey, Ventura & Sonoma (Intel x86_64)","notes":"Optimizes Zen vertical tabs on legacy Intel MacBooks by hibernating inactive workspaces, stripping ad auction scripts, and saving battery life."},
@@ -441,7 +441,7 @@ const SETUP_BROWSERS = [
   {"slug":"thorium-windows-11-arm64","shortName":"Thorium Win 11 ARM","name":"Thorium AVX2/ARM64 Browser on Windows 11 Copilot+","os":"Windows 11 ARM64 (Snapdragon X Elite)","notes":"Blazing fast native ARM64 performance with SWEEPR DeepBlock declarativeNetRequest dynamic rule sets and sub-50ms cookie banner auto-rejection."},
   {"slug":"floorp-browser-arch-linux","shortName":"Floorp Arch Linux","name":"Floorp Privacy Browser on Arch Linux & AUR","os":"Arch Linux, Manjaro & EndeavourOS","notes":"Hardened Gecko privacy browser paired with SWEEPR DeepBlock cosmetic scriptlets, URL tracking parameter stripping, and RAM tamer."},
   {"slug":"zen-browser-windows-arm64","shortName":"Zen Win 11 ARM","name":"Zen Privacy Browser on Windows 11 ARM64","os":"Windows 11 ARM64 (Qualcomm Snapdragon X)","notes":"Ultra-fast vertical tabs browsing with SWEEPR Total Tab & RAM Tamer and 8/8 anti-detection ad blocking on Copilot+ PCs."},
-  {"slug":"waterfox-macos-apple-silicon","shortName":"Waterfox Mac Silicon","name":"Waterfox Privacy Browser on Apple Silicon macOS","os":"macOS Sonoma & Sequoia (M-Series)","notes":"Zero-telemetry Gecko engine paired with SWEEPR DeepBlock sub-50ms rule matching, YouTube anti-detection, and automated cookie banner dismissal."},
+  {"slug":"waterfox-macos-apple-silicon","shortName":"Waterfox Mac Silicon","name":"Waterfox Privacy Browser on Apple Silicon macOS","os":"macOS Sonoma & Sequoia (M-Series)","notes":"Privacy-focused Gecko engine paired with SWEEPR DeepBlock sub-50ms rule matching, YouTube anti-detection, and automated cookie banner dismissal."},
   {"slug":"chromium-freebsd-desktop","shortName":"Chromium on FreeBSD","name":"Chromium Browser on FreeBSD Desktop","os":"FreeBSD 14+ (X11 / Wayland)","notes":"Lightweight Manifest V3 declarativeNetRequest dynamic rule sets, sub-50ms cookie banner dismissal, and memory optimization on BSD systems."},
   {"slug":"arc-browser-windows-10","shortName":"Arc Windows 10","name":"The Arc Browser on Windows 10 (64-bit)","os":"Windows 10 (Build 19045+)","notes":"Optimized for Arc on Windows 10, hibernating inactive sidebar spaces, stripping cross-site tracking parameters, and blocking video commercials."},
   {"slug":"brave-browser-arch-linux","shortName":"Brave Arch Linux","name":"Brave Browser on Arch Linux & Manjaro","os":"Arch Linux, Manjaro & EndeavourOS","notes":"Supercharges Brave Shields on Arch Linux with automatic <50ms cookie banner rejection, AI slop search filtering, and fake scam shop warnings."},
@@ -778,7 +778,7 @@ function renderHtml(cand, existingPool = [], existingIdx = 0) {
     body = `
     <h2>Why Legacy Ad Blockers Fail on ${p.name} in 2026</h2>
     <p>Across <strong>${p.name}</strong> (${p.category}), visitors encounter ${p.issue.toLowerCase()}. Standard Manifest V2 or static filter lists are frequently detected by client-side anti-adblock scripts, resulting in playback interruptions, broken page scrollbars, or persistent cookie walls.</p>
-    <p><strong>SWEEPR DeepBlock v1.2.2</strong> combines high-speed <code>declarativeNetRequest</code> network rules with zero-telemetry DeepStealth cosmetic scriptlets so pages load cleanly without triggering anti-adblock warnings.</p>
+    <p><strong>SWEEPR DeepBlock v1.2.2</strong> combines high-speed <code>declarativeNetRequest</code> network rules with local-first DeepStealth cosmetic scriptlets so pages load cleanly without triggering anti-adblock warnings.</p>
 
     <h2>How SWEEPR DeepBlock Optimizes ${p.name}</h2>
     <ul>
@@ -1000,7 +1000,7 @@ function renderHtml(cand, existingPool = [], existingIdx = 0) {
     <ul>
       <li><strong>Rule Matching Latency:</strong> Under 50ms with zero page scroll lock or layout shift.</li>
       <li><strong>Memory &amp; Battery Savings:</strong> Cuts multi-tab browser RAM usage by up to 62% by halting real-time ad auction loops and hibernating inactive tabs (<code>Alt+Shift+Z</code>).</li>
-      <li><strong>Zero-Telemetry Architecture:</strong> 100% local rule execution — your browsing history never leaves your device.</li>
+      <li><strong>Local-First Privacy Architecture:</strong> 100% on-device rule execution — zero browsing history or visited URLs ever leave your device.</li>
     </ul>`;
     faqs = [
       { q: `Does SWEEPR DeepBlock handle ${(g.shortTitle || g.title).replace(/ \(2026\)$/, '').toLowerCase()} automatically?`, a: `Yes. Once installed, SWEEPR DeepBlock v1.2.2 applies these rules automatically in under 50ms across all supported desktop and mobile browsers without manual filter maintenance.` },
@@ -1092,13 +1092,6 @@ function renderHtml(cand, existingPool = [], existingIdx = 0) {
       priceValidUntil: '2027-12-31',
       availability: 'https://schema.org/InStock',
       url: 'https://sweeprdeepblock.com/pricing'
-    },
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: '4.9',
-      reviewCount: '1280',
-      bestRating: '5',
-      worstRating: '1'
     }
   };
 
@@ -1181,11 +1174,14 @@ function renderHtml(cand, existingPool = [], existingIdx = 0) {
     </div>
     ${relatedSectionHtml}
     <footer style="margin-top:36px;padding-top:20px;border-top:1px solid #1e293b;color:#64748b;font-size:0.8rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;">
-      <div>Publisher: <strong>SWEEPR</strong> (UK) • Requirements: Windows 10/11, macOS, iOS, Android (Chrome, Edge, Firefox, Safari, Brave, Opera) • Version 1.2.2</div>
+      <div>Publisher: <strong>SWEEPR</strong> (UK) • Requirements: Windows 10/11, macOS, iOS, Android (Chrome, Edge, Firefox, Safari, Brave, Opera) • Version 1.2.7 • No Browsing History Logged</div>
       <div style="display:flex;gap:14px;flex-wrap:wrap;">
         <a href="/" style="color:#94a3b8;text-decoration:none;">Home</a>
         <a href="/test-lab" style="color:#94a3b8;text-decoration:none;">8/8 Test Lab</a>
+        <a href="/tools" style="color:#94a3b8;text-decoration:none;">Free Privacy Tools</a>
         <a href="/vs/total-adblock" style="color:#94a3b8;text-decoration:none;">vs Total Adblock</a>
+        <a href="https://sweeprcleaner.com?utm_source=sweeprdeepblock&amp;utm_medium=footer" rel="noopener" style="color:#10b981;text-decoration:none;font-weight:600;">Sweepr Cleaner</a>
+        <a href="https://sweeprvpn.com?utm_source=sweeprdeepblock&amp;utm_medium=footer" rel="noopener" style="color:#10b981;text-decoration:none;font-weight:600;">Sweepr VPN</a>
         <a href="/support" style="color:#94a3b8;text-decoration:none;">How to Uninstall / Cancel</a>
         <a href="/refund" style="color:#94a3b8;text-decoration:none;">Refund Policy</a>
         <a href="/privacy" style="color:#94a3b8;text-decoration:none;">Privacy Policy</a>
@@ -1276,7 +1272,13 @@ async function runDaily50DeepBlockPages(targetCount = 0, force = false) {
     { loc: 'https://sweeprdeepblock.com/pricing', changefreq: 'weekly', priority: '0.9' },
     { loc: 'https://sweeprdeepblock.com/download', changefreq: 'weekly', priority: '0.9' },
     { loc: 'https://sweeprdeepblock.com/test-lab', changefreq: 'weekly', priority: '0.9' },
+    { loc: 'https://sweeprdeepblock.com/tools', changefreq: 'weekly', priority: '0.9' },
+    { loc: 'https://sweeprdeepblock.com/tools/is-my-adblocker-working', changefreq: 'weekly', priority: '0.9' },
+    { loc: 'https://sweeprdeepblock.com/tools/dns-leak-test', changefreq: 'weekly', priority: '0.9' },
+    { loc: 'https://sweeprdeepblock.com/tools/browser-fingerprint-test', changefreq: 'weekly', priority: '0.9' },
+    { loc: 'https://sweeprdeepblock.com/tools/is-this-shop-a-scam', changefreq: 'weekly', priority: '0.9' },
     { loc: 'https://sweeprdeepblock.com/vs/total-adblock', changefreq: 'weekly', priority: '0.8' },
+    { loc: 'https://sweeprdeepblock.com/login', changefreq: 'monthly', priority: '0.6' },
     { loc: 'https://sweeprdeepblock.com/support', changefreq: 'monthly', priority: '0.6' },
     { loc: 'https://sweeprdeepblock.com/refund', changefreq: 'monthly', priority: '0.5' },
     { loc: 'https://sweeprdeepblock.com/privacy', changefreq: 'monthly', priority: '0.5' },

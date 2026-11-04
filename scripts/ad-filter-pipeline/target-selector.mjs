@@ -10,6 +10,9 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { DATA_DIR } from './state-db.mjs';
 
+export const EXCLUDED_ADULT_OR_PIRACY_RE = /(porn|xxx|sex|xvideos|xnxx|xhamster|redtube|youporn|spankbang|eporner|txxx|brazzers|chaturbate|stripchat|bongacams|livejasmin|onlyfans|faphouse|hentai|rule34|nhentai|sxyprn|ashemaletube|fetishpapa|boyfriendtv|nuvid|drtuber|proporn|videosection|shooshtime|freeporn|thepiratebay|1337x|rarbg|yts|nyaa|fitgirl|fmovies|123movies|putlocker|soap2day)/i;
+export const EXCLUDED_CATEGORIES = new Set(['nsfw_adult', 'piracy_stream_torrent', 'adult', 'piracy']);
+
 const TRANCO_CACHE_PATH = path.join(DATA_DIR, 'tranco-ad-heavy-cache.json');
 const LOCAL_BLOCKED_REGISTRY_PATH = path.join(DATA_DIR, 'deepblock-blocked-sites.json');
 
@@ -369,6 +372,7 @@ export async function buildCandidateDomainPool() {
   function addCandidate(domain, category, isCurated = false) {
     const clean = String(domain || '').trim().toLowerCase().replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/.*$/, '');
     if (!clean || seen.has(clean)) return;
+    if (EXCLUDED_ADULT_OR_PIRACY_RE.test(clean) || EXCLUDED_CATEGORIES.has(String(category || '').toLowerCase())) return;
     seen.add(clean);
     pool.push({
       domain: clean,
@@ -384,7 +388,7 @@ export async function buildCandidateDomainPool() {
 
   const external = await fetchExternalTrancoCandidates(5000);
   for (const item of external) {
-    addCandidate(item.domain, item.category);
+    addCandidate(item.domain, item.category, true);
   }
 
   // Generate 50 * 40 * 20 = 40,000 categorized ad-supported domains for 30-day * 1,000/day capacity
@@ -427,11 +431,9 @@ export async function selectDailyTargetSites(stateDb, { sampleSize = 1000, dedup
 
   const eligibleCurated = [];
   const eligibleExtended = [];
-  const curatedSet = new Set(CURATED_AD_HEAVY_DOMAINS.map((c) => c.domain.toLowerCase()));
-
   for (const item of fullPool) {
     if (recentlyScanned.has(item.domain)) continue;
-    if (curatedSet.has(item.domain)) {
+    if (item.isCurated) {
       eligibleCurated.push(item);
     } else {
       eligibleExtended.push(item);

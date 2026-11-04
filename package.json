@@ -5,9 +5,11 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "seo:daily": "node scripts/daily-50-seo-pages.mjs 50",
+    "seo:daily": "node scripts/daily-50-seo-pages.mjs 0",
+    "seo:intent-miner": "node scripts/search-intent-gap-miner.mjs",
     "seo:drip": "node scripts/deepblock-seo-drip.mjs 300",
     "seo:audit": "node scripts/technical-seo-audit.mjs",
+    "tools:build": "node scripts/build-interactive-tools.mjs",
     "filters:daily": "node scripts/daily-ad-filter-pipeline.mjs 1000"
   },
   "engines": {

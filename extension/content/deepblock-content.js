@@ -1147,8 +1147,6 @@
     li:has(> a[href*="rmzsglng.com"]),
     a[href*="aivanta76.com"],
     li:has(> a[href*="aivanta76.com"]),
-    a[href*="bongacams"],
-    li:has(> a[href*="bongacams"]),
     a[href*="gotpd.me"],
     li:has(> a[href*="gotpd.me"]) {
       display: none !important;
@@ -1160,10 +1158,6 @@
     .block-video .video-holder {
       width: 100% !important;
       float: none !important;
-    }
-    #moviexxx {
-      max-width: initial !important;
-      max-height: initial !important;
     }
     /* Ensure anti-adblock bait probes in <head> (#ad-unit, #taboola-stream-1) always report visible geometry */
     head > ins,
@@ -1257,6 +1251,39 @@
       const trustedShopSites = Array.isArray(res && res.trustedShopSites) ? res.trustedShopSites : [];
       const settings = (res && res.settings) || {};
 
+      function countAndReportPageAds() {
+        try {
+          const adSlotSelector = [
+            'ins.adsbygoogle',
+            '[id^="google_ads_iframe"]',
+            '[data-ad-slot]',
+            '[data-ad-client]',
+            '[data-google-query-id]',
+            '.adsbox',
+            '.ad-banner',
+            '.ad-slot',
+            '.advertisement',
+            'ytd-ad-slot-renderer',
+            'ytd-in-feed-ad-layout-renderer',
+            'iframe[src*="doubleclick.net"]',
+            'iframe[src*="googlesyndication.com"]',
+            '[id*="taboola"]',
+            '[id*="outbrain"]'
+          ].join(',');
+          const nodes = document.querySelectorAll(adSlotSelector);
+          let newlyCounted = 0;
+          for (const el of nodes) {
+            if (!el.dataset || el.dataset.deepblockAdCounted === '1') continue;
+            el.dataset.deepblockAdCounted = '1';
+            newlyCounted++;
+          }
+          if (newlyCounted > 0) {
+            reportMetric('adsBlocked', Math.min(newlyCounted, 25));
+          }
+        } catch (e) {}
+      }
+
+      const extraCmpSelectors = Array.isArray(res && res.extraCmpSelectors) ? res.extraCmpSelectors : [];
       const isPaidEntitled = Boolean(res && res.proActive && res.licenseKey);
       if (!isPaidEntitled || (currentHost && pausedSites.includes(currentHost)) || settings.adBlocking === false) {
         removeUniversalAdCosmeticStyle();
@@ -1267,6 +1294,19 @@
           document.documentElement.dataset.sweeprPaused = '1';
           delete document.documentElement.dataset.sweeprProActive;
         } catch (e) {}
+        if (!isPaidEntitled && !(currentHost && pausedSites.includes(currentHost))) {
+          const runFreeDiagnosticPass = () => {
+            countAndReportPageAds();
+            processCookieBanners(false, extraCmpSelectors);
+            processSearchResults(false);
+            processEcommerceStore(false, trustedShopSites);
+          };
+          if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', runFreeDiagnosticPass, { once: true });
+          } else {
+            runFreeDiagnosticPass();
+          }
+        }
         return;
       }
 
@@ -1284,7 +1324,6 @@
       }
 
       const flags = (res && res.remoteFeatureFlags) || {};
-      const extraCmpSelectors = Array.isArray(res && res.extraCmpSelectors) ? res.extraCmpSelectors : [];
       const extraAntiAdblockSelectors = Array.isArray(res && res.extraAntiAdblockSelectors)
         ? res.extraAntiAdblockSelectors
         : [];
@@ -1296,6 +1335,7 @@
 
       function runDomProtectionPass() {
         injectUniversalAdCosmeticStyle();
+        countAndReportPageAds();
         if (Array.isArray(res && res.extraCosmeticSelectors)) {
           injectIsolatedOtaCosmeticStyles(res.extraCosmeticSelectors);
         }
@@ -1329,6 +1369,7 @@
       }
 
       const throttledDomPass = createThrottle(() => {
+        countAndReportPageAds();
         if (settings.cookieAutoClose !== false && flags.cookieAutoClose !== false) {
           processCookieBanners(true, extraCmpSelectors);
         }

@@ -42,7 +42,7 @@ const noIndexPseoRoutes = new Set();
 const incomingInternalLinks = new Map();
 for (const f of htmlFiles) {
   const rel = path.relative(WEBSITE_DIR, f).replace(/\\/g, '/');
-  const clean = rel === 'index.html' ? '/' : '/' + rel.replace(/\.html$/, '');
+  const clean = rel === 'index.html' ? '/' : (rel.endsWith('/index.html') ? '/' + rel.replace(/\/index\.html$/, '') : '/' + rel.replace(/\.html$/, ''));
   existingCleanRoutes.add(clean);
   if (/^(solutions|setup|vs|guides)\//i.test(rel)) {
     const raw = fs.readFileSync(f, 'utf8');
@@ -143,7 +143,7 @@ for (const filePath of htmlFiles) {
     if (!canHref.startsWith('https://sweeprdeepblock.com')) {
       results.htmlIssues.push({ file: rel, type: 'non_production_canonical', msg: `Canonical link does not start with https://sweeprdeepblock.com: "${canHref}"` });
     }
-    const expectedSlug = rel === 'index.html' ? '' : rel.replace(/\.html$/, '');
+    const expectedSlug = rel === 'index.html' ? '' : (rel.endsWith('/index.html') ? rel.replace(/\/index\.html$/, '') : rel.replace(/\.html$/, ''));
     const expectedUrl = `https://sweeprdeepblock.com/${expectedSlug}`;
     if (canHref !== expectedUrl) {
       results.htmlIssues.push({ file: rel, type: 'canonical_mismatch', msg: `Canonical href "${canHref}" does not match expected "${expectedUrl}"` });
@@ -250,8 +250,8 @@ for (const filePath of htmlFiles) {
                 }
               }
             }
-            if (!item.aggregateRating) {
-              results.htmlWarnings.push({ file: rel, type: 'missing_aggregateRating', msg: 'Schema missing aggregateRating for rich snippets' });
+            if (item.aggregateRating && (String(item.aggregateRating.reviewCount) === '1280' || String(item.aggregateRating.reviewCount) === '428')) {
+              results.htmlWarnings.push({ file: rel, type: 'unverified_aggregateRating', msg: 'Schema contains unverified hardcoded aggregateRating' });
             }
           }
         }
@@ -286,7 +286,7 @@ for (const filePath of htmlFiles) {
       const cleanPath = href.split('?')[0];
       incomingInternalLinks.set(cleanPath, (incomingInternalLinks.get(cleanPath) || 0) + 1);
       if (cleanPath !== '/' && !existingCleanRoutes.has(cleanPath)) {
-        if (!cleanPath.startsWith('/api/') && !cleanPath.startsWith('/checkout') && !cleanPath.startsWith('/cdn-cgi')) {
+        if (!cleanPath.startsWith('/api/') && !cleanPath.startsWith('/checkout') && !cleanPath.startsWith('/cdn-cgi') && !cleanPath.startsWith('/test-lab/results/')) {
           results.htmlIssues.push({ file: rel, type: 'broken_internal_link', msg: `Internal link to non-existent route: ${href}` });
         }
       }
@@ -311,7 +311,7 @@ for (const filePath of htmlFiles) {
   const content = fs.readFileSync(filePath, 'utf8');
   if (/meta\s+name=["']robots["']\s+content=["'][^"']*noindex/i.test(content)) continue;
   const rel = path.relative(WEBSITE_DIR, filePath).replace(/\\/g, '/');
-  const clean = rel === 'index.html' ? '/' : '/' + rel.replace(/\.html$/, '');
+  const clean = rel === 'index.html' ? '/' : (rel.endsWith('/index.html') ? '/' + rel.replace(/\/index\.html$/, '') : '/' + rel.replace(/\.html$/, ''));
   if (clean !== '/' && (incomingInternalLinks.get(clean) || 0) === 0) {
     orphanPagesCount++;
     results.htmlWarnings.push({ file: rel, type: 'orphan_page', msg: `Indexable page has 0 incoming internal links: ${clean}` });

@@ -1,0 +1,562 @@
+{
+  "generatedAt": "2026-11-04T08:05:25.363Z",
+  "seedsQueried": 12,
+  "indexablePagesChecked": 300,
+  "totalAutocompleteQueriesDiscovered": 188,
+  "alreadyCoveredCount": 38,
+  "uncoveredIntentGapsCount": 150,
+  "topPriorityGaps": [
+    {
+      "query": "why is my adblock not working on safari",
+      "seed": "is my adblocker",
+      "intentScore": 99,
+      "recommendedFormat": "interactive_tool",
+      "suggestedRoute": "/tools/why-is-my-adblock-not-working-on-safari",
+      "closestExistingPage": "/tools/is-my-adblocker-working",
+      "overlapRatio": 0.2
+    },
+    {
+      "query": "ad blocker not working on fandom",
+      "seed": "ad blocker not working on",
+      "intentScore": 99,
+      "recommendedFormat": "troubleshooting_guide",
+      "suggestedRoute": "/guides/ad-blocker-not-working-on-fandom",
+      "closestExistingPage": "/tools/is-my-adblocker-working",
+      "overlapRatio": 0.25
+    },
+    {
+      "query": "adblock not working on chrome",
+      "seed": "ad blocker not working on",
+      "intentScore": 99,
+      "recommendedFormat": "troubleshooting_guide",
+      "suggestedRoute": "/guides/adblock-not-working-on-chrome",
+      "closestExistingPage": "/tools/is-my-adblocker-working",
+      "overlapRatio": 0.25
+    },
+    {
+      "query": "adblock not working on hulu",
+      "seed": "ad blocker not working on",
+      "intentScore": 99,
+      "recommendedFormat": "troubleshooting_guide",
+      "suggestedRoute": "/guides/adblock-not-working-on-hulu",
+      "closestExistingPage": "/tools/is-my-adblocker-working",
+      "overlapRatio": 0.25
+    },
+    {
+      "query": "ad blocker not working on youtube",
+      "seed": "ad blocker not working on",
+      "intentScore": 99,
+      "recommendedFormat": "troubleshooting_guide",
+      "suggestedRoute": "/guides/ad-blocker-not-working-on-youtube",
+      "closestExistingPage": "/tools/is-my-adblocker-working",
+      "overlapRatio": 0.25
+    },
+    {
+      "query": "ad blocker not working on edge",
+      "seed": "ad blocker not working on",
+      "intentScore": 99,
+      "recommendedFormat": "troubleshooting_guide",
+      "suggestedRoute": "/guides/ad-blocker-not-working-on-edge",
+      "closestExistingPage": "/tools/is-my-adblocker-working",
+      "overlapRatio": 0.25
+    },
+    {
+      "query": "ad blocker not working on twitch",
+      "seed": "ad blocker not working on",
+      "intentScore": 99,
+      "recommendedFormat": "troubleshooting_guide",
+      "suggestedRoute": "/guides/ad-blocker-not-working-on-twitch",
+      "closestExistingPage": "/tools/is-my-adblocker-working",
+      "overlapRatio": 0.25
+    },
+    {
+      "query": "adblock not working on youtube 2026",
+      "seed": "ad blocker not working on",
+      "intentScore": 99,
+      "recommendedFormat": "troubleshooting_guide",
+      "suggestedRoute": "/guides/adblock-not-working-on-youtube-2026",
+      "closestExistingPage": "/guides/how-to-block-youtube-ads-chrome-manifest-v3-2026",
+      "overlapRatio": 0.4
+    },
+    {
+      "query": "adblock not working on youtube anymore",
+      "seed": "ad blocker not working on",
+      "intentScore": 99,
+      "recommendedFormat": "troubleshooting_guide",
+      "suggestedRoute": "/guides/adblock-not-working-on-youtube-anymore",
+      "closestExistingPage": "/guides/how-to-fix-high-cpu-usage-from-youtube-anti-adblock",
+      "overlapRatio": 0.4
+    },
+    {
+      "query": "why is my adblock not working on youtube",
+      "seed": "is my adblocker",
+      "intentScore": 99,
+      "recommendedFormat": "interactive_tool",
+      "suggestedRoute": "/tools/why-is-my-adblock-not-working-on-youtube",
+      "closestExistingPage": "/guides/how-to-fix-high-cpu-usage-from-youtube-anti-adblock",
+      "overlapRatio": 0.4
+    },
+    {
+      "query": "why is my adblocker not working on twitch",
+      "seed": "is my adblocker",
+      "intentScore": 99,
+      "recommendedFormat": "interactive_tool",
+      "suggestedRoute": "/tools/why-is-my-adblocker-not-working-on-twitch",
+      "closestExistingPage": "/tools/is-my-adblocker-working",
+      "overlapRatio": 0.4
+    },
+    {
+      "query": "adblock not working on youtube",
+      "seed": "ad blocker not working on",
+      "intentScore": 99,
+      "recommendedFormat": "troubleshooting_guide",
+      "suggestedRoute": "/guides/adblock-not-working-on-youtube",
+      "closestExistingPage": "/guides/how-to-fix-high-cpu-usage-from-youtube-anti-adblock",
+      "overlapRatio": 0.5
+    },
+    {
+      "query": "adblock not working on twitch",
+      "seed": "ad blocker not working on",
+      "intentScore": 99,
+      "recommendedFormat": "troubleshooting_guide",
+      "suggestedRoute": "/guides/adblock-not-working-on-twitch",
+      "closestExistingPage": "/guides/how-to-fix-twitch-network-error-2000-adblock",
+      "overlapRatio": 0.5
+    },
+    {
+      "query": "ad blocker not working on pinterest",
+      "seed": "ad blocker not working on",
+      "intentScore": 95,
+      "recommendedFormat": "troubleshooting_guide",
+      "suggestedRoute": "/guides/ad-blocker-not-working-on-pinterest",
+      "closestExistingPage": "/tools/is-my-adblocker-working",
+      "overlapRatio": 0.25
+    },
+    {
+      "query": "adblock not working on pinterest",
+      "seed": "ad blocker not working on",
+      "intentScore": 95,
+      "recommendedFormat": "troubleshooting_guide",
+      "suggestedRoute": "/guides/adblock-not-working-on-pinterest",
+      "closestExistingPage": "/tools/is-my-adblocker-working",
+      "overlapRatio": 0.25
+    },
+    {
+      "query": "adblock not working on netflix",
+      "seed": "ad blocker not working on",
+      "intentScore": 95,
+      "recommendedFormat": "troubleshooting_guide",
+      "suggestedRoute": "/guides/adblock-not-working-on-netflix",
+      "closestExistingPage": "/tools/is-my-adblocker-working",
+      "overlapRatio": 0.25
+    },
+    {
+      "query": "why is my adblocker not working anymore",
+      "seed": "is my adblocker",
+      "intentScore": 95,
+      "recommendedFormat": "interactive_tool",
+      "suggestedRoute": "/tools/why-is-my-adblocker-not-working-anymore",
+      "closestExistingPage": "/tools/is-my-adblocker-working",
+      "overlapRatio": 0.4
+    },
+    {
+      "query": "why is my adblocker not working",
+      "seed": "is my adblocker",
+      "intentScore": 95,
+      "recommendedFormat": "interactive_tool",
+      "suggestedRoute": "/tools/why-is-my-adblocker-not-working",
+      "closestExistingPage": "/tools/is-my-adblocker-working",
+      "overlapRatio": 0.5
+    },
+    {
+      "query": "best ad blocker for edge reddit",
+      "seed": "best ad blocker for",
+      "intentScore": 77,
+      "recommendedFormat": "browser_setup_guide",
+      "suggestedRoute": "/setup/best-ad-blocker-for-edge-reddit",
+      "closestExistingPage": "/solutions/reddit-promoted-posts-auto-reject-cookie-popups",
+      "overlapRatio": 0.25
+    },
+    {
+      "query": "is my adblock making youtube slow",
+      "seed": "is my adblocker",
+      "intentScore": 77,
+      "recommendedFormat": "interactive_tool",
+      "suggestedRoute": "/tools/is-my-adblock-making-youtube-slow",
+      "closestExistingPage": "/guides/how-to-fix-high-cpu-usage-from-youtube-anti-adblock",
+      "overlapRatio": 0.5
+    },
+    {
+      "query": "is my adblock slowing down youtube",
+      "seed": "is my adblocker",
+      "intentScore": 77,
+      "recommendedFormat": "interactive_tool",
+      "suggestedRoute": "/tools/is-my-adblock-slowing-down-youtube",
+      "closestExistingPage": "/guides/how-to-fix-high-cpu-usage-from-youtube-anti-adblock",
+      "overlapRatio": 0.5
+    },
+    {
+      "query": "manifest v3 youtube ad blocker",
+      "seed": "manifest v3 ad blocker",
+      "intentScore": 77,
+      "recommendedFormat": "platform_solution",
+      "suggestedRoute": "/solutions/manifest-v3-youtube-ad-blocker",
+      "closestExistingPage": "/guides/how-to-block-youtube-ads-chrome-manifest-v3-2026",
+      "overlapRatio": 0.67
+    },
+    {
+      "query": "twitch adblock firefox",
+      "seed": "twitch adblock",
+      "intentScore": 77,
+      "recommendedFormat": "browser_setup_guide",
+      "suggestedRoute": "/setup/twitch-adblock-firefox",
+      "closestExistingPage": "/guides/how-to-fix-twitch-network-error-2000-adblock",
+      "overlapRatio": 0.67
+    },
+    {
+      "query": "twitch adblock chrome",
+      "seed": "twitch adblock",
+      "intentScore": 77,
+      "recommendedFormat": "browser_setup_guide",
+      "suggestedRoute": "/setup/twitch-adblock-chrome",
+      "closestExistingPage": "/guides/how-to-fix-twitch-network-error-2000-adblock",
+      "overlapRatio": 0.67
+    },
+    {
+      "query": "twitch adblock opera",
+      "seed": "twitch adblock",
+      "intentScore": 77,
+      "recommendedFormat": "browser_setup_guide",
+      "suggestedRoute": "/setup/twitch-adblock-opera",
+      "closestExistingPage": "/guides/how-to-fix-twitch-network-error-2000-adblock",
+      "overlapRatio": 0.67
+    },
+    {
+      "query": "twitch adblock edge",
+      "seed": "twitch adblock",
+      "intentScore": 77,
+      "recommendedFormat": "browser_setup_guide",
+      "suggestedRoute": "/setup/twitch-adblock-edge",
+      "closestExistingPage": "/guides/how-to-fix-twitch-network-error-2000-adblock",
+      "overlapRatio": 0.67
+    },
+    {
+      "query": "manifest v3 ad blocker firefox",
+      "seed": "manifest v3 ad blocker",
+      "intentScore": 75,
+      "recommendedFormat": "browser_setup_guide",
+      "suggestedRoute": "/setup/manifest-v3-ad-blocker-firefox",
+      "closestExistingPage": "/setup/firefox-android-mobile",
+      "overlapRatio": 0.33
+    },
+    {
+      "query": "opera browser using too much ram",
+      "seed": "browser using too much ram",
+      "intentScore": 75,
+      "recommendedFormat": "browser_setup_guide",
+      "suggestedRoute": "/setup/opera-browser-using-too-much-ram",
+      "closestExistingPage": "/solutions/anime-streaming-portals-reduce-browser-ram-usage",
+      "overlapRatio": 0.33
+    },
+    {
+      "query": "opera browser taking too much ram",
+      "seed": "browser using too much ram",
+      "intentScore": 75,
+      "recommendedFormat": "browser_setup_guide",
+      "suggestedRoute": "/setup/opera-browser-taking-too-much-ram",
+      "closestExistingPage": "/solutions/anime-streaming-portals-reduce-browser-ram-usage",
+      "overlapRatio": 0.33
+    },
+    {
+      "query": "google chrome using too much ram",
+      "seed": "browser using too much ram",
+      "intentScore": 75,
+      "recommendedFormat": "browser_setup_guide",
+      "suggestedRoute": "/setup/google-chrome-using-too-much-ram",
+      "closestExistingPage": "/solutions/youtube-chrome-mv3-reduce-browser-ram-usage",
+      "overlapRatio": 0.33
+    },
+    {
+      "query": "chrome using too much ram",
+      "seed": "browser using too much ram",
+      "intentScore": 75,
+      "recommendedFormat": "browser_setup_guide",
+      "suggestedRoute": "/setup/chrome-using-too-much-ram",
+      "closestExistingPage": "/solutions/youtube-chrome-mv3-reduce-browser-ram-usage",
+      "overlapRatio": 0.4
+    },
+    {
+      "query": "brave browser using too much ram",
+      "seed": "browser using too much ram",
+      "intentScore": 75,
+      "recommendedFormat": "browser_setup_guide",
+      "suggestedRoute": "/setup/brave-browser-using-too-much-ram",
+      "closestExistingPage": "/guides/how-to-fix-high-ram-usage-on-brave-browser",
+      "overlapRatio": 0.5
+    },
+    {
+      "query": "brave browser taking too much ram",
+      "seed": "browser using too much ram",
+      "intentScore": 75,
+      "recommendedFormat": "browser_setup_guide",
+      "suggestedRoute": "/setup/brave-browser-taking-too-much-ram",
+      "closestExistingPage": "/guides/how-to-fix-high-ram-usage-on-brave-browser",
+      "overlapRatio": 0.5
+    },
+    {
+      "query": "chrome manifest v3 ad blocker",
+      "seed": "manifest v3 ad blocker",
+      "intentScore": 75,
+      "recommendedFormat": "browser_setup_guide",
+      "suggestedRoute": "/setup/chrome-manifest-v3-ad-blocker",
+      "closestExistingPage": "/setup/google-chrome-manifest-v3",
+      "overlapRatio": 0.67
+    },
+    {
+      "query": "how to check if website store is legit",
+      "seed": "how to check if online store is legit",
+      "intentScore": 73,
+      "recommendedFormat": "interactive_tool",
+      "suggestedRoute": "/tools/how-to-check-if-website-store-is-legit",
+      "closestExistingPage": null,
+      "overlapRatio": 0
+    },
+    {
+      "query": "how to check if website is legit",
+      "seed": "how to check if online store is legit",
+      "intentScore": 73,
+      "recommendedFormat": "interactive_tool",
+      "suggestedRoute": "/tools/how-to-check-if-website-is-legit",
+      "closestExistingPage": null,
+      "overlapRatio": 0
+    },
+    {
+      "query": "how to check a legit website",
+      "seed": "how to check if online store is legit",
+      "intentScore": 73,
+      "recommendedFormat": "interactive_tool",
+      "suggestedRoute": "/tools/how-to-check-a-legit-website",
+      "closestExistingPage": null,
+      "overlapRatio": 0
+    },
+    {
+      "query": "dnsleaktest.com",
+      "seed": "dns leak test",
+      "intentScore": 73,
+      "recommendedFormat": "interactive_tool",
+      "suggestedRoute": "/tools/dnsleaktest-com",
+      "closestExistingPage": null,
+      "overlapRatio": 0
+    },
+    {
+      "query": "dnsleaktest",
+      "seed": "dns leak test",
+      "intentScore": 73,
+      "recommendedFormat": "interactive_tool",
+      "suggestedRoute": "/tools/dnsleaktest",
+      "closestExistingPage": null,
+      "overlapRatio": 0
+    },
+    {
+      "query": "dnsleaktest v6",
+      "seed": "dns leak test",
+      "intentScore": 73,
+      "recommendedFormat": "interactive_tool",
+      "suggestedRoute": "/tools/dnsleaktest-v6",
+      "closestExistingPage": null,
+      "overlapRatio": 0
+    },
+    {
+      "query": "dnsleaktest safe",
+      "seed": "dns leak test",
+      "intentScore": 73,
+      "recommendedFormat": "interactive_tool",
+      "suggestedRoute": "/tools/dnsleaktest-safe",
+      "closestExistingPage": null,
+      "overlapRatio": 0
+    },
+    {
+      "query": "dnsleaktest extended",
+      "seed": "dns leak test",
+      "intentScore": 73,
+      "recommendedFormat": "interactive_tool",
+      "suggestedRoute": "/tools/dnsleaktest-extended",
+      "closestExistingPage": null,
+      "overlapRatio": 0
+    },
+    {
+      "query": "dnsleaktest meaning",
+      "seed": "dns leak test",
+      "intentScore": 73,
+      "recommendedFormat": "interactive_tool",
+      "suggestedRoute": "/tools/dnsleaktest-meaning",
+      "closestExistingPage": null,
+      "overlapRatio": 0
+    },
+    {
+      "query": "dnsleaktest explained",
+      "seed": "dns leak test",
+      "intentScore": 73,
+      "recommendedFormat": "interactive_tool",
+      "suggestedRoute": "/tools/dnsleaktest-explained",
+      "closestExistingPage": null,
+      "overlapRatio": 0
+    },
+    {
+      "query": "why did my ad blocker stop working",
+      "seed": "ad blocker not working on",
+      "intentScore": 73,
+      "recommendedFormat": "platform_solution",
+      "suggestedRoute": "/solutions/why-did-my-ad-blocker-stop-working",
+      "closestExistingPage": "/tools/is-my-adblocker-working",
+      "overlapRatio": 0.2
+    },
+    {
+      "query": "how to check if online shopping website is legit",
+      "seed": "how to check if online store is legit",
+      "intentScore": 73,
+      "recommendedFormat": "interactive_tool",
+      "suggestedRoute": "/tools/how-to-check-if-online-shopping-website-is-legit",
+      "closestExistingPage": "/solutions/daily-mail-online-block-video-ads",
+      "overlapRatio": 0.2
+    },
+    {
+      "query": "how to know if an online clothing store is legit",
+      "seed": "how to check if online store is legit",
+      "intentScore": 73,
+      "recommendedFormat": "interactive_tool",
+      "suggestedRoute": "/tools/how-to-know-if-an-online-clothing-store-is-legit",
+      "closestExistingPage": "/solutions/daily-mail-online-block-video-ads",
+      "overlapRatio": 0.2
+    },
+    {
+      "query": "how to know if an online jewelry store is legit",
+      "seed": "how to check if online store is legit",
+      "intentScore": 73,
+      "recommendedFormat": "interactive_tool",
+      "suggestedRoute": "/tools/how-to-know-if-an-online-jewelry-store-is-legit",
+      "closestExistingPage": "/solutions/daily-mail-online-block-video-ads",
+      "overlapRatio": 0.2
+    },
+    {
+      "query": "how can i check if an online store is legit",
+      "seed": "how to check if online store is legit",
+      "intentScore": 73,
+      "recommendedFormat": "interactive_tool",
+      "suggestedRoute": "/tools/how-can-i-check-if-an-online-store-is-legit",
+      "closestExistingPage": "/solutions/daily-mail-online-block-video-ads",
+      "overlapRatio": 0.2
+    },
+    {
+      "query": "how to check if online store is legit",
+      "seed": "how to check if online store is legit",
+      "intentScore": 73,
+      "recommendedFormat": "interactive_tool",
+      "suggestedRoute": "/tools/how-to-check-if-online-store-is-legit",
+      "closestExistingPage": "/solutions/daily-mail-online-block-video-ads",
+      "overlapRatio": 0.25
+    }
+  ],
+  "sampleCoveredQueries": [
+    {
+      "query": "how to block ads on youtube",
+      "matchedPage": "/solutions/youtube-chrome-mv3-block-video-ads",
+      "overlapRatio": 1
+    },
+    {
+      "query": "how to block ads on chrome",
+      "matchedPage": "/solutions/youtube-chrome-mv3-block-video-ads",
+      "overlapRatio": 1
+    },
+    {
+      "query": "how to block ads on twitch",
+      "matchedPage": "/solutions/twitch-live-streams-block-video-ads",
+      "overlapRatio": 1
+    },
+    {
+      "query": "how to block ads on youtube app",
+      "matchedPage": "/solutions/youtube-chrome-mv3-block-video-ads",
+      "overlapRatio": 0.75
+    },
+    {
+      "query": "block youtube ads on tv",
+      "matchedPage": "/solutions/youtube-chrome-mv3-block-video-ads",
+      "overlapRatio": 1
+    },
+    {
+      "query": "block youtube ads on iphone",
+      "matchedPage": "/solutions/youtube-chrome-mv3-block-video-ads",
+      "overlapRatio": 0.75
+    },
+    {
+      "query": "block youtube ads on apple tv",
+      "matchedPage": "/solutions/youtube-chrome-mv3-block-video-ads",
+      "overlapRatio": 0.75
+    },
+    {
+      "query": "block youtube ads on android",
+      "matchedPage": "/solutions/youtube-chrome-mv3-block-video-ads",
+      "overlapRatio": 0.75
+    },
+    {
+      "query": "block youtube ads on roku",
+      "matchedPage": "/solutions/youtube-chrome-mv3-block-video-ads",
+      "overlapRatio": 0.75
+    },
+    {
+      "query": "block youtube ads on smart tv",
+      "matchedPage": "/solutions/smart-tv-web-browsers-block-video-ads",
+      "overlapRatio": 0.75
+    },
+    {
+      "query": "block youtube ads on samsung tv",
+      "matchedPage": "/solutions/youtube-chrome-mv3-block-video-ads",
+      "overlapRatio": 0.75
+    },
+    {
+      "query": "block youtube ads on ipad",
+      "matchedPage": "/solutions/youtube-chrome-mv3-block-video-ads",
+      "overlapRatio": 0.75
+    },
+    {
+      "query": "block youtube ads on firestick",
+      "matchedPage": "/solutions/youtube-chrome-mv3-block-video-ads",
+      "overlapRatio": 0.75
+    },
+    {
+      "query": "block youtube ads on edge",
+      "matchedPage": "/solutions/youtube-chrome-mv3-block-video-ads",
+      "overlapRatio": 0.75
+    },
+    {
+      "query": "block youtube ads on chrome",
+      "matchedPage": "/solutions/youtube-chrome-mv3-block-video-ads",
+      "overlapRatio": 1
+    },
+    {
+      "query": "block youtube ads on pihole",
+      "matchedPage": "/solutions/youtube-chrome-mv3-block-video-ads",
+      "overlapRatio": 0.75
+    },
+    {
+      "query": "block youtube ads on roku tv",
+      "matchedPage": "/solutions/youtube-chrome-mv3-block-video-ads",
+      "overlapRatio": 0.75
+    },
+    {
+      "query": "block youtube ads on ios",
+      "matchedPage": "/solutions/youtube-chrome-mv3-block-video-ads",
+      "overlapRatio": 0.75
+    },
+    {
+      "query": "auto reject cookie popups chrome",
+      "matchedPage": "/solutions/anime-streaming-portals-auto-reject-cookie-popups",
+      "overlapRatio": 0.8
+    },
+    {
+      "query": "auto reject cookie popups edge",
+      "matchedPage": "/solutions/anime-streaming-portals-auto-reject-cookie-popups",
+      "overlapRatio": 0.8
+    }
+  ]
+}

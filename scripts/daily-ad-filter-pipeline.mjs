@@ -103,6 +103,7 @@ export async function runDailyAdFilterPipeline(options = {}) {
     });
 
     let lastLogBucket = 0;
+    const scanStartMs = Date.now();
     const scanResults = await scanner.scanSitesBatch(selected, ({ completed, total }) => {
       const pct = Math.floor((completed / total) * 100);
       if (pct >= lastLogBucket + 25 || completed === total) {
@@ -110,6 +111,12 @@ export async function runDailyAdFilterPipeline(options = {}) {
         console.log(`[Stage 2/5 — Browser Scanner] Evaluated ${completed}/${total} sites (${pct}%)...`);
       }
     });
+    const scanDurationMs = Date.now() - scanStartMs;
+    const avgMsPerSite = Math.round(scanDurationMs / Math.max(1, scanResults.length));
+    const liveReachableCount = scanResults.filter((r) => r && r.liveReachable !== false && r.status !== 'unreachable').length;
+    console.log(
+      `[Stage 2/5 — Telemetry Check] Duration: ${(scanDurationMs / 1000).toFixed(2)}s | Avg: ${avgMsPerSite}ms/site | Live HTTP Reachable: ${liveReachableCount}/${scanResults.length}`
+    );
 
     // ========================================================================
     // STAGE 3: Automated Rule Generation & Self-Healing Verification

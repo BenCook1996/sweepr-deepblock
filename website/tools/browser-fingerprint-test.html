@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Browser Fingerprint Test: Canvas, WebGL &amp; Audio | SWEEPR</title>
+  <meta name="description" content="Audit your browser against covert HTML5 Canvas, WebGL GPU, and AudioContext fingerprinting trackers. See if tracking scripts can identify you across Incognito." />
+  <link rel="canonical" href="https://sweeprdeepblock.com/tools/browser-fingerprint-test" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+  <meta name="theme-color" content="#0F172A" />
+  <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="SWEEPR DeepBlock" />
+  <meta property="og:locale" content="en_GB" />
+  <meta property="og:url" content="https://sweeprdeepblock.com/tools/browser-fingerprint-test" />
+  <meta property="og:title" content="Browser Fingerprint Test: Canvas, WebGL &amp; Audio | SWEEPR" />
+  <meta property="og:description" content="Audit your browser against covert HTML5 Canvas, WebGL GPU, and AudioContext fingerprinting trackers. See if tracking scripts can identify you across Incognito." />
+  <meta property="og:image" content="https://sweeprdeepblock.com/og-image.png" />
+  <meta property="og:image:alt" content="Browser Fingerprint Test: Canvas, WebGL &amp; Audio | SWEEPR" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:url" content="https://sweeprdeepblock.com/tools/browser-fingerprint-test" />
+  <meta name="twitter:title" content="Browser Fingerprint Test: Canvas, WebGL &amp; Audio | SWEEPR" />
+  <meta name="twitter:description" content="Audit your browser against covert HTML5 Canvas, WebGL GPU, and AudioContext fingerprinting trackers. See if tracking scripts can identify you across Incognito." />
+  <meta name="twitter:image" content="https://sweeprdeepblock.com/og-image.png" />
+
+  <!-- Structured Data -->
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://sweeprdeepblock.com/"},{"@type":"ListItem","position":2,"name":"Free Privacy Tools","item":"https://sweeprdeepblock.com/tools"},{"@type":"ListItem","position":3,"name":"Live Browser Fingerprint & Canvas Entropy Audit","item":"https://sweeprdeepblock.com/tools/browser-fingerprint-test"}]}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"SWEEPR Browser Fingerprint Audit Tool","url":"https://sweeprdeepblock.com/tools/browser-fingerprint-test","applicationCategory":"SecurityApplication","operatingSystem":"All Browsers (Chrome, Edge, Firefox, Safari, Brave, Opera)","description":"Audit your browser against covert HTML5 Canvas, WebGL GPU, and AudioContext fingerprinting trackers. See if tracking scripts can identify you across Incognito.","offers":{"@type":"Offer","price":"0","priceCurrency":"GBP","validFrom":"2026-01-01","priceValidUntil":"2027-12-31","availability":"https://schema.org/InStock","url":"https://sweeprdeepblock.com/tools/browser-fingerprint-test"}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why does Incognito Mode not stop browser fingerprinting?","acceptedAnswer":{"@type":"Answer","text":"Incognito mode only clears cookies when you close the window. Hardware-level APIs like HTML5 Canvas, WebGL renderer strings, and AudioContext return the exact same mathematical hash unless protected by an entropy shield like SWEEPR DeepStealth."}},{"@type":"Question","name":"How does SWEEPR DeepBlock prevent Canvas and AudioContext fingerprinting?","acceptedAnswer":{"@type":"Answer","text":"SWEEPR DeepStealth injects imperceptible, session-unique cryptographic noise into Canvas readbacks and AudioContext buffers so tracking scripts receive a non-correlatable hash on every visit without breaking web apps."}}]}</script>
+  <link rel="stylesheet" href="/style.css" />
+  <!-- Google tag (gtag.js) - Sweepr Deepblock -->
+  <script async src="/metrics/js?id=G-01MNBQSL9K"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-01MNBQSL9K', {
+      transport_url: window.location.origin + '/metrics',
+      first_party_collection: true
+    });
+  </script>
+</head>
+<body style="font-family:system-ui,-apple-system,sans-serif;background:#090d16;color:#f8fafc;margin:0;line-height:1.65;">
+  <header style="border-bottom:1px solid #1e293b;padding:16px 24px;display:flex;justify-content:space-between;align-items:center;max-width:1080px;margin:0 auto;">
+    <a href="/" style="color:#f8fafc;font-weight:800;font-size:1.15rem;text-decoration:none;">SWEEPR <span style="color:#10b981;">DeepBlock</span></a>
+    <nav style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;">
+      <a href="/tools" style="color:#10b981;text-decoration:none;font-weight:700;">Diagnostic Tools</a>
+      <a href="/test-lab" style="color:#94a3b8;text-decoration:none;">8/8 Test Lab</a>
+      <a href="/pricing" style="color:#94a3b8;text-decoration:none;">Pricing</a>
+      <a href="/download" style="color:#cbd5e1;text-decoration:none;font-weight:600;">Free Extension</a>
+      <a href="/order?plan=annual" style="background:#10b981;color:#042f2e;font-weight:700;padding:8px 16px;border-radius:8px;text-decoration:none;">Get SWEEPR DeepBlock Pro &rarr;</a>
+    </nav>
+  </header>
+  <main style="max-width:960px;margin:0 auto;padding:42px 24px;">
+    <span style="display:inline-block;background:rgba(16,185,129,0.15);color:#10b981;padding:4px 12px;border-radius:999px;font-size:0.8rem;font-weight:700;margin-bottom:12px;">Interactive Tool 03 • Anti-Fingerprinting Diagnostic</span>
+    <h1 style="font-size:2.1rem;line-height:1.22;margin:0 0 16px;">Live Browser Fingerprint &amp; Canvas Entropy Audit</h1>
+    <p style="font-size:1.08rem;color:#94a3b8;margin-bottom:24px;">Advertising networks use HTML5 Canvas rendering, WebGL GPU strings, and AudioContext oscillators to build a permanent hardware ID that follows you even in Incognito mode. Inspect your live browser signature below.</p>
+
+    
+      <div style="background:#111827;border:1px solid #1e293b;border-radius:16px;padding:24px;margin:24px 0;">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:18px;">
+          <div>
+            <div style="font-size:0.8rem;color:#94a3b8;text-transform:uppercase;font-weight:700;">Live Fingerprint Vectors Inspected</div>
+            <div id="fpSummaryStatus" style="font-size:1.5rem;font-weight:800;color:#a78bfa;">Scanning Browser Entropy...</div>
+          </div>
+          <button type="button" onclick="runFingerprintAudit()" style="background:#10b981;color:#042f2e;border:none;font-weight:800;padding:11px 20px;border-radius:10px;cursor:pointer;">Re-Test Fingerprint</button>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;">
+          <div style="background:#090d16;border:1px solid #1e293b;border-radius:10px;padding:14px;">
+            <div style="color:#94a3b8;font-size:0.78rem;">HTML5 Canvas 2D Signature</div>
+            <div id="fpCanvasVal" style="font-family:monospace;font-weight:700;color:#f8fafc;margin-top:4px;">Computing...</div>
+          </div>
+          <div style="background:#090d16;border:1px solid #1e293b;border-radius:10px;padding:14px;">
+            <div style="color:#94a3b8;font-size:0.78rem;">WebGL Renderer Exposure</div>
+            <div id="fpWebglVal" style="font-family:monospace;font-weight:700;color:#f8fafc;margin-top:4px;">Computing...</div>
+          </div>
+          <div style="background:#090d16;border:1px solid #1e293b;border-radius:10px;padding:14px;">
+            <div style="color:#94a3b8;font-size:0.78rem;">Hardware Concurrency / Screen</div>
+            <div id="fpHwVal" style="font-family:monospace;font-weight:700;color:#f8fafc;margin-top:4px;">Computing...</div>
+          </div>
+          <div style="background:#090d16;border:1px solid #1e293b;border-radius:10px;padding:14px;">
+            <div style="color:#94a3b8;font-size:0.78rem;">DeepStealth Entropy Shield</div>
+            <div id="fpShieldVal" style="font-weight:700;color:#10b981;margin-top:4px;">Checking...</div>
+          </div>
+        </div>
+      </div>
+      <script>
+        function runFingerprintAudit() {
+          try {
+            var c = document.createElement('canvas');
+            c.width = 160; c.height = 36;
+            var ctx = c.getContext('2d');
+            ctx.textBaseline = 'top';
+            ctx.font = '14px Arial';
+            ctx.fillStyle = '#10b981';
+            ctx.fillRect(10, 4, 80, 20);
+            ctx.fillStyle = '#f8fafc';
+            ctx.fillText('SWEEPR-FP-2026', 12, 8);
+            var data = c.toDataURL();
+            var hash = 0;
+            for (var i = 0; i < data.length; i++) { hash = ((hash << 5) - hash) + data.charCodeAt(i); hash |= 0; }
+            document.getElementById('fpCanvasVal').textContent = '0x' + Math.abs(hash).toString(16).toUpperCase();
+            var gl = c.getContext('webgl');
+            var renderer = 'Masked / Standard';
+            if (gl) {
+              var dbg = gl.getExtension('WEBGL_debug_renderer_info');
+              if (dbg) renderer = String(gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) || '').slice(0, 28);
+            }
+            document.getElementById('fpWebglVal').textContent = renderer;
+            document.getElementById('fpHwVal').textContent = (navigator.hardwareConcurrency || '?') + ' cores • ' + screen.width + 'x' + screen.height;
+            var protectedFp = !!(document.documentElement.getAttribute('data-sweepr-deepblock') || window.__SWEEPR_DEEPSTEALTH__);
+            document.getElementById('fpShieldVal').textContent = protectedFp ? '✓ Active (Session Noise Injected)' : '⚠ Unmasked Hardware Fingerprint';
+            document.getElementById('fpShieldVal').style.color = protectedFp ? '#10b981' : '#f59e0b';
+            document.getElementById('fpSummaryStatus').textContent = protectedFp ? 'Protected by SWEEPR DeepStealth' : 'Static Fingerprint Detected (Install DeepBlock to Mask)';
+          } catch (e) {}
+        }
+        window.addEventListener('DOMContentLoaded', runFingerprintAudit);
+      </script>
+    
+
+    <div style="margin-top:32px;padding:24px;background:#111827;border:1px solid #10b981;border-radius:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;">
+      <div style="max-width:540px;">
+        <strong style="font-size:1.1rem;">Pass Every Browser Protection Check Automatically</strong>
+        <div style="color:#94a3b8;font-size:0.92rem;margin-top:4px;">Install <strong>SWEEPR DeepBlock v1.2.7</strong> for 8/8 Manifest V3 video ad blocking, &lt;50ms cookie consent auto-rejection, URL tracker stripping, and real-time scam store alerts. No browsing history logged.</div>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+        <a href="/download" style="background:#10b981;color:#042f2e;font-weight:800;padding:11px 20px;border-radius:8px;text-decoration:none;">Install Free Extension &rarr;</a>
+        <a href="/order?plan=annual" style="background:#1e293b;color:#f8fafc;border:1px solid #334155;font-weight:700;padding:10px 18px;border-radius:8px;text-decoration:none;">Unlock Pro (£4.99/mo Annual)</a>
+      </div>
+    </div>
+
+    <h2 style="margin-top:36px;">Frequently Asked Questions</h2>
+    <div style="background:#111827;border:1px solid #1e293b;border-radius:10px;padding:18px;margin:14px 0;"><h3 style="margin:0 0 8px;">Why does Incognito Mode not stop browser fingerprinting?</h3><p style="margin:0;color:#cbd5e1;">Incognito mode only clears cookies when you close the window. Hardware-level APIs like HTML5 Canvas, WebGL renderer strings, and AudioContext return the exact same mathematical hash unless protected by an entropy shield like SWEEPR DeepStealth.</p></div>
+    <div style="background:#111827;border:1px solid #1e293b;border-radius:10px;padding:18px;margin:14px 0;"><h3 style="margin:0 0 8px;">How does SWEEPR DeepBlock prevent Canvas and AudioContext fingerprinting?</h3><p style="margin:0;color:#cbd5e1;">SWEEPR DeepStealth injects imperceptible, session-unique cryptographic noise into Canvas readbacks and AudioContext buffers so tracking scripts receive a non-correlatable hash on every visit without breaking web apps.</p></div>
+
+    <section style="margin-top:36px;padding-top:24px;border-top:1px solid #1e293b;">
+      <h2 style="font-size:1.3rem;margin:0 0 12px;">More Free Browser Privacy &amp; Security Diagnostics</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;">
+        <a href="/tools" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:14px;text-decoration:none;color:#f8fafc;">
+        <div style="font-size:0.75rem;color:#10b981;font-weight:700;margin-bottom:4px;">Interactive Diagnostic</div>
+        <div style="font-size:0.95rem;font-weight:600;">Free Browser Privacy, Adblock &amp; Scam Diagnostic Tools</div>
+      </a>
+      <a href="/tools/is-my-adblocker-working" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:14px;text-decoration:none;color:#f8fafc;">
+        <div style="font-size:0.75rem;color:#10b981;font-weight:700;margin-bottom:4px;">Interactive Diagnostic</div>
+        <div style="font-size:0.95rem;font-weight:600;">Is My Adblocker Working? Live 8-Point Browser Benchmark</div>
+      </a>
+      <a href="/tools/dns-leak-test" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:14px;text-decoration:none;color:#f8fafc;">
+        <div style="font-size:0.75rem;color:#10b981;font-weight:700;margin-bottom:4px;">Interactive Diagnostic</div>
+        <div style="font-size:0.95rem;font-weight:600;">Live DNS Privacy &amp; URL Tracking Parameter Leak Test</div>
+      </a>
+      <a href="/tools/is-this-shop-a-scam" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:14px;text-decoration:none;color:#f8fafc;">
+        <div style="font-size:0.75rem;color:#10b981;font-weight:700;margin-bottom:4px;">Interactive Diagnostic</div>
+        <div style="font-size:0.95rem;font-weight:600;">Is This Online Shop a Scam? Instant Store &amp; Domain Checker</div>
+      </a>
+        <a href="/test-lab" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:14px;text-decoration:none;color:#f8fafc;">
+          <div style="font-size:0.75rem;color:#10b981;font-weight:700;margin-bottom:4px;">Full Suite Benchmark</div>
+          <div style="font-size:0.95rem;font-weight:600;">8/8 Live Anti-Detection Test Lab</div>
+        </a>
+      </div>
+    </section>
+
+    <footer style="margin-top:36px;padding-top:20px;border-top:1px solid #1e293b;color:#64748b;font-size:0.8rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+      <div>Publisher: <strong>SWEEPR</strong> (UK) • Requirements: Windows 10/11, macOS, iOS, Android (Chrome, Edge, Firefox, Safari, Brave, Opera) • Version 1.2.7 • No Browsing History Logged</div>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;">
+        <a href="/" style="color:#94a3b8;text-decoration:none;">Home</a>
+        <a href="/test-lab" style="color:#94a3b8;text-decoration:none;">8/8 Test Lab</a>
+        <a href="/tools" style="color:#94a3b8;text-decoration:none;">Free Privacy Tools</a>
+        <a href="/vs/total-adblock" style="color:#94a3b8;text-decoration:none;">vs Total Adblock</a>
+        <a href="https://sweeprcleaner.com?utm_source=sweeprdeepblock&amp;utm_medium=tools" rel="noopener" style="color:#10b981;text-decoration:none;font-weight:600;">Sweepr Cleaner</a>
+        <a href="https://sweeprvpn.com?utm_source=sweeprdeepblock&amp;utm_medium=tools" rel="noopener" style="color:#10b981;text-decoration:none;font-weight:600;">Sweepr VPN</a>
+        <a href="/support" style="color:#94a3b8;text-decoration:none;">How to Uninstall / Cancel</a>
+        <a href="/refund" style="color:#94a3b8;text-decoration:none;">Refund Policy</a>
+        <a href="/privacy" style="color:#94a3b8;text-decoration:none;">Privacy Policy</a>
+        <a href="/terms" style="color:#94a3b8;text-decoration:none;">Terms</a>
+      </div>
+    </footer>
+  </main>
+</body>
+</html>

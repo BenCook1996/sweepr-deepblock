@@ -1,11 +1,17 @@
 {
   "manifest_version": 3,
-  "default_locale": "en",
-  "name": "__MSG_extName__",
-  "short_name": "__MSG_extShortName__",
-  "version": "1.2.6",
+  "name": "SWEEPR DeepBlock: Ad Blocker & Cookie Auto-Reject",
+  "short_name": "SWEEPR DeepBlock",
+  "version": "1.2.7",
+  "description": "Blocks video & banner ads, auto-rejects GDPR cookie popups, flags scam stores, and frees browser RAM. No browsing history logged.",
+  "homepage_url": "https://sweeprdeepblock.com",
   "minimum_chrome_version": "116",
-  "description": "__MSG_extDescription__",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
   "permissions": [
     "declarativeNetRequest",
     "declarativeNetRequestWithHostAccess",
@@ -17,47 +23,53 @@
   "host_permissions": [
     "<all_urls>"
   ],
-  "content_security_policy": {
-    "extension_pages": "script-src 'self'; object-src 'none'; base-uri 'none';"
-  },
-  "background": {
-    "service_worker": "background.js"
+  "action": {
+    "default_title": "SWEEPR DeepBlock Dashboard",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
   },
   "options_ui": {
-    "page": "welcome.html",
+    "page": "options.html",
     "open_in_tab": true
   },
   "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Alt+Shift+D",
+        "mac": "Alt+Shift+D"
+      },
+      "description": "Open SWEEPR DeepBlock Dashboard"
+    },
     "toggle-site-protection": {
       "suggested_key": {
         "default": "Alt+Shift+S",
-        "mac": "MacCtrl+Shift+S"
+        "mac": "Alt+Shift+S"
       },
-      "description": "Pause or resume SWEEPR Deepblock on the current website"
+      "description": "Pause or Resume SWEEPR DeepBlock on Current Site"
     },
     "snooze-inactive-tabs": {
       "suggested_key": {
         "default": "Alt+Shift+Z",
-        "mac": "MacCtrl+Shift+Z"
+        "mac": "Alt+Shift+Z"
       },
-      "description": "Snooze unused background tabs to free memory"
+      "description": "Snooze Inactive Background Tabs & Free RAM"
     }
   },
-  "icons": {
-    "16": "icons/icon-16.png",
-    "32": "icons/icon-32.png",
-    "48": "icons/icon-48.png",
-    "64": "icons/icon-64.png",
-    "128": "icons/icon-128.png"
+  "background": {
+    "service_worker": "background.js",
+    "scripts": [
+      "background.js"
+    ]
   },
-  "action": {
-    "default_title": "SWEEPR Deepblock — Ad, Pop-Up & Fake Shop Protection",
-    "default_popup": "popup.html",
-    "default_icon": {
-      "16": "icons/icon-16.png",
-      "32": "icons/icon-32.png",
-      "48": "icons/icon-48.png",
-      "128": "icons/icon-128.png"
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "extension@sweeprdeepblock.com",
+      "strict_min_version": "128.0"
     }
   },
   "declarative_net_request": {
@@ -66,40 +78,43 @@
         "id": "ads_and_trackers",
         "enabled": false,
         "path": "rules/static_ads_and_trackers.json"
-      },
-      {
-        "id": "cryptominers_and_heavy_scripts",
-        "enabled": false,
-        "path": "rules/cryptominers.json"
       }
     ]
   },
   "content_scripts": [
     {
       "matches": [
-        "<all_urls>"
+        "http://*/*",
+        "https://*/*"
       ],
       "js": [
-        "content/deepstealth-main.js"
+        "content/deepblock-stealth-main.js"
       ],
       "run_at": "document_start",
-      "world": "MAIN",
-      "all_frames": true
+      "all_frames": true,
+      "world": "MAIN"
     },
     {
       "matches": [
-        "<all_urls>"
+        "http://*/*",
+        "https://*/*"
       ],
       "js": [
         "content/deepblock-content.js"
       ],
-      "run_at": "document_start"
+      "run_at": "document_start",
+      "all_frames": true
     }
   ],
-  "browser_specific_settings": {
-    "gecko": {
-      "id": "extension@sweeprdeepblock.com",
-      "strict_min_version": "109.0"
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "rules/empty.js",
+        "rules/empty.txt"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
     }
-  }
+  ]
 }
