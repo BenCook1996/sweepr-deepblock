@@ -9,6 +9,10 @@
     "seo:intent-miner": "node scripts/search-intent-gap-miner.mjs",
     "seo:drip": "node scripts/deepblock-seo-drip.mjs 300",
     "seo:audit": "node scripts/technical-seo-audit.mjs",
+    "seo:build-sites": "node scripts/build-verified-site-reports.mjs",
+    "seo:build-glossary": "node scripts/build-glossary-hub.mjs",
+    "seo:review-miner": "node scripts/competitor-review-miner.mjs",
+    "ads:stage-gate": "node scripts/reinvestment-stage-gate.mjs",
     "tools:build": "node scripts/build-interactive-tools.mjs",
     "filters:daily": "node scripts/daily-ad-filter-pipeline.mjs 1000"
   },

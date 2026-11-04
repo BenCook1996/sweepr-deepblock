@@ -1,0 +1,78 @@
+{
+  "generatedAt": "2026-11-04T20:40:46.558Z",
+  "currentStage": "Stage 1 (£10.00/day)",
+  "recommendedAction": "UNLOCK_STAGE_2_REINVESTMENT (£25.00/day including £3.50/day warm retargeting)",
+  "metrics": {
+    "dailySpendGbp": 10,
+    "blendedCacGbp": 16.4,
+    "blendedNetLtvGbp": 39.6,
+    "ltvToCacRatio": 2.41,
+    "permissionActivationRatePct": 84.5,
+    "refundRate14dPct": 2.8
+  },
+  "stageGates": {
+    "blendedCacUnder18Gbp": {
+      "target": "<= £18.00",
+      "actual": "£16.40",
+      "passed": true
+    },
+    "ltvToCacOver2_2x": {
+      "target": ">= 2.20x",
+      "actual": "2.41x",
+      "passed": true
+    },
+    "permissionActivationOver82Pct": {
+      "target": ">= 82.0%",
+      "actual": "84.5%",
+      "passed": true
+    },
+    "refundRateUnder4_5Pct": {
+      "target": "<= 4.5%",
+      "actual": "2.8%",
+      "passed": true
+    }
+  },
+  "allGatesPassed": true,
+  "retargetingAudiencesConfigured": [
+    "TestLab_Runners_NoPurchase",
+    "Order_Page_Abandoners",
+    "Competitor_VS_Readers"
+  ],
+  "reinvestmentLadder": [
+    {
+      "stage": "Stage 1 (Current Baseline)",
+      "dailyBudgetGbp": 10,
+      "monthlyBudgetGbp": 300,
+      "channelSplit": {
+        "redditAdsProspectingGbp": 7.5,
+        "microsoftBingSearchExactGbp": 2.5,
+        "retargetingWarmAudiencesGbp": 0
+      },
+      "retargetingRule": "Collect first-party retargeting segments only (0% spend until Stage 2 gate unlocked)"
+    },
+    {
+      "stage": "Stage 2 (40% Net Revenue Reinvestment Gate)",
+      "dailyBudgetGbp": 25,
+      "monthlyBudgetGbp": 750,
+      "unlocked": true,
+      "channelSplit": {
+        "redditAdsProspectingGbp": 14,
+        "microsoftBingSearchExactGbp": 7.5,
+        "retargetingWarmAudiencesGbp": 3.5
+      },
+      "retargetingRule": "Activate £3.50/day retargeting across TestLab_Runners_NoPurchase, Order_Page_Abandoners, and Competitor_VS_Readers"
+    },
+    {
+      "stage": "Stage 3 (Scale & Ecosystem Bundle Gate)",
+      "dailyBudgetGbp": 50,
+      "monthlyBudgetGbp": 1500,
+      "unlocked": true,
+      "channelSplit": {
+        "redditAdsProspectingGbp": 25,
+        "microsoftBingSearchExactGbp": 16,
+        "retargetingWarmAudiencesGbp": 9
+      },
+      "retargetingRule": "Expand retargeting + launch Sweepr Security Suite cross-sell ad groups"
+    }
+  ]
+}

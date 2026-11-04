@@ -1706,6 +1706,10 @@ const CLEAN_ROUTES = {
   '/tools/dns-leak-test': path.join('tools', 'dns-leak-test.html'),
   '/tools/browser-fingerprint-test': path.join('tools', 'browser-fingerprint-test.html'),
   '/tools/is-this-shop-a-scam': path.join('tools', 'is-this-shop-a-scam.html'),
+  '/site': path.join('site', 'index.html'),
+  '/glossary': path.join('glossary', 'index.html'),
+  '/campaigns/uk-ad-load-index': path.join('campaigns', 'uk-ad-load-index.html'),
+  '/campaigns/renewal-shock-switcher': path.join('campaigns', 'renewal-shock-switcher.html'),
   '/mockups': 'mockups.html',
   '/popup-mockups': 'popup-mockups.html',
   '/redesign-prototype': 'redesign-prototype.html',
@@ -2170,6 +2174,15 @@ function renderCheckoutSuccessPage(acc, isCancelled = false) {
         Open Customer Portal
       </a>
     </div>
+
+    <div class="bg-slate-900/80 border border-sky-500/30 rounded-2xl p-4 text-left space-y-2 mt-4">
+      <div class="text-[11px] font-extrabold uppercase tracking-wider text-sky-400">Complete Your SWEEPR Security Suite</div>
+      <p class="text-xs text-slate-300">Extend protection beyond your browser with deep OS junk &amp; startup cleanup or device-wide WireGuard® VPN encryption:</p>
+      <div class="flex flex-wrap gap-2 pt-1">
+        <a href="https://sweeprcleaner.com/?utm_source=deepblock_a5&amp;utm_medium=checkout_success" rel="noopener" class="px-3 py-1.5 rounded-lg bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 text-xs font-bold no-underline">Explore Sweepr Cleaner &rarr;</a>
+        <a href="https://sweeprvpn.com/?utm_source=deepblock_a5&amp;utm_medium=checkout_success" rel="noopener" class="px-3 py-1.5 rounded-lg bg-sky-500/15 border border-sky-500/40 text-sky-300 text-xs font-bold no-underline">Explore Sweepr VPN &rarr;</a>
+      </div>
+    </div>
   </div>
 </body>
 </html>`;
@@ -2250,6 +2263,9 @@ const server = http.createServer(async (req, res) => {
       const scoreMatch = /score-(\d{1,3})/i.exec(slug);
       const grade = gradeMatch ? gradeMatch[1].toUpperCase() : 'A';
       const score = scoreMatch ? Math.min(100, Math.max(0, parseInt(scoreMatch[1], 10))) : 100;
+      const adsVec = Math.min(100, Math.max(0, parseInt(parsedUrl.searchParams.get('ads') || String(score), 10) || score));
+      const dnsVec = Math.min(100, Math.max(0, parseInt(parsedUrl.searchParams.get('dns') || String(score), 10) || score));
+      const fpVec = Math.min(100, Math.max(0, parseInt(parsedUrl.searchParams.get('fp') || String(score), 10) || score));
       const badgeColor = score >= 90 ? '#10b981' : score >= 70 ? '#f59e0b' : '#f43f5e';
       const shareHtml = `<!DOCTYPE html>
 <html lang="en">
@@ -2262,7 +2278,7 @@ const server = http.createServer(async (req, res) => {
   <link rel="canonical" href="${PUBLIC_URL}/tools/is-my-adblocker-working">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Browser Protection Score: ${score}/100 (Grade ${grade}) — SWEEPR Deepblock">
-  <meta property="og:description" content="Can your browser pass the 6-vector ad, tracker, DNS leak, and fingerprint diagnostic? Run the free 10-second test.">
+  <meta property="og:description" content="Can your browser pass the 8-vector MV3 ad, tracker, DNS leak, and fingerprint diagnostic? Run the free 10-second test.">
   <meta property="og:url" content="${PUBLIC_URL}${pathname}">
   <meta property="og:image" content="${PUBLIC_URL}/og-image.png">
   <link rel="icon" type="image/svg+xml" href="/logo.svg">
@@ -2271,7 +2287,7 @@ const server = http.createServer(async (req, res) => {
 <body class="bg-slate-950 text-white min-h-screen flex items-center justify-center p-6 font-sans antialiased">
   <main class="max-w-xl w-full bg-slate-900 border border-slate-800 rounded-3xl p-8 text-center shadow-2xl space-y-6">
     <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-extrabold uppercase tracking-wider">
-      SWEEPR DeepBlock Diagnostic Scorecard
+      SWEEPR DeepBlock 2026 MV3 Scorecard
     </div>
     <div class="w-28 h-28 mx-auto rounded-3xl flex flex-col items-center justify-center border-2" style="border-color:${badgeColor};background:rgba(15,23,42,0.8)">
       <span class="text-4xl font-black" style="color:${badgeColor}">${grade}</span>
@@ -2279,8 +2295,22 @@ const server = http.createServer(async (req, res) => {
     </div>
     <h1 class="text-2xl sm:text-3xl font-black">Browser Protection Score: ${score}/100</h1>
     <p class="text-slate-300 text-sm leading-relaxed">
-      This browser was tested against live ad-injection vectors, GDPR cookie consent trackers, WebRTC/DNS leaks, and hardware canvas fingerprinting.
+      This browser was audited against live MV3 ad-injection vectors, GDPR cookie consent locks, URL/DNS tracker beacons, and hardware Canvas fingerprinting.
     </p>
+    <div class="bg-slate-950/80 border border-slate-800 rounded-2xl p-4 text-left space-y-3 text-xs">
+      <div>
+        <div class="flex justify-between font-bold text-slate-300 mb-1"><span>Ad &amp; Video Script Defense</span><span class="text-emerald-400">${adsVec}%</span></div>
+        <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden"><div class="h-full bg-emerald-500" style="width:${adsVec}%"></div></div>
+      </div>
+      <div>
+        <div class="flex justify-between font-bold text-slate-300 mb-1"><span>Encrypted DNS &amp; URL Tracker Sanitizer</span><span class="text-sky-400">${dnsVec}%</span></div>
+        <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden"><div class="h-full bg-sky-400" style="width:${dnsVec}%"></div></div>
+      </div>
+      <div>
+        <div class="flex justify-between font-bold text-slate-300 mb-1"><span>Canvas &amp; Hardware Entropy Shield</span><span class="text-purple-400">${fpVec}%</span></div>
+        <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden"><div class="h-full bg-purple-400" style="width:${fpVec}%"></div></div>
+      </div>
+    </div>
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
       <a href="/tools/is-my-adblocker-working" class="py-3.5 px-5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-sm no-underline">
         Run Your Own Free Test →
@@ -4202,6 +4232,34 @@ function getCachedDynamicDelta() {
     return sendJson(res, 200, { ok: true, cancelAtPeriodEnd: true, status: record.status });
   }
 
+  // Automation A4: In-Portal 1-Click Plan Switch (Monthly Intro -> Annual £4.99/mo eq. or 6-Month £44.99, Zero Emails)
+  if (req.method === 'POST' && pathname === '/api/portal/switch-plan') {
+    if (!isSameOriginWriteRequest(req, { allowExtension: true })) {
+      return sendJson(res, 403, { ok: false, error: 'cross_origin_forbidden' }, {}, req);
+    }
+    if (!checkRateLimit(req, 'portal_switch_plan', 12, 60000)) {
+      return sendJson(res, 429, { ok: false, error: 'rate_limit_exceeded' });
+    }
+    const body = await readBody(req);
+    if (body && body.__tooLarge) return sendJson(res, 413, { ok: false, error: 'payload_too_large' });
+    const targetPlan = body?.plan === 'six_month' ? 'six_month' : 'annual';
+    const acc = await resolveAccountFromSessionOrCredentials(req, body || {});
+    if (!acc) {
+      return sendJson(res, 401, { ok: false, error: 'unauthorized', message: 'Valid license key or active portal session required.' });
+    }
+    acc.plan = targetPlan;
+    acc.cancelAtPeriodEnd = false;
+    acc.stepUpSaveEligible = false;
+    syncSubscriptionWithSweeprCrm(acc, { notes: `Switched plan via A4 in-portal save to ${targetPlan}` }).catch(() => {});
+    return sendJson(res, 200, {
+      ok: true,
+      plan: acc.plan,
+      status: acc.status,
+      licenseKey: acc.licenseKey,
+      message: targetPlan === 'annual' ? 'Switched to Annual Plan (£59.99/yr — £4.99/mo equivalent)' : 'Switched to 6-Month Plan (£44.99)'
+    });
+  }
+
   // ==========================================================================
   // API 3c: Unified 4-Device Management & QR Code Device Linking (Flow A & B)
   // ==========================================================================
@@ -5363,7 +5421,7 @@ function getCachedDynamicDelta() {
     }
   }
   if (!candidateRel) {
-    if (/^\/(solutions|setup|vs|guides|tools)\/[a-z0-9-]+$/i.test(pathname)) {
+    if (/^\/(solutions|setup|vs|guides|tools|site|glossary|campaigns)\/[a-z0-9-]+$/i.test(pathname)) {
       candidateRel = pathname.slice(1) + '.html';
     } else if (pathname.length > 1 && !path.extname(pathname)) {
       const htmlCandidate = pathname.slice(1) + '.html';

@@ -468,6 +468,8 @@ async function verifyLicenseWithServer(rawKey) {
               licenseToken: data.token || data.license_token || '',
               crmAccountId: data.account_id || '',
               subscriptionStatus: subStatus,
+              stepUpSaveEligible: Boolean(data.stepUpSaveEligible || data.plan === 'monthly_intro'),
+              previousLicenseKey: canonicalKey,
               licenseVerifiedAt: Date.now(),
               entitlements,
               encryptedDnsEnabled: true,
@@ -1248,7 +1250,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 
   if (msg.type === 'GET_DASHBOARD_STATE') {
     Promise.all([
-      chrome.storage.local.get([...Object.keys(DEFAULT_STATE), 'extensionUpdateStatus', 'hostPermissionsGranted']),
+      chrome.storage.local.get([...Object.keys(DEFAULT_STATE), 'extensionUpdateStatus', 'hostPermissionsGranted', 'stepUpSaveEligible', 'previousLicenseKey']),
       getRamSpeedometerMetrics(),
       chrome.tabs.query({ active: true, currentWindow: true })
     ]).then(async ([store, ramMetrics, activeTabs]) => {
@@ -1257,6 +1259,25 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       const activeTabId = activeTab ? activeTab.id : null;
       const currentTabScamDetected = Boolean(activeTabId && scamDetectedTabs.has(activeTabId));
       const currentTabScamReasons = (activeTabId && scamReasonsByTab.get(activeTabId)) || [];
+      const mergedStats = { ...DEFAULT_STATE.stats, ...(store.stats || {}) };
+      const totalThreats =
+        (Number(mergedStats.adsBlocked) || 0) +
+        (Number(mergedStats.cookiePromptsDetected) || 0) +
+        (Number(mergedStats.aiSlopDetected) || 0) +
+        (Number(mergedStats.fakeStoresDetected) || 0);
+      const milestoneState = {
+        totalThreats,
+        secondsSaved: Math.max(1, Math.round(totalThreats * 0.42)),
+        reached100: totalThreats >= 100,
+        reached500: totalThreats >= 500,
+        reached1000: totalThreats >= 1000
+      };
+      const stepUpSaveEligible = Boolean(store.stepUpSaveEligible);
+      const winbackEligible = Boolean(
+        !auth.proActive &&
+          store.previousLicenseKey &&
+          ['canceled', 'expired', 'inactive', 'unverified'].includes(String(store.subscriptionStatus || ''))
+      );
       sendResponse({
         ...DEFAULT_STATE,
         ...store,
@@ -1264,7 +1285,10 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
         ramTamerActive: Boolean(auth.ramTamerActive),
         licenseKey: auth.licenseKey || '',
         settings: { ...DEFAULT_STATE.settings, ...(store.settings || {}) },
-        stats: { ...DEFAULT_STATE.stats, ...(store.stats || {}) },
+        stats: mergedStats,
+        milestoneState,
+        stepUpSaveEligible,
+        winbackEligible,
         ramMetrics,
         currentTabScamDetected,
         currentTabScamReasons,

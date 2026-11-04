@@ -284,6 +284,111 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
+    // Automation A3: Value Receipt & Milestone Upgrade Card (Free Users at 100 / 1,000 threats)
+    const milestoneActionCard = document.getElementById('milestoneActionCard');
+    const milestoneActionText = document.getElementById('milestoneActionText');
+    const a3MilestoneUpgradeBtn = document.getElementById('a3MilestoneUpgradeBtn');
+    const a3MilestoneDismissBtn = document.getElementById('a3MilestoneDismissBtn');
+    const mState = state.milestoneState || {
+      totalThreats: (Number(stats.adsBlocked) || 0) + (Number(stats.cookiePromptsDetected) || 0) + (Number(stats.aiSlopDetected) || 0) + (Number(stats.fakeStoresDetected) || 0),
+      secondsSaved: 42
+    };
+    if (milestoneActionCard) {
+      chrome.storage.local.get(['a3MilestoneDismissedAt'], (a3Store) => {
+        const dismissedRecent = a3Store && a3Store.a3MilestoneDismissedAt && Date.now() - Number(a3Store.a3MilestoneDismissedAt) < 7 * 86400 * 1000;
+        if (!isPro && mState.totalThreats >= 100 && !dismissedRecent) {
+          if (milestoneActionText) {
+            milestoneActionText.textContent = `🛡️ ${mState.totalThreats.toLocaleString()} threats spotted (~${mState.secondsSaved}s saved)! Unlock Pro (£4.99 1st mo)`;
+          }
+          milestoneActionCard.style.display = 'flex';
+          if (a3MilestoneUpgradeBtn) {
+            a3MilestoneUpgradeBtn.onclick = () => {
+              chrome.tabs.create({ url: 'https://sweeprdeepblock.com/order?plan=monthly&intro=1&utm_source=extension_a3' });
+            };
+          }
+          if (a3MilestoneDismissBtn) {
+            a3MilestoneDismissBtn.onclick = () => {
+              chrome.storage.local.set({ a3MilestoneDismissedAt: Date.now() });
+              milestoneActionCard.style.display = 'none';
+            };
+          }
+        } else {
+          milestoneActionCard.style.display = 'none';
+        }
+      });
+    }
+
+    // Automation A4: Intro-Price Step-Up Save & Win-Back Banner (100% In-Extension, Zero Emails)
+    const stepUpAndWinbackBanner = document.getElementById('stepUpAndWinbackBanner');
+    const stepUpAndWinbackText = document.getElementById('stepUpAndWinbackText');
+    const a4SwitchPlanBtn = document.getElementById('a4SwitchPlanBtn');
+    const a4DismissBtn = document.getElementById('a4DismissBtn');
+    if (stepUpAndWinbackBanner) {
+      chrome.storage.local.get(['a4DismissedAt'], (a4Store) => {
+        const dismissedRecent = a4Store && a4Store.a4DismissedAt && Date.now() - Number(a4Store.a4DismissedAt) < 7 * 86400 * 1000;
+        if ((state.stepUpSaveEligible || state.winbackEligible) && !dismissedRecent) {
+          if (stepUpAndWinbackText) {
+            stepUpAndWinbackText.textContent = state.winbackEligible
+              ? `⚡ Reactivate Pro (${mState.totalThreats.toLocaleString()} blocks saved) — Lock £4.99/mo Annual`
+              : `💡 Intro Month Ending Soon — Lock £4.99/mo Forever on Annual Plan`;
+          }
+          stepUpAndWinbackBanner.style.display = 'flex';
+          if (a4SwitchPlanBtn) {
+            a4SwitchPlanBtn.onclick = () => {
+              chrome.tabs.create({ url: 'https://sweeprdeepblock.com/order?plan=annual&utm_source=extension_a4' });
+            };
+          }
+          if (a4DismissBtn) {
+            a4DismissBtn.onclick = () => {
+              chrome.storage.local.set({ a4DismissedAt: Date.now() });
+              stepUpAndWinbackBanner.style.display = 'none';
+            };
+          }
+        } else {
+          stepUpAndWinbackBanner.style.display = 'none';
+        }
+      });
+    }
+
+    // Automation A5: Sweepr Ecosystem Cross-Sell Router (Sweepr Cleaner & Sweepr VPN)
+    const ecosystemCrossSellCard = document.getElementById('ecosystemCrossSellCard');
+    const ecosystemCrossSellText = document.getElementById('ecosystemCrossSellText');
+    const a5CrossSellCtaBtn = document.getElementById('a5CrossSellCtaBtn');
+    const a5CrossSellDismissBtn = document.getElementById('a5CrossSellDismissBtn');
+    if (ecosystemCrossSellCard) {
+      chrome.storage.local.get(['a5DismissedAt'], (a5Store) => {
+        const dismissedRecent = a5Store && a5Store.a5DismissedAt && Date.now() - Number(a5Store.a5DismissedAt) < 14 * 86400 * 1000;
+        const tabsHib = Number(stats.tabsHibernated) || 0;
+        const slowdownPct = Number(state.ramMetrics && state.ramMetrics.slowdownPct) || 0;
+        const triggerCleaner = tabsHib >= 20 || slowdownPct >= 45;
+        const triggerVpn = Boolean(state.encryptedDnsEnabled || isPro);
+        if (!dismissedRecent && (triggerCleaner || triggerVpn)) {
+          const targetUrl = triggerCleaner
+            ? 'https://sweeprcleaner.com/?utm_source=deepblock_a5&utm_medium=ram_trigger'
+            : 'https://sweeprvpn.com/?utm_source=deepblock_a5&utm_medium=dns_trigger';
+          if (ecosystemCrossSellText) {
+            ecosystemCrossSellText.textContent = triggerCleaner
+              ? '🧹 High RAM usage spotted — Clean OS junk with Sweepr Cleaner'
+              : '🔒 Encrypt ISP & Wi-Fi traffic across all apps with Sweepr VPN';
+          }
+          ecosystemCrossSellCard.style.display = 'flex';
+          if (a5CrossSellCtaBtn) {
+            a5CrossSellCtaBtn.onclick = () => {
+              chrome.tabs.create({ url: targetUrl });
+            };
+          }
+          if (a5CrossSellDismissBtn) {
+            a5CrossSellDismissBtn.onclick = () => {
+              chrome.storage.local.set({ a5DismissedAt: Date.now() });
+              ecosystemCrossSellCard.style.display = 'none';
+            };
+          }
+        } else {
+          ecosystemCrossSellCard.style.display = 'none';
+        }
+      });
+    }
+
     const upd = state.extensionUpdateStatus;
     const extUpdateBanner = document.getElementById('extUpdateBanner');
     const extUpdateBannerText = document.getElementById('extUpdateBannerText');

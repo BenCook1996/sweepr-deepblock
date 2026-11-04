@@ -319,14 +319,23 @@ for (const filePath of htmlFiles) {
 }
 console.log(`[AUDIT] Orphan indexable pages (0 incoming internal links): ${orphanPagesCount}`);
 
-// Check sitemap.xml
+// Check sitemap.xml (+ partitioned sitemap-sites.xml)
 const sitemapPath = path.join(WEBSITE_DIR, 'sitemap.xml');
+const sitemapSitesPath = path.join(WEBSITE_DIR, 'sitemap-sites.xml');
 let sitemapUrls = [];
 if (fs.existsSync(sitemapPath)) {
   const sitemapXml = fs.readFileSync(sitemapPath, 'utf8');
   const locMatches = sitemapXml.match(/<loc>([^<]+)<\/loc>/g) || [];
   sitemapUrls = locMatches.map(m => m.replace(/<\/?loc>/g, '').trim());
-  console.log(`[AUDIT] Found ${sitemapUrls.length} URLs in sitemap.xml`);
+  if (fs.existsSync(sitemapSitesPath)) {
+    const sitesXml = fs.readFileSync(sitemapSitesPath, 'utf8');
+    const siteMatches = sitesXml.match(/<loc>([^<]+)<\/loc>/g) || [];
+    for (const m of siteMatches) {
+      const u = m.replace(/<\/?loc>/g, '').trim();
+      if (!sitemapUrls.includes(u)) sitemapUrls.push(u);
+    }
+  }
+  console.log(`[AUDIT] Found ${sitemapUrls.length} URLs across sitemap.xml + sitemap-sites.xml`);
 
   for (const u of sitemapUrls) {
     if (u.endsWith('.html') && !u.endsWith('pad.xml')) {

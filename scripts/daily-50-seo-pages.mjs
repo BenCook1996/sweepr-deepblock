@@ -1277,6 +1277,9 @@ async function runDaily50DeepBlockPages(targetCount = 0, force = false) {
     { loc: 'https://sweeprdeepblock.com/tools/dns-leak-test', changefreq: 'weekly', priority: '0.9' },
     { loc: 'https://sweeprdeepblock.com/tools/browser-fingerprint-test', changefreq: 'weekly', priority: '0.9' },
     { loc: 'https://sweeprdeepblock.com/tools/is-this-shop-a-scam', changefreq: 'weekly', priority: '0.9' },
+    { loc: 'https://sweeprdeepblock.com/glossary', changefreq: 'weekly', priority: '0.8' },
+    { loc: 'https://sweeprdeepblock.com/campaigns/uk-ad-load-index', changefreq: 'weekly', priority: '0.8' },
+    { loc: 'https://sweeprdeepblock.com/campaigns/renewal-shock-switcher', changefreq: 'weekly', priority: '0.8' },
     { loc: 'https://sweeprdeepblock.com/vs/total-adblock', changefreq: 'weekly', priority: '0.8' },
     { loc: 'https://sweeprdeepblock.com/login', changefreq: 'monthly', priority: '0.6' },
     { loc: 'https://sweeprdeepblock.com/support', changefreq: 'monthly', priority: '0.6' },
@@ -1288,12 +1291,13 @@ async function runDaily50DeepBlockPages(targetCount = 0, force = false) {
 
   const allPseoUrls = [];
   let consolidatedNoIndexCount = 0;
-  for (const dir of ['solutions', 'setup', 'vs', 'guides']) {
+  for (const dir of ['solutions', 'setup', 'vs', 'guides', 'glossary']) {
     const dirAbs = path.join(WEBSITE_DIR, dir);
     if (!fs.existsSync(dirAbs)) continue;
     for (const f of fs.readdirSync(dirAbs).sort()) {
       if (!f.endsWith('.html')) continue;
       const slug = f.replace(/\.html$/, '');
+      if (slug === 'index') continue;
       if (dir === 'vs' && slug === 'total-adblock') continue;
       const fileContent = fs.readFileSync(path.join(dirAbs, f), 'utf8');
       if (/<meta\s+name=["']robots["']\s+content=["'][^"']*noindex/i.test(fileContent)) {

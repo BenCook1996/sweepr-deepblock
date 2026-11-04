@@ -89,7 +89,8 @@ const TOOLS = [
           </div>
           <div style="display:flex;gap:10px;flex-wrap:wrap;">
             <button id="runAbTestBtn" type="button" onclick="runLiveAdblockAudit()" style="background:#10b981;color:#042f2e;border:none;font-weight:800;padding:12px 22px;border-radius:10px;cursor:pointer;font-size:0.95rem;">Run 8-Point Live Benchmark</button>
-            <a id="shareAbResultLink" href="/test-lab/results/grade-a-score-100" style="background:#1e293b;color:#f8fafc;border:1px solid #334155;font-weight:700;padding:11px 16px;border-radius:10px;text-decoration:none;font-size:0.88rem;">Share Scorecard</a>
+            <a id="shareAbResultLink" href="/test-lab/results/grade-a-score-100?ads=100&amp;dns=100&amp;fp=100" style="background:#1e293b;color:#f8fafc;border:1px solid #334155;font-weight:700;padding:11px 16px;border-radius:10px;text-decoration:none;font-size:0.88rem;">Share Scorecard</a>
+            <button id="copyRedditBenchmarkBtn" type="button" onclick="copyRedditBenchmarkSnippet()" style="background:#0f172a;color:#38bdf8;border:1px solid #38bdf8;font-weight:700;padding:11px 16px;border-radius:10px;cursor:pointer;font-size:0.86rem;">Copy Reddit Benchmark Snippet</button>
           </div>
         </div>
         <div id="abChecksGrid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;">
@@ -103,7 +104,69 @@ const TOOLS = [
           <div class="ab-check-card" style="background:#090d16;border:1px solid #1e293b;border-radius:10px;padding:14px;"><strong>8. Canvas Fingerprint Entropy</strong><div class="ab-status" style="color:#94a3b8;font-size:0.85rem;margin-top:4px;">Pending check...</div></div>
         </div>
       </div>
+
+      <div style="background:#111827;border:1px solid #1e293b;border-radius:16px;padding:24px;margin:24px 0;overflow-x:auto;">
+        <h2 style="margin:0 0 12px;font-size:1.25rem;">2026 Manifest V3 Ad-Blocker Benchmark Comparison Table</h2>
+        <p style="color:#94a3b8;font-size:0.9rem;margin:0 0 16px;">How popular Chrome &amp; Edge Manifest V3 ad blockers score across all 8 anti-detection, privacy, and scam-protection checks:</p>
+        <table style="width:100%;border-collapse:collapse;font-size:0.88rem;min-width:680px;">
+          <thead>
+            <tr style="border-bottom:1px solid #1e293b;color:#94a3b8;text-align:left;">
+              <th style="padding:10px 8px;">Extension (MV3 Engine)</th>
+              <th style="padding:10px 8px;">Score</th>
+              <th style="padding:10px 8px;">Video Anti-Detection</th>
+              <th style="padding:10px 8px;">&lt;50ms Cookie Auto-Reject</th>
+              <th style="padding:10px 8px;">URL Tracker Stripper</th>
+              <th style="padding:10px 8px;">Scam Store + Canvas Shield</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid #1e293b;background:rgba(16,185,129,0.08);">
+              <td style="padding:10px 8px;font-weight:800;color:#10b981;">SWEEPR DeepBlock v1.2.7</td>
+              <td style="padding:10px 8px;font-weight:800;color:#10b981;">8/8 (100% A+)</td>
+              <td style="padding:10px 8px;color:#10b981;">✓ Dynamic MV3 Scriptlets</td>
+              <td style="padding:10px 8px;color:#10b981;">✓ Automatic (&lt;50ms)</td>
+              <td style="padding:10px 8px;color:#10b981;">✓ Built-in DNR</td>
+              <td style="padding:10px 8px;color:#10b981;">✓ 14 Heuristics + DeepStealth</td>
+            </tr>
+            <tr style="border-bottom:1px solid #1e293b;">
+              <td style="padding:10px 8px;font-weight:700;"><a href="/vs/adguard-extension" style="color:#f8fafc;text-decoration:none;">AdGuard MV3 Extension</a></td>
+              <td style="padding:10px 8px;color:#38bdf8;font-weight:700;">6/8 (75% B)</td>
+              <td style="padding:10px 8px;color:#cbd5e1;">✓ Static Rules</td>
+              <td style="padding:10px 8px;color:#cbd5e1;">Manual Filter Toggle</td>
+              <td style="padding:10px 8px;color:#cbd5e1;">Partial</td>
+              <td style="padding:10px 8px;color:#94a3b8;">✕ No Scam Store DOM Guard</td>
+            </tr>
+            <tr style="border-bottom:1px solid #1e293b;">
+              <td style="padding:10px 8px;font-weight:700;"><a href="/vs/ublock-origin-lite" style="color:#f8fafc;text-decoration:none;">uBlock Origin Lite (MV3)</a></td>
+              <td style="padding:10px 8px;color:#f59e0b;font-weight:700;">5/8 (62% C)</td>
+              <td style="padding:10px 8px;color:#cbd5e1;">Requires Complete Mode</td>
+              <td style="padding:10px 8px;color:#94a3b8;">Hides Banners Only</td>
+              <td style="padding:10px 8px;color:#cbd5e1;">✓ Strip Params</td>
+              <td style="padding:10px 8px;color:#94a3b8;">✕ No Canvas/Scam Shield</td>
+            </tr>
+            <tr style="border-bottom:1px solid #1e293b;">
+              <td style="padding:10px 8px;font-weight:700;"><a href="/vs/total-adblock" style="color:#f8fafc;text-decoration:none;">Total Adblock (£99/yr Renewal)</a></td>
+              <td style="padding:10px 8px;color:#f59e0b;font-weight:700;">4/8 (50% C)</td>
+              <td style="padding:10px 8px;color:#f59e0b;">Paywalled After 7 Days</td>
+              <td style="padding:10px 8px;color:#94a3b8;">Basic Hiding</td>
+              <td style="padding:10px 8px;color:#94a3b8;">✕ Not Included</td>
+              <td style="padding:10px 8px;color:#94a3b8;">✕ Not Included</td>
+            </tr>
+            <tr>
+              <td style="padding:10px 8px;color:#94a3b8;">Unprotected Browser (Default)</td>
+              <td style="padding:10px 8px;color:#ef4444;font-weight:700;">0/8 (0% F)</td>
+              <td style="padding:10px 8px;color:#ef4444;">✕ Exposed</td>
+              <td style="padding:10px 8px;color:#ef4444;">✕ Exposed</td>
+              <td style="padding:10px 8px;color:#ef4444;">✕ Exposed</td>
+              <td style="padding:10px 8px;color:#ef4444;">✕ Exposed</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
       <script>
+        var lastAbPassed = 8;
+        var lastAbPct = 100;
+        var lastAbSlug = 'grade-a-score-100?ads=100&dns=100&fp=100';
         function runLiveAdblockAudit() {
           var hasDeepBlock = !!(document.documentElement.getAttribute('data-sweepr-deepblock') || window.__SWEEPR_DEEPSTEALTH__);
           var bait = document.createElement('div');
@@ -126,9 +189,31 @@ const TOOLS = [
             }
           }
           var pct = Math.round((passed / 8) * 100);
+          var adsVec = hasDeepBlock ? 100 : (baitHidden ? 75 : 25);
+          var dnsVec = hasDeepBlock ? 100 : (baitHidden ? 50 : 20);
+          var fpVec = hasDeepBlock ? 100 : 15;
           var grade = passed === 8 ? 'grade-a-score-100' : (passed >= 4 ? 'grade-c-score-' + pct : 'grade-f-score-' + pct);
+          lastAbPassed = passed;
+          lastAbPct = pct;
+          lastAbSlug = grade + '?ads=' + adsVec + '&dns=' + dnsVec + '&fp=' + fpVec;
           document.getElementById('abScoreDisplay').textContent = passed + '/8 Checks Passed (' + pct + '%)';
-          document.getElementById('shareAbResultLink').href = '/test-lab/results/' + grade;
+          document.getElementById('shareAbResultLink').href = '/test-lab/results/' + lastAbSlug;
+        }
+        function copyRedditBenchmarkSnippet() {
+          var md = '**My 2026 MV3 Browser Ad-Blocker Benchmark Result:** ' + lastAbPassed + '/8 (' + lastAbPct + '%)\\n\\n' +
+            '| Check | Status |\\n|---|---|\\n' +
+            '| Ad Network & Bait Shield | ' + (lastAbPassed >= 3 ? 'Passed' : 'Exposed') + ' |\\n' +
+            '| <50ms Cookie Auto-Reject & Scroll Restore | ' + (lastAbPassed >= 6 ? 'Passed' : 'Exposed') + ' |\\n' +
+            '| Canvas Fingerprint & Scam Store Guard | ' + (lastAbPassed === 8 ? 'Passed' : 'Exposed') + ' |\\n\\n' +
+            'Scorecard: https://sweeprdeepblock.com/test-lab/results/' + lastAbSlug;
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(md);
+          }
+          var btn = document.getElementById('copyRedditBenchmarkBtn');
+          if (btn) {
+            btn.textContent = '✓ Copied Reddit Markdown!';
+            setTimeout(function() { btn.textContent = 'Copy Reddit Benchmark Snippet'; }, 2400);
+          }
         }
         window.addEventListener('DOMContentLoaded', function() { setTimeout(runLiveAdblockAudit, 250); });
       </script>
@@ -164,6 +249,14 @@ const TOOLS = [
           <div style="color:#94a3b8;font-size:0.8rem;margin-bottom:4px;">Sanitized Canonical Output:</div>
           <code id="cleanUrlOutput" style="color:#10b981;word-break:break-all;font-weight:700;">https://example-shop.co.uk/product?id=42</code>
           <div id="strippedBadges" style="margin-top:8px;color:#38bdf8;font-size:0.82rem;font-weight:600;">✓ 4 cross-site tracking beacons stripped (utm_source, fbclid, gclid, msclkid)</div>
+        </div>
+        <div id="a5VpnCrossSellCard" style="margin-top:16px;background:rgba(56,189,248,0.08);border:1px solid #38bdf8;border-radius:12px;padding:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;">
+          <div style="max-width:560px;">
+            <div style="font-size:0.74rem;color:#38bdf8;font-weight:800;text-transform:uppercase;margin-bottom:4px;">SWEEPR Ecosystem Protection • Encrypted Network Tunnel</div>
+            <strong style="color:#f8fafc;font-size:0.98rem;">Browser DNR strips tracking parameters — encrypt your ISP &amp; public Wi-Fi traffic too</strong>
+            <div style="color:#94a3b8;font-size:0.86rem;margin-top:4px;">Pair <strong>SWEEPR DeepBlock</strong> browser tracker blocking with <strong>Sweepr VPN</strong> for full device-wide WireGuard® tunnel encryption and ISP DNS leak defense.</div>
+          </div>
+          <a href="https://sweeprvpn.com/?utm_source=deepblock_a5&amp;utm_medium=dns_leak_test" rel="noopener" style="background:#38bdf8;color:#082f49;font-weight:800;padding:10px 18px;border-radius:8px;text-decoration:none;font-size:0.88rem;">Explore Sweepr VPN &rarr;</a>
         </div>
       </div>
       <script>
@@ -449,6 +542,8 @@ for (const tool of TOOLS) {
     <a href="/" style="color:#f8fafc;font-weight:800;font-size:1.15rem;text-decoration:none;">SWEEPR <span style="color:#10b981;">DeepBlock</span></a>
     <nav style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;">
       <a href="/tools" style="color:#10b981;text-decoration:none;font-weight:700;">Diagnostic Tools</a>
+      <a href="/site" style="color:#94a3b8;text-decoration:none;">Site Audits</a>
+      <a href="/glossary" style="color:#94a3b8;text-decoration:none;">Glossary</a>
       <a href="/test-lab" style="color:#94a3b8;text-decoration:none;">8/8 Test Lab</a>
       <a href="/pricing" style="color:#94a3b8;text-decoration:none;">Pricing</a>
       <a href="/download" style="color:#cbd5e1;text-decoration:none;font-weight:600;">Free Extension</a>
@@ -493,6 +588,10 @@ for (const tool of TOOLS) {
         <a href="/" style="color:#94a3b8;text-decoration:none;">Home</a>
         <a href="/test-lab" style="color:#94a3b8;text-decoration:none;">8/8 Test Lab</a>
         <a href="/tools" style="color:#94a3b8;text-decoration:none;">Free Privacy Tools</a>
+        <a href="/site" style="color:#94a3b8;text-decoration:none;">Site Ad Audits</a>
+        <a href="/glossary" style="color:#94a3b8;text-decoration:none;">Privacy Glossary</a>
+        <a href="/campaigns/uk-ad-load-index" style="color:#94a3b8;text-decoration:none;">UK Ad-Load Index</a>
+        <a href="/campaigns/renewal-shock-switcher" style="color:#94a3b8;text-decoration:none;">Renewal Shock Switcher</a>
         <a href="/vs/total-adblock" style="color:#94a3b8;text-decoration:none;">vs Total Adblock</a>
         <a href="https://sweeprcleaner.com?utm_source=sweeprdeepblock&amp;utm_medium=tools" rel="noopener" style="color:#10b981;text-decoration:none;font-weight:600;">Sweepr Cleaner</a>
         <a href="https://sweeprvpn.com?utm_source=sweeprdeepblock&amp;utm_medium=tools" rel="noopener" style="color:#10b981;text-decoration:none;font-weight:600;">Sweepr VPN</a>

@@ -384,6 +384,33 @@ document.addEventListener('DOMContentLoaded', () => {
         utm_medium: urlParams.get('utm_medium') || '(none)',
         utm_campaign: urlParams.get('utm_campaign') || ''
       });
+
+      // Stage-Gated First-Party Retargeting Audience Segmentation
+      const hasProKey = Boolean(localStorage.getItem('sweepr_license_key') || localStorage.getItem('deepblock_license_key'));
+      if (!hasProKey) {
+        let audienceSegment = '';
+        if (currentPath === '/test-lab' || currentPath.startsWith('/tools/')) {
+          audienceSegment = 'TestLab_Runners_NoPurchase';
+        } else if (currentPath === '/order' || currentPath === '/checkout') {
+          audienceSegment = 'Order_Page_Abandoners';
+        } else if (currentPath.startsWith('/vs/') || currentPath.startsWith('/campaigns/')) {
+          audienceSegment = 'Competitor_VS_Readers';
+        }
+        if (audienceSegment) {
+          window.sweeprTrackEvent('retargeting_audience_hit', {
+            audience_segment: audienceSegment,
+            page_path: currentPath
+          });
+          try {
+            if (Array.isArray(window.uetq)) {
+              window.uetq.push('event', audienceSegment, { event_category: 'retargeting', event_label: currentPath });
+            }
+            if (typeof window.rdt === 'function') {
+              window.rdt('track', 'Custom', { customEventName: audienceSegment });
+            }
+          } catch (e) {}
+        }
+      }
     }
 
     // Global Funnel CTA Click & Install Started Instrumentation
