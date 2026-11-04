@@ -11,8 +11,11 @@
     "seo:audit": "node scripts/technical-seo-audit.mjs",
     "seo:build-sites": "node scripts/build-verified-site-reports.mjs",
     "seo:build-glossary": "node scripts/build-glossary-hub.mjs",
+    "seo:build-eu": "node scripts/build-localized-eu-hubs.mjs",
+    "seo:build-stories": "node scripts/build-customer-stories.mjs",
     "seo:review-miner": "node scripts/competitor-review-miner.mjs",
     "ads:stage-gate": "node scripts/reinvestment-stage-gate.mjs",
+    "ads:stage3-pack": "node scripts/build-stage3-expansion-ads.mjs",
     "tools:build": "node scripts/build-interactive-tools.mjs",
     "filters:daily": "node scripts/daily-ad-filter-pipeline.mjs 1000"
   },

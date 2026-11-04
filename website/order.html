@@ -356,7 +356,7 @@
   <!-- MAIN 2-COLUMN CHECKOUT LAYOUT — Concept C: 1-Screen Express Checkout -->
   <main class="max-w-6xl mx-auto px-4 sm:px-6 py-5 sm:py-8 w-full flex-1">
     <!-- Top Segmented Plan Switcher Bar (Instant 1-Click Plan Switching on /order) -->
-    <div class="bg-white rounded-2xl p-1.5 sm:p-2 border border-gray-200/90 shadow-xs mb-5 grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-2">
+    <div class="bg-white rounded-2xl p-1.5 sm:p-2 border border-gray-200/90 shadow-xs mb-5 grid grid-cols-1 sm:grid-cols-4 gap-1.5 sm:gap-2">
       <button type="button" id="planTabAnnual" onclick="selectCheckoutPlan('annual')" class="py-2 sm:py-2.5 px-3 rounded-xl bg-emerald-600 text-white font-extrabold text-xs sm:text-sm shadow-xs cursor-pointer transition-all">
         ★ Annual — £4.99/mo (Save 50%)
       </button>
@@ -365,6 +365,9 @@
       </button>
       <button type="button" id="planTabMonthly" onclick="selectCheckoutPlan('monthly')" class="py-2 sm:py-2.5 px-3 rounded-xl bg-gray-50 hover:bg-gray-100 text-gray-700 font-bold text-xs sm:text-sm cursor-pointer transition-all">
         Monthly — £9.99/mo
+      </button>
+      <button type="button" id="planTabSuite" onclick="selectCheckoutPlan('suite_annual')" class="py-2 sm:py-2.5 px-3 rounded-xl bg-gray-50 hover:bg-gray-100 text-gray-700 font-bold text-xs sm:text-sm cursor-pointer transition-all">
+        🛡️ Complete Suite — £89.99/yr (Save 45%)
       </button>
     </div>
 
@@ -1072,6 +1075,7 @@
     }
 
     function getRamAddonPence(plan = selectedPlan) {
+      if (plan === 'suite_annual') return 0;
       const p = checkoutConfig && checkoutConfig.pricing;
       if (plan === 'annual') return p?.ramTamerAnnualAmount ?? 1499;
       if (plan === 'six_month') return p?.ramTamerSixMonthAmount ?? 999;
@@ -1080,6 +1084,7 @@
 
     function getBasePlanPence(plan = selectedPlan) {
       const p = checkoutConfig && checkoutConfig.pricing;
+      if (plan === 'suite_annual') return p?.suiteAnnualAmount ?? 8999;
       if (plan === 'annual') return p?.annualAmount ?? 5999;
       if (plan === 'six_month') return p?.sixMonthAmount ?? 4499;
       return isDiscountApplied ? (p?.introMonthlyAmount ?? 199) : (p?.monthlyAmount ?? 999);
@@ -1168,8 +1173,25 @@
 
       const tagSvg = '<svg class="w-3.5 h-3.5 text-brand-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg> ';
       const savingsNoteEl = document.getElementById('savingsSummaryNote');
+      const suiteFmt = p?.suiteAnnualFormatted ?? '£89.99';
+      const suiteMoEq = p?.suiteAnnualMonthlyEqFormatted ?? '£7.49';
+      const suiteAnchorFmt = p?.suiteStandaloneAnchorFormatted ?? '£164.97';
 
-      if (selectedPlan === 'annual') {
+      if (selectedPlan === 'suite_annual') {
+        document.getElementById('productTagContent').innerHTML = `${tagSvg}All-in-One Suite Bundle (Save 45% vs ${suiteAnchorFmt})`;
+        document.getElementById('productPriceTop').textContent = suiteFmt;
+        document.getElementById('productPriceSub').textContent = `per year (${suiteMoEq}/mo for all 4 apps)`;
+        document.getElementById('summaryPlanTitle').textContent = 'Sweepr Complete Security Suite (DeepBlock + VPN + Cleaner + RAM Tamer)';
+        document.getElementById('summaryPlanPrice').textContent = `${suiteFmt}/year`;
+        document.getElementById('savingsSummaryLabel').textContent = 'Complete Suite Bundle Savings (Save 45%)';
+        document.getElementById('savingsSummaryAmount').textContent = '- £74.98';
+        if (savingsNoteEl) savingsNoteEl.textContent = `(Includes DeepBlock Pro + Sweepr VPN + Sweepr Cleaner + RAM Tamer vs ${suiteAnchorFmt}/yr standalone)`;
+        document.getElementById('savingsSummaryRow').classList.remove('hidden');
+        document.getElementById('discountSummaryRow').classList.add('hidden');
+        if (ramRow) ramRow.classList.add('hidden');
+        document.getElementById('termsConsentLabel').textContent =
+          `I agree to pay ${totalFormatted} today which will auto renew at ${totalFormatted} annually unless I cancel before my next renewal. I can cancel anytime in 1 click via my online Customer Portal.`;
+      } else if (selectedPlan === 'annual') {
         document.getElementById('productTagContent').innerHTML = `${tagSvg}Save 50% vs monthly billing`;
         document.getElementById('productPriceTop').textContent = annualFmt;
         document.getElementById('productPriceSub').textContent = `per year (${annualMoEq}/mo)`;
@@ -1234,12 +1256,17 @@
           ? `Monthly — ${introFmt} 1st mo`
           : `Monthly — ${monthlyFmt}/mo`;
       }
+      const tabSuite = document.getElementById('planTabSuite');
+      if (tabSuite) {
+        tabSuite.className = selectedPlan === 'suite_annual' ? activeTabCls : inactiveTabCls;
+        tabSuite.textContent = `🛡️ Suite — ${suiteFmt}/yr (Save 45%)`;
+      }
 
       updatePaymentRequestTotal();
     }
 
     function selectCheckoutPlan(plan) {
-      if (plan === 'six_month' || plan === 'monthly' || plan === 'annual') {
+      if (plan === 'suite_annual' || plan === 'six_month' || plan === 'monthly' || plan === 'annual') {
         selectedPlan = plan;
         try { sessionStorage.setItem('deepblock_selected_plan', plan); } catch (e) {}
         updateOrderUI();
@@ -1664,6 +1691,9 @@
         (restoredDraft && restoredDraft.isDiscountApplied && (!params.get('plan') || p === 'monthly'))
       ) {
         activateDiscountOffer();
+      } else if (p === 'suite_annual' || p === 'suite' || p === 'bundle') {
+        selectedPlan = 'suite_annual';
+        updateOrderUI();
       } else if (p === 'six_month' || p === '6month' || p === 'sixmonth') {
         selectedPlan = 'six_month';
         updateOrderUI();

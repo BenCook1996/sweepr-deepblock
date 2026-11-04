@@ -257,6 +257,26 @@ function buildLocalizedPricing(countryCode = 'GB', overrideCurrency) {
     ? Math.round(cfg.ramTamerSixMonthAmount / 6)
     : Math.floor(cfg.ramTamerSixMonthAmount / 6);
 
+  const suiteAnnualAmount =
+    cfg.currency === 'gbp'
+      ? 8999
+      : cfg.currency === 'usd'
+      ? 10999
+      : cfg.currency === 'eur'
+      ? 9999
+      : Math.round(cfg.annualAmount * 1.5);
+  const suiteStandaloneAnchorAmount =
+    cfg.currency === 'gbp'
+      ? 16497
+      : cfg.currency === 'usd'
+      ? 19997
+      : cfg.currency === 'eur'
+      ? 18497
+      : Math.round(suiteAnnualAmount * 1.83);
+  const suiteAnnualMonthlyEq = cfg.zeroDecimal
+    ? Math.round(suiteAnnualAmount / 12)
+    : Math.floor(suiteAnnualAmount / 12);
+
   return {
     country: cc,
     countryFlag: countryToFlag(cc),
@@ -271,6 +291,13 @@ function buildLocalizedPricing(countryCode = 'GB', overrideCurrency) {
     sixMonthAmount: cfg.sixMonthAmount,
     monthlyAmount: cfg.monthlyAmount,
     introMonthlyAmount: cfg.introMonthlyAmount,
+    suiteAnnualAmount,
+    suiteStandaloneAnchorAmount,
+    suiteAnnualMonthlyEqAmount: suiteAnnualMonthlyEq,
+    suiteSavingsPercent: 45,
+    suiteAnnualFormatted: formatAmount(suiteAnnualAmount, cfg),
+    suiteStandaloneAnchorFormatted: formatAmount(suiteStandaloneAnchorAmount, cfg),
+    suiteAnnualMonthlyEqFormatted: formatAmount(suiteAnnualMonthlyEq, cfg),
     annualMonthlyEqAmount: annualMonthlyEq,
     sixMonthMonthlyEqAmount: sixMonthMonthlyEq,
     annualSavingsAmount,
@@ -1103,7 +1130,7 @@ function removeLocalDeviceForAccount(acc, deviceId) {
   return removed;
 }
 
-function buildDeepblockEntitlements(ramTamerAddon) {
+function buildDeepblockEntitlements(ramTamerAddon, isSuiteBundle = false) {
   const list = [
     'pro_cookie_autoreject',
     'pro_ai_slop_purifier',
@@ -1111,8 +1138,11 @@ function buildDeepblockEntitlements(ramTamerAddon) {
     'bundle_fake_store_detector',
     'bundle_encrypted_dns_proxy'
   ];
-  if (ramTamerAddon) {
+  if (ramTamerAddon || isSuiteBundle) {
     list.push('addon_total_tab_and_ram_tamer');
+  }
+  if (isSuiteBundle) {
+    list.push('suite_sweepr_vpn_pro', 'suite_sweepr_cleaner_pro');
   }
   return list;
 }
@@ -1154,8 +1184,8 @@ function upsertLocalAccount({ email, name, country, stripeCustomerId, plan, ramT
       activation_code: activationCode,
       licenseKey,
       plan: plan || 'annual',
-      ramTamerAddon: Boolean(ramTamerAddon),
-      entitlements: buildDeepblockEntitlements(Boolean(ramTamerAddon)),
+      ramTamerAddon: Boolean(ramTamerAddon || plan === 'suite_annual'),
+      entitlements: buildDeepblockEntitlements(Boolean(ramTamerAddon), plan === 'suite_annual'),
       status,
       devices: new Set(),
       deviceMeta: new Map(),
@@ -1168,9 +1198,9 @@ function upsertLocalAccount({ email, name, country, stripeCustomerId, plan, ramT
       if (name) acc.name = name;
       if (country) acc.country = country;
       if (plan) acc.plan = plan;
-      if (ramTamerAddon !== undefined) {
-        acc.ramTamerAddon = Boolean(ramTamerAddon);
-        acc.entitlements = buildDeepblockEntitlements(acc.ramTamerAddon);
+      if (ramTamerAddon !== undefined || plan === 'suite_annual') {
+        acc.ramTamerAddon = Boolean(ramTamerAddon || acc.plan === 'suite_annual');
+        acc.entitlements = buildDeepblockEntitlements(acc.ramTamerAddon, acc.plan === 'suite_annual');
       }
       if (status) acc.status = status;
     }
@@ -1708,6 +1738,9 @@ const CLEAN_ROUTES = {
   '/tools/is-this-shop-a-scam': path.join('tools', 'is-this-shop-a-scam.html'),
   '/site': path.join('site', 'index.html'),
   '/glossary': path.join('glossary', 'index.html'),
+  '/de': path.join('de', 'index.html'),
+  '/fr': path.join('fr', 'index.html'),
+  '/stories': path.join('stories', 'index.html'),
   '/campaigns/uk-ad-load-index': path.join('campaigns', 'uk-ad-load-index.html'),
   '/campaigns/renewal-shock-switcher': path.join('campaigns', 'renewal-shock-switcher.html'),
   '/mockups': 'mockups.html',
@@ -2515,6 +2548,49 @@ function getCachedDynamicDelta() {
     });
   }
 
+  // API -0a: Step 3.1 Extension & Web Paywall A/B Testing Engine (50/50 Deterministic Bucket Assignment)
+  if (req.method === 'GET' && pathname === '/api/ab-config') {
+    const seed = String(
+      parsedUrl.searchParams.get('device_id') ||
+      parsedUrl.searchParams.get('seed') ||
+      `${getClientIp(req)}|${req.headers['user-agent'] || ''}`
+    ).trim();
+    const forceVariant = String(parsedUrl.searchParams.get('force_variant') || '').trim();
+    const hashByte = crypto.createHash('sha256').update(seed).digest()[0];
+    const variant =
+      forceVariant === 'variant_a_breadth' || forceVariant === 'variant_b_risk_free_14d'
+        ? forceVariant
+        : hashByte % 2 === 0
+        ? 'variant_a_breadth'
+        : 'variant_b_risk_free_14d';
+
+    const variants = {
+      variant_a_breadth: {
+        id: 'variant_a_breadth',
+        experiment: 'phase3_paywall_framing_v1',
+        badge: '4-DEVICE ECOSYSTEM LICENSE',
+        headline: 'One Subscription. 4 Devices + Ecosystem Ready',
+        subheadline: 'Protect Chrome, Edge, Firefox, Safari, iOS & Android simultaneously — or bundle with Sweepr VPN & Sweepr Cleaner and save 45%.',
+        ctaLabel: 'Unlock 4-Device Pro (£4.99/mo eq.) →'
+      },
+      variant_b_risk_free_14d: {
+        id: 'variant_b_risk_free_14d',
+        experiment: 'phase3_paywall_framing_v1',
+        badge: '14-DAY RISK-FREE GUARANTEE',
+        headline: '14-Day 100% Money-Back Guarantee + 1-Click Cancel',
+        subheadline: 'Zero auto-renewal traps. Pause, switch plans, or claim an instant 1-click refund in your self-service portal anytime.',
+        ctaLabel: 'Start 14-Day Risk-Free Pro (£4.99/mo eq.) →'
+      }
+    };
+    return sendJson(res, 200, {
+      ok: true,
+      experiment: 'phase3_paywall_framing_v1',
+      variant,
+      config: variants[variant],
+      allVariants: variants
+    }, {}, req);
+  }
+
   // API 0: Geo-IP & Multi-Currency Pricing
   if (req.method === 'GET' && pathname === '/api/pricing') {
     const localizedPricing = resolvePricingForRequest(req, parsedUrl);
@@ -2571,6 +2647,18 @@ function getCachedDynamicDelta() {
           interval: 'month',
           name: 'SWEEPR Deepblock Pro (Monthly)',
           label: `Monthly Plan (${localizedPricing.monthlyFormatted}/mo)`
+        },
+        suite_annual: {
+          amountPence: localizedPricing.suiteAnnualAmount,
+          formatted: localizedPricing.suiteAnnualFormatted,
+          standaloneAnchorFormatted: localizedPricing.suiteStandaloneAnchorFormatted,
+          monthlyEqFormatted: localizedPricing.suiteAnnualMonthlyEqFormatted,
+          savingsPercent: localizedPricing.suiteSavingsPercent,
+          interval: 'year',
+          includesRamTamer: true,
+          includesSuiteApps: ['deepblock_pro', 'sweepr_vpn_pro', 'sweepr_cleaner_pro', 'ram_tamer'],
+          name: 'Sweepr Complete Security Suite (Annual Bundle)',
+          label: `Complete Security Suite (${localizedPricing.suiteAnnualFormatted}/yr vs ${localizedPricing.suiteStandaloneAnchorFormatted} — Save 45%)`
         }
       },
       addons: {
@@ -2673,13 +2761,15 @@ function getCachedDynamicDelta() {
     const postalCode = typeof body.postcode === 'string' ? body.postcode.trim().slice(0, 32) : '';
     const rawPlan = typeof body.plan === 'string' ? body.plan.toLowerCase() : 'annual';
     const plan =
-      rawPlan === 'annual'
+      rawPlan === 'suite_annual' || rawPlan === 'suite' || rawPlan === 'bundle'
+        ? 'suite_annual'
+        : rawPlan === 'annual'
         ? 'annual'
         : rawPlan === 'six_month' || rawPlan === '6month' || rawPlan === 'sixmonth'
         ? 'six_month'
         : 'monthly';
     const applyDiscount = Boolean(body.applyDiscount || body.discountApplied) && plan === 'monthly';
-    const includeRamTamer = hasRamTamerInBody(body);
+    const includeRamTamer = plan === 'suite_annual' || hasRamTamerInBody(body);
 
     const localizedPricing = resolvePricingForRequest(req, parsedUrl, body);
     const existingAcc = accountsByEmail.get(email);
@@ -2777,10 +2867,13 @@ function getCachedDynamicDelta() {
         }
       }
 
-      const isAnnual = plan === 'annual';
+      const isSuiteAnnual = plan === 'suite_annual';
+      const isAnnual = plan === 'annual' || isSuiteAnnual;
       const isSixMonth = plan === 'six_month';
       const productId = await getStripeProductId();
-      const unitAmount = isAnnual
+      const unitAmount = isSuiteAnnual
+        ? localizedPricing.suiteAnnualAmount
+        : isAnnual
         ? localizedPricing.annualAmount
         : isSixMonth
         ? localizedPricing.sixMonthAmount
@@ -2803,7 +2896,7 @@ function getCachedDynamicDelta() {
         }
       ];
 
-      if (includeRamTamer) {
+      if (includeRamTamer && !isSuiteAnnual) {
         const ramProductId = await getStripeRamTamerProductId();
         const addonUnitAmount = isAnnual
           ? localizedPricing.ramTamerAnnualAmount
@@ -4232,7 +4325,7 @@ function getCachedDynamicDelta() {
     return sendJson(res, 200, { ok: true, cancelAtPeriodEnd: true, status: record.status });
   }
 
-  // Automation A4: In-Portal 1-Click Plan Switch (Monthly Intro -> Annual £4.99/mo eq. or 6-Month £44.99, Zero Emails)
+  // Automation A4 + Phase 3 Step 3.3: In-Portal & In-Extension 1-Click Plan Switch & Escalating D30/D60/D90 Win-Back (Zero Emails)
   if (req.method === 'POST' && pathname === '/api/portal/switch-plan') {
     if (!isSameOriginWriteRequest(req, { allowExtension: true })) {
       return sendJson(res, 403, { ok: false, error: 'cross_origin_forbidden' }, {}, req);
@@ -4242,22 +4335,47 @@ function getCachedDynamicDelta() {
     }
     const body = await readBody(req);
     if (body && body.__tooLarge) return sendJson(res, 413, { ok: false, error: 'payload_too_large' });
-    const targetPlan = body?.plan === 'six_month' ? 'six_month' : 'annual';
+    const winbackTier = String(body?.winback_tier || '').trim().toLowerCase();
+    const rawPlan = String(body?.plan || 'annual').trim().toLowerCase();
+    let targetPlan =
+      rawPlan === 'suite_annual' || rawPlan === 'suite' || winbackTier === 'tier_d90'
+        ? 'suite_annual'
+        : rawPlan === 'six_month' || winbackTier === 'tier_d30'
+        ? 'six_month'
+        : 'annual';
     const acc = await resolveAccountFromSessionOrCredentials(req, body || {});
     if (!acc) {
       return sendJson(res, 401, { ok: false, error: 'unauthorized', message: 'Valid license key or active portal session required.' });
     }
     acc.plan = targetPlan;
+    acc.status = 'active';
     acc.cancelAtPeriodEnd = false;
     acc.stepUpSaveEligible = false;
-    syncSubscriptionWithSweeprCrm(acc, { notes: `Switched plan via A4 in-portal save to ${targetPlan}` }).catch(() => {});
+    if (winbackTier === 'tier_d60' || targetPlan === 'suite_annual' || Boolean(body?.ramTamerAddon)) {
+      acc.ramTamerAddon = true;
+    }
+    acc.entitlements = buildDeepblockEntitlements(Boolean(acc.ramTamerAddon), targetPlan === 'suite_annual');
+    syncSubscriptionWithSweeprCrm(acc, {
+      notes: `Switched plan via A4/Phase3 winback (${winbackTier || 'direct'}) to ${targetPlan}`
+    }).catch(() => {});
+    const confirmMsg =
+      targetPlan === 'suite_annual'
+        ? 'Upgraded to Sweepr Complete Security Suite (£89.99/yr — DeepBlock Pro + Sweepr VPN + Sweepr Cleaner + RAM Tamer)'
+        : winbackTier === 'tier_d60'
+        ? 'Switched to Annual Plan (£59.99/yr) + Free 12-Month Total Tab & RAM Tamer Unlocked!'
+        : targetPlan === 'annual'
+        ? 'Switched to Annual Plan (£59.99/yr — £4.99/mo equivalent)'
+        : 'Switched to 6-Month Plan (£44.99 — Save 25%)';
     return sendJson(res, 200, {
       ok: true,
       plan: acc.plan,
+      winbackTier: winbackTier || null,
+      ramTamerAddon: Boolean(acc.ramTamerAddon),
+      entitlements: acc.entitlements,
       status: acc.status,
       licenseKey: acc.licenseKey,
-      message: targetPlan === 'annual' ? 'Switched to Annual Plan (£59.99/yr — £4.99/mo equivalent)' : 'Switched to 6-Month Plan (£44.99)'
-    });
+      message: confirmMsg
+    }, {}, req);
   }
 
   // ==========================================================================
@@ -5421,7 +5539,7 @@ function getCachedDynamicDelta() {
     }
   }
   if (!candidateRel) {
-    if (/^\/(solutions|setup|vs|guides|tools|site|glossary|campaigns)\/[a-z0-9-]+$/i.test(pathname)) {
+    if (/^\/(solutions|setup|vs|guides|tools|site|glossary|campaigns|de|fr|stories)\/[a-z0-9-]+$/i.test(pathname)) {
       candidateRel = pathname.slice(1) + '.html';
     } else if (pathname.length > 1 && !path.extname(pathname)) {
       const htmlCandidate = pathname.slice(1) + '.html';

@@ -540,11 +540,13 @@ async function revokeProState(reason = 'inactive') {
   verifiedSession.ramTamerActive = false;
   verifiedSession.licenseKey = '';
   verifiedSession.internalWriteInProgress = true;
+  const existing = await chrome.storage.local.get(['churnedAt']);
   await chrome.storage.local.set({
     proActive: false,
     ramTamerActive: false,
     licenseKey: '',
     subscriptionStatus: String(reason),
+    churnedAt: existing?.churnedAt || Date.now(),
     licenseVerifiedAt: Date.now(),
     entitlements: [],
     encryptedDnsEnabled: false,
@@ -1250,11 +1252,22 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 
   if (msg.type === 'GET_DASHBOARD_STATE') {
     Promise.all([
-      chrome.storage.local.get([...Object.keys(DEFAULT_STATE), 'extensionUpdateStatus', 'hostPermissionsGranted', 'stepUpSaveEligible', 'previousLicenseKey']),
+      chrome.storage.local.get([
+        ...Object.keys(DEFAULT_STATE),
+        'extensionUpdateStatus',
+        'hostPermissionsGranted',
+        'stepUpSaveEligible',
+        'previousLicenseKey',
+        'churnedAt',
+        'simulatedWinbackTier',
+        'abVariantOverride',
+        'deviceId'
+      ]),
       getRamSpeedometerMetrics(),
       chrome.tabs.query({ active: true, currentWindow: true })
     ]).then(async ([store, ramMetrics, activeTabs]) => {
       const auth = await ensureVerifiedProSession();
+      const deviceId = store.deviceId || (await getOrCreateDeviceId());
       const activeTab = activeTabs && activeTabs[0];
       const activeTabId = activeTab ? activeTab.id : null;
       const currentTabScamDetected = Boolean(activeTabId && scamDetectedTabs.has(activeTabId));
@@ -1275,9 +1288,20 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       const stepUpSaveEligible = Boolean(store.stepUpSaveEligible);
       const winbackEligible = Boolean(
         !auth.proActive &&
-          store.previousLicenseKey &&
-          ['canceled', 'expired', 'inactive', 'unverified'].includes(String(store.subscriptionStatus || ''))
+          (store.simulatedWinbackTier ||
+            (store.previousLicenseKey &&
+              ['canceled', 'expired', 'inactive', 'unverified'].includes(String(store.subscriptionStatus || ''))))
       );
+      const daysSinceChurn = Math.max(0, Math.floor((Date.now() - Number(store.churnedAt || Date.now())) / 86400000));
+      const winbackTier =
+        store.simulatedWinbackTier ||
+        (daysSinceChurn >= 90 ? 'tier_d90' : daysSinceChurn >= 60 ? 'tier_d60' : 'tier_d30');
+      const charSum = String(deviceId)
+        .split('')
+        .reduce((acc, ch) => acc + ch.charCodeAt(0), 0);
+      const abVariant =
+        store.abVariantOverride || (charSum % 2 === 0 ? 'variant_a_breadth' : 'variant_b_risk_free_14d');
+
       sendResponse({
         ...DEFAULT_STATE,
         ...store,
@@ -1289,12 +1313,23 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
         milestoneState,
         stepUpSaveEligible,
         winbackEligible,
+        winbackTier,
+        daysSinceChurn,
+        abVariant,
         ramMetrics,
         currentTabScamDetected,
         currentTabScamReasons,
         hostPermissionsGranted: store.hostPermissionsGranted !== false,
         extensionUpdateStatus: store.extensionUpdateStatus || null
       });
+    });
+    return true;
+  }
+
+  if (msg.type === 'SIMULATE_WINBACK_TIER') {
+    const tier = ['tier_d30', 'tier_d60', 'tier_d90'].includes(msg.tier) ? msg.tier : null;
+    chrome.storage.local.set({ simulatedWinbackTier: tier }, () => {
+      sendResponse({ ok: true, simulatedWinbackTier: tier });
     });
     return true;
   }

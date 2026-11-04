@@ -244,6 +244,13 @@ document.addEventListener('DOMContentLoaded', () => {
       upgradeCtaBtn.style.display = 'flex';
       toggleLicenseDrawerBtn.style.display = 'inline-flex';
       licenseDrawerEl.classList.add('open');
+      const upgradeSubtitleEl = document.getElementById('upgradeSubtitleText');
+      if (upgradeSubtitleEl) {
+        upgradeSubtitleEl.textContent =
+          state.abVariant === 'variant_b_risk_free_14d'
+            ? '14-Day 100% Risk-Free Guarantee · 1-Click Portal Cancel'
+            : 'One Subscription · 4 Devices + Sweepr Ecosystem Ready';
+      }
     }
 
     updateSiteBarState();
@@ -318,7 +325,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // Automation A4: Intro-Price Step-Up Save & Win-Back Banner (100% In-Extension, Zero Emails)
+    // Automation A4 + Phase 3 Step 3.3: Escalating D30 / D60 / D90 In-Extension Win-Back & Step-Up Banner (Zero Emails)
     const stepUpAndWinbackBanner = document.getElementById('stepUpAndWinbackBanner');
     const stepUpAndWinbackText = document.getElementById('stepUpAndWinbackText');
     const a4SwitchPlanBtn = document.getElementById('a4SwitchPlanBtn');
@@ -327,15 +334,28 @@ document.addEventListener('DOMContentLoaded', () => {
       chrome.storage.local.get(['a4DismissedAt'], (a4Store) => {
         const dismissedRecent = a4Store && a4Store.a4DismissedAt && Date.now() - Number(a4Store.a4DismissedAt) < 7 * 86400 * 1000;
         if ((state.stepUpSaveEligible || state.winbackEligible) && !dismissedRecent) {
+          const wbTier = state.winbackTier || 'tier_d30';
+          let bannerCopy = `💡 Intro Month Ending Soon — Lock £4.99/mo Forever on Annual Plan`;
+          let targetUrl = 'https://sweeprdeepblock.com/order?plan=annual&utm_source=extension_a4';
+          if (state.winbackEligible) {
+            if (wbTier === 'tier_d90') {
+              bannerCopy = `🛡️ D90 Win-Back: Complete Security Suite (DeepBlock+VPN+Cleaner) £89.99/yr (Save 45%)`;
+              targetUrl = 'https://sweeprdeepblock.com/order?plan=suite_annual&winback=tier_d90&utm_source=extension_d90';
+            } else if (wbTier === 'tier_d60') {
+              bannerCopy = `⚡ D60 Win-Back: Lock £4.99/mo Annual + FREE 12-Month RAM Tamer`;
+              targetUrl = 'https://sweeprdeepblock.com/order?plan=annual&winback=tier_d60&utm_source=extension_d60';
+            } else {
+              bannerCopy = `⚡ D30 Win-Back (${mState.totalThreats.toLocaleString()} blocks): 6-Month Plan £44.99 (Save 25%)`;
+              targetUrl = 'https://sweeprdeepblock.com/order?plan=six_month&winback=tier_d30&utm_source=extension_d30';
+            }
+          }
           if (stepUpAndWinbackText) {
-            stepUpAndWinbackText.textContent = state.winbackEligible
-              ? `⚡ Reactivate Pro (${mState.totalThreats.toLocaleString()} blocks saved) — Lock £4.99/mo Annual`
-              : `💡 Intro Month Ending Soon — Lock £4.99/mo Forever on Annual Plan`;
+            stepUpAndWinbackText.textContent = bannerCopy;
           }
           stepUpAndWinbackBanner.style.display = 'flex';
           if (a4SwitchPlanBtn) {
             a4SwitchPlanBtn.onclick = () => {
-              chrome.tabs.create({ url: 'https://sweeprdeepblock.com/order?plan=annual&utm_source=extension_a4' });
+              chrome.tabs.create({ url: targetUrl });
             };
           }
           if (a4DismissBtn) {

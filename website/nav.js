@@ -89,6 +89,37 @@
   }
   window.addEventListener('DOMContentLoaded', checkActiveOrderDraftBanner);
   window.addEventListener('pageshow', checkActiveOrderDraftBanner);
+
+  // Step 3.1: Client-Side Paywall A/B Testing Engine (50/50 Deterministic Bucket Assignment)
+  function initPaywallAbTest() {
+    try {
+      const badgeEl = document.querySelector('[data-ab-paywall-badge]');
+      const headlineEl = document.querySelector('[data-ab-paywall-headline]');
+      if (!badgeEl && !headlineEl) return;
+      const cid = getClientId();
+      const urlParams = new URLSearchParams(window.location.search || '');
+      const forced = urlParams.get('ab_variant') || urlParams.get('force_variant') || '';
+      const q = `/api/ab-config?device_id=${encodeURIComponent(cid)}${forced ? '&force_variant=' + encodeURIComponent(forced) : ''}`;
+      fetch(q)
+        .then((r) => (r.ok ? r.json() : null))
+        .then((data) => {
+          if (!data || !data.config) return;
+          window.__sweeprAbVariant = data.variant;
+          try { sessionStorage.setItem('sweepr_ab_variant', data.variant); } catch (e) {}
+          if (badgeEl && data.config.badge) {
+            badgeEl.textContent = '✓ ' + data.config.badge + ' • ' + data.config.headline;
+          }
+          if (typeof window.sweeprTrackEvent === 'function') {
+            window.sweeprTrackEvent('paywall_ab_impression', {
+              experiment: data.experiment || 'phase3_paywall_framing_v1',
+              variant: data.variant
+            });
+          }
+        })
+        .catch(() => {});
+    } catch (e) {}
+  }
+  window.addEventListener('DOMContentLoaded', initPaywallAbTest);
 })();
 
 document.addEventListener('DOMContentLoaded', () => {
