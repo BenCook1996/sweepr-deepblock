@@ -21,6 +21,8 @@
 ||2mdn.net^$third-party
 ||3lift.com^$third-party
 ||a-ads.com^$third-party,script,xmlhttprequest
+||aaaconnect.info^$third-party
+||acquaintjokinglyscoring.com^$third-party
 ||adblade.com^$third-party,script,xmlhttprequest
 ||adform.net^$third-party
 ||adkernel.com^$third-party
@@ -36,6 +38,7 @@
 ||ads-twitter.com^$third-party
 ||ads.soundcloud.com^$third-party
 ||ads.yahoo.com^$third-party
+||adsmediabox.com^$third-party
 ||adservice.google.co.uk^$third-party
 ||adservice.google.com^$third-party
 ||adspirit.de^$third-party,script,xmlhttprequest
@@ -50,15 +53,18 @@
 ||advnet.xyz^$third-party
 ||adxpansion.com^$third-party
 ||ahw2lok.txxx.com^$third-party
+||aivanta76.com^$third-party
 ||alwingulla.com^$third-party,script,xmlhttprequest
 ||amazon-adsystem.com^$third-party
 ||aniview.com^$third-party
 ||api-v2.soundcloud.com/ads*$xmlhttprequest
+||awmdelivery.com^$third-party
 ||bat.bing.com^$third-party
 ||bidswitch.net^$third-party
 ||blogherads.com^$third-party
 ||blogherads.com^$third-party,script,xmlhttprequest
 ||bngpt.com^$third-party
+||bongacams2.com^$third-party
 ||brid.tv^$third-party,script,xmlhttprequest
 ||camsoda.ai^$third-party
 ||carbonads.com^$third-party,script,xmlhttprequest
@@ -115,6 +121,8 @@
 ||google-analytics.com^$third-party
 ||googlesyndication.com^$third-party
 ||googletagmanager.com^$third-party
+||gotpd.me^$third-party
+||gsrv.dev^$third-party
 ||gumgum.com^$third-party
 ||hilltopads.net^$third-party
 ||hollowgoal.com^$third-party
@@ -156,11 +164,15 @@
 ||nvdst.com/*/ppdr/p2p.init.js$third-party
 ||nvdst.com/adx_$third-party
 ||ogury.io^$third-party
+||onclckmn.com^$third-party
+||onclicka.com^$third-party
 ||openx.net^$third-party
 ||orbsrv.com^$third-party
 ||outbrain.com^$third-party
 ||pemsrv.com^$third-party
 ||playstream.media^$third-party,script,xmlhttprequest
+||playvids.com/ads/prebid-ads
+||playvids.com/away/$subdocument,script,xmlhttprequest,ping
 ||plugrush.com^$third-party
 ||popads.net^$third-party
 ||popcash.net^$third-party
@@ -185,6 +197,7 @@
 ||revive-adserver.net^$third-party,script,xmlhttprequest
 ||richads.com^$third-party,script,xmlhttprequest
 ||richaudience.com^$third-party,script,xmlhttprequest
+||rmzsglng.com^$third-party
 ||rubiconproject.com^$third-party
 ||rvmessage.online^$third-party
 ||rvrpushserv.com^$third-party
@@ -347,6 +360,27 @@ pornoeggs.com##.m-l-ntvb
 pornoeggs.com##a[href*="/away/pop"]
 pornoeggs.com##a[href*="/away/tab"]
 pornoeggs.com##li:has(> a[href*="/away/tab"])
+porntrex.com###overlay
+porntrex.com##.block-video .opt
+porntrex.com##.block-video > .table:has(.opt)
+porntrex.com##.bottom-adv
+porntrex.com##.exclusive-link-href
+porntrex.com##.index-link
+porntrex.com##.index-link-href
+porntrex.com##.pop-adv
+porntrex.com##.pop-premium
+porntrex.com##a[href*="aivanta76.com"]
+porntrex.com##a[href*="bongacams"]
+porntrex.com##a[href*="gotpd.me"]
+porntrex.com##a[href*="rmzsglng.com"]
+porntrex.com##div:has(> div > iframe[src*="gsrv.dev"])
+porntrex.com##div:has(> iframe[src*="gsrv.dev"])
+porntrex.com##iframe[src*="aaaconnect.info"]
+porntrex.com##iframe[src*="gsrv.dev"]
+porntrex.com##li:has(> a[href*="aivanta76.com"])
+porntrex.com##li:has(> a[href*="bongacams"])
+porntrex.com##li:has(> a[href*="gotpd.me"])
+porntrex.com##li:has(> a[href*="rmzsglng.com"])
 postwire.news##.vidoomy-video-ad
 qpic.cn##.yieldlove-ad-slot
 questbeacon.info##.freestar-ad-slot
@@ -383,3 +417,19 @@ tiktok.com##tiktok-cookie-banner
 todotorrents.com##.adnuntius-ad-box
 tpb.vn##.targetspot-ad
 tribunewatch.nl##.showheroes-ad-player
+playvids.com###vast-ad-block
+playvids.com###vast-ad-block-button
+playvids.com##.block-advert
+playvids.com##.col-12.col-lg-auto:has(.block-advert)
+playvids.com##.m-l-ntvb
+playvids.com##.card-promotion
+playvids.com##.card-deck-promotion
+playvids.com##.invideoBlock
+playvids.com##.invideoBlockLabel
+playvids.com##.fluid_html_on_pause_container
+playvids.com##.fluid_html_on_pause:not(.fluid_initial_play_button_container)
+playvids.com##a.add_href_jsclick
+playvids.com##a[href*="/away/pop"]
+playvids.com##a[href*="/away/tab"]
+playvids.com##li:has(> a[href*="/away/tab"])
+playvids.com##iframe[src*="statserv.net"]

@@ -174,21 +174,21 @@ async function syncRemoteFilterDelta() {
     if (data.featureFlags && typeof data.featureFlags === 'object') {
       updates.remoteFeatureFlags = data.featureFlags;
     }
+    const sanitizeRemoteSelector = (sel, maxLen = 180) =>
+      typeof sel === 'string' &&
+      sel.length > 0 &&
+      sel.length <= maxLen &&
+      /^[a-zA-Z0-9#._:() >[\]="'*~$^|,/-]+$/.test(sel) &&
+      !/[{};\\@]/.test(sel) &&
+      !/url\(/i.test(sel);
     if (Array.isArray(data.extraCmpSelectors)) {
-      const sanitizeRemoteSelector = (sel, maxLen = 120) =>
-        typeof sel === 'string' &&
-        sel.length > 0 &&
-        sel.length <= maxLen &&
-        /^[a-zA-Z0-9#._:() >[\]="'-]+$/.test(sel) &&
-        !/[{};\\@]/.test(sel) &&
-        !/url\(/i.test(sel);
-      updates.extraCmpSelectors = data.extraCmpSelectors.filter((s) => sanitizeRemoteSelector(s, 120)).slice(0, 50);
+      updates.extraCmpSelectors = data.extraCmpSelectors.filter((s) => sanitizeRemoteSelector(s, 180)).slice(0, 100);
     }
     if (Array.isArray(data.extraAntiAdblockSelectors)) {
-      updates.extraAntiAdblockSelectors = data.extraAntiAdblockSelectors.filter((s) => sanitizeRemoteSelector(s, 120)).slice(0, 50);
+      updates.extraAntiAdblockSelectors = data.extraAntiAdblockSelectors.filter((s) => sanitizeRemoteSelector(s, 180)).slice(0, 100);
     }
     if (Array.isArray(data.extraCosmeticSelectors)) {
-      updates.extraCosmeticSelectors = data.extraCosmeticSelectors.filter((s) => sanitizeRemoteSelector(s, 150)).slice(0, 100);
+      updates.extraCosmeticSelectors = data.extraCosmeticSelectors.filter((s) => sanitizeRemoteSelector(s, 180)).slice(0, 200);
     }
     if (Object.keys(updates).length > 0) {
       await chrome.storage.local.set(updates);
@@ -198,6 +198,9 @@ async function syncRemoteFilterDelta() {
       chrome.declarativeNetRequest &&
       chrome.declarativeNetRequest.updateDynamicRules
     ) {
+      if (!verifiedSession.coldChecked) {
+        await enforceStoredSubscriptionIntegrity();
+      }
       const existing = await chrome.declarativeNetRequest.getDynamicRules();
       const removeRuleIds = existing.filter((r) => r.id >= 80000 && r.id < 81000).map((r) => r.id);
       const validRules =
@@ -211,7 +214,7 @@ async function syncRemoteFilterDelta() {
                 if (Array.isArray(r.condition.resourceTypes) && r.condition.resourceTypes.includes('main_frame')) return false;
                 return true;
               })
-              .slice(0, 100)
+              .slice(0, 500)
           : [];
       await chrome.declarativeNetRequest.updateDynamicRules({
         removeRuleIds,
@@ -552,7 +555,9 @@ async function ensureVerifiedProSession() {
 }
 
 // Immediately ensure DNR rulesets and protection state are active on service worker wakeup
-enforceStoredSubscriptionIntegrity().catch(() => {});
+enforceStoredSubscriptionIntegrity()
+  .then(() => syncRemoteFilterDelta())
+  .catch(() => {});
 
 if (
   typeof chrome !== 'undefined' &&

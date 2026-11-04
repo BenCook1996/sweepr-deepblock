@@ -1,7 +1,7 @@
 {
   "ok": true,
-  "version": "1.1.50701",
-  "updatedAt": "2026-11-04T00:05:01.601Z",
+  "version": "1.1.50702",
+  "updatedAt": "2026-11-04T00:56:00.000Z",
   "featureFlags": {
     "cookieAutoClose": true,
     "hideSearchSpam": true,
@@ -13,15 +13,34 @@
   "extraCmpSelectors": [],
   "extraAntiAdblockSelectors": [],
   "extraCosmeticSelectors": [
+    ".block-video#block-chat > .table",
+    ".block-video > .table:has(.opt)",
+    ".block-video .opt",
+    ".bottom-adv",
+    ".pop-adv",
+    ".pop-premium",
+    ".index-link",
+    ".exclusive-link-href",
+    ".index-link-href",
+    "iframe[src*=\"gsrv.dev\"]",
+    "iframe[src*=\"aaaconnect.info\"]",
+    "iframe[src*=\"awmdelivery.com\"]",
+    "div:has(> iframe[src*=\"gsrv.dev\"])",
+    "div:has(> div > iframe[src*=\"gsrv.dev\"])",
     "#vast-ad-block",
     "#vast-ad-block-button",
     ".invideoBlock",
     ".invideoBlockLabel",
-    ".fluid_html_on_pause",
+    ".fluid_html_on_pause_container",
+    ".fluid_html_on_pause:not(.fluid_initial_play_button_container)",
+    "iframe[src*=\"statserv.net\"]",
     ".block-advert",
     ".col-12.col-lg-auto:has(.block-advert)",
     ".m-l-ntvb",
+    ".card-promotion",
     ".card-deck-promotion",
+    "a.add_href_jsclick",
+    "li:has(> a.add_href_jsclick)",
     ".ib-300-250",
     "#banner_iframe",
     "#ag-agegate",
@@ -1221,6 +1240,224 @@
       },
       "condition": {
         "urlFilter": "||pornoeggs.com/away/",
+        "resourceTypes": [
+          "sub_frame",
+          "script",
+          "xmlhttprequest",
+          "ping",
+          "other"
+        ]
+      }
+    },
+    {
+      "id": 80072,
+      "priority": 5,
+      "action": {
+        "type": "block"
+      },
+      "condition": {
+        "urlFilter": "||gsrv.dev^",
+        "resourceTypes": [
+          "script",
+          "sub_frame",
+          "image",
+          "xmlhttprequest",
+          "media",
+          "ping",
+          "other"
+        ]
+      }
+    },
+    {
+      "id": 80073,
+      "priority": 5,
+      "action": {
+        "type": "block"
+      },
+      "condition": {
+        "urlFilter": "||aaaconnect.info^",
+        "resourceTypes": [
+          "script",
+          "sub_frame",
+          "image",
+          "xmlhttprequest",
+          "media",
+          "ping",
+          "other"
+        ]
+      }
+    },
+    {
+      "id": 80074,
+      "priority": 5,
+      "action": {
+        "type": "block"
+      },
+      "condition": {
+        "urlFilter": "||onclckmn.com^",
+        "resourceTypes": [
+          "script",
+          "sub_frame",
+          "image",
+          "xmlhttprequest",
+          "ping",
+          "other"
+        ]
+      }
+    },
+    {
+      "id": 80075,
+      "priority": 5,
+      "action": {
+        "type": "block"
+      },
+      "condition": {
+        "urlFilter": "||onclicka.com^",
+        "resourceTypes": [
+          "script",
+          "sub_frame",
+          "image",
+          "xmlhttprequest",
+          "ping",
+          "other"
+        ]
+      }
+    },
+    {
+      "id": 80076,
+      "priority": 5,
+      "action": {
+        "type": "block"
+      },
+      "condition": {
+        "urlFilter": "||adsmediabox.com^",
+        "resourceTypes": [
+          "script",
+          "sub_frame",
+          "image",
+          "xmlhttprequest",
+          "ping",
+          "other"
+        ]
+      }
+    },
+    {
+      "id": 80077,
+      "priority": 5,
+      "action": {
+        "type": "block"
+      },
+      "condition": {
+        "urlFilter": "||awmdelivery.com^",
+        "resourceTypes": [
+          "script",
+          "sub_frame",
+          "image",
+          "xmlhttprequest",
+          "media",
+          "ping",
+          "other"
+        ]
+      }
+    },
+    {
+      "id": 80078,
+      "priority": 5,
+      "action": {
+        "type": "block"
+      },
+      "condition": {
+        "urlFilter": "||acquaintjokinglyscoring.com^",
+        "resourceTypes": [
+          "script",
+          "sub_frame",
+          "image",
+          "xmlhttprequest",
+          "ping",
+          "other"
+        ]
+      }
+    },
+    {
+      "id": 80079,
+      "priority": 5,
+      "action": {
+        "type": "block"
+      },
+      "condition": {
+        "urlFilter": "||rmzsglng.com^",
+        "resourceTypes": [
+          "script",
+          "sub_frame",
+          "image",
+          "xmlhttprequest",
+          "ping",
+          "other"
+        ]
+      }
+    },
+    {
+      "id": 80080,
+      "priority": 5,
+      "action": {
+        "type": "block"
+      },
+      "condition": {
+        "urlFilter": "||aivanta76.com^",
+        "resourceTypes": [
+          "script",
+          "sub_frame",
+          "image",
+          "xmlhttprequest",
+          "ping",
+          "other"
+        ]
+      }
+    },
+    {
+      "id": 80081,
+      "priority": 5,
+      "action": {
+        "type": "block"
+      },
+      "condition": {
+        "urlFilter": "||bongacams2.com^",
+        "resourceTypes": [
+          "script",
+          "sub_frame",
+          "image",
+          "xmlhttprequest",
+          "ping",
+          "other"
+        ]
+      }
+    },
+    {
+      "id": 80082,
+      "priority": 5,
+      "action": {
+        "type": "block"
+      },
+      "condition": {
+        "urlFilter": "||gotpd.me^",
+        "resourceTypes": [
+          "script",
+          "sub_frame",
+          "image",
+          "xmlhttprequest",
+          "ping",
+          "other"
+        ]
+      }
+    },
+    {
+      "id": 80083,
+      "priority": 5,
+      "action": {
+        "type": "block"
+      },
+      "condition": {
+        "urlFilter": "||playvids.com/away/",
         "resourceTypes": [
           "sub_frame",
           "script",

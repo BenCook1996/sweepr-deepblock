@@ -2327,7 +2327,7 @@ function getCachedDynamicDelta() {
 }
 
   // API -1b: Dynamic Filter Delta & Remote Feature-Flag Kill-Switch + Extension Version Gate Endpoint
-  const LATEST_EXTENSION_VERSION = String(process.env.LATEST_EXTENSION_VERSION || '1.2.4').trim();
+  const LATEST_EXTENSION_VERSION = String(process.env.LATEST_EXTENSION_VERSION || '1.2.6').trim();
   const MIN_EXTENSION_VERSION = String(process.env.MIN_EXTENSION_VERSION || '1.1.6').trim();
   const FORCE_EXTENSION_UPDATE = process.env.FORCE_EXTENSION_UPDATE === 'true';
   const compareSemver = (latestVer, currentVer) => {
@@ -2387,7 +2387,11 @@ function getCachedDynamicDelta() {
     };
     const dynamicPayload = getCachedDynamicDelta();
     if (dynamicPayload && typeof dynamicPayload === 'object') {
-      return sendJson(res, 200, { ok: true, ...dynamicPayload, ...versionMeta });
+      const isLegacyClient = !currentVer || compareSemver('1.2.6', currentVer);
+      const safePayload = isLegacyClient
+        ? { ...dynamicPayload, extraCosmeticSelectors: [], extraAntiAdblockSelectors: [] }
+        : dynamicPayload;
+      return sendJson(res, 200, { ok: true, ...safePayload, ...versionMeta });
     }
     return sendJson(res, 200, {
       ok: true,

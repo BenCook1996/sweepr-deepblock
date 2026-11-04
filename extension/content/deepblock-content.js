@@ -180,7 +180,7 @@
         typeof sel === 'string' &&
         sel.length > 0 &&
         sel.length <= 250 &&
-        /^[a-zA-Z0-9#._:() >[\]="'-]+$/.test(sel) &&
+        /^[a-zA-Z0-9#._:() >[\]="'*~$^|,/-]+$/.test(sel) &&
         !/[{};\\@]/.test(sel) &&
         !/url\(/i.test(sel)
       );
@@ -796,7 +796,7 @@
         removedGridAd = true;
       });
       const promoNodes = document.querySelectorAll(
-        'a.top-bar-xx-style, .magic-sites, .list-btn.bnr, .bnr, .bnrs, a.bartab, .video-player .caption.bottom-right, .odw, [data-odw], .ourdreamai-native, .eroslider, a.no-taps[href*="camsoda"], img.camsoda-logo, #vast-ad-block, #vast-ad-block-button, .invideoBlock, .fluid_html_on_pause, [id*="_ad_html_on_pause"], .block-advert, .m-l-ntvb, .card-deck-promotion, .ib-300-250, #banner_iframe, #ag-agegate, #ag-cookiebar'
+        'a.top-bar-xx-style, .magic-sites, .list-btn.bnr, .bnr, .bnrs, a.bartab, .video-player .caption.bottom-right, .odw, [data-odw], .ourdreamai-native, .eroslider, a.no-taps[href*="camsoda"], img.camsoda-logo, #vast-ad-block, #vast-ad-block-button, .invideoBlock, .fluid_html_on_pause_container, .fluid_html_on_pause:not(.fluid_initial_play_button_container), [id*="_ad_html_on_pause"], .block-advert, .m-l-ntvb, .card-promotion, .card-deck-promotion, a.add_href_jsclick, .ib-300-250, #banner_iframe, #ag-agegate, #ag-cookiebar, .block-video#block-chat > .table, .block-video > .table:has(.opt), .block-video .opt, .bottom-adv, .pop-adv, .pop-premium, .index-link, .exclusive-link-href, .index-link-href, iframe[src*="gsrv.dev"], iframe[src*="aaaconnect.info"], iframe[src*="awmdelivery.com"]'
       );
       promoNodes.forEach((node) => {
         const parent = node.parentElement;
@@ -812,6 +812,15 @@
           node.remove();
         }
       });
+      if (/(^|\.)porntrex\.com$/i.test(location.hostname)) {
+        const overlayEl = document.getElementById('overlay');
+        if (overlayEl) overlayEl.remove();
+        document.querySelectorAll('div[style*="border:1px solid"]').forEach((box) => {
+          if (box.querySelector('iframe[src*="gsrv.dev"]') || box.children.length === 0 || !box.querySelector('video, img, a')) {
+            box.remove();
+          }
+        });
+      }
       if (removedGridAd) {
         window.dispatchEvent(new Event('resize'));
         reportMetric('adsBlocked', gridAdNodes.length);
@@ -1081,12 +1090,16 @@
     #vast-ad-block-button,
     .invideoBlock,
     .invideoBlockLabel,
-    .fluid_html_on_pause,
+    .fluid_html_on_pause_container,
+    .fluid_html_on_pause:not(.fluid_initial_play_button_container),
     [id*="_ad_html_on_pause"],
     .block-advert,
     .col-12.col-lg-auto:has(.block-advert),
     .m-l-ntvb,
+    .card-promotion,
     .card-deck-promotion,
+    a.add_href_jsclick,
+    li:has(> a.add_href_jsclick),
     .ib-300-250,
     #banner_iframe,
     #ag-agegate,
@@ -1095,12 +1108,42 @@
     a[href*="/away/tab"],
     li:has(> a[href*="/away/tab"]),
     iframe[src*="statserv.net"],
-    iframe[src*="/ads/prebid-ads"] {
+    iframe[src*="/ads/prebid-ads"],
+    /* Porntrex & KVS GoAdServer (gsrv.dev / aaaconnect.info / awmdelivery.com) Ad Slots */
+    .block-video#block-chat > .table,
+    .block-video > .table:has(.opt),
+    .block-video > .table:has(iframe[src*="gsrv.dev"]),
+    .block-video .opt,
+    .bottom-adv,
+    .pop-adv,
+    .pop-premium,
+    .index-link,
+    .exclusive-link-href,
+    .index-link-href,
+    div[style*="border:1px solid #ccc"][style*="text-align:center"],
+    div[style*="border:1px solid #ccc"]:has(iframe[src*="gsrv.dev"]),
+    div:has(> iframe[src*="gsrv.dev"]),
+    div:has(> div > iframe[src*="gsrv.dev"]),
+    iframe[src*="gsrv.dev"],
+    iframe[src*="aaaconnect.info"],
+    iframe[src*="awmdelivery.com"],
+    a[href*="rmzsglng.com"],
+    li:has(> a[href*="rmzsglng.com"]),
+    a[href*="aivanta76.com"],
+    li:has(> a[href*="aivanta76.com"]),
+    a[href*="bongacams"],
+    li:has(> a[href*="bongacams"]),
+    a[href*="gotpd.me"],
+    li:has(> a[href*="gotpd.me"]) {
       display: none !important;
       visibility: hidden !important;
       height: 0 !important;
       min-height: 0 !important;
       pointer-events: none !important;
+    }
+    .block-video .video-holder {
+      width: 100% !important;
+      float: none !important;
     }
     #moviexxx {
       max-width: initial !important;
@@ -1158,7 +1201,7 @@
           return (
             clean.length > 2 &&
             clean.length <= 250 &&
-            /^[a-zA-Z0-9#._:() >[\]="'-]+$/.test(clean) &&
+            /^[a-zA-Z0-9#._:() >[\]="'*~$^|,/-]+$/.test(clean) &&
             !/[{};\\@]/.test(clean) &&
             !/url\(/i.test(clean)
           );
@@ -1236,6 +1279,10 @@
       }
 
       function runDomProtectionPass() {
+        injectUniversalAdCosmeticStyle();
+        if (Array.isArray(res && res.extraCosmeticSelectors)) {
+          injectIsolatedOtaCosmeticStyles(res.extraCosmeticSelectors);
+        }
         if (res && res.customHiddenSelectors) {
           applySavedCustomHiddenSelectors(res.customHiddenSelectors);
         }
