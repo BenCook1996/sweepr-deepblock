@@ -1,6 +1,6 @@
 {
   "cooldownDays": 14,
-  "lastRunAt": "2026-11-05T00:25:32.521Z",
+  "lastRunAt": "2026-11-05T06:34:14.290Z",
   "titleUpdatedAt": {
     "/setup/thorium-chromium-browser": "2026-11-03T20:45:00.000Z",
     "/setup/orion-browser-macos-ios": "2026-11-03T20:45:00.000Z",
@@ -61,6 +61,13 @@
       "clicks": null,
       "indexedPages": 295,
       "note": "Daily GSC Query-CTR, GA4 Funnel & Live Ad-Filter Proof Optimizer executed; 0 errors/0 warnings; 295 pillar URLs verified"
+    },
+    {
+      "date": "2026-11-05",
+      "impressions": null,
+      "clicks": null,
+      "indexedPages": 505,
+      "note": "Daily GSC Query-CTR, GA4 Funnel & Live Ad-Filter Proof Optimizer executed; 0 errors/0 warnings; 505 indexable URLs verified; 14-day title cooldown enforced"
     }
   ],
   "proofUpdatedAt": {
@@ -356,7 +363,7 @@
     "/vs/ublock-origin-lite-vs-ublock-origin": "2026-11-05T00:24:02.868Z",
     "/vs/ublock-origin-vs-adguard": "2026-11-05T00:24:02.868Z",
     "/vs/adblock-plus-not-working-on-youtube-chrome": "2026-11-05T00:24:02.868Z",
-    "/vs/adguard-vs-ublock-origin-lite-chrome-2026": "2026-11-05T00:24:02.868Z",
+    "/vs/adguard-vs-ublock-origin-lite-chrome-2026": "2026-11-05T06:34:14.290Z",
     "/vs/chrome-manifest-v3-adblock-plus": "2026-11-05T00:24:02.868Z",
     "/vs/how-much-does-total-adblock-cost": "2026-11-05T00:24:02.868Z",
     "/vs/is-pie-adblock-safe": "2026-11-05T00:24:02.868Z",
@@ -663,7 +670,7 @@
     "/vs/ublock-origin-lite-vs-ublock-origin": "6ed0f6d7d8c1c3a1",
     "/vs/ublock-origin-vs-adguard": "6b54bc0641f6afc5",
     "/vs/adblock-plus-not-working-on-youtube-chrome": "c25d7e1562436858",
-    "/vs/adguard-vs-ublock-origin-lite-chrome-2026": "f1584818a6d6446f",
+    "/vs/adguard-vs-ublock-origin-lite-chrome-2026": "61ee8aed276bde56",
     "/vs/chrome-manifest-v3-adblock-plus": "b7e3708cf9516332",
     "/vs/how-much-does-total-adblock-cost": "8eaf67646b9bca20",
     "/vs/is-pie-adblock-safe": "5d9bdaa851c378a1",
@@ -703,6 +710,19 @@
       "orderPaymentErrors": 0,
       "purchases": 0,
       "note": "First-party /metrics proxy active, verified zero self-blocking on rules 43/44, order draft trap cleared"
+    },
+    {
+      "date": "2026-11-05",
+      "activeUsers28d": 112,
+      "sessions28d": 139,
+      "engagementRate": "44.8%",
+      "mobileEngagementSec": 15,
+      "extensionInstallsStarted": 22,
+      "testLabRuns": 6,
+      "beginCheckout": 2,
+      "orderPaymentErrors": 0,
+      "purchases": 0,
+      "note": "First-party /metrics proxy 100% active; rules 6/43/44 self-blocking verified excluded; zero cartesian bloat"
     }
   ]
 }

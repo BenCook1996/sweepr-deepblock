@@ -1,211 +1,25 @@
 {
-  "generatedAt": "2026-11-04T23:50:36.315Z",
+  "generatedAt": "2026-11-05T06:34:21.518Z",
   "engineVersion": "2.0.0",
   "seedsQueried": 306,
-  "indexablePagesChecked": 490,
+  "indexablePagesChecked": 505,
   "totalAutocompleteQueriesDiscovered": 520,
-  "alreadyCoveredCount": 9,
-  "uncoveredIntentGapsCount": 14,
+  "alreadyCoveredCount": 24,
+  "uncoveredIntentGapsCount": 1,
   "topPriorityGaps": [
     {
-      "query": "pie adblock safe or scam alternative",
-      "secondaryKeywords": [],
-      "seed": "P1_COMMERCIAL_SWITCHER",
-      "intentScore": 92,
-      "volumeScore": 74,
-      "lowCompetitionScore": 100,
-      "estimatedKD": 1,
-      "opportunityScore": 94.4,
-      "recommendedFormat": "competitor_comparison",
-      "suggestedRoute": "/vs/pie-adblock-safe-or-scam-alternative",
-      "closestExistingPage": "/vs/pie-adblock",
-      "overlapRatio": 0.22
-    },
-    {
-      "query": "switch from adblock plus to manifest v3",
-      "secondaryKeywords": [],
-      "seed": "P1_COMMERCIAL_SWITCHER",
-      "intentScore": 100,
-      "volumeScore": 74,
-      "lowCompetitionScore": 90,
-      "estimatedKD": 10,
-      "opportunityScore": 93.7,
-      "recommendedFormat": "competitor_comparison",
-      "suggestedRoute": "/vs/switch-from-adblock-plus-to-manifest-v3",
-      "closestExistingPage": "/vs/adblock-plus",
-      "overlapRatio": 0.386
-    },
-    {
-      "query": "adguard vs ublock origin lite chrome 2026",
-      "secondaryKeywords": [
-        "adguard vs ublock origin lite"
-      ],
-      "seed": "P1_COMMERCIAL_SWITCHER",
-      "intentScore": 100,
-      "volumeScore": 74,
-      "lowCompetitionScore": 85,
-      "estimatedKD": 15,
-      "opportunityScore": 91.9,
-      "recommendedFormat": "competitor_comparison",
-      "suggestedRoute": "/vs/adguard-vs-ublock-origin-lite-chrome-2026",
-      "closestExistingPage": "/vs/ublock-origin-lite",
-      "overlapRatio": 0.499
-    },
-    {
-      "query": "lightweight alternative to ghostery chrome",
-      "secondaryKeywords": [],
-      "seed": "P1_COMMERCIAL_SWITCHER",
-      "intentScore": 92,
-      "volumeScore": 74,
-      "lowCompetitionScore": 79,
-      "estimatedKD": 21,
-      "opportunityScore": 87,
-      "recommendedFormat": "competitor_comparison",
-      "suggestedRoute": "/vs/lightweight-alternative-to-ghostery-chrome",
-      "closestExistingPage": "/vs/ublock-origin-alternative-for-chrome",
-      "overlapRatio": 0.422
-    },
-    {
-      "query": "adblock not working after chrome manifest v3 update",
-      "secondaryKeywords": [],
-      "seed": "P3_URGENT_TROUBLESHOOTING",
-      "intentScore": 71,
-      "volumeScore": 74,
-      "lowCompetitionScore": 100,
-      "estimatedKD": 1,
-      "opportunityScore": 87,
-      "recommendedFormat": "troubleshooting_guide",
-      "suggestedRoute": "/guides/adblock-not-working-after-chrome-manifest-v3-update",
-      "closestExistingPage": "/guides/best-manifest-v3-adblockers-for-google-chrome-2026",
-      "overlapRatio": 0.336
-    },
-    {
-      "query": "how much does total adblock cost",
-      "secondaryKeywords": [
-        "what is the cost of total adblock"
-      ],
-      "seed": "P1_COMMERCIAL_SWITCHER",
-      "intentScore": 94,
-      "volumeScore": 72,
-      "lowCompetitionScore": 70,
-      "estimatedKD": 30,
-      "opportunityScore": 84,
-      "recommendedFormat": "competitor_comparison",
-      "suggestedRoute": "/vs/how-much-does-total-adblock-cost",
-      "closestExistingPage": "/vs/total-adblock",
-      "overlapRatio": 0.426
-    },
-    {
-      "query": "how to test if manifest v3 adblocker is working",
-      "secondaryKeywords": [],
-      "seed": "P3_URGENT_TROUBLESHOOTING",
-      "intentScore": 74,
-      "volumeScore": 74,
-      "lowCompetitionScore": 85,
-      "estimatedKD": 15,
-      "opportunityScore": 82.8,
-      "recommendedFormat": "interactive_tool",
-      "suggestedRoute": "/guides/how-to-test-if-manifest-v3-adblocker-is-working",
-      "closestExistingPage": "/guides/best-manifest-v3-adblockers-for-google-chrome-2026",
-      "overlapRatio": 0.349
-    },
-    {
-      "query": "pie adblock is a scam",
+      "query": "is pie adblock legit reddit",
       "secondaryKeywords": [],
       "seed": "P1_COMMERCIAL_SWITCHER",
       "intentScore": 80,
-      "volumeScore": 72,
-      "lowCompetitionScore": 79,
-      "estimatedKD": 21,
-      "opportunityScore": 82.3,
+      "volumeScore": 47,
+      "lowCompetitionScore": 93,
+      "estimatedKD": 7,
+      "opportunityScore": 74.7,
       "recommendedFormat": "competitor_comparison",
-      "suggestedRoute": "/vs/pie-adblock-is-a-scam",
+      "suggestedRoute": "/vs/is-pie-adblock-legit-reddit",
       "closestExistingPage": "/vs/pie-adblock",
-      "overlapRatio": 0.668
-    },
-    {
-      "query": "chrome manifest v3 adblock plus",
-      "secondaryKeywords": [],
-      "seed": "P6_BROWSER_RAM_TAB_TAMER",
-      "intentScore": 68,
-      "volumeScore": 67,
-      "lowCompetitionScore": 90,
-      "estimatedKD": 10,
-      "opportunityScore": 80.4,
-      "recommendedFormat": "competitor_comparison",
-      "suggestedRoute": "/vs/chrome-manifest-v3-adblock-plus",
-      "closestExistingPage": "/setup/google-chrome-manifest-v3",
-      "overlapRatio": 0.549
-    },
-    {
-      "query": "adblock plus not working on youtube chrome",
-      "secondaryKeywords": [],
-      "seed": "P3_URGENT_TROUBLESHOOTING",
-      "intentScore": 87,
-      "volumeScore": 49,
-      "lowCompetitionScore": 100,
-      "estimatedKD": 1,
-      "opportunityScore": 80.2,
-      "recommendedFormat": "competitor_comparison",
-      "suggestedRoute": "/vs/adblock-plus-not-working-on-youtube-chrome",
-      "closestExistingPage": "/guides/how-to-block-youtube-ads-chrome-manifest-v3-2026",
-      "overlapRatio": 0.378
-    },
-    {
-      "query": "adblock not working on twitch 2026",
-      "secondaryKeywords": [],
-      "seed": "P3_URGENT_TROUBLESHOOTING",
-      "intentScore": 65,
-      "volumeScore": 63,
-      "lowCompetitionScore": 99,
-      "estimatedKD": 1,
-      "opportunityScore": 76.3,
-      "recommendedFormat": "troubleshooting_guide",
-      "suggestedRoute": "/guides/adblock-not-working-on-twitch-2026",
-      "closestExistingPage": "/guides/how-to-fix-twitch-purple-screen-adblock-2026",
-      "overlapRatio": 0.508
-    },
-    {
-      "query": "total adblock cost per month",
-      "secondaryKeywords": [],
-      "seed": "P1_COMMERCIAL_SWITCHER",
-      "intentScore": 94,
-      "volumeScore": 52,
-      "lowCompetitionScore": 79,
-      "estimatedKD": 21,
-      "opportunityScore": 76.2,
-      "recommendedFormat": "competitor_comparison",
-      "suggestedRoute": "/vs/total-adblock-cost-per-month",
-      "closestExistingPage": "/vs/total-adblock",
-      "overlapRatio": 0.198
-    },
-    {
-      "query": "is pie adblock safe",
-      "secondaryKeywords": [],
-      "seed": "P1_COMMERCIAL_SWITCHER",
-      "intentScore": 80,
-      "volumeScore": 64,
-      "lowCompetitionScore": 79,
-      "estimatedKD": 21,
-      "opportunityScore": 74.8,
-      "recommendedFormat": "competitor_comparison",
-      "suggestedRoute": "/vs/is-pie-adblock-safe",
-      "closestExistingPage": "/vs/pie-adblock",
-      "overlapRatio": 0.47
-    },
-    {
-      "query": "total adblock free alternative",
-      "secondaryKeywords": [],
-      "seed": "P1_COMMERCIAL_SWITCHER",
-      "intentScore": 92,
-      "volumeScore": 56,
-      "lowCompetitionScore": 71,
-      "estimatedKD": 29,
-      "opportunityScore": 73.8,
-      "recommendedFormat": "competitor_comparison",
-      "suggestedRoute": "/vs/total-adblock-free-alternative",
-      "closestExistingPage": "/vs/total-adblock-renewal-charge-alternative",
-      "overlapRatio": 0.701
+      "overlapRatio": 0.305
     }
   ],
   "sampleCoveredQueries": [
@@ -215,13 +29,83 @@
       "overlapRatio": 1
     },
     {
+      "query": "pie adblock safe or scam alternative",
+      "matchedPage": "/vs/pie-adblock-safe-or-scam-alternative",
+      "overlapRatio": 1
+    },
+    {
+      "query": "switch from adblock plus to manifest v3",
+      "matchedPage": "/vs/switch-from-adblock-plus-to-manifest-v3",
+      "overlapRatio": 1
+    },
+    {
+      "query": "adguard vs ublock origin lite chrome 2026",
+      "matchedPage": "/vs/adguard-vs-ublock-origin-lite-chrome-2026",
+      "overlapRatio": 1
+    },
+    {
+      "query": "lightweight alternative to ghostery chrome",
+      "matchedPage": "/vs/lightweight-alternative-to-ghostery-chrome",
+      "overlapRatio": 1
+    },
+    {
+      "query": "adblock not working after chrome manifest v3 update",
+      "matchedPage": "/guides/adblock-not-working-after-chrome-manifest-v3-update",
+      "overlapRatio": 1
+    },
+    {
+      "query": "how to test if manifest v3 adblocker is working",
+      "matchedPage": "/guides/how-to-test-if-manifest-v3-adblocker-is-working",
+      "overlapRatio": 1
+    },
+    {
       "query": "adguard vs ublock origin 2024",
       "matchedPage": "/vs/ublock-origin-vs-adguard",
       "overlapRatio": 1
     },
     {
+      "query": "pie adblock is a scam",
+      "matchedPage": "/vs/pie-adblock-is-a-scam",
+      "overlapRatio": 1
+    },
+    {
+      "query": "is pie adblock safe",
+      "matchedPage": "/vs/is-pie-adblock-safe",
+      "overlapRatio": 1
+    },
+    {
       "query": "ublock origin vs adguard",
       "matchedPage": "/vs/ublock-origin-vs-adguard",
+      "overlapRatio": 1
+    },
+    {
+      "query": "how much does total adblock cost",
+      "matchedPage": "/vs/how-much-does-total-adblock-cost",
+      "overlapRatio": 1
+    },
+    {
+      "query": "total adblock cost per month",
+      "matchedPage": "/vs/total-adblock-cost-per-month",
+      "overlapRatio": 1
+    },
+    {
+      "query": "total adblock free alternative",
+      "matchedPage": "/vs/total-adblock-free-alternative",
+      "overlapRatio": 1
+    },
+    {
+      "query": "adblock plus not working on youtube chrome",
+      "matchedPage": "/vs/adblock-plus-not-working-on-youtube-chrome",
+      "overlapRatio": 1
+    },
+    {
+      "query": "adblock not working on twitch 2026",
+      "matchedPage": "/guides/adblock-not-working-on-twitch-2026",
+      "overlapRatio": 1
+    },
+    {
+      "query": "chrome manifest v3 adblock plus",
+      "matchedPage": "/vs/chrome-manifest-v3-adblock-plus",
       "overlapRatio": 1
     }
   ]
