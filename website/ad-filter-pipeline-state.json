@@ -1,8 +1,20 @@
 {
-  "updatedAt": "2026-11-04T08:04:04.344Z",
+  "updatedAt": "2026-11-05T00:03:54.250Z",
   "dedupWindowDays": 30,
-  "totalTrackedDomains": 10110,
+  "totalTrackedDomains": 10115,
   "recentRuns": [
+    {
+      "run_id": "adpipe-2026-11-05-y7day",
+      "started_at": "2026-11-05T00:03:47.514Z",
+      "completed_at": "2026-11-05T00:03:54.249Z",
+      "sites_sampled": 5,
+      "sites_scanned": 5,
+      "leaks_detected": 0,
+      "rules_auto_patched": 0,
+      "manual_review_count": 0,
+      "commit_hash": "0fc5514",
+      "crm_synced": 1
+    },
     {
       "run_id": "adpipe-2026-11-04-49aht",
       "started_at": "2026-11-04T08:03:59.276Z",
@@ -71489,6 +71501,41 @@
       "lastScannedAt": 1793779443688,
       "scanCount": 1,
       "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "securestudies.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793837033659,
+      "scanCount": 1,
+      "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "pelmorex.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793837033659,
+      "scanCount": 1,
+      "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "lphbs.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793837033659,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dailyofferservice.com": {
+      "category": "news",
+      "lastScannedAt": 1793837033659,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "pingdom.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793837033659,
+      "scanCount": 1,
+      "lastStatus": "clean",
       "leaksFound": 0
     }
   }
