@@ -5,6 +5,9 @@
 **/.env
 **/.env.*
 extension/*
+!extension/manifest.json
+!extension/_locales
+!extension/_locales/**
 !extension/rules
 !extension/rules/**
 data/.cache

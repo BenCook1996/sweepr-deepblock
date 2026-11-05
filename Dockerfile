@@ -9,9 +9,11 @@ COPY server.js sweepr-client.js outreach-seed-deepblock.json ./
 COPY website ./website
 COPY data ./data
 COPY scripts ./scripts
+COPY extension/manifest.json ./extension/manifest.json
+COPY extension/_locales ./extension/_locales
 COPY extension/rules ./extension/rules
 
-RUN mkdir -p /app/data/.cache && chown -R node:node /app/data /app/extension /app/scripts
+RUN mkdir -p /app/data/.cache /app/dist/store-listings && chown -R node:node /app/data /app/dist /app/website /app/extension /app/scripts
 
 ENV NODE_ENV=production
 ENV PORT=3000
