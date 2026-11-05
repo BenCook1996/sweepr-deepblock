@@ -489,13 +489,14 @@ for (let i = 0; i < VERIFIED_PUBLISHERS.length; i++) {
 }
 
 // 2. Write /site/index.html hub
+const publisherCount = VERIFIED_PUBLISHERS.length;
 const siteHubHtml = `<!DOCTYPE html>
 <html lang="en-GB">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Verified Website Ad, Tracker &amp; Cookie Wall Reports | SWEEPR</title>
-  <meta name="description" content="Explore 100 verified website ad-load, tracker, and GDPR cookie consent CMP audit reports across UK news, recipe blogs, gaming wikis, and tech portals." />
+  <title>Verified Website Ad &amp; Cookie Reports (${publisherCount} Sites) | SWEEPR</title>
+  <meta name="description" content="Explore ${publisherCount} verified website ad-load, tracker, and GDPR cookie consent CMP audit reports across UK news, recipe blogs, gaming wikis, and tech portals." />
   <meta name="robots" content="index, follow" />
   <meta name="theme-color" content="#0F172A" />
   <link rel="canonical" href="https://sweeprdeepblock.com/site" />
@@ -503,13 +504,13 @@ const siteHubHtml = `<!DOCTYPE html>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Verified Website Ad, Tracker &amp; Cookie Wall Reports | SWEEPR" />
-  <meta property="og:description" content="Explore 100 verified website ad-load, tracker, and GDPR cookie consent CMP audit reports across UK news, recipe blogs, gaming wikis, and tech portals." />
+  <meta property="og:title" content="Verified Website Ad, Tracker &amp; Cookie Wall Reports (${publisherCount} Sites) | SWEEPR" />
+  <meta property="og:description" content="Explore ${publisherCount} verified website ad-load, tracker, and GDPR cookie consent CMP audit reports across UK news, recipe blogs, gaming wikis, and tech portals." />
   <meta property="og:url" content="https://sweeprdeepblock.com/site" />
   <meta property="og:image" content="https://sweeprdeepblock.com/og-image.png" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Verified Website Ad, Tracker &amp; Cookie Wall Reports | SWEEPR" />
-  <meta name="twitter:description" content="Explore 100 verified website ad-load, tracker, and GDPR cookie consent CMP audit reports across UK news, recipe blogs, gaming wikis, and tech portals." />
+  <meta name="twitter:title" content="Verified Website Ad, Tracker &amp; Cookie Wall Reports (${publisherCount} Sites) | SWEEPR" />
+  <meta name="twitter:description" content="Explore ${publisherCount} verified website ad-load, tracker, and GDPR cookie consent CMP audit reports across UK news, recipe blogs, gaming wikis, and tech portals." />
   <meta name="twitter:image" content="https://sweeprdeepblock.com/og-image.png" />
   <link rel="icon" type="image/svg+xml" href="/logo.svg" />
   <script src="https://cdn.tailwindcss.com/3.4.5"></script>
@@ -518,7 +519,7 @@ const siteHubHtml = `<!DOCTYPE html>
     '@type': 'CollectionPage',
     name: 'SWEEPR DeepBlock Verified Website Ad & Tracker Reports',
     url: 'https://sweeprdeepblock.com/site',
-    description: 'Data-verified ad-load, third-party tracker, and cookie consent CMP telemetry reports for 100 top UK and global websites.'
+    description: `Data-verified ad-load, third-party tracker, and cookie consent CMP telemetry reports for ${publisherCount} top UK and global websites.`
   })}</script>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans antialiased">
@@ -532,6 +533,7 @@ const siteHubHtml = `<!DOCTYPE html>
         <a href="/campaigns/uk-ad-load-index" class="hover:text-white">UK Ad-Load Index</a>
         <a href="/tools" class="hover:text-white">Diagnostic Tools</a>
         <a href="/glossary" class="hover:text-white">Glossary</a>
+        <a href="/stories" class="hover:text-white">Customer Stories</a>
         <a href="/pricing" class="hover:text-white">Pricing</a>
       </nav>
       <a href="/download" class="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs sm:text-sm no-underline">Get Extension →</a>
@@ -539,8 +541,8 @@ const siteHubHtml = `<!DOCTYPE html>
   </header>
   <main class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-10 space-y-8">
     <div class="space-y-3">
-      <span class="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-extrabold uppercase">Automation A1 • 100 Verified Publisher Audits</span>
-      <h1 class="text-3xl sm:text-4xl font-black text-white">Verified Website Ad-Load &amp; Tracker Reports</h1>
+      <span class="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-extrabold uppercase">Automation A1 • ${publisherCount} Verified Publisher Audits</span>
+      <h1 class="text-3xl sm:text-4xl font-black text-white">Verified Website Ad-Load &amp; Tracker Reports (${publisherCount} Publishers)</h1>
       <p class="text-slate-300 max-w-3xl text-sm sm:text-base">Every report below is generated from verified Manifest V3 <code>declarativeNetRequest</code> rule matches, third-party SSP/ad-server telemetry, and CMP cookie consent signatures. Want the ranked league table? <a href="/campaigns/uk-ad-load-index" class="text-emerald-400 font-bold underline">Open the 2026 UK Website Ad-Load Index →</a></p>
     </div>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -568,10 +570,14 @@ const siteHubHtml = `<!DOCTYPE html>
       <div class="flex flex-wrap gap-4">
         <a href="https://sweeprcleaner.com/?utm_source=sweeprdeepblock.com&amp;utm_medium=site_hub" target="_blank" rel="noopener" class="text-emerald-400 hover:underline">Sweepr Cleaner</a>
         <a href="https://sweeprvpn.com/?utm_source=sweeprdeepblock.com&amp;utm_medium=site_hub" target="_blank" rel="noopener" class="text-emerald-400 hover:underline">Sweepr VPN</a>
+        <a href="/order?plan=suite_annual" class="text-emerald-400 hover:underline font-bold">Complete Suite (£89.99/yr)</a>
         <a href="/campaigns/uk-ad-load-index" class="hover:text-white">UK Ad-Load Index</a>
         <a href="/campaigns/renewal-shock-switcher" class="hover:text-white">Renewal Shock Switcher</a>
         <a href="/tools" class="hover:text-white">Diagnostic Tools</a>
         <a href="/glossary" class="hover:text-white">Glossary</a>
+        <a href="/stories" class="hover:text-white">Stories</a>
+        <a href="/de" class="hover:text-white">DE</a>
+        <a href="/fr" class="hover:text-white">FR</a>
       </div>
     </div>
   </footer>
@@ -613,8 +619,8 @@ const campaign1Html = `<!DOCTYPE html>
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>The 2026 UK Website Ad-Load Index (100 Sites Ranked) | SWEEPR</title>
-  <meta name="description" content="Interactive 2026 UK Website Ad-Load Index ranking 100 news, recipe, gaming, and tech websites by ad requests, trackers, cookie walls, and RAM bloat." />
+  <title>The 2026 UK Website Ad-Load Index (${publisherCount} Sites Ranked) | SWEEPR</title>
+  <meta name="description" content="Interactive 2026 UK Website Ad-Load Index ranking ${publisherCount} news, recipe, gaming, and tech websites by ad requests, trackers, cookie walls, and RAM bloat." />
   <meta name="robots" content="index, follow" />
   <meta name="theme-color" content="#0F172A" />
   <link rel="canonical" href="https://sweeprdeepblock.com/campaigns/uk-ad-load-index" />
@@ -622,13 +628,13 @@ const campaign1Html = `<!DOCTYPE html>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <meta property="og:type" content="article" />
-  <meta property="og:title" content="The 2026 UK Website Ad-Load Index (100 Sites Ranked) | SWEEPR" />
-  <meta property="og:description" content="Which UK newspapers, gaming wikis, and recipe blogs load the most trackers and ad scripts? Explore the full 100-site telemetry league table." />
+  <meta property="og:title" content="The 2026 UK Website Ad-Load Index (${publisherCount} Sites Ranked) | SWEEPR" />
+  <meta property="og:description" content="Which UK newspapers, gaming wikis, and recipe blogs load the most trackers and ad scripts? Explore the full ${publisherCount}-site telemetry league table." />
   <meta property="og:url" content="https://sweeprdeepblock.com/campaigns/uk-ad-load-index" />
   <meta property="og:image" content="https://sweeprdeepblock.com/og-image.png" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="The 2026 UK Website Ad-Load Index (100 Sites Ranked) | SWEEPR" />
-  <meta name="twitter:description" content="Which UK newspapers, gaming wikis, and recipe blogs load the most trackers and ad scripts? Explore the full 100-site telemetry league table." />
+  <meta name="twitter:title" content="The 2026 UK Website Ad-Load Index (${publisherCount} Sites Ranked) | SWEEPR" />
+  <meta name="twitter:description" content="Which UK newspapers, gaming wikis, and recipe blogs load the most trackers and ad scripts? Explore the full ${publisherCount}-site telemetry league table." />
   <meta name="twitter:image" content="https://sweeprdeepblock.com/og-image.png" />
   <link rel="icon" type="image/svg+xml" href="/logo.svg" />
   <script src="https://cdn.tailwindcss.com/3.4.5"></script>
@@ -636,7 +642,7 @@ const campaign1Html = `<!DOCTYPE html>
     '@context': 'https://schema.org',
     '@type': 'Dataset',
     name: 'The 2026 UK Website Ad-Load & Cookie Wall Index',
-    description: 'Benchmark dataset ranking 100 UK and global websites by third-party ad requests, tracking beacons, CMP cookie consent frameworks, and browser RAM overhead.',
+    description: `Benchmark dataset ranking ${publisherCount} UK and global websites by third-party ad requests, tracking beacons, CMP cookie consent frameworks, and browser RAM overhead.`,
     url: 'https://sweeprdeepblock.com/campaigns/uk-ad-load-index',
     creator: { '@type': 'Organization', name: 'SWEEPR Global Limited', url: 'https://sweeprdeepblock.com' }
   })}</script>
@@ -649,23 +655,24 @@ const campaign1Html = `<!DOCTYPE html>
         <span>SWEEPR <span class="text-emerald-400">DeepBlock</span></span>
       </a>
       <nav class="hidden md:flex items-center gap-5 text-sm font-semibold text-slate-300">
-        <a href="/site" class="hover:text-white">100 Site Audits</a>
+        <a href="/site" class="hover:text-white">${publisherCount} Site Audits</a>
         <a href="/campaigns/renewal-shock-switcher" class="hover:text-white">Renewal Switcher</a>
         <a href="/tools" class="hover:text-white">Diagnostic Tools</a>
         <a href="/glossary" class="hover:text-white">Glossary</a>
+        <a href="/stories" class="hover:text-white">Stories</a>
       </nav>
-      <a href="/download" class="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs sm:text-sm no-underline">Block All 100 Sites →</a>
+      <a href="/download" class="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs sm:text-sm no-underline">Block All ${publisherCount} Sites →</a>
     </div>
   </header>
 
   <main class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-10 space-y-8">
     <div class="space-y-4">
       <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs font-extrabold uppercase">
-        2026 Research Benchmark • 100 Publishers Audited
+        2026 Research Benchmark • ${publisherCount} Publishers Audited
       </div>
       <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">The 2026 UK Website Ad-Load Index</h1>
       <p class="text-slate-300 max-w-3xl text-base leading-relaxed">
-        We audited 100 of the most visited UK newspapers, regional Reach PLC titles, gaming wikis, recipe blogs, and tech portals to measure how many ad-auction scripts, third-party trackers, and GDPR cookie consent walls execute on a single page visit.
+        We audited ${publisherCount} of the most visited UK newspapers, regional Reach PLC titles, gaming wikis, recipe blogs, and tech portals to measure how many ad-auction scripts, third-party trackers, and GDPR cookie consent walls execute on a single page visit.
       </p>
       <div class="flex flex-wrap gap-3 pt-1">
         <button id="copyRedditTableBtn" type="button" class="px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs sm:text-sm cursor-pointer">
@@ -724,7 +731,7 @@ const campaign1Html = `<!DOCTYPE html>
             .map((p, i) => `| #${i + 1} | ${p.domain} | ${p.adReq} | ${p.trackers} | ${p.cmp} | +${p.loadSec}s | ${p.ramMb} MB |`)
         )}.join('\\n'),
         '',
-        'Full 100-site telemetry dataset: https://sweeprdeepblock.com/campaigns/uk-ad-load-index'
+        'Full ${publisherCount}-site telemetry dataset: https://sweeprdeepblock.com/campaigns/uk-ad-load-index'
       ].join('\\n');
       navigator.clipboard?.writeText(md);
       this.textContent = '✓ Copied Reddit Markdown Table!';
@@ -737,10 +744,12 @@ const campaign1Html = `<!DOCTYPE html>
       <div class="flex flex-wrap gap-4">
         <a href="https://sweeprcleaner.com/?utm_source=sweeprdeepblock.com&amp;utm_medium=ad_load_index" target="_blank" rel="noopener" class="text-emerald-400 hover:underline">Sweepr Cleaner</a>
         <a href="https://sweeprvpn.com/?utm_source=sweeprdeepblock.com&amp;utm_medium=ad_load_index" target="_blank" rel="noopener" class="text-emerald-400 hover:underline">Sweepr VPN</a>
-        <a href="/site" class="hover:text-white">All 100 Site Audits</a>
+        <a href="/order?plan=suite_annual" class="text-emerald-400 hover:underline font-bold">Complete Suite (£89.99/yr)</a>
+        <a href="/site" class="hover:text-white">All ${publisherCount} Site Audits</a>
         <a href="/campaigns/renewal-shock-switcher" class="hover:text-white">Renewal Shock Switcher</a>
         <a href="/tools" class="hover:text-white">Diagnostic Tools</a>
         <a href="/glossary" class="hover:text-white">Glossary</a>
+        <a href="/stories" class="hover:text-white">Stories</a>
       </div>
     </div>
   </footer>
@@ -755,7 +764,7 @@ const campaign3Html = `<!DOCTYPE html>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AdBlocker Renewal Shock Calculator: Escape £99/yr Charges | SWEEPR</title>
-  <meta name="description" content="Hit by a surprise £99–£119/yr Total Adblock renewal charge? Calculate your 3-year savings by switching to SWEEPR DeepBlock Pro with 1-click cancellation." />
+  <meta name="description" content="Hit by a surprise £99–£119/yr Total Adblock renewal charge? Calculate your 3-year savings (£207.03+) by switching to SWEEPR DeepBlock Pro (£29.99/yr)." />
   <meta name="robots" content="index, follow" />
   <meta name="theme-color" content="#0F172A" />
   <link rel="canonical" href="https://sweeprdeepblock.com/campaigns/renewal-shock-switcher" />
@@ -764,12 +773,12 @@ const campaign3Html = `<!DOCTYPE html>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <meta property="og:type" content="website" />
   <meta property="og:title" content="AdBlocker Renewal Shock Calculator: Escape £99/yr Charges | SWEEPR" />
-  <meta property="og:description" content="Compare surprise £99/yr legacy adblocker renewals against SWEEPR DeepBlock Pro. No Acceptable Ads whitelists and 1-click online cancellation." />
+  <meta property="og:description" content="Compare surprise £99/yr legacy adblocker renewals against SWEEPR DeepBlock Pro (£29.99/yr). No Acceptable Ads whitelists and 1-click online cancellation." />
   <meta property="og:url" content="https://sweeprdeepblock.com/campaigns/renewal-shock-switcher" />
   <meta property="og:image" content="https://sweeprdeepblock.com/og-image.png" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="AdBlocker Renewal Shock Calculator: Escape £99/yr Charges | SWEEPR" />
-  <meta name="twitter:description" content="Compare surprise £99/yr legacy adblocker renewals against SWEEPR DeepBlock Pro. No Acceptable Ads whitelists and 1-click online cancellation." />
+  <meta name="twitter:description" content="Compare surprise £99/yr legacy adblocker renewals against SWEEPR DeepBlock Pro (£29.99/yr). No Acceptable Ads whitelists and 1-click online cancellation." />
   <meta name="twitter:image" content="https://sweeprdeepblock.com/og-image.png" />
   <link rel="icon" type="image/svg+xml" href="/logo.svg" />
   <script src="https://cdn.tailwindcss.com/3.4.5"></script>
@@ -794,8 +803,9 @@ const campaign3Html = `<!DOCTYPE html>
         <a href="/campaigns/uk-ad-load-index" class="hover:text-white">UK Ad-Load Index</a>
         <a href="/tools" class="hover:text-white">Diagnostic Tools</a>
         <a href="/glossary" class="hover:text-white">Glossary</a>
+        <a href="/stories" class="hover:text-white">Stories</a>
       </nav>
-      <a href="/order?plan=annual" class="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs sm:text-sm no-underline">Switch (£4.99/mo Annual) →</a>
+      <a href="/order?plan=annual" class="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs sm:text-sm no-underline">Switch (£2.50/mo Annual) →</a>
     </div>
   </header>
 
@@ -804,7 +814,7 @@ const campaign3Html = `<!DOCTYPE html>
       <span class="px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-extrabold uppercase">Campaign 3 • Renewal Shock Switcher Hub</span>
       <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Tired of £99+ Ad-Blocker Auto-Renewal Shock?</h1>
       <p class="text-slate-300 text-base leading-relaxed">
-        Thousands of UK &amp; US users sign up for a cheap introductory ad-blocker deal only to be hit with a <strong>£99 to £119 annual renewal charge</strong>—while still seeing "Acceptable Ads" whitelisted banners. Calculate how much you save by switching to SWEEPR DeepBlock Pro.
+        Thousands of UK &amp; US users sign up for a cheap introductory ad-blocker deal only to be hit with a <strong>£99 to £119 annual renewal charge</strong>—while still seeing "Acceptable Ads" whitelisted banners. Calculate how much you save by switching to SWEEPR DeepBlock Pro (£29.99/yr) or the 4-in-1 Sweepr Complete Security Suite (£89.99/yr).
       </p>
     </div>
 
@@ -821,21 +831,21 @@ const campaign3Html = `<!DOCTYPE html>
           </div>
         </label>
         <div class="space-y-2 text-xs text-slate-300 bg-slate-950/80 p-4 rounded-2xl border border-slate-800">
-          <div class="font-bold text-white">Why Switchers Choose SWEEPR DeepBlock Pro:</div>
-          <div>✓ <strong>£4.99 First-Month Intro</strong> or <strong>£59.99/yr Fixed Annual Rate (£4.99/mo eq.)</strong></div>
+          <div class="font-bold text-white">Why Switchers Choose SWEEPR DeepBlock Pro (v1.2.7):</div>
+          <div>✓ <strong>£1.99 First-Month Intro</strong> or <strong>£29.99/yr Fixed Annual Rate (£2.50/mo eq., 4 Devices)</strong></div>
+          <div>✓ <strong>£89.99/yr Complete Security Suite</strong> (DeepBlock Pro + RAM Tamer + Sweepr VPN + Sweepr Cleaner, 5 Devices)</div>
           <div>✓ <strong>Zero "Acceptable Ads" Bribes</strong> — we never take money from ad networks</div>
           <div>✓ <strong>1-Click Online Cancellation</strong> in your Customer Portal + 14-Day Refund Guarantee</div>
-          <div>✓ <strong>Covers Up to 4 Devices</strong> + Auto Cookie Reject (&lt;50ms) + Fake Shop Detector</div>
         </div>
       </div>
 
       <div class="bg-gradient-to-br from-emerald-950/70 to-slate-950 border border-emerald-500/40 rounded-3xl p-6 text-center space-y-4">
         <div class="text-xs font-extrabold uppercase tracking-wider text-emerald-300">Your Projected 3-Year Switcher Savings</div>
-        <div id="savingsTotalDisplay" class="text-5xl font-black text-emerald-400">£117.03</div>
-        <div class="text-xs text-slate-300">Saved over 3 years on SWEEPR DeepBlock Annual (£59.99/yr) vs <span id="compNameSpan">£99/yr</span> renewal</div>
+        <div id="savingsTotalDisplay" class="text-5xl font-black text-emerald-400">£207.03</div>
+        <div class="text-xs text-slate-300">Saved over 3 years on SWEEPR DeepBlock Pro Annual (£29.99/yr) vs <span id="compNameSpan">£99/yr</span> renewal</div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-          <a href="/order?plan=annual" class="py-3.5 px-5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-sm no-underline">Switch Now (£4.99/mo eq.) →</a>
-          <a href="/vs/total-adblock" class="py-3.5 px-5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm border border-slate-700 no-underline">Read Full Comparison</a>
+          <a href="/order?plan=annual" class="py-3.5 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs sm:text-sm no-underline">Switch to Pro (£29.99/yr) →</a>
+          <a href="/order?plan=suite_annual" class="py-3.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-emerald-300 font-bold text-xs sm:text-sm border border-emerald-500/40 no-underline">Complete Suite (£89.99/yr) →</a>
         </div>
       </div>
     </section>
@@ -850,7 +860,7 @@ const campaign3Html = `<!DOCTYPE html>
       const val = Number(input.value || 99);
       lbl.textContent = '£' + val + '/year';
       compSpan.textContent = '£' + val + '/yr';
-      const saved3Yr = Math.max(0, (val * 3) - (59.99 * 3)).toFixed(2);
+      const saved3Yr = Math.max(0, (val * 3) - (29.99 * 3)).toFixed(2);
       totalEl.textContent = '£' + saved3Yr;
     });
   </script>
@@ -861,7 +871,9 @@ const campaign3Html = `<!DOCTYPE html>
       <div class="flex flex-wrap gap-4">
         <a href="https://sweeprcleaner.com/?utm_source=sweeprdeepblock.com&amp;utm_medium=renewal_switcher" target="_blank" rel="noopener" class="text-emerald-400 hover:underline">Sweepr Cleaner</a>
         <a href="https://sweeprvpn.com/?utm_source=sweeprdeepblock.com&amp;utm_medium=renewal_switcher" target="_blank" rel="noopener" class="text-emerald-400 hover:underline">Sweepr VPN</a>
+        <a href="/order?plan=suite_annual" class="text-emerald-400 hover:underline font-bold">Complete Suite (£89.99/yr)</a>
         <a href="/vs/total-adblock" class="hover:text-white">vs Total Adblock</a>
+        <a href="/vs/total-adblock-cancel-subscription" class="hover:text-white">Cancel Total Adblock Guide</a>
         <a href="/campaigns/uk-ad-load-index" class="hover:text-white">UK Ad-Load Index</a>
         <a href="/site" class="hover:text-white">Site Reports</a>
         <a href="/tools" class="hover:text-white">Diagnostic Tools</a>
@@ -872,4 +884,4 @@ const campaign3Html = `<!DOCTYPE html>
 </html>`;
 fs.writeFileSync(path.join(CAMPAIGNS_DIR, 'renewal-shock-switcher.html'), campaign3Html, 'utf8');
 
-console.log(`Built 100 verified /site/{domain} reports + /site hub + /sitemap-sites.xml + Campaign 1 & Campaign 3 pages.`);
+console.log(`Built ${publisherCount} verified /site/{domain} reports + /site hub + /sitemap-sites.xml + Campaign 1 & Campaign 3 pages.`);

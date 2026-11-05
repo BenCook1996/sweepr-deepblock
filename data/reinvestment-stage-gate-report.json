@@ -1,35 +1,45 @@
 {
-  "generatedAt": "2026-11-04T20:57:42.766Z",
+  "generatedAt": "2026-11-05T00:25:46.015Z",
   "currentStage": "Stage 1 (£10.00/day)",
-  "recommendedAction": "UNLOCK_STAGE_2_REINVESTMENT (£25.00/day — Top CPAU Winner: MS_AG1_Competitor_Switchers at £15.47 CPAU)",
+  "recommendedDailyBudgetGbp": 25,
+  "stageGate": {
+    "currentStage": "STAGE_2_UNLOCKED_25GBP",
+    "recommendedDailyBudgetGbp": 25,
+    "unlockStage2AtDailyGbp": 19,
+    "unlockStage3AtDailyGbp": 42
+  },
+  "recommendedAction": "UNLOCK_STAGE_2_REINVESTMENT (£25.00/day — Top CPAU Winner: MS_AG3_LowKD_Matrix_Switchers at £14.3 CPAU)",
   "metrics": {
     "dailySpendGbp": 10,
-    "blendedCacGbp": 16.4,
-    "blendedCpauGbp": 19.41,
-    "blendedNetLtvGbp": 39.6,
-    "ltvToCacRatio": 2.41,
-    "permissionActivationRatePct": 84.5,
-    "refundRate14dPct": 2.8
+    "blendedCacGbp": 15.6,
+    "blendedCpauGbp": 17.97,
+    "blendedNetLtvGbp": 49.37,
+    "proAnnualPriceGbp": 29.99,
+    "suiteAnnualPriceGbp": 89.99,
+    "suiteAttachRatePct": 22.2,
+    "ltvToCacRatio": 3.16,
+    "permissionActivationRatePct": 86.8,
+    "refundRate14dPct": 2.2
   },
   "stageGates": {
     "blendedCacUnder18Gbp": {
       "target": "<= £18.00",
-      "actual": "£16.40",
+      "actual": "£15.60",
       "passed": true
     },
     "ltvToCacOver2_2x": {
       "target": ">= 2.20x",
-      "actual": "2.41x",
+      "actual": "3.16x",
       "passed": true
     },
     "permissionActivationOver82Pct": {
       "target": ">= 82.0%",
-      "actual": "84.5%",
+      "actual": "86.8%",
       "passed": true
     },
     "refundRateUnder4_5Pct": {
       "target": "<= 4.5%",
-      "actual": "2.8%",
+      "actual": "2.2%",
       "passed": true
     }
   },
@@ -37,68 +47,94 @@
   "cpauAdGroupRanking": [
     {
       "rank": 1,
-      "adGroupId": "MS_AG1_Competitor_Switchers",
-      "channel": "Microsoft Ads (Exact Search)",
-      "currentDailySpendGbp": 1.5,
-      "cacGbp": 13.8,
-      "permissionActivationRatePct": 89.2,
-      "targetLandingPage": "/campaigns/renewal-shock-switcher",
-      "cpauGbp": 15.47,
-      "efficiencyScore": 6.4641,
-      "recommendedBudgetSharePct": 23,
-      "recommendedStage2DailyGbp": 4.95
+      "adGroupId": "MS_AG3_LowKD_Matrix_Switchers",
+      "channel": "Microsoft Ads (Low-KD Matrix Exact)",
+      "currentDailySpendGbp": 1.25,
+      "cacGbp": 12.9,
+      "permissionActivationRatePct": 90.2,
+      "targetLandingPage": "/vs/pie-adblock-safe-or-scam-alternative",
+      "cpauGbp": 14.3,
+      "efficiencyScore": 6.993,
+      "recommendedBudgetSharePct": 16.7,
+      "recommendedStage2DailyGbp": 3.59
     },
     {
       "rank": 2,
-      "adGroupId": "RD_AG3_Renewal_Shock_Switchers",
-      "channel": "Reddit Ads (Competitor Switchers)",
-      "currentDailySpendGbp": 2,
-      "cacGbp": 14.9,
-      "permissionActivationRatePct": 87.8,
-      "targetLandingPage": "/campaigns/renewal-shock-switcher",
-      "cpauGbp": 16.97,
-      "efficiencyScore": 5.8928,
-      "recommendedBudgetSharePct": 21,
-      "recommendedStage2DailyGbp": 4.51
+      "adGroupId": "MS_AG1_Competitor_Switchers",
+      "channel": "Microsoft Ads (Exact Search)",
+      "currentDailySpendGbp": 1.5,
+      "cacGbp": 13.4,
+      "permissionActivationRatePct": 89.6,
+      "targetLandingPage": "/vs/total-adblock-cancel-subscription",
+      "cpauGbp": 14.96,
+      "efficiencyScore": 6.6845,
+      "recommendedBudgetSharePct": 16,
+      "recommendedStage2DailyGbp": 3.44
     },
     {
       "rank": 3,
-      "adGroupId": "MS_AG2_MV3_Privacy_Blocking",
-      "channel": "Microsoft Ads (Exact Search)",
-      "currentDailySpendGbp": 1,
-      "cacGbp": 15.2,
-      "permissionActivationRatePct": 86.4,
-      "targetLandingPage": "/tools/is-my-adblocker-working",
-      "cpauGbp": 17.59,
-      "efficiencyScore": 5.685,
-      "recommendedBudgetSharePct": 20.3,
-      "recommendedStage2DailyGbp": 4.36
+      "adGroupId": "RD_AG3_Renewal_Shock_Switchers",
+      "channel": "Reddit Ads (Competitor Switchers)",
+      "currentDailySpendGbp": 2,
+      "cacGbp": 14.2,
+      "permissionActivationRatePct": 88.4,
+      "targetLandingPage": "/campaigns/renewal-shock-switcher",
+      "cpauGbp": 16.06,
+      "efficiencyScore": 6.2267,
+      "recommendedBudgetSharePct": 14.9,
+      "recommendedStage2DailyGbp": 3.2
     },
     {
       "rank": 4,
-      "adGroupId": "RD_AG1_MV3_Benchmark_Tech",
-      "channel": "Reddit Ads (UK Privacy & Browsers)",
-      "currentDailySpendGbp": 3,
-      "cacGbp": 16.1,
-      "permissionActivationRatePct": 85,
-      "targetLandingPage": "/tools/is-my-adblocker-working",
-      "cpauGbp": 18.94,
-      "efficiencyScore": 5.2798,
-      "recommendedBudgetSharePct": 18.8,
-      "recommendedStage2DailyGbp": 4.04
+      "adGroupId": "MS_AG2_MV3_Privacy_Blocking",
+      "channel": "Microsoft Ads (Exact Search)",
+      "currentDailySpendGbp": 1,
+      "cacGbp": 14.8,
+      "permissionActivationRatePct": 87.2,
+      "targetLandingPage": "/vs/ublock-origin-alternative-for-chrome",
+      "cpauGbp": 16.97,
+      "efficiencyScore": 5.8928,
+      "recommendedBudgetSharePct": 14.1,
+      "recommendedStage2DailyGbp": 3.03
     },
     {
       "rank": 5,
+      "adGroupId": "RD_AG4_LowKD_Matrix_Guides",
+      "channel": "Reddit Ads (Low-KD Matrix Intent)",
+      "currentDailySpendGbp": 1.25,
+      "cacGbp": 15.1,
+      "permissionActivationRatePct": 86.8,
+      "targetLandingPage": "/guides/adblock-not-working-after-chrome-manifest-v3-update",
+      "cpauGbp": 17.4,
+      "efficiencyScore": 5.7471,
+      "recommendedBudgetSharePct": 13.7,
+      "recommendedStage2DailyGbp": 2.95
+    },
+    {
+      "rank": 6,
+      "adGroupId": "RD_AG1_MV3_Benchmark_Tech",
+      "channel": "Reddit Ads (UK Privacy & Browsers)",
+      "currentDailySpendGbp": 3,
+      "cacGbp": 15.9,
+      "permissionActivationRatePct": 85.4,
+      "targetLandingPage": "/tools/is-my-adblocker-working",
+      "cpauGbp": 18.62,
+      "efficiencyScore": 5.3706,
+      "recommendedBudgetSharePct": 12.8,
+      "recommendedStage2DailyGbp": 2.76
+    },
+    {
+      "rank": 7,
       "adGroupId": "RD_AG2_UK_News_Cookie_Walls",
       "channel": "Reddit Ads (UK News & Casual)",
       "currentDailySpendGbp": 2.5,
-      "cacGbp": 17.4,
-      "permissionActivationRatePct": 82.5,
+      "cacGbp": 16.9,
+      "permissionActivationRatePct": 83.1,
       "targetLandingPage": "/campaigns/uk-ad-load-index",
-      "cpauGbp": 21.09,
-      "efficiencyScore": 4.7416,
-      "recommendedBudgetSharePct": 16.9,
-      "recommendedStage2DailyGbp": 3.63
+      "cpauGbp": 20.34,
+      "efficiencyScore": 4.9164,
+      "recommendedBudgetSharePct": 11.8,
+      "recommendedStage2DailyGbp": 2.53
     }
   ],
   "retargetingAudiencesConfigured": [
@@ -145,7 +181,7 @@
         "retargetingWarmAudiencesGbp": 9,
         "chatgptSearchAdsGbp": 7
       },
-      "retargetingRule": "Expand retargeting + DE/FR EU CMP ad groups + Sweepr Complete Suite bundle offers"
+      "retargetingRule": "Expand retargeting + DE/FR EU CMP ad groups + £89.99/yr Sweepr Complete Suite bundle offers"
     }
   ]
 }

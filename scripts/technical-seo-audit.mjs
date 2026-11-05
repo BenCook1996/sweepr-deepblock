@@ -219,8 +219,15 @@ for (const filePath of htmlFiles) {
     }
   }
 
-  // Live MV3 Rule Proof check on indexable PSEO Pillar pages
+  // Live MV3 Rule Proof & Version Freshness check on indexable PSEO Pillar pages
   if (/^(solutions|setup|vs|guides)\//i.test(rel) && rel !== 'vs/total-adblock.html') {
+    if (/Version\s+1\.2\.[25]\b/i.test(content)) {
+      results.htmlWarnings.push({
+        file: rel,
+        type: 'stale_pillar_version',
+        msg: 'Indexable Pillar page contains stale Version 1.2.2 / 1.2.5 string (expected 1.2.7)'
+      });
+    }
     if (!content.includes('id="deepblock-live-rule-proof"')) {
       results.htmlWarnings.push({
         file: rel,

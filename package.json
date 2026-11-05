@@ -19,7 +19,13 @@
     "ads:stage-gate": "node scripts/reinvestment-stage-gate.mjs",
     "ads:stage3-pack": "node scripts/build-stage3-expansion-ads.mjs",
     "tools:build": "node scripts/build-interactive-tools.mjs",
-    "filters:daily": "node scripts/daily-ad-filter-pipeline.mjs 1000"
+    "aso:build": "node scripts/build-aso-store-listings.mjs",
+    "store:package": "node scripts/build-store-packages.mjs",
+    "gsc:strike-zone": "node scripts/gsc-strike-zone-optimizer.mjs",
+    "filters:daily": "node scripts/daily-ad-filter-pipeline.mjs 1000",
+    "seo:sync-geo": "node scripts/sync-geo-and-llms.mjs",
+    "cro:analyze": "node scripts/funnel-cro-analyzer.mjs",
+    "cmo:sync-all": "node scripts/build-store-packages.mjs && node scripts/build-interactive-tools.mjs && node scripts/build-glossary-hub.mjs && node scripts/build-localized-eu-hubs.mjs && node scripts/keyword-research-engine.mjs && node scripts/build-verified-site-reports.mjs && node scripts/build-customer-stories.mjs && node scripts/daily-seo-pagespeed-audit.mjs && node scripts/gsc-strike-zone-optimizer.mjs && node scripts/competitor-review-miner.mjs && node scripts/funnel-cro-analyzer.mjs && node scripts/reinvestment-stage-gate.mjs && node scripts/build-stage3-expansion-ads.mjs"
   },
   "engines": {
     "node": ">=22.23.4"

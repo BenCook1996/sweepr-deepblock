@@ -1,6 +1,12 @@
 {
-  "generatedAt": "2026-11-04T20:39:39.283Z",
+  "generatedAt": "2026-11-05T00:26:30.367Z",
   "automation": "A6_Competitor_Review_Mining_And_Ad_Copy_Refresher",
+  "version": "1.2.7",
+  "pricingModel": {
+    "introMonthlyGbp": 1.99,
+    "proAnnualGbp": 29.99,
+    "completeSuiteAnnualGbp": 89.99
+  },
   "competitorsAnalyzed": [
     "Total Adblock",
     "AdGuard Browser Extension",
@@ -8,7 +14,8 @@
     "Pie Adblock",
     "Ghostery"
   ],
-  "vsPagesAudited": 108,
+  "vsPagesAudited": 124,
+  "lowKdMatrixOpportunitiesSynced": 12,
   "vsCoverage": [
     {
       "page": "/vs/1blocker-safari",
@@ -54,6 +61,13 @@
     },
     {
       "page": "/vs/adblock-one-trend-micro",
+      "mentionsRenewalPricing": true,
+      "mentionsMv3Engine": true,
+      "mentionsCookieRejector": true,
+      "mentionsScamDetector": true
+    },
+    {
+      "page": "/vs/adblock-plus-not-working-on-youtube-chrome",
       "mentionsRenewalPricing": true,
       "mentionsMv3Engine": true,
       "mentionsCookieRejector": true,
@@ -152,6 +166,13 @@
     },
     {
       "page": "/vs/adguard-vpn-adblocker",
+      "mentionsRenewalPricing": true,
+      "mentionsMv3Engine": true,
+      "mentionsCookieRejector": true,
+      "mentionsScamDetector": true
+    },
+    {
+      "page": "/vs/adguard-vs-ublock-origin-lite-chrome-2026",
       "mentionsRenewalPricing": true,
       "mentionsMv3Engine": true,
       "mentionsCookieRejector": true,
@@ -268,6 +289,13 @@
       "mentionsMv3Engine": true,
       "mentionsCookieRejector": true,
       "mentionsScamDetector": true
+    },
+    {
+      "page": "/vs/chrome-manifest-v3-adblock-plus",
+      "mentionsRenewalPricing": true,
+      "mentionsMv3Engine": true,
+      "mentionsCookieRejector": true,
+      "mentionsScamDetector": false
     },
     {
       "page": "/vs/clamav-web-filter",
@@ -410,6 +438,20 @@
       "mentionsScamDetector": true
     },
     {
+      "page": "/vs/how-much-does-total-adblock-cost",
+      "mentionsRenewalPricing": true,
+      "mentionsMv3Engine": true,
+      "mentionsCookieRejector": true,
+      "mentionsScamDetector": true
+    },
+    {
+      "page": "/vs/is-pie-adblock-safe",
+      "mentionsRenewalPricing": true,
+      "mentionsMv3Engine": true,
+      "mentionsCookieRejector": true,
+      "mentionsScamDetector": false
+    },
+    {
       "page": "/vs/ivpn-anti-tracker-shield",
       "mentionsRenewalPricing": true,
       "mentionsMv3Engine": true,
@@ -450,6 +492,13 @@
       "mentionsMv3Engine": true,
       "mentionsCookieRejector": true,
       "mentionsScamDetector": true
+    },
+    {
+      "page": "/vs/lightweight-alternative-to-ghostery-chrome",
+      "mentionsRenewalPricing": true,
+      "mentionsMv3Engine": true,
+      "mentionsCookieRejector": true,
+      "mentionsScamDetector": false
     },
     {
       "page": "/vs/malwarebytes-browser-guard-mv3",
@@ -551,6 +600,20 @@
     },
     {
       "page": "/vs/pi-hole-dns-sinkhole",
+      "mentionsRenewalPricing": true,
+      "mentionsMv3Engine": true,
+      "mentionsCookieRejector": true,
+      "mentionsScamDetector": true
+    },
+    {
+      "page": "/vs/pie-adblock-is-a-scam",
+      "mentionsRenewalPricing": true,
+      "mentionsMv3Engine": true,
+      "mentionsCookieRejector": true,
+      "mentionsScamDetector": true
+    },
+    {
+      "page": "/vs/pie-adblock-safe-or-scam-alternative",
       "mentionsRenewalPricing": true,
       "mentionsMv3Engine": true,
       "mentionsCookieRejector": true,
@@ -676,7 +739,35 @@
       "mentionsScamDetector": true
     },
     {
+      "page": "/vs/switch-from-adblock-plus-to-manifest-v3",
+      "mentionsRenewalPricing": true,
+      "mentionsMv3Engine": true,
+      "mentionsCookieRejector": true,
+      "mentionsScamDetector": true
+    },
+    {
       "page": "/vs/total-adblock-android-apk",
+      "mentionsRenewalPricing": true,
+      "mentionsMv3Engine": true,
+      "mentionsCookieRejector": true,
+      "mentionsScamDetector": true
+    },
+    {
+      "page": "/vs/total-adblock-cancel-subscription",
+      "mentionsRenewalPricing": true,
+      "mentionsMv3Engine": true,
+      "mentionsCookieRejector": true,
+      "mentionsScamDetector": true
+    },
+    {
+      "page": "/vs/total-adblock-cost-per-month",
+      "mentionsRenewalPricing": true,
+      "mentionsMv3Engine": true,
+      "mentionsCookieRejector": true,
+      "mentionsScamDetector": true
+    },
+    {
+      "page": "/vs/total-adblock-free-alternative",
       "mentionsRenewalPricing": true,
       "mentionsMv3Engine": true,
       "mentionsCookieRejector": true,
@@ -704,6 +795,13 @@
       "mentionsScamDetector": true
     },
     {
+      "page": "/vs/total-adblock-renewal-charge-alternative",
+      "mentionsRenewalPricing": true,
+      "mentionsMv3Engine": true,
+      "mentionsCookieRejector": true,
+      "mentionsScamDetector": true
+    },
+    {
       "page": "/vs/total-adblock-windows-app",
       "mentionsRenewalPricing": true,
       "mentionsMv3Engine": true,
@@ -725,6 +823,13 @@
       "mentionsScamDetector": true
     },
     {
+      "page": "/vs/ublock-origin-alternative-for-chrome",
+      "mentionsRenewalPricing": true,
+      "mentionsMv3Engine": true,
+      "mentionsCookieRejector": true,
+      "mentionsScamDetector": true
+    },
+    {
       "page": "/vs/ublock-origin-legacy",
       "mentionsRenewalPricing": true,
       "mentionsMv3Engine": true,
@@ -732,7 +837,21 @@
       "mentionsScamDetector": true
     },
     {
+      "page": "/vs/ublock-origin-lite-vs-ublock-origin",
+      "mentionsRenewalPricing": true,
+      "mentionsMv3Engine": true,
+      "mentionsCookieRejector": true,
+      "mentionsScamDetector": false
+    },
+    {
       "page": "/vs/ublock-origin-lite",
+      "mentionsRenewalPricing": true,
+      "mentionsMv3Engine": true,
+      "mentionsCookieRejector": true,
+      "mentionsScamDetector": true
+    },
+    {
+      "page": "/vs/ublock-origin-vs-adguard",
       "mentionsRenewalPricing": true,
       "mentionsMv3Engine": true,
       "mentionsCookieRejector": true,
@@ -782,21 +901,22 @@
         "Free version stops blocking ads on popular sites after 7 days unless you pay £99/yr.",
         "Had to contact support just to stop the annual renewal."
       ],
-      "deepblockCounterPositioning": "Transparent £4.99/mo Intro (then £9.99/mo) or £59.99/yr Annual (£4.99/mo eq.) with 1-click self-serve cancellation at /support.",
+      "deepblockCounterPositioning": "Transparent £1.99 1st-Month Intro or £29.99/yr Pro Annual (£2.50/mo eq., 4 devices) and £89.99/yr Complete Security Suite (5 devices) with 1-click self-serve cancellation at /support.",
       "targetLandingPages": [
+        "/vs/total-adblock-cancel-subscription",
         "/vs/total-adblock",
         "/campaigns/renewal-shock-switcher"
       ],
       "rsaHeadlines": [
         "Tired of £99 Adblock Renewals?",
         "Switch From Total Adblock Today",
-        "Honest £4.99/mo Annual Pricing"
+        "Honest £2.50/mo Annual Pricing"
       ],
       "rsaDescriptions": [
-        "Stop paying £99-£119 surprise renewal fees. Get 8/8 MV3 ad & tracker defense for £59.99/yr (up to 4 devices) with 1-click cancellation.",
-        "Compare 3-year adblocker renewal costs. SWEEPR DeepBlock includes YouTube MV3 protection, <50ms cookie rejector & scam store alerts."
+        "Stop paying £99-£119 surprise renewal fees. Get 8/8 MV3 ad & tracker defense for £29.99/yr Pro (up to 4 devices) with 1-click cancellation.",
+        "Compare 3-year adblocker renewal costs. SWEEPR DeepBlock v1.2.7 includes MV3 protection, <50ms cookie rejector & scam store alerts."
       ],
-      "redditHeadline": "PSA: Check what your \"£1.99 intro\" adblocker actually renews at in Year 2 (£99–£119/yr) — we built a 3-year cost calculator & MV3 alternative"
+      "redditHeadline": "PSA: Check what your \"£1.99 intro\" adblocker actually renews at in Year 2 (£99–£119/yr) — we built a 3-year cost calculator & £29.99/yr MV3 alternative"
     },
     {
       "clusterId": "youtube_mv3_detection",
@@ -813,11 +933,11 @@
         "Keep getting the \"Ad blockers are not allowed\" modal unless I manually update filters.",
         "Lite version requires manually enabling Complete permission mode on every browser."
       ],
-      "deepblockCounterPositioning": "8/8 Manifest V3 DeepStealth Engine combining C++ declarativeNetRequest rules (<22µs) with dynamic OTA filter deltas.",
+      "deepblockCounterPositioning": "8/8 Manifest V3 DeepStealth Engine combining 242 C++ declarativeNetRequest rules (15µs latency) with dynamic OTA filter deltas.",
       "targetLandingPages": [
+        "/vs/ublock-origin-alternative-for-chrome",
         "/tools/is-my-adblocker-working",
-        "/vs/ublock-origin-lite",
-        "/test-lab"
+        "/vs/ublock-origin-lite"
       ],
       "rsaHeadlines": [
         "Pass All 8 MV3 Adblock Checks",
@@ -826,7 +946,7 @@
       ],
       "rsaDescriptions": [
         "Is your ad blocker failing after Chrome Manifest V3? Run our free 8-point browser benchmark and upgrade to SWEEPR DeepBlock v1.2.7.",
-        "Engineered natively for Chrome, Edge & Firefox Manifest V3. Sub-millisecond network filtering plus automatic <50ms cookie rejection."
+        "Engineered natively for Chrome, Edge & Firefox Manifest V3. 15µs C++ network filtering plus automatic <50ms cookie rejection."
       ],
       "redditHeadline": "We benchmarked 5 Manifest V3 ad blockers against 8 live 2026 detection, DNS leak, and Canvas fingerprint checks — test your browser in 5 seconds"
     },
@@ -846,7 +966,7 @@
       ],
       "deepblockCounterPositioning": "Automated <50ms CMP Rejector (OneTrust, Quantcast, Sourcepoint, TrustArc) that clicks \"Reject All\" and restores body overflow scroll.",
       "targetLandingPages": [
-        "/solutions/auto-reject-cookie-popups",
+        "/guides/how-to-automatically-reject-cookie-banners-uk",
         "/campaigns/uk-ad-load-index"
       ],
       "rsaHeadlines": [
@@ -856,7 +976,7 @@
       ],
       "rsaDescriptions": [
         "Dont just hide cookie banners and break page scrolling. SWEEPR DeepBlock automatically clicks Reject All in under 50ms across 150+ CMPs.",
-        "Browse UK news, recipes, and shopping sites without cookie consent pop-ups or frozen scrollbars. Try SWEEPR DeepBlock today."
+        "Browse UK news, recipes, and shopping sites without cookie consent pop-ups or frozen scrollbars. Try SWEEPR DeepBlock Pro (£29.99/yr)."
       ],
       "redditHeadline": "Why hiding GDPR cookie banners with CSS breaks page scrolling (and how we engineered a <50ms auto-Reject-All engine for UK sites)"
     },
@@ -874,21 +994,22 @@
         "Makes laptop fans spin up on media-heavy news and fandom wikis.",
         "Slows down page load instead of speeding it up."
       ],
-      "deepblockCounterPositioning": "Built-in Total Tab & RAM Tamer hibernates inactive background tabs and cuts browser RAM overhead by up to 62%.",
+      "deepblockCounterPositioning": "Built-in Total Tab & RAM Tamer + £89.99/yr Sweepr Complete Security Suite (DeepBlock Pro + RAM Tamer + VPN + Cleaner) cuts browser RAM overhead by up to 62%.",
       "targetLandingPages": [
-        "/solutions/reduce-chrome-ram-usage",
+        "/order?plan=suite_annual",
+        "/guides/how-to-reduce-browser-ram-speed-up-slow-tabs",
         "/site"
       ],
       "rsaHeadlines": [
         "Cut Browser RAM Usage by 62%",
-        "Lightweight MV3 Ad & Tracker Shield",
+        "4-in-1 Complete Security Suite",
         "Stop Heavy Ad Scripts & Tab Bloat"
       ],
       "rsaDescriptions": [
-        "Block CPU-draining ad networks and automatically hibernate idle background tabs. Save up to 62% browser memory with SWEEPR DeepBlock.",
-        "Zero DOM bloat. 22µs C++ declarativeNetRequest lookup latency plus built-in Tab & RAM Tamer for Chrome, Edge, and Firefox."
+        "Block CPU-draining ad networks and hibernate idle tabs. Get the 4-in-1 Sweepr Complete Security Suite (DeepBlock + VPN + Cleaner) for £89.99/yr.",
+        "Zero DOM bloat. 15µs C++ declarativeNetRequest lookup latency plus built-in Tab & RAM Tamer for Chrome, Edge, and Firefox."
       ],
-      "redditHeadline": "We audited 100 UK & global websites: third-party ad & tracker scripts consume up to 430 MB of RAM per tab [Full Dataset Inside]"
+      "redditHeadline": "We audited 150 UK & global websites: third-party ad & tracker scripts consume up to 430 MB of RAM per tab [Full Dataset Inside]"
     },
     {
       "clusterId": "acceptable_ads_and_scam_blindspot",
@@ -916,7 +1037,7 @@
       ],
       "rsaDescriptions": [
         "Ad networks cannot pay to bypass SWEEPR DeepBlock. Includes real-time Fake Online Shop alerts and AI search result cleansing.",
-        "No Acceptable Ads compromises. No browsing history logged. Protect up to 4 desktop and mobile browsers with SWEEPR DeepBlock Pro."
+        "No Acceptable Ads compromises. No browsing history logged. Protect up to 4 devices for £29.99/yr Pro or 5 devices with £89.99/yr Suite."
       ],
       "redditHeadline": "Why \"free\" adblockers that rely on Acceptable Ads whitelists or coupon injection are a privacy trap in 2026"
     }

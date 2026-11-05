@@ -1300,7 +1300,19 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
         .split('')
         .reduce((acc, ch) => acc + ch.charCodeAt(0), 0);
       const abVariant =
-        store.abVariantOverride || (charSum % 2 === 0 ? 'variant_a_breadth' : 'variant_b_risk_free_14d');
+        store.abVariantOverride ||
+        store.abVariantServer ||
+        (charSum % 2 === 0 ? 'variant_a_breadth' : 'variant_b_risk_free_14d');
+      if (!store.abVariantFetchedAt || Date.now() - Number(store.abVariantFetchedAt) > 6 * 3600 * 1000) {
+        fetch('https://sweeprdeepblock.com/api/ab/paywall?vid=' + encodeURIComponent(deviceId))
+          .then((r) => (r.ok ? r.json() : null))
+          .then((data) => {
+            if (data && data.variant) {
+              chrome.storage.local.set({ abVariantServer: data.variant, abVariantFetchedAt: Date.now() });
+            }
+          })
+          .catch(() => {});
+      }
 
       sendResponse({
         ...DEFAULT_STATE,

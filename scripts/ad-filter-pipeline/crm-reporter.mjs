@@ -94,6 +94,21 @@ export class CrmPipelineReporter {
     const blockedRegistryBatch = this._buildBlockedRegistryBatch(scannedSites, leakRecords, commitRef);
     let registrySyncedCount = 0;
     if (blockedRegistryBatch.length > 0) {
+      // Also persist to local data/deepblock-blocked-sites.json on disk
+      try {
+        const localRegPath = path.join(ROOT_DIR, 'data', 'deepblock-blocked-sites.json');
+        let existingReg = [];
+        if (fs.existsSync(localRegPath)) {
+          const parsed = JSON.parse(fs.readFileSync(localRegPath, 'utf8'));
+          existingReg = Array.isArray(parsed) ? parsed : (parsed.sites || []);
+        }
+        const byDomain = new Map(existingReg.map((s) => [s.domain || s.url, s]));
+        for (const item of blockedRegistryBatch) {
+          byDomain.set(item.domain || item.url, { ...byDomain.get(item.domain || item.url), ...item });
+        }
+        fs.writeFileSync(localRegPath, JSON.stringify([...byDomain.values()], null, 2), 'utf8');
+      } catch {}
+
       const regOk = await this.registerBlockedSitesBatch(blockedRegistryBatch);
       if (regOk) {
         registrySyncedCount = blockedRegistryBatch.length;
@@ -289,7 +304,7 @@ export class CrmPipelineReporter {
       event_name: payload.Fix_Status === 'Auto-Patched' ? 'ad_filter_leak_patched' : 'ad_filter_manual_review',
       category: 'ad_filter_pipeline',
       os: 'headless_scanner',
-      app_version: '1.1.5',
+      app_version: '1.2.7',
       properties: {
         run_id: runId,
         ...payload
@@ -330,7 +345,7 @@ export class CrmPipelineReporter {
       event_name: 'ad_filter_daily_summary',
       category: 'ad_filter_pipeline',
       os: 'headless_scanner',
-      app_version: '1.1.5',
+      app_version: '1.2.7',
       properties: summaryPayload
     };
 

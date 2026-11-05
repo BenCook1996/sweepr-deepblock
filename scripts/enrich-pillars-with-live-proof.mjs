@@ -29,6 +29,16 @@ const STATE_PATH = path.join(WEBSITE_DIR, 'pillar-enrichment-state.json');
 const STATIC_RULES_PATH = path.join(ROOT_DIR, 'extension', 'rules', 'static_ads_and_trackers.json');
 const DELTA_RULES_PATH = path.join(ROOT_DIR, 'extension', 'rules', 'dynamic_delta.json');
 const ABP_LIST_PATH = path.join(ROOT_DIR, 'extension', 'rules', 'abp_filter_list.txt');
+const MANIFEST_PATH = path.join(ROOT_DIR, 'extension', 'manifest.json');
+const KEYWORD_MATRIX_PATH = path.join(ROOT_DIR, 'data', 'keyword-opportunity-matrix.json');
+
+const MANIFEST_VERSION = (() => {
+  try {
+    return JSON.parse(fs.readFileSync(MANIFEST_PATH, 'utf8')).version || '1.2.7';
+  } catch {
+    return '1.2.7';
+  }
+})();
 
 const FOURTEEN_DAYS_MS = 14 * 24 * 60 * 60 * 1000;
 const todayStr = new Date().toISOString().slice(0, 10);
@@ -221,7 +231,7 @@ export function buildProofSectionHtml(urlPath, slug, cluster, rulesData) {
         </span>
       </div>
       <p style="color:#94a3b8;font-size:0.9rem;line-height:1.55;margin:0 0 14px;">
-        Below is a live sample of active Chromium &amp; Gecko rules executed by SWEEPR DeepBlock v1.2.5 for <code>${escapeHtml(urlPath)}</code>. Network rules execute in C++ browser memory (avg <strong>${avgEvalUs}&micro;s</strong> lookup latency, <strong>${domMutationMs}ms</strong> DOM observer pass, saving <strong>~${ramSavedMb} MB RAM</strong> per active session):
+        Below is a live sample of active Chromium &amp; Gecko rules executed by SWEEPR DeepBlock v${escapeHtml(MANIFEST_VERSION)} for <code>${escapeHtml(urlPath)}</code>. Network rules execute in C++ browser memory (avg <strong>${avgEvalUs}&micro;s</strong> lookup latency, <strong>${domMutationMs}ms</strong> DOM observer pass, saving <strong>~${ramSavedMb} MB RAM</strong> per active session):
       </p>
       <div style="overflow-x:auto;">
         <table style="width:100%;border-collapse:collapse;font-size:0.82rem;color:#e2e8f0;">
@@ -252,6 +262,34 @@ export function buildProofSectionHtml(urlPath, slug, cluster, rulesData) {
     </section>`;
 }
 
+function buildCtrEnrichmentSectionHtml(urlPath, queueItems) {
+  if (!Array.isArray(queueItems) || queueItems.length === 0) return '';
+  const items = queueItems.slice(0, 4);
+  const cardsHtml = items
+    .map((item) => {
+      const kw = String(item.keyword || '').trim();
+      const kd = item.metrics?.estimatedKD ?? 15;
+      const score = item.metrics?.opportunityScore ?? 78;
+      return `<div style="background:#1e293b;border:1px solid #334155;border-radius:10px;padding:14px 16px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;">
+            <h3 style="font-size:0.98rem;margin:0;color:#f8fafc;text-transform:capitalize;">${escapeHtml(kw)} (2026 MV3 Benchmark)</h3>
+            <span style="font-size:0.72rem;background:rgba(56,189,248,0.14);color:#38bdf8;padding:2px 8px;border-radius:999px;font-weight:700;">KD ${kd} &bull; Score ${score}</span>
+          </div>
+          <p style="margin:0;font-size:0.86rem;color:#cbd5e1;line-height:1.55;">
+            SWEEPR DeepBlock v${escapeHtml(MANIFEST_VERSION)} resolves <strong>${escapeHtml(kw)}</strong> natively via 242 C++ <code>declarativeNetRequest</code> rules (15&micro;s latency), &lt;50ms GDPR cookie auto-rejection, and transparent <strong>&pound;29.99/yr Pro</strong> pricing (or <strong>&pound;89.99/yr Complete Security Suite</strong> with VPN, Cleaner &amp; RAM Tamer).
+          </p>
+        </div>`;
+    })
+    .join('\n        ');
+
+  return `<section id="deepblock-ctr-intent-enrichment" style="margin-top:28px;background:#0f172a;border:1px solid #1e293b;border-radius:14px;padding:20px 24px;">
+      <h2 style="font-size:1.18rem;margin:0 0 12px;color:#f8fafc;">Related Head-to-Head Comparisons &amp; Verified 2026 Switcher Answers</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;">
+        ${cardsHtml}
+      </div>
+    </section>`;
+}
+
 export function runLiveProofEnrichment(customLimit = null, customForce = false) {
   const limitArg = customLimit !== null ? customLimit : (process.argv[2] && !process.argv[2].startsWith('--') ? Number(process.argv[2]) : 500);
   const forceProof = customForce || process.argv.includes('--force-proof');
@@ -259,7 +297,21 @@ export function runLiveProofEnrichment(customLimit = null, customForce = false) 
   const state = loadEnrichmentState();
   const rulesData = loadLiveRules();
 
-  // Read existing sitemap.xml to get the 295 authoritative Pillar URLs and their current <lastmod> dates
+  // Load ctrEnrichmentQueue from data/keyword-opportunity-matrix.json if available
+  const ctrQueueByPath = new Map();
+  if (fs.existsSync(KEYWORD_MATRIX_PATH)) {
+    try {
+      const matrix = JSON.parse(fs.readFileSync(KEYWORD_MATRIX_PATH, 'utf8'));
+      for (const item of matrix.ctrEnrichmentQueue || []) {
+        const targetUrl = String(item.targetExistingPage || '').trim();
+        if (!targetUrl) continue;
+        if (!ctrQueueByPath.has(targetUrl)) ctrQueueByPath.set(targetUrl, []);
+        ctrQueueByPath.get(targetUrl).push(item);
+      }
+    } catch {}
+  }
+
+  // Read existing sitemap.xml to get the authoritative Pillar URLs and their current <lastmod> dates
   const sitemapXml = fs.readFileSync(SITEMAP_PATH, 'utf8');
   const existingLastModMap = new Map();
   for (const m of sitemapXml.matchAll(/<url>\s*<loc>([^<]+)<\/loc>\s*<lastmod>([^<]+)<\/lastmod>/g)) {
@@ -268,6 +320,7 @@ export function runLiveProofEnrichment(customLimit = null, customForce = false) 
 
   const modifiedLocs = new Set();
   let enrichedCount = 0;
+  let ctrEnrichedCount = 0;
 
   for (const cluster of ['setup', 'solutions', 'vs', 'guides']) {
     const dirAbs = path.join(WEBSITE_DIR, cluster);
@@ -288,25 +341,71 @@ export function runLiveProofEnrichment(customLimit = null, customForce = false) 
       const urlPath = `/${cluster}/${slug}`;
       const loc = `https://sweeprdeepblock.com${urlPath}`;
 
-      if (html.includes('id="deepblock-live-rule-proof"') && !forceProof) {
-        continue;
+      let updatedHtml = html
+        .replace(/SWEEPR DeepBlock v1\.2\.[25]/g, `SWEEPR DeepBlock v${MANIFEST_VERSION}`)
+        .replace(/•\s*Version\s+1\.2\.[25]/g, `• Version ${MANIFEST_VERSION}`)
+        .replace(/"highPrice"\s*:\s*"59\.99"\s*,\s*"offerCount"\s*:\s*"3"/g, '"highPrice":"89.99","offerCount":"4"')
+        .replace(/src="https:\/\/www\.googletagmanager\.com\/gtag\/js\?id=G-01MNBQSL9K"/g, 'src="/metrics/js?id=G-01MNBQSL9K"')
+        .replace(
+          /gtag\('config',\s*'G-01MNBQSL9K'\);/g,
+          `gtag('config', 'G-01MNBQSL9K', {\n      transport_url: window.location.origin + '/metrics',\n      first_party_collection: true\n    });`
+        )
+        .replace(
+          /£9\.99\/mo or save 50% on the <strong>£59\.99\/yr Annual Plan — £4\.99\/mo<\/strong>/g,
+          '£1.99 1st mo or save 50% on the <strong>£29.99/yr Annual Plan — £2.50/mo</strong>, or bundle all 4 apps in the <strong>£89.99/yr Complete Security Suite</strong>'
+        )
+        .replace(
+          /<a href="\/order\?plan=annual"([^>]*)>Unlock Pro \(£4\.99\/mo Annual\)<\/a>/g,
+          '<a href="/order?plan=annual"$1>Unlock Pro (£2.50/mo Annual)</a>\n        <a href="/order?plan=suite_annual" style="background:rgba(16,185,129,0.14);color:#34d399;border:1px solid rgba(16,185,129,0.4);font-weight:700;padding:10px 16px;border-radius:8px;text-decoration:none;">Complete Suite (£89.99/yr) &rarr;</a>'
+        );
+
+      // Ensure footer links include /site, /stories, /glossary, /de, /fr if missing
+      if (
+        updatedHtml.includes('<a href="/tools" style="color:#94a3b8;text-decoration:none;">Free Privacy Tools</a>') &&
+        !updatedHtml.includes('href="/stories"')
+      ) {
+        updatedHtml = updatedHtml.replace(
+          '<a href="/tools" style="color:#94a3b8;text-decoration:none;">Free Privacy Tools</a>',
+          '<a href="/tools" style="color:#94a3b8;text-decoration:none;">Free Privacy Tools</a>\n        <a href="/site" style="color:#94a3b8;text-decoration:none;">Site Ad Audits</a>\n        <a href="/stories" style="color:#94a3b8;text-decoration:none;">Customer Stories</a>\n        <a href="/glossary" style="color:#94a3b8;text-decoration:none;">Privacy Glossary</a>\n        <a href="/de" style="color:#94a3b8;text-decoration:none;">Deutsch (/de)</a>\n        <a href="/fr" style="color:#94a3b8;text-decoration:none;">Français (/fr)</a>'
+        );
       }
 
-      const proofHtml = buildProofSectionHtml(urlPath, slug, cluster, rulesData);
-      let updatedHtml = html;
+      const needsProof = !updatedHtml.includes('id="deepblock-live-rule-proof"') || forceProof;
+      if (needsProof) {
+        const proofHtml = buildProofSectionHtml(urlPath, slug, cluster, rulesData);
+        if (updatedHtml.includes('id="deepblock-live-rule-proof"')) {
+          updatedHtml = updatedHtml.replace(
+            /<section id="deepblock-live-rule-proof"[\s\S]*?<\/section>/i,
+            proofHtml
+          );
+        } else if (updatedHtml.includes('<section style="margin-top:36px;padding-top:24px;border-top:1px solid #1e293b;">')) {
+          updatedHtml = updatedHtml.replace(
+            '<section style="margin-top:36px;padding-top:24px;border-top:1px solid #1e293b;">',
+            `${proofHtml}\n    <section style="margin-top:36px;padding-top:24px;border-top:1px solid #1e293b;">`
+          );
+        } else if (updatedHtml.includes('</main>')) {
+          updatedHtml = updatedHtml.replace('</main>', `    ${proofHtml}\n  </main>`);
+        }
+      }
 
-      if (updatedHtml.includes('id="deepblock-live-rule-proof"')) {
-        updatedHtml = updatedHtml.replace(
-          /<section id="deepblock-live-rule-proof"[\s\S]*?<\/section>/i,
-          proofHtml
-        );
-      } else if (updatedHtml.includes('<section style="margin-top:36px;padding-top:24px;border-top:1px solid #1e293b;">')) {
-        updatedHtml = updatedHtml.replace(
-          '<section style="margin-top:36px;padding-top:24px;border-top:1px solid #1e293b;">',
-          `${proofHtml}\n    <section style="margin-top:36px;padding-top:24px;border-top:1px solid #1e293b;">`
-        );
-      } else if (updatedHtml.includes('</main>')) {
-        updatedHtml = updatedHtml.replace('</main>', `    ${proofHtml}\n  </main>`);
+      // Inject CTR Intent Enrichment Section if this page is a target in ctrEnrichmentQueue
+      const ctrItems = ctrQueueByPath.get(urlPath);
+      if (ctrItems && ctrItems.length > 0) {
+        const ctrHtml = buildCtrEnrichmentSectionHtml(urlPath, ctrItems);
+        if (updatedHtml.includes('id="deepblock-ctr-intent-enrichment"')) {
+          updatedHtml = updatedHtml.replace(
+            /<section id="deepblock-ctr-intent-enrichment"[\s\S]*?<\/section>/i,
+            ctrHtml
+          );
+        } else if (updatedHtml.includes('id="deepblock-live-rule-proof"')) {
+          updatedHtml = updatedHtml.replace(
+            /<section id="deepblock-live-rule-proof"/i,
+            `${ctrHtml}\n    <section id="deepblock-live-rule-proof"`
+          );
+        } else if (updatedHtml.includes('</main>')) {
+          updatedHtml = updatedHtml.replace('</main>', `    ${ctrHtml}\n  </main>`);
+        }
+        ctrEnrichedCount++;
       }
 
       if (updatedHtml !== html) {
@@ -336,7 +435,7 @@ export function runLiveProofEnrichment(customLimit = null, customForce = false) 
   fs.writeFileSync(STATE_PATH, JSON.stringify(state, null, 2), 'utf8');
 
   console.log(
-    `[Live Proof Injector] Enriched ${enrichedCount} indexable Pillar pages with verified MV3 DNR rule telemetry | Updated <lastmod> on ${modifiedLocs.size} sitemap URLs | 14-day title cooldown tracked for ${Object.keys(state.titleUpdatedAt).length} GSC pages.`
+    `[Live Proof Injector] Enriched ${enrichedCount} indexable Pillar pages (v${MANIFEST_VERSION}) | CTR Queue Applied: ${ctrEnrichedCount} pages | Updated <lastmod> on ${modifiedLocs.size} sitemap URLs.`
   );
 }
 

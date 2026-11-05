@@ -25,10 +25,12 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = path.resolve(__dirname, '..');
 const WEBSITE_DIR = path.join(ROOT_DIR, 'website');
 const SITEMAP_PATH = path.join(WEBSITE_DIR, 'sitemap.xml');
+const SITEMAP_SITES_PATH = path.join(WEBSITE_DIR, 'sitemap-sites.xml');
 const PAD_PATH = path.join(WEBSITE_DIR, 'pad.xml');
 const INDEXING_QUEUE_PATH = path.join(WEBSITE_DIR, 'indexing-queue.json');
 const SEED_PATH = path.join(ROOT_DIR, 'outreach-seed-deepblock.json');
-const INDEXNOW_KEY = '8f9a2b4c6d1e3f5a7b9c0d2e4f6a8b0c';
+const KEYWORD_MATRIX_PATH = path.join(ROOT_DIR, 'data', 'keyword-opportunity-matrix.json');
+const INDEXNOW_KEY = '9a4e7b2c5d8f1a3e6b9c0d4f7a2e5b8c';
 
 // Auto-load root .env if available
 const envPath = path.join(ROOT_DIR, '.env');
@@ -132,7 +134,7 @@ async function auditStoreBacklinks() {
       name: 'Windows Package Manager (Winget)',
       manifestPath: 'winget-manifests/s/SWEEPR/Deepblock/1.1.6/SWEEPR.Deepblock.installer.yaml',
       packageId: 'SWEEPR.Deepblock',
-      version: '1.1.6',
+      version: '1.2.7',
       installerUrl: 'https://sweeprdeepblock.com/download/SWEEPRDeepblockSetup.exe',
       status: 'verified'
     },
@@ -264,39 +266,48 @@ const GSC_PRIORITY_URLS = new Set([
   'https://sweeprdeepblock.com/test-lab',
   'https://sweeprdeepblock.com/pricing',
   'https://sweeprdeepblock.com/download',
+  'https://sweeprdeepblock.com/site',
+  'https://sweeprdeepblock.com/glossary',
+  'https://sweeprdeepblock.com/stories',
+  'https://sweeprdeepblock.com/campaigns/uk-ad-load-index',
+  'https://sweeprdeepblock.com/campaigns/renewal-shock-switcher',
+  'https://sweeprdeepblock.com/tools/is-my-adblocker-working',
+  'https://sweeprdeepblock.com/tools/is-this-shop-a-scam',
   'https://sweeprdeepblock.com/setup/thorium-chromium-browser',
   'https://sweeprdeepblock.com/setup/orion-browser-macos-ios',
   'https://sweeprdeepblock.com/setup/floorp-browser-firefox-fork',
   'https://sweeprdeepblock.com/setup/arc-browser-windows-mac',
   'https://sweeprdeepblock.com/setup/zen-browser-privacy-tabs',
   'https://sweeprdeepblock.com/setup/kiwi-browser-android',
-  'https://sweeprdeepblock.com/setup/ungoogled-chromium-desktop',
+  'https://sweeprdeepblock.com/setup/ungoogled-chromium-setup',
   'https://sweeprdeepblock.com/setup/brave-macos-apple-silicon',
   'https://sweeprdeepblock.com/setup/librewolf-hardened-firefox',
   'https://sweeprdeepblock.com/solutions/crunchyroll-anime-streams-block-video-ads',
   'https://sweeprdeepblock.com/solutions/fandom-game-wikis-reduce-browser-ram-usage',
   'https://sweeprdeepblock.com/solutions/webtoon-manhwa-readers-block-video-ads',
-  'https://sweeprdeepblock.com/solutions/manga-webnovel-portals-block-video-ads',
+  'https://sweeprdeepblock.com/solutions/manga-comic-readers-block-video-ads',
   'https://sweeprdeepblock.com/solutions/linkedin-feed-ads-block-video-ads',
   'https://sweeprdeepblock.com/solutions/soundcloud-audio-player-block-video-ads',
-  'https://sweeprdeepblock.com/solutions/dex-token-screeners-filter-ai-slop-and-scams',
-  'https://sweeprdeepblock.com/solutions/geeksforgeeks-coding-portals-remove-page-clutter-and-ram-bloat',
+  'https://sweeprdeepblock.com/solutions/dex-token-screeners-stop-malvertising-popunders',
+  'https://sweeprdeepblock.com/solutions/geeksforgeeks-dev-portals-reduce-browser-ram-usage',
   'https://sweeprdeepblock.com/solutions/roblox-web-community-filter-ai-slop-and-scams',
-  'https://sweeprdeepblock.com/solutions/rumble-video-platform-block-video-ads',
-  'https://sweeprdeepblock.com/solutions/tumblr-blog-network-remove-page-clutter-and-ram-bloat',
+  'https://sweeprdeepblock.com/solutions/rumble-video-streams-block-video-ads',
+  'https://sweeprdeepblock.com/solutions/tumblr-blog-feeds-block-video-ads',
   'https://sweeprdeepblock.com/vs/avast-secure-browser-guard',
   'https://sweeprdeepblock.com/vs/total-adblock',
+  'https://sweeprdeepblock.com/vs/total-adblock-cancel-subscription',
+  'https://sweeprdeepblock.com/vs/ublock-origin-alternative-for-chrome',
   'https://sweeprdeepblock.com/vs/ublock-origin-lite',
   'https://sweeprdeepblock.com/vs/adguard-extension',
   'https://sweeprdeepblock.com/vs/ghostery-privacy-ad-blocker',
-  'https://sweeprdeepblock.com/guides/how-to-pass-adblock-tester-100-score',
-  'https://sweeprdeepblock.com/guides/how-to-reduce-chrome-ram-usage-by-60-percent',
-  'https://sweeprdeepblock.com/guides/how-to-spot-fake-online-shops-2026'
+  'https://sweeprdeepblock.com/guides/how-to-automatically-reject-cookie-banners-uk',
+  'https://sweeprdeepblock.com/guides/how-to-reduce-browser-ram-speed-up-slow-tabs',
+  'https://sweeprdeepblock.com/guides/how-to-spot-fake-scam-online-shops-uk'
 ]);
 
 function loadLiveRuleStats() {
-  let staticCount = 220;
-  let deltaCount = 38;
+  let staticCount = 242;
+  let deltaCount = 14;
   try {
     const s = JSON.parse(fs.readFileSync(path.join(ROOT_DIR, 'extension/rules/static_ads_and_trackers.json'), 'utf8'));
     if (Array.isArray(s)) staticCount = s.length;
@@ -312,6 +323,16 @@ function loadLiveRuleStats() {
 function loadRecentlyUpdatedUrls() {
   const statePath = path.join(WEBSITE_DIR, 'pillar-enrichment-state.json');
   const recent = new Set();
+  if (fs.existsSync(KEYWORD_MATRIX_PATH)) {
+    try {
+      const kw = JSON.parse(fs.readFileSync(KEYWORD_MATRIX_PATH, 'utf8'));
+      for (const opp of (kw.opportunities || []).slice(0, 15)) {
+        if (opp.isPublishedOnDisk && opp.targetRoute) {
+          recent.add(`https://sweeprdeepblock.com${opp.targetRoute}`);
+        }
+      }
+    } catch {}
+  }
   if (!fs.existsSync(statePath)) return recent;
   try {
     const st = JSON.parse(fs.readFileSync(statePath, 'utf8'));
@@ -330,6 +351,13 @@ const LIVE_RULE_STATS = loadLiveRuleStats();
 function loadSitemapItems() {
   const xml = fs.readFileSync(SITEMAP_PATH, 'utf8');
   const rawUrls = [...xml.matchAll(/<loc>(.*?)<\/loc>/g)].map((m) => m[1].trim());
+  if (fs.existsSync(SITEMAP_SITES_PATH)) {
+    const sitesXml = fs.readFileSync(SITEMAP_SITES_PATH, 'utf8');
+    const siteUrls = [...sitesXml.matchAll(/<loc>(.*?)<\/loc>/g)].map((m) => m[1].trim());
+    for (const u of siteUrls) {
+      if (!rawUrls.includes(u)) rawUrls.push(u);
+    }
+  }
   const recentSet = loadRecentlyUpdatedUrls();
   const urls = [
     ...rawUrls.filter((u) => recentSet.has(u) || GSC_PRIORITY_URLS.has(u)),

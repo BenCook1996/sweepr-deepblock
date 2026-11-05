@@ -171,8 +171,8 @@ const GLOSSARY_TERMS = [
     shortTitle: 'What is Browser Tab Discarding & Hibernation? | SWEEPR Glossary',
     description: 'Discover how background ad-auction timers bloat Chrome and Edge memory usage to 8GB+ and how native tab discarding frees up to 62% of browser RAM.',
     category: 'Browser Performance',
-    toolPath: '/tools/is-my-adblocker-working',
-    toolName: 'Browser Bloat & Ad-Script Diagnostic',
+    toolPath: '/tools/browser-ram-calculator',
+    toolName: 'Browser RAM & Tab Bloat Calculator',
     siteSlug: 'fandom-com',
     definition: 'Browser tab discarding (hibernation) is the process of unloading inactive background renderer processes from system RAM via the native chrome.tabs.discard API while keeping the tab visible on the tab strip.',
     mechanism: 'Open publisher tabs continuously run Prebid.js header-bidding auctions every 30 seconds in the background. SWEEPR DeepBlock + Total Tab & RAM Tamer blocks the ad timers and automatically hibernates idle tabs while backing up your session.'
@@ -389,8 +389,12 @@ function renderGlossaryPage(item, idx, allItems) {
       <div class="flex flex-wrap gap-4">
         <a href="https://sweeprcleaner.com/?utm_source=sweeprdeepblock.com&amp;utm_medium=glossary_footer" target="_blank" rel="noopener" class="text-emerald-400 hover:underline">Sweepr Cleaner</a>
         <a href="https://sweeprvpn.com/?utm_source=sweeprdeepblock.com&amp;utm_medium=glossary_footer" target="_blank" rel="noopener" class="text-emerald-400 hover:underline">Sweepr VPN</a>
+        <a href="/order?plan=suite_annual" class="text-emerald-300 font-bold hover:underline">Complete Suite (£89.99/yr)</a>
         <a href="/glossary" class="hover:text-white">Glossary</a>
         <a href="/site" class="hover:text-white">Site Reports</a>
+        <a href="/stories" class="hover:text-white">Customer Stories</a>
+        <a href="/de" class="hover:text-white">Deutsch (/de)</a>
+        <a href="/fr" class="hover:text-white">Français (/fr)</a>
         <a href="/tools" class="hover:text-white">Diagnostic Tools</a>
         <a href="/privacy" class="hover:text-white">Privacy Policy</a>
       </div>
@@ -436,6 +440,13 @@ const glossaryHubHtml = `<!DOCTYPE html>
     url: 'https://sweeprdeepblock.com/glossary',
     description: 'Technical definitions and interactive diagnostic links for 20 core ad-blocking, anti-fingerprinting, and browser security concepts.'
   })}</script>
+  <script async src="/metrics/js?id=G-01MNBQSL9K"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-01MNBQSL9K', { transport_url: window.location.origin + '/metrics', first_party_collection: true });
+  </script>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans antialiased">
   <header class="border-b border-slate-800/80 bg-slate-950/90 backdrop-blur sticky top-0 z-40">
@@ -476,7 +487,11 @@ const glossaryHubHtml = `<!DOCTYPE html>
       <div class="flex flex-wrap gap-4">
         <a href="https://sweeprcleaner.com/?utm_source=sweeprdeepblock.com&amp;utm_medium=glossary_hub" target="_blank" rel="noopener" class="text-emerald-400 hover:underline">Sweepr Cleaner</a>
         <a href="https://sweeprvpn.com/?utm_source=sweeprdeepblock.com&amp;utm_medium=glossary_hub" target="_blank" rel="noopener" class="text-emerald-400 hover:underline">Sweepr VPN</a>
+        <a href="/order?plan=suite_annual" class="text-emerald-300 font-bold hover:underline">Complete Suite (£89.99/yr)</a>
         <a href="/site" class="hover:text-white">Site Audits</a>
+        <a href="/stories" class="hover:text-white">Customer Stories</a>
+        <a href="/de" class="hover:text-white">Deutsch (/de)</a>
+        <a href="/fr" class="hover:text-white">Français (/fr)</a>
         <a href="/campaigns/uk-ad-load-index" class="hover:text-white">UK Ad-Load Index</a>
         <a href="/tools" class="hover:text-white">Diagnostic Tools</a>
       </div>

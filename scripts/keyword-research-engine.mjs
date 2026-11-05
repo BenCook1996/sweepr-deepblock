@@ -863,6 +863,29 @@ const HIGH_DR_EDITORIAL_DOMAINS = new Set([
 ]);
 
 const STALE_SERP_RE = /\b(2019|2020|2021|2022|2023|2024|manifest\s*v2|mv2)\b/i;
+const DECOY_SERP_DOMAIN_RE = /(powerthesaurus\.org|wordhippo\.com|merriam-webster\.com\/thesaurus\/hate)/i;
+const DOMAIN_TOPIC_VOCAB_RE =
+  /\b(adblock|ad\s*blocker|blocker|ublock|adguard|ghostery|pie|stands|wipr|1blocker|browser|chrome|firefox|safari|edge|brave|vivaldi|opera|thorium|floorp|zen|arc|orion|cookie|consent|gdpr|onetrust|didomi|sourcepoint|usercentrics|quantcast|trustarc|privacy|tracker|ram|memory|cpu|tab|extension|addon|manifest|mv3|youtube|twitch|crunchyroll|spotify|itvx|fandom|scam|shop|store|shopify|trustpilot)\b/i;
+
+function isRelevantSerpResponse(results, query) {
+  if (!Array.isArray(results) || results.length < 3) return false;
+  // Reject immediately if any decoy thesaurus/anti-bot fallback URL is present
+  if (results.some((r) => DECOY_SERP_DOMAIN_RE.test(`${r.domain} ${r.url}`))) {
+    return false;
+  }
+  const qCanon = canonicalizeIntentTokens(query);
+  let relevantItems = 0;
+  for (const item of results) {
+    const combined = `${item.title} ${item.snippet} ${item.url}`.toLowerCase();
+    const itemCanon = canonicalizeIntentTokens(`${item.title} ${item.snippet}`);
+    const hasQueryToken = qCanon.tokens.some((t) => t.length >= 3 && itemCanon.tokenSet.has(t));
+    const hasDomainTopic = DOMAIN_TOPIC_VOCAB_RE.test(combined);
+    if (hasQueryToken || hasDomainTopic) {
+      relevantItems++;
+    }
+  }
+  return relevantItems >= 2;
+}
 
 async function fetchLiveBingRssSerp(query) {
   try {
@@ -899,6 +922,7 @@ async function fetchLiveBingRssSerp(query) {
       results.push({ rank: results.length + 1, url: link, domain, title, snippet });
       if (results.length >= 5) break;
     }
+    if (!isRelevantSerpResponse(results, query)) return [];
     return results;
   } catch {
     return [];
@@ -940,6 +964,7 @@ async function fetchLiveDdgHtmlSerp(query) {
       results.push({ rank: results.length + 1, url: rawHref, domain, title, snippet: '' });
       if (results.length >= 5) break;
     }
+    if (!isRelevantSerpResponse(results, query)) return [];
     return results;
   } catch {
     return [];
@@ -950,7 +975,14 @@ export async function evaluateSerpWeakSpotScore(query, queryCanon, serpCache, al
   const qNorm = String(query || '').trim().toLowerCase();
   const now = Date.now();
   const cached = serpCache[qNorm];
-  if (cached && now - cached.ts < SERP_CACHE_TTL_MS && typeof cached.lowCompetitionScore === 'number') {
+  if (
+    cached &&
+    now - cached.ts < SERP_CACHE_TTL_MS &&
+    typeof cached.lowCompetitionScore === 'number' &&
+    (!Array.isArray(cached.top5Organic) ||
+      cached.top5Organic.length === 0 ||
+      isRelevantSerpResponse(cached.top5Organic, qNorm))
+  ) {
     return cached;
   }
 
@@ -1159,6 +1191,15 @@ function clampMetaDescription(rawDesc) {
   return clean.slice(0, 160);
 }
 
+function truncateAtWordBoundary(str, maxLen = 48) {
+  const clean = String(str || '').replace(/\s+/g, ' ').trim();
+  if (clean.length <= maxLen) return clean;
+  const sliced = clean.slice(0, maxLen);
+  const lastSpace = sliced.lastIndexOf(' ');
+  const out = (lastSpace > 20 ? sliced.slice(0, lastSpace) : sliced).replace(/[,:;.\-–—]+$/, '').trim();
+  return out;
+}
+
 export function synthesizePageBlueprint(keyword, secondaryKeywords, intentInfo, metrics) {
   const titlePhrase = toTitleCase(keyword);
   const title = clampSeoTitle(titlePhrase);
@@ -1220,6 +1261,35 @@ export function synthesizePageBlueprint(keyword, secondaryKeywords, intentInfo, 
   };
 
   const secList = secondaryKeywords.slice(0, 3);
+  let faq3 = {
+    q: secList[1]
+      ? `How do I fix ${secList[1]} without breaking page scrolling?`
+      : `Why do standard ad blockers fail or break page scrolling on modern sites?`,
+    a: `Legacy CSS-hiding extensions delete the visual overlay while leaving body{overflow:hidden} locked and consented tracker scripts active. SWEEPR DeepBlock executes the genuine "Reject All" CMP signal in under 50ms and restores clean scrolling automatically.`
+  };
+  if (isCompetitor) {
+    faq3 = {
+      q: secList[1]
+        ? `How does SWEEPR DeepBlock compare on ${secList[1]} and renewal pricing?`
+        : `Does SWEEPR DeepBlock charge surprise Year-2 renewal price hikes like legacy ad blockers?`,
+      a: `Never. Unlike legacy ad blockers that lure users in with a £19 intro offer and auto-renew at £99–£120/yr, SWEEPR DeepBlock Pro is locked at a transparent £29.99/yr (£2.50/mo eq.) across 4 devices, backed by a 1-click cancellation toggle and a 14-day money-back guarantee.`
+    };
+  } else if (isScamOrShop) {
+    faq3 = {
+      q: secList[1]
+        ? `How does SWEEPR DeepBlock detect ${secList[1]} before checkout?`
+        : `How does the Fake E-Commerce & AI Slop Detector protect shoppers in real time?`,
+      a: `SWEEPR DeepBlock's 14-point heuristic scanner inspects RDAP domain registration age, cloned Shopify checkout templates, fake countdown timers, and synthetic review clusters locally in your browser before you enter payment details.`
+    };
+  } else if (isRamOrSuite) {
+    faq3 = {
+      q: secList[1]
+        ? `How much memory does SWEEPR save for ${secList[1]}?`
+        : `How does Total Tab & RAM Tamer reduce browser memory by up to 62%?`,
+      a: `By blocking heavy third-party video ad iframes at the C++ network layer before they allocate heap memory, and automatically hibernating idle background tabs while protecting pinned, audio, and active form tabs.`
+    };
+  }
+
   const customFaqs = [
     {
       q: `How does SWEEPR DeepBlock solve "${keyword}" in 2026?`,
@@ -1231,12 +1301,7 @@ export function synthesizePageBlueprint(keyword, secondaryKeywords, intentInfo, 
         : `Does this work on Chrome, Edge, Brave, and Firefox Manifest V3?`,
       a: `Yes. Every SWEEPR DeepBlock rule pack is compiled natively for Chromium Manifest V3 (Chrome, Edge, Brave, Thorium, Vivaldi, Opera, Arc) and Firefox WebExtensions with zero cloud browsing telemetry.`
     },
-    {
-      q: secList[1]
-        ? `How do I fix ${secList[1]} without breaking page scrolling?`
-        : `Why do standard ad blockers fail or break page scrolling on modern sites?`,
-      a: `Legacy CSS-hiding extensions delete the visual overlay while leaving body{overflow:hidden} locked and consented tracker scripts active. SWEEPR DeepBlock executes the genuine "Reject All" CMP signal in under 50ms and restores clean scrolling automatically.`
-    },
+    faq3,
     {
       q: `What is included in SWEEPR DeepBlock Pro vs the Complete Security Suite?`,
       a: `SWEEPR DeepBlock Pro (£29.99/yr or £1.99 1st-Month Intro) unlocks all 6 browser protection modules across 4 devices. The Sweepr Complete Security Suite (£89.99/yr, save 45%) bundles DeepBlock Pro, Total Tab & RAM Tamer, Sweepr VPN Pro, and Sweepr Desktop Cleaner Pro across 5 devices.`
@@ -1247,7 +1312,7 @@ export function synthesizePageBlueprint(keyword, secondaryKeywords, intentInfo, 
     title,
     h1,
     metaDescription,
-    shortLinkTitle: titlePhrase.length > 48 ? titlePhrase.slice(0, 45).trim() + '' : titlePhrase,
+    shortLinkTitle: truncateAtWordBoundary(titlePhrase, 48),
     linkBadge: `${intentInfo.cluster.toUpperCase()} • KD ${metrics.estimatedKD} • Score ${metrics.opportunityScore}`,
     painPointIssue: `Eliminating ${keyword} with verified C++ declarativeNetRequest filtering, <50ms CMP auto-rejection, and local-first privacy protection`,
     beforeStat: isRamOrSuite ? '1.8 GB+ Browser Tab RAM Bloat' : 'Unskippable Ads & Tracker Walls',
@@ -1273,19 +1338,35 @@ export async function runKeywordResearchEngine(options = {}) {
 
   const autocompleteCache = loadJsonFileSafe(AUTOCOMPLETE_CACHE_PATH, {});
   const serpCache = loadJsonFileSafe(SERP_CACHE_PATH, {});
+
+  // Purge any decoy-poisoned entries from serpCache immediately
+  for (const [k, v] of Object.entries(serpCache)) {
+    if (
+      Array.isArray(v?.top5Organic) &&
+      v.top5Organic.length > 0 &&
+      !isRelevantSerpResponse(v.top5Organic, k)
+    ) {
+      delete serpCache[k];
+    }
+  }
+
   const corpus = loadUnifiedIndexableCorpus();
 
   // Build hierarchical seed queries across the 6 pillars
   const seedJobs = [];
+  const jobsByPillar = new Map();
   const seenSeedKey = new Set();
 
   for (const pillar of PILLAR_SEED_MATRIX) {
+    const pillarJobs = [];
     // Depth 0: Direct high-intent seeds
     for (const ds of pillar.directSeeds || []) {
       const k = `${pillar.pillarId}:${ds.toLowerCase()}`;
       if (!seenSeedKey.has(k)) {
         seenSeedKey.add(k);
-        seedJobs.push({ pillar, seed: ds, depth: 0 });
+        const job = { pillar, seed: ds, depth: 0 };
+        seedJobs.push(job);
+        pillarJobs.push(job);
       }
     }
     // Depth 0/1: Entity x Modifier combinations
@@ -1296,10 +1377,13 @@ export async function runKeywordResearchEngine(options = {}) {
         const k = `${pillar.pillarId}:${phrase.toLowerCase()}`;
         if (!seenSeedKey.has(k)) {
           seenSeedKey.add(k);
-          seedJobs.push({ pillar, seed: phrase, depth });
+          const job = { pillar, seed: phrase, depth };
+          seedJobs.push(job);
+          pillarJobs.push(job);
         }
       }
     }
+    jobsByPillar.set(pillar.pillarId, pillarJobs);
   }
 
   const rawHarvestMap = new Map();
@@ -1322,11 +1406,46 @@ export async function runKeywordResearchEngine(options = {}) {
     }
   }
 
-  // Query live autocomplete endpoints with bounded concurrency (batch of 6 seed jobs)
+  // Also hydrate rawHarvestMap from all valid cached autocomplete responses so previously expanded pillars stay active
+  const nowTs = Date.now();
+  for (const job of seedJobs) {
+    for (const eng of job.pillar.engines) {
+      const ck = `${eng}:${job.seed.toLowerCase().trim()}`;
+      const cached = autocompleteCache[ck];
+      if (cached && nowTs - cached.ts < AUTOCOMPLETE_CACHE_TTL_MS && Array.isArray(cached.items)) {
+        for (const item of cached.items) {
+          const q = item.text;
+          if (!rawHarvestMap.has(q)) {
+            rawHarvestMap.set(q, {
+              query: q,
+              pillarId: job.pillar.pillarId,
+              seed: job.seed,
+              minDepth: job.depth,
+              seedCount: 1,
+              bestRankByEngine: { [eng]: item.rank },
+              bestRelevanceByEngine: item.relevance ? { [eng]: item.relevance } : {}
+            });
+          }
+        }
+      }
+    }
+  }
+
+  // Query live autocomplete endpoints with balanced round-robin sampling across all 6 pillars (8 per pillar = 48 balanced seeds)
   if (!offlineMode) {
     const BATCH_SIZE = 6;
-    // Limit live network expansion to top 36 seed jobs per run for fast execution (<15s)
-    const activeSeedJobs = seedJobs.slice(0, 36);
+    const SEEDS_PER_PILLAR = 8;
+    const activeSeedJobs = [];
+    for (const [, pJobs] of jobsByPillar.entries()) {
+      // Prioritize uncached seeds first so sequential runs expand coverage across the full matrix
+      const sortedPJobs = [...pJobs].sort((a, b) => {
+        const aCached = a.pillar.engines.every((eng) => Boolean(autocompleteCache[`${eng}:${a.seed.toLowerCase().trim()}`]));
+        const bCached = b.pillar.engines.every((eng) => Boolean(autocompleteCache[`${eng}:${b.seed.toLowerCase().trim()}`]));
+        if (aCached !== bCached) return aCached ? 1 : -1;
+        return a.depth - b.depth;
+      });
+      activeSeedJobs.push(...sortedPJobs.slice(0, SEEDS_PER_PILLAR));
+    }
     for (let i = 0; i < activeSeedJobs.length; i += BATCH_SIZE) {
       const slice = activeSeedJobs.slice(i, i + BATCH_SIZE);
       await Promise.all(

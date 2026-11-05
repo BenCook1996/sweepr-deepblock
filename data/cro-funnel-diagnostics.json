@@ -1,0 +1,227 @@
+{
+  "generatedAt": "2026-11-05T00:25:45.900Z",
+  "overallHealth": "OPTIMAL",
+  "unitEconomics": {
+    "updatedAt": "2026-11-05T00:25:45.898Z",
+    "dailySpendGbp": 10,
+    "blendedCacGbp": 15.6,
+    "year1BlendedAovGbp": 43.31,
+    "blendedNetLtvGbp": 49.37,
+    "ltvToCacRatio": 3.16,
+    "permissionActivationRatePct": 86.8,
+    "freeToProCheckoutRatePct": 4.68,
+    "suiteAttachRatePct": 22.2,
+    "refundRate14dPct": 2.2,
+    "pricingTiersGbp": {
+      "introMonthly": 1.99,
+      "monthlyStandard": 4.99,
+      "sixMonthPro": 19.99,
+      "annualPro": 29.99,
+      "completeSuiteAnnual": 89.99
+    }
+  },
+  "funnelStages": [
+    {
+      "stageId": "1_store_or_download_to_install",
+      "name": "Download / Store Listing -> Extension Installed",
+      "visitorsIn": 1250,
+      "conversionsOut": 385,
+      "conversionRatePct": 30.8,
+      "targetRatePct": 28,
+      "status": "HEALTHY",
+      "automatedRemedy": "Maintain 1-click browser-detected download CTA and live 8/8 Test Lab proof badge on /download."
+    },
+    {
+      "stageId": "2_install_to_permissions_granted",
+      "name": "Extension Installed -> MV3 Permissions Activated",
+      "visitorsIn": 385,
+      "conversionsOut": 334,
+      "conversionRatePct": 86.8,
+      "targetRatePct": 85,
+      "status": "HEALTHY",
+      "automatedRemedy": "Keep 2-step annotated permission visual guide active on /welcome."
+    },
+    {
+      "stageId": "3_permissions_to_aha_moment_60s",
+      "name": "Permissions Activated -> First 100 Trackers Blocked / 8/8 Test Lab Run (<60s)",
+      "visitorsIn": 334,
+      "conversionsOut": 268,
+      "conversionRatePct": 80.2,
+      "targetRatePct": 75,
+      "status": "HEALTHY",
+      "automatedRemedy": "Continue auto-opening live 8/8 Test Lab verification receipt upon installation."
+    },
+    {
+      "stageId": "4_active_free_to_pro_checkout",
+      "name": "Active Free User -> Paid Pro / Suite Checkout",
+      "visitorsIn": 385,
+      "conversionsOut": 18,
+      "conversionRatePct": 4.68,
+      "targetRatePct": 4.2,
+      "status": "HEALTHY",
+      "automatedRemedy": "Paywall Multi-Armed Bandit routes 80% of traffic to highest-RPV framing while testing £1.99 Intro vs £29.99/yr Pro vs £89.99/yr Complete Suite."
+    },
+    {
+      "stageId": "5_pro_checkout_to_complete_suite_bundle",
+      "name": "Paid Checkout -> £89.99/yr Sweepr Complete Security Suite Attach",
+      "visitorsIn": 18,
+      "conversionsOut": 4,
+      "conversionRatePct": 22.2,
+      "targetRatePct": 20,
+      "status": "HEALTHY",
+      "automatedRemedy": "Keep 4-in-1 Sweepr Complete Security Suite (£89.99/yr — Save 45%) highlighted across sweeprdeepblock.com, sweeprvpn.com, and sweeprcleaner.com."
+    }
+  ],
+  "paywallBanditSnapshot": {
+    "experiment": "paywall_value_framing_v2",
+    "epsilon": 0.2,
+    "updatedAt": "2026-11-04T23:53:13.176Z",
+    "leaderVariantId": "ram_speedometer_bundle",
+    "mode": "bandit_exploitation_80_20",
+    "stats": {
+      "control_value_stack": {
+        "visitors": 42,
+        "conversions": 2,
+        "suiteAttachCount": 0,
+        "totalRevenueGbp": 59.98
+      },
+      "renewal_transparency": {
+        "visitors": 44,
+        "conversions": 3,
+        "suiteAttachCount": 1,
+        "totalRevenueGbp": 149.97
+      },
+      "ram_speedometer_bundle": {
+        "visitors": 42,
+        "conversions": 3,
+        "suiteAttachCount": 2,
+        "totalRevenueGbp": 209.97
+      }
+    },
+    "computedMetrics": {
+      "control_value_stack": {
+        "visitors": 42,
+        "conversions": 2,
+        "suiteAttachCount": 0,
+        "totalRevenueGbp": 59.98,
+        "conversionRatePct": 4.76,
+        "aovGbp": 29.99,
+        "rpvGbp": 1.43,
+        "zScoreVsControl": 0
+      },
+      "renewal_transparency": {
+        "visitors": 44,
+        "conversions": 3,
+        "suiteAttachCount": 1,
+        "totalRevenueGbp": 149.97,
+        "conversionRatePct": 6.82,
+        "aovGbp": 49.99,
+        "rpvGbp": 3.41,
+        "zScoreVsControl": 0.41
+      },
+      "ram_speedometer_bundle": {
+        "visitors": 42,
+        "conversions": 3,
+        "suiteAttachCount": 2,
+        "totalRevenueGbp": 209.97,
+        "conversionRatePct": 7.14,
+        "aovGbp": 69.99,
+        "rpvGbp": 5,
+        "zScoreVsControl": 0.46
+      }
+    }
+  },
+  "strikeZoneSeoPrescriptions": [
+    {
+      "keyword": "pie adblock safe or scam alternative",
+      "targetRoute": "/vs/pie-adblock-safe-or-scam-alternative",
+      "estimatedKD": 1,
+      "opportunityScore": 94.4,
+      "primaryCta": "/order?plan=annual",
+      "recommendedTool": "/tools/is-this-shop-a-scam",
+      "status": "PUBLISHED_AND_INTERLINKED"
+    },
+    {
+      "keyword": "switch from adblock plus to manifest v3",
+      "targetRoute": "/vs/switch-from-adblock-plus-to-manifest-v3",
+      "estimatedKD": 10,
+      "opportunityScore": 93.7,
+      "primaryCta": "/order?plan=annual",
+      "recommendedTool": "/tools/is-my-adblocker-working",
+      "status": "PUBLISHED_AND_INTERLINKED"
+    },
+    {
+      "keyword": "adguard vs ublock origin lite chrome 2026",
+      "targetRoute": "/vs/adguard-vs-ublock-origin-lite-chrome-2026",
+      "estimatedKD": 15,
+      "opportunityScore": 91.9,
+      "primaryCta": "/order?plan=annual",
+      "recommendedTool": "/tools/is-my-adblocker-working",
+      "status": "PUBLISHED_AND_INTERLINKED"
+    },
+    {
+      "keyword": "lightweight alternative to ghostery chrome",
+      "targetRoute": "/vs/lightweight-alternative-to-ghostery-chrome",
+      "estimatedKD": 21,
+      "opportunityScore": 87,
+      "primaryCta": "/order?plan=annual",
+      "recommendedTool": "/tools/is-my-adblocker-working",
+      "status": "PUBLISHED_AND_INTERLINKED"
+    },
+    {
+      "keyword": "adblock not working after chrome manifest v3 update",
+      "targetRoute": "/guides/adblock-not-working-after-chrome-manifest-v3-update",
+      "estimatedKD": 1,
+      "opportunityScore": 87,
+      "primaryCta": "/order?plan=annual",
+      "recommendedTool": "/tools/is-my-adblocker-working",
+      "status": "PUBLISHED_AND_INTERLINKED"
+    },
+    {
+      "keyword": "how much does total adblock cost",
+      "targetRoute": "/vs/how-much-does-total-adblock-cost",
+      "estimatedKD": 30,
+      "opportunityScore": 84,
+      "primaryCta": "/order?plan=annual",
+      "recommendedTool": "/tools/is-my-adblocker-working",
+      "status": "PUBLISHED_AND_INTERLINKED"
+    },
+    {
+      "keyword": "how to test if manifest v3 adblocker is working",
+      "targetRoute": "/guides/how-to-test-if-manifest-v3-adblocker-is-working",
+      "estimatedKD": 15,
+      "opportunityScore": 82.8,
+      "primaryCta": "/order?plan=annual",
+      "recommendedTool": "/tools/is-my-adblocker-working",
+      "status": "PUBLISHED_AND_INTERLINKED"
+    },
+    {
+      "keyword": "pie adblock is a scam",
+      "targetRoute": "/vs/pie-adblock-is-a-scam",
+      "estimatedKD": 21,
+      "opportunityScore": 82.3,
+      "primaryCta": "/order?plan=annual",
+      "recommendedTool": "/tools/is-this-shop-a-scam",
+      "status": "PUBLISHED_AND_INTERLINKED"
+    },
+    {
+      "keyword": "chrome manifest v3 adblock plus",
+      "targetRoute": "/vs/chrome-manifest-v3-adblock-plus",
+      "estimatedKD": 10,
+      "opportunityScore": 80.4,
+      "primaryCta": "/order?plan=annual",
+      "recommendedTool": "/tools/is-my-adblocker-working",
+      "status": "PUBLISHED_AND_INTERLINKED"
+    },
+    {
+      "keyword": "adblock plus not working on youtube chrome",
+      "targetRoute": "/vs/adblock-plus-not-working-on-youtube-chrome",
+      "estimatedKD": 1,
+      "opportunityScore": 80.2,
+      "primaryCta": "/order?plan=annual",
+      "recommendedTool": "/tools/is-my-adblocker-working",
+      "status": "PUBLISHED_AND_INTERLINKED"
+    }
+  ],
+  "ctrEnrichmentTargetsQueued": 6
+}

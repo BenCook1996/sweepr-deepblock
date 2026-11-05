@@ -179,17 +179,17 @@ document.addEventListener('DOMContentLoaded', () => {
     currentState = state || currentState;
     const isPro = Boolean(state.proActive);
     const stats = state.stats || {};
-    const ads = isPro ? (Number(stats.adsBlocked) || 0) + (Number(stats.aiSlopDetected) || 0) : 0;
-    const cookies = isPro ? Number(stats.cookiePromptsDetected) || 0 : 0;
-    const slop = isPro ? Number(stats.aiSlopDetected) || 0 : 0;
-    const scams = isPro ? Number(stats.fakeStoresDetected) || 0 : 0;
+    const ads = (Number(stats.adsBlocked) || 0) + (Number(stats.aiSlopDetected) || 0);
+    const cookies = Number(stats.cookiePromptsDetected) || 0;
+    const slop = Number(stats.aiSlopDetected) || 0;
+    const scams = Number(stats.fakeStoresDetected) || 0;
 
     if (adsCountEl) adsCountEl.textContent = String(ads);
     if (cookieCountEl) cookieCountEl.textContent = String(cookies);
     if (slopCountEl) slopCountEl.textContent = String(slop);
     if (scamCountEl) scamCountEl.textContent = String(scams);
     if (adsBlockedTextEl) {
-      adsBlockedTextEl.textContent = isPro ? `${ads + cookies} blocked ✓` : '🔒 Locked';
+      adsBlockedTextEl.textContent = isPro ? `${ads + cookies} blocked ✓` : `${ads + cookies} spotted · Free Preview`;
     }
 
     const sessions = Array.isArray(state.cloudTabSessions) ? state.cloudTabSessions : [];
@@ -263,9 +263,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (reviewMilestoneBanner) {
       const totalBlocked = ads + cookies;
       chrome.storage.local.get(['reviewPromptDismissed'], (rStore) => {
-        if (!rStore?.reviewPromptDismissed && isPro && totalBlocked >= 250) {
+        if (!rStore?.reviewPromptDismissed && isPro && totalBlocked >= 500) {
           if (reviewMilestoneText) {
-            reviewMilestoneText.textContent = `🎉 ${totalBlocked.toLocaleString()} ads & pop-ups blocked! Enjoying Deepblock?`;
+            reviewMilestoneText.textContent = `🎉 ${totalBlocked.toLocaleString()} ads & pop-ups blocked! Enjoying DeepBlock?`;
           }
           reviewMilestoneBanner.style.display = 'flex';
           if (reviewRateBtn) {
@@ -304,15 +304,22 @@ document.addEventListener('DOMContentLoaded', () => {
       chrome.storage.local.get(['a3MilestoneDismissedAt'], (a3Store) => {
         const dismissedRecent = a3Store && a3Store.a3MilestoneDismissedAt && Date.now() - Number(a3Store.a3MilestoneDismissedAt) < 7 * 86400 * 1000;
         if (!isPro && mState.totalThreats >= 100 && !dismissedRecent) {
+          const isHighMilestone = mState.totalThreats >= 1000;
           if (milestoneActionText) {
-            milestoneActionText.textContent = `🛡️ ${mState.totalThreats.toLocaleString()} threats spotted (~${mState.secondsSaved}s saved)! Unlock Pro (£4.99 1st mo)`;
+            milestoneActionText.textContent = isHighMilestone
+              ? `🔥 ${mState.totalThreats.toLocaleString()} threats blocked (~${mState.secondsSaved}s saved)! Lock £29.99/yr Pro or £89.99/yr Suite`
+              : `🛡️ ${mState.totalThreats.toLocaleString()} threats spotted (~${mState.secondsSaved}s saved)! Unlock Pro (£1.99 1st mo or £29.99/yr)`;
           }
-          milestoneActionCard.style.display = 'flex';
           if (a3MilestoneUpgradeBtn) {
+            a3MilestoneUpgradeBtn.textContent = isHighMilestone ? 'Unlock Pro / Suite' : 'Claim £1.99 Intro';
             a3MilestoneUpgradeBtn.onclick = () => {
-              chrome.tabs.create({ url: 'https://sweeprdeepblock.com/order?plan=monthly&intro=1&utm_source=extension_a3' });
+              const targetPlanUrl = isHighMilestone
+                ? 'https://sweeprdeepblock.com/order?plan=annual&utm_source=extension_a3_1000'
+                : 'https://sweeprdeepblock.com/order?plan=monthly&intro=1&utm_source=extension_a3_100';
+              chrome.tabs.create({ url: targetPlanUrl });
             };
           }
+          milestoneActionCard.style.display = 'flex';
           if (a3MilestoneDismissBtn) {
             a3MilestoneDismissBtn.onclick = () => {
               chrome.storage.local.set({ a3MilestoneDismissedAt: Date.now() });
@@ -335,17 +342,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const dismissedRecent = a4Store && a4Store.a4DismissedAt && Date.now() - Number(a4Store.a4DismissedAt) < 7 * 86400 * 1000;
         if ((state.stepUpSaveEligible || state.winbackEligible) && !dismissedRecent) {
           const wbTier = state.winbackTier || 'tier_d30';
-          let bannerCopy = `💡 Intro Month Ending Soon — Lock £4.99/mo Forever on Annual Plan`;
+          let bannerCopy = `💡 Intro Month Ending (${mState.totalThreats.toLocaleString()} blocks, ${cookies} cookies) — Lock £29.99/yr (£2.50/mo) Forever`;
           let targetUrl = 'https://sweeprdeepblock.com/order?plan=annual&utm_source=extension_a4';
           if (state.winbackEligible) {
             if (wbTier === 'tier_d90') {
               bannerCopy = `🛡️ D90 Win-Back: Complete Security Suite (DeepBlock+VPN+Cleaner) £89.99/yr (Save 45%)`;
               targetUrl = 'https://sweeprdeepblock.com/order?plan=suite_annual&winback=tier_d90&utm_source=extension_d90';
             } else if (wbTier === 'tier_d60') {
-              bannerCopy = `⚡ D60 Win-Back: Lock £4.99/mo Annual + FREE 12-Month RAM Tamer`;
+              bannerCopy = `⚡ D60 Win-Back: Lock £29.99/yr (£2.50/mo) Annual + FREE 12-Month RAM Tamer`;
               targetUrl = 'https://sweeprdeepblock.com/order?plan=annual&winback=tier_d60&utm_source=extension_d60';
             } else {
-              bannerCopy = `⚡ D30 Win-Back (${mState.totalThreats.toLocaleString()} blocks): 6-Month Plan £44.99 (Save 25%)`;
+              bannerCopy = `⚡ D30 Win-Back (${mState.totalThreats.toLocaleString()} blocks): 6-Month Plan £19.99 (Save 33%)`;
               targetUrl = 'https://sweeprdeepblock.com/order?plan=six_month&winback=tier_d30&utm_source=extension_d30';
             }
           }
@@ -370,7 +377,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // Automation A5: Sweepr Ecosystem Cross-Sell Router (Sweepr Cleaner & Sweepr VPN)
+    // Automation A5: Sweepr Ecosystem Cross-Sell Router (Sweepr Complete Security Suite / Cleaner / VPN)
     const ecosystemCrossSellCard = document.getElementById('ecosystemCrossSellCard');
     const ecosystemCrossSellText = document.getElementById('ecosystemCrossSellText');
     const a5CrossSellCtaBtn = document.getElementById('a5CrossSellCtaBtn');
@@ -380,16 +387,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const dismissedRecent = a5Store && a5Store.a5DismissedAt && Date.now() - Number(a5Store.a5DismissedAt) < 14 * 86400 * 1000;
         const tabsHib = Number(stats.tabsHibernated) || 0;
         const slowdownPct = Number(state.ramMetrics && state.ramMetrics.slowdownPct) || 0;
-        const triggerCleaner = tabsHib >= 20 || slowdownPct >= 45;
-        const triggerVpn = Boolean(state.encryptedDnsEnabled || isPro);
+        const totalProtected = ads + cookies;
+        const triggerCleaner = !state.ramTamerActive && (tabsHib >= 20 || slowdownPct >= 45);
+        const triggerVpn = !state.ramTamerActive && Boolean(state.encryptedDnsEnabled || (isPro && totalProtected >= 150));
         if (!dismissedRecent && (triggerCleaner || triggerVpn)) {
           const targetUrl = triggerCleaner
-            ? 'https://sweeprcleaner.com/?utm_source=deepblock_a5&utm_medium=ram_trigger'
-            : 'https://sweeprvpn.com/?utm_source=deepblock_a5&utm_medium=dns_trigger';
+            ? 'https://sweeprdeepblock.com/order?plan=suite_annual&utm_source=extension_a5&utm_medium=ram_trigger'
+            : 'https://sweeprdeepblock.com/order?plan=suite_annual&utm_source=extension_a5&utm_medium=dns_trigger';
           if (ecosystemCrossSellText) {
             ecosystemCrossSellText.textContent = triggerCleaner
-              ? '🧹 High RAM usage spotted — Clean OS junk with Sweepr Cleaner'
-              : '🔒 Encrypt ISP & Wi-Fi traffic across all apps with Sweepr VPN';
+              ? '🧹 High RAM usage spotted — Unlock Complete Suite (DeepBlock + RAM Tamer + Cleaner + VPN) £89.99/yr'
+              : '🔒 Encrypt ISP & Wi-Fi traffic across 5 devices with Sweepr Complete Security Suite (£89.99/yr)';
+          }
+          if (a5CrossSellCtaBtn) {
+            a5CrossSellCtaBtn.textContent = 'Bundle & Save ↗';
           }
           ecosystemCrossSellCard.style.display = 'flex';
           if (a5CrossSellCtaBtn) {

@@ -118,7 +118,8 @@ function renderEuPage({
       <p class="text-slate-300 text-base sm:text-lg leading-relaxed">${lead}</p>
       <div class="flex flex-wrap gap-3 pt-2">
         <a href="/download" class="px-5 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-sm no-underline">${ctaInstall} →</a>
-        <a href="/order?plan=annual" class="px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm border border-slate-700 no-underline">${ctaPro}</a>
+        <a href="/order?plan=annual" class="px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm border border-slate-700 no-underline">${ctaPro} (£29.99/yr)</a>
+        <a href="/order?plan=suite_annual" class="px-5 py-3 rounded-xl bg-emerald-950/80 hover:bg-emerald-900 text-emerald-300 font-bold text-sm border border-emerald-500/40 no-underline">Complete Suite (£89.99/yr) →</a>
         <a href="${guideLink}" class="px-4 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-emerald-400 font-bold text-sm border border-emerald-500/30 no-underline">${guideLabel}</a>
       </div>
     </div>
@@ -160,7 +161,9 @@ function renderEuPage({
         <a href="/fr" class="hover:text-white">Français (/fr)</a>
         <a href="/site" class="hover:text-white">150 Site Audits</a>
         <a href="/stories" class="hover:text-white">Customer Stories</a>
+        <a href="/glossary" class="hover:text-white">Glossary</a>
         <a href="/tools" class="hover:text-white">Diagnostic Tools</a>
+        <a href="/order?plan=suite_annual" class="text-emerald-400 font-bold hover:underline">Complete Suite (£89.99/yr)</a>
       </div>
     </div>
   </footer>

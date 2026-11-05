@@ -13,7 +13,7 @@ const TOOLS = [
     slug: 'index',
     canonicalPath: '/tools',
     title: 'Free Browser Privacy, Adblock & Scam Diagnostic Tools | SWEEPR',
-    description: 'Run 4 free client-side browser diagnostics: test your ad blocker against MV3 detection, check DNS & URL tracker leaks, audit browser fingerprinting, and scan shops.',
+    description: 'Run 5 free client-side browser diagnostics: test MV3 ad blocking, check DNS & URL tracker leaks, audit fingerprinting, scan shops, and calculate RAM bloat.',
     h1: 'Free Browser Privacy, Adblock & Scam Diagnostic Tools',
     badge: 'SWEEPR Interactive Diagnostic Suite • 100% Client-Side',
     lead: 'Test your current browser protection in under 5 seconds. Every diagnostic runs locally in your browser with zero browsing history logged.',
@@ -21,7 +21,7 @@ const TOOLS = [
     faqs: [
       {
         q: 'Are these browser privacy and adblock diagnostic tools free to use?',
-        a: 'Yes. All 4 interactive diagnostic tools on SWEEPR DeepBlock are 100% free and execute locally inside your browser without requiring an account.'
+        a: 'Yes. All 5 interactive diagnostic tools on SWEEPR DeepBlock are 100% free and execute locally inside your browser without requiring an account.'
       },
       {
         q: 'How can I fix failed checks in the Adblock, DNS, or Fingerprint tests?',
@@ -57,6 +57,12 @@ const TOOLS = [
           <h2 style="font-size:1.25rem;margin:0 0 8px;color:#f8fafc;">Is This Online Shop a Scam? (Instant Check)</h2>
           <p style="color:#94a3b8;font-size:0.92rem;margin:0 0 14px;">Check any store URL for cloned dropshipping templates, suspicious TLD patterns, fake urgency timers, and checkout red flags.</p>
           <span style="color:#f59e0b;font-weight:700;font-size:0.9rem;">Scan a Store URL Now &rarr;</span>
+        </a>
+        <a href="/tools/browser-ram-calculator" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:14px;padding:22px;text-decoration:none;color:#f8fafc;">
+          <div style="font-size:0.78rem;color:#34d399;font-weight:700;text-transform:uppercase;margin-bottom:6px;">Tool 05 • Memory &amp; Tab Tamer</div>
+          <h2 style="font-size:1.25rem;margin:0 0 8px;color:#f8fafc;">Browser RAM &amp; Tab Bloat Calculator</h2>
+          <p style="color:#94a3b8;font-size:0.92rem;margin:0 0 14px;">Calculate how much RAM and battery your open tabs waste on background ad auctions and video trackers, and see your instant savings.</p>
+          <span style="color:#34d399;font-weight:700;font-size:0.9rem;">Calculate RAM Savings &rarr;</span>
         </a>
       </div>
     `
@@ -431,6 +437,80 @@ const TOOLS = [
         }
       </script>
     `
+  },
+  {
+    slug: 'browser-ram-calculator',
+    canonicalPath: '/tools/browser-ram-calculator',
+    title: 'Browser RAM & Tab Bloat Calculator (2026) | SWEEPR DeepBlock',
+    description: 'Calculate how much RAM and CPU your open Chrome, Edge, or Brave tabs waste on real-time ad auctions and background trackers, and see how much memory SWEEPR reclaims.',
+    h1: 'Live Browser RAM & Tab Bloat Calculator',
+    badge: 'Interactive Tool 05 • Memory & Tab Bloat Diagnostic',
+    lead: 'Adjust your open tab count and typical browsing mix below to calculate how much system RAM is consumed by real-time bidding (RTB) ad iframes, video telemetry loops, and idle background tabs.',
+    appName: 'SWEEPR Browser RAM & Tab Bloat Calculator',
+    faqs: [
+      {
+        q: 'Why do modern browser tabs consume so much RAM even when idle?',
+        a: 'Unblocked web pages spawn 15 to 40 third-party ad-auction iframes and background WebSocket telemetry timers that continuously allocate JavaScript heap memory even when the tab is in the background.'
+      },
+      {
+        q: 'How do SWEEPR DeepBlock and Total Tab & RAM Tamer reduce memory usage?',
+        a: 'SWEEPR DeepBlock blocks ad and tracker scripts at the C++ network layer before they allocate DOM heap memory (~185 MB saved per heavy tab), while the Total Tab & RAM Tamer module hibernates inactive background tabs and Sweepr Desktop Cleaner reclaims system cache.'
+      }
+    ],
+    renderToolInteractive: () => `
+      <div style="background:#111827;border:1px solid #1e293b;border-radius:16px;padding:24px;margin:24px 0;">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;margin-bottom:20px;">
+          <div>
+            <label for="ramTabCount" style="display:block;font-weight:700;margin-bottom:6px;color:#f8fafc;">Open Browser Tabs: <span id="ramTabCountVal" style="color:#10b981;">25 Tabs</span></label>
+            <input id="ramTabCount" type="range" min="5" max="120" value="25" oninput="recalcBrowserRam()" style="width:100%;accent-color:#10b981;" />
+          </div>
+          <div>
+            <label for="ramMixSelect" style="display:block;font-weight:700;margin-bottom:6px;color:#f8fafc;">Primary Browsing Workload:</label>
+            <select id="ramMixSelect" onchange="recalcBrowserRam()" style="width:100%;background:#090d16;border:1px solid #334155;color:#f8fafc;padding:10px 12px;border-radius:10px;font-size:0.9rem;">
+              <option value="210">Video Streaming, Fandom Wikis &amp; News (Heavy Ad Load)</option>
+              <option value="165" selected>Mixed SaaS, Social Feeds, Shopping &amp; Docs</option>
+              <option value="125">Developer Portals, Research &amp; Reference Tabs</option>
+            </select>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;">
+          <div style="background:#090d16;border:1px solid #1e293b;border-radius:10px;padding:14px;">
+            <div style="color:#94a3b8;font-size:0.78rem;">Unprotected Browser RAM</div>
+            <div id="ramUnprotectedVal" style="font-size:1.45rem;font-weight:800;color:#f59e0b;margin-top:4px;">4.13 GB</div>
+          </div>
+          <div style="background:#090d16;border:1px solid #10b981;border-radius:10px;padding:14px;">
+            <div style="color:#94a3b8;font-size:0.78rem;">RAM Saved by DeepBlock + Tab Tamer</div>
+            <div id="ramSavedVal" style="font-size:1.45rem;font-weight:800;color:#10b981;margin-top:4px;">2.27 GB Reclaimed</div>
+          </div>
+          <div style="background:#090d16;border:1px solid #1e293b;border-radius:10px;padding:14px;">
+            <div style="color:#94a3b8;font-size:0.78rem;">Blocked Background Ad Auctions / Hr</div>
+            <div id="ramAuctionsVal" style="font-size:1.45rem;font-weight:800;color:#38bdf8;margin-top:4px;">~3,500 RTB Calls</div>
+          </div>
+        </div>
+        <div style="margin-top:16px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.35);border-radius:12px;padding:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;">
+          <div style="max-width:560px;">
+            <div style="font-size:0.74rem;color:#34d399;font-weight:800;text-transform:uppercase;margin-bottom:4px;">4-in-1 Sweepr Complete Security Suite (£89.99/yr)</div>
+            <strong style="color:#f8fafc;font-size:0.98rem;">Combine DeepBlock Pro + Total Tab &amp; RAM Tamer + Sweepr Desktop Cleaner + Sweepr VPN</strong>
+            <div style="color:#94a3b8;font-size:0.86rem;margin-top:4px;">Eliminate browser ad bloat, hibernate idle tabs automatically, and clean system-wide disk caches across up to 5 devices.</div>
+          </div>
+          <a href="/order?plan=suite_annual&amp;src=ram_calculator" style="background:#10b981;color:#042f2e;font-weight:800;padding:10px 18px;border-radius:8px;text-decoration:none;font-size:0.88rem;">Get Complete Suite (£89.99/yr) &rarr;</a>
+        </div>
+      </div>
+      <script>
+        function recalcBrowserRam() {
+          var tabs = Number(document.getElementById('ramTabCount').value || 25);
+          var perTabMb = Number(document.getElementById('ramMixSelect').value || 165);
+          document.getElementById('ramTabCountVal').textContent = tabs + ' Tabs';
+          var totalMb = tabs * perTabMb;
+          var savedMb = Math.round(totalMb * 0.55);
+          var auctions = tabs * 140;
+          document.getElementById('ramUnprotectedVal').textContent = (totalMb / 1024).toFixed(2) + ' GB';
+          document.getElementById('ramSavedVal').textContent = (savedMb / 1024).toFixed(2) + ' GB Reclaimed';
+          document.getElementById('ramAuctionsVal').textContent = '~' + auctions.toLocaleString() + ' RTB Calls';
+        }
+        window.addEventListener('DOMContentLoaded', recalcBrowserRam);
+      </script>
+    `
   }
 ];
 
@@ -565,7 +645,8 @@ for (const tool of TOOLS) {
       </div>
       <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
         <a href="/download" style="background:#10b981;color:#042f2e;font-weight:800;padding:11px 20px;border-radius:8px;text-decoration:none;">Install Free Extension &rarr;</a>
-        <a href="/order?plan=annual" style="background:#1e293b;color:#f8fafc;border:1px solid #334155;font-weight:700;padding:10px 18px;border-radius:8px;text-decoration:none;">Unlock Pro (£4.99/mo Annual)</a>
+        <a href="/order?plan=annual" style="background:#1e293b;color:#f8fafc;border:1px solid #334155;font-weight:700;padding:10px 18px;border-radius:8px;text-decoration:none;">Unlock Pro (£2.50/mo Annual)</a>
+        <a href="/order?plan=suite_annual" style="background:rgba(16,185,129,0.14);color:#34d399;border:1px solid rgba(16,185,129,0.4);font-weight:700;padding:10px 16px;border-radius:8px;text-decoration:none;">Complete Suite (£89.99/yr) &rarr;</a>
       </div>
     </div>
 

@@ -154,6 +154,38 @@
     <!-- 8 Test Cards Grid -->
     <h2 class="sr-only">Live Browser Verification Checks</h2>
     <div id="testGrid" class="grid grid-cols-1 md:grid-cols-2 gap-5"></div>
+
+    <!-- Zero-Email Viral Scorecard & Give-1-Get-1 Referral Challenge Card -->
+    <section id="viralReferralSection" class="mt-10 rounded-3xl p-6 sm:p-8 border-2 border-emerald-500/80 bg-gradient-to-br from-slate-900 via-slate-900 to-emerald-950 text-white shadow-2xl">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+        <div class="lg:col-span-7 space-y-3">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-xs font-black uppercase tracking-wider">
+            <span>🏆 VIRAL MV3 CHALLENGE • ZERO-EMAIL REFERRAL REWARDS</span>
+          </div>
+          <h2 class="text-2xl sm:text-3xl font-black text-white">
+            Share Your Live Test Lab Scorecard — Give 14 Days, Get +30 Days Pro + RAM Tamer
+          </h2>
+          <p class="text-sm text-slate-300 leading-relaxed">
+            Challenge a friend or post your verified 8-vector MV3 scorecard on Reddit/X. Every friend who runs the Test Lab &amp; installs DeepBlock via your anonymous referral code automatically credits <strong>+30 Days of DeepBlock Pro + Total Tab &amp; RAM Tamer</strong> to your device via extension heartbeat (<strong class="text-emerald-300">0 emails required</strong>).
+          </p>
+          <div class="flex flex-wrap gap-3 pt-2">
+            <button type="button" id="copyReferralChallengeBtn" class="py-3 px-5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs sm:text-sm cursor-pointer shadow-lg">
+              Copy Challenge Link &amp; Earn +30 Days Pro →
+            </button>
+            <a href="/download?install=1" class="py-3 px-5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs sm:text-sm border border-slate-700 no-underline">
+              Install Free Extension
+            </a>
+            <a href="/order?plan=suite_annual" class="py-3 px-5 rounded-xl bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 font-bold text-xs sm:text-sm border border-sky-400/40 no-underline">
+              Complete Security Suite (£89.99/yr) →
+            </a>
+          </div>
+          <div id="referralStatusHint" class="text-xs font-mono text-emerald-300 pt-1">Generating your anonymous zero-email challenge link...</div>
+        </div>
+        <div class="lg:col-span-5">
+          <img id="liveShareCardBadgeImg" src="/api/test-lab/share-card.svg?score=100&amp;blocked=8&amp;ram=640&amp;ref=verified" alt="SWEEPR DeepBlock Live Test Lab Scorecard Badge" width="600" height="315" class="w-full rounded-2xl border border-emerald-500/40 shadow-xl" loading="lazy" />
+        </div>
+      </div>
+    </section>
   </main>
   <footer class="mt-16 py-8 text-center text-gray-500 text-sm border-t border-gray-200">
     <div class="flex flex-wrap justify-center gap-6 mb-4">
@@ -469,6 +501,46 @@
       `
         )
         .join('');
+
+      // Initialize Zero-Email Viral Scorecard & Referral Link
+      try {
+        const pctScore = Math.round((passedTotal / Math.max(1, results.length)) * 100);
+        const deviceSeed = localStorage.getItem('sweepr_ga4_cid') || 'anon_' + Date.now();
+        const refRes = await fetch('/api/referral/create', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ deviceId: deviceSeed, licenseKey: localStorage.getItem('sweepr_license_key') || '' })
+        }).then((r) => (r.ok ? r.json() : null)).catch(() => null);
+        const refCode = (refRes && refRes.code) || 'verified';
+        const challengeUrl = (refRes && refRes.shareUrls && refRes.shareUrls.testLabChallenge) || `${window.location.origin}/test-lab?ref=${refCode}`;
+        const badgeImg = document.getElementById('liveShareCardBadgeImg');
+        if (badgeImg) {
+          badgeImg.src = `/api/test-lab/share-card.svg?score=${pctScore}&blocked=${passedTotal}&ram=640&ref=${encodeURIComponent(refCode)}`;
+        }
+        const hintEl = document.getElementById('referralStatusHint');
+        if (hintEl) {
+          hintEl.textContent = `Your Challenge URL: ${challengeUrl} (Code: ${refCode} • Zero-Email Auto-Credit)`;
+        }
+        const copyBtn = document.getElementById('copyReferralChallengeBtn');
+        if (copyBtn) {
+          copyBtn.onclick = () => {
+            navigator.clipboard.writeText(challengeUrl).catch(() => {});
+            copyBtn.textContent = '✓ Copied Challenge Link (' + refCode + ')!';
+            if (typeof window.sweeprTrackEvent === 'function') {
+              window.sweeprTrackEvent('test_lab_referral_shared', { code: refCode, score: pctScore });
+            }
+          };
+        }
+        const urlParams = new URLSearchParams(window.location.search || '');
+        const incomingRef = urlParams.get('ref');
+        if (incomingRef && incomingRef.startsWith('u_')) {
+          fetch('/api/referral/redeem', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ code: incomingRef, deviceId: deviceSeed })
+          }).catch(() => {});
+        }
+      } catch (e) {}
     }
 
     window.addEventListener('DOMContentLoaded', () => {

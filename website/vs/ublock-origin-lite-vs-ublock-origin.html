@@ -44,7 +44,10 @@
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-    gtag('config', 'G-01MNBQSL9K');
+    gtag('config', 'G-01MNBQSL9K', {
+      transport_url: window.location.origin + '/metrics',
+      first_party_collection: true
+    });
   </script>
 </head>
 <body style="font-family:system-ui,-apple-system,sans-serif;background:#090d16;color:#f8fafc;margin:0;line-height:1.65;">
@@ -146,7 +149,7 @@
         </span>
       </div>
       <p style="color:#94a3b8;font-size:0.9rem;line-height:1.55;margin:0 0 14px;">
-        Below is a live sample of active Chromium &amp; Gecko rules executed by SWEEPR DeepBlock v1.2.5 for <code>/vs/ublock-origin-lite-vs-ublock-origin</code>. Network rules execute in C++ browser memory (avg <strong>20&micro;s</strong> lookup latency, <strong>2.0ms</strong> DOM observer pass, saving <strong>~202 MB RAM</strong> per active session):
+        Below is a live sample of active Chromium &amp; Gecko rules executed by SWEEPR DeepBlock v1.2.7 for <code>/vs/ublock-origin-lite-vs-ublock-origin</code>. Network rules execute in C++ browser memory (avg <strong>20&micro;s</strong> lookup latency, <strong>2.0ms</strong> DOM observer pass, saving <strong>~202 MB RAM</strong> per active session):
       </p>
       <div style="overflow-x:auto;">
         <table style="width:100%;border-collapse:collapse;font-size:0.82rem;color:#e2e8f0;">

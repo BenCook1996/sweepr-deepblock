@@ -14,17 +14,17 @@ const STORIES = [
   {
     slug: 'switching-from-total-adblock-renewal-shock',
     title: 'Case Study: Escaping £99/yr Adblocker Renewal Traps | SWEEPR',
-    metaDesc: 'How UK households switched from legacy £99–£120/yr auto-renewal adblockers to SWEEPR DeepBlock transparent £2.99/mo pricing with 1-click portal control.',
+    metaDesc: 'How UK households switched from £99/yr auto-renewal adblockers to SWEEPR DeepBlock transparent £29.99/yr Pro pricing (£2.50/mo eq.) with 1-click portal control.',
     category: 'Renewal-Shock Switcher Benchmark',
     persona: 'UK Household (4 Devices — Chrome & Edge)',
     beforeMetric: '£99.00/yr Renewal Charge + Nag Popups',
-    afterMetric: '£29.88/yr (£2.49/mo) + 0 Popups',
+    afterMetric: '£29.99/yr (£2.50/mo eq.) + 0 Popups',
     ramSaved: '410 MB per news tab',
     summary: 'Audit of billing transparency, MV3 rule density, and 1-click self-service cancellation comparing legacy intro-trap blockers against SWEEPR DeepBlock.',
     problem: 'After signing up for a £19 introductory first-year deal with a legacy consumer adblocker, the household was billed £99.00 on auto-renewal while still seeing sponsored "Acceptable Ads" and constant in-extension upsell popups.',
-    solution: 'Migrated 4 desktop browsers to SWEEPR DeepBlock Annual (£29.88/yr flat rate) via the Renewal-Shock Switcher Hub, enabling 30,000+ declarativeNetRequest rules and Automated GDPR Cookie-Wall Rejection.',
+    solution: 'Migrated 4 desktop browsers to SWEEPR DeepBlock Pro Annual (£29.99/yr flat rate, or £89.99/yr Complete Security Suite across 5 devices) via the Renewal-Shock Switcher Hub, enabling 242 C++ declarativeNetRequest rules and Automated GDPR Cookie-Wall Rejection.',
     results: [
-      'Saved £69.12/year immediately with guaranteed flat-rate renewal pricing and zero hidden tiered add-on charges.',
+      'Saved £69.01/year immediately with guaranteed flat-rate £29.99/yr renewal pricing and zero hidden tiered add-on charges.',
       'Eliminated 100% of "Acceptable Ads" whitelisted sponsored placements across UK news and shopping domains.',
       'Verified 1-click self-service pause, downgrade, and refund controls inside the customer portal without calling support.'
     ],

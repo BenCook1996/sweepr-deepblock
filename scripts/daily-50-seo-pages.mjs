@@ -17,6 +17,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { loadLiveRules, buildProofSectionHtml } from './enrich-pillars-with-live-proof.mjs';
+import { runGeoAndLlmsSync } from './sync-geo-and-llms.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = path.resolve(__dirname, '..');
@@ -907,16 +908,16 @@ function renderHtml(cand, existingPool = [], existingIdx = 0) {
       `${prob.metaDescPrefix} ${shortP}. Passes 8/8 MV3 anti-detection checks and auto-rejects cookie banners in under 50ms.`
     ], shortP);
     h1 = `${prob.h1Prefix} ${p.name} ${prob.h1Suffix}`;
-    lead = `Looking for the most reliable way to solve ${p.issue.toLowerCase()} on ${p.name}? SWEEPR DeepBlock v1.2.2 neutralizes video and display ad injections, auto-rejects cookie consent banners in under 50ms, and passes all 8/8 Manifest V3 anti-detection checks.`;
+    lead = `Looking for the most reliable way to solve ${p.issue.toLowerCase()} on ${p.name}? SWEEPR DeepBlock v1.2.7 neutralizes video and display ad injections, auto-rejects cookie consent banners in under 50ms, and passes all 8/8 Manifest V3 anti-detection checks.`;
     body = `
     <h2>Why Legacy Ad Blockers Fail on ${p.name} in 2026</h2>
     <p>Across <strong>${p.name}</strong> (${p.category}), visitors encounter ${p.issue.toLowerCase()}. Standard Manifest V2 or static filter lists are frequently detected by client-side anti-adblock scripts, resulting in playback interruptions, broken page scrollbars, or persistent cookie walls.</p>
-    <p><strong>SWEEPR DeepBlock v1.2.2</strong> combines high-speed <code>declarativeNetRequest</code> network rules with local-first DeepStealth cosmetic scriptlets so pages load cleanly without triggering anti-adblock warnings.</p>
+    <p><strong>SWEEPR DeepBlock v1.2.7</strong> combines high-speed <code>declarativeNetRequest</code> network rules with local-first DeepStealth cosmetic scriptlets so pages load cleanly without triggering anti-adblock warnings.</p>
 
     <h2>How SWEEPR DeepBlock Optimizes ${p.name}</h2>
     <ul>
       <li><strong>Before SWEEPR DeepBlock:</strong> ${prob.beforeStat} (${p.issue}).</li>
-      <li><strong>With SWEEPR DeepBlock v1.2.2:</strong> ${prob.afterStat} — verified at <strong>${prob.perfStat}</strong>.</li>
+      <li><strong>With SWEEPR DeepBlock v1.2.7:</strong> ${prob.afterStat} — verified at <strong>${prob.perfStat}</strong>.</li>
       <li><strong>Automatic Cookie Pop-Up Rejector (&lt;50ms):</strong> Automatically selects "Reject All" on OneTrust, Quantcast, Didomi, TrustArc, and 150+ CMP overlays while keeping page scroll unlocked.</li>
       <li><strong>Total Tab &amp; RAM Tamer:</strong> Halts background real-time bidding (RTB) ad auction loops and hibernates idle tabs to cut browser memory usage by up to 62%.</li>
       <li><strong>Live 8/8 Anti-Detection Verification:</strong> Audit your browser setup anytime in our <a href="/test-lab">8-Point Adblock &amp; Anti-Detection Test Lab</a>.</li>
@@ -929,7 +930,7 @@ function renderHtml(cand, existingPool = [], existingIdx = 0) {
           <tr style="background:#1e293b;color:#f8fafc;text-align:left;">
             <th style="padding:12px 14px;">Protection Metric</th>
             <th style="padding:12px 14px;">Unprotected / Basic Blocker</th>
-            <th style="padding:12px 14px;color:#10b981;">SWEEPR DeepBlock v1.2.2</th>
+            <th style="padding:12px 14px;color:#10b981;">SWEEPR DeepBlock v1.2.7</th>
           </tr>
         </thead>
         <tbody>
@@ -964,7 +965,7 @@ function renderHtml(cand, existingPool = [], existingIdx = 0) {
       <li><strong>Reload ${shortP}:</strong> Open ${p.name} or run the <a href="/test-lab">8/8 Live Test Lab</a> to confirm full DeepStealth protection.</li>
     </ol>`;
     faqs = [
-      { q: `Does SWEEPR DeepBlock work on ${p.name} after Chrome's Manifest V3 update?`, a: `Yes. SWEEPR DeepBlock v1.2.2 is purpose-built for Manifest V3 across Chrome, Edge, Brave, Opera, Vivaldi, Arc, Firefox, and Safari, passing all 8/8 anti-detection checks without playback warnings.` },
+      { q: `Does SWEEPR DeepBlock work on ${p.name} after Chrome's Manifest V3 update?`, a: `Yes. SWEEPR DeepBlock v1.2.7 is purpose-built for Manifest V3 across Chrome, Edge, Brave, Opera, Vivaldi, Arc, Firefox, and Safari, passing all 8/8 anti-detection checks without playback warnings.` },
       { q: `Will SWEEPR DeepBlock automatically reject cookie consent pop-ups on ${p.name}?`, a: `Yes. SWEEPR DeepBlock automatically clicks "No / Reject All" on 150+ GDPR and CCPA cookie consent frameworks in under 50 milliseconds while preserving smooth page scrolling.` },
       { q: `How much browser RAM does SWEEPR DeepBlock save when browsing ${p.name}?`, a: `By terminating background ad auction scripts before they execute and hibernating inactive tabs, SWEEPR DeepBlock reduces browser RAM consumption by up to 62%.` }
     ];
@@ -978,10 +979,10 @@ function renderHtml(cand, existingPool = [], existingIdx = 0) {
       `Best ad blocker for ${shortB}: block video ads with 8/8 anti-detection, auto-reject cookie banners in <50ms, and cut browser RAM 62%.`
     ], shortB);
     h1 = `Best Ad Blocker for ${b.name}: 2026 Setup & Verification Guide`;
-    lead = `${b.notes} Follow this 2026 setup guide to configure SWEEPR DeepBlock v1.2.2 on ${b.name} (${b.os}) for 8/8 anti-detection video ad blocking, sub-50ms automatic cookie consent rejection, and up to 62% lower memory usage.`;
+    lead = `${b.notes} Follow this 2026 setup guide to configure SWEEPR DeepBlock v1.2.7 on ${b.name} (${b.os}) for 8/8 anti-detection video ad blocking, sub-50ms automatic cookie consent rejection, and up to 62% lower memory usage.`;
     body = `
     <h2>Does ${b.name} Need a Dedicated Ad Blocker in 2026?</h2>
-    <p>While <strong>${b.name}</strong> (${b.os}) is popular among performance and privacy-minded users, default browser filters rarely neutralize server-side video ad injections on YouTube and Twitch, 150+ CMP cookie consent banners, or newly registered e-commerce scam stores. Adding <strong>SWEEPR DeepBlock v1.2.2</strong> upgrades ${shortB} with a 6-module protection engine.</p>
+    <p>While <strong>${b.name}</strong> (${b.os}) is popular among performance and privacy-minded users, default browser filters rarely neutralize server-side video ad injections on YouTube and Twitch, 150+ CMP cookie consent banners, or newly registered e-commerce scam stores. Adding <strong>SWEEPR DeepBlock v1.2.7</strong> upgrades ${shortB} with a 6-module protection engine.</p>
 
     <h2>Key Capabilities on ${b.name} (${b.os})</h2>
     <ul>
@@ -999,7 +1000,7 @@ function renderHtml(cand, existingPool = [], existingIdx = 0) {
       <li><strong>Run the 8/8 Live Diagnostic:</strong> Open <a href="/test-lab">sweeprdeepblock.com/test-lab</a> in ${shortB} to confirm 100% network, cosmetic, and fingerprint protection.</li>
     </ol>
 
-    <h2>${shortB} Built-In Filtering vs. SWEEPR DeepBlock v1.2.2</h2>
+    <h2>${shortB} Built-In Filtering vs. SWEEPR DeepBlock v1.2.7</h2>
     <div style="overflow-x:auto;margin:18px 0;">
       <table style="width:100%;border-collapse:collapse;background:#111827;border:1px solid #1e293b;border-radius:10px;overflow:hidden;font-size:0.93rem;">
         <thead>
@@ -1034,8 +1035,8 @@ function renderHtml(cand, existingPool = [], existingIdx = 0) {
       </table>
     </div>`;
     faqs = [
-      { q: `What is the best ad blocker for ${b.name} in 2026?`, a: `SWEEPR DeepBlock v1.2.2 is engineered specifically for ${b.name} on ${b.os}, combining 8/8 anti-detection video ad blocking with sub-50ms automatic cookie banner rejection, AI search slop filtering, and a Fake Online Shop detector.` },
-      { q: `How many devices does one SWEEPR DeepBlock license cover on ${b.name}?`, a: `A single SWEEPR DeepBlock Pro license covers up to 5 browsers and devices across Windows, macOS, Linux, iOS, and Android with instant QR sync.` },
+      { q: `What is the best ad blocker for ${b.name} in 2026?`, a: `SWEEPR DeepBlock v1.2.7 is engineered specifically for ${b.name} on ${b.os}, combining 8/8 anti-detection video ad blocking with sub-50ms automatic cookie banner rejection, AI search slop filtering, and a Fake Online Shop detector.` },
+      { q: `How many devices does one SWEEPR DeepBlock license cover on ${b.name}?`, a: `A single SWEEPR DeepBlock Pro license (£29.99/yr) covers up to 4 browsers/devices, while the Sweepr Complete Security Suite (£89.99/yr) covers up to 5 devices across Windows, macOS, Linux, iOS, and Android.` },
       { q: `How can I test if my ad blocker is working properly on ${b.name}?`, a: `Visit https://sweeprdeepblock.com/test-lab on ${b.name} to run all 8 live verification checks covering video ad scripts, tracker beacons, cookie walls, URL parameter stripping, and canvas fingerprinting.` }
     ];
   } else if (cand.cluster === 'vs') {
@@ -1047,7 +1048,7 @@ function renderHtml(cand, existingPool = [], existingIdx = 0) {
       `SWEEPR DeepBlock vs ${shortC} (2026): compare 8/8 MV3 anti-detection, <50ms cookie banner auto-rejection, and RAM optimization.`
     ], shortC);
     h1 = `SWEEPR DeepBlock vs ${c.name}: 2026 Feature, Speed & Privacy Comparison`;
-    lead = `Comparing SWEEPR DeepBlock v1.2.2 with ${c.name}? See why users switch to SWEEPR DeepBlock for verified 8/8 anti-detection video ad blocking, <50ms automatic cookie consent rejection, real-time Fake Scam Shop alerts, and transparent pricing.`;
+    lead = `Comparing SWEEPR DeepBlock v1.2.7 with ${c.name}? See why users switch to SWEEPR DeepBlock for verified 8/8 anti-detection video ad blocking, <50ms automatic cookie consent rejection, real-time Fake Scam Shop alerts, and transparent £29.99/yr Pro pricing.`;
     body = `
     <h2>Side-by-Side Comparison: SWEEPR DeepBlock vs. ${c.name}</h2>
     <div style="overflow-x:auto;margin:18px 0;">
@@ -1055,7 +1056,7 @@ function renderHtml(cand, existingPool = [], existingIdx = 0) {
         <thead>
           <tr style="background:#1e293b;color:#f8fafc;text-align:left;">
             <th style="padding:12px 14px;">Feature / Protection Layer</th>
-            <th style="padding:12px 14px;color:#10b981;">SWEEPR DeepBlock v1.2.2</th>
+            <th style="padding:12px 14px;color:#10b981;">SWEEPR DeepBlock v1.2.7</th>
             <th style="padding:12px 14px;">${c.name}</th>
           </tr>
         </thead>
@@ -1082,12 +1083,12 @@ function renderHtml(cand, existingPool = [], existingIdx = 0) {
           </tr>
           <tr style="border-top:1px solid #1e293b;">
             <td style="padding:10px 14px;"><strong>Total Tab &amp; RAM Tamer (-62% Memory)</strong></td>
-            <td style="padding:10px 14px;color:#10b981;font-weight:700;">Included in Pro Suite</td>
+            <td style="padding:10px 14px;color:#10b981;font-weight:700;">Included in Complete Suite</td>
             <td style="padding:10px 14px;color:#94a3b8;">${c.ramTamer}</td>
           </tr>
           <tr style="border-top:1px solid #1e293b;">
             <td style="padding:10px 14px;"><strong>Pricing &amp; Renewal Transparency</strong></td>
-            <td style="padding:10px 14px;color:#10b981;font-weight:700;">£9.99/mo or £59.99/yr (5 Devices)</td>
+            <td style="padding:10px 14px;color:#10b981;font-weight:700;">£29.99/yr Pro (4 Devices) or £89.99/yr Suite (5 Devices)</td>
             <td style="padding:10px 14px;color:#94a3b8;">${c.price}</td>
           </tr>
         </tbody>
@@ -1098,12 +1099,12 @@ function renderHtml(cand, existingPool = [], existingIdx = 0) {
     <ul>
       <li><strong>No "Acceptable Ads" Whitelists or DNS DOM Limitations:</strong> Unlike DNS-only blockers or extensions that accept payments from ad networks, SWEEPR DeepBlock enforces 100% zero-compromise DOM and network filtering.</li>
       <li><strong>6-in-1 Browser Security Suite:</strong> Replaces separate extensions for video ad blocking, cookie consent auto-rejection, URL tracking parameter stripping, AI search cleansing, scam store detection, and tab memory hibernation.</li>
-      <li><strong>Transparent UK Pricing &amp; 14-Day Money-Back Guarantee:</strong> One license covers up to 5 desktop and mobile devices with 1-click self-serve cancellation at <a href="/support">sweeprdeepblock.com/support</a>.</li>
+      <li><strong>Transparent UK Pricing &amp; 14-Day Money-Back Guarantee:</strong> £29.99/yr Pro covers 4 devices (or £89.99/yr Complete Security Suite covers 5 devices) with 1-click self-serve cancellation at <a href="/support">sweeprdeepblock.com/support</a>.</li>
     </ul>`;
     faqs = [
       { q: `Why choose SWEEPR DeepBlock over ${c.name} in 2026?`, a: `Unlike ${c.name}, SWEEPR DeepBlock combines 8/8 Manifest V3 anti-detection video ad blocking with an automatic <50ms cookie consent rejector, a Fake Online Shop scam detector, an AI Slop search filter, and a 62% Tab RAM Tamer in one lightweight extension.` },
       { q: `Can I import or switch from ${shortC} to SWEEPR DeepBlock in under a minute?`, a: `Yes. Install SWEEPR DeepBlock from sweeprdeepblock.com/download, disable ${shortC} so it does not trigger duplicate anti-adblock detection scripts, and verify 8/8 protection in the live Test Lab.` },
-      { q: `Does SWEEPR DeepBlock charge surprise auto-renewal markups like legacy adblockers?`, a: `Never. SWEEPR DeepBlock offers clear, upfront pricing (£9.99/mo, £44.99/6mo, or £59.99/yr for 5 devices) backed by a money-back guarantee.` }
+      { q: `Does SWEEPR DeepBlock charge surprise auto-renewal markups like legacy adblockers?`, a: `Never. SWEEPR DeepBlock offers clear, upfront pricing (£1.99 1st-Month Intro, £29.99/yr Pro for 4 devices, or £89.99/yr Complete Security Suite for 5 devices) backed by a money-back guarantee.` }
     ];
   } else {
     const { g } = cand;
@@ -1120,11 +1121,11 @@ function renderHtml(cand, existingPool = [], existingIdx = 0) {
     body = `
     <h2>How SWEEPR DeepBlock Solves This Automatically</h2>
     <p>${g.summary}</p>
-    <p>With Chrome, Edge, Brave, and Chromium browsers enforcing Manifest V3 rules in 2026, legacy script blockers frequently fail or cause page layout freezes. <strong>SWEEPR DeepBlock v1.2.2</strong> resolves this at both the network layer (<code>declarativeNetRequest</code>) and the DOM scriptlet layer in under 50 milliseconds.</p>
+    <p>With Chrome, Edge, Brave, and Chromium browsers enforcing Manifest V3 rules in 2026, legacy script blockers frequently fail or cause page layout freezes. <strong>SWEEPR DeepBlock v1.2.7</strong> resolves this at both the network layer (<code>declarativeNetRequest</code>) and the DOM scriptlet layer in under 50 milliseconds.</p>
 
     <h2>Step-by-Step Implementation Guide</h2>
     <ol>
-      <li><strong>Add SWEEPR DeepBlock v1.2.2:</strong> Install the extension in 30 seconds from <a href="/download">sweeprdeepblock.com/download</a> for Chrome, Firefox, Edge, Safari, Brave, Opera, Arc, or Orion.</li>
+      <li><strong>Add SWEEPR DeepBlock v1.2.7:</strong> Install the extension in 30 seconds from <a href="/download">sweeprdeepblock.com/download</a> for Chrome, Firefox, Edge, Safari, Brave, Opera, Arc, or Orion.</li>
       <li><strong>Enable All 6 Protection Engines:</strong> Open the toolbar popup to confirm Video &amp; Page Ad Blocking, Auto-Decline Cookie Pop-Ups, Hide Search Engine Spam, Scam Online Shop Alerts, and Tracker-Free Links are active.</li>
       <li><strong>Verify in the 8-Point Test Lab:</strong> Run our live <a href="/test-lab">8-Point Adblock &amp; Anti-Detection Test Lab</a> to benchmark your browser in real time.</li>
     </ol>
@@ -1136,7 +1137,7 @@ function renderHtml(cand, existingPool = [], existingIdx = 0) {
       <li><strong>Local-First Privacy Architecture:</strong> 100% on-device rule execution — zero browsing history or visited URLs ever leave your device.</li>
     </ul>`;
     faqs = [
-      { q: `Does SWEEPR DeepBlock handle ${(g.shortTitle || g.title).replace(/ \(2026\)$/, '').toLowerCase()} automatically?`, a: `Yes. Once installed, SWEEPR DeepBlock v1.2.2 applies these rules automatically in under 50ms across all supported desktop and mobile browsers without manual filter maintenance.` },
+      { q: `Does SWEEPR DeepBlock handle ${(g.shortTitle || g.title).replace(/ \(2026\)$/, '').toLowerCase()} automatically?`, a: `Yes. Once installed, SWEEPR DeepBlock v1.2.7 applies these rules automatically in under 50ms across all supported desktop and mobile browsers without manual filter maintenance.` },
       { q: `Which browsers support this SWEEPR DeepBlock protection module?`, a: `All 6 protection modules are supported across Google Chrome (MV3), Mozilla Firefox, Microsoft Edge, Apple Safari (macOS & iOS), Brave, Opera GX, Vivaldi, Arc, Orion, Floorp, Zen, and Thorium.` },
       { q: `How can I verify that protection is active on my browser?`, a: `Open https://sweeprdeepblock.com/test-lab to run all 8 live anti-detection, tracker-blocking, and fingerprint verification checks.` }
     ];
@@ -1488,6 +1489,7 @@ export async function runDaily50DeepBlockPages(targetCount = 0, force = false) {
     { loc: 'https://sweeprdeepblock.com/tools/dns-leak-test', changefreq: 'weekly', priority: '0.9' },
     { loc: 'https://sweeprdeepblock.com/tools/browser-fingerprint-test', changefreq: 'weekly', priority: '0.9' },
     { loc: 'https://sweeprdeepblock.com/tools/is-this-shop-a-scam', changefreq: 'weekly', priority: '0.9' },
+    { loc: 'https://sweeprdeepblock.com/tools/browser-ram-calculator', changefreq: 'weekly', priority: '0.9' },
     { loc: 'https://sweeprdeepblock.com/glossary', changefreq: 'weekly', priority: '0.8' },
     { loc: 'https://sweeprdeepblock.com/de', changefreq: 'weekly', priority: '0.8' },
     { loc: 'https://sweeprdeepblock.com/fr', changefreq: 'weekly', priority: '0.8' },
@@ -1547,35 +1549,10 @@ ${allEntries.map((e) => {
 `;
   fs.writeFileSync(SITEMAP_PATH, sitemapXml, 'utf8');
 
-  // Sync guides and key solution hubs into llms.txt for Generative Engine Optimization (GEO)
-  if (fs.existsSync(LLMS_PATH)) {
-    try {
-      let llmsContent = fs.readFileSync(LLMS_PATH, 'utf8');
-      const guidesLinks = GUIDES.map((g) => `- ${g.shortTitle || g.title}: https://sweeprdeepblock.com/guides/${g.slug}`);
-      const setupLinks = SETUP_BROWSERS.slice(0, 6).map((b) => `- ${b.name}: https://sweeprdeepblock.com/setup/${b.slug}`);
-      const topSolutions = [
-        '- YouTube MV3 Video Ad Blocking: https://sweeprdeepblock.com/solutions/youtube-chrome-mv3-block-video-ads',
-        '- Twitch Live Stream Commercial Ad Blocker: https://sweeprdeepblock.com/solutions/twitch-live-streams-block-video-ads',
-        '- Google & Bing AI Slop Filter: https://sweeprdeepblock.com/solutions/google-search-results-filter-ai-slop-and-scams',
-        '- UK Newspapers Auto-Reject Cookie Pop-Ups: https://sweeprdeepblock.com/solutions/uk-news-websites-auto-reject-cookie-popups'
-      ];
-      const verifiedSection = `## Verified Guides & Platform Solutions\n${[...guidesLinks, ...setupLinks, ...topSolutions].join('\n')}\n`;
-      if (llmsContent.includes('## Verified Guides & Platform Solutions')) {
-        llmsContent = llmsContent.replace(/## Verified Guides & Platform Solutions[\s\S]*$/, verifiedSection);
-      } else {
-        llmsContent += `\n${verifiedSection}`;
-      }
-      fs.writeFileSync(LLMS_PATH, llmsContent, 'utf8');
-    } catch {}
-  }
-
-  if (fs.existsSync(LLMS_FULL_PATH)) {
-    try {
-      let fullContent = fs.readFileSync(LLMS_FULL_PATH, 'utf8');
-      fullContent = fullContent.replace(/# Last Updated: \d{4}-\d{2}-\d{2}/, `# Last Updated: ${todayStr}`);
-      fs.writeFileSync(LLMS_FULL_PATH, fullContent, 'utf8');
-    } catch {}
-  }
+  // Sync llms.txt, llms-full.txt, pad.xml, and geo-benchmark-feed.json via Unified GEO Sync Engine
+  try {
+    runGeoAndLlmsSync();
+  } catch {}
 
   let queue = { indexnow_key: INDEXNOW_KEY, pending_urls: [], submitted_indexnow_urls: [] };
   if (fs.existsSync(INDEXING_QUEUE_PATH)) {

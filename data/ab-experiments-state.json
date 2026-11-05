@@ -1,0 +1,59 @@
+{
+  "experiment": "paywall_value_framing_v2",
+  "epsilon": 0.2,
+  "updatedAt": "2026-11-04T23:53:13.176Z",
+  "leaderVariantId": "ram_speedometer_bundle",
+  "mode": "bandit_exploitation_80_20",
+  "stats": {
+    "control_value_stack": {
+      "visitors": 42,
+      "conversions": 2,
+      "suiteAttachCount": 0,
+      "totalRevenueGbp": 59.98
+    },
+    "renewal_transparency": {
+      "visitors": 44,
+      "conversions": 3,
+      "suiteAttachCount": 1,
+      "totalRevenueGbp": 149.97
+    },
+    "ram_speedometer_bundle": {
+      "visitors": 42,
+      "conversions": 3,
+      "suiteAttachCount": 2,
+      "totalRevenueGbp": 209.97
+    }
+  },
+  "computedMetrics": {
+    "control_value_stack": {
+      "visitors": 42,
+      "conversions": 2,
+      "suiteAttachCount": 0,
+      "totalRevenueGbp": 59.98,
+      "conversionRatePct": 4.76,
+      "aovGbp": 29.99,
+      "rpvGbp": 1.43,
+      "zScoreVsControl": 0
+    },
+    "renewal_transparency": {
+      "visitors": 44,
+      "conversions": 3,
+      "suiteAttachCount": 1,
+      "totalRevenueGbp": 149.97,
+      "conversionRatePct": 6.82,
+      "aovGbp": 49.99,
+      "rpvGbp": 3.41,
+      "zScoreVsControl": 0.41
+    },
+    "ram_speedometer_bundle": {
+      "visitors": 42,
+      "conversions": 3,
+      "suiteAttachCount": 2,
+      "totalRevenueGbp": 209.97,
+      "conversionRatePct": 7.14,
+      "aovGbp": 69.99,
+      "rpvGbp": 5,
+      "zScoreVsControl": 0.46
+    }
+  }
+}

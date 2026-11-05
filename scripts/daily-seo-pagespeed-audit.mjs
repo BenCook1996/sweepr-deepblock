@@ -22,6 +22,7 @@ import { fileURLToPath } from 'node:url';
 import { runKeywordResearchEngine } from './keyword-research-engine.mjs';
 import { runDaily50DeepBlockPages } from './daily-50-seo-pages.mjs';
 import { runLiveProofEnrichment } from './enrich-pillars-with-live-proof.mjs';
+import { runGeoAndLlmsSync } from './sync-geo-and-llms.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = path.resolve(__dirname, '..');
@@ -39,7 +40,7 @@ function parseLimitArg() {
       if (!Number.isNaN(n) && n >= 0) return n;
     }
   }
-  return 5;
+  return 15;
 }
 
 function auditPageSpeedBudgets() {
@@ -132,12 +133,17 @@ export async function runDailySeoPageSpeedPipeline() {
   const genSummary = await runDaily50DeepBlockPages(newPagesLimit, false);
 
   console.log('\n============================================================================');
-  console.log('  STEP 3/4: VERIFYING LIVE MV3 RULE TELEMETRY PROOF ACROSS ALL PILLARS');
+  console.log('  STEP 3/5: VERIFYING LIVE MV3 RULE TELEMETRY PROOF ACROSS ALL PILLARS');
   console.log('============================================================================');
   runLiveProofEnrichment(500, false);
 
   console.log('\n============================================================================');
-  console.log('  STEP 4/4: RUNNING TECHNICAL SEO, ANTI-CANNIBALIZATION & PAGESPEED AUDIT');
+  console.log('  STEP 4/5: SYNCING GEO LLMS.TXT & AI CITATION MANIFEST');
+  console.log('============================================================================');
+  const geoSummary = runGeoAndLlmsSync();
+
+  console.log('\n============================================================================');
+  console.log('  STEP 5/5: RUNNING TECHNICAL SEO, ANTI-CANNIBALIZATION & PAGESPEED AUDIT');
   console.log('============================================================================');
   const techAuditStdout = execFileSync(
     process.execPath,
@@ -165,6 +171,7 @@ export async function runDailySeoPageSpeedPipeline() {
     status: cwvReport.budgetViolations.length === 0 ? 'PASS' : 'FAIL',
     keywordEngineSummary: kwReport?.summary || {},
     pageGenerationSummary: genSummary,
+    geoSyncSummary: geoSummary,
     pageSpeedCwvAudit: cwvReport
   };
 

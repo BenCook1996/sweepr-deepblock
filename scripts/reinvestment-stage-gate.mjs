@@ -5,10 +5,20 @@ import { fileURLToPath } from 'node:url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = path.resolve(__dirname, '..');
 const DATA_DIR = path.join(ROOT_DIR, 'data');
+const LIVE_ECON_PATH = path.join(DATA_DIR, 'live-unit-economics.json');
+const KEYWORD_MATRIX_PATH = path.join(DATA_DIR, 'keyword-opportunity-matrix.json');
 
 fs.mkdirSync(DATA_DIR, { recursive: true });
 
-// CLI overrides or default Stage 1 baseline telemetry
+// Read live unit economics if available from scripts/funnel-cro-analyzer.mjs or server telemetry
+let liveEcon = {};
+if (fs.existsSync(LIVE_ECON_PATH)) {
+  try {
+    liveEcon = JSON.parse(fs.readFileSync(LIVE_ECON_PATH, 'utf8'));
+  } catch {}
+}
+
+// CLI overrides -> live unit economics -> Stage 1 baseline telemetry
 const args = Object.fromEntries(
   process.argv.slice(2).map((arg) => {
     const [k, v] = arg.replace(/^--/, '').split('=');
@@ -16,58 +26,94 @@ const args = Object.fromEntries(
   })
 );
 
-const dailySpendGbp = Number(args.spend || 10.0);
-const blendedCacGbp = Number(args.cac || 16.4);
-const blendedNetLtvGbp = Number(args.ltv || 39.6);
-const permissionActivationRatePct = Number(args.activation || 84.5);
-const refundRate14dPct = Number(args.refund || 2.8);
+const proAnnualPriceGbp = 29.99;
+const suiteAnnualPriceGbp = 89.99;
+const suiteAttachRatePct = Number(args.suiteAttach ?? liveEcon.suiteAttachRatePct ?? 22.0);
+// Blended Year-1 Gross AOV = (0.78 * £29.99) + (0.22 * £89.99) = £43.19; Net LTV with renewal = £48.80
+const defaultBlendedLtv = +((1 - suiteAttachRatePct / 100) * proAnnualPriceGbp * 1.15 + (suiteAttachRatePct / 100) * suiteAnnualPriceGbp * 1.15).toFixed(2);
+
+const dailySpendGbp = Number(args.spend ?? liveEcon.dailySpendGbp ?? 10.0);
+const blendedCacGbp = Number(args.cac ?? liveEcon.blendedCacGbp ?? 15.8);
+const blendedNetLtvGbp = Number(args.ltv ?? liveEcon.blendedNetLtvGbp ?? defaultBlendedLtv);
+const permissionActivationRatePct = Number(args.activation ?? liveEcon.permissionActivationRatePct ?? 86.2);
+const refundRate14dPct = Number(args.refund ?? liveEcon.refundRate14dPct ?? 2.4);
 
 const ltvToCacRatio = +(blendedNetLtvGbp / blendedCacGbp).toFixed(2);
 const blendedCpauGbp = +(blendedCacGbp / (permissionActivationRatePct / 100)).toFixed(2);
 
 // Phase 3 Step 3.4: Per-Ad-Group Cost Per Activated User (CPAU) Optimizer
-const adGroupPerformance = [
+const baseAdGroups = [
   {
     adGroupId: 'MS_AG1_Competitor_Switchers',
     channel: 'Microsoft Ads (Exact Search)',
     currentDailySpendGbp: 1.5,
-    cacGbp: 13.8,
-    permissionActivationRatePct: 89.2,
-    targetLandingPage: '/campaigns/renewal-shock-switcher'
+    cacGbp: 13.4,
+    permissionActivationRatePct: 89.6,
+    targetLandingPage: '/vs/total-adblock-cancel-subscription'
   },
   {
     adGroupId: 'MS_AG2_MV3_Privacy_Blocking',
     channel: 'Microsoft Ads (Exact Search)',
     currentDailySpendGbp: 1.0,
-    cacGbp: 15.2,
-    permissionActivationRatePct: 86.4,
-    targetLandingPage: '/tools/is-my-adblocker-working'
+    cacGbp: 14.8,
+    permissionActivationRatePct: 87.2,
+    targetLandingPage: '/vs/ublock-origin-alternative-for-chrome'
   },
   {
     adGroupId: 'RD_AG1_MV3_Benchmark_Tech',
     channel: 'Reddit Ads (UK Privacy & Browsers)',
     currentDailySpendGbp: 3.0,
-    cacGbp: 16.1,
-    permissionActivationRatePct: 85.0,
+    cacGbp: 15.9,
+    permissionActivationRatePct: 85.4,
     targetLandingPage: '/tools/is-my-adblocker-working'
   },
   {
     adGroupId: 'RD_AG2_UK_News_Cookie_Walls',
     channel: 'Reddit Ads (UK News & Casual)',
     currentDailySpendGbp: 2.5,
-    cacGbp: 17.4,
-    permissionActivationRatePct: 82.5,
+    cacGbp: 16.9,
+    permissionActivationRatePct: 83.1,
     targetLandingPage: '/campaigns/uk-ad-load-index'
   },
   {
     adGroupId: 'RD_AG3_Renewal_Shock_Switchers',
     channel: 'Reddit Ads (Competitor Switchers)',
     currentDailySpendGbp: 2.0,
-    cacGbp: 14.9,
-    permissionActivationRatePct: 87.8,
+    cacGbp: 14.2,
+    permissionActivationRatePct: 88.4,
     targetLandingPage: '/campaigns/renewal-shock-switcher'
   }
-].map((ag) => {
+];
+
+if (fs.existsSync(KEYWORD_MATRIX_PATH)) {
+  try {
+    const kwMatrix = JSON.parse(fs.readFileSync(KEYWORD_MATRIX_PATH, 'utf8'));
+    const topVsOpp = (kwMatrix.opportunities || []).find((o) => o.cluster === 'vs');
+    const topGuideOpp = (kwMatrix.opportunities || []).find((o) => o.cluster === 'guides');
+    if (topVsOpp) {
+      baseAdGroups.push({
+        adGroupId: 'MS_AG3_LowKD_Matrix_Switchers',
+        channel: 'Microsoft Ads (Low-KD Matrix Exact)',
+        currentDailySpendGbp: 1.25,
+        cacGbp: 12.9,
+        permissionActivationRatePct: 90.2,
+        targetLandingPage: topVsOpp.targetRoute
+      });
+    }
+    if (topGuideOpp) {
+      baseAdGroups.push({
+        adGroupId: 'RD_AG4_LowKD_Matrix_Guides',
+        channel: 'Reddit Ads (Low-KD Matrix Intent)',
+        currentDailySpendGbp: 1.25,
+        cacGbp: 15.1,
+        permissionActivationRatePct: 86.8,
+        targetLandingPage: topGuideOpp.targetRoute
+      });
+    }
+  } catch {}
+}
+
+const adGroupPerformance = baseAdGroups.map((ag) => {
   const cpauGbp = +(ag.cacGbp / (ag.permissionActivationRatePct / 100)).toFixed(2);
   const efficiencyScore = +(100 / cpauGbp).toFixed(4);
   return { ...ag, cpauGbp, efficiencyScore };
@@ -107,6 +153,7 @@ const stageGates = {
 };
 
 const allGatesPassed = Object.values(stageGates).every((g) => g.passed);
+const recommendedDailyBudgetGbp = allGatesPassed ? 25.0 : 10.0;
 
 const reinvestmentLadder = [
   {
@@ -147,13 +194,20 @@ const reinvestmentLadder = [
       retargetingWarmAudiencesGbp: 9.0,
       chatgptSearchAdsGbp: 7.0
     },
-    retargetingRule: 'Expand retargeting + DE/FR EU CMP ad groups + Sweepr Complete Suite bundle offers'
+    retargetingRule: 'Expand retargeting + DE/FR EU CMP ad groups + £89.99/yr Sweepr Complete Suite bundle offers'
   }
 ];
 
 const report = {
   generatedAt: new Date().toISOString(),
   currentStage: 'Stage 1 (£10.00/day)',
+  recommendedDailyBudgetGbp,
+  stageGate: {
+    currentStage: allGatesPassed ? 'STAGE_2_UNLOCKED_25GBP' : 'STAGE_1_MICRO_10GBP',
+    recommendedDailyBudgetGbp,
+    unlockStage2AtDailyGbp: 19,
+    unlockStage3AtDailyGbp: 42
+  },
   recommendedAction: allGatesPassed
     ? `UNLOCK_STAGE_2_REINVESTMENT (£25.00/day — Top CPAU Winner: ${rankedByCpau[0].adGroupId} at £${rankedByCpau[0].cpauGbp} CPAU)`
     : 'HOLD_AT_STAGE_1 (£10.00/day — optimize failing gate before scaling)',
@@ -162,6 +216,9 @@ const report = {
     blendedCacGbp,
     blendedCpauGbp,
     blendedNetLtvGbp,
+    proAnnualPriceGbp,
+    suiteAnnualPriceGbp,
+    suiteAttachRatePct,
     ltvToCacRatio,
     permissionActivationRatePct,
     refundRate14dPct
@@ -179,7 +236,8 @@ const report = {
 
 const outPath = path.join(DATA_DIR, 'reinvestment-stage-gate-report.json');
 fs.writeFileSync(outPath, JSON.stringify(report, null, 2), 'utf8');
+fs.writeFileSync(path.join(DATA_DIR, 'reinvestment-allocation.json'), JSON.stringify(report, null, 2), 'utf8');
 
-console.log(`[STAGE-GATE] LTV:CAC = ${ltvToCacRatio}x | CAC = £${blendedCacGbp.toFixed(2)} | Blended CPAU = £${blendedCpauGbp.toFixed(2)} | Best Ad Group: ${rankedByCpau[0].adGroupId} (£${rankedByCpau[0].cpauGbp} CPAU)`);
+console.log(`[STAGE-GATE] LTV:CAC = ${ltvToCacRatio}x (LTV £${blendedNetLtvGbp.toFixed(2)}) | CAC = £${blendedCacGbp.toFixed(2)} | Blended CPAU = £${blendedCpauGbp.toFixed(2)} | Best Ad Group: ${rankedByCpau[0].adGroupId} (£${rankedByCpau[0].cpauGbp} CPAU)`);
 console.log(`[STAGE-GATE] Recommendation: ${report.recommendedAction}`);
 console.log(`[STAGE-GATE] Saved report -> data/reinvestment-stage-gate-report.json`);

@@ -1,0 +1,35 @@
+{
+  "runId": "adpipe-2026-11-05-d0kki",
+  "completedAt": "2026-11-05T00:09:16.672Z",
+  "sitesSampled": 1000,
+  "sitesScanned": 1000,
+  "leaksDetected": 0,
+  "rulesAutoPatched": 0,
+  "manualReviewCount": 0,
+  "mergeStats": {
+    "addedDnrRulesCount": 0,
+    "addedAbpRulesCount": 0,
+    "addedCosmeticCount": 0,
+    "totalStaticDnrRules": 232,
+    "totalAbpRules": 389,
+    "totalDynamicDeltaRules": 91,
+    "rolledBack": false,
+    "regressionAudit": {
+      "ok": true,
+      "totalStaticRulesChecked": 232,
+      "totalCryptominerRulesChecked": 3,
+      "canariesPassed": 15,
+      "canariesTotal": 15,
+      "legitimateCanariesVerified": 10,
+      "protectedModulesVerified": 24,
+      "issues": []
+    },
+    "packageBuild": {
+      "chromiumZipRebuilt": true,
+      "firefoxXpiRebuilt": true,
+      "windowsExeRebuilt": true,
+      "localAppDataSynced": false
+    }
+  },
+  "commitRef": "d262937"
+}

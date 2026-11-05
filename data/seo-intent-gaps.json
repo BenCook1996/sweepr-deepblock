@@ -1,84 +1,14 @@
 {
-  "generatedAt": "2026-11-04T22:28:01.762Z",
+  "generatedAt": "2026-11-04T23:50:36.315Z",
   "engineVersion": "2.0.0",
   "seedsQueried": 306,
-  "indexablePagesChecked": 485,
-  "totalAutocompleteQueriesDiscovered": 507,
-  "alreadyCoveredCount": 14,
-  "uncoveredIntentGapsCount": 52,
+  "indexablePagesChecked": 490,
+  "totalAutocompleteQueriesDiscovered": 520,
+  "alreadyCoveredCount": 9,
+  "uncoveredIntentGapsCount": 14,
   "topPriorityGaps": [
     {
-      "query": "total adblock cancel subscription",
-      "secondaryKeywords": [
-        "total adblock cancel subscription email",
-        "total adblock cancel subscription refund"
-      ],
-      "seed": "P1_COMMERCIAL_SWITCHER",
-      "intentScore": 100,
-      "volumeScore": 85,
-      "lowCompetitionScore": 90,
-      "estimatedKD": 10,
-      "opportunityScore": 97,
-      "recommendedFormat": "competitor_comparison",
-      "suggestedRoute": "/vs/total-adblock-cancel-subscription",
-      "closestExistingPage": "/vs/total-adblock",
-      "overlapRatio": 0.292
-    },
-    {
-      "query": "ublock origin alternative for chrome",
-      "secondaryKeywords": [
-        "ublock origin alternative",
-        "ublock origin alternative for chrome reddit",
-        "alternative to ublock origin"
-      ],
-      "seed": "P1_COMMERCIAL_SWITCHER",
-      "intentScore": 100,
-      "volumeScore": 83,
-      "lowCompetitionScore": 90,
-      "estimatedKD": 10,
-      "opportunityScore": 96.4,
-      "recommendedFormat": "competitor_comparison",
-      "suggestedRoute": "/vs/ublock-origin-alternative-for-chrome",
-      "closestExistingPage": "/setup/google-chrome-manifest-v3",
-      "overlapRatio": 0.221
-    },
-    {
-      "query": "ublock origin vs adguard",
-      "secondaryKeywords": [
-        "adguard extension vs ublock origin",
-        "adguard vs ublock origin 2024"
-      ],
-      "seed": "P1_COMMERCIAL_SWITCHER",
-      "intentScore": 92,
-      "volumeScore": 89,
-      "lowCompetitionScore": 90,
-      "estimatedKD": 10,
-      "opportunityScore": 95.4,
-      "recommendedFormat": "competitor_comparison",
-      "suggestedRoute": "/vs/ublock-origin-vs-adguard",
-      "closestExistingPage": "/vs/adguard-extension",
-      "overlapRatio": 0.578
-    },
-    {
-      "query": "ublock origin lite vs ublock origin",
-      "secondaryKeywords": [
-        "ublock origin vs ublock origin lite",
-        "ublock origin lite vs ublock",
-        "ublock origin lite vs ublock origin reddit"
-      ],
-      "seed": "P1_COMMERCIAL_SWITCHER",
-      "intentScore": 92,
-      "volumeScore": 86,
-      "lowCompetitionScore": 90,
-      "estimatedKD": 10,
-      "opportunityScore": 94.5,
-      "recommendedFormat": "competitor_comparison",
-      "suggestedRoute": "/vs/ublock-origin-lite-vs-ublock-origin",
-      "closestExistingPage": "/vs/ublock-origin-lite",
-      "overlapRatio": 0.589
-    },
-    {
-      "query": "total adblock renewal charge alternative",
+      "query": "pie adblock safe or scam alternative",
       "secondaryKeywords": [],
       "seed": "P1_COMMERCIAL_SWITCHER",
       "intentScore": 92,
@@ -87,9 +17,9 @@
       "estimatedKD": 1,
       "opportunityScore": 94.4,
       "recommendedFormat": "competitor_comparison",
-      "suggestedRoute": "/vs/total-adblock-renewal-charge-alternative",
-      "closestExistingPage": "/stories/switching-from-total-adblock-renewal-shock",
-      "overlapRatio": 0.451
+      "suggestedRoute": "/vs/pie-adblock-safe-or-scam-alternative",
+      "closestExistingPage": "/vs/pie-adblock",
+      "overlapRatio": 0.22
     },
     {
       "query": "switch from adblock plus to manifest v3",
@@ -103,138 +33,23 @@
       "recommendedFormat": "competitor_comparison",
       "suggestedRoute": "/vs/switch-from-adblock-plus-to-manifest-v3",
       "closestExistingPage": "/vs/adblock-plus",
-      "overlapRatio": 0.379
+      "overlapRatio": 0.386
     },
     {
       "query": "adguard vs ublock origin lite chrome 2026",
       "secondaryKeywords": [
-        "adguard vs ublock origin lite",
-        "ublock origin lite vs adguard"
+        "adguard vs ublock origin lite"
       ],
       "seed": "P1_COMMERCIAL_SWITCHER",
       "intentScore": 100,
       "volumeScore": 74,
-      "lowCompetitionScore": 90,
-      "estimatedKD": 10,
-      "opportunityScore": 93.7,
+      "lowCompetitionScore": 85,
+      "estimatedKD": 15,
+      "opportunityScore": 91.9,
       "recommendedFormat": "competitor_comparison",
       "suggestedRoute": "/vs/adguard-vs-ublock-origin-lite-chrome-2026",
       "closestExistingPage": "/vs/ublock-origin-lite",
-      "overlapRatio": 0.508
-    },
-    {
-      "query": "ublock origin lite not working on youtube",
-      "secondaryKeywords": [
-        "ublock origin lite not working on youtube reddit"
-      ],
-      "seed": "P1_COMMERCIAL_SWITCHER",
-      "intentScore": 87,
-      "volumeScore": 86,
-      "lowCompetitionScore": 90,
-      "estimatedKD": 10,
-      "opportunityScore": 92.8,
-      "recommendedFormat": "competitor_comparison",
-      "suggestedRoute": "/vs/ublock-origin-lite-not-working-on-youtube",
-      "closestExistingPage": "/vs/ublock-origin-lite",
-      "overlapRatio": 0.359
-    },
-    {
-      "query": "ublock origin not working on youtube",
-      "secondaryKeywords": [
-        "ublock origin not working",
-        "ublock origin not working anymore"
-      ],
-      "seed": "P1_COMMERCIAL_SWITCHER",
-      "intentScore": 87,
-      "volumeScore": 85,
-      "lowCompetitionScore": 90,
-      "estimatedKD": 10,
-      "opportunityScore": 92.5,
-      "recommendedFormat": "competitor_comparison",
-      "suggestedRoute": "/vs/ublock-origin-not-working-on-youtube",
-      "closestExistingPage": "/guides/how-to-block-youtube-ads-chrome-manifest-v3-2026",
-      "overlapRatio": 0.228
-    },
-    {
-      "query": "pie adblock not working on youtube",
-      "secondaryKeywords": [
-        "pie adblock not working on youtube anymore",
-        "pie adblock not working"
-      ],
-      "seed": "P1_COMMERCIAL_SWITCHER",
-      "intentScore": 87,
-      "volumeScore": 85,
-      "lowCompetitionScore": 90,
-      "estimatedKD": 10,
-      "opportunityScore": 92.5,
-      "recommendedFormat": "competitor_comparison",
-      "suggestedRoute": "/vs/pie-adblock-not-working-on-youtube",
-      "closestExistingPage": "/vs/pie-adblock",
-      "overlapRatio": 0.359
-    },
-    {
-      "query": "adblock plus not working on youtube",
-      "secondaryKeywords": [
-        "adblock plus not working",
-        "adblock plus not working anymore"
-      ],
-      "seed": "P1_COMMERCIAL_SWITCHER",
-      "intentScore": 87,
-      "volumeScore": 84,
-      "lowCompetitionScore": 90,
-      "estimatedKD": 10,
-      "opportunityScore": 92.1,
-      "recommendedFormat": "competitor_comparison",
-      "suggestedRoute": "/vs/adblock-plus-not-working-on-youtube",
-      "closestExistingPage": "/vs/adblock-plus",
-      "overlapRatio": 0.359
-    },
-    {
-      "query": "how much does total adblock cost",
-      "secondaryKeywords": [
-        "what is the cost of total adblock"
-      ],
-      "seed": "P1_COMMERCIAL_SWITCHER",
-      "intentScore": 94,
-      "volumeScore": 74,
-      "lowCompetitionScore": 90,
-      "estimatedKD": 10,
-      "opportunityScore": 91.6,
-      "recommendedFormat": "competitor_comparison",
-      "suggestedRoute": "/vs/how-much-does-total-adblock-cost",
-      "closestExistingPage": "/vs/total-adblock",
-      "overlapRatio": 0.451
-    },
-    {
-      "query": "ublock origin vs adblock best ad blocker",
-      "secondaryKeywords": [
-        "ublock origin vs adblock",
-        "ublock origin vs ublock"
-      ],
-      "seed": "P1_COMMERCIAL_SWITCHER",
-      "intentScore": 100,
-      "volumeScore": 67,
-      "lowCompetitionScore": 90,
-      "estimatedKD": 10,
-      "opportunityScore": 91.6,
-      "recommendedFormat": "competitor_comparison",
-      "suggestedRoute": "/vs/ublock-origin-vs-adblock-best-ad-blocker",
-      "closestExistingPage": "/vs/ghostery-privacy-ad-blocker",
-      "overlapRatio": 0.482
-    },
-    {
-      "query": "pie adblock safe or scam alternative",
-      "secondaryKeywords": [],
-      "seed": "P1_COMMERCIAL_SWITCHER",
-      "intentScore": 92,
-      "volumeScore": 74,
-      "lowCompetitionScore": 90,
-      "estimatedKD": 10,
-      "opportunityScore": 90.9,
-      "recommendedFormat": "competitor_comparison",
-      "suggestedRoute": "/vs/pie-adblock-safe-or-scam-alternative",
-      "closestExistingPage": "/vs/pie-adblock",
-      "overlapRatio": 0.211
+      "overlapRatio": 0.499
     },
     {
       "query": "lightweight alternative to ghostery chrome",
@@ -242,72 +57,13 @@
       "seed": "P1_COMMERCIAL_SWITCHER",
       "intentScore": 92,
       "volumeScore": 74,
-      "lowCompetitionScore": 90,
-      "estimatedKD": 10,
-      "opportunityScore": 90.9,
-      "recommendedFormat": "competitor_comparison",
-      "suggestedRoute": "/vs/lightweight-alternative-to-ghostery-chrome",
-      "closestExistingPage": "/vs/ghostery-privacy-ad-blocker",
-      "overlapRatio": 0.257
-    },
-    {
-      "query": "ublock origin not working on twitch",
-      "secondaryKeywords": [],
-      "seed": "P1_COMMERCIAL_SWITCHER",
-      "intentScore": 87,
-      "volumeScore": 75,
-      "lowCompetitionScore": 93,
-      "estimatedKD": 7,
-      "opportunityScore": 90.5,
-      "recommendedFormat": "competitor_comparison",
-      "suggestedRoute": "/vs/ublock-origin-not-working-on-twitch",
-      "closestExistingPage": "/solutions/twitch-live-streams-block-video-ads",
-      "overlapRatio": 0.245
-    },
-    {
-      "query": "pie adblock not working on twitch",
-      "secondaryKeywords": [],
-      "seed": "P1_COMMERCIAL_SWITCHER",
-      "intentScore": 87,
-      "volumeScore": 75,
-      "lowCompetitionScore": 93,
-      "estimatedKD": 7,
-      "opportunityScore": 90.5,
-      "recommendedFormat": "competitor_comparison",
-      "suggestedRoute": "/vs/pie-adblock-not-working-on-twitch",
-      "closestExistingPage": "/vs/pie-adblock",
-      "overlapRatio": 0.35
-    },
-    {
-      "query": "ublock origin lite alternative",
-      "secondaryKeywords": [
-        "ublock origin lite alternative reddit",
-        "ublock origin lite alternative chrome"
-      ],
-      "seed": "P1_COMMERCIAL_SWITCHER",
-      "intentScore": 92,
-      "volumeScore": 70,
-      "lowCompetitionScore": 90,
-      "estimatedKD": 10,
-      "opportunityScore": 89.7,
-      "recommendedFormat": "competitor_comparison",
-      "suggestedRoute": "/vs/ublock-origin-lite-alternative",
-      "closestExistingPage": "/vs/ublock-origin-lite",
-      "overlapRatio": 0.47
-    },
-    {
-      "query": "ublock origin lite vs ublock origin scope",
-      "secondaryKeywords": [],
-      "seed": "P1_COMMERCIAL_SWITCHER",
-      "intentScore": 92,
-      "volumeScore": 67,
-      "lowCompetitionScore": 85,
-      "estimatedKD": 15,
+      "lowCompetitionScore": 79,
+      "estimatedKD": 21,
       "opportunityScore": 87,
       "recommendedFormat": "competitor_comparison",
-      "suggestedRoute": "/vs/ublock-origin-lite-vs-ublock-origin-scope",
-      "closestExistingPage": "/vs/ublock-origin-lite",
-      "overlapRatio": 0.418
+      "suggestedRoute": "/vs/lightweight-alternative-to-ghostery-chrome",
+      "closestExistingPage": "/vs/ublock-origin-alternative-for-chrome",
+      "overlapRatio": 0.422
     },
     {
       "query": "adblock not working after chrome manifest v3 update",
@@ -321,110 +77,23 @@
       "recommendedFormat": "troubleshooting_guide",
       "suggestedRoute": "/guides/adblock-not-working-after-chrome-manifest-v3-update",
       "closestExistingPage": "/guides/best-manifest-v3-adblockers-for-google-chrome-2026",
-      "overlapRatio": 0.344
+      "overlapRatio": 0.336
     },
     {
-      "query": "adblock plus cancel subscription",
+      "query": "how much does total adblock cost",
       "secondaryKeywords": [
-        "cancel adblock plus subscription"
+        "what is the cost of total adblock"
       ],
-      "seed": "P1_COMMERCIAL_SWITCHER",
-      "intentScore": 100,
-      "volumeScore": 63,
-      "lowCompetitionScore": 90,
-      "estimatedKD": 10,
-      "opportunityScore": 85.4,
-      "recommendedFormat": "competitor_comparison",
-      "suggestedRoute": "/vs/adblock-plus-cancel-subscription",
-      "closestExistingPage": "/vs/adblock-plus",
-      "overlapRatio": 0.308
-    },
-    {
-      "query": "ublock origin alternative reddit",
-      "secondaryKeywords": [],
-      "seed": "P1_COMMERCIAL_SWITCHER",
-      "intentScore": 92,
-      "volumeScore": 77,
-      "lowCompetitionScore": 70,
-      "estimatedKD": 30,
-      "opportunityScore": 84.8,
-      "recommendedFormat": "competitor_comparison",
-      "suggestedRoute": "/vs/ublock-origin-alternative-reddit",
-      "closestExistingPage": "/guides/how-to-block-reddit-sponsored-promoted-posts-in-feed",
-      "overlapRatio": 0.256
-    },
-    {
-      "query": "total adblock not working",
-      "secondaryKeywords": [
-        "total adblock not working on youtube",
-        "why is total adblock not working"
-      ],
-      "seed": "P1_COMMERCIAL_SWITCHER",
-      "intentScore": 87,
-      "volumeScore": 70,
-      "lowCompetitionScore": 79,
-      "estimatedKD": 21,
-      "opportunityScore": 84.1,
-      "recommendedFormat": "competitor_comparison",
-      "suggestedRoute": "/vs/total-adblock-not-working",
-      "closestExistingPage": "/vs/total-adblock",
-      "overlapRatio": 0.451
-    },
-    {
-      "query": "pie adblock block ads get paid",
-      "secondaryKeywords": [],
       "seed": "P1_COMMERCIAL_SWITCHER",
       "intentScore": 94,
-      "volumeScore": 54,
-      "lowCompetitionScore": 100,
-      "estimatedKD": 1,
-      "opportunityScore": 84.1,
+      "volumeScore": 72,
+      "lowCompetitionScore": 70,
+      "estimatedKD": 30,
+      "opportunityScore": 84,
       "recommendedFormat": "competitor_comparison",
-      "suggestedRoute": "/vs/pie-adblock-block-ads-get-paid",
-      "closestExistingPage": "/vs/pie-adblock",
-      "overlapRatio": 0.398
-    },
-    {
-      "query": "pie adblock alternative reddit",
-      "secondaryKeywords": [],
-      "seed": "P1_COMMERCIAL_SWITCHER",
-      "intentScore": 92,
-      "volumeScore": 63,
-      "lowCompetitionScore": 93,
-      "estimatedKD": 7,
-      "opportunityScore": 83.6,
-      "recommendedFormat": "competitor_comparison",
-      "suggestedRoute": "/vs/pie-adblock-alternative-reddit",
-      "closestExistingPage": "/vs/pie-adblock",
-      "overlapRatio": 0.345
-    },
-    {
-      "query": "total adblock vs ublock origin",
-      "secondaryKeywords": [],
-      "seed": "P1_COMMERCIAL_SWITCHER",
-      "intentScore": 92,
-      "volumeScore": 69,
-      "lowCompetitionScore": 71,
-      "estimatedKD": 29,
-      "opportunityScore": 82.8,
-      "recommendedFormat": "competitor_comparison",
-      "suggestedRoute": "/vs/total-adblock-vs-ublock-origin",
+      "suggestedRoute": "/vs/how-much-does-total-adblock-cost",
       "closestExistingPage": "/vs/total-adblock",
-      "overlapRatio": 0.578
-    },
-    {
-      "query": "pie adblock is a scam",
-      "secondaryKeywords": [],
-      "seed": "P1_COMMERCIAL_SWITCHER",
-      "intentScore": 80,
-      "volumeScore": 74,
-      "lowCompetitionScore": 79,
-      "estimatedKD": 21,
-      "opportunityScore": 82.8,
-      "recommendedFormat": "competitor_comparison",
-      "suggestedRoute": "/vs/pie-adblock-is-a-scam",
-      "closestExistingPage": "/vs/pie-adblock",
-      "overlapRatio": 0.668
+      "overlapRatio": 0.426
     },
     {
       "query": "how to test if manifest v3 adblocker is working",
@@ -438,231 +107,77 @@
       "recommendedFormat": "interactive_tool",
       "suggestedRoute": "/guides/how-to-test-if-manifest-v3-adblocker-is-working",
       "closestExistingPage": "/guides/best-manifest-v3-adblockers-for-google-chrome-2026",
-      "overlapRatio": 0.36
+      "overlapRatio": 0.349
     },
     {
-      "query": "ublock origin lite not working on safari",
+      "query": "pie adblock is a scam",
       "secondaryKeywords": [],
       "seed": "P1_COMMERCIAL_SWITCHER",
+      "intentScore": 80,
+      "volumeScore": 72,
+      "lowCompetitionScore": 79,
+      "estimatedKD": 21,
+      "opportunityScore": 82.3,
+      "recommendedFormat": "competitor_comparison",
+      "suggestedRoute": "/vs/pie-adblock-is-a-scam",
+      "closestExistingPage": "/vs/pie-adblock",
+      "overlapRatio": 0.668
+    },
+    {
+      "query": "chrome manifest v3 adblock plus",
+      "secondaryKeywords": [],
+      "seed": "P6_BROWSER_RAM_TAB_TAMER",
+      "intentScore": 68,
+      "volumeScore": 67,
+      "lowCompetitionScore": 90,
+      "estimatedKD": 10,
+      "opportunityScore": 80.4,
+      "recommendedFormat": "competitor_comparison",
+      "suggestedRoute": "/vs/chrome-manifest-v3-adblock-plus",
+      "closestExistingPage": "/setup/google-chrome-manifest-v3",
+      "overlapRatio": 0.549
+    },
+    {
+      "query": "adblock plus not working on youtube chrome",
+      "secondaryKeywords": [],
+      "seed": "P3_URGENT_TROUBLESHOOTING",
       "intentScore": 87,
-      "volumeScore": 56,
+      "volumeScore": 49,
+      "lowCompetitionScore": 100,
+      "estimatedKD": 1,
+      "opportunityScore": 80.2,
+      "recommendedFormat": "competitor_comparison",
+      "suggestedRoute": "/vs/adblock-plus-not-working-on-youtube-chrome",
+      "closestExistingPage": "/guides/how-to-block-youtube-ads-chrome-manifest-v3-2026",
+      "overlapRatio": 0.378
+    },
+    {
+      "query": "adblock not working on twitch 2026",
+      "secondaryKeywords": [],
+      "seed": "P3_URGENT_TROUBLESHOOTING",
+      "intentScore": 65,
+      "volumeScore": 63,
       "lowCompetitionScore": 99,
       "estimatedKD": 1,
-      "opportunityScore": 81.9,
-      "recommendedFormat": "competitor_comparison",
-      "suggestedRoute": "/vs/ublock-origin-lite-not-working-on-safari",
-      "closestExistingPage": "/vs/ublock-origin-lite",
-      "overlapRatio": 0.333
-    },
-    {
-      "query": "ublock origin not working on edge",
-      "secondaryKeywords": [],
-      "seed": "P1_COMMERCIAL_SWITCHER",
-      "intentScore": 87,
-      "volumeScore": 61,
-      "lowCompetitionScore": 93,
-      "estimatedKD": 7,
-      "opportunityScore": 81.3,
-      "recommendedFormat": "competitor_comparison",
-      "suggestedRoute": "/vs/ublock-origin-not-working-on-edge",
-      "closestExistingPage": "/setup/microsoft-edge-windows-11",
-      "overlapRatio": 0.256
-    },
-    {
-      "query": "adblock plus not working properly",
-      "secondaryKeywords": [],
-      "seed": "P1_COMMERCIAL_SWITCHER",
-      "intentScore": 87,
-      "volumeScore": 60,
-      "lowCompetitionScore": 93,
-      "estimatedKD": 7,
-      "opportunityScore": 81,
-      "recommendedFormat": "competitor_comparison",
-      "suggestedRoute": "/vs/adblock-plus-not-working-properly",
-      "closestExistingPage": "/vs/adblock-plus",
-      "overlapRatio": 0.308
-    },
-    {
-      "query": "ublock origin not working chrome",
-      "secondaryKeywords": [],
-      "seed": "P1_COMMERCIAL_SWITCHER",
-      "intentScore": 87,
-      "volumeScore": 57,
-      "lowCompetitionScore": 93,
-      "estimatedKD": 7,
-      "opportunityScore": 80.1,
-      "recommendedFormat": "competitor_comparison",
-      "suggestedRoute": "/vs/ublock-origin-not-working-chrome",
-      "closestExistingPage": "/setup/google-chrome-manifest-v3",
-      "overlapRatio": 0.221
-    },
-    {
-      "query": "total adblock not working on iphone",
-      "secondaryKeywords": [],
-      "seed": "P1_COMMERCIAL_SWITCHER",
-      "intentScore": 87,
-      "volumeScore": 56,
-      "lowCompetitionScore": 93,
-      "estimatedKD": 7,
-      "opportunityScore": 79.8,
-      "recommendedFormat": "competitor_comparison",
-      "suggestedRoute": "/vs/total-adblock-not-working-on-iphone",
-      "closestExistingPage": "/vs/total-adblock",
-      "overlapRatio": 0.292
-    },
-    {
-      "query": "adblock plus not working on pinterest",
-      "secondaryKeywords": [],
-      "seed": "P1_COMMERCIAL_SWITCHER",
-      "intentScore": 87,
-      "volumeScore": 56,
-      "lowCompetitionScore": 93,
-      "estimatedKD": 7,
-      "opportunityScore": 79.8,
-      "recommendedFormat": "competitor_comparison",
-      "suggestedRoute": "/vs/adblock-plus-not-working-on-pinterest",
-      "closestExistingPage": "/vs/adblock-plus",
-      "overlapRatio": 0.328
-    },
-    {
-      "query": "total adblock vs adblock pro",
-      "secondaryKeywords": [],
-      "seed": "P1_COMMERCIAL_SWITCHER",
-      "intentScore": 100,
-      "volumeScore": 56,
-      "lowCompetitionScore": 79,
-      "estimatedKD": 21,
-      "opportunityScore": 79.5,
-      "recommendedFormat": "competitor_comparison",
-      "suggestedRoute": "/vs/total-adblock-vs-adblock-pro",
-      "closestExistingPage": "/vs/total-adblock",
-      "overlapRatio": 0.519
-    },
-    {
-      "query": "adblock plus not working on edge",
-      "secondaryKeywords": [],
-      "seed": "P1_COMMERCIAL_SWITCHER",
-      "intentScore": 87,
-      "volumeScore": 55,
-      "lowCompetitionScore": 93,
-      "estimatedKD": 7,
-      "opportunityScore": 79.5,
-      "recommendedFormat": "competitor_comparison",
-      "suggestedRoute": "/vs/adblock-plus-not-working-on-edge",
-      "closestExistingPage": "/vs/adblock-plus",
-      "overlapRatio": 0.345
-    },
-    {
-      "query": "adblock plus for chrome free alternative",
-      "secondaryKeywords": [],
-      "seed": "P1_COMMERCIAL_SWITCHER",
-      "intentScore": 100,
-      "volumeScore": 54,
-      "lowCompetitionScore": 79,
-      "estimatedKD": 21,
-      "opportunityScore": 78.8,
-      "recommendedFormat": "competitor_comparison",
-      "suggestedRoute": "/vs/adblock-plus-for-chrome-free-alternative",
-      "closestExistingPage": "/vs/adblock-plus",
-      "overlapRatio": 0.285
-    },
-    {
-      "query": "ublock origin alternative for edge",
-      "secondaryKeywords": [],
-      "seed": "P1_COMMERCIAL_SWITCHER",
-      "intentScore": 100,
-      "volumeScore": 61,
-      "lowCompetitionScore": 71,
-      "estimatedKD": 29,
-      "opportunityScore": 78.2,
-      "recommendedFormat": "competitor_comparison",
-      "suggestedRoute": "/vs/ublock-origin-alternative-for-edge",
-      "closestExistingPage": "/setup/microsoft-edge-windows-11",
-      "overlapRatio": 0.256
-    },
-    {
-      "query": "ublock origin not working reddit",
-      "secondaryKeywords": [],
-      "seed": "P1_COMMERCIAL_SWITCHER",
-      "intentScore": 87,
-      "volumeScore": 50,
-      "lowCompetitionScore": 93,
-      "estimatedKD": 7,
-      "opportunityScore": 78,
-      "recommendedFormat": "competitor_comparison",
-      "suggestedRoute": "/vs/ublock-origin-not-working-reddit",
-      "closestExistingPage": "/guides/how-to-block-reddit-sponsored-promoted-posts-in-feed",
-      "overlapRatio": 0.256
-    },
-    {
-      "query": "chrome extensions adblock plus alternative",
-      "secondaryKeywords": [],
-      "seed": "P1_COMMERCIAL_SWITCHER",
-      "intentScore": 92,
-      "volumeScore": 60,
-      "lowCompetitionScore": 79,
-      "estimatedKD": 21,
-      "opportunityScore": 77.8,
-      "recommendedFormat": "competitor_comparison",
-      "suggestedRoute": "/vs/chrome-extensions-adblock-plus-alternative",
-      "closestExistingPage": "/vs/adblock-plus",
-      "overlapRatio": 0.28
-    },
-    {
-      "query": "adblocker for chrome adblock plus alternative",
-      "secondaryKeywords": [],
-      "seed": "P1_COMMERCIAL_SWITCHER",
-      "intentScore": 100,
-      "volumeScore": 48,
-      "lowCompetitionScore": 79,
-      "estimatedKD": 21,
-      "opportunityScore": 77,
-      "recommendedFormat": "competitor_comparison",
-      "suggestedRoute": "/vs/adblocker-for-chrome-adblock-plus-alternative",
-      "closestExistingPage": "/vs/adblock-plus",
-      "overlapRatio": 0.313
+      "opportunityScore": 76.3,
+      "recommendedFormat": "troubleshooting_guide",
+      "suggestedRoute": "/guides/adblock-not-working-on-twitch-2026",
+      "closestExistingPage": "/guides/how-to-fix-twitch-purple-screen-adblock-2026",
+      "overlapRatio": 0.508
     },
     {
       "query": "total adblock cost per month",
       "secondaryKeywords": [],
       "seed": "P1_COMMERCIAL_SWITCHER",
       "intentScore": 94,
-      "volumeScore": 54,
+      "volumeScore": 52,
       "lowCompetitionScore": 79,
       "estimatedKD": 21,
-      "opportunityScore": 76.8,
+      "opportunityScore": 76.2,
       "recommendedFormat": "competitor_comparison",
       "suggestedRoute": "/vs/total-adblock-cost-per-month",
       "closestExistingPage": "/vs/total-adblock",
-      "overlapRatio": 0.215
-    },
-    {
-      "query": "total adblock cancel",
-      "secondaryKeywords": [],
-      "seed": "P1_COMMERCIAL_SWITCHER",
-      "intentScore": 92,
-      "volumeScore": 60,
-      "lowCompetitionScore": 72,
-      "estimatedKD": 28,
-      "opportunityScore": 75.4,
-      "recommendedFormat": "competitor_comparison",
-      "suggestedRoute": "/vs/total-adblock-cancel",
-      "closestExistingPage": "/vs/total-adblock",
-      "overlapRatio": 0.451
-    },
-    {
-      "query": "ublock origin lite vs scope",
-      "secondaryKeywords": [],
-      "seed": "P1_COMMERCIAL_SWITCHER",
-      "intentScore": 92,
-      "volumeScore": 54,
-      "lowCompetitionScore": 77,
-      "estimatedKD": 23,
-      "opportunityScore": 75.3,
-      "recommendedFormat": "competitor_comparison",
-      "suggestedRoute": "/vs/ublock-origin-lite-vs-scope",
-      "closestExistingPage": "/vs/ublock-origin-lite",
-      "overlapRatio": 0.589
+      "overlapRatio": 0.198
     },
     {
       "query": "is pie adblock safe",
@@ -679,64 +194,6 @@
       "overlapRatio": 0.47
     },
     {
-      "query": "adblock plus extension chrome",
-      "secondaryKeywords": [],
-      "seed": "P1_COMMERCIAL_SWITCHER",
-      "intentScore": 70,
-      "volumeScore": 68,
-      "lowCompetitionScore": 71,
-      "estimatedKD": 29,
-      "opportunityScore": 74.8,
-      "recommendedFormat": "competitor_comparison",
-      "suggestedRoute": "/vs/adblock-plus-extension-chrome",
-      "closestExistingPage": "/vs/adblock-plus",
-      "overlapRatio": 0.41
-    },
-    {
-      "query": "ublock origin extension chrome",
-      "secondaryKeywords": [
-        "ublock origin chrome extension download"
-      ],
-      "seed": "P1_COMMERCIAL_SWITCHER",
-      "intentScore": 70,
-      "volumeScore": 68,
-      "lowCompetitionScore": 71,
-      "estimatedKD": 29,
-      "opportunityScore": 74.8,
-      "recommendedFormat": "competitor_comparison",
-      "suggestedRoute": "/vs/ublock-origin-extension-chrome",
-      "closestExistingPage": "/vs/adguard-extension",
-      "overlapRatio": 0.312
-    },
-    {
-      "query": "ublock origin lite vs normal",
-      "secondaryKeywords": [],
-      "seed": "P1_COMMERCIAL_SWITCHER",
-      "intentScore": 92,
-      "volumeScore": 51,
-      "lowCompetitionScore": 77,
-      "estimatedKD": 23,
-      "opportunityScore": 74.4,
-      "recommendedFormat": "competitor_comparison",
-      "suggestedRoute": "/vs/ublock-origin-lite-vs-normal",
-      "closestExistingPage": "/vs/ublock-origin-lite",
-      "overlapRatio": 0.589
-    },
-    {
-      "query": "adblock plus vs other blockers",
-      "secondaryKeywords": [],
-      "seed": "P1_COMMERCIAL_SWITCHER",
-      "intentScore": 92,
-      "volumeScore": 48,
-      "lowCompetitionScore": 79,
-      "estimatedKD": 21,
-      "opportunityScore": 74.3,
-      "recommendedFormat": "competitor_comparison",
-      "suggestedRoute": "/vs/adblock-plus-vs-other-blockers",
-      "closestExistingPage": "/vs/adblock-plus",
-      "overlapRatio": 0.551
-    },
-    {
       "query": "total adblock free alternative",
       "secondaryKeywords": [],
       "seed": "P1_COMMERCIAL_SWITCHER",
@@ -747,9 +204,25 @@
       "opportunityScore": 73.8,
       "recommendedFormat": "competitor_comparison",
       "suggestedRoute": "/vs/total-adblock-free-alternative",
-      "closestExistingPage": "/vs/total-adblock",
-      "overlapRatio": 0.331
+      "closestExistingPage": "/vs/total-adblock-renewal-charge-alternative",
+      "overlapRatio": 0.701
     }
   ],
-  "sampleCoveredQueries": []
+  "sampleCoveredQueries": [
+    {
+      "query": "total adblock renewal charge alternative",
+      "matchedPage": "/vs/total-adblock-renewal-charge-alternative",
+      "overlapRatio": 1
+    },
+    {
+      "query": "adguard vs ublock origin 2024",
+      "matchedPage": "/vs/ublock-origin-vs-adguard",
+      "overlapRatio": 1
+    },
+    {
+      "query": "ublock origin vs adguard",
+      "matchedPage": "/vs/ublock-origin-vs-adguard",
+      "overlapRatio": 1
+    }
+  ]
 }

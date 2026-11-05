@@ -22,6 +22,8 @@
  *      - Sends per-site leak payloads + daily summary to the SWEEPR CRM API (`project=deepblock`) & custom webhook.
  */
 
+import fs from 'node:fs';
+import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { PipelineStateDB, ROOT_DIR } from './ad-filter-pipeline/state-db.mjs';
 import { selectDailyTargetSites } from './ad-filter-pipeline/target-selector.mjs';
@@ -256,6 +258,34 @@ export async function runDailyAdFilterPipeline(options = {}) {
     console.log(
       `[Stage 5/5 — CRM Reporting] Synced ${crmResult.syncedCount}/${crmResult.totalRecords} leak payloads + ${crmResult.registrySyncedCount || 0} blocked sites in CRM Registry + Daily Summary (${crmResult.summarySynced ? 'OK' : 'Queued in DLQ'})`
     );
+
+    // Stage 6: Persist filter-harvest-report.json & trigger GEO / Live Proof synchronization
+    try {
+      const reportPath = path.join(ROOT_DIR, 'data', 'filter-harvest-report.json');
+      fs.writeFileSync(
+        reportPath,
+        JSON.stringify(
+          {
+            runId,
+            completedAt: new Date().toISOString(),
+            sitesSampled: selected.length,
+            sitesScanned: scanResults.length,
+            leaksDetected: allEvaluatedLeaks.length,
+            rulesAutoPatched: autoPatched.length,
+            manualReviewCount: manualReview.length,
+            mergeStats,
+            commitRef
+          },
+          null,
+          2
+        ),
+        'utf8'
+      );
+      const { runLiveProofEnrichment } = await import('./enrich-pillars-with-live-proof.mjs');
+      const { runGeoAndLlmsSync } = await import('./sync-geo-and-llms.mjs');
+      runLiveProofEnrichment(50);
+      runGeoAndLlmsSync();
+    } catch {}
     console.log('======================================================================\n');
 
     return {

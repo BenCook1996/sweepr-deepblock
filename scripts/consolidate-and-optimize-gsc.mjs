@@ -891,6 +891,22 @@ const sitemapEntries = orderedPillarPages.map((p) => {
   };
 });
 
+// Preserve all existing non-pruned hub URLs (/tools/*, /glossary/*, /stories/*, /de/*, /fr/*, /campaigns/*) in sitemap.xml
+const seenSitemapLocs = new Set(sitemapEntries.map((e) => e.loc));
+for (const [existingLoc, existingLastMod] of existingLastModMap.entries()) {
+  if (seenSitemapLocs.has(existingLoc)) continue;
+  const relPath = existingLoc.replace(/^https?:\/\/sweeprdeepblock\.com/i, '');
+  if (/^\/(tools|glossary|stories|de|fr|campaigns)(\/|$)/i.test(relPath)) {
+    seenSitemapLocs.add(existingLoc);
+    sitemapEntries.push({
+      loc: existingLoc,
+      lastmod: existingLastMod || todayStr,
+      changefreq: 'weekly',
+      priority: '0.85'
+    });
+  }
+}
+
 const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${sitemapEntries.map((e) => `  <url>\n    <loc>${e.loc}</loc>\n    <lastmod>${e.lastmod}</lastmod>\n    <changefreq>${e.changefreq}</changefreq>\n    <priority>${e.priority}</priority>\n  </url>`).join('\n')}

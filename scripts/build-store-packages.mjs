@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * SWEEPR Deepblock v1.1.6 — Cross-Browser Extension Store Packager
+ * SWEEPR DeepBlock v1.2.7 — Cross-Browser Extension Store Packager
  * Generates store-ready MV3 ZIP archives with POSIX forward-slash entry paths:
  *   1. Google Chrome Web Store (`dist/sweepr-deepblock-chrome-webstore-mv3.zip` & `dist/sweepr-deepblock-edge-chrome-mv3.zip`)
  *   2. Mozilla Firefox Add-ons / AMO (`dist/sweepr-deepblock-firefox-amo-mv3.zip`)
@@ -9,6 +9,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { runBuildAsoStoreListings } from './build-aso-store-listings.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = path.resolve(__dirname, '..');
@@ -66,7 +67,39 @@ function createPosixZip(sourceDir, outZip) {
   execFileSync('powershell', ['-NoProfile', '-Command', psScript]);
 }
 
+runBuildAsoStoreListings();
+
 const baseManifest = JSON.parse(fs.readFileSync(path.join(EXT_DIR, 'manifest.json'), 'utf8'));
+
+function validateManifestAssets(manifest, extDir) {
+  const requiredPaths = new Set();
+  for (const p of Object.values(manifest.icons || {})) requiredPaths.add(p);
+  if (manifest.action?.default_popup) requiredPaths.add(manifest.action.default_popup);
+  for (const p of Object.values(manifest.action?.default_icon || {})) requiredPaths.add(p);
+  if (manifest.options_ui?.page) requiredPaths.add(manifest.options_ui.page);
+  if (manifest.background?.service_worker) requiredPaths.add(manifest.background.service_worker);
+  for (const s of manifest.background?.scripts || []) requiredPaths.add(s);
+  for (const r of manifest.declarative_net_request?.rule_resources || []) {
+    if (r.path) requiredPaths.add(r.path);
+  }
+  for (const cs of manifest.content_scripts || []) {
+    for (const jsFile of cs.js || []) requiredPaths.add(jsFile);
+    for (const cssFile of cs.css || []) requiredPaths.add(cssFile);
+  }
+  for (const war of manifest.web_accessible_resources || []) {
+    for (const res of war.resources || []) requiredPaths.add(res);
+  }
+
+  for (const relPath of requiredPaths) {
+    const absPath = path.join(extDir, relPath);
+    if (!fs.existsSync(absPath)) {
+      throw new Error(`[Store Packager] Missing asset referenced in manifest.json: ${relPath}`);
+    }
+  }
+  console.log(`[Store Packager] Verified all ${requiredPaths.size} manifest asset paths exist on disk.`);
+}
+
+validateManifestAssets(baseManifest, EXT_DIR);
 
 // 1. Build Google Chrome Web Store & Microsoft Edge MV3 Package
 const chromeStaging = path.join(DIST_DIR, 'staging-chrome');

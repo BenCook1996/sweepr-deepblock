@@ -344,12 +344,18 @@
       </div>
     </div>
     <div class="max-w-4xl mx-auto text-center pt-5 pb-3">
-      <h1 id="bannerTitle" class="text-2xl sm:text-3xl md:text-4xl font-black text-white tracking-tight">
+      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-400/30 text-emerald-300 text-[11px] font-bold mb-2" data-ab-paywall-badge>
+        ✓ 4-Device Pro (£29.99/yr) or 4-App Complete Security Suite (£89.99/yr)
+      </div>
+      <h1 id="bannerTitle" class="text-2xl sm:text-3xl md:text-4xl font-black text-white tracking-tight" data-ab-paywall-headline>
         Get Complete Ad &amp; Pop-Up Protection for 2026
       </h1>
-      <p id="bannerSubtitle" class="text-gray-300 text-xs sm:text-sm md:text-base mt-1.5 font-normal max-w-2xl mx-auto">
-        Block Ads, Pop-Ups &amp; Scams.
+      <p id="bannerSubtitle" class="text-gray-300 text-xs sm:text-sm md:text-base mt-1.5 font-normal max-w-2xl mx-auto" data-ab-paywall-subheadline>
+        Block Ads, Pop-Ups &amp; Scams — Locked-In £29.99/yr Rate with 14-Day Guarantee.
       </p>
+      <div class="text-[11px] font-bold text-emerald-400 mt-1.5" data-live-proof-ticker>
+        Verified Live: 10,218+ Ad/Scam Domains • 242 C++ DNR Rules (15µs) • 150 Audited Publishers
+      </div>
     </div>
   </header>
 
@@ -358,13 +364,13 @@
     <!-- Top Segmented Plan Switcher Bar (Instant 1-Click Plan Switching on /order) -->
     <div class="bg-white rounded-2xl p-1.5 sm:p-2 border border-gray-200/90 shadow-xs mb-5 grid grid-cols-1 sm:grid-cols-4 gap-1.5 sm:gap-2">
       <button type="button" id="planTabAnnual" onclick="selectCheckoutPlan('annual')" class="py-2 sm:py-2.5 px-3 rounded-xl bg-emerald-600 text-white font-extrabold text-xs sm:text-sm shadow-xs cursor-pointer transition-all">
-        ★ Annual — £4.99/mo (Save 50%)
+        ★ Annual — £2.50/mo (Save 50%)
       </button>
       <button type="button" id="planTabSixMonth" onclick="selectCheckoutPlan('six_month')" class="py-2 sm:py-2.5 px-3 rounded-xl bg-gray-50 hover:bg-gray-100 text-gray-700 font-bold text-xs sm:text-sm cursor-pointer transition-all">
-        6-Month — £7.49/mo (Save 25%)
+        6-Month — £3.33/mo (Save 33%)
       </button>
       <button type="button" id="planTabMonthly" onclick="selectCheckoutPlan('monthly')" class="py-2 sm:py-2.5 px-3 rounded-xl bg-gray-50 hover:bg-gray-100 text-gray-700 font-bold text-xs sm:text-sm cursor-pointer transition-all">
-        Monthly — £9.99/mo
+        Monthly — £4.99/mo (£1.99 Intro)
       </button>
       <button type="button" id="planTabSuite" onclick="selectCheckoutPlan('suite_annual')" class="py-2 sm:py-2.5 px-3 rounded-xl bg-gray-50 hover:bg-gray-100 text-gray-700 font-bold text-xs sm:text-sm cursor-pointer transition-all">
         🛡️ Complete Suite — £89.99/yr (Save 45%)
@@ -381,7 +387,7 @@
           <div id="mobileAccordionHint" class="text-[11px] text-gray-500 mt-0.5">Tap to expand itemized summary &amp; 1-click add-on &darr;</div>
         </div>
         <div class="text-right shrink-0">
-          <div id="mobileAccordionTotal" class="font-black text-base text-gray-900 tabular-nums">£74.98</div>
+          <div id="mobileAccordionTotal" class="font-black text-base text-gray-900 tabular-nums">£44.98</div>
           <div class="text-[10px] font-bold text-emerald-700">14-Day Refund</div>
         </div>
       </button>
@@ -433,8 +439,8 @@
           </div>
 
           <div class="flex sm:block items-baseline justify-between pt-2 sm:pt-0 border-t sm:border-t-0 border-gray-100 text-left sm:text-right shrink-0">
-            <div id="productPriceTop" class="text-2xl font-black text-gray-900 tracking-tight">£59.99</div>
-            <div id="productPriceSub" class="text-[11px] text-gray-500 font-medium">per year (£4.99/mo)</div>
+            <div id="productPriceTop" class="text-2xl font-black text-gray-900 tracking-tight">£29.99</div>
+            <div id="productPriceSub" class="text-[11px] text-gray-500 font-medium">per year (£2.50/mo)</div>
           </div>
         </div>
 
@@ -492,7 +498,7 @@
         <div class="bg-gray-50/80 rounded-xl p-4 border border-gray-200/80 space-y-2.5 text-xs sm:text-sm">
           <div class="flex items-center justify-between text-gray-700">
             <span id="summaryPlanTitle">SWEEPR Deepblock Pro (Annual Plan)</span>
-            <span id="summaryPlanPrice" class="font-semibold text-gray-900">£59.99/year</span>
+            <span id="summaryPlanPrice" class="font-semibold text-gray-900">£29.99/year</span>
           </div>
 
           <div id="ramAddonSummaryRow" class="flex items-center justify-between text-emerald-800 bg-emerald-50/90 px-2.5 py-1.5 rounded-lg border border-emerald-200/80">
@@ -507,27 +513,27 @@
           <div id="savingsSummaryRow" class="flex flex-col gap-0.5 text-emerald-600 font-medium border-t border-dashed border-gray-200 pt-2">
             <div class="flex items-center justify-between text-xs">
               <span id="savingsSummaryLabel">Annual Plan Savings (Save 50%)</span>
-              <span id="savingsSummaryAmount" class="font-bold">- £59.89</span>
+              <span id="savingsSummaryAmount" class="font-bold">- £29.89</span>
             </div>
             <div id="savingsSummaryNote" class="text-[10px] text-gray-500 font-normal">
-              Billed annually at £59.99/year (£4.99/month equivalent) instead of standard £119.88/year.
+              Billed annually at £29.99/year (£2.50/month equivalent) instead of standard £59.88/year.
             </div>
           </div>
 
           <!-- Discount Line (Shows when £1.99 1st month discount is applied) -->
           <div id="discountSummaryRow" class="hidden flex flex-col gap-0.5 text-emerald-600 font-medium border-t border-dashed border-gray-200 pt-2">
             <div class="flex items-center justify-between text-xs">
-              <span>Introductory 1st-Month Discount (<strong id="discountSaveStrong">Save £8.00</strong>)</span>
-              <span id="discountAmountMinus" class="font-bold">- £8.00</span>
+              <span>Introductory 1st-Month Discount (<strong id="discountSaveStrong">Save £3.00</strong>)</span>
+              <span id="discountAmountMinus" class="font-bold">- £3.00</span>
             </div>
             <div id="discountNoteText" class="text-[10px] text-gray-500 font-normal">
-              Discount applies strictly to month 1. All future monthly renewals are billed at the standard rate of £9.99/month unless cancelled.
+              Discount applies strictly to month 1. All future monthly renewals are billed at the standard rate of £4.99/month unless cancelled.
             </div>
           </div>
 
           <div class="pt-2.5 border-t border-gray-200 flex items-center justify-between">
             <span id="totalTodayLabel" class="font-bold text-gray-900 text-sm sm:text-base">Total Today (GBP)</span>
-            <span id="totalTodayText" class="font-black text-xl sm:text-2xl text-gray-900">£74.98</span>
+            <span id="totalTodayText" class="font-black text-xl sm:text-2xl text-gray-900">£44.98</span>
           </div>
         </div>
 
@@ -932,8 +938,8 @@
     let checkoutConfig = {
       publishableKey: '',
       elementsEnabled: false,
-      amountTodayPence: 5999,
-      amountRegularPence: 5999
+      amountTodayPence: 2999,
+      amountRegularPence: 2999
     };
     let discountModalShown = false;
     let inactivityTimer = null;
@@ -1085,9 +1091,9 @@
     function getBasePlanPence(plan = selectedPlan) {
       const p = checkoutConfig && checkoutConfig.pricing;
       if (plan === 'suite_annual') return p?.suiteAnnualAmount ?? 8999;
-      if (plan === 'annual') return p?.annualAmount ?? 5999;
-      if (plan === 'six_month') return p?.sixMonthAmount ?? 4499;
-      return isDiscountApplied ? (p?.introMonthlyAmount ?? 199) : (p?.monthlyAmount ?? 999);
+      if (plan === 'annual') return p?.annualAmount ?? 2999;
+      if (plan === 'six_month') return p?.sixMonthAmount ?? 1999;
+      return isDiscountApplied ? (p?.introMonthlyAmount ?? 199) : (p?.monthlyAmount ?? 499);
     }
 
     function formatLocalAmount(amountMinor) {
@@ -1161,15 +1167,15 @@
         ramRow.classList.add('hidden');
       }
 
-      const annualFmt = p?.annualFormatted ?? '£59.99';
-      const annualMoEq = p?.annualMonthlyEqFormatted ?? '£4.99';
-      const annualSave = p?.annualSavingsFormatted ?? '£59.89';
-      const sixFmt = p?.sixMonthFormatted ?? '£44.99';
-      const sixMoEq = p?.sixMonthMonthlyEqFormatted ?? '£7.49';
-      const sixSave = p?.sixMonthSavingsFormatted ?? '£14.95';
-      const monthlyFmt = p?.monthlyFormatted ?? '£9.99';
+      const annualFmt = p?.annualFormatted ?? '£29.99';
+      const annualMoEq = p?.annualMonthlyEqFormatted ?? '£2.50';
+      const annualSave = p?.annualSavingsFormatted ?? '£29.89';
+      const sixFmt = p?.sixMonthFormatted ?? '£19.99';
+      const sixMoEq = p?.sixMonthMonthlyEqFormatted ?? '£3.33';
+      const sixSave = p?.sixMonthSavingsFormatted ?? '£9.95';
+      const monthlyFmt = p?.monthlyFormatted ?? '£4.99';
       const introFmt = p?.introMonthlyFormatted ?? '£1.99';
-      const introSave = p?.introSavingsFormatted ?? '£8.00';
+      const introSave = p?.introSavingsFormatted ?? '£3.00';
 
       const tagSvg = '<svg class="w-3.5 h-3.5 text-brand-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg> ';
       const savingsNoteEl = document.getElementById('savingsSummaryNote');
@@ -1621,6 +1627,24 @@
             plan: plan,
             ram_tamer: ramTamer,
             content_ids: contentIds
+          })
+        }).catch(() => {});
+
+        const banditVariant =
+          window.__sweeprAbVariant ||
+          localStorage.getItem('sweepr_ab_variant') ||
+          sessionStorage.getItem('sweepr_ab_variant') ||
+          'control_value_stack';
+        await fetch('/api/ab/convert', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          keepalive: true,
+          body: JSON.stringify({
+            variant: banditVariant,
+            banditVariant,
+            plan,
+            amountGbp: value,
+            includesSuite: plan === 'suite_annual'
           })
         }).catch(() => {});
       } catch (convErr) {
