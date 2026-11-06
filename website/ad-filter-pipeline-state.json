@@ -1,8 +1,20 @@
 {
-  "updatedAt": "2026-11-05T00:09:16.625Z",
+  "updatedAt": "2026-11-06T00:02:31.809Z",
   "dedupWindowDays": 30,
-  "totalTrackedDomains": 11115,
+  "totalTrackedDomains": 11120,
   "recentRuns": [
+    {
+      "run_id": "adpipe-2026-11-06-28frg",
+      "started_at": "2026-11-06T00:02:26.706Z",
+      "completed_at": "2026-11-06T00:02:31.808Z",
+      "sites_sampled": 5,
+      "sites_scanned": 5,
+      "leaks_detected": 0,
+      "rules_auto_patched": 0,
+      "manual_review_count": 0,
+      "commit_hash": "3ec9b9d",
+      "crm_synced": 1
+    },
     {
       "run_id": "adpipe-2026-11-05-d0kki",
       "started_at": "2026-11-05T00:05:21.627Z",
@@ -78546,6 +78558,41 @@
     "youtube-mp3.org": {
       "category": "general_ad_supported",
       "lastScannedAt": 1793837215194,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "mixpo.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923351242,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "yammer.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923351242,
+      "scanCount": 1,
+      "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "fastcodesign.com": {
+      "category": "gaming",
+      "lastScannedAt": 1793923351242,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "google.com.tw": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923351242,
+      "scanCount": 1,
+      "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "360game.vn": {
+      "category": "gaming",
+      "lastScannedAt": 1793923351242,
       "scanCount": 1,
       "lastStatus": "unreachable",
       "leaksFound": 0
