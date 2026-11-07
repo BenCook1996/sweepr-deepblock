@@ -1,8 +1,20 @@
 {
-  "updatedAt": "2026-11-06T00:02:31.809Z",
+  "updatedAt": "2026-11-06T00:08:01.102Z",
   "dedupWindowDays": 30,
-  "totalTrackedDomains": 11120,
+  "totalTrackedDomains": 12120,
   "recentRuns": [
+    {
+      "run_id": "adpipe-2026-11-06-o3han",
+      "started_at": "2026-11-06T00:03:50.957Z",
+      "completed_at": "2026-11-06T00:08:01.101Z",
+      "sites_sampled": 1000,
+      "sites_scanned": 1000,
+      "leaks_detected": 0,
+      "rules_auto_patched": 0,
+      "manual_review_count": 0,
+      "commit_hash": "5ff7628",
+      "crm_synced": 0
+    },
     {
       "run_id": "adpipe-2026-11-06-28frg",
       "started_at": "2026-11-06T00:02:26.706Z",
@@ -78593,6 +78605,7006 @@
     "360game.vn": {
       "category": "gaming",
       "lastScannedAt": 1793923351242,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "slacker.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "diply.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "frameddisplay.com": {
+      "category": "gaming",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "slideshare.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "clashofclans.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "mystartsearch.com": {
+      "category": "entertainment",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "weibo.cn": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "wikimedia.org": {
+      "category": "gaming",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "pricegrabber.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "shoprunner.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "tribalfusion.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "simplereach.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bongacash.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "sascdn.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "pubnub.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "receitas.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dropboxusercontent.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "admarketplace.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "taps.io": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "drupal.org": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "aliyuncdn.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "klm.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "yesware.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "venturecapitalnews.us": {
+      "category": "news",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "updatepm.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "zillowstatic.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "fotokritik.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "lostlettermen.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "complex.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "adtech.de": {
+      "category": "blogs",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "adformdsp.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "smi2.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "expedia.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "androidcentral.com": {
+      "category": "blogs",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "plug.it": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "alibaba.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "meteomedia.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dana123.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "indianexpress.com": {
+      "category": "news",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "copacet.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "searchmarketing.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "ebaumsworld.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "eyedemand.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "rollingstone.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "quickmeme.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "mapquest.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "condenast.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "enbac.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "corriereobjects.it": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "iesnare.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "verticalresponse.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "egistec.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "liadm.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "masslive.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "taobao.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "googlehosted.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "mybrowserbar.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "crackedcdn.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "instacontent.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bleacherreport.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "folha.com.br": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "optorb.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "evidon.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "ptinews.com": {
+      "category": "news",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "infowars.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "lifespan.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "iol.it": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "c-col.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "veruta.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "intelliad.de": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "wunderground.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "liqwid.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "everyplay.com": {
+      "category": "gaming",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "google.com.mx": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "rtbhouse.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "adxcore.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "adnexio.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "content.ad": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bbc.co.uk": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "userreport.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "whitepages.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "yldbt.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "adsupply.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "nintendo.net": {
+      "category": "gaming",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bm23.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "rcsmetrics.it": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "adzerk.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "responsys.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "xunlei.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "xingcloud.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "nokia.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "travelers.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "mysearchdial.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "sbitinjs.info": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "9gag.tv": {
+      "category": "entertainment",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "appoxee.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "wpadsvr.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "yahoo.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "zenfs.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "torrentum.pl": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "techhive.com": {
+      "category": "blogs",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "32d1d3b9c.se": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "wsoddata.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "real.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "smartcampaign.it": {
+      "category": "gaming",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "videoplaza.tv": {
+      "category": "entertainment",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "choicestream.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "careland.com.cn": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "daringfireball.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cootek.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "blogherads.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dtzads.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dpbolvw.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "lonny.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "exip.org": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "ampdesk.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "zelfy.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "shareth.ru": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "sony.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "trbas.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "onswipe.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dataferb.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "box.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "nbcuni.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "intentmedia.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "amazon.co.uk": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "tracksitetraffic1.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "creafi-online-media.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bankrate.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "system-monitor.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "admission.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "terra.com.mx": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "marinsm.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "ttnetmuzik.com.tr": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "learni.st": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "rklyjs.info": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "google.fi": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "efinancialnews.com": {
+      "category": "news",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "ad120m.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "govdelivery.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "eddiebauer.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "providesupport.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "careerbuilder.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "trackimpression.com": {
+      "category": "news",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "adtechus.com": {
+      "category": "blogs",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "engageya.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "wearemadeinny.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "yandex.st": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "mediaforge.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "thebighits.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "llnwd.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "acc-hd.de": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "adopshost1.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "smartadserver.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "sporx.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "eba.gov.tr": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "ibtimes.com": {
+      "category": "news",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "launchpad.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "pastebin.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "7176.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bmwusa.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "meccahoo.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "clickability.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "yelp-support.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "criteo.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "stylene.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "sony.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "clickbooth.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "sonital.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "mchsi.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "spankwire.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dailycaller.com": {
+      "category": "news",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "jscripts.org": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "starwebnet.com": {
+      "category": "entertainment",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "adform.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "foolcdn.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "luxup.ru": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "pages03.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "giaoduc.net.vn": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "sprint.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "pages05.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "convertro.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "mozillamessaging.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "adgorithms.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "zst.com.br": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "simplemachines.org": {
+      "category": "blogs",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "mediander.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "alipay.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "motherless.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "lgtvsdp.com": {
+      "category": "entertainment",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "wsimg.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "s-microsoft.com": {
+      "category": "blogs",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "fncstatic.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "leafletjs.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "securedvisit.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "media1first.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bizrate.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bluenationreview.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "jwpltx.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "salesforceliveagent.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "pickmeup-ltd.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bankofamerica.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "psafe.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dataxu.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "webcitation.org": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dyndns.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "baynote.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "hotelurbano.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "santander.com.br": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "adreadytractions.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "qwikbookprint.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "solo-launcher.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "emjcd.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "fixyourbloodsugar.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "digitaltarget.ru": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "thenextweb.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "expedia.fr": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "displaymarketplace.com": {
+      "category": "gaming",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "24hstatic.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "vice.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bbci.co.uk": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "webservis.gen.tr": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cnn.it": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "systweak.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "codecanyon.net": {
+      "category": "blogs",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cloudmark.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "hao123img.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "appsdt.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "stormiq.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "channelintelligence.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dmtracker.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "foursquare.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "fansided.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "espnfrontrow.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "jsuol.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "hurlist.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "medio.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "blurdev.com": {
+      "category": "blogs",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "hahatimes.com": {
+      "category": "news",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "aol.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dtvbb.tv": {
+      "category": "entertainment",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "googletagservices.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "amazon.com.au": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "h33t.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "rasmussenreports.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "avira-update.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "abullseyeview.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dealtime.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "ad360.vn": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "redd.it": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "ultraadserver.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "mahmure.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "viaf.org": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "ycombinator.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "healthforself.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "comcastnets.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "sftcdn.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "ngaynay.vn": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "quantcast.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "tp-link.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "mydomainadvisor.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "theverge.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "badlefthook.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "hlserve.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bizjournals.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "enoratraffic.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "free-coupons-codes.com": {
+      "category": "blogs",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "turnto.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "azcardinals.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "lexity.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "npr.org": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "auditude.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "pixlr.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "onscroll.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "geogslb.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "filmifullizle.com": {
+      "category": "entertainment",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bigcommerce.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "smoothfusion.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "speedshiftmedia.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "plista.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "citrixonline.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "keywordblocks.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "op-cdn.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dropbox.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "groupon.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "neulion.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dxsvr.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "oregonlive.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "realclearmarkets.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "litecoin.org": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "000dn.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "chicagotribune.com": {
+      "category": "news",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "mininova.org": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "githubapp.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "funshion.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "netmining.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "conduit-services.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "newrepublic.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dsusw.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "gelocal.it": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "staradvertiser.com": {
+      "category": "entertainment",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "appleiphonecell.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "medicinenet.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "metanetwork.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "indexww.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "webscorebox.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "deca.vn": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "castplatform.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "expedia.es": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "canlirulet-siteleri.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "publicbt.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dpstack.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "mathjax.org": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "fox.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dtinews.vn": {
+      "category": "news",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "disneyprivacycenter.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "makers.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "superfish.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bounceexchange.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "quantserve.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "pop6.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "xg4ken.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "impact-ad.jp": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "wurfl.io": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "xaxis.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "duba.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "otwsftv0.com": {
+      "category": "entertainment",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "me.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "patreon.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "t.co": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "suproo.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "furious7.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "adnxs.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "sailthru.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "tenmarks.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "shoppingshadow.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bb.com.br": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "edgefonts.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "everyscreenmedia.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "google.ru": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "shld.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "greatschools.org": {
+      "category": "recipes",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "adelement.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "j2inter.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "vinacaptcha.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "wanelo.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "ghostery.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "examiner.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "gosquared.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "crdui.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "boombeachgame.com": {
+      "category": "gaming",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "eff.org": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "em.io": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "lazada.vn": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "google.com.sg": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bhg.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "medyanetads.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "featurelink.com": {
+      "category": "recipes",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "web.de": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "zedge.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "adtima.vn": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "mailtravel.co.uk": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "viewablemedia.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "passport.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "apptap.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bdstatic.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "localresponse.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "coed.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "adzcore.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "tradedoubler.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "networkmagic.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "estat.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "copperegg.com": {
+      "category": "gaming",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "ow.ly": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "google.dz": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "agame.com": {
+      "category": "gaming",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "pushwoosh.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "adf.ly": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "creativecdn.com": {
+      "category": "recipes",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "gmx.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bloxcms.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "rt.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "footprint.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "naver.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "qservz.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "pub2srv.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "ebay.be": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "vzwwo.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "zlcdn.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "eamobile.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "clarin.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "srvntrk.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cafemom.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "brasil.gov.br": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "vocalocity.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "livejournal.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "hepsibahis6.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "nbc.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "mopub.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "jasmin.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "burstnet.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "histats.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "ligatus.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "novanet.vn": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "mediasoul.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "pfx.ms": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "moneymorning.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "9999mb.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "space.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "drweb.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "elasticbeanstalk.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "gadgetspurchase.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "hurriyetoto.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "ubuntu.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "adweek.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cdn77.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "techcrunch.com": {
+      "category": "blogs",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "thestreet.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "tnetnoc.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "brtstats.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "zenoviaexchange.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "radiotime.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "imgiz.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "vgtf.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "aweber.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "wiley.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "posterous.com": {
+      "category": "news",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "sendmessagebox.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "jntwrk.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "hotwords.com.br": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "reddollars.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "epsihost.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dianomi.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cartalk.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "detik.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "usabilla.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "patch.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "mobilecore.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "mindjolt.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "espn3.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "hobwelt.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "easybreathe.com": {
+      "category": "recipes",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "foxsports.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "naver.jp": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "lolstatic.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "mmo-champion.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "winamp.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "tiqcdn.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "adobe.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "vindicosuite.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "tumblr.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "mybuys.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "173uu.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "geoadnxs.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "adrttt.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "updaterss.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "editmysite.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "mediakit.com.br": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "awin1.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "trb.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "google.sk": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "splashtop.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "ixigo.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "ebay.it": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "mqcdn.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "best-tv.com": {
+      "category": "entertainment",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "ihrhls.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "public-trust.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "gaytube.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "theviilage.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "onsugar.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "intellicast.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "ashleyrnadison.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "pubsqrd.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bloomberg.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "3g.cn": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "wlxrs.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "mxpnl.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "ifcdn.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "google.com.my": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "emediate.eu": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "popsugar.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "viglink.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bbb.org": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dilei.it": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "jumptime.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "emusic.com": {
+      "category": "entertainment",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "untd.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "wsj.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "xtube.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "yourshoppingoutlet.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "allmusic.com": {
+      "category": "entertainment",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "nict.jp": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "trrsf.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "hubrus.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "ioam.de": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "speedial.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "ebay.ie": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "adsrvr.org": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "ultradns.co.uk": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "q1media.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "sonobi.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cnnchile.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "adsnative.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "adplugcompany.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "adobetag.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "mediaplex.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "desmoinesregister.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "resultspage.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "invitemedia.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "korrelate.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "casinositeleri.biz": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cdn-apple.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "overstock.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "newrelic.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "iolo.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "mindspark.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "mshcdn.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "xatech.com": {
+      "category": "blogs",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "tightendjump.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "martiniadnetwork.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "loudtalks.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "f-secure.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "motherjones.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "247inc.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "incmd05.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "exactag.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "sabah.com.tr": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dianxin.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "serve-sys.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "gizmodo.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "hotels.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "htc.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "jawbone.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "pcworld.com": {
+      "category": "blogs",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "adsmarket.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "pbwstatic.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "google.it": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "pagesix.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "moatads.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "gaytubevideos.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "d3js.org": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "spingo.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "snxd.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "ngoisao.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "customersvc.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "populisengage.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "fout.jp": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "fandango.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "vui.vn": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "instantservice.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "grabnetworks.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bossip.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "gs-cdn.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "onavo.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "etracker.de": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "adobur.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "anyclip.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "chartboost.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "quizzyn.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "google.bg": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dailyfinance.com": {
+      "category": "news",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "pubventuresmedia.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "adersite.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "miamidolphins.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "staticflickr.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "livefyre.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "maxpreps.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "wsjdigital.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "infusionsoft.com": {
+      "category": "blogs",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "3lift.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dowjoneson.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "amung.us": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "skim.gs": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "meetic-partners.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "acuityplatform.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "lavamobiles.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "torrentsmd.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dribbble.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cbs.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "visualdna.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "gpsonextra.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "ranker.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "ribob01.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "stumble-upon.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "nytm.org": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "mzstatic.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "6pm.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cashtrafic.info": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bizographics.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "miniclipcdn.com": {
+      "category": "blogs",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "reactiongifs.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "mozillalabs.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "midasplayer.com": {
+      "category": "gaming",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "googleusercontent.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "fptad.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "crashlytics.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "ebaydesc.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "exitmonetization.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "certona.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "vidyoda.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "safemovedm.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "buzzwok.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "siviaggia.it": {
+      "category": "gaming",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "shopbop.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "mediawiki.org": {
+      "category": "gaming",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "jobsite.co.uk": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "instyle.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "traffichaus.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "criteo.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "foodandwine.com": {
+      "category": "recipes",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "ensonhaber.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "profootballhof.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "shopperconnect.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "qadabra.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "vaccint.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "legacy.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "sstatic.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "linknavi1.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "google.cl": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "v4cdn.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "pubexchange.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cogocast.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "linksmart.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "hearstnp.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "yahooapis.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "admized.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "toysrus.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "fluentmobile.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "wdgserv.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "desync.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "somo.vn": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "highwebmedia.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "janrain.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "compete.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "veinteractive.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "globalenerji.com.tr": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "myfreecams.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "springboardplatform.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "microad.jp": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "jtvnw.net": {
+      "category": "entertainment",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cheetahmail.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "disney.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "padsdelivery.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "streamprovider.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "yoz.io": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "siteblindado.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "viewster.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "staticsfly.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "sayyac.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "entrust.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dpmsrv.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "eproof.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "google.co.hu": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "admicro.vn": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "google.es": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "inspsearchapi.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "a3cloud.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "rockabox.co": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "audible.co.uk": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "srvabc.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "googlecommerce.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "c-span.org": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "iminent.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "nasil.tv": {
+      "category": "entertainment",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "lolpro.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "highcharts.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "eblastengine.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "s-msft.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "thedatingnetwork.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "sears.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "yieldify.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "baidu.co.th": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "trueconf.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cubicleoffers.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "tvbythenumbers.com": {
+      "category": "entertainment",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "ojrq.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "alephd.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "wikiversity.org": {
+      "category": "gaming",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "zedo.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "darchermedia.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "adorika.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "tapas.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "httptrack.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "vanityfair.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "belugaboost.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "imdb.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "nakedtube.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "patriots.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "polyad.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "xbox.com": {
+      "category": "gaming",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "escinteractive.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "footballfanatics.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "roimediadigital.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "olivebrandresponse.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "r7ls.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "aexp-static.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "delivery.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bloglovin.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "fyre.co": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "doubleverify.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "ibook.info": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "hao123.com.eg": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "demonoid.me": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "microsoftonline-p.com": {
+      "category": "blogs",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "spilcdn.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bostonglobe.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "flashtalking.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "avira.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "adocean.pl": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "repubblica.it": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "nbcsports.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "trvl-media.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "jpush.cn": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dmca.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "popcrush.com": {
+      "category": "blogs",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "promobay.org": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "clicktale.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "video-one.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "phunware.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "googledrive.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "google.com.ar": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "ad-maven.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "haircolorforwomen.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "filepicker.io": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "aa.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "baidustatic.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "azcentral.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "thoughtleadr.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "amazon.fr": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "kissmetrics.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "ethn.io": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bna.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "trove.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "github.io": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "customer.io": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "ebay.fr": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "smh.com.au": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "starzone.info": {
+      "category": "entertainment",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "yastatic.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "zopim.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "sourceforge.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "lporirxe.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "playblasteroids.com": {
+      "category": "gaming",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dumedia.ru": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "likesharetweet.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "2mdn.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "products-marketplace.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "mefeedia.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "liveleak.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "washingtonpost.com": {
+      "category": "news",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "oyunkolu.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "venturebeat.com": {
+      "category": "recipes",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bettycrocker.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "imageg.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "abril.com.br": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "advertising-support.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cootekservice.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "createspace.com": {
+      "category": "recipes",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "adsdumpo.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "tmall.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cdc.gov": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "lenovo.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bannerflow.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "jscods.cf": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "crdrdpjs.info": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "netnanny.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "kralpoptv.com.tr": {
+      "category": "entertainment",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "kuwo.cn": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "tinchieu.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "so.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "telize.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "mom.me": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "olx.pl": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "nikkei.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "hepsiburada.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "nordstrom.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "poll.fm": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cdnetworks.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "effectivemeasure.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "hearstmags.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "crawlability.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "wfxtriggers.com": {
+      "category": "gaming",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "wnsqzonebk.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "shbdn.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "ebay.de": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "spotxchange.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "thanhnien.com.vn": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "macromedia.com": {
+      "category": "blogs",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "kelkoo.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "adsrv247.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "turn.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "utorrent.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "chargers.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "mojang.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "longurl.it": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "irishtimes.com": {
+      "category": "news",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "redditgifts.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "redditstatic.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "iconarchive.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "origin.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "moodle.org": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "statigr.am": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "9gaging.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "uproxx.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "mercent.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "9game.com": {
+      "category": "gaming",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dishanywhere.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "netshelter.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "mediafiredev.com": {
+      "category": "blogs",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "force.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "ipredictive.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "reference.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "marketo.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "c-launcher.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "hs-analytics.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "instagram.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "fullhdfilmizle.com": {
+      "category": "entertainment",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "clickprotects.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "databrain.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "viber.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bee7.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "inatjs.info": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "livesportmedia.eu": {
+      "category": "gaming",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "tomsguide.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "trustedsource.org": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "tyroodr.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "drpsrvr.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "marthastewart.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "truste.org": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "ptp123.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "coccoc.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "eyeviewads.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "v9.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "genieesspv.jp": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "theblaze.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "panoramio.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "ministerial5.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "ehownowcdn.com": {
+      "category": "blogs",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "quicktransmit.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "twimg.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "googlesyndication.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "ups.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "sogou.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "quifinanza.it": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "crobo.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "vk.me": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "thebookinsider.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "tumri.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "adbutter.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "medianetadvertising.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "ad4game.com": {
+      "category": "gaming",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "google.pl": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "miaozhen.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "genieessp.jp": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "yceml.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "nwps.ws": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "ifunny.mobi": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bestbuy.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "apply2jobs.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "wildgames.com": {
+      "category": "gaming",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "360.cn": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "etahub.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "redditmedia.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "gandi.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "abmr.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "realclearsports.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "adshostnet.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dnsomatic.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "okcupid.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "jalopnik.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bostonherald.com": {
+      "category": "news",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "gamestop.com": {
+      "category": "gaming",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "yp.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "d41.co": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "gmarket.co.kr": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "mediaquark.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "pubgears.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "plexop.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "alexa.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "gfycat.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "nexage.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "clixmetrix.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "hrblock.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "mediabong.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "justjared.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "crashplan.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "afiliados.com.br": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "theweek.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "healthcentral.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "expedia.it": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "intgr.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "images-amazon.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "productsmagazines.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "game-advertising-online.com": {
+      "category": "gaming",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "wal.co": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "tubegalore.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "oley.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "earthnetworks.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "filehippo.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "babycenter.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "adultfriendfinder.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cb-cdn.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "skinected.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "chartbeat.com": {
+      "category": "recipes",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "rmgserving.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "goadservices.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "tremormedia.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "spiceworks.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "arcadecandy.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "viewmixed.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "qwapi.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "adnetwork.vn": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "villarenters.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "ivcbrasil.org.br": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "mmstat.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "aim.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "optimatic.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "hon.ch": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "threattrack.com": {
+      "category": "recipes",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "teamskeetimages.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bbelements.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "eyeota.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "ally.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "orange.fr": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "jpost.com": {
+      "category": "news",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "fluxstatic.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "maxpointinteractive.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "vitv.it": {
+      "category": "entertainment",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "adhigh.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "sunset.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "tacoda.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "trustlogo.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "djreprints.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bnqt.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "arabayarisi.com.tr": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "melonstube.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "gamek.vn": {
+      "category": "gaming",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "perezhilton.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "onedio.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "lglime.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "youtu.be": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cracked.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "tradelab.fr": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "monstersandcritics.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "adobedtm.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "wordpress.org": {
+      "category": "news",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "gq.com.tr": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "giphy.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "go2rewards.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "skor.tv": {
+      "category": "entertainment",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "westelm.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "pch.com": {
+      "category": "blogs",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "eltrafiko.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "ebaymainstreet.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "charter.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "getresponse.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "kiip.me": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "swiftype.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "tecmundo.com.br": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "textnow.me": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "clickfast.co": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "movieseum.com": {
+      "category": "entertainment",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "mastercard.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "protectfootballonfreetv.com": {
+      "category": "entertainment",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "google.com.pe": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "vimeocdn.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "tribdss.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "invisionpower.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "yieldselect.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "samsungelectronics.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "thomsonreuters.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "sendo.vn": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "nasdaq.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "amazon.es": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "logentries.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "webtrekk.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "ed4.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "olx.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "king.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "smarterremarketer.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "nflyouthpd.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "pub-fit.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "shareasale.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "facebook.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dt07.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "entrepreneur.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "blackberry.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "filmdiziseyret.com": {
+      "category": "entertainment",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "amxdt.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "zedo.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "mnginteractive.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "intuit.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "britishairways.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "lavanetwork.net": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "naytev.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "shockpedia.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "35go.cn": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "squarespace.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "domobile.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1793923539791,
       "scanCount": 1,
       "lastStatus": "unreachable",
       "leaksFound": 0
