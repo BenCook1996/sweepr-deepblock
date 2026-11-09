@@ -1355,13 +1355,12 @@ export async function runDaily50DeepBlockPages(targetCount = 0, force = false) {
   const pool = buildPool();
   let reRenderedCount = 0;
 
-  // Guardrail (GSC Crawl-Budget Protection): Allow verified keyword blueprints, setup, vs, guides,
-  // or primary platform flagship '-block-video-ads' solutions unless --allow-cartesian is explicitly set.
+  // Guardrail (GSC Crawl-Budget Protection): Strictly allow ONLY verified keyword blueprints
+  // from data/keyword-opportunity-matrix.json unless --allow-cartesian or --allow-synthetic is explicitly passed.
+  const allowSynthetic = allowCartesian || process.argv.includes('--allow-synthetic');
   const isPillarCandidate = (cand) => {
     if (cand.isKeywordBlueprint) return true;
-    if (cand.cluster === 'setup' || cand.cluster === 'vs' || cand.cluster === 'guides') return true;
-    if (cand.urlPath && cand.urlPath.endsWith('-block-video-ads')) return true;
-    return allowCartesian;
+    return allowSynthetic;
   };
 
   const selected = [];
@@ -1497,7 +1496,6 @@ export async function runDaily50DeepBlockPages(targetCount = 0, force = false) {
     { loc: 'https://sweeprdeepblock.com/campaigns/uk-ad-load-index', changefreq: 'weekly', priority: '0.8' },
     { loc: 'https://sweeprdeepblock.com/campaigns/renewal-shock-switcher', changefreq: 'weekly', priority: '0.8' },
     { loc: 'https://sweeprdeepblock.com/vs/total-adblock', changefreq: 'weekly', priority: '0.8' },
-    { loc: 'https://sweeprdeepblock.com/login', changefreq: 'monthly', priority: '0.6' },
     { loc: 'https://sweeprdeepblock.com/support', changefreq: 'monthly', priority: '0.6' },
     { loc: 'https://sweeprdeepblock.com/refund', changefreq: 'monthly', priority: '0.5' },
     { loc: 'https://sweeprdeepblock.com/privacy', changefreq: 'monthly', priority: '0.5' },

@@ -40,7 +40,7 @@ function parseLimitArg() {
       if (!Number.isNaN(n) && n >= 0) return n;
     }
   }
-  return 15;
+  return 3;
 }
 
 function auditPageSpeedBudgets() {
@@ -133,17 +133,27 @@ export async function runDailySeoPageSpeedPipeline() {
   const genSummary = await runDaily50DeepBlockPages(newPagesLimit, false);
 
   console.log('\n============================================================================');
-  console.log('  STEP 3/5: VERIFYING LIVE MV3 RULE TELEMETRY PROOF ACROSS ALL PILLARS');
+  console.log('  STEP 3/6: VERIFYING LIVE MV3 RULE TELEMETRY PROOF ACROSS ALL PILLARS');
   console.log('============================================================================');
   runLiveProofEnrichment(500, false);
 
   console.log('\n============================================================================');
-  console.log('  STEP 4/5: SYNCING GEO LLMS.TXT & AI CITATION MANIFEST');
+  console.log('  STEP 4/6: RUNNING GSC CONSOLIDATION & 301 REDIRECT HEALTH GUARD');
+  console.log('============================================================================');
+  const guardStdout = execFileSync(
+    process.execPath,
+    [path.join(__dirname, 'gsc-consolidation-redirect-guard.mjs')],
+    { encoding: 'utf8' }
+  );
+  console.log(guardStdout.trim());
+
+  console.log('\n============================================================================');
+  console.log('  STEP 5/6: SYNCING GEO LLMS.TXT & AI CITATION MANIFEST');
   console.log('============================================================================');
   const geoSummary = runGeoAndLlmsSync();
 
   console.log('\n============================================================================');
-  console.log('  STEP 5/5: RUNNING TECHNICAL SEO, ANTI-CANNIBALIZATION & PAGESPEED AUDIT');
+  console.log('  STEP 6/6: RUNNING TECHNICAL SEO, ANTI-CANNIBALIZATION & PAGESPEED AUDIT');
   console.log('============================================================================');
   const techAuditStdout = execFileSync(
     process.execPath,

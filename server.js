@@ -6296,9 +6296,18 @@ global.__cmoAutomationJobs = [
     id: 'daily_seo_pagespeed_audit',
     name: 'Technical SEO, Cannibalization & CWV Guardrail Audit',
     script: 'scripts/daily-seo-pagespeed-audit.mjs',
+    args: ['3'],
     outputFile: 'data/daily-seo-audit-report.json',
     intervalMs: 24 * 60 * 60 * 1000,
     timeoutMs: 120000
+  },
+  {
+    id: 'gsc_consolidation_redirect_guard',
+    name: 'GSC Consolidation & 301 Redirect Health Guard',
+    script: 'scripts/gsc-consolidation-redirect-guard.mjs',
+    outputFile: 'data/gsc-consolidation-health.json',
+    intervalMs: 12 * 60 * 60 * 1000,
+    timeoutMs: 90000
   }
 ];
 

@@ -78,6 +78,21 @@ for (const filePath of htmlFiles) {
           type: 'noindex_self_canonical',
           msg: 'Consolidated noindex PSEO page should canonicalize to its parent Pillar URL'
         });
+      } else {
+        const targetRoute = canMatchNoIdx[1].trim().replace(/^https?:\/\/sweeprdeepblock\.com/i, '') || '/';
+        if (!existingCleanRoutes.has(targetRoute)) {
+          results.htmlIssues.push({
+            file: rel,
+            type: 'broken_consolidation_canonical',
+            msg: `Consolidated noindex PSEO page canonicalizes to non-existent target: ${targetRoute}`
+          });
+        } else if (noIndexPseoRoutes.has(targetRoute)) {
+          results.htmlIssues.push({
+            file: rel,
+            type: 'consolidation_redirect_chain',
+            msg: `Consolidated noindex PSEO page canonicalizes to another noindex page (redirect chain): ${targetRoute}`
+          });
+        }
       }
       for (const m of content.matchAll(/<a\s+[^>]*href=["'](\/(?:solutions|setup|vs|guides)\/[a-z0-9-]+)["']/gi)) {
         if (noIndexPseoRoutes.has(m[1])) {
@@ -440,6 +455,35 @@ if (fs.existsSync(robotsPath)) {
   }
   if (!robotsTxt.includes('User-agent: ClaudeBot') || !robotsTxt.includes('User-agent: GPTBot') || !robotsTxt.includes('User-agent: PerplexityBot')) {
     results.htmlWarnings.push({ file: 'robots.txt', type: 'missing_ai_crawlers', msg: 'robots.txt missing explicit directives for ClaudeBot, GPTBot, or PerplexityBot' });
+  }
+  // Ensure 0 URLs in sitemap.xml / sitemap-sites.xml conflict with robots.txt Disallow rules
+  const disallowPrefixes = [];
+  let activeAgent = '*';
+  for (const rawLine of robotsTxt.split(/\r?\n/)) {
+    const line = rawLine.trim();
+    if (!line || line.startsWith('#')) continue;
+    const uaMatch = line.match(/^User-agent:\s*(.+)$/i);
+    if (uaMatch) {
+      activeAgent = uaMatch[1].trim();
+      continue;
+    }
+    const disMatch = line.match(/^Disallow:\s*(.+)$/i);
+    if (disMatch && (activeAgent === '*' || /Googlebot/i.test(activeAgent))) {
+      const prefix = disMatch[1].trim();
+      if (prefix && prefix !== '/') disallowPrefixes.push(prefix);
+    }
+  }
+  for (const u of sitemapUrls) {
+    const urlPath = u.replace(/^https?:\/\/sweeprdeepblock\.com/i, '') || '/';
+    for (const prefix of disallowPrefixes) {
+      if (urlPath === prefix || urlPath.startsWith(prefix + '/') || (prefix.endsWith('/') && urlPath.startsWith(prefix))) {
+        results.htmlIssues.push({
+          file: 'sitemap.xml',
+          type: 'sitemap_robots_disallow_conflict',
+          msg: `Sitemap URL "${u}" conflicts with robots.txt "Disallow: ${prefix}"`
+        });
+      }
+    }
   }
 } else {
   results.htmlIssues.push({ file: 'robots.txt', type: 'missing_robots', msg: 'robots.txt not found!' });

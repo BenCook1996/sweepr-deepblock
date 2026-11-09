@@ -69,7 +69,8 @@ export const PILLAR_SEED_MATRIX = [
       '1blocker',
       'wipr adblock',
       'brave shields',
-      'privacy badger'
+      'privacy badger',
+      'adblock luna vpn'
     ],
     modifiers: ['alternative', 'vs', 'renewal price', 'cancel', 'not working', 'chrome manifest v3'],
     directSeeds: [
@@ -77,6 +78,8 @@ export const PILLAR_SEED_MATRIX = [
       'best manifest v3 adblocker vs ublock origin lite',
       'adblock without acceptable ads whitelist',
       'pie adblock safe or scam alternative',
+      'is pie adblock legit reddit',
+      'adblock luna vpn safe alternative',
       'switch from adblock plus to manifest v3',
       'adguard vs ublock origin lite chrome 2026',
       'lightweight alternative to ghostery chrome'
@@ -93,13 +96,16 @@ export const PILLAR_SEED_MATRIX = [
       'twitch purple screen',
       'twitch adblock',
       'crunchyroll ads',
+      'funimation ads',
       'spotify web player ads',
       'chrome manifest v3 adblocker',
       'kick stream ads',
       'itvx ads browser',
       'channel 4od ads chrome',
       'fandom wiki video ads',
-      'reddit promoted posts blocker'
+      'reddit promoted posts blocker',
+      'wattpad ad blocker',
+      'soundgasm popunder blocker'
     ],
     modifiers: ['2026', 'chrome', 'edge', 'firefox', 'safari', 'fix', 'extension'],
     directSeeds: [
@@ -107,11 +113,14 @@ export const PILLAR_SEED_MATRIX = [
       'block youtube pre roll ads chrome 2026',
       'stop twitch mid roll ads without purple screen',
       'block crunchyroll video ads chrome extension',
+      'funimation block video ads chrome',
       'block fandom autoplay sidebar videos chrome',
       'best adblocker for thorium browser',
       'best adblocker for floorp browser',
       'best adblocker for zen browser',
-      'best adblocker for arc browser windows'
+      'best adblocker for arc browser windows',
+      'waterfox adblock mv3 extension',
+      'kiwi browser adblock extension android'
     ]
   },
   {
@@ -209,6 +218,7 @@ export const PILLAR_SEED_MATRIX = [
     directSeeds: [
       'adblocker with built in tab suspender',
       'reduce chrome ram usage from ad trackers',
+      'vivaldi high ram usage fix extension',
       'stop news websites freezing browser tabs',
       'lightweight manifest v3 adblocker low memory'
     ]

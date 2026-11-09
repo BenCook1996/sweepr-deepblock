@@ -280,7 +280,7 @@ const GSC_PRIORITY_URLS = new Set([
   'https://sweeprdeepblock.com/setup/arc-browser-windows-mac',
   'https://sweeprdeepblock.com/setup/zen-browser-privacy-tabs',
   'https://sweeprdeepblock.com/setup/kiwi-browser-android',
-  'https://sweeprdeepblock.com/setup/ungoogled-chromium-setup',
+  'https://sweeprdeepblock.com/setup/ungoogled-chromium-mv3',
   'https://sweeprdeepblock.com/setup/brave-macos-apple-silicon',
   'https://sweeprdeepblock.com/setup/librewolf-hardened-firefox',
   'https://sweeprdeepblock.com/solutions/crunchyroll-anime-streams-block-video-ads',
@@ -289,12 +289,21 @@ const GSC_PRIORITY_URLS = new Set([
   'https://sweeprdeepblock.com/solutions/manga-comic-readers-block-video-ads',
   'https://sweeprdeepblock.com/solutions/linkedin-feed-ads-block-video-ads',
   'https://sweeprdeepblock.com/solutions/soundcloud-audio-player-block-video-ads',
-  'https://sweeprdeepblock.com/solutions/dex-token-screeners-stop-malvertising-popunders',
-  'https://sweeprdeepblock.com/solutions/geeksforgeeks-dev-portals-reduce-browser-ram-usage',
+  'https://sweeprdeepblock.com/solutions/dex-token-screeners-block-video-ads',
+  'https://sweeprdeepblock.com/solutions/geeksforgeeks-dev-portals-block-video-ads',
   'https://sweeprdeepblock.com/solutions/roblox-web-community-filter-ai-slop-and-scams',
   'https://sweeprdeepblock.com/solutions/rumble-video-streams-block-video-ads',
   'https://sweeprdeepblock.com/solutions/tumblr-blog-feeds-block-video-ads',
+  'https://sweeprdeepblock.com/solutions/1337x-torrent-indexer-block-video-ads',
+  'https://sweeprdeepblock.com/solutions/soundgasm-audio-streaming-stop-malvertising-popunders',
+  'https://sweeprdeepblock.com/solutions/strava-fitness-activity-stop-malvertising-popunders',
+  'https://sweeprdeepblock.com/solutions/nyaa-si-anime-torrents-strip-tracking-parameters',
+  'https://sweeprdeepblock.com/solutions/wattpad-web-novels-stop-malvertising-popunders',
+  'https://sweeprdeepblock.com/solutions/pinterest-promoted-pins-filter-ai-slop-and-scams',
+  'https://sweeprdeepblock.com/solutions/kick-streaming-portals-block-video-ads',
   'https://sweeprdeepblock.com/vs/avast-secure-browser-guard',
+  'https://sweeprdeepblock.com/vs/adblock-luna-vpn',
+  'https://sweeprdeepblock.com/vs/is-pie-adblock-legit-reddit',
   'https://sweeprdeepblock.com/vs/total-adblock',
   'https://sweeprdeepblock.com/vs/total-adblock-cancel-subscription',
   'https://sweeprdeepblock.com/vs/ublock-origin-alternative-for-chrome',
@@ -303,7 +312,9 @@ const GSC_PRIORITY_URLS = new Set([
   'https://sweeprdeepblock.com/vs/ghostery-privacy-ad-blocker',
   'https://sweeprdeepblock.com/guides/how-to-automatically-reject-cookie-banners-uk',
   'https://sweeprdeepblock.com/guides/how-to-reduce-browser-ram-speed-up-slow-tabs',
-  'https://sweeprdeepblock.com/guides/how-to-spot-fake-scam-online-shops-uk'
+  'https://sweeprdeepblock.com/guides/how-to-spot-fake-scam-online-shops-uk',
+  'https://sweeprdeepblock.com/guides/how-to-block-twitch-embedded-stream-ads-external',
+  'https://sweeprdeepblock.com/guides/how-to-fix-high-ram-usage-on-vivaldi-browser'
 ]);
 
 function loadLiveRuleStats() {
@@ -372,188 +383,6 @@ function loadSitemapItems() {
   });
 }
 
-const TOKEN_POOL_SIZE = 10;
-const tokenPool = new Array(TOKEN_POOL_SIZE).fill(null);
-const tokenPending = new Array(TOKEN_POOL_SIZE).fill(null);
-
-async function getTelegraphToken(slot = 0) {
-  const s = Math.abs(slot) % TOKEN_POOL_SIZE;
-  if (tokenPool[s]) return tokenPool[s];
-  if (tokenPending[s]) return tokenPending[s];
-
-  tokenPending[s] = (async () => {
-    try {
-      const accRes = await fetch(
-        `https://api.telegra.ph/createAccount?short_name=DeepBlock${s + 1}&author_name=SWEEPR+DeepBlock+Lab&author_url=https://sweeprdeepblock.com`,
-        { signal: AbortSignal.timeout(15000) }
-      );
-      const acc = await accRes.json();
-      tokenPool[s] = acc?.result?.access_token || null;
-    } catch {
-      tokenPool[s] = null;
-    }
-    return tokenPool[s];
-  })().finally(() => {
-    tokenPending[s] = null;
-  });
-
-  const tok = await tokenPending[s];
-  return tok || tokenPool.find(Boolean) || null;
-}
-
-async function publishTelegraph(item, lang, runTag, slot = 0) {
-  const s = Math.abs(slot) % TOKEN_POOL_SIZE;
-  let token = await getTelegraphToken(s);
-  if (!token) throw new Error('Telegraph token error');
-  const title = `[${lang.code}] ${lang.prefix} ${item.name} (${runTag})`;
-  const content = [
-    {
-      tag: 'p',
-      children: [
-        { tag: 'a', attrs: { href: 'https://sweeprdeepblock.com' }, children: [lang.cta] },
-        ` runs ${LIVE_RULE_STATS.staticCount} static Manifest V3 declarativeNetRequest rules + ${LIVE_RULE_STATS.deltaCount} live OTA delta rules to block YouTube & Twitch video ads, automatically click "Reject All" on cookie pop-ups in under 50ms, filter AI search slop, and warn shoppers about fake scam stores.`
-      ]
-    },
-    {
-      tag: 'ul',
-      children: [
-        { tag: 'li', children: [{ tag: 'a', attrs: { href: item.url }, children: [`${item.name} — Official Technical Guide`] }] },
-        { tag: 'li', children: [{ tag: 'a', attrs: { href: 'https://sweeprdeepblock.com/test-lab' }, children: [`Run Live 8/8 Ad & Tracker Leak Benchmark (${LIVE_RULE_STATS.staticCount + LIVE_RULE_STATS.deltaCount} Verified MV3 Rules)`] }] },
-        { tag: 'li', children: [{ tag: 'a', attrs: { href: 'https://sweeprdeepblock.com/download' }, children: ['Install SWEEPR DeepBlock (Chrome, Edge, Brave, Firefox, Safari)'] }] },
-        { tag: 'li', children: [{ tag: 'a', attrs: { href: 'https://sweeprdeepblock.com/pad.xml' }, children: ['SWEEPR DeepBlock PAD 4.0 XML Specification'] }] }
-      ]
-    }
-  ];
-  const r = await fetch('https://api.telegra.ph/createPage', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ access_token: token, title, author_name: 'SWEEPR DeepBlock Lab', author_url: 'https://sweeprdeepblock.com', content }),
-    signal: AbortSignal.timeout(15000)
-  });
-  const j = await r.json();
-  if (!j.ok || !j.result?.url) {
-    if (j?.error && (j.error.includes('TOKEN') || j.error.includes('AUTH') || j.error.includes('FLOOD_WAIT'))) {
-      tokenPool[s] = null;
-    }
-    if (j?.error && j.error.includes('FLOOD_WAIT')) {
-      const waitSec = Number(j.error.match(/\d+/)?.[0] || 5);
-      console.warn(`[Telegraph Flood Wait] Backing off ${waitSec}s...`);
-      await new Promise((resolve) => setTimeout(resolve, (waitSec + 1) * 1000));
-      const retryToken = await getTelegraphToken(s);
-      if (retryToken) {
-        const rRetry = await fetch('https://api.telegra.ph/createPage', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ access_token: retryToken, title, author_name: 'SWEEPR DeepBlock Lab', author_url: 'https://sweeprdeepblock.com', content }),
-          signal: AbortSignal.timeout(15000)
-        });
-        const jRetry = await rRetry.json();
-        if (jRetry.ok && jRetry.result?.url) {
-          const slug = jRetry.result.url.split('/').pop() || runTag;
-          return {
-            url: jRetry.result.url,
-            who: `Telegraph DeepBlock (${lang.code}) — ${item.name} [${slug.slice(-14)}]`,
-            website: 'telegra.ph',
-            how: `Daily Drip Dofollow Article (${lang.code})`,
-            category: `[SWEEPR DeepBlock] ${title} -> ${item.url} (DR 89)`
-          };
-        }
-      }
-    }
-    throw new Error('Telegraph createPage error: ' + (j?.error || 'unknown'));
-  }
-  const slug = j.result.url.split('/').pop() || runTag;
-  return {
-    url: j.result.url,
-    who: `Telegraph DeepBlock (${lang.code}) — ${item.name} [${slug.slice(-14)}]`,
-    website: 'telegra.ph',
-    how: `Daily Drip Dofollow Article (${lang.code})`,
-    category: `[SWEEPR DeepBlock] ${title} -> ${item.url} (DR 89)`
-  };
-}
-
-let dpasteAvailable = false;
-let pasteRsAvailable = false;
-
-async function publishDpaste(item, lang, runTag, slot = 0) {
-  const title = `[${lang.code}] ${lang.prefix} ${item.name} (${runTag})`;
-  const md = `# ${title}\n\n- **Primary Guide:** [${item.name}](${item.url})\n- **Official Extension:** [${lang.cta}](https://sweeprdeepblock.com)\n- **Live MV3 Rule Telemetry:** ${LIVE_RULE_STATS.staticCount} Static DNR Rules + ${LIVE_RULE_STATS.deltaCount} Daily OTA Delta Rules\n- **8/8 Anti-Detection Test Lab:** [https://sweeprdeepblock.com/test-lab](https://sweeprdeepblock.com/test-lab)\n- **PAD 4.0 XML Feed:** [https://sweeprdeepblock.com/pad.xml](https://sweeprdeepblock.com/pad.xml)\n- **Pricing & Trial:** [https://sweeprdeepblock.com/pricing](https://sweeprdeepblock.com/pricing)\n`;
-  
-  // Try dpaste.org (DR 74) if not marked unavailable
-  if (dpasteAvailable !== false) {
-    try {
-      const body = new URLSearchParams({ content: md, lexer: '_markdown', format: 'url', expires: '31536000' });
-      const r = await fetch('https://dpaste.org/api/', { method: 'POST', body, signal: AbortSignal.timeout(3000) });
-      if (r.ok) {
-        const url = (await r.text()).trim();
-        if (url.startsWith('https://dpaste.org/')) {
-          dpasteAvailable = true;
-          const pasteId = url.split('/').filter(Boolean).pop() || runTag;
-          return {
-            url,
-            who: `DPaste DeepBlock (${lang.code}) — ${item.name} [${pasteId}]`,
-            website: 'dpaste.org',
-            how: `Daily Drip Dofollow Markdown (${lang.code})`,
-            category: `[SWEEPR DeepBlock] ${title} -> ${item.url} (DR 74)`
-          };
-        } else {
-          dpasteAvailable = false;
-        }
-      } else {
-        dpasteAvailable = false;
-      }
-    } catch {
-      dpasteAvailable = false;
-    }
-  }
-
-  // High-DR Fallback 1: paste.rs (DR 71)
-  if (pasteRsAvailable !== false) {
-    try {
-    const rPaste = await fetch('https://paste.rs/', {
-      method: 'POST',
-      body: md,
-      headers: { 'Content-Type': 'text/markdown; charset=utf-8' },
-      signal: AbortSignal.timeout(3000)
-    });
-    if (rPaste.ok) {
-      const pUrl = (await rPaste.text()).trim();
-      if (pUrl.startsWith('https://paste.rs/')) {
-        const pasteId = pUrl.split('/').filter(Boolean).pop() || runTag;
-        return {
-          url: pUrl,
-          who: `PasteRS DeepBlock (${lang.code}) — ${item.name} [${pasteId}]`,
-          website: 'paste.rs',
-          how: `Daily Drip Dofollow Markdown (${lang.code})`,
-          category: `[SWEEPR DeepBlock] ${title} -> ${item.url} (DR 71)`
-        };
-      } else {
-        pasteRsAvailable = false;
-      }
-    } else {
-      pasteRsAvailable = false;
-    }
-  } catch {
-      pasteRsAvailable = false;
-    }
-  }
-
-  // High-DR Fallback 2: Telegraph (DR 89)
-  return await publishTelegraph(item, lang, runTag, slot);
-}
-
-async function syncToCrm(entry, sourceUrl) {
-  const headers = { 'Content-Type': 'application/json', Authorization: AUTH_HEADER, 'X-Sweepr-Project': 'deepblock' };
-  const payload = JSON.stringify({ project_id: 'deepblock', ...entry });
-  const blPayload = JSON.stringify({ project_id: 'deepblock', source_url: sourceUrl });
-  await Promise.all([
-    fetch(`${RAILWAY_CRM_BASE}/api/crm/outreach?project=deepblock`, { method: 'POST', headers, body: payload, signal: AbortSignal.timeout(10000) }).catch(() => {}),
-    fetch(`${RAILWAY_CRM_BASE}/api/crm/seo/backlinks?project=deepblock`, { method: 'POST', headers, body: blPayload, signal: AbortSignal.timeout(10000) }).catch(() => {}),
-    fetch(`${CLEANER_CRM_BASE}/api/crm/outreach?project=deepblock`, { method: 'POST', headers, body: payload, signal: AbortSignal.timeout(10000) }).catch(() => {}),
-    fetch(`${CLEANER_CRM_BASE}/api/crm/seo/backlinks?project=deepblock`, { method: 'POST', headers, body: blPayload, signal: AbortSignal.timeout(10000) }).catch(() => {})
-  ]);
-}
-
 async function fetchDeepBlockCrmState(seed = []) {
   const headers = { Authorization: AUTH_HEADER, 'X-Sweepr-Project': 'deepblock' };
   const [rOutreach, rBacklinks] = await Promise.all([
@@ -587,115 +416,26 @@ async function fetchDeepBlockCrmState(seed = []) {
   return { postedUrls, postedCombos, postedDirectoryDomains, crmCount: (rOutreach.rows || []).length };
 }
 
-async function runBacklinksWorkflow(targetCount = 300) {
+async function runBacklinksWorkflow() {
   console.log('\n=======================================================');
-  console.log(`  2. MULTILINGUAL HIGH-DR BACKLINK SYNDICATION (${targetCount} LINKS)`);
+  console.log('  2. WHITE-HAT AUTHORITY BACKLINK & DIRECTORY VERIFICATION');
   console.log('=======================================================');
 
-  const items = loadSitemapItems();
   let seed = [];
   if (fs.existsSync(SEED_PATH)) {
     try { seed = JSON.parse(fs.readFileSync(SEED_PATH, 'utf8')); } catch {}
   }
   const crmState = await fetchDeepBlockCrmState(seed);
   console.log(
-    `[CRM Deduplication Check (project=deepblock)] Live CRM Rows: ${crmState.crmCount} | Tracked URLs: ${crmState.postedUrls.size} | Posted Combos: ${crmState.postedCombos.size} | Submitted Directories: ${[...crmState.postedDirectoryDomains].join(', ') || 'none'}`
+    `[White-Hat Link Guard (project=deepblock)] Automated paste-site drops (telegra.ph / dpaste.org / paste.rs) permanently disabled to protect Google crawl budget.`
+  );
+  console.log(
+    `[CRM Authority State] Live CRM Rows: ${crmState.crmCount} | Verified Curated Directories: ${crmState.postedDirectoryDomains.size} (${[...crmState.postedDirectoryDomains].slice(0, 10).join(', ') || 'none'})`
   );
 
-  const unpostedQueue = [];
-  const platforms = ['telegra.ph', 'dpaste.org'];
-  for (const item of items) {
-    for (const lang of LANGUAGES) {
-      for (const platform of platforms) {
-        const comboKey = `${platform}|${lang.code}|${item.url}`;
-        if (!crmState.postedCombos.has(comboKey)) {
-          unpostedQueue.push({ platform, lang, item, comboKey });
-        }
-      }
-    }
-  }
-  let fallbackCursor = 0;
-  while (unpostedQueue.length < targetCount) {
-    const item = items[fallbackCursor % items.length];
-    const lang = LANGUAGES[Math.floor(fallbackCursor / items.length) % LANGUAGES.length];
-    const platform = platforms[fallbackCursor % platforms.length];
-    unpostedQueue.push({ platform, lang, item, comboKey: `${platform}|${lang.code}|${item.url}#c${fallbackCursor}` });
-    fallbackCursor++;
-  }
-  const runTag = new Date().toISOString().slice(0, 13).replace('T', '-');
-  let completed = 0;
-  const BATCH_SIZE = 10;
-  let queueCursor = 0;
-  let batchNum = 0;
-
-  while (completed < targetCount) {
-    while (queueCursor >= unpostedQueue.length) {
-      const item = items[fallbackCursor % items.length];
-      const lang = LANGUAGES[Math.floor(fallbackCursor / items.length) % LANGUAGES.length];
-      const platform = platforms[fallbackCursor % platforms.length];
-      unpostedQueue.push({ platform, lang, item, comboKey: `${platform}|${lang.code}|${item.url}#c${fallbackCursor}` });
-      fallbackCursor++;
-    }
-    const batch = unpostedQueue.slice(queueCursor, queueCursor + BATCH_SIZE);
-    queueCursor += batch.length;
-    batchNum++;
-
-    const results = await Promise.all(
-      batch.map(async (task, offset) => {
-        const idx = queueCursor - batch.length + offset;
-        const { platform, item, lang, comboKey } = task;
-        if (offset > 0) await new Promise((r) => setTimeout(r, offset * 50));
-        try {
-          const res = platform === 'telegra.ph' ? await publishTelegraph(item, lang, `${runTag}-${idx}`, offset) : await publishDpaste(item, lang, `${runTag}-${idx}`, offset);
-          return { ...res, comboKey };
-        } catch {
-          try {
-            const fallbackPlatform = platform === 'telegra.ph' ? 'dpaste.org' : 'telegra.ph';
-            const res = fallbackPlatform === 'telegra.ph' ? await publishTelegraph(item, lang, `${runTag}-r${idx}`, offset) : await publishDpaste(item, lang, `${runTag}-r${idx}`, offset);
-            return { ...res, comboKey };
-          } catch {
-            return null;
-          }
-        }
-      })
-    );
-    const valid = results.filter((r) => r && !crmState.postedUrls.has(r.url));
-    await Promise.all(
-      valid.map(async (res, j) => {
-        crmState.postedUrls.add(res.url);
-        crmState.postedCombos.add(res.comboKey);
-        const entry = {
-          project_id: 'deepblock',
-          who: res.who,
-          website: res.website,
-          url: res.url,
-          how: res.how,
-          category: res.category,
-          status: 'listed',
-          message_id: `deepblock-drip-${runTag}-${queueCursor + j}-${Date.now()}`,
-          reached_out_at: Math.floor(Date.now() / 1000)
-        };
-        seed.push(entry);
-        completed++;
-        await syncToCrm(entry, res.url);
-      })
-    );
-
-    if (batchNum % 5 === 0 || completed >= targetCount) {
-      console.log(`[Batch ${batchNum}] Progress: ${completed}/${targetCount} published (${Math.min(100, ((completed / targetCount) * 100)).toFixed(1)}%)`);
-    }
-
-    if (completed < targetCount) {
-      await new Promise((resolve) => setTimeout(resolve, 400));
-    }
-  }
-
-  fs.writeFileSync(SEED_PATH, JSON.stringify(seed, null, 2), 'utf8');
-  console.log(`[Backlink Syndication Complete] Published ${completed} new dofollow backlinks. Total seed count: ${seed.length}`);
-
-  // Trigger CRM backlink verification
+  // Trigger CRM backlink verification for official store & curated software directory profiles only
   const headers = { 'Content-Type': 'application/json', Authorization: AUTH_HEADER, 'X-Sweepr-Project': 'deepblock' };
-  const verifyPayload = JSON.stringify({ project_id: 'deepblock', only: 'unchecked', limit: 1000 });
+  const verifyPayload = JSON.stringify({ project_id: 'deepblock', only: 'unchecked', limit: 250 });
   await Promise.all([
     fetch(`${RAILWAY_CRM_BASE}/api/crm/seo/backlinks/verify?project=deepblock`, {
       method: 'POST',
@@ -711,7 +451,7 @@ async function runBacklinksWorkflow(targetCount = 300) {
     }).catch(() => {})
   ]);
 
-  return { completed, totalSeed: seed.length };
+  return { completed: 0, totalSeed: seed.length, mode: 'white_hat_only_paste_sites_disabled' };
 }
 
 async function runIndexingWorkflow() {
@@ -721,6 +461,14 @@ async function runIndexingWorkflow() {
 
   const sitemapXml = fs.readFileSync(SITEMAP_PATH, 'utf8');
   const sitemapUrls = [...sitemapXml.matchAll(/<loc>(.*?)<\/loc>/g)].map((m) => m[1].trim());
+  if (fs.existsSync(SITEMAP_SITES_PATH)) {
+    const sitesXml = fs.readFileSync(SITEMAP_SITES_PATH, 'utf8');
+    const siteUrls = [...sitesXml.matchAll(/<loc>(.*?)<\/loc>/g)].map((m) => m[1].trim());
+    for (const u of siteUrls) {
+      if (!sitemapUrls.includes(u)) sitemapUrls.push(u);
+    }
+  }
+  const sitemapSet = new Set(sitemapUrls);
 
   let queue = { indexnow_key: INDEXNOW_KEY, pending_urls: [], gsc_requested: [], bing_requested: [], last_indexnow_ping: null, last_sitemap_ping: null };
   if (fs.existsSync(INDEXING_QUEUE_PATH)) {
@@ -732,12 +480,14 @@ async function runIndexingWorkflow() {
     } catch {}
   }
 
-  const alreadySubmittedSet = new Set(Array.isArray(queue.submitted_indexnow_urls) ? queue.submitted_indexnow_urls : []);
+  // Filter out any legacy 301-redirected or non-indexable URLs that are no longer in sitemap.xml / sitemap-sites.xml
+  const alreadySubmittedSet = new Set(
+    (Array.isArray(queue.submitted_indexnow_urls) ? queue.submitted_indexnow_urls : []).filter((u) => sitemapSet.has(u))
+  );
   if (alreadySubmittedSet.size === 0) {
     for (const u of sitemapUrls) alreadySubmittedSet.add(u);
   }
-  let deltaUrls = sitemapUrls.filter((u) => !alreadySubmittedSet.has(u));
-  const sitemapSet = new Set(sitemapUrls);
+  const deltaUrls = sitemapUrls.filter((u) => !alreadySubmittedSet.has(u));
   const recentSet = loadRecentlyUpdatedUrls();
   const priorityGscUrls = sitemapUrls.filter((u) => (recentSet.has(u) || GSC_PRIORITY_URLS.has(u)));
 
@@ -749,6 +499,7 @@ async function runIndexingWorkflow() {
   }
   const urlsToSubmit = [...batchSet];
   queue.pending_urls = [...new Set([...priorityGscUrls, ...(queue.pending_urls || []).filter((u) => sitemapSet.has(u)), ...sitemapUrls])];
+  queue.gsc_requested = (queue.gsc_requested || []).filter((u) => sitemapSet.has(u));
 
   let bingRes = 'skipped_already_submitted';
   let indexNowRes = 'skipped_already_submitted';
@@ -792,7 +543,7 @@ async function runIndexingWorkflow() {
   queue.submitted_indexnow_urls = [...alreadySubmittedSet];
   fs.writeFileSync(INDEXING_QUEUE_PATH, JSON.stringify(queue, null, 2), 'utf8');
 
-  console.log(`[IndexNow Submissions] Submitted ${urlsToSubmit.length} priority & delta URLs (${deltaUrls.length} new delta + ${urlsToSubmit.length - deltaUrls.length} GSC priority):`);
+  console.log(`[IndexNow Submissions] Scanned ${sitemapUrls.length} total indexable URLs (sitemap.xml + sitemap-sites.xml). Submitted ${urlsToSubmit.length} priority & delta URLs (${deltaUrls.length} new delta + ${urlsToSubmit.length - deltaUrls.length} GSC priority):`);
   urlsToSubmit.slice(0, 8).forEach(u => console.log(`   * ${u}`));
   if (urlsToSubmit.length > 8) console.log(`   ... and ${urlsToSubmit.length - 8} more`);
   console.log(`  - www.bing.com/indexnow: ${bingRes}`);
@@ -835,9 +586,8 @@ function appendAuditLog(auditData) {
 | **Store Backlink: Winget Manifest** | v${auditData.store.winget.version} Package | ${auditData.store.winget.status} (\`SWEEPR.Deepblock.installer.yaml\`) | **Valid Manifest** |
 | **Store Link Parity (\`download.html\`)** | 1-Click Store CTAs | ${auditData.store.downloadPageParity.status} (Chrome CWS & Firefox AMO) | **100% Parity** |
 | **Authority Directories Audited** | 330 curated directories | SaaSHub, AlternativeTo, Product Hunt, Softpedia, MajorGeeks, FossHub, etc. | **${auditData.directory.totalDirectories} Profiles Tracked (DR 56–96)** |
-| **High-DR Backlinks Generated** | ${auditData.backlinks.targetCount} target links | **${auditData.backlinks.completed} new dofollow links published** (Telegraph DR 89) | **100.0% Complete (${auditData.backlinks.completed}/${auditData.backlinks.targetCount})** |
-| **Total Tracked Authority Seed** | Prior + Delta | **${auditData.backlinks.totalSeed} entries tracked** with deduplication | **+${auditData.backlinks.completed} links recorded** |
-| **Search Engine IndexNow Submissions** | ${auditData.indexing.sitemapUrls} sitemap URLs | Submitted ${auditData.indexing.submittedCount} priority URLs to Bing, IndexNow & Yandex | **Dispatched (${auditData.indexing.yandexRes})** |
+| **White-Hat Link-Spam Guard** | Paste-site drops (\`telegra.ph\` / \`dpaste\` / \`paste.rs\`) | **0 automated paste-site links published** (Permanently disabled for Google Crawl Budget) | **100% White-Hat Compliant** |
+| **Search Engine IndexNow Submissions** | ${auditData.indexing.sitemapUrls} dual-sitemap URLs | Submitted ${auditData.indexing.submittedCount} priority URLs to Bing, IndexNow & Yandex | **Dispatched (${auditData.indexing.yandexRes})** |
 | **GSC Priority Queue** | 300 authoritative pillar URLs | Synced to \`website/indexing-queue.json\` | **Updated & Synchronized** |
 | **CRM Backlinks & Outreach Sync** | \`project_id: deepblock\` | Synced to Railway CRM with automated verify trigger | **Synchronized & Verified** |
 | **Emails Sent** | 0 | **0 (STRICT ZERO-EMAIL RULE ENFORCED)** | **Zero SMTP / Zero Outreach Emails** |

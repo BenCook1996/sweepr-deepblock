@@ -309,8 +309,9 @@ if (fs.existsSync(kwMatrixPath)) {
     const kwMatrix = JSON.parse(fs.readFileSync(kwMatrixPath, 'utf8'));
     if (Array.isArray(kwMatrix.opportunities)) {
       for (const opp of kwMatrix.opportunities) {
-        if (opp.isPublishedOnDisk && opp.recommendedUrlPath) {
-          keywordMatrixPaths.push(opp.recommendedUrlPath);
+        const route = opp.targetRoute || opp.recommendedUrlPath;
+        if (opp.isPublishedOnDisk && route) {
+          keywordMatrixPaths.push(route);
         }
       }
     }
