@@ -182,3 +182,12 @@
   - **Remediation Implemented**: Added `BLOCKED_STATIC_FILES` (`server.js`, `sweepr-client.js`, `package.json`, `indexing-queue.json`, `daily-seo-pages-state.json`, `outreach-seed-deepblock.json`) to `server.js` returning `403 Forbidden`.
 - **Finding 3 (CSP, HSTS, COOP & Permissions-Policy Headers)**: Static responses in `server.js` only set `X-Content-Type-Options`, `X-Frame-Options`, and `Referrer-Policy`.
   - **Remediation Implemented**: Added `Strict-Transport-Security: max-age=31536000; includeSubDomains; preload`, `Permissions-Policy: camera=(), microphone=(), geolocation=()`, `Cross-Origin-Opener-Policy: same-origin-allow-popups`, and `Content-Security-Policy: frame-ancestors 'self'; base-uri 'self'; object-src 'none'`.
+
+---
+
+## [Cloud Automated Security & Trust-Boundary Audit] — 2026-11-09
+
+- **Timestamp**: `2026-11-09T22:50:42.362Z`
+- **Engine**: `scripts/cloud-security-audit.mjs`
+- **Scorecard**: **8/10 Trust-Boundary Checks Passed (2 Vulnerabilities)**
+- **Verified Domains**: Stripe/PayPal HMAC Webhooks, Single-Use OTP & `HttpOnly; SameSite=Lax` Sessions, 5-Device License Cap, Path-Traversal & Dotfile Blocking, Manifest V3 Least-Privilege, Own-Domain GA4/UTM DNR Exclusions, and Zero-Dependency Supply Chain.

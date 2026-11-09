@@ -1,22 +1,27 @@
-name: SWEEPR DeepBlock — Search-Intent Gap Miner & Pillar SEO Sync
+name: SWEEPR DeepBlock — Cloud CMO, GSC/GA4 API, Pillar SEO & IndexNow Pipeline
 
 on:
-  # Paused automatic 50/day swap-text generation to prevent Scaled Content Abuse / Doorway demotions.
-  # Runs Search-Intent Gap Miner & syncs the 300 indexable Pillar + Interactive Tool pages.
+  schedule:
+    # Runs twice daily at 06:30 UTC and 18:30 UTC (100% unattended in the cloud)
+    - cron: '30 6,18 * * *'
   workflow_dispatch:
     inputs:
       batch_size:
-        description: 'Number of new programmatic SEO pages to generate (default 0 — swap-text generation paused)'
+        description: 'Max researched low-KD keyword blueprint pages to materialize per run (default 3)'
         required: false
-        default: '0'
+        default: '3'
 
 permissions:
   contents: write
 
+concurrency:
+  group: sweepr-deepblock-cloud-seo-cmo
+  cancel-in-progress: false
+
 jobs:
-  daily-seo-generation:
+  cloud-cmo-seo-pipeline:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
     steps:
       - name: Checkout SWEEPR DeepBlock Repository
         uses: actions/checkout@v4
@@ -28,24 +33,48 @@ jobs:
         with:
           node-version: '22.23.4'
 
-      - name: Run Search-Intent Gap Miner & Sync Sitemap (0 Swap-Text Batch)
+      - name: 1. Sync Live Google Search Console & GA4 API Telemetry (Service Account JWT)
+        env:
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+          GSC_SITE_URL: ${{ vars.GSC_SITE_URL || 'sc-domain:sweeprdeepblock.com' }}
+          GA4_PROPERTY_ID: ${{ vars.GA4_PROPERTY_ID || '559863555' }}
         run: |
-          node scripts/search-intent-gap-miner.mjs
-          node scripts/daily-50-seo-pages.mjs ${{ inputs.batch_size || '0' }}
+          node scripts/gsc-ga4-cloud-sync.mjs
 
-      - name: Run Technical SEO Audit (Verify 0 Errors / 0 Warnings)
+      - name: 2. Run Keyword Research, Blueprint Materialization (<=3/run), Consolidation Guard & CWV Audit
+        run: |
+          node scripts/daily-seo-pagespeed-audit.mjs ${{ inputs.batch_size || '3' }}
+
+      - name: 3. Run GSC Strike-Zone Optimizer, Funnel CRO, Stage-Gate & ASO/Ads Builders
+        run: |
+          node scripts/gsc-strike-zone-optimizer.mjs
+          node scripts/competitor-review-miner.mjs
+          node scripts/funnel-cro-analyzer.mjs
+          node scripts/reinvestment-stage-gate.mjs
+          node scripts/build-aso-store-listings.mjs
+          node scripts/build-stage3-expansion-ads.mjs
+
+      - name: 4. Run White-Hat Store Backlink Audit, PAD 4.0 Probe & Dual-Sitemap IndexNow
+        env:
+          SWEEPR_RAILWAY_CRM: ${{ secrets.SWEEPR_RAILWAY_CRM || 'https://sweepr-crm-production.up.railway.app' }}
+          CRM_ADMIN_USER: ${{ secrets.CRM_ADMIN_USER || 'admin' }}
+          CRM_ADMIN_PASSWORD: ${{ secrets.CRM_ADMIN_PASSWORD }}
+        run: |
+          node scripts/deepblock-seo-drip.mjs
+
+      - name: 5. Final Technical SEO & Consolidation Regression Gate (0 Errors / 0 Warnings)
         run: |
           node scripts/technical-seo-audit.mjs
 
-      - name: Commit & Push Intent Gaps & Sitemap Updates
+      - name: 6. Commit & Push Updated SEO, Telemetry & CMO Reports to Main (Triggers Railway Deploy)
         run: |
-          git config user.name "SWEEPR DeepBlock SEO Bot"
+          git config user.name "SWEEPR DeepBlock Cloud CMO Bot"
           git config user.email "bot@sweeprdeepblock.com"
-          git add website/ data/seo-intent-gaps.json TECHNICAL_SEO_AUDIT_LOG.md
+          git add website/ data/ dist/ TECHNICAL_SEO_AUDIT_LOG.md
           if git diff --staged --quiet; then
-            echo "No new SEO updates today."
+            echo "No net-new repository changes to commit."
           else
-            git commit -m "chore(seo): update search-intent gap report and verify 300-pillar sitemap"
+            git commit -m "chore(cloud-cmo): automated GSC/GA4 sync, pillar SEO guard, and IndexNow pipeline"
             git pull --rebase -X ours origin main
             git push origin main
           fi

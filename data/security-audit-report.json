@@ -1,0 +1,71 @@
+{
+  "generatedAt": "2026-11-09T22:52:16.218Z",
+  "durationMs": 18,
+  "healthy": true,
+  "totalChecks": 10,
+  "passedChecks": 10,
+  "failedChecks": 0,
+  "checks": [
+    {
+      "id": "SEC-01",
+      "domain": "payments_and_webhooks",
+      "description": "Stripe webhook HMAC signature verification (stripe-signature + timingSafeEqual)",
+      "status": "PASS"
+    },
+    {
+      "id": "SEC-02",
+      "domain": "payments_and_webhooks",
+      "description": "Subscription checkout & server-side payment state verification guards present",
+      "status": "PASS"
+    },
+    {
+      "id": "SEC-03",
+      "domain": "auth_and_sessions",
+      "description": "Session cookies enforce HttpOnly, Secure, and SameSite=Lax",
+      "status": "PASS"
+    },
+    {
+      "id": "SEC-04",
+      "domain": "auth_and_sessions",
+      "description": "State-changing API routes validate Origin / Sec-Fetch-Site CSRF headers",
+      "status": "PASS"
+    },
+    {
+      "id": "SEC-05",
+      "domain": "device_limit_and_pairing",
+      "description": "License activation enforces 5-device maximum limit & namespace isolation",
+      "status": "PASS"
+    },
+    {
+      "id": "SEC-06",
+      "domain": "http_headers_and_traversal",
+      "description": "HTTP responses enforce Strict-Transport-Security, X-Content-Type-Options: nosniff, and Content-Security-Policy",
+      "status": "PASS"
+    },
+    {
+      "id": "SEC-07",
+      "domain": "http_headers_and_traversal",
+      "description": "Static file server blocks sensitive extensions (.db, .sqlite, .env, .git, .pem)",
+      "status": "PASS"
+    },
+    {
+      "id": "SEC-08",
+      "domain": "mv3_extension_security",
+      "description": "Manifest V3 extension uses manifest_version 3 and declarativeNetRequest",
+      "status": "PASS"
+    },
+    {
+      "id": "SEC-09",
+      "domain": "mv3_own_domain_non_regression",
+      "description": "DNR Rules #6, #43, and #44 preserve sweeprdeepblock.com exclusions",
+      "status": "PASS"
+    },
+    {
+      "id": "SEC-10",
+      "domain": "supply_chain_isolation",
+      "description": "Zero third-party npm runtime dependencies in package.json (100% native Node.js stdlib)",
+      "status": "PASS"
+    }
+  ],
+  "issues": []
+}

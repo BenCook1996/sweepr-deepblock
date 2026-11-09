@@ -1,0 +1,49 @@
+name: SWEEPR DeepBlock — Weekly Cloud White-Hat Security Audit
+
+on:
+  schedule:
+    # Runs automatically every Saturday at 09:00 UTC in the cloud
+    - cron: '0 9 * * 6'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sweepr-deepblock-cloud-security-audit
+  cancel-in-progress: false
+
+jobs:
+  weekly-security-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout SWEEPR DeepBlock Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js 22+
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.23.4'
+
+      - name: Run 10-Domain Trust-Boundary Security Audit & Syntax Verification
+        run: |
+          node --check server.js
+          node --check sweepr-client.js
+          node scripts/cloud-security-audit.mjs --append-log
+          node scripts/technical-seo-audit.mjs
+
+      - name: Commit & Push Security Audit Report to Main
+        run: |
+          git config user.name "SWEEPR DeepBlock Security Bot"
+          git config user.email "security@sweeprdeepblock.com"
+          git add SECURITY_AUDIT_LOG.md data/security-audit-report.json data/automation-scheduler-state.json
+          if git diff --staged --quiet; then
+            echo "No new security audit log changes to commit."
+          else
+            git commit -m "chore(security): automated weekly cloud white-hat security audit"
+            git pull --rebase -X ours origin main
+            git push origin main
+          fi

@@ -19,14 +19,14 @@
   },
   "funnel_cro_analyzer": {
     "status": "ok",
-    "lastRunAt": "2026-11-09T14:46:04.308Z",
-    "durationMs": 288,
+    "lastRunAt": "2026-11-09T21:16:00.305Z",
+    "durationMs": 379,
     "error": null
   },
   "reinvestment_stage_gate": {
     "status": "ok",
-    "lastRunAt": "2026-11-09T14:50:50.000Z",
-    "durationMs": 307,
+    "lastRunAt": "2026-11-09T21:16:02.868Z",
+    "durationMs": 557,
     "error": null
   },
   "keyword_research_engine": {
@@ -51,6 +51,19 @@
     "status": "ok",
     "lastRunAt": "2026-11-09T19:33:02.336Z",
     "durationMs": 35365,
+    "error": null
+  },
+  "gsc_ga4_cloud_sync": {
+    "status": "ok",
+    "lastRunAt": "2026-11-09T22:50:42.140Z",
+    "durationMs": 19,
+    "mode": "cached_telemetry_awaiting_service_account_secret",
+    "error": null
+  },
+  "cloud_security_audit": {
+    "status": "ok",
+    "lastRunAt": "2026-11-09T22:52:16.218Z",
+    "durationMs": 18,
     "error": null
   }
 }

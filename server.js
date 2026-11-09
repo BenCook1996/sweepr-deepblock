@@ -6308,6 +6308,22 @@ global.__cmoAutomationJobs = [
     outputFile: 'data/gsc-consolidation-health.json',
     intervalMs: 12 * 60 * 60 * 1000,
     timeoutMs: 90000
+  },
+  {
+    id: 'gsc_ga4_cloud_sync',
+    name: 'Cloud GSC & GA4 API Telemetry Sync (Service Account JWT)',
+    script: 'scripts/gsc-ga4-cloud-sync.mjs',
+    outputFile: 'data/gsc-ga4-cloud-sync-report.json',
+    intervalMs: 12 * 60 * 60 * 1000,
+    timeoutMs: 60000
+  },
+  {
+    id: 'cloud_security_audit',
+    name: 'Cloud White-Hat Security & 10-Domain Trust-Boundary Audit',
+    script: 'scripts/cloud-security-audit.mjs',
+    outputFile: 'data/security-audit-report.json',
+    intervalMs: 24 * 60 * 60 * 1000,
+    timeoutMs: 45000
   }
 ];
 
