@@ -4,6 +4,30 @@ Tracks automated daily technical SEO audits and under-the-hood optimizations (st
 
 ---
 
+## [Google Search Console Nov 9 Update Review, Page-1 Pillar Rescue & HTTP 301 Consolidation Upgrade] — 2026-11-09 (18:58 UTC)
+
+- **Execution Timestamp**: 2026-11-09T18:58:25Z
+- **Target Domain**: `https://sweeprdeepblock.com` (`sc-domain:sweeprdeepblock.com`)
+- **Live GSC Performance Verified (`2026-10-19` – `2026-11-09`)**:
+  - **28-Day Window**: `7` Clicks, `508` Impressions, `1.38%` CTR, `14.16` Avg Position.
+  - **7-Day Window (`Nov 1 – Nov 7`)**: `1` Click, `23` Impressions, `4.35%` CTR, `19.70` Avg Position — rebounding from `0/day` (`Nov 2–3`) to `3/day` (`Nov 4`) -> `7/day` (`Nov 5`) -> `3/day` (`Nov 6`) -> `9/day` + `1` Click (`11.11%` CTR on `Nov 7`), with hourly impressions continuing on `Nov 8–9`.
+  - **Page Indexing (`2026-11-06`)**: `1,215` Indexed, `364` Not Indexed (`286` `Excluded by 'noindex' tag`).
+- **Actions Executed & Verified**:
+  1. **Rescued 8 Active GSC Platform/Competitor Pages into Indexable Pillars**:
+     - Promoted `/solutions/1337x-torrent-indexer-block-video-ads` (**Pos 2.0**), `/solutions/soundgasm-audio-streaming-stop-malvertising-popunders` (**Pos 2.0–3.0**), `/solutions/strava-fitness-activity-stop-malvertising-popunders` (**Pos 9.0**), `/solutions/nyaa-si-anime-torrents-strip-tracking-parameters` (**Pos 10.0**), `/solutions/wattpad-web-novels-stop-malvertising-popunders`, `/solutions/pinterest-promoted-pins-filter-ai-slop-and-scams`, `/solutions/kick-streaming-portals-block-video-ads`, and `/vs/adblock-luna-vpn` to full `index, follow` Pillars with `#deepblock-live-rule-proof` (`v1.2.7`) and exact-query metadata.
+  2. **100% Problem Suffix Mapping & Server-Level HTTP `301` Consolidation Redirects**:
+     - Registered all **17** Cartesian problem suffixes in `scripts/consolidate-and-optimize-gsc.mjs` (`0` unmatched slugs across `1,259` solution files).
+     - Upgraded `serveStaticOptimized` in `server.js` so consolidated non-pillar sub-variants return `HTTP 301 Moved Permanently` (`Location: <canonicalPillarPath>`) to transfer 100% of Google ranking signals and accelerate de-indexation of redundant Cartesian permutations.
+  3. **Cooldown-Safe Strike-Zone Query & FAQ Enrichment**:
+     - Injected `<section id="gsc-exact-query-enrichment">` and `FAQPage` JSON-LD answers on `/solutions/crunchyroll-anime-streams-block-video-ads` (`Funimation`), `/solutions/1337x-torrent-indexer-block-video-ads` (`1337x ads`), `/solutions/nyaa-si-anime-torrents-strip-tracking-parameters` (`nyaa.si red highlight`), `/setup/kiwi-browser-android` (`kiwi unblocker`), `/solutions/linkedin-feed-ads-block-video-ads` (`chrome extension that stops linkedin ads`), and `/solutions/fandom-game-wikis-reduce-browser-ram-usage` (`why does fandom use so much memory`) while preserving the 14-day `<title>` cooldown.
+  4. **Materialized New Low-KD Transactional Pillar**:
+     - Generated `/vs/is-pie-adblock-legit-reddit` (`KD 7`, `Score 74.7`) with `#deepblock-live-rule-proof` and `>= 4` incoming internal donor links.
+  5. **Audit Scorecard**:
+     - **Total HTML Files Scanned**: `1,805` (`514` Indexable Pillars [`363` in `sitemap.xml` + `151` in `sitemap-sites.xml`], `1,291` Consolidated Sub-Variants).
+     - **Orphan Pages**: `0` | **Min Incoming Links Across All 314 Pillars**: `4` | **Errors**: `0` | **Warnings**: `0` | **Emails Sent**: `0`.
+
+---
+
 ## [Once-Daily SWEEPR DeepBlock Authority Directory, Store Backlink Audit & GSC Priority Indexing Workflow] — 2026-11-09 (14:54 UTC)
 
 - **Execution Timestamp**: 2026-11-09T14:54:01.960Z
