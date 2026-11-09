@@ -1,8 +1,20 @@
 {
-  "updatedAt": "2026-11-08T00:06:22.006Z",
+  "updatedAt": "2026-11-09T00:04:02.032Z",
   "dedupWindowDays": 30,
-  "totalTrackedDomains": 14125,
+  "totalTrackedDomains": 14135,
   "recentRuns": [
+    {
+      "run_id": "adpipe-2026-11-09-r28rq",
+      "started_at": "2026-11-09T00:03:53.617Z",
+      "completed_at": "2026-11-09T00:04:02.032Z",
+      "sites_sampled": 10,
+      "sites_scanned": 10,
+      "leaks_detected": 0,
+      "rules_auto_patched": 0,
+      "manual_review_count": 0,
+      "commit_hash": "dedb8a2",
+      "crm_synced": 1
+    },
     {
       "run_id": "adpipe-2026-11-08-928b9",
       "started_at": "2026-11-08T00:03:17.335Z",
@@ -99676,6 +99688,76 @@
     "nexusspot.io": {
       "category": "gaming",
       "lastScannedAt": 1794096312348,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "fastcoexist.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1794182638658,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "targetspot.com": {
+      "category": "general_ad_supported",
+      "lastScannedAt": 1794182638658,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "arenazone.gg": {
+      "category": "gaming",
+      "lastScannedAt": 1794182638658,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cravedigest.de": {
+      "category": "recipes",
+      "lastScannedAt": 1794182638658,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bakewire.tv": {
+      "category": "recipes",
+      "lastScannedAt": 1794182638658,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "skilletonline.me": {
+      "category": "recipes",
+      "lastScannedAt": 1794182638658,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "gadgetscoop.org": {
+      "category": "blogs",
+      "lastScannedAt": 1794182638658,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "buzzglobe.news": {
+      "category": "entertainment",
+      "lastScannedAt": 1794182638658,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "nexuspulse.co": {
+      "category": "gaming",
+      "lastScannedAt": 1794182638658,
+      "scanCount": 1,
+      "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "pixelpulse.jp": {
+      "category": "gaming",
+      "lastScannedAt": 1794182638658,
       "scanCount": 1,
       "lastStatus": "unreachable",
       "leaksFound": 0

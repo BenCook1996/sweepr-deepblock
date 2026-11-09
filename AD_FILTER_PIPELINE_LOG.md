@@ -373,3 +373,13 @@ Automated daily 24-hour pipeline (`00:00 UTC`) sampling 1,000 unique ad-heavy do
 - **Cross-Site Non-Regression Suite:** PASS (15/15 Golden Network & DeepStealth Surrogate Canaries | 10/10 Legitimate Site Canaries Unblocked | 24 Cross-Module Selectors Protected)
 - **Git Commit / Deployment Ref:** `5c7b9ad`
 
+## Run `adpipe-2026-11-09-c04n8` — 2026-11-09T00:06:48.312Z
+- **Sites Sampled (30-Day Deduplicated):** 1000
+- **Sites Evaluated:** 1000
+- **Ad Leaks Detected:** 0
+- **Rules Auto-Patched (Verified Self-Healing):** 0
+- **Flagged for Manual Review:** 0
+- **Repository Ruleset Totals:** 245 MV3 Static DNR Rules | 389 ABP/uBO Rules | 100 OTA Delta Rules
+- **Cross-Site Non-Regression Suite:** PASS (15/15 Golden Network & DeepStealth Surrogate Canaries | 10/10 Legitimate Site Canaries Unblocked | 24 Cross-Module Selectors Protected)
+- **Git Commit / Deployment Ref:** `dedb8a2`
+
