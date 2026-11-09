@@ -796,7 +796,7 @@
         removedGridAd = true;
       });
       const promoNodes = document.querySelectorAll(
-        'a.top-bar-xx-style, .magic-sites, .list-btn.bnr, .bnr, .bnrs, a.bartab, .video-player .caption.bottom-right, .odw, [data-odw], .ourdreamai-native, .eroslider, a.no-taps[href*="camsoda"], img.camsoda-logo, #vast-ad-block, #vast-ad-block-button, .invideoBlock, .fluid_html_on_pause_container, .fluid_html_on_pause:not(.fluid_initial_play_button_container), [id*="_ad_html_on_pause"], .block-advert, .m-l-ntvb, .card-promotion, .card-deck-promotion, a.add_href_jsclick, .ib-300-250, #banner_iframe, #ag-agegate, #ag-cookiebar, .block-video#block-chat > .table, .block-video > .table:has(.opt), .block-video .opt, .bottom-adv, .pop-adv, .pop-premium, .index-link, .exclusive-link-href, .index-link-href, iframe[src*="gsrv.dev"], iframe[src*="aaaconnect.info"], iframe[src*="awmdelivery.com"], .upkeep > .promotion, #spot_video_ntv_a, #spot_video_ntv_b, #spot_video_ntv_c, #spot_video_underplayer_livecams, #spot_video_livecams, .stem:has(#spot_video_livecams), .spot-live-cam, .ID_live_cam_wrapper, .ID-viptube-before-ad-video, .download_adv_text_video, .button-under-video:has(.download_adv_text_video), #rvt-element, [id^="rvt-p2p"], a[data-model-item], a[href*="/linkout/livecams/"], li:has(> div.item2 > a[href*="/linkout/livecams/"])'
+        'a.top-bar-xx-style, .magic-sites, .list-btn.bnr, .bnr, .bnrs, a.bartab, .video-player .caption.bottom-right, .odw, [data-odw], .ourdreamai-native, .eroslider, a.no-taps[href*="camsoda"], img.camsoda-logo, #vast-ad-block, #vast-ad-block-button, .invideoBlock, .fluid_html_on_pause_container, .fluid_html_on_pause:not(.fluid_initial_play_button_container), [id*="_ad_html_on_pause"], .block-advert, .m-l-ntvb, .card-promotion, .card-deck-promotion, a.add_href_jsclick, .ib-300-250, #banner_iframe, #ag-agegate, #ag-cookiebar, .block-video#block-chat > .table, .block-video > .table:has(.opt), .block-video .opt, .bottom-adv, .pop-adv, .pop-premium, .index-link, .exclusive-link-href, .index-link-href, iframe[src*="gsrv.dev"], iframe[src*="aaaconnect.info"], iframe[src*="awmdelivery.com"], .upkeep > .promotion, #spot_video_ntv_a, #spot_video_ntv_b, #spot_video_ntv_c, #spot_video_underplayer_livecams, #spot_video_livecams, .stem:has(#spot_video_livecams), .spot-live-cam, .ID_live_cam_wrapper, .ID-viptube-before-ad-video, .download_adv_text_video, .button-under-video:has(.download_adv_text_video), #rvt-element, [id^="rvt-p2p"], a[data-model-item], a[href*="/linkout/livecams/"], li:has(> div.item2 > a[href*="/linkout/livecams/"]), div:has(> a[href*="ey43.com"]), a[href*="ey43.com"], div[style*="z-index: 2147483646"][style*="position: absolute"], [data-cl-overlay], #c_window_xEucqIjg, #alink_overlay_EPXdyaUf, div[style*="z-index: 300000"][style*="position: fixed"]'
       );
       promoNodes.forEach((node) => {
         const parent = node.parentElement;
@@ -1148,7 +1148,14 @@
     a[href*="aivanta76.com"],
     li:has(> a[href*="aivanta76.com"]),
     a[href*="gotpd.me"],
-    li:has(> a[href*="gotpd.me"]) {
+    li:has(> a[href*="gotpd.me"]),
+    div:has(> a[href*="ey43.com"]),
+    a[href*="ey43.com"],
+    div[style*="z-index: 2147483646"][style*="position: absolute"],
+    [data-cl-overlay],
+    #c_window_xEucqIjg,
+    #alink_overlay_EPXdyaUf,
+    div[style*="z-index: 300000"][style*="position: fixed"] {
       display: none !important;
       visibility: hidden !important;
       height: 0 !important;

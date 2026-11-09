@@ -130,6 +130,15 @@ async function syncRemoteFilterDelta() {
         ? [chrome.runtime.getURL('rules/dynamic_delta.json')]
         : [])
     ];
+    let localData = null;
+    if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getURL) {
+      try {
+        const localRes = await fetch(chrome.runtime.getURL('rules/dynamic_delta.json'));
+        if (localRes.ok) {
+          localData = await localRes.json().catch(() => null);
+        }
+      } catch (err) {}
+    }
     let data = null;
     for (const url of endpoints) {
       try {
@@ -147,7 +156,22 @@ async function syncRemoteFilterDelta() {
         }
       } catch (err) {}
     }
+    if (!data && localData && localData.ok) {
+      data = localData;
+    }
     if (!data || !data.ok) return;
+    if (localData && Array.isArray(localData.dynamicDnrRules)) {
+      const ruleMap = new Map();
+      if (Array.isArray(data.dynamicDnrRules)) {
+        for (const r of data.dynamicDnrRules) {
+          if (r && typeof r.id === 'number') ruleMap.set(r.id, r);
+        }
+      }
+      for (const r of localData.dynamicDnrRules) {
+        if (r && typeof r.id === 'number') ruleMap.set(r.id, r);
+      }
+      data.dynamicDnrRules = Array.from(ruleMap.values());
+    }
     const updates = {};
     if (data.latestExtensionVersion || data.minExtensionVersion) {
       const latestVersion = String(data.latestExtensionVersion || currentVersion).trim();
@@ -263,14 +287,14 @@ async function syncExtensionProtectionRules(enablePro) {
     if (!chrome.declarativeNetRequest || !chrome.declarativeNetRequest.updateEnabledRulesets) return;
     if (enablePro) {
       await chrome.declarativeNetRequest.updateEnabledRulesets({
-        enableRulesetIds: ['ads_and_trackers', 'cryptominers_and_heavy_scripts'],
+        enableRulesetIds: ['ads_and_trackers'],
         disableRulesetIds: []
       });
       await syncPausedSiteDnrAllowlist();
     } else {
       await chrome.declarativeNetRequest.updateEnabledRulesets({
         enableRulesetIds: [],
-        disableRulesetIds: ['ads_and_trackers', 'cryptominers_and_heavy_scripts']
+        disableRulesetIds: ['ads_and_trackers']
       });
     }
   } catch (e) {}
@@ -786,11 +810,12 @@ async function updateActionBadge(passedStats, passedSettings) {
 }
 
 const POPUNDER_TAB_URL_REGEX =
-  /(\/zv3\/(b|url|cam)|\/link\/out\/|\/getape\/|\/prepop\.php|\/getadb\/|\/venor\.php|\/v1\/link\.php|\/splash\.php\?idzone=|\/api\/click\/|\/click\.go|\/loadeactrl\.go|tsyndicate\.com|contentsserved\.com|exoclick\.com|exosrv\.com|realsrv\.com|magsrv\.com|pemsrv\.com|orbsrv\.com|trafficjunky\.(net|com)|juicyads\.com|jads\.co|clickadu\.com|clickaine\.com|hilltopads\.net|adspyglass\.com|plugrush\.com|adxpansion\.com|crakrevenue\.com|twinrdsyn\.com|twinrdengine\.com|adtng\.com|etahub\.com|bngpt\.com|xlivrdr\.com|popads\.net|popcash\.net|propellerads\.com|u5s5\.com|fh-wgt\.com|cupbearergrowllurch\.com|hollowgoal\.com|fhgte\.com|directsle\.com|qoqh\.com|lxax\.com|koxk\.com|applzr\.com|goadserver\.com|yequka\.my|rvmessage\.online|rvrpushserv\.com|advnet\.xyz|zog\.link|iloptrex\.com|vidvas3\.com)/i;
+  /(\/zv3\/(b|url|cam)|\/link\/out\/|\/getape\/|\/prepop\.php|\/getadb\/|\/venor\.php|\/v1\/link\.php|\/splash\.php\?idzone=|\/api\/click\/|\/click\.go|\/loadeactrl\.go|tsyndicate\.com|contentsserved\.com|exoclick\.com|exosrv\.com|realsrv\.com|magsrv\.com|pemsrv\.com|orbsrv\.com|trafficjunky\.(net|com)|juicyads\.com|jads\.co|clickadu\.com|clickaine\.com|hilltopads\.net|adspyglass\.com|plugrush\.com|adxpansion\.com|crakrevenue\.com|twinrdsyn\.com|twinrdengine\.com|adtng\.com|etahub\.com|bngpt\.com|xlivrdr\.com|popads\.net|popcash\.net|propellerads\.com|u5s5\.com|fh-wgt\.com|cupbearergrowllurch\.com|hollowgoal\.com|fhgte\.com|directsle\.com|qoqh\.com|lxax\.com|koxk\.com|applzr\.com|goadserver\.com|yequka\.my|rvmessage\.online|rvrpushserv\.com|advnet\.xyz|zog\.link|iloptrex\.com|vidvas3\.com|pagerrentablespotlight\.com|holaraphraus\.com|terschomonic\.com|enomotia\.com|janitorprecisiontrio\.com|earthspetti\.com|displayvertising\.com|jusgrmawfbaqu\.com|bspyoibtwrrc\.com|cemhlobja\.com|d3mzokty951c5w\.cloudfront\.net|ey43\.com|adsco\.re)/i;
 
-const STRICT_POPUNDER_OPENER_HOSTS = new Set([]);
+const STRICT_POPUNDER_OPENER_HOSTS = new Set(['vidara.to', 'vidara.so', 'as9u7bgh9.com']);
 
 const newlySpawnedChildTabs = new Map();
+let lastActiveHttpTabId = null;
 
 function normalizeHost(rawUrl) {
   try {
@@ -801,7 +826,7 @@ function normalizeHost(rawUrl) {
 }
 
 async function checkAndClosePopunderTab(tabId, candidateUrl, openerTabId) {
-  if (!tabId || !candidateUrl || /^chrome(-extension)?:\/\//i.test(candidateUrl)) return false;
+  if (!tabId || !candidateUrl || /^(chrome(-extension)?|edge|about|moz-extension):\/\//i.test(candidateUrl)) return false;
   try {
     const store = await chrome.storage.local.get(['settings', 'pausedSites']);
     const settings = store.settings || DEFAULT_STATE.settings;
@@ -809,9 +834,10 @@ async function checkAndClosePopunderTab(tabId, candidateUrl, openerTabId) {
     const pausedSites = Array.isArray(store.pausedSites) ? store.pausedSites : [];
 
     let openerHost = '';
-    if (openerTabId) {
+    const effectiveOpenerId = openerTabId || (lastActiveHttpTabId !== tabId ? lastActiveHttpTabId : null);
+    if (effectiveOpenerId) {
       try {
-        const openerTab = await chrome.tabs.get(openerTabId);
+        const openerTab = await chrome.tabs.get(effectiveOpenerId);
         openerHost = normalizeHost(openerTab && openerTab.url);
       } catch (e) {}
     }
@@ -826,9 +852,9 @@ async function checkAndClosePopunderTab(tabId, candidateUrl, openerTabId) {
     if (isAdUrl || isCrossOriginFromStrictTube) {
       newlySpawnedChildTabs.delete(tabId);
       await chrome.tabs.remove(tabId);
-      if (openerTabId) {
+      if (effectiveOpenerId) {
         try {
-          await chrome.tabs.update(openerTabId, { active: true });
+          await chrome.tabs.update(effectiveOpenerId, { active: true });
         } catch (e) {}
       }
       queueDiagnosticStatIncrement('adsBlocked', 1);
@@ -842,14 +868,17 @@ async function checkAndClosePopunderTab(tabId, candidateUrl, openerTabId) {
 if (chrome.tabs) {
   if (chrome.tabs.onCreated) {
     chrome.tabs.onCreated.addListener((tab) => {
-      if (!tab || !tab.id || !tab.openerTabId) return;
+      if (!tab || !tab.id) return;
+      const initialUrl = tab.pendingUrl || tab.url || '';
+      if (/^(chrome|edge|about):\/\/newtab/i.test(initialUrl) || initialUrl === 'about:newtab') return;
+      const effectiveOpenerId = tab.openerTabId || (lastActiveHttpTabId !== tab.id ? lastActiveHttpTabId : undefined);
+      if (!effectiveOpenerId && !POPUNDER_TAB_URL_REGEX.test(initialUrl)) return;
       newlySpawnedChildTabs.set(tab.id, {
-        openerTabId: tab.openerTabId,
+        openerTabId: effectiveOpenerId,
         createdAt: Date.now()
       });
-      const initialUrl = tab.pendingUrl || tab.url || '';
       if (initialUrl && initialUrl !== 'about:blank') {
-        checkAndClosePopunderTab(tab.id, initialUrl, tab.openerTabId);
+        checkAndClosePopunderTab(tab.id, initialUrl, effectiveOpenerId);
       }
     });
   }
@@ -857,6 +886,13 @@ if (chrome.tabs) {
     chrome.tabs.onActivated.addListener((activeInfo) => {
       if (activeInfo && activeInfo.tabId) {
         recordTabActivity(activeInfo.tabId, Date.now());
+        if (!newlySpawnedChildTabs.has(activeInfo.tabId)) {
+          chrome.tabs.get(activeInfo.tabId, (t) => {
+            if (!chrome.runtime.lastError && t && /^https?:\/\//i.test(t.url || '')) {
+              lastActiveHttpTabId = t.id;
+            }
+          });
+        }
       }
       updateActionBadge();
     });
@@ -865,7 +901,7 @@ if (chrome.tabs) {
     chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
       const childMeta = newlySpawnedChildTabs.get(tabId);
       if (childMeta) {
-        if (Date.now() - childMeta.createdAt > 2500) {
+        if (Date.now() - childMeta.createdAt > 4000) {
           newlySpawnedChildTabs.delete(tabId);
         } else {
           const nextUrl = changeInfo.url || (tab && (tab.pendingUrl || tab.url)) || '';
@@ -876,6 +912,8 @@ if (chrome.tabs) {
             newlySpawnedChildTabs.delete(tabId);
           }
         }
+      } else if (tab && tab.active && /^https?:\/\//i.test(tab.url || '')) {
+        lastActiveHttpTabId = tabId;
       }
       if (tab && tab.active) {
         recordTabActivity(tabId, Date.now());

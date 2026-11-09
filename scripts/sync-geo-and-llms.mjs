@@ -79,7 +79,7 @@ export function runGeoAndLlmsSync() {
   const staticRaw = readJsonSafe(STATIC_RULES_PATH, []);
   const staticCount = Array.isArray(staticRaw) ? staticRaw.length : (staticRaw.rules?.length || 242);
   const deltaRaw = readJsonSafe(DELTA_RULES_PATH, []);
-  const deltaCount = Array.isArray(deltaRaw) ? deltaRaw.length : (deltaRaw.rules?.length || 14);
+  const deltaCount = Array.isArray(deltaRaw) ? deltaRaw.length : (deltaRaw.dynamicDnrRules?.length || deltaRaw.rules?.length || 14);
   const abpCount = fs.existsSync(ABP_RULES_PATH)
     ? fs
         .readFileSync(ABP_RULES_PATH, 'utf8')

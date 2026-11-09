@@ -60,8 +60,8 @@
   </script>
 
   <script src="https://cdn.tailwindcss.com/3.4.5"></script>
-  <link rel="stylesheet" href="/style.css">
-  <script src="/nav.js" defer></script>
+  <link rel="stylesheet" href="/style.css?v=20261108">
+  <script src="/nav.js?v=20261108" defer></script>
   <script src="/i18n.js" defer></script>
   <!-- Google tag (gtag.js) - Sweepr Deepblock -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-01MNBQSL9K"></script>
@@ -219,20 +219,33 @@
             </div>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label for="supportCategory" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Topic</label>
-              <select id="supportCategory" class="input-field text-sm bg-white">
-                <option value="billing">Billing, Cancellation or Refund Request</option>
-                <option value="activation">License Key / 6-Digit Activation Code</option>
-                <option value="technical">Technical Support (Chrome / Safari / Edge / Firefox)</option>
-                <option value="general">General Inquiry</option>
-              </select>
+          <!-- 1-Tap Category Chips (Replaces 4-Option Dropdown per @Memorisely [3sGb5-nLke0]) -->
+          <div>
+            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Topic (1-Tap Selection)</label>
+            <input type="hidden" id="supportCategory" value="billing">
+            <div id="supportCategoryChips" role="radiogroup" aria-label="Support Topic" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <button type="button" role="radio" aria-checked="true" data-category-val="billing" class="support-chip-btn active">
+                <span aria-hidden="true">💳</span>
+                <span>Billing &amp; Refund</span>
+              </button>
+              <button type="button" role="radio" aria-checked="false" data-category-val="activation" class="support-chip-btn">
+                <span aria-hidden="true">🔑</span>
+                <span>Activation Code / Key</span>
+              </button>
+              <button type="button" role="radio" aria-checked="false" data-category-val="technical" class="support-chip-btn">
+                <span aria-hidden="true">🛡️</span>
+                <span>Technical Support</span>
+              </button>
+              <button type="button" role="radio" aria-checked="false" data-category-val="general" class="support-chip-btn">
+                <span aria-hidden="true">💬</span>
+                <span>General Inquiry</span>
+              </button>
             </div>
-            <div>
-              <label for="supportSubject" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Subject *</label>
-              <input type="text" id="supportSubject" required placeholder="Brief summary of your request" class="input-field text-sm">
-            </div>
+          </div>
+
+          <div>
+            <label for="supportSubject" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Subject *</label>
+            <input type="text" id="supportSubject" required placeholder="Brief summary of your request" class="input-field text-sm">
           </div>
 
           <div>
@@ -316,7 +329,23 @@
       const form = document.getElementById('supportForm');
       const btn = document.getElementById('supportSubmitBtn');
       const msg = document.getElementById('supportStatusMsg');
+      const categoryInput = document.getElementById('supportCategory');
+      const chipsWrap = document.getElementById('supportCategoryChips');
       if (!form) return;
+
+      if (chipsWrap && categoryInput) {
+        chipsWrap.querySelectorAll('[data-category-val]').forEach(function(chip) {
+          chip.addEventListener('click', function() {
+            const val = chip.getAttribute('data-category-val') || 'billing';
+            categoryInput.value = val;
+            chipsWrap.querySelectorAll('[data-category-val]').forEach(function(c) {
+              const isSelected = c === chip;
+              c.classList.toggle('active', isSelected);
+              c.setAttribute('aria-checked', isSelected ? 'true' : 'false');
+            });
+          });
+        });
+      }
 
       form.addEventListener('submit', async function(e) {
         e.preventDefault();

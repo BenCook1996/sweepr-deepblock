@@ -1,6 +1,6 @@
 {
   "cooldownDays": 14,
-  "lastRunAt": "2026-11-08T06:32:15.507Z",
+  "lastRunAt": "2026-11-09T18:57:25.718Z",
   "titleUpdatedAt": {
     "/setup/thorium-chromium-browser": "2026-11-03T20:45:00.000Z",
     "/setup/orion-browser-macos-ios": "2026-11-03T20:45:00.000Z",
@@ -32,49 +32,91 @@
     "/solutions/twitch-vod-replay-block-video-ads": "2026-11-03T20:45:00.000Z"
   },
   "customQuerySurgery": {},
-  "discoveredGscPaths": [],
+  "discoveredGscPaths": [
+    "/solutions/1337x-torrent-indexer-block-video-ads",
+    "/solutions/soundgasm-audio-streaming-stop-malvertising-popunders",
+    "/solutions/strava-fitness-activity-stop-malvertising-popunders",
+    "/solutions/nyaa-si-anime-torrents-strip-tracking-parameters",
+    "/solutions/wattpad-web-novels-stop-malvertising-popunders",
+    "/solutions/pinterest-promoted-pins-filter-ai-slop-and-scams",
+    "/solutions/kick-streaming-portals-block-video-ads",
+    "/vs/adblock-luna-vpn",
+    "/guides/how-to-block-twitch-embedded-stream-ads-external",
+    "/guides/how-to-fix-high-ram-usage-on-vivaldi-browser"
+  ],
   "gscRecoveryHistory": [
     {
       "date": "2026-10-28",
       "impressions": 119,
       "clicks": 1,
-      "indexedPages": 171,
-      "note": "Peak honeymoon serving before Cartesian 404 shockwave"
+      "indexedPages": 1254,
+      "note": "Peak honeymoon serving before Cartesian Scaled-Content demotion"
     },
     {
       "date": "2026-11-01",
       "impressions": 1,
       "clicks": 0,
-      "indexedPages": 171,
-      "note": "Trough after Scaled Content demotion (1,575 pages)"
+      "indexedPages": 1244,
+      "note": "Trough after Scaled Content demotion (1,575 Cartesian pages)"
+    },
+    {
+      "date": "2026-11-02",
+      "impressions": 0,
+      "clicks": 0,
+      "indexedPages": 1244,
+      "note": "Zero-impression trough prior to Pillar Consolidation"
     },
     {
       "date": "2026-11-03",
-      "impressions": null,
-      "clicks": null,
-      "indexedPages": 295,
+      "impressions": 0,
+      "clicks": 0,
+      "indexedPages": 1244,
       "note": "Consolidated 1,588 -> 295 Pillar URLs, applied 28-page CTR surgery & Live MV3 Rule Proof"
     },
     {
       "date": "2026-11-04",
-      "impressions": null,
-      "clicks": null,
-      "indexedPages": 295,
-      "note": "Daily GSC Query-CTR, GA4 Funnel & Live Ad-Filter Proof Optimizer executed; 0 errors/0 warnings; 295 pillar URLs verified"
+      "impressions": 3,
+      "clicks": 0,
+      "avgPosition": 11,
+      "indexedPages": 1215,
+      "excludedByNoindex": 286,
+      "note": "First post-consolidation rebound day (3 impressions, Avg Pos 11.0)"
     },
     {
       "date": "2026-11-05",
-      "impressions": null,
-      "clicks": null,
-      "indexedPages": 505,
-      "note": "Daily GSC Query-CTR, GA4 Funnel & Live Ad-Filter Proof Optimizer executed; 0 errors/0 warnings; 505 indexable URLs verified; 14-day title cooldown enforced"
+      "impressions": 7,
+      "clicks": 0,
+      "avgPosition": 31.14,
+      "indexedPages": 1215,
+      "excludedByNoindex": 286,
+      "note": "Post-consolidation rebound accelerates to 7 impressions/day"
     },
     {
       "date": "2026-11-06",
-      "impressions": null,
-      "clicks": null,
-      "indexedPages": 505,
-      "note": "Daily GSC Query-CTR, GA4 Funnel & Live Ad-Filter Proof Optimizer executed; 0 errors/0 warnings; 505 indexable URLs verified; 14-day title cooldown enforced"
+      "impressions": 3,
+      "clicks": 0,
+      "avgPosition": 16.67,
+      "indexedPages": 1215,
+      "excludedByNoindex": 286,
+      "note": "GSC Page Indexing checkpoint: 1,215 Indexed, 286 Excluded by noindex"
+    },
+    {
+      "date": "2026-11-07",
+      "impressions": 9,
+      "clicks": 1,
+      "ctr": 0.1111,
+      "avgPosition": 16.78,
+      "indexedPages": 1215,
+      "excludedByNoindex": 286,
+      "note": "Post-consolidation 7-day high: 9 impressions + 1 click (11.11% CTR)"
+    },
+    {
+      "date": "2026-11-09",
+      "impressions": 2,
+      "clicks": 0,
+      "avgPosition": 23,
+      "indexedPages": 514,
+      "note": "Rescued 8 active GSC platform/competitor pages into Pillars, upgraded consolidated sub-variants to HTTP 301 redirects, and enriched 6 Strike-Zone pages"
     }
   ],
   "proofUpdatedAt": {
@@ -307,7 +349,7 @@
     "/guides/how-to-block-twitch-embedded-stream-takeovers-fandom": "2026-11-05T00:24:02.868Z",
     "/guides/how-to-block-twitch-midroll-commercials-without-black-screen": "2026-11-05T00:24:02.868Z",
     "/guides/how-to-block-unskippable-audio-ads-on-spotify-web": "2026-11-05T00:24:02.868Z",
-    "/guides/how-to-block-youtube-ads-chrome-manifest-v3-2026": "2026-11-08T06:32:15.507Z",
+    "/guides/how-to-block-youtube-ads-chrome-manifest-v3-2026": "2026-11-09T07:32:57.833Z",
     "/guides/how-to-bypass-anti-adblock-inspect-element-blockers-news": "2026-11-05T00:24:02.868Z",
     "/guides/how-to-bypass-anti-adblock-inspect-element-blockers": "2026-11-05T00:24:02.868Z",
     "/guides/how-to-detect-ai-generated-scam-reviews-amazon": "2026-11-05T00:24:02.868Z",
@@ -382,7 +424,16 @@
     "/vs/total-adblock-free-alternative": "2026-11-05T00:24:02.868Z",
     "/guides/adblock-not-working-after-chrome-manifest-v3-update": "2026-11-05T00:24:02.868Z",
     "/guides/adblock-not-working-on-twitch-2026": "2026-11-05T00:24:02.868Z",
-    "/guides/how-to-test-if-manifest-v3-adblocker-is-working": "2026-11-05T00:24:02.868Z"
+    "/guides/how-to-test-if-manifest-v3-adblocker-is-working": "2026-11-05T00:24:02.868Z",
+    "/solutions/1337x-torrent-indexer-block-video-ads": "2026-11-09T18:52:04.569Z",
+    "/solutions/kick-streaming-portals-block-video-ads": "2026-11-09T18:52:04.569Z",
+    "/solutions/nyaa-si-anime-torrents-strip-tracking-parameters": "2026-11-09T18:52:04.569Z",
+    "/solutions/pinterest-promoted-pins-filter-ai-slop-and-scams": "2026-11-09T18:52:04.569Z",
+    "/solutions/soundgasm-audio-streaming-stop-malvertising-popunders": "2026-11-09T18:52:04.569Z",
+    "/solutions/strava-fitness-activity-stop-malvertising-popunders": "2026-11-09T18:52:04.569Z",
+    "/solutions/wattpad-web-novels-stop-malvertising-popunders": "2026-11-09T18:52:04.569Z",
+    "/vs/adblock-luna-vpn": "2026-11-09T18:52:04.569Z",
+    "/vs/is-pie-adblock-legit-reddit": "2026-11-09T18:55:12.665Z"
   },
   "contentHashes": {
     "/setup/arc-browser-windows-mac": "da77e780adaf6967",
@@ -614,7 +665,7 @@
     "/guides/how-to-block-twitch-embedded-stream-takeovers-fandom": "9043d334838f641b",
     "/guides/how-to-block-twitch-midroll-commercials-without-black-screen": "8fd75f10860172e1",
     "/guides/how-to-block-unskippable-audio-ads-on-spotify-web": "0b7d3f261c25400a",
-    "/guides/how-to-block-youtube-ads-chrome-manifest-v3-2026": "f9582d577892f3ac",
+    "/guides/how-to-block-youtube-ads-chrome-manifest-v3-2026": "28626b76bd3fbeb3",
     "/guides/how-to-bypass-anti-adblock-inspect-element-blockers-news": "e05c5644b896726e",
     "/guides/how-to-bypass-anti-adblock-inspect-element-blockers": "21f704dc39a360b2",
     "/guides/how-to-detect-ai-generated-scam-reviews-amazon": "2bf46b973cd8580d",
@@ -689,7 +740,16 @@
     "/vs/total-adblock-free-alternative": "32a32e0ed5ef5a18",
     "/guides/adblock-not-working-after-chrome-manifest-v3-update": "fac6239a317b009c",
     "/guides/adblock-not-working-on-twitch-2026": "c815ae5a33b5817d",
-    "/guides/how-to-test-if-manifest-v3-adblocker-is-working": "49b633706103b94e"
+    "/guides/how-to-test-if-manifest-v3-adblocker-is-working": "49b633706103b94e",
+    "/solutions/1337x-torrent-indexer-block-video-ads": "68dd5616d93120cf",
+    "/solutions/kick-streaming-portals-block-video-ads": "30cdf39dcb7ed8dd",
+    "/solutions/nyaa-si-anime-torrents-strip-tracking-parameters": "a75d9609c2948fae",
+    "/solutions/pinterest-promoted-pins-filter-ai-slop-and-scams": "1c36be26e34ce63f",
+    "/solutions/soundgasm-audio-streaming-stop-malvertising-popunders": "7857cf55571ba72d",
+    "/solutions/strava-fitness-activity-stop-malvertising-popunders": "702c11037206bf35",
+    "/solutions/wattpad-web-novels-stop-malvertising-popunders": "1e4dcf2bbf00729b",
+    "/vs/adblock-luna-vpn": "0535293d771ae862",
+    "/vs/is-pie-adblock-legit-reddit": "3b1d8bd105ed745b"
   },
   "ga4FunnelHistory": [
     {

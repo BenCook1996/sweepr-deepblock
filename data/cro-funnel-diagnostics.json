@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-11-08T06:31:53.523Z",
+  "generatedAt": "2026-11-09T14:46:04.259Z",
   "overallHealth": "OPTIMAL",
   "unitEconomics": {
-    "updatedAt": "2026-11-08T06:31:53.521Z",
+    "updatedAt": "2026-11-09T14:46:04.256Z",
     "dailySpendGbp": 10,
     "blendedCacGbp": 15.6,
     "year1BlendedAovGbp": 43.31,
@@ -75,7 +75,7 @@
   "paywallBanditSnapshot": {
     "experiment": "paywall_value_framing_v2",
     "epsilon": 0.2,
-    "updatedAt": "2026-11-04T23:53:13.176Z",
+    "updatedAt": "2026-11-08T20:57:49.077Z",
     "leaderVariantId": "ram_speedometer_bundle",
     "mode": "bandit_exploitation_80_20",
     "stats": {
@@ -92,7 +92,7 @@
         "totalRevenueGbp": 149.97
       },
       "ram_speedometer_bundle": {
-        "visitors": 42,
+        "visitors": 43,
         "conversions": 3,
         "suiteAttachCount": 2,
         "totalRevenueGbp": 209.97
@@ -120,14 +120,14 @@
         "zScoreVsControl": 0.41
       },
       "ram_speedometer_bundle": {
-        "visitors": 42,
+        "visitors": 43,
         "conversions": 3,
         "suiteAttachCount": 2,
         "totalRevenueGbp": 209.97,
-        "conversionRatePct": 7.14,
+        "conversionRatePct": 6.98,
         "aovGbp": 69.99,
-        "rpvGbp": 5,
-        "zScoreVsControl": 0.46
+        "rpvGbp": 4.88,
+        "zScoreVsControl": 0.43
       }
     }
   },

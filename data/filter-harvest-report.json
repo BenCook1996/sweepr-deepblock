@@ -1,6 +1,6 @@
 {
-  "runId": "adpipe-2026-11-08-928b9",
-  "completedAt": "2026-11-08T00:06:22.047Z",
+  "runId": "adpipe-2026-11-09-c04n8",
+  "completedAt": "2026-11-09T00:07:15.104Z",
   "sitesSampled": 1000,
   "sitesScanned": 1000,
   "leaksDetected": 0,
@@ -10,13 +10,13 @@
     "addedDnrRulesCount": 0,
     "addedAbpRulesCount": 0,
     "addedCosmeticCount": 0,
-    "totalStaticDnrRules": 232,
+    "totalStaticDnrRules": 245,
     "totalAbpRules": 389,
-    "totalDynamicDeltaRules": 91,
+    "totalDynamicDeltaRules": 100,
     "rolledBack": false,
     "regressionAudit": {
       "ok": true,
-      "totalStaticRulesChecked": 232,
+      "totalStaticRulesChecked": 245,
       "totalCryptominerRulesChecked": 3,
       "canariesPassed": 15,
       "canariesTotal": 15,
@@ -31,5 +31,5 @@
       "localAppDataSynced": false
     }
   },
-  "commitRef": "cd22460"
+  "commitRef": "3170ae8"
 }

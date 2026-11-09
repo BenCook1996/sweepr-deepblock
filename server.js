@@ -1849,6 +1849,68 @@ function serveStaticOptimized(req, res, fullPath) {
     const isStaticAsset = ['.svg', '.png', '.webp', '.jpg', '.jpeg', '.ico', '.css', '.js', '.woff2', '.woff', '.ttf', '.webmanifest'].includes(ext);
     const isSeoMetaFile = ['.xml', '.txt'].includes(ext);
 
+    const NON_INDEXABLE_PAGES = new Set([
+      'order.html',
+      'login.html',
+      'logos.html',
+      'mockups.html',
+      'popup-mockups.html',
+      'redesign-prototype.html',
+      'extension-ux-prototype.html',
+      'store-creatives.html',
+      'welcome-concepts.html',
+      'ios-app.html',
+      'sweepr-vpn-concepts.html',
+      'sweepr-vpn-mobile-redesign.html',
+      'icon-animations-mockup.html',
+      'ergonomic-mockup-1.html',
+      'ergonomic-mockup-2.html',
+      'ergonomic-mockup-3.html',
+      'ergonomic-mockup-4.html',
+      'ergonomic-mockup-5.html',
+      'memorisely-ui-audit.html'
+    ]);
+
+    let cachedSeo = null;
+    let isConsolidatedNoIndex = false;
+    if (isHtml) {
+      const fileNameLower = path.basename(fullPath).toLowerCase();
+      if (!global.__deepblockHtmlSeoCache) global.__deepblockHtmlSeoCache = new Map();
+      cachedSeo = global.__deepblockHtmlSeoCache.get(fullPath);
+      if (!cachedSeo || cachedSeo.mtimeMs !== stats.mtimeMs) {
+        let robotsMeta = null;
+        let canonicalHref = null;
+        try {
+          const headChunk = fs.readFileSync(fullPath, 'utf8').slice(0, 6144);
+          const rm = headChunk.match(/<meta\s+name=["']robots["']\s+content=["']([^"']+)["']/i) ||
+                     headChunk.match(/<meta\s+content=["']([^"']+)["']\s+name=["']robots["']/i);
+          if (rm && rm[1]) robotsMeta = rm[1].trim();
+          const cm = headChunk.match(/<link\s+rel=["']canonical["']\s+href=["']([^"']+)["']/i) ||
+                     headChunk.match(/<link\s+href=["']([^"']+)["']\s+rel=["']canonical["']/i);
+          if (cm && cm[1]) canonicalHref = cm[1].trim();
+        } catch {}
+        cachedSeo = { mtimeMs: stats.mtimeMs, robotsMeta, canonicalHref };
+        global.__deepblockHtmlSeoCache.set(fullPath, cachedSeo);
+      }
+      isConsolidatedNoIndex = Boolean(cachedSeo.robotsMeta && /\bnoindex\b/i.test(cachedSeo.robotsMeta));
+      if (isConsolidatedNoIndex && !NON_INDEXABLE_PAGES.has(fileNameLower) && cachedSeo.canonicalHref) {
+        const relFromWebsite = path.relative(path.resolve(WEBSITE_DIR), fullPath).replace(/\\/g, '/');
+        const selfSlug = relFromWebsite === 'index.html' ? '' : relFromWebsite.replace(/\.html$/, '');
+        const selfPath = '/' + selfSlug;
+        const targetPath = cachedSeo.canonicalHref.replace(/^https?:\/\/sweeprdeepblock\.com/i, '') || '/';
+        if (targetPath && targetPath !== selfPath && /^\/(solutions|setup|vs|guides)\//i.test(selfPath)) {
+          res.writeHead(301, {
+            'Location': targetPath,
+            'Link': `<https://sweeprdeepblock.com${targetPath}>; rel="canonical"`,
+            'Cache-Control': 'public, max-age=3600, stale-while-revalidate=86400',
+            'X-Content-Type-Options': 'nosniff',
+            'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload'
+          });
+          return res.end();
+        }
+      }
+    }
+
     // ETag & 304 Not Modified conditional cache verification
     const etag = `W/"${stats.size.toString(16)}-${Math.floor(stats.mtimeMs).toString(16)}"`;
     const lastModified = stats.mtime.toUTCString();
@@ -1874,9 +1936,12 @@ function serveStaticOptimized(req, res, fullPath) {
     }
 
     // Cache-Control strategy
+    const isCodeAsset = ext === '.css' || ext === '.js';
     let cacheControl = 'public, max-age=300, stale-while-revalidate=86400';
     if (isInstallerBinary) {
       cacheControl = 'no-store, no-cache, must-revalidate';
+    } else if (isCodeAsset) {
+      cacheControl = 'public, max-age=0, must-revalidate';
     } else if (isSeoMetaFile) {
       cacheControl = 'public, max-age=3600, stale-while-revalidate=86400';
     } else if (isStaticAsset) {
@@ -1906,22 +1971,6 @@ function serveStaticOptimized(req, res, fullPath) {
       headers['Accept-Ranges'] = 'bytes';
     }
 
-    const NON_INDEXABLE_PAGES = new Set([
-      'order.html',
-      'login.html',
-      'logos.html',
-      'mockups.html',
-      'popup-mockups.html',
-      'redesign-prototype.html',
-      'extension-ux-prototype.html',
-      'store-creatives.html',
-      'welcome-concepts.html',
-      'ios-app.html',
-      'sweepr-vpn-concepts.html',
-      'sweepr-vpn-mobile-redesign.html',
-      'icon-animations-mockup.html'
-    ]);
-
     if (isHtml) {
       const fileNameLower = path.basename(fullPath).toLowerCase();
       if (fileNameLower === 'ios-app.html' || fileNameLower === 'login.html') {
@@ -1930,25 +1979,6 @@ function serveStaticOptimized(req, res, fullPath) {
       headers['Accept-CH'] = 'Sec-CH-UA-Platform, Sec-CH-UA-Mobile, Sec-CH-UA-Model, Sec-CH-UA-Arch';
       headers['Vary'] = headers['Vary'] ? `${headers['Vary']}, Sec-CH-UA-Platform` : 'Accept-Encoding, Sec-CH-UA-Platform';
 
-      if (!global.__deepblockHtmlSeoCache) global.__deepblockHtmlSeoCache = new Map();
-      let cachedSeo = global.__deepblockHtmlSeoCache.get(fullPath);
-      if (!cachedSeo || cachedSeo.mtimeMs !== stats.mtimeMs) {
-        let robotsMeta = null;
-        let canonicalHref = null;
-        try {
-          const headChunk = fs.readFileSync(fullPath, 'utf8').slice(0, 6144);
-          const rm = headChunk.match(/<meta\s+name=["']robots["']\s+content=["']([^"']+)["']/i) ||
-                     headChunk.match(/<meta\s+content=["']([^"']+)["']\s+name=["']robots["']/i);
-          if (rm && rm[1]) robotsMeta = rm[1].trim();
-          const cm = headChunk.match(/<link\s+rel=["']canonical["']\s+href=["']([^"']+)["']/i) ||
-                     headChunk.match(/<link\s+href=["']([^"']+)["']\s+rel=["']canonical["']/i);
-          if (cm && cm[1]) canonicalHref = cm[1].trim();
-        } catch {}
-        cachedSeo = { mtimeMs: stats.mtimeMs, robotsMeta, canonicalHref };
-        global.__deepblockHtmlSeoCache.set(fullPath, cachedSeo);
-      }
-
-      const isConsolidatedNoIndex = Boolean(cachedSeo.robotsMeta && /\bnoindex\b/i.test(cachedSeo.robotsMeta));
       if (NON_INDEXABLE_PAGES.has(fileNameLower)) {
         headers['X-Robots-Tag'] = 'noindex, nofollow';
       } else if (isConsolidatedNoIndex) {

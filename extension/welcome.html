@@ -8,16 +8,35 @@
   <style>
     :root {
       color-scheme: light;
-      --bg: #f8fafc;
+      /* Primitive Tokens (@Memorisely Design System Pillar 9) */
+      --emerald-500: #10b981;
+      --emerald-600: #059669;
+      --emerald-700: #047857;
+      --slate-50: #f8fafc;
+      --slate-100: #f1f5f9;
+      --slate-200: #e2e8f0;
+      --slate-500: #64748b;
+      --slate-700: #334155;
+      --slate-900: #0f172a;
+
+      /* Semantic Tokens & Concentric Radius Math (R_outer = R_inner + Padding) */
+      --bg: var(--slate-50);
       --bg-gradient:
         radial-gradient(circle at 10% 15%, rgba(209, 250, 229, 0.7) 0%, rgba(248, 250, 252, 0) 45%),
         radial-gradient(circle at 90% 85%, rgba(167, 243, 208, 0.5) 0%, rgba(248, 250, 252, 0) 45%);
       --card-bg: #ffffff;
-      --card-border: #e2e8f0;
-      --surface-muted: #f8fafc;
-      --text: #0f172a;
-      --text-secondary: #334155;
-      --muted: #64748b;
+      --card-border: var(--slate-200);
+      --surface-muted: var(--slate-50);
+      --text: var(--slate-900);
+      --text-secondary: var(--slate-700);
+      --muted: var(--slate-500);
+      --radius-seg-inner: 10px;
+      --space-seg-pad: 6px;
+      --radius-seg-outer: calc(var(--radius-seg-inner) + var(--space-seg-pad)); /* 16px */
+      --radius-tabs-inner: 8px;
+      --space-tabs-pad: 4px;
+      --radius-tabs-outer: calc(var(--radius-tabs-inner) + var(--space-tabs-pad)); /* 12px */
+      --focus-ring: 0 0 0 2px #ffffff, 0 0 0 4px var(--emerald-500);
     }
 
     * { box-sizing: border-box; }
@@ -41,7 +60,7 @@
     }
 
     /* =========================================================================
-       VERSION 3.1 SPLIT HERO MODAL (v2.2 Left Obsidian Stage + v2.1 Right Card)
+       VERSION 3.1 SPLIT HERO MODAL (v2.2 Left Obsidian Stage + Option 1 Right Card)
        ========================================================================= */
     .v31-shell {
       border-radius: 26px;
@@ -58,7 +77,7 @@
       }
     }
 
-    /* Left Side of v2.2: Emerald Obsidian Stage */
+    /* Left Side: Emerald Obsidian Stage */
     .obsidian-stage {
       background:
         radial-gradient(120% 90% at 15% 10%, rgba(16, 185, 129, 0.25) 0%, rgba(6, 78, 59, 0.12) 48%, transparent 100%),
@@ -154,7 +173,7 @@
       font-weight: 700;
     }
 
-    /* Right Side of v2.1: Segmented Single-Focus Card + Full-Width Mobile QR Card */
+    /* Right Side: Option 1 Single-Focus Card + Full-Width Mobile QR Card */
     .daylight-stage {
       padding: 34px 36px;
       background: #ffffff;
@@ -168,7 +187,6 @@
       }
     }
 
-    /* Status Pill (Hidden visually unless needed by welcome.js) */
     .status-badge-row {
       display: flex;
       align-items: center;
@@ -191,11 +209,11 @@
       letter-spacing: 0.04em;
     }
 
-    /* Segmented Switcher */
+    /* Segmented Switcher (Concentric Radius: 16px outer = 10px inner + 6px pad) */
     .seg-bar {
       background: #f1f5f9;
-      padding: 6px;
-      border-radius: 16px;
+      padding: var(--space-seg-pad, 6px);
+      border-radius: var(--radius-seg-outer, 16px);
       border: 1px solid rgba(226, 232, 240, 0.9);
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -203,8 +221,9 @@
       margin-bottom: 22px;
     }
     .seg-btn {
+      min-height: 44px;
       padding: 10px 12px;
-      border-radius: 12px;
+      border-radius: var(--radius-seg-inner, 10px);
       border: none;
       background: transparent;
       color: #475569;
@@ -219,6 +238,10 @@
     }
     .seg-btn:hover {
       color: #0f172a;
+    }
+    .seg-btn:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
     }
     .seg-btn.active {
       background: #ffffff;
@@ -239,7 +262,7 @@
       display: none !important;
     }
 
-    /* Input Field + Paste Button */
+    /* Input Field + 1-Click Paste & Unlock Button */
     .field-header {
       display: flex;
       flex-wrap: wrap;
@@ -265,13 +288,14 @@
       border-radius: 6px;
     }
     .input-wrap {
-      position: relative;
       display: flex;
       align-items: center;
+      gap: 8px;
     }
     .key-input {
-      width: 100%;
-      padding: 14px 92px 14px 16px;
+      flex: 1;
+      min-height: 46px;
+      padding: 12px 14px;
       border-radius: 12px;
       background: #f8fafc;
       border: 2px solid #e2e8f0;
@@ -286,42 +310,44 @@
       background: #ffffff;
     }
     .paste-btn {
-      position: absolute;
-      right: 10px;
-      padding: 6px 12px;
-      border-radius: 8px;
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      color: #334155;
-      font-size: 12px;
+      min-height: 46px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      background: #0f172a;
+      border: 1px solid #0f172a;
+      color: #ffffff;
+      font-size: 12.5px;
       font-weight: 800;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 5px;
+      gap: 6px;
+      white-space: nowrap;
       transition: all 120ms ease;
-      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
     }
     .paste-btn:hover {
-      background: #ecfdf5;
-      border-color: #6ee7b7;
-      color: #047857;
+      background: #1e293b;
+    }
+    .paste-btn:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
     }
     .key-hint {
       font-size: 12px;
       font-weight: 600;
-      color: #94a3b8;
+      color: #64748b;
       margin-top: 8px;
     }
 
-    /* Primary Full-Width CTA Button */
+    /* Primary Full-Width Green CTA Button (Zero Prices or Amounts + Complete 5-State Matrix) */
     .primary-cta-btn {
       margin-top: 16px;
       width: 100%;
+      min-height: 48px;
       padding: 14px 24px;
       border-radius: 12px;
       border: none;
-      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      background: #059669;
       color: #ffffff;
       font-size: 14px;
       font-weight: 900;
@@ -331,15 +357,23 @@
       justify-content: center;
       gap: 8px;
       text-decoration: none;
-      box-shadow: 0 10px 22px -6px rgba(5, 150, 105, 0.35);
-      transition: all 140ms ease;
+      box-shadow: 0 6px 16px rgba(5, 150, 105, 0.25);
+      transition: background 140ms ease, transform 140ms ease;
     }
     .primary-cta-btn:hover {
-      background: linear-gradient(135deg, #059669 0%, #047857 100%);
+      background: #047857;
       transform: translateY(-1px);
+    }
+    .primary-cta-btn:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
     }
     .primary-cta-btn:active {
       transform: translateY(0) scale(0.995);
+    }
+    .primary-cta-btn:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
     }
 
     /* Tab 2: Clutter-Free Order Redirect Box */
@@ -362,7 +396,7 @@
       margin: 6px 0 0;
     }
 
-    /* Full-Width Executive Mobile QR Sync Action Card (Zero Text Truncation) */
+    /* Full-Width Executive Mobile QR Sync Action Card */
     .qr-footer-section {
       margin-top: 24px;
       padding-top: 20px;
@@ -388,7 +422,10 @@
       border-color: #10b981;
       background: #f8fafc;
       transform: translateY(-1px);
-      box-shadow: 0 10px 24px -8px rgba(5, 150, 105, 0.15);
+    }
+    .pro-action-btn:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
     }
     .pro-action-left {
       display: flex;
@@ -450,14 +487,9 @@
       flex-shrink: 0;
       transition: all 140ms ease;
     }
-    .pro-action-btn:hover .pro-chevron {
-      background: #ecfdf5;
-      color: #059669;
-      transform: translateX(2px);
-    }
 
     /* =========================================================================
-       OFFLOADED DASHBOARD PANELS (6 Modules + Sessions + Whitelist + Support)
+       OFFLOADED DASHBOARD PANELS (6 Whole-Row Modules + 4-Tab Switcher + Support)
        ========================================================================= */
     .dashboard-grid {
       display: grid;
@@ -487,42 +519,98 @@
       color: var(--muted);
       margin-bottom: 14px;
     }
+    /* De-containerized Keyline List Rows (@Memorisely [VpXDo2_PbIQ], [sXDujQ09xJE], [OcibTxoU6Us]) */
     .list-item {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 10px;
-      padding: 10px 12px;
-      background: var(--surface-muted);
-      border: 1px solid var(--card-border);
-      border-radius: 12px;
-      margin-bottom: 7px;
+      min-height: 52px;
+      padding: 12px 10px;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid #f1f5f9;
+      border-radius: 0;
+      margin-bottom: 0;
       font-size: 12.5px;
       font-weight: 600;
       color: var(--text-secondary);
+      transition: background 0.14s ease, border-radius 0.14s ease;
+    }
+    .list-item:last-child {
+      border-bottom: none;
+    }
+    .list-item.module-row {
+      cursor: pointer;
+      user-select: none;
+    }
+    .list-item.module-row:hover {
+      background: #f8fafc;
+      border-radius: 10px;
+    }
+    /* Concentric 4-Tab Bar (12px outer = 8px inner + 4px pad) */
+    .list-tabs-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 4px;
+      padding: var(--space-tabs-pad, 4px);
+      background: #f1f5f9;
+      border-radius: var(--radius-tabs-outer, 12px);
+      margin-bottom: 14px;
+    }
+    .list-tab-btn {
+      min-height: 38px;
+      border: none;
+      border-radius: var(--radius-tabs-inner, 8px);
+      background: transparent;
+      color: #475569;
+      font-size: 11.5px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.14s ease;
+    }
+    .list-tab-btn:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+    .list-tab-btn.active {
+      background: #ffffff;
+      color: #0f172a;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+    }
+    .list-tab-pane.hidden {
+      display: none;
     }
     .mini-btn {
       background: #ecfdf5;
       color: #047857;
       border: 1px solid #a7f3d0;
       border-radius: 8px;
-      padding: 5px 11px;
+      padding: 6px 12px;
       font-size: 11px;
       font-weight: 800;
       cursor: pointer;
       flex-shrink: 0;
     }
+    .mini-btn:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
     .switch-btn {
       width: 44px;
       height: 24px;
       border-radius: 999px;
-      background: #10b981;
+      background: #059669;
       border: none;
       position: relative;
       cursor: pointer;
       padding: 0;
       flex-shrink: 0;
       transition: background 0.16s ease;
+    }
+    .switch-btn:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
     }
     .switch-btn::after {
       content: "";
@@ -556,6 +644,17 @@
     .switch-btn.pro-lock::after {
       display: none;
     }
+    .support-field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .support-label {
+      font-size: 11.5px;
+      font-weight: 800;
+      color: var(--text-secondary);
+      letter-spacing: 0.01em;
+    }
     .support-input {
       width: 100%;
       padding: 10px 13px;
@@ -565,8 +664,16 @@
       border-radius: 10px;
       font-size: 13px;
       font-family: inherit;
+      outline: none;
+      transition: border-color 140ms ease, background 140ms ease;
+    }
+    .support-input:focus {
+      border-color: #10b981;
+      background: #ffffff;
+      box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.16);
     }
     .support-btn {
+      min-height: 44px;
       background: #059669;
       color: #ffffff;
       border: none;
@@ -575,16 +682,24 @@
       font-size: 13px;
       font-weight: 800;
       cursor: pointer;
+      transition: background 140ms ease;
+    }
+    .support-btn:hover {
+      background: #047857;
+    }
+    .support-btn:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
     }
   </style>
 </head>
 <body>
   <div class="container">
     <!-- =======================================================================
-         VERSION 3.1 SPLIT HERO MODAL (v2.2 Left Stage + v2.1 Right Card)
+         OPTION 1 SPLIT HERO CARD
          ======================================================================= -->
     <div class="v31-shell">
-      <!-- LEFT SIDE OF v2.2 -->
+      <!-- LEFT SIDE -->
       <div class="obsidian-stage">
         <div>
           <div class="brand-row">
@@ -605,7 +720,6 @@
             Engineered for Chrome, Firefox, Edge, Safari, iOS &amp; Android with one unified Pro license key.
           </p>
 
-          <!-- 2x2 Metric Grid from v2.2 -->
           <div class="metrics-grid">
             <div class="metric-card">
               <div class="metric-val">&lt;50ms</div>
@@ -632,7 +746,7 @@
         </div>
       </div>
 
-      <!-- RIGHT SIDE OF v2.1 (No Step 1, Zero Truncation, Zero Pricing Clutter) -->
+      <!-- RIGHT SIDE (Option 1: 1-Click Paste+Unlock, Zero Competing Green Buttons, Zero Prices in Green Buttons) -->
       <div class="daylight-stage">
         <div>
           <div class="status-badge-row">
@@ -655,22 +769,22 @@
           <div id="welcomePanelKey" class="tab-panel hidden">
             <div class="field-header">
               <label for="welcomeLicenseInput" class="field-label">
-                Enter License Key, 6-Digit Code, or Pairing Token
+                Instant License / 6-Digit Code Activation
               </label>
-              <span class="field-tag">Instant Activation</span>
+              <span class="field-tag">Auto-Unlocks on 6th Digit</span>
             </div>
             <div class="input-wrap">
               <input
                 type="text"
                 id="welcomeLicenseInput"
                 class="key-input mono"
-                placeholder="SWEEPR-DB-XXXX or 6-digit code"
+                placeholder="Type or paste 6-digit code or license key..."
                 autocomplete="off"
                 spellcheck="false"
               />
-              <button type="button" id="welcomePasteBtn" class="paste-btn" title="Paste from clipboard">
+              <button type="button" id="welcomePasteBtn" class="paste-btn" title="Paste &amp; Unlock in 1 click">
                 <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-                <span>Paste</span>
+                <span>Paste &amp; Unlock</span>
               </button>
             </div>
             <div id="welcomeKeyFeedback" class="key-hint">
@@ -682,16 +796,18 @@
               <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
             </button>
 
-            <a
-              href="https://sweeprdeepblock.com/order?offer=intro&amp;utm_source=extension&amp;utm_medium=welcome_tab"
-              target="_blank"
-              rel="noopener"
-              id="welcomeInlineTrialBtn"
-              style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:10px;padding:11px 14px;border-radius:12px;border:1.5px solid #a7f3d0;background:#ecfdf5;color:#047857;font-size:12.5px;font-weight:800;text-decoration:none;text-align:center;"
-            >
-              <span>Start 30-Day Pro Trial (£1.99) or £29.99/yr Annual</span>
-              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-            </a>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:10px;border-top:1px solid #f1f5f9;font-size:12px;">
+              <span style="color:var(--muted);font-weight:600;">Need a license key?</span>
+              <a
+                href="https://sweeprdeepblock.com/order?offer=intro&amp;utm_source=extension&amp;utm_medium=welcome_tab"
+                target="_blank"
+                rel="noopener"
+                id="welcomeInlineTrialBtn"
+                style="color:#059669;font-weight:800;text-decoration:none;"
+              >
+                Get Pro Protection &rarr;
+              </a>
+            </div>
           </div>
 
           <!-- Tab B: Default for Brand-New Store Installs without a License Key -->
@@ -702,14 +818,14 @@
                 Enable autonomous YouTube &amp; web ad blocking, automatic cookie consent rejection, scam store alerts, and background tab speed optimization across up to 5 devices.
               </p>
               <a href="https://sweeprdeepblock.com/order?offer=intro&amp;utm_source=extension&amp;utm_medium=welcome_tab" target="_blank" rel="noopener" class="primary-cta-btn">
-                <span>Start 30-Day Pro Trial (£1.99) or £29.99/yr Annual</span>
+                <span>Unlock Full Pro Protection</span>
                 <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
               </a>
             </div>
           </div>
         </div>
 
-        <!-- FULL-WIDTH EXECUTIVE MOBILE QR SYNC CARD (Step 1 Removed, Zero Truncation) -->
+        <!-- FULL-WIDTH EXECUTIVE MOBILE QR SYNC CARD -->
         <div class="qr-footer-section">
           <a href="https://sweeprdeepblock.com/login?utm_source=extension&amp;utm_medium=welcome_tab" target="_blank" rel="noopener" class="pro-action-btn">
             <div class="pro-action-left">
@@ -736,114 +852,147 @@
       </div>
     </div>
 
-    <!-- Offloaded Full-Tab Controls: 6 Granular Protection Modules + Saved Sessions + Whitelisted Sites -->
+    <!-- Offloaded Full-Tab Controls: 6 Whole-Row Protection Modules + 4-Tab Segmented Lists + Support Drawer -->
     <div class="dashboard-grid" id="modulesSection">
       <div class="panel-card">
         <div class="panel-title">
-          <span>Protection Module Toggles</span>
-          <span style="font-size:12px;color:#059669;">6 Modules</span>
+          <span>6 Core Protection Engines</span>
+          <span style="font-size:11px;color:#059669;background:#ecfdf5;padding:3px 8px;border-radius:6px;">Click Entire Row to Toggle</span>
         </div>
         <div class="panel-sub">Fine-tune individual SWEEPR Deepblock engines across your browser.</div>
         <div>
-          <div class="list-item">
+          <div class="list-item module-row" data-row-setting="adBlocking">
             <div>
               <div style="font-weight:800;">Video &amp; Page Ad Blocking</div>
               <div style="font-size:11px;color:var(--muted);">YouTube pre-roll &amp; anti-adblock cloaking</div>
             </div>
-            <button type="button" data-setting="adBlocking" data-pro="1" class="switch-btn pro-lock">🔒 PRO</button>
+            <button type="button" data-setting="adBlocking" data-pro="1" class="switch-btn pro-lock">PRO</button>
           </div>
-          <div class="list-item">
+          <div class="list-item module-row" data-row-setting="cookieAutoClose">
             <div>
               <div style="font-weight:800;">Auto-Decline Cookie Pop-Ups</div>
               <div style="font-size:11px;color:var(--muted);">Silently rejects CMP banners in &lt;50ms</div>
             </div>
-            <button type="button" data-setting="cookieAutoClose" data-pro="1" class="switch-btn pro-lock">🔒 PRO</button>
+            <button type="button" data-setting="cookieAutoClose" data-pro="1" class="switch-btn pro-lock">PRO</button>
           </div>
-          <div class="list-item">
+          <div class="list-item module-row" data-row-setting="hideSearchSpam">
             <div>
               <div style="font-weight:800;">Hide Search Engine Spam</div>
               <div style="font-size:11px;color:var(--muted);">Cleans Google, Bing &amp; DuckDuckGo SERPs</div>
             </div>
-            <button type="button" data-setting="hideSearchSpam" data-pro="1" class="switch-btn pro-lock">🔒 PRO</button>
+            <button type="button" data-setting="hideSearchSpam" data-pro="1" class="switch-btn pro-lock">PRO</button>
           </div>
-          <div class="list-item">
+          <div class="list-item module-row" data-row-setting="fakeShopAlerts">
             <div>
               <div style="font-weight:800;">Scam Online Shop Alerts</div>
               <div style="font-size:11px;color:var(--muted);">Warns on fake urgency countdown stores</div>
             </div>
-            <button type="button" data-setting="fakeShopAlerts" data-pro="1" class="switch-btn pro-lock">🔒 PRO</button>
+            <button type="button" data-setting="fakeShopAlerts" data-pro="1" class="switch-btn pro-lock">PRO</button>
           </div>
-          <div class="list-item">
+          <div class="list-item module-row" data-row-setting="trackerProtection">
             <div>
               <div style="font-weight:800;">Tracker-Free Links</div>
               <div style="font-size:11px;color:var(--muted);">Strips click tracking parameters</div>
             </div>
-            <button type="button" data-setting="trackerProtection" data-pro="1" class="switch-btn pro-lock">🔒 PRO</button>
+            <button type="button" data-setting="trackerProtection" data-pro="1" class="switch-btn pro-lock">PRO</button>
           </div>
-          <div class="list-item">
+          <div class="list-item module-row" data-row-setting="silentMode">
             <div>
               <div style="font-weight:800;">100% Silent Mode</div>
               <div style="font-size:11px;color:var(--muted);">Hide on-page toasts &amp; counter badges</div>
             </div>
-            <button type="button" data-setting="silentMode" data-pro="1" class="switch-btn pro-lock">🔒 PRO</button>
+            <button type="button" data-setting="silentMode" data-pro="1" class="switch-btn pro-lock">PRO</button>
           </div>
         </div>
       </div>
 
       <div class="panel-card">
         <div class="panel-title">
-          <span>Saved Tab Session History</span>
-          <span id="fullSavedSessionsCount" style="font-size:12px;color:#059669;">0 snapshots</span>
+          <span>Saved Sessions &amp; Site Lists</span>
+          <span style="font-size:11px;color:var(--muted);">Segmented View</span>
         </div>
-        <div class="panel-sub">Snapshots automatically saved when background tabs are put to sleep.</div>
-        <div id="fullSavedSessionsList">
-          <div style="font-size:12.5px;color:var(--muted);">No saved tab groups yet.</div>
+        <div class="panel-sub">Switch between saved tab snapshots, paused domains, pinned sites, and hidden page elements.</div>
+
+        <!-- 4-Tab Segmented Switcher (Replaces 4 Stacked Empty Lists) -->
+        <div class="list-tabs-bar" id="welcomeListTabsBar">
+          <button type="button" class="list-tab-btn active" data-list-tab="sessions">Sessions</button>
+          <button type="button" class="list-tab-btn" data-list-tab="paused">Paused</button>
+          <button type="button" class="list-tab-btn" data-list-tab="pinned">Pinned</button>
+          <button type="button" class="list-tab-btn" data-list-tab="hidden">Hidden</button>
         </div>
 
-        <div class="panel-title" style="margin-top:20px;">
-          <span>Paused Websites (Whitelist)</span>
-          <span id="pausedSitesCount" style="font-size:12px;color:#059669;">0 sites</span>
-        </div>
-        <div class="panel-sub">Websites where SWEEPR Deepblock protection is currently paused.</div>
-        <div id="pausedSitesList">
-          <div style="font-size:12.5px;color:var(--muted);">Protection is active on all websites.</div>
-        </div>
-
-        <div class="panel-title" style="margin-top:20px;">
-          <span>Kept-Awake Websites (Never Snooze)</span>
-          <span id="neverSnoozeCount" style="font-size:12px;color:#059669;">0 sites</span>
-        </div>
-        <div class="panel-sub">Websites excluded from automatic background tab hibernation.</div>
-        <div id="neverSnoozeList">
-          <div style="font-size:12.5px;color:var(--muted);">No sites pinned awake yet.</div>
+        <div id="listPane-sessions" class="list-tab-pane">
+          <div class="panel-title" style="font-size:13px;">
+            <span>Saved Tab Session History</span>
+            <span id="fullSavedSessionsCount" style="font-size:11.5px;color:#059669;">0 snapshots</span>
+          </div>
+          <div class="panel-sub">Snapshots automatically saved when background tabs are put to sleep.</div>
+          <div id="fullSavedSessionsList">
+            <div style="font-size:12.5px;color:var(--muted);">No saved tab groups yet.</div>
+          </div>
         </div>
 
-        <div class="panel-title" style="margin-top:20px;">
-          <span>Custom Hidden Elements</span>
-          <span id="customZappedCount" style="font-size:12px;color:#059669;">0 sites</span>
+        <div id="listPane-paused" class="list-tab-pane hidden">
+          <div class="panel-title" style="font-size:13px;">
+            <span>Paused Websites (Whitelist)</span>
+            <span id="pausedSitesCount" style="font-size:11.5px;color:#059669;">0 sites</span>
+          </div>
+          <div class="panel-sub">Websites where SWEEPR Deepblock protection is currently paused.</div>
+          <div id="pausedSitesList">
+            <div style="font-size:12.5px;color:var(--muted);">Protection is active on all websites.</div>
+          </div>
         </div>
-        <div class="panel-sub">Elements hidden using the right-click / popup Element Hider.</div>
-        <div id="customZappedList">
-          <div style="font-size:12.5px;color:var(--muted);">No custom hidden elements yet.</div>
+
+        <div id="listPane-pinned" class="list-tab-pane hidden">
+          <div class="panel-title" style="font-size:13px;">
+            <span>Kept-Awake Websites (Never Snooze)</span>
+            <span id="neverSnoozeCount" style="font-size:11.5px;color:#059669;">0 sites</span>
+          </div>
+          <div class="panel-sub">Websites excluded from automatic background tab hibernation.</div>
+          <div id="neverSnoozeList">
+            <div style="font-size:12.5px;color:var(--muted);">No sites pinned awake yet.</div>
+          </div>
+        </div>
+
+        <div id="listPane-hidden" class="list-tab-pane hidden">
+          <div class="panel-title" style="font-size:13px;">
+            <span>Custom Hidden Elements</span>
+            <span id="customZappedCount" style="font-size:11.5px;color:#059669;">0 sites</span>
+          </div>
+          <div class="panel-sub">Elements hidden using the right-click / popup Element Hider.</div>
+          <div id="customZappedList">
+            <div style="font-size:12.5px;color:var(--muted);">No custom hidden elements yet.</div>
+          </div>
         </div>
       </div>
 
-      <div class="panel-card" style="grid-column: 1 / -1;">
-        <div class="panel-title">
+      <details class="panel-card" style="grid-column: 1 / -1;">
+        <summary class="panel-title" style="cursor:pointer;list-style:none;margin:0;">
           <span>Need Help? Message SWEEPR Support</span>
-          <span style="font-size:12px;color:#059669;">Direct UK Engineering Support</span>
+          <span style="font-size:12px;color:#059669;">Direct UK Engineering Support ▾</span>
+        </summary>
+        <div style="margin-top:12px;">
+          <div class="panel-sub">Have a question or found a website with stubborn ads? Send a message directly to our support team.</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:10px;">
+            <div class="support-field">
+              <label for="welcomeSupportEmail" class="support-label">Your Email Address</label>
+              <input type="email" id="welcomeSupportEmail" class="support-input" placeholder="you@example.com" />
+            </div>
+            <div class="support-field">
+              <label for="welcomeSupportSubject" class="support-label">Issue Summary</label>
+              <input type="text" id="welcomeSupportSubject" class="support-input" placeholder="e.g. Ad report or billing help" />
+            </div>
+          </div>
+          <div class="support-field" style="margin-bottom:10px;">
+            <label for="welcomeSupportMessage" class="support-label">Diagnostic Details</label>
+            <textarea id="welcomeSupportMessage" class="support-input" rows="3" style="resize:vertical;" placeholder="Include website URL or steps to reproduce..."></textarea>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+            <button type="button" id="welcomeSupportSendBtn" class="support-btn">Send Message to Support</button>
+            <span id="welcomeSupportFeedback" style="font-size:12.5px;font-weight:700;display:none;"></span>
+          </div>
         </div>
-        <div class="panel-sub">Have a question or found a website with stubborn ads? Send a message directly to our support team.</div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:10px;">
-          <input type="email" id="welcomeSupportEmail" class="support-input" placeholder="Your email address for our reply" />
-          <input type="text" id="welcomeSupportSubject" class="support-input" placeholder="Subject (e.g. Ad report or billing help)" />
-        </div>
-        <textarea id="welcomeSupportMessage" class="support-input" rows="3" style="resize:vertical;margin-bottom:10px;" placeholder="Describe how we can help..."></textarea>
-        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-          <button type="button" id="welcomeSupportSendBtn" class="support-btn">Send Message to Support</button>
-          <span id="welcomeSupportFeedback" style="font-size:12.5px;font-weight:700;display:none;"></span>
-        </div>
-      </div>
+      </details>
     </div>
   </div>
   <script src="welcome.js"></script>

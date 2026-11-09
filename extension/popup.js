@@ -64,18 +64,15 @@ document.addEventListener('DOMContentLoaded', () => {
         draftLicenseKey: licenseKeyInput.value,
         licenseDrawerOpen: true
       });
-      if (licenseFeedbackEl) {
-        if (/^\d{6}$/.test(raw)) {
+      if (/^\d{6}$/.test(raw) || /^SWEEPR-DB-[A-Z0-9-]{4,}$/i.test(raw) || /^ptk_[a-zA-Z0-9_-]{6,}$/i.test(raw)) {
+        if (licenseFeedbackEl) {
           licenseFeedbackEl.style.display = 'block';
           licenseFeedbackEl.style.color = '#059669';
-          licenseFeedbackEl.textContent = '✓ 6-digit code ready — click Unlock';
-        } else if (/^SWEEPR-DB-[A-Z0-9-]{4,}$/i.test(raw) || /^ptk_[a-zA-Z0-9_-]{6,}$/.test(raw)) {
-          licenseFeedbackEl.style.display = 'block';
-          licenseFeedbackEl.style.color = '#059669';
-          licenseFeedbackEl.textContent = '✓ Valid key format — click Unlock';
-        } else if (!raw) {
-          licenseFeedbackEl.style.display = 'none';
+          licenseFeedbackEl.textContent = 'Verifying code automatically...';
         }
+        handlePopupActivate();
+      } else if (!raw && licenseFeedbackEl) {
+        licenseFeedbackEl.style.display = 'none';
       }
     });
   }
@@ -87,10 +84,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const text = await navigator.clipboard.readText();
         if (text && text.trim()) {
           licenseKeyInput.value = text.trim();
-          licenseKeyInput.dispatchEvent(new Event('input'));
-          licenseKeyInput.focus();
         }
-      } catch (e) {
+      } catch (e) {}
+      if ((licenseKeyInput.value || '').trim()) {
+        handlePopupActivate();
+      } else {
         licenseKeyInput.focus();
       }
     });
@@ -125,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!currentState.proActive) {
       siteBarEl.classList.add('paused');
       sitePauseBtn.className = 'switch-btn pro-lock';
-      sitePauseBtn.textContent = '🔒 PRO';
+      sitePauseBtn.textContent = 'PRO';
       currentSiteSubEl.textContent = 'Unlock Pro below to enable full Site Shield';
       return;
     }
@@ -134,16 +132,22 @@ document.addEventListener('DOMContentLoaded', () => {
       currentHostname &&
       Array.isArray(currentState.pausedSites) &&
       currentState.pausedSites.includes(currentHostname);
+    const siteBarClickRow = document.getElementById('siteBarClickRow');
+    if (siteBarClickRow) {
+      siteBarClickRow.setAttribute('aria-checked', isPaused ? 'false' : 'true');
+    }
     if (isPaused) {
       siteBarEl.classList.add('paused');
       sitePauseBtn.className = 'switch-btn off';
-      currentSiteSubEl.textContent = 'Protection paused on this site';
-      if (pause5MinBtn) pause5MinBtn.textContent = '▶️ Resume Protection';
+      currentSiteSubEl.textContent = 'Protection paused — click card to resume';
+      if (pause5MinBtn) pause5MinBtn.innerHTML = '<span>Resume Protection</span>';
     } else {
       siteBarEl.classList.remove('paused');
       sitePauseBtn.className = 'switch-btn';
-      currentSiteSubEl.textContent = 'Site Shield ON · Ads & Cookies Blocked';
-      if (pause5MinBtn) pause5MinBtn.textContent = '🔧 Pause 5m (Fix Page)';
+      currentSiteSubEl.textContent = 'Click anywhere on card to pause site';
+      if (pause5MinBtn) {
+        pause5MinBtn.innerHTML = '<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span>Pause 5m (Fix)</span>';
+      }
     }
 
     if (keepSiteAwakeBtn) {
@@ -151,7 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
         currentHostname &&
         Array.isArray(currentState.neverSnoozeSites) &&
         currentState.neverSnoozeSites.includes(currentHostname);
-      keepSiteAwakeBtn.textContent = keptAwake ? '✓ Kept Awake' : '📌 Keep Site Awake';
+      keepSiteAwakeBtn.textContent = keptAwake ? '✓ Kept Awake' : 'Keep Site Awake';
       keepSiteAwakeBtn.style.borderColor = keptAwake ? '#10b981' : '';
       keepSiteAwakeBtn.style.color = keptAwake ? '#059669' : '';
     }
@@ -161,16 +165,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!storeSafetyCard || !storeSafetyTitle || !storeSafetySub || !storeSafetyPill) return;
     if (state.currentTabScamDetected) {
       storeSafetyCard.classList.add('scam-alert');
-      storeSafetyTitle.textContent = '⚠️ Suspicious Store Signals Found';
+      storeSafetyTitle.textContent = 'Suspicious Store Signals Found';
       const firstReason = (state.currentTabScamReasons && state.currentTabScamReasons[0]) || 'Fake urgency countdown timer detected on store';
       storeSafetySub.textContent = firstReason;
-      storeSafetyPill.textContent = 'RISK';
+      storeSafetyPill.textContent = 'Risk Alert';
       storeSafetyPill.className = 'store-pill risk';
     } else {
       storeSafetyCard.classList.remove('scam-alert');
-      storeSafetyTitle.textContent = '🛡️ Store & Site Check: Verified Safe';
+      storeSafetyTitle.textContent = 'Store & Site Check: Verified Safe';
       storeSafetySub.textContent = '0 phishing or fake-urgency scam signals on this page';
-      storeSafetyPill.textContent = 'SAFE';
+      storeSafetyPill.textContent = 'Verified Safe';
       storeSafetyPill.className = 'store-pill';
     }
   }
@@ -200,10 +204,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const discardedCount = Number(state.ramMetrics.discardedCount) || 0;
       const savedGb = Number(stats.ramSavedGb) || +(discardedCount * 0.14).toFixed(1);
       ramHeadlineEl.textContent = !isPro
-        ? '🔒 Pro Add-On'
+        ? 'Pro Add-On'
         : savedGb > 0
-        ? `⚡ ${savedGb} GB Saved · ${discardedCount} Sleeping`
-        : `${totalTabs} Tabs Open`;
+        ? `${savedGb} GB Saved`
+        : `${totalTabs} Tabs`;
       const scaleRatio = isPro ? Math.min(0.85, Math.max(0.18, (totalTabs * 4) / 100)) : 0;
       ramBarFillEl.style.transform = `scaleX(${scaleRatio.toFixed(2)})`;
       const autoOn = !state.settings || state.settings.autoRamTamer !== false;
@@ -242,8 +246,7 @@ document.addEventListener('DOMContentLoaded', () => {
       tierBadgeEl.textContent = 'Free Preview';
       tierBadgeEl.classList.remove('pro');
       upgradeCtaBtn.style.display = 'flex';
-      toggleLicenseDrawerBtn.style.display = 'inline-flex';
-      licenseDrawerEl.classList.add('open');
+      toggleLicenseDrawerBtn.style.display = 'flex';
       const upgradeSubtitleEl = document.getElementById('upgradeSubtitleText');
       if (upgradeSubtitleEl) {
         upgradeSubtitleEl.textContent =
@@ -311,7 +314,7 @@ document.addEventListener('DOMContentLoaded', () => {
               : `🛡️ ${mState.totalThreats.toLocaleString()} threats spotted (~${mState.secondsSaved}s saved)! Unlock Pro (£1.99 1st mo or £29.99/yr)`;
           }
           if (a3MilestoneUpgradeBtn) {
-            a3MilestoneUpgradeBtn.textContent = isHighMilestone ? 'Unlock Pro / Suite' : 'Claim £1.99 Intro';
+            a3MilestoneUpgradeBtn.textContent = isHighMilestone ? 'Unlock Pro / Suite' : 'Unlock Pro';
             a3MilestoneUpgradeBtn.onclick = () => {
               const targetPlanUrl = isHighMilestone
                 ? 'https://sweeprdeepblock.com/order?plan=annual&utm_source=extension_a3_1000'
@@ -474,8 +477,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (response) renderState(response);
   });
 
-  // 1-Click Toggle Site Shield (and reload active tab so change takes effect immediately)
-  sitePauseBtn.addEventListener('click', () => {
+  // 1-Click Toggle Site Shield on Full Card Row or Switch (and reload active tab so change takes effect immediately)
+  function handleToggleSiteShield(e) {
+    if (e && e.type === 'keydown' && e.key !== 'Enter' && e.key !== ' ') return;
+    if (e && e.type === 'keydown') e.preventDefault();
     if (!currentState.proActive) {
       openProRequiredPrompt();
       return;
@@ -496,7 +501,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
     );
-  });
+  }
+
+  const siteBarClickRow = document.getElementById('siteBarClickRow');
+  if (siteBarClickRow) {
+    siteBarClickRow.addEventListener('click', handleToggleSiteShield);
+    siteBarClickRow.addEventListener('keydown', handleToggleSiteShield);
+  } else if (sitePauseBtn) {
+    sitePauseBtn.addEventListener('click', handleToggleSiteShield);
+  }
 
   // 1-Click "Pause 5m (Fix Page)" Broken-Website Escape Hatch
   if (pause5MinBtn) {
@@ -587,8 +600,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const count = Number(res.newlyDiscarded) || 0;
         const savedGb = (res.stats && res.stats.ramSavedGb) || 0.4;
         reclaimRamBtn.textContent =
-          count > 0 ? `✓ ${count} Tabs Snoozed` : '✓ Already Fast';
-        ramHeadlineEl.textContent = `⚡ ${savedGb} GB Saved`;
+          count > 0 ? '✓ Idle Tabs Snoozed' : '✓ Already Optimized';
+        ramHeadlineEl.textContent = `${savedGb} GB Saved`;
         ramBarFillEl.style.transform = 'scaleX(0.18)';
         if (ramHeadlineEl.animate) {
           ramHeadlineEl.animate(

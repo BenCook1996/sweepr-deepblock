@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Memorisely (@Memorisely/shorts) 95-Video UI/UX Audit &amp; Pre vs Post Workbench — SWEEPR Deepblock</title>
+  <script src="https://cdn.tailwindcss.com/3.4.5"></script>
+  <style>
+    :root {
+      /* Primitive Tokens (Memorisely Shorts KPKl9i09M04 & mYzgPh5wPq4) */
+      --emerald-50: #ecfdf5;
+      --emerald-100: #d1fae5;
+      --emerald-200: #a7f3d0;
+      --emerald-400: #34d399;
+      --emerald-500: #10b981;
+      --emerald-600: #059669;
+      --emerald-700: #047857;
+      --slate-50: #f8fafc;
+      --slate-100: #f1f5f9;
+      --slate-200: #e2e8f0;
+      --slate-400: #94a3b8;
+      --slate-500: #64748b;
+      --slate-700: #334155;
+      --slate-900: #0f172a;
+
+      /* Semantic Tokens (Memorisely Shorts GAgKtBnI-ds & vgrI0OraARY) */
+      --surface-canvas: var(--slate-50);
+      --surface-card: #ffffff;
+      --surface-subtle: var(--slate-100);
+      --border-subtle: var(--slate-200);
+      --text-primary: var(--slate-900);
+      --text-secondary: var(--slate-700);
+      --text-muted: var(--slate-500);
+      --action-primary-bg: var(--emerald-600);
+      --action-primary-hover: var(--emerald-700);
+    }
+
+    body {
+      font-family: "Plus Jakarta Sans", Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #090d16;
+      color: #f8fafc;
+      -webkit-font-smoothing: antialiased;
+    }
+    .tabular-nums { font-variant-numeric: tabular-nums; }
+    .mono { font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace; }
+
+    /* X-Ray Callouts for Memorisely Rules */
+    body.xray-active .xray-only { display: flex !important; }
+    body.xray-active .xray-bad { outline: 2px dashed #ef4444 !important; outline-offset: 2px; position: relative; }
+    body.xray-active .xray-good { outline: 2px solid #10b981 !important; outline-offset: 2px; position: relative; }
+
+    /* View Mode Toggles */
+    body.view-pre-only .col-post { display: none !important; }
+    body.view-post-only .col-pre { display: none !important; }
+    body.view-pre-only .comparison-grid,
+    body.view-post-only .comparison-grid {
+      grid-template-columns: 1fr !important;
+      max-width: 780px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Free vs Pro State Toggles */
+    body.pro-mode .state-free-only { display: none !important; }
+    body.pro-mode .state-pro-only { display: flex !important; }
+
+    /* Instant CSS Tooltip Pill (Memorisely Short pljDzSOF-Do: Linear/Stripe Style) */
+    .has-kbd-tooltip {
+      position: relative;
+    }
+    .kbd-tooltip {
+      position: absolute;
+      bottom: calc(100% + 6px);
+      left: 50%;
+      transform: translateX(-50%) translateY(3px);
+      background: #0f172a;
+      color: #f8fafc;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 6px;
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 140ms cubic-bezier(0.16, 1, 0.3, 1), transform 140ms cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.28);
+      z-index: 40;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .has-kbd-tooltip:hover .kbd-tooltip,
+    .has-kbd-tooltip:focus-visible .kbd-tooltip {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(0);
+    }
+    .kbd-pill {
+      background: rgba(255, 255, 255, 0.16);
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      padding: 1px 4px;
+      border-radius: 4px;
+      font-family: ui-monospace, monospace;
+      font-size: 9.5px;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- =========================================================================
+       STICKY WORKBENCH HEADER
+       ========================================================================= -->
+  <header class="sticky top-0 z-50 bg-slate-950/95 backdrop-blur-xl border-b border-slate-800 px-4 py-3">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-emerald-600 text-white font-black text-xs flex items-center justify-center shadow-lg shadow-emerald-600/25">
+          M95
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-[11px] font-extrabold uppercase tracking-wider text-emerald-400">
+              @Memorisely YouTube Shorts · Complete 95-Video UI/UX Audit
+            </span>
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+              Option 1 Preserved · Zero Prices in Green Buttons
+            </span>
+          </div>
+          <h1 class="text-sm sm:text-base font-black text-white">
+            SWEEPR Deepblock — Pre vs. Post Interactive UI Review Workbench
+          </h1>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2 text-xs">
+        <a href="https://www.youtube.com/@Memorisely/shorts" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-xl font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 no-underline transition-all">
+          ↗ @Memorisely/shorts (95 Videos)
+        </a>
+        <a href="/ergonomic-mockup-1.html" class="px-3 py-1.5 rounded-xl font-bold bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white border border-slate-800 no-underline transition-all">
+          Previous Option 1 Mockup
+        </a>
+      </div>
+    </div>
+
+    <!-- Surface Tabs & Interactive Toggles -->
+    <div class="max-w-7xl mx-auto mt-3 pt-2.5 border-t border-slate-800/90 flex flex-wrap items-center justify-between gap-3 text-xs">
+      <div class="flex flex-wrap items-center gap-1.5 bg-slate-900 p-1 rounded-xl border border-slate-800">
+        <button type="button" id="tabBtn-popup" onclick="switchSurface('popup')" class="px-3 py-1.5 rounded-lg font-bold bg-emerald-600 text-white cursor-pointer transition-all">
+          1. Extension Popup (popup.html)
+        </button>
+        <button type="button" id="tabBtn-welcome" onclick="switchSurface('welcome')" class="px-3 py-1.5 rounded-lg font-bold text-slate-300 hover:text-white cursor-pointer transition-all">
+          2. Welcome &amp; Settings (welcome.html)
+        </button>
+        <button type="button" id="tabBtn-website" onclick="switchSurface('website')" class="px-3 py-1.5 rounded-lg font-bold text-slate-300 hover:text-white cursor-pointer transition-all">
+          3. Website &amp; Support (index / pricing / support)
+        </button>
+        <button type="button" id="tabBtn-checkout" onclick="switchSurface('checkout')" class="px-3 py-1.5 rounded-lg font-bold text-slate-300 hover:text-white cursor-pointer transition-all">
+          4. Checkout, Portal &amp; Test Lab (order / login)
+        </button>
+        <button type="button" id="tabBtn-catalog" onclick="switchSurface('catalog')" class="px-3 py-1.5 rounded-lg font-bold text-amber-300 hover:text-white cursor-pointer transition-all">
+          📺 All 95 Memorisely Shorts Matrix
+        </button>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2">
+        <button type="button" id="xrayToggleBtn" onclick="toggleXray()" class="px-3 py-1.5 rounded-xl font-bold bg-emerald-500/20 border border-emerald-500/50 text-emerald-300 hover:bg-emerald-500/30 cursor-pointer transition-all">
+          📐 Memorisely Rule X-Ray: OFF
+        </button>
+        <button type="button" id="proModeBtn" onclick="toggleProMode()" class="px-3 py-1.5 rounded-xl font-bold bg-slate-800 border border-slate-700 text-slate-200 hover:bg-slate-700 cursor-pointer transition-all">
+          🔑 State: Free / Unactivated
+        </button>
+        <div class="inline-flex rounded-xl bg-slate-900 p-0.5 border border-slate-800">
+          <button type="button" onclick="setViewMode('split')" id="viewBtn-split" class="px-2.5 py-1 rounded-lg font-bold bg-slate-700 text-white cursor-pointer">Side-by-Side</button>
+          <button type="button" onclick="setViewMode('pre')" id="viewBtn-pre" class="px-2.5 py-1 rounded-lg font-bold text-slate-400 hover:text-white cursor-pointer">Pre Only</button>
+          <button type="button" onclick="setViewMode('post')" id="viewBtn-post" class="px-2.5 py-1 rounded-lg font-bold text-slate-400 hover:text-white cursor-pointer">Post Only</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- =========================================================================
+       SUMMARY BANNER: 12 DISTILLED MEMORISELY LAWS APPLIED TO SWEEPR DEEPBLOCK
+       ========================================================================= -->
+  <section class="bg-slate-900/90 border-b border-slate-800 px-4 py-3.5">
+    <div class="max-w-7xl mx-auto">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 text-xs">
+        <div class="p-2.5 rounded-xl bg-slate-950/90 border border-slate-800">
+          <div class="font-extrabold text-emerald-400">1. Corner Radius Math (3 Shorts)</div>
+          <div class="text-slate-300 mt-0.5 leading-snug"><code class="text-amber-300">R_outer = R_inner + Padding</code> fixes pinched corners in Popup, Segmented Bars &amp; Order Tabs.</div>
+        </div>
+        <div class="p-2.5 rounded-xl bg-slate-950/90 border border-slate-800">
+          <div class="font-extrabold text-sky-400">2. Stop Dropdowns &amp; Placeholders (4 Shorts)</div>
+          <div class="text-slate-300 mt-0.5 leading-snug">Replaces 4-option Support <code class="text-amber-300">&lt;select&gt;</code> with 1-tap Chips &amp; adds persistent labels to unlabelled inputs.</div>
+        </div>
+        <div class="p-2.5 rounded-xl bg-slate-950/90 border border-slate-800">
+          <div class="font-extrabold text-purple-400">3. Kill Containeritis &amp; Box Nesting (5 Shorts)</div>
+          <div class="text-slate-300 mt-0.5 leading-snug">Replaces 6 boxed sub-cards in <code class="text-amber-300">welcome.html</code> &amp; 7 nested boxes in <code class="text-amber-300">order.html</code> with clean keylines.</div>
+        </div>
+        <div class="p-2.5 rounded-xl bg-slate-950/90 border border-slate-800">
+          <div class="font-extrabold text-amber-400">4. Tooltips, 70/60 Dark &amp; Microcopy (9 Shorts)</div>
+          <div class="text-slate-300 mt-0.5 leading-snug">Adds Linear-style <code class="text-amber-300">&lt;kbd&gt;</code> tooltips, fixes dark banner saturation, &amp; upgrades vague button verbs.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       MAIN WORKBENCH STAGE
+       ========================================================================= -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 py-6">
+
+    <!-- =======================================================================
+         SURFACE 1: EXTENSION POPUP (extension/popup.html)
+         ======================================================================= -->
+    <div id="surface-popup" class="space-y-6">
+      <div class="comparison-grid grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+
+        <!-- PRE: CURRENT extension/popup.html -->
+        <div class="col-pre bg-slate-900/70 border border-red-500/30 rounded-2xl p-5 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div>
+              <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-red-500/20 text-red-300 border border-red-500/40">
+                PRE · Current Production (extension/popup.html)
+              </span>
+              <h2 class="text-base font-black text-white mt-1">
+                5 Memorisely Violations Identified in Popup
+              </h2>
+            </div>
+            <span class="mono text-xs text-red-300">5 UI/UX Fixes Needed</span>
+          </div>
+
+          <div class="flex justify-center py-3">
+            <div class="w-[360px] bg-[#f8fafc] text-[#0f172a] rounded-2xl border border-slate-300 shadow-xl p-3 font-sans select-none">
+              <!-- Compact Brand Strip -->
+              <div class="flex items-center justify-between mb-2 px-0.5">
+                <div class="flex items-center gap-1.5 font-extrabold text-xs">
+                  <div class="w-5 h-5 rounded-md bg-emerald-600 text-white grid place-items-center text-[10px]">✓</div>
+                  <span>SWEEPR <span class="text-emerald-600">Deepblock</span></span>
+                </div>
+                <span class="text-[9px] font-extrabold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 uppercase tracking-wider">Free Preview</span>
+              </div>
+
+              <!-- Violation 1: Non-concentric radius (14px outer vs 10px inner + 11px padding = 21px != 14px) -->
+              <div class="xray-bad bg-white border-2 border-emerald-500/75 rounded-[14px] p-[11px_13px] shadow-xs">
+                <div class="xray-only hidden text-[9px] font-mono font-bold text-red-600 mb-1">
+                  ✗ Short [ZOLASfGpWTw]: R_outer(14px) ≠ R_inner(10px) + Pad(11px) = 21px
+                </div>
+                <div class="flex items-center justify-between gap-2.5">
+                  <div class="flex items-center gap-2.5 min-w-0">
+                    <div class="w-9 h-9 rounded-[10px] bg-emerald-600 text-white flex items-center justify-center shrink-0">🛡️</div>
+                    <div class="min-w-0">
+                      <div class="text-[13.5px] font-extrabold text-slate-900 truncate">youtube.com</div>
+                      <div class="text-[10.5px] font-semibold text-emerald-600">Click anywhere on card to pause site</div>
+                    </div>
+                  </div>
+                  <div class="w-12 h-[26px] rounded-full bg-emerald-600 relative shrink-0">
+                    <span class="w-5 h-5 rounded-full bg-white absolute top-[3px] right-[3px] shadow"></span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Violation 2: Slow native title attribute instead of instant hover/focus tooltip with shortcut -->
+              <div class="grid grid-cols-2 gap-2 mt-2">
+                <button type="button" class="xray-bad min-h-[44px] bg-white text-slate-700 border border-slate-200 rounded-xl px-2.5 py-2 text-[11.5px] font-bold flex items-center justify-center gap-1.5" title="Slow OS native title tooltip">
+                  <span>⏱ Pause 5m (Fix)</span>
+                </button>
+                <button type="button" class="xray-bad min-h-[44px] bg-white text-slate-700 border border-slate-200 rounded-xl px-2.5 py-2 text-[11.5px] font-bold flex items-center justify-center gap-1.5" title="Slow OS native title tooltip">
+                  <span>👁 Hide Element</span>
+                </button>
+              </div>
+              <div class="xray-only hidden text-[9px] font-mono font-bold text-red-600 mt-1">
+                ✗ Short [pljDzSOF-Do]: Uses slow OS title="" instead of instant Linear-style shortcut tooltip
+              </div>
+
+              <!-- Violation 3: Boxed grey container for 3 telemetry numbers -->
+              <div class="xray-bad bg-[#f1f5f9] border border-slate-200 rounded-xl px-3 py-2.5 mt-2 flex items-center justify-between text-[11px] font-semibold text-slate-700 tabular-nums">
+                <div><strong class="font-extrabold text-slate-900">14</strong> Ads · <strong class="font-extrabold text-slate-900">3</strong> Cookies · <strong class="text-emerald-600 font-extrabold">Fast</strong></div>
+                <span class="text-[10px] font-bold text-emerald-700">● Verified Safe</span>
+              </div>
+
+              <!-- Primary Action + Progressive Disclosure Drawer -->
+              <div class="mt-2 space-y-2">
+                <button type="button" class="state-free-only w-full min-h-[46px] px-3.5 py-2.5 rounded-xl bg-emerald-600 text-white font-extrabold text-[12.5px] flex items-center justify-center gap-2 shadow">
+                  <span>Unlock Full Pro Protection</span>
+                  <span>&rarr;</span>
+                </button>
+                <button type="button" class="state-pro-only hidden w-full min-h-[46px] px-3.5 py-2.5 rounded-xl bg-emerald-600 text-white font-extrabold text-[12.5px] items-center justify-center gap-2 shadow">
+                  <span>⚡ Boost Browser Speed Now</span>
+                </button>
+
+                <!-- Violation 4 & 5: Placeholder used as label (Short d51i3QJx8jM) + Non-concentric radius (12px outer vs 8px inner + 10px pad) -->
+                <div class="state-free-only flex-col xray-bad bg-white border border-slate-200 rounded-[12px] overflow-hidden">
+                  <div class="px-3 py-2 flex items-center justify-between text-[11px] font-bold text-slate-700 bg-slate-50/60">
+                    <span>Already have a 6-digit code or key?</span>
+                    <span class="text-emerald-600 font-extrabold">▴</span>
+                  </div>
+                  <div class="p-[8px_10px_10px] border-t border-slate-100">
+                    <div class="xray-only hidden text-[9px] font-mono font-bold text-red-600 mb-1">
+                      ✗ Short [d51i3QJx8jM]: No &lt;label&gt; (placeholder disappears when typing!)
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                      <input type="text" placeholder="Paste 6-digit code or key" class="flex-1 min-h-[38px] px-2.5 py-1.5 border border-slate-300 bg-slate-50 rounded-[8px] text-[11.5px] mono font-bold" />
+                      <button type="button" class="min-h-[38px] bg-slate-900 text-white rounded-[8px] px-2.5 py-1.5 text-[11px] font-extrabold">Paste &amp; Unlock</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Footer -->
+              <div class="grid grid-cols-2 mt-2.5 bg-white border border-slate-200 rounded-xl overflow-hidden text-[11.5px] font-bold text-slate-700">
+                <button type="button" class="min-h-[42px] border-r border-slate-200">⚙ Settings &amp; Tabs</button>
+                <button type="button" class="min-h-[42px]">✓ Live Shield Test</button>
+              </div>
+            </div>
+          </div>
+
+          <ul class="text-xs text-slate-300 space-y-1.5 pt-2 border-t border-slate-800">
+            <li><strong class="text-red-400">1. Corner Radius Mismatch (Short <code class="text-amber-300">ZOLASfGpWTw</code>):</strong> <code class="mono">.site-card</code> uses <code class="mono">border-radius: 14px</code> with <code class="mono">padding: 11px</code> and <code class="mono">.shield-icon-box</code> <code class="mono">10px</code> ($10 + 11 = 21\text{px} \neq 14\text{px}$).</li>
+            <li><strong class="text-red-400">2. Placeholder as Label (Short <code class="text-amber-300">d51i3QJx8jM</code>):</strong> <code class="mono">#licenseKeyInput</code> has no <code class="mono">&lt;label&gt;</code>; typing erases the format instruction.</li>
+            <li><strong class="text-red-400">3. Missing Instant Shortcut Tooltips (Short <code class="text-amber-300">pljDzSOF-Do</code>):</strong> Relies on slow OS <code class="mono">title="..."</code> instead of instant CSS <code class="mono">&lt;kbd&gt;</code> tooltips.</li>
+            <li><strong class="text-red-400">4. Missing <code class="mono">:focus-visible</code> States (Short <code class="text-amber-300">YVP64FDIKM0</code>):</strong> Custom buttons lack keyboard focus rings.</li>
+          </ul>
+        </div>
+
+        <!-- POST: PROPOSED extension/popup.html -->
+        <div class="col-post bg-slate-900/70 border border-emerald-500/40 rounded-2xl p-5 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div>
+              <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                POST · Memorisely-Refined Popup (Option 1 + 0 Prices in Green CTA)
+              </span>
+              <h2 class="text-base font-black text-white mt-1">
+                Concentric Radii + Persistent Label + Instant Shortcut Tooltips
+              </h2>
+            </div>
+            <span class="mono text-xs text-emerald-400">100% Memorisely Compliant</span>
+          </div>
+
+          <div class="flex justify-center py-3">
+            <div class="w-[360px] bg-[#f8fafc] text-[#0f172a] rounded-2xl border border-slate-200 shadow-2xl p-3 font-sans select-none">
+              <!-- Compact Brand Strip -->
+              <div class="flex items-center justify-between mb-2 px-0.5">
+                <div class="flex items-center gap-1.5 font-extrabold text-xs">
+                  <div class="w-5 h-5 rounded-[6px] bg-emerald-600 text-white grid place-items-center text-[10px]">✓</div>
+                  <span>SWEEPR <span class="text-emerald-600">Deepblock</span></span>
+                </div>
+                <span class="text-[9px] font-extrabold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 uppercase tracking-wider">Free Preview</span>
+              </div>
+
+              <!-- Fix 1: Concentric Radius Math: R_outer (18px) = R_inner (8px) + Padding (10px) + Instant KBD Tooltip -->
+              <div class="xray-good has-kbd-tooltip bg-white border-2 border-emerald-500/80 hover:border-emerald-600 rounded-[18px] p-[10px] shadow-xs transition-all cursor-pointer">
+                <div class="kbd-tooltip">
+                  <span>Toggle Site Shield</span>
+                  <span class="kbd-pill">Alt+Shift+S</span>
+                </div>
+                <div class="xray-only hidden text-[9px] font-mono font-bold text-emerald-700 mb-1">
+                  ✓ Short [ZOLASfGpWTw]: R_outer(18px) = R_inner(8px) + Pad(10px)
+                </div>
+                <div class="flex items-center justify-between gap-2.5">
+                  <div class="flex items-center gap-2.5 min-w-0">
+                    <div class="w-9 h-9 rounded-[8px] bg-emerald-600 text-white flex items-center justify-center shrink-0">
+                      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                    </div>
+                    <div class="min-w-0">
+                      <div class="text-[13.5px] font-extrabold text-slate-900 truncate">youtube.com</div>
+                      <div class="text-[10.5px] font-semibold text-emerald-600">Protected · Click row to pause</div>
+                    </div>
+                  </div>
+                  <div class="w-12 h-[26px] rounded-full bg-emerald-600 relative shrink-0">
+                    <span class="w-5 h-5 rounded-full bg-white absolute top-[3px] right-[3px] shadow"></span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Fix 2: Instant Hover/Focus Tooltips on Quick-Fix Chips (Short pljDzSOF-Do) -->
+              <div class="grid grid-cols-2 gap-2 mt-2">
+                <button type="button" class="xray-good has-kbd-tooltip min-h-[44px] bg-white hover:bg-emerald-50/40 hover:border-emerald-500 text-slate-700 hover:text-emerald-800 border border-slate-200 rounded-xl px-2.5 py-2 text-[11.5px] font-bold flex items-center justify-center gap-1.5 transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600">
+                  <span class="kbd-tooltip">Reloads page paused for 5m</span>
+                  <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                  <span>Pause 5m (Fix)</span>
+                </button>
+                <button type="button" class="xray-good has-kbd-tooltip min-h-[44px] bg-white hover:bg-emerald-50/40 hover:border-emerald-500 text-slate-700 hover:text-emerald-800 border border-slate-200 rounded-xl px-2.5 py-2 text-[11.5px] font-bold flex items-center justify-center gap-1.5 transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600">
+                  <span class="kbd-tooltip">Click any page element to hide <span class="kbd-pill">Esc</span></span>
+                  <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                  <span>Hide Element</span>
+                </button>
+              </div>
+
+              <!-- Fix 3: De-containerized Keyline Telemetry Strip (Short VpXDo2_PbIQ & xQWl1kCoq5c) -->
+              <div class="xray-good px-1 py-2.5 mt-1 border-y border-slate-200/90 flex items-center justify-between text-[11px] font-semibold text-slate-600 tabular-nums">
+                <div class="flex items-center gap-2">
+                  <span><strong class="font-extrabold text-slate-900">14</strong> Ads</span>
+                  <span class="text-slate-300">·</span>
+                  <span><strong class="font-extrabold text-slate-900">3</strong> Cookies</span>
+                  <span class="text-slate-300">·</span>
+                  <span class="text-emerald-600 font-extrabold">Fast</span>
+                </div>
+                <span class="text-[10px] font-bold text-emerald-700 inline-flex items-center gap-1.5">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                  Verified Safe
+                </span>
+              </div>
+
+              <!-- Fix 4 & 5: Primary Green CTA (Zero Prices) + Concentric Drawer (14px outer = 8px inner + 6px pad) with Persistent Label -->
+              <div class="mt-2.5 space-y-2">
+                <button type="button" class="state-free-only w-full min-h-[46px] px-3.5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-[12.5px] flex items-center justify-center gap-2 shadow transition-all">
+                  <span>Unlock Full Pro Protection</span>
+                  <span>&rarr;</span>
+                </button>
+                <button type="button" class="state-pro-only hidden has-kbd-tooltip w-full min-h-[46px] px-3.5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-[12.5px] items-center justify-center gap-2 shadow transition-all">
+                  <span class="kbd-tooltip">Snooze inactive tabs <span class="kbd-pill">Alt+Shift+Z</span></span>
+                  <span>⚡ Boost Browser Speed Now</span>
+                </button>
+
+                <div class="state-free-only flex-col xray-good bg-white border border-slate-200 rounded-[14px] overflow-hidden">
+                  <div class="px-3 py-2 flex items-center justify-between text-[11px] font-bold text-slate-700">
+                    <span>Already have a 6-digit code or key?</span>
+                    <span class="text-emerald-600 font-extrabold">▴</span>
+                  </div>
+                  <div class="p-[6px] pt-2 border-t border-slate-100">
+                    <div class="flex items-center justify-between px-1 mb-1">
+                      <label class="text-[9.5px] font-extrabold uppercase tracking-wider text-slate-500">6-Digit Code or License Key</label>
+                      <span class="text-[9px] font-bold text-emerald-700">Auto-Unlocks</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                      <input type="text" placeholder="e.g. 482910 or SWEEPR-..." class="flex-1 min-h-[38px] px-2.5 py-1.5 border border-slate-300 focus:border-emerald-600 bg-slate-50 focus:bg-white rounded-[8px] text-[11.5px] mono font-bold outline-none" />
+                      <button type="button" class="min-h-[38px] bg-slate-900 hover:bg-slate-800 text-white rounded-[8px] px-2.5 py-1.5 text-[11px] font-extrabold">Paste &amp; Unlock</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Footer: Concentric 12px outer -->
+              <div class="grid grid-cols-2 mt-2.5 bg-white border border-slate-200 rounded-xl overflow-hidden text-[11.5px] font-bold text-slate-700">
+                <button type="button" class="min-h-[42px] border-r border-slate-200 hover:bg-slate-50 hover:text-emerald-700 transition-colors">⚙ Settings &amp; Tabs</button>
+                <button type="button" class="min-h-[42px] hover:bg-slate-50 hover:text-emerald-700 transition-colors">✓ Live Shield Test</button>
+              </div>
+            </div>
+          </div>
+
+          <ul class="text-xs text-slate-300 space-y-1.5 pt-2 border-t border-slate-800">
+            <li><strong class="text-emerald-400">1. Concentric Corner Math (<code class="text-amber-300">ZOLASfGpWTw</code>):</strong> <code class="mono">.site-card</code> uses <code class="mono">18px</code> outer radius = <code class="mono">8px</code> icon badge + <code class="mono">10px</code> padding; license drawer uses <code class="mono">14px</code> outer = <code class="mono">8px</code> input + <code class="mono">6px</code> padding.</li>
+            <li><strong class="text-emerald-400">2. Persistent Field Label (<code class="text-amber-300">d51i3QJx8jM</code>):</strong> Explicit <code class="mono">&lt;label&gt;</code> + <code class="mono">Auto-Unlocks</code> badge stays visible while typing.</li>
+            <li><strong class="text-emerald-400">3. Instant <code class="mono">&lt;kbd&gt;</code> Tooltips (<code class="text-amber-300">pljDzSOF-Do</code>):</strong> Hover or keyboard-focus any control above to see instant Linear-style tooltips.</li>
+            <li><strong class="text-emerald-400">4. De-Containerized Telemetry (<code class="text-amber-300">VpXDo2_PbIQ</code>):</strong> Replaces the grey box-in-box with clean keylines.</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- =======================================================================
+         SURFACE 2: EXTENSION WELCOME & SETTINGS (extension/welcome.html)
+         ======================================================================= -->
+    <div id="surface-welcome" class="hidden space-y-6">
+      <div class="comparison-grid grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+
+        <!-- PRE: CURRENT extension/welcome.html -->
+        <div class="col-pre bg-slate-900/70 border border-red-500/30 rounded-2xl p-5 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div>
+              <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-red-500/20 text-red-300 border border-red-500/40">
+                PRE · Current Production (extension/welcome.html)
+              </span>
+              <h2 class="text-base font-black text-white mt-1">
+                6 Boxed Sub-Cards + Unlabelled Support Inputs + Radius Mismatch
+              </h2>
+            </div>
+            <span class="mono text-xs text-red-300">4 UI/UX Fixes Needed</span>
+          </div>
+
+          <div class="bg-[#f8fafc] text-slate-900 rounded-2xl p-4 space-y-4">
+            <!-- Segmented Switcher Radius Mismatch: 16px outer vs 12px inner + 6px pad = 18px -->
+            <div class="xray-bad bg-slate-100 p-[6px] rounded-[16px] border border-slate-200 grid grid-cols-2 gap-1.5">
+              <button type="button" class="min-h-[42px] rounded-[12px] text-xs font-extrabold text-slate-600">🔑 I Have a License / Code</button>
+              <button type="button" class="min-h-[42px] rounded-[12px] bg-white shadow-xs text-xs font-extrabold text-slate-900">🛡️ Get Pro License</button>
+            </div>
+            <div class="xray-only hidden text-[9px] font-mono font-bold text-red-600">
+              ✗ Short [ZOLASfGpWTw]: .seg-bar outer 16px ≠ inner 12px + 6px pad (should be 10px inner)
+            </div>
+
+            <!-- 6 Boxed Sub-Cards inside a Boxed Panel Card (Containeritis - Short VpXDo2_PbIQ & sXDujQ09xJE) -->
+            <div class="xray-bad bg-white border border-slate-200 rounded-2xl p-4">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-sm font-extrabold">6 Core Protection Engines</span>
+                <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">6 Boxed Containers Inside 1 Card</span>
+              </div>
+              <div class="xray-only hidden text-[9px] font-mono font-bold text-red-600 mb-2">
+                ✗ Shorts [VpXDo2_PbIQ] &amp; [sXDujQ09xJE]: 6 separate bordered grey boxes stacked inside a bordered card
+              </div>
+              <div class="space-y-2">
+                <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between">
+                  <div>
+                    <div class="text-xs font-extrabold">Video &amp; Page Ad Blocking</div>
+                    <div class="text-[11px] text-slate-500">YouTube pre-roll &amp; anti-adblock cloaking</div>
+                  </div>
+                  <span class="w-10 h-5 rounded-full bg-emerald-600 inline-block"></span>
+                </div>
+                <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between">
+                  <div>
+                    <div class="text-xs font-extrabold">Auto-Decline Cookie Pop-Ups</div>
+                    <div class="text-[11px] text-slate-500">Silently rejects CMP banners in &lt;50ms</div>
+                  </div>
+                  <span class="w-10 h-5 rounded-full bg-emerald-600 inline-block"></span>
+                </div>
+                <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between">
+                  <div>
+                    <div class="text-xs font-extrabold">Scam Online Shop Alerts</div>
+                    <div class="text-[11px] text-slate-500">Warns on fake urgency countdown stores</div>
+                  </div>
+                  <span class="w-10 h-5 rounded-full bg-emerald-600 inline-block"></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Support Drawer Without Labels (Short d51i3QJx8jM) -->
+            <div class="xray-bad bg-white border border-slate-200 rounded-2xl p-4 space-y-2">
+              <div class="text-xs font-extrabold">Need Help? Message SWEEPR Support (Unlabelled Inputs)</div>
+              <div class="xray-only hidden text-[9px] font-mono font-bold text-red-600">
+                ✗ Short [d51i3QJx8jM]: Zero &lt;label&gt; elements on Email, Subject, or Message!
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <input type="email" placeholder="Your email address for our reply" class="p-2 text-xs border border-slate-200 bg-slate-50 rounded-lg" />
+                <input type="text" placeholder="Subject (e.g. Ad report or billing help)" class="p-2 text-xs border border-slate-200 bg-slate-50 rounded-lg" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- POST: PROPOSED extension/welcome.html -->
+        <div class="col-post bg-slate-900/70 border border-emerald-500/40 rounded-2xl p-5 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div>
+              <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                POST · Memorisely-Refined Welcome &amp; Settings
+              </span>
+              <h2 class="text-base font-black text-white mt-1">
+                Borderless Hairline List + Concentric Switchers + Labelled Support Form
+              </h2>
+            </div>
+            <span class="mono text-xs text-emerald-400">-24 Redundant Box Borders</span>
+          </div>
+
+          <div class="bg-[#f8fafc] text-slate-900 rounded-2xl p-4 space-y-4">
+            <!-- Fix 1: Concentric Segmented Switcher: 16px outer = 10px inner + 6px pad -->
+            <div class="xray-good bg-slate-100 p-[6px] rounded-[16px] border border-slate-200 grid grid-cols-2 gap-1.5">
+              <button type="button" class="min-h-[42px] rounded-[10px] text-xs font-extrabold text-slate-600 hover:text-slate-900">🔑 I Have a License / Code</button>
+              <button type="button" class="min-h-[42px] rounded-[10px] bg-white shadow-xs text-xs font-extrabold text-slate-900">🛡️ Get Pro License</button>
+            </div>
+
+            <!-- Fix 2: Clean Keyline List Instead of 6 Boxed Containers (Shorts VpXDo2_PbIQ, sXDujQ09xJE, xQWl1kCoq5c) -->
+            <div class="xray-good bg-white border border-slate-200 rounded-2xl p-4">
+              <div class="flex items-center justify-between pb-2.5 border-b border-slate-100">
+                <div>
+                  <div class="text-sm font-extrabold text-slate-900">6 Core Protection Engines</div>
+                  <div class="text-[11px] text-slate-500">Click anywhere on a row to toggle protection</div>
+                </div>
+                <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">All 6 Active</span>
+              </div>
+              <div class="divide-y divide-slate-100">
+                <div class="py-3 px-2 -mx-2 rounded-xl hover:bg-slate-50 flex items-center justify-between cursor-pointer transition-colors">
+                  <div class="flex items-center gap-3">
+                    <span class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-xs shrink-0">▶</span>
+                    <div>
+                      <div class="text-xs font-extrabold text-slate-900">Video &amp; Page Ad Blocking</div>
+                      <div class="text-[11px] text-slate-500">YouTube pre-roll &amp; anti-adblock cloaking</div>
+                    </div>
+                  </div>
+                  <span class="w-10 h-5 rounded-full bg-emerald-600 inline-block"></span>
+                </div>
+                <div class="py-3 px-2 -mx-2 rounded-xl hover:bg-slate-50 flex items-center justify-between cursor-pointer transition-colors">
+                  <div class="flex items-center gap-3">
+                    <span class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-xs shrink-0">🍪</span>
+                    <div>
+                      <div class="text-xs font-extrabold text-slate-900">Auto-Decline Cookie Pop-Ups</div>
+                      <div class="text-[11px] text-slate-500">Silently rejects CMP banners in &lt;50ms</div>
+                    </div>
+                  </div>
+                  <span class="w-10 h-5 rounded-full bg-emerald-600 inline-block"></span>
+                </div>
+                <div class="py-3 px-2 -mx-2 rounded-xl hover:bg-slate-50 flex items-center justify-between cursor-pointer transition-colors">
+                  <div class="flex items-center gap-3">
+                    <span class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-xs shrink-0">🛡️</span>
+                    <div>
+                      <div class="text-xs font-extrabold text-slate-900">Scam Online Shop Alerts</div>
+                      <div class="text-[11px] text-slate-500">Warns on fake urgency countdown stores</div>
+                    </div>
+                  </div>
+                  <span class="w-10 h-5 rounded-full bg-emerald-600 inline-block"></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Fix 3: Persistent Labels + 1-Tap Topic Chips in Support Drawer (Shorts d51i3QJx8jM & 3sGb5-nLke0) -->
+            <div class="xray-good bg-white border border-slate-200 rounded-2xl p-4 space-y-3">
+              <div class="text-xs font-extrabold text-slate-900">Need Help? Message SWEEPR Support</div>
+              <div class="grid grid-cols-2 gap-2.5">
+                <div>
+                  <label class="block text-[10px] font-extrabold uppercase tracking-wider text-slate-600 mb-1">Your Email Address *</label>
+                  <input type="email" placeholder="you@example.com" class="w-full p-2 text-xs border border-slate-200 bg-slate-50 focus:bg-white rounded-lg" />
+                </div>
+                <div>
+                  <label class="block text-[10px] font-extrabold uppercase tracking-wider text-slate-600 mb-1">Topic / Subject *</label>
+                  <input type="text" placeholder="e.g. Ad report on site" class="w-full p-2 text-xs border border-slate-200 bg-slate-50 focus:bg-white rounded-lg" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- =======================================================================
+         SURFACE 3: WEBSITE & SUPPORT (index.html, pricing.html, support.html)
+         ======================================================================= -->
+    <div id="surface-website" class="hidden space-y-6">
+      <div class="comparison-grid grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+
+        <!-- PRE: CURRENT Website & Support -->
+        <div class="col-pre bg-slate-900/70 border border-red-500/30 rounded-2xl p-5 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div>
+              <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-red-500/20 text-red-300 border border-red-500/40">
+                PRE · Current Production (index.html / pricing.html / support.html)
+              </span>
+              <h2 class="text-base font-black text-white mt-1">
+                4-Option Dropdown + Harsh Neon Sky Border + 36px Mobile Sticky CTA
+              </h2>
+            </div>
+            <span class="mono text-xs text-red-300">4 UI/UX Fixes Needed</span>
+          </div>
+
+          <div class="bg-white text-slate-900 rounded-2xl p-4 space-y-4">
+            <!-- Violation 1: Support Topic Dropdown for just 4 options (Shorts 3sGb5-nLke0 & TPypFTsIf-8) -->
+            <div class="xray-bad p-3.5 rounded-xl border border-slate-200 bg-slate-50">
+              <div class="xray-only hidden text-[9px] font-mono font-bold text-red-600 mb-1">
+                ✗ Shorts [3sGb5-nLke0] &amp; [TPypFTsIf-8]: Native &lt;select&gt; dropdown hides 4 simple options behind 2 clicks
+              </div>
+              <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1.5">Topic (website/support.html)</label>
+              <select class="w-full p-2.5 rounded-lg border border-slate-300 bg-white text-xs font-semibold">
+                <option>Billing, Cancellation or Refund Request</option>
+                <option>License Key / 6-Digit Activation Code</option>
+                <option>Technical Support (Chrome / Safari / Edge / Firefox)</option>
+                <option>General Inquiry</option>
+              </select>
+            </div>
+
+            <!-- Violation 2: Oversaturated Sky-Blue Border & Competing Colours on Dark Suite Banner (Shorts 7yyvEEwXcko, k5drflvjnNs, l5rd6wYC8Jc) -->
+            <div class="xray-bad rounded-2xl p-4 border-2 border-sky-500 bg-gradient-to-r from-slate-900 via-slate-900 to-emerald-950 text-white space-y-2">
+              <div class="xray-only hidden text-[9px] font-mono font-bold text-red-400">
+                ✗ Shorts [k5drflvjnNs] &amp; [l5rd6wYC8Jc]: Oversaturated cyan border + 4 competing accent colors (emerald, sky, teal, amber)
+              </div>
+              <span class="inline-block px-2.5 py-0.5 rounded-full bg-sky-500/20 border border-sky-400/40 text-sky-300 text-[10px] font-black uppercase">
+                🛡️ ALL-IN-ONE SWEEPR SECURITY SUITE • SAVE 45%
+              </span>
+              <div class="text-sm font-black">Get SWEEPR DeepBlock Pro + Sweepr VPN + Sweepr Cleaner + RAM Tamer</div>
+              <button type="button" class="py-2 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-sky-500 text-slate-950 font-black text-xs">
+                Get Complete Suite Bundle &rarr;
+              </button>
+            </div>
+
+            <!-- Violation 3: 36px (!h-9) Mobile Sticky Bar Button (Shorts 0IrWV9nV6Ns & YeqYP0x-zTM) -->
+            <div class="xray-bad p-3 rounded-xl border border-slate-200 bg-white flex items-center justify-between">
+              <div>
+                <div class="text-xs font-extrabold text-slate-900">Mobile Sticky Bottom Bar (320px iPhone SE)</div>
+                <div class="text-[11px] text-emerald-700 font-semibold">Current button height is 36px (!h-9 &lt; 44px minimum)</div>
+              </div>
+              <button type="button" class="h-9 px-3 rounded-xl bg-emerald-600 text-white text-xs font-bold">Install Now &rarr;</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- POST: PROPOSED Website & Support -->
+        <div class="col-post bg-slate-900/70 border border-emerald-500/40 rounded-2xl p-5 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div>
+              <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                POST · Memorisely-Refined Website &amp; Support
+              </span>
+              <h2 class="text-base font-black text-white mt-1">
+                1-Tap Topic Chips + Harmonized Obsidian Banner + 44px Mobile Bar
+              </h2>
+            </div>
+            <span class="mono text-xs text-emerald-400">-50% Form Interaction Cost</span>
+          </div>
+
+          <div class="bg-white text-slate-900 rounded-2xl p-4 space-y-4">
+            <!-- Fix 1: 1-Tap Radio Chips Replace 4-Option Dropdown (Shorts 3sGb5-nLke0 & TPypFTsIf-8) -->
+            <div class="xray-good p-3.5 rounded-xl border border-slate-200 bg-slate-50/60">
+              <div class="xray-only hidden text-[9px] font-mono font-bold text-emerald-700 mb-1">
+                ✓ Shorts [3sGb5-nLke0] &amp; [TPypFTsIf-8]: 4 visible 1-tap chips replace 2-click &lt;select&gt; dropdown
+              </div>
+              <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-2">Select Support Topic (1 Tap)</label>
+              <div class="grid grid-cols-2 gap-2" id="demoSupportChips">
+                <button type="button" onclick="selectSupportChip(this)" class="min-h-[40px] px-3 py-2 rounded-xl border-2 border-emerald-600 bg-emerald-50/80 text-emerald-900 text-xs font-extrabold text-left flex items-center justify-between cursor-pointer">
+                  <span>💳 Billing &amp; Refund</span>
+                  <span>✓</span>
+                </button>
+                <button type="button" onclick="selectSupportChip(this)" class="min-h-[40px] px-3 py-2 rounded-xl border border-slate-200 bg-white hover:border-emerald-400 text-slate-700 text-xs font-bold text-left flex items-center justify-between cursor-pointer">
+                  <span>🔑 Activation Code</span>
+                </button>
+                <button type="button" onclick="selectSupportChip(this)" class="min-h-[40px] px-3 py-2 rounded-xl border border-slate-200 bg-white hover:border-emerald-400 text-slate-700 text-xs font-bold text-left flex items-center justify-between cursor-pointer">
+                  <span>🛡️ Technical Help</span>
+                </button>
+                <button type="button" onclick="selectSupportChip(this)" class="min-h-[40px] px-3 py-2 rounded-xl border border-slate-200 bg-white hover:border-emerald-400 text-slate-700 text-xs font-bold text-left flex items-center justify-between cursor-pointer">
+                  <span>💬 General Question</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Fix 2: Harmonized Emerald Obsidian Surface (Shorts 7yyvEEwXcko, k5drflvjnNs, l5rd6wYC8Jc) -->
+            <div class="xray-good rounded-2xl p-4 border border-emerald-500/35 bg-[#071712] text-white space-y-2" style="background-image: radial-gradient(120% 90% at 15% 10%, rgba(16, 185, 129, 0.20) 0%, transparent 70%);">
+              <div class="xray-only hidden text-[9px] font-mono font-bold text-emerald-400">
+                ✓ Shorts [7yyvEEwXcko] &amp; [l5rd6wYC8Jc]: Unified Emerald Obsidian surface + 70/60 desaturated tokens
+              </div>
+              <span class="inline-block px-2.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-400/30 text-emerald-300 text-[10px] font-extrabold uppercase tracking-wider">
+                🛡️ 4-App Complete Security Suite · Save 45%
+              </span>
+              <div class="text-sm font-black text-white">SWEEPR DeepBlock Pro + VPN + Cleaner + RAM Tamer</div>
+              <button type="button" class="min-h-[42px] py-2 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs transition-colors">
+                Explore Complete Suite &rarr;
+              </button>
+            </div>
+
+            <!-- Fix 3: 44px Ergonomic Mobile Sticky Bar CTA (Shorts 0IrWV9nV6Ns & YeqYP0x-zTM) -->
+            <div class="xray-good p-3 rounded-xl border border-slate-200 bg-white flex items-center justify-between">
+              <div>
+                <div class="text-xs font-extrabold text-slate-900">Mobile Sticky Bottom Bar (44px Touch Target)</div>
+                <div class="text-[11px] text-emerald-700 font-semibold">44px height + safe-area-inset-bottom padding</div>
+              </div>
+              <button type="button" class="min-h-[44px] px-4 rounded-xl bg-emerald-600 text-white text-xs font-extrabold">Install Free Extension &rarr;</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- =======================================================================
+         SURFACE 4: CHECKOUT & PORTAL (order.html, login.html, test-lab.html)
+         ======================================================================= -->
+    <div id="surface-checkout" class="hidden space-y-6">
+      <div class="comparison-grid grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+
+        <!-- PRE: CURRENT Checkout & Portal -->
+        <div class="col-pre bg-slate-900/70 border border-red-500/30 rounded-2xl p-5 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div>
+              <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-red-500/20 text-red-300 border border-red-500/40">
+                PRE · Current Production (order.html &amp; login.html)
+              </span>
+              <h2 class="text-base font-black text-white mt-1">
+                7 Nested Boxes in Order Summary + Abstract Button Verbs ("Continue")
+              </h2>
+            </div>
+            <span class="mono text-xs text-red-300">4 UI/UX Fixes Needed</span>
+          </div>
+
+          <div class="bg-white text-slate-900 rounded-2xl p-4 space-y-3">
+            <div class="xray-only hidden text-[9px] font-mono font-bold text-red-600">
+              ✗ Short [VpXDo2_PbIQ]: 7 nested bordered containers inside the Order Summary card!
+            </div>
+            <!-- 2 Separate Boxed Free Bonus Cards -->
+            <div class="xray-bad space-y-2">
+              <div class="bg-emerald-50/60 border border-emerald-200 rounded-xl px-3 py-2 flex items-center justify-between text-xs">
+                <span class="font-bold">🎁 Fake Online Shop Detector</span>
+                <span class="px-2 py-0.5 rounded bg-white border border-emerald-200 text-[10px] font-extrabold text-emerald-800">INCLUDED FREE</span>
+              </div>
+              <div class="bg-emerald-50/60 border border-emerald-200 rounded-xl px-3 py-2 flex items-center justify-between text-xs">
+                <span class="font-bold">🎁 Private Browsing Protection</span>
+                <span class="px-2 py-0.5 rounded bg-white border border-emerald-200 text-[10px] font-extrabold text-emerald-800">INCLUDED FREE</span>
+              </div>
+            </div>
+
+            <!-- Boxed Breakdown with another Boxed Row inside it -->
+            <div class="xray-bad bg-gray-50 rounded-xl p-3 border border-gray-200 space-y-2 text-xs">
+              <div class="flex justify-between">
+                <span>SWEEPR Deepblock Pro (Annual)</span>
+                <span class="font-bold">£29.99/yr</span>
+              </div>
+              <div class="bg-emerald-50 px-2.5 py-1.5 rounded-lg border border-emerald-200 flex justify-between">
+                <span class="font-semibold">⚡ Total Tab &amp; RAM Tamer Add-On</span>
+                <span class="font-bold">+ £14.99/yr</span>
+              </div>
+            </div>
+
+            <!-- Abstract Microcopy in login.html & order.html (Shorts giY-yze53T8 & VUxf62edbxE) -->
+            <div class="xray-bad p-3 rounded-xl border border-slate-200 bg-slate-50 space-y-2">
+              <div class="xray-only hidden text-[9px] font-mono font-bold text-red-600">
+                ✗ Short [giY-yze53T8]: Abstract button copy ("Continue", "PURCHASE SECURELY", "CLAIM DISCOUNT")
+              </div>
+              <div class="text-[11px] font-bold text-slate-600">Current Button Microcopy:</div>
+              <div class="flex flex-wrap gap-2">
+                <span class="px-3 py-1.5 rounded-lg bg-emerald-600 text-white text-xs font-bold">Continue (login.html)</span>
+                <span class="px-3 py-1.5 rounded-full bg-emerald-600 text-white text-xs font-black">PURCHASE SECURELY (order.html)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- POST: PROPOSED Checkout & Portal -->
+        <div class="col-post bg-slate-900/70 border border-emerald-500/40 rounded-2xl p-5 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div>
+              <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                POST · Memorisely-Refined Checkout &amp; Portal
+              </span>
+              <h2 class="text-base font-black text-white mt-1">
+                Clean Keyline Receipt + Verb+Noun Outcome Microcopy
+              </h2>
+            </div>
+            <span class="mono text-xs text-emerald-400">Scannable Keyline Hierarchy</span>
+          </div>
+
+          <div class="bg-white text-slate-900 rounded-2xl p-4 space-y-3">
+            <!-- Fix 1: Unified Keyline Bonus List (Short VpXDo2_PbIQ & xQWl1kCoq5c) -->
+            <div class="xray-good py-2 border-y border-slate-100 space-y-1.5 text-xs">
+              <div class="flex items-center justify-between">
+                <span class="flex items-center gap-2 font-bold text-slate-800">
+                  <span class="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 inline-flex items-center justify-center text-[10px] font-black">✓</span>
+                  Fake Online Shop Detector
+                </span>
+                <span class="text-[10px] font-extrabold text-emerald-700 uppercase">Included Free</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="flex items-center gap-2 font-bold text-slate-800">
+                  <span class="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 inline-flex items-center justify-center text-[10px] font-black">✓</span>
+                  Private Browsing &amp; Link Protection
+                </span>
+                <span class="text-[10px] font-extrabold text-emerald-700 uppercase">Included Free</span>
+              </div>
+            </div>
+
+            <!-- Fix 2: Clean Keyline Receipt without Nested Boxes -->
+            <div class="xray-good pt-1 space-y-2 text-xs tabular-nums">
+              <div class="flex justify-between text-slate-700">
+                <span>SWEEPR Deepblock Pro (Annual Plan)</span>
+                <span class="font-bold text-slate-900">£29.99/year</span>
+              </div>
+              <div class="flex justify-between text-slate-700">
+                <span>⚡ Total Tab &amp; RAM Tamer Add-On</span>
+                <span class="font-bold text-slate-900">+ £14.99/year</span>
+              </div>
+              <div class="flex justify-between text-emerald-700 font-semibold pt-1.5 border-t border-dashed border-slate-200">
+                <span>Annual Plan Savings (Save 50%)</span>
+                <span class="font-bold">- £29.89</span>
+              </div>
+            </div>
+
+            <!-- Fix 3: Specific Verb + Noun Microcopy (Shorts giY-yze53T8 & VUxf62edbxE — Zero Prices in Green Buttons) -->
+            <div class="xray-good p-3 rounded-xl border border-emerald-200 bg-emerald-50/40 space-y-2">
+              <div class="text-[11px] font-bold text-emerald-900">Verb + Noun Microcopy (Zero Prices in Green Buttons):</div>
+              <div class="flex flex-wrap gap-2">
+                <span class="px-3 py-1.5 rounded-xl bg-emerald-600 text-white text-xs font-extrabold">Send 6-Digit Login Code &rarr; (login.html)</span>
+                <span class="px-3 py-1.5 rounded-xl bg-emerald-600 text-white text-xs font-extrabold">🔒 Complete Secure Order (order.html)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- =======================================================================
+         SURFACE 5: COMPLETE 95-VIDEO @MEMORISELY/SHORTS AUDIT MATRIX
+         ======================================================================= -->
+    <div id="surface-catalog" class="hidden space-y-6">
+      <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+          <div>
+            <h2 class="text-lg font-black text-white">Complete 95-Video @Memorisely/shorts Audit Matrix</h2>
+            <p class="text-xs text-slate-400">Every video produced on <code class="text-emerald-400">youtube.com/@Memorisely/shorts</code> categorized by how it applies to SWEEPR Deepblock.</p>
+          </div>
+          <span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+            95 Shorts Audited · 12 Core UI Laws Extracted
+          </span>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="border-b border-slate-800 text-slate-400 uppercase text-[10px] tracking-wider">
+                <th class="py-2.5 px-3">Memorisely Principle / Law</th>
+                <th class="py-2.5 px-3">Source Shorts (Video IDs &amp; Titles)</th>
+                <th class="py-2.5 px-3">SWEEPR Deepblock Target Files</th>
+                <th class="py-2.5 px-3">Status / Proposed Action</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/80 text-slate-200">
+              <tr>
+                <td class="py-3 px-3 font-extrabold text-emerald-400">1. Concentric Corner Radius Math<br><code class="text-[10px] text-amber-300">R_outer = R_inner + Padding</code></td>
+                <td class="py-3 px-3">
+                  <a href="https://www.youtube.com/shorts/ZOLASfGpWTw" target="_blank" class="text-sky-400 underline">#8 [ZOLASfGpWTw]</a>,
+                  <a href="https://www.youtube.com/shorts/11n11lrbTb8" target="_blank" class="text-sky-400 underline">#12 [11n11lrbTb8]</a>,
+                  <a href="https://www.youtube.com/shorts/09T1XTD1FvI" target="_blank" class="text-sky-400 underline">#72 [09T1XTD1FvI] (461K views)</a>
+                </td>
+                <td class="py-3 px-3 mono text-[11px]">extension/popup.html<br>extension/welcome.html<br>website/order.html</td>
+                <td class="py-3 px-3">Align nested radii on <code class="mono">.site-card</code>, <code class="mono">.license-disclosure-wrap</code>, <code class="mono">.seg-bar</code>, <code class="mono">.list-tabs-bar</code>, and checkout plan tabs.</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-3 font-extrabold text-emerald-400">2. Stop Using Dropdowns for &le;5 Options (Use Chips)</td>
+                <td class="py-3 px-3">
+                  <a href="https://www.youtube.com/shorts/3sGb5-nLke0" target="_blank" class="text-sky-400 underline">#2 [3sGb5-nLke0]</a>,
+                  <a href="https://www.youtube.com/shorts/TPypFTsIf-8" target="_blank" class="text-sky-400 underline">#3 [TPypFTsIf-8]</a>,
+                  <a href="https://www.youtube.com/shorts/5U1AIZilxCE" target="_blank" class="text-sky-400 underline">#5 [5U1AIZilxCE]</a>
+                </td>
+                <td class="py-3 px-3 mono text-[11px]">website/support.html</td>
+                <td class="py-3 px-3">Replace 4-option <code class="mono">#supportCategory</code> <code class="mono">&lt;select&gt;</code> dropdown with 4 1-tap selectable topic chips (keeping hidden select/value synced).</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-3 font-extrabold text-emerald-400">3. Never Use Placeholders as Labels</td>
+                <td class="py-3 px-3">
+                  <a href="https://www.youtube.com/shorts/d51i3QJx8jM" target="_blank" class="text-sky-400 underline">#29 [d51i3QJx8jM]</a>
+                </td>
+                <td class="py-3 px-3 mono text-[11px]">extension/popup.html<br>extension/welcome.html</td>
+                <td class="py-3 px-3">Add persistent <code class="mono">&lt;label&gt;</code> tags above <code class="mono">#licenseKeyInput</code> and the 3 support form fields in <code class="mono">welcome.html</code>.</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-3 font-extrabold text-emerald-400">4. Stop Using Containers &amp; Card Backgrounds (Use Whitespace &amp; Keylines)</td>
+                <td class="py-3 px-3">
+                  <a href="https://www.youtube.com/shorts/VpXDo2_PbIQ" target="_blank" class="text-sky-400 underline">#7 [VpXDo2_PbIQ]</a>,
+                  <a href="https://www.youtube.com/shorts/sXDujQ09xJE" target="_blank" class="text-sky-400 underline">#33 [sXDujQ09xJE]</a>,
+                  <a href="https://www.youtube.com/shorts/OcibTxoU6Us" target="_blank" class="text-sky-400 underline">#34 [OcibTxoU6Us] (21K)</a>,
+                  <a href="https://www.youtube.com/shorts/o8WOwOgWJsQ" target="_blank" class="text-sky-400 underline">#37 [o8WOwOgWJsQ]</a>,
+                  <a href="https://www.youtube.com/shorts/onxbvlk-LW4" target="_blank" class="text-sky-400 underline">#43 [onxbvlk-LW4]</a>
+                </td>
+                <td class="py-3 px-3 mono text-[11px]">extension/welcome.html<br>extension/popup.html<br>website/order.html</td>
+                <td class="py-3 px-3">Replace 6 boxed <code class="mono">.list-item</code> sub-cards in <code class="mono">welcome.html</code> and 7 nested boxes in <code class="mono">order.html</code> with clean keylines.</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-3 font-extrabold text-emerald-400">5. Instant Shortcut Tooltips on Compact Buttons</td>
+                <td class="py-3 px-3">
+                  <a href="https://www.youtube.com/shorts/pljDzSOF-Do" target="_blank" class="text-sky-400 underline">#48 [pljDzSOF-Do]</a>,
+                  <a href="https://www.youtube.com/shorts/YVP64FDIKM0" target="_blank" class="text-sky-400 underline">#47 [YVP64FDIKM0]</a>
+                </td>
+                <td class="py-3 px-3 mono text-[11px]">extension/popup.html<br>website/style.css</td>
+                <td class="py-3 px-3">Add Linear/Stripe-style instant hover &amp; <code class="mono">:focus-visible</code> tooltips with <code class="mono">&lt;kbd&gt;</code> shortcut badges (<code class="mono">Alt+Shift+S</code>, <code class="mono">Alt+Shift+Z</code>).</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-3 font-extrabold text-emerald-400">6. Stop Overusing Primary Buttons &amp; Red Destructive Hierarchy</td>
+                <td class="py-3 px-3">
+                  <a href="https://www.youtube.com/shorts/IrzTgmHdOmk" target="_blank" class="text-sky-400 underline">#24 [IrzTgmHdOmk]</a>,
+                  <a href="https://www.youtube.com/shorts/qO61OKOZ7xA" target="_blank" class="text-sky-400 underline">#42 [qO61OKOZ7xA]</a>,
+                  <a href="https://www.youtube.com/shorts/8eFpocLf9Do" target="_blank" class="text-sky-400 underline">#91 [8eFpocLf9Do]</a>,
+                  <a href="https://www.youtube.com/shorts/fJ_Z7wXLa0w" target="_blank" class="text-sky-400 underline">#90 [fJ_Z7wXLa0w] (Hick's Law)</a>
+                </td>
+                <td class="py-3 px-3 mono text-[11px]">website/test-lab.html<br>website/login.html</td>
+                <td class="py-3 px-3">Demote secondary navbar re-run button in <code class="mono">test-lab.html</code> and style cancel auto-renewal in <code class="mono">login.html</code> as quiet destructive ghost button until hover.</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-3 font-extrabold text-emerald-400">7. Verb + Noun Action Microcopy (Stop Using Generic Verbs)</td>
+                <td class="py-3 px-3">
+                  <a href="https://www.youtube.com/shorts/giY-yze53T8" target="_blank" class="text-sky-400 underline">#30 [giY-yze53T8] (4.6K)</a>,
+                  <a href="https://www.youtube.com/shorts/VUxf62edbxE" target="_blank" class="text-sky-400 underline">#95 [VUxf62edbxE]</a>
+                </td>
+                <td class="py-3 px-3 mono text-[11px]">website/login.html<br>website/order.html</td>
+                <td class="py-3 px-3">Replace <code class="mono">"Continue"</code> &rarr; <code class="mono">"Send 6-Digit Login Code"</code> and <code class="mono">"CLAIM DISCOUNT"</code> &rarr; <code class="mono">"Apply Intro Offer"</code> (0 prices in green buttons).</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-3 font-extrabold text-emerald-400">8. Dark Surface Harmony, 70/60 Rule &amp; Fewer Colours</td>
+                <td class="py-3 px-3">
+                  <a href="https://www.youtube.com/shorts/7yyvEEwXcko" target="_blank" class="text-sky-400 underline">#15 [7yyvEEwXcko]</a>,
+                  <a href="https://www.youtube.com/shorts/k5drflvjnNs" target="_blank" class="text-sky-400 underline">#70 [k5drflvjnNs]</a>,
+                  <a href="https://www.youtube.com/shorts/l5rd6wYC8Jc" target="_blank" class="text-sky-400 underline">#63 [l5rd6wYC8Jc]</a>
+                </td>
+                <td class="py-3 px-3 mono text-[11px]">website/index.html<br>website/pricing.html</td>
+                <td class="py-3 px-3">Harmonize the Complete Security Suite dark banner with the Emerald Obsidian palette, removing harsh neon sky-blue borders.</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-3 font-extrabold text-emerald-400">9. Primitive &rarr; Semantic CSS Design Tokens</td>
+                <td class="py-3 px-3">
+                  <a href="https://www.youtube.com/shorts/KPKl9i09M04" target="_blank" class="text-sky-400 underline">#4 [KPKl9i09M04]</a>,
+                  <a href="https://www.youtube.com/shorts/vgrI0OraARY" target="_blank" class="text-sky-400 underline">#6 [vgrI0OraARY]</a>,
+                  <a href="https://www.youtube.com/shorts/mYzgPh5wPq4" target="_blank" class="text-sky-400 underline">#10 [mYzgPh5wPq4]</a>,
+                  <a href="https://www.youtube.com/shorts/GAgKtBnI-ds" target="_blank" class="text-sky-400 underline">#13 [GAgKtBnI-ds]</a>,
+                  <a href="https://www.youtube.com/shorts/-MPpIaNd7SM" target="_blank" class="text-sky-400 underline">#55 [-MPpIaNd7SM] (48K)</a>
+                </td>
+                <td class="py-3 px-3 mono text-[11px]">website/style.css<br>extension/popup.html<br>extension/welcome.html</td>
+                <td class="py-3 px-3">Standardize <code class="mono">:root</code> primitive tokens (<code class="mono">--emerald-600</code>, <code class="mono">--slate-50</code>) mapped to semantic tokens (<code class="mono">--surface-card</code>, <code class="mono">--action-primary-bg</code>, <code class="mono">--radius-outer</code>).</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-3 font-extrabold text-emerald-400">10. Image Contrast Scrim &amp; 320px Small-Viewport First</td>
+                <td class="py-3 px-3">
+                  <a href="https://www.youtube.com/shorts/Bnag-8d0BQ0" target="_blank" class="text-sky-400 underline">#26 [Bnag-8d0BQ0]</a>,
+                  <a href="https://www.youtube.com/shorts/kOHqBN_-Thk" target="_blank" class="text-sky-400 underline">#93 [kOHqBN_-Thk]</a>,
+                  <a href="https://www.youtube.com/shorts/YeqYP0x-zTM" target="_blank" class="text-sky-400 underline">#45 [YeqYP0x-zTM]</a>,
+                  <a href="https://www.youtube.com/shorts/0IrWV9nV6Ns" target="_blank" class="text-sky-400 underline">#27 [0IrWV9nV6Ns]</a>
+                </td>
+                <td class="py-3 px-3 mono text-[11px]">website/index.html</td>
+                <td class="py-3 px-3">Add top gradient scrim on YouTube hero preview image for badge contrast &amp; upgrade mobile sticky bar button from 36px to 44px.</td>
+              </tr>
+              <tr>
+                <td class="py-3 px-3 font-extrabold text-slate-400">11. Figma / Framer / Portfolio / AI Tool Tutorials (45 Shorts)</td>
+                <td class="py-3 px-3 text-slate-400">
+                  Shorts #1, #11, #14, #18, #20–22, #25, #28, #36, #38–41, #44, #49–50, #53–54, #56–62, #66–69, #71, #73–76, #78–79, #82–83, #86, #89, #92, #94
+                </td>
+                <td class="py-3 px-3 text-slate-400">N/A (Design-tool specific)</td>
+                <td class="py-3 px-3 text-slate-400">Audited — covers Figma Auto Layout, Figma Make AI, Framer portfolios, and icon/font bookmark lists (already satisfied by SVG icons &amp; Plus Jakarta Sans).</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    function switchSurface(name) {
+      ['popup', 'welcome', 'website', 'checkout', 'catalog'].forEach((s) => {
+        const el = document.getElementById('surface-' + s);
+        const btn = document.getElementById('tabBtn-' + s);
+        if (el) el.classList.toggle('hidden', s !== name);
+        if (btn) {
+          if (s === name) {
+            btn.className = 'px-3 py-1.5 rounded-lg font-bold bg-emerald-600 text-white cursor-pointer transition-all';
+          } else {
+            btn.className = 'px-3 py-1.5 rounded-lg font-bold text-slate-300 hover:text-white cursor-pointer transition-all';
+          }
+        }
+      });
+    }
+
+    function toggleXray() {
+      const active = document.body.classList.toggle('xray-active');
+      const btn = document.getElementById('xrayToggleBtn');
+      if (btn) {
+        btn.textContent = active ? '📐 Memorisely Rule X-Ray: ON' : '📐 Memorisely Rule X-Ray: OFF';
+      }
+    }
+
+    function toggleProMode() {
+      const pro = document.body.classList.toggle('pro-mode');
+      const btn = document.getElementById('proModeBtn');
+      if (btn) {
+        btn.textContent = pro ? '🔑 State: Pro Active' : '🔑 State: Free / Unactivated';
+      }
+    }
+
+    function setViewMode(mode) {
+      document.body.classList.remove('view-pre-only', 'view-post-only');
+      if (mode === 'pre') document.body.classList.add('view-pre-only');
+      if (mode === 'post') document.body.classList.add('view-post-only');
+      ['split', 'pre', 'post'].forEach((m) => {
+        const btn = document.getElementById('viewBtn-' + m);
+        if (btn) {
+          btn.className = m === mode
+            ? 'px-2.5 py-1 rounded-lg font-bold bg-slate-700 text-white cursor-pointer'
+            : 'px-2.5 py-1 rounded-lg font-bold text-slate-400 hover:text-white cursor-pointer';
+        }
+      });
+    }
+
+    function selectSupportChip(clicked) {
+      const container = document.getElementById('demoSupportChips');
+      if (!container) return;
+      container.querySelectorAll('button').forEach((b) => {
+        b.className = 'min-h-[40px] px-3 py-2 rounded-xl border border-slate-200 bg-white hover:border-emerald-400 text-slate-700 text-xs font-bold text-left flex items-center justify-between cursor-pointer';
+        const check = b.querySelector('span:nth-child(2)');
+        if (check) check.remove();
+      });
+      clicked.className = 'min-h-[40px] px-3 py-2 rounded-xl border-2 border-emerald-600 bg-emerald-50/80 text-emerald-900 text-xs font-extrabold text-left flex items-center justify-between cursor-pointer';
+      const tick = document.createElement('span');
+      tick.textContent = '✓';
+      clicked.appendChild(tick);
+    }
+  </script>
+</body>
+</html>

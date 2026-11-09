@@ -31,6 +31,7 @@ const INDEXING_QUEUE_PATH = path.join(WEBSITE_DIR, 'indexing-queue.json');
 const SEED_PATH = path.join(ROOT_DIR, 'outreach-seed-deepblock.json');
 const KEYWORD_MATRIX_PATH = path.join(ROOT_DIR, 'data', 'keyword-opportunity-matrix.json');
 const INDEXNOW_KEY = '9a4e7b2c5d8f1a3e6b9c0d4f7a2e5b8c';
+const BROWSER_UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36';
 
 // Auto-load root .env if available
 const envPath = path.join(ROOT_DIR, '.env');
@@ -87,7 +88,7 @@ async function verifyAndProbePadXml() {
   // Test HTTPS live reachability
   let liveStatus = 'untested';
   try {
-    const live = await fetch(specUrl, { signal: AbortSignal.timeout(10000) });
+    const live = await fetch(specUrl, { headers: { 'User-Agent': BROWSER_UA }, signal: AbortSignal.timeout(10000) });
     liveStatus = `HTTP ${live.status} (${live.headers.get('content-type') || 'xml'})`;
     console.log(`[PAD XML HTTPS Probe] ${specUrl} -> ${liveStatus}`);
   } catch (err) {
@@ -95,7 +96,7 @@ async function verifyAndProbePadXml() {
     liveStatus = `Err: ${err.message}`;
   }
 
-  return { programName, version, cost, currency, sizeBytes, sizeMb, specUrl, primaryDl, liveStatus };
+  return { programName, version, cost, currency, sizeBytes, sizeMb, specUrl, primaryDl, secondaryDl, liveStatus };
 }
 
 async function auditStoreBacklinks() {
@@ -147,7 +148,7 @@ async function auditStoreBacklinks() {
 
   // 1. Probe Chrome Web Store
   try {
-    const cwsRes = await fetch(storeAudit.chrome.url, { signal: AbortSignal.timeout(10000) });
+    const cwsRes = await fetch(storeAudit.chrome.url, { headers: { 'User-Agent': BROWSER_UA }, signal: AbortSignal.timeout(10000) });
     storeAudit.chrome.httpCode = cwsRes.status;
     storeAudit.chrome.status = cwsRes.ok ? `HTTP ${cwsRes.status} OK` : `HTTP ${cwsRes.status}`;
   } catch (err) {
@@ -169,7 +170,7 @@ async function auditStoreBacklinks() {
 
   // 2. Probe Mozilla Firefox AMO
   try {
-    const amoRes = await fetch(storeAudit.firefox.url, { signal: AbortSignal.timeout(10000) });
+    const amoRes = await fetch(storeAudit.firefox.url, { headers: { 'User-Agent': BROWSER_UA }, signal: AbortSignal.timeout(10000) });
     storeAudit.firefox.httpCode = amoRes.status;
     storeAudit.firefox.status = amoRes.ok ? `HTTP ${amoRes.status} OK` : `HTTP ${amoRes.status}`;
   } catch (err) {
@@ -178,7 +179,7 @@ async function auditStoreBacklinks() {
 
   // 3. Probe GitHub
   try {
-    const ghRes = await fetch(storeAudit.github.url, { signal: AbortSignal.timeout(10000) });
+    const ghRes = await fetch(storeAudit.github.url, { headers: { 'User-Agent': BROWSER_UA }, signal: AbortSignal.timeout(10000) });
     storeAudit.github.httpCode = ghRes.status;
     storeAudit.github.status = ghRes.ok ? `HTTP ${ghRes.status} OK` : `HTTP ${ghRes.status}`;
   } catch (err) {
@@ -846,7 +847,7 @@ function appendAuditLog(auditData) {
 1. **PAD XML Specification & HTTPS Probe (\`website/pad.xml\`)**:
    - Verified XML specification headers: Program \`${auditData.pad.programName}\`, Version \`${auditData.pad.version}\`, Cost \`${auditData.pad.currency} ${auditData.pad.cost}\`.
    - Live reachability: Verified HTTP 200 \`${auditData.pad.liveStatus}\` on \`https://sweeprdeepblock.com/pad.xml\`.
-   - Verified primary download route (\`${auditData.pad.primaryDl}\`) and interactive diagnostic route (\`${auditData.pad.liveStatus}\`).
+   - Verified primary download route (\`${auditData.pad.primaryDl}\`) and interactive diagnostic route (\`${auditData.pad.secondaryDl}\`).
 
 2. **Store Backlink & Distribution Channel Audit**:
    - **Chrome Web Store**: Verified live listing URL (\`${auditData.store.chrome.url}\`) returning ${auditData.store.chrome.status}. Confirmed official packaging archive in \`dist/sweepr-deepblock-chrome-webstore-mv3.zip\` (${auditData.store.chrome.distZipSize} bytes) and 7/7 24-bit RGB store creatives in \`store-creatives/active-listing/\`.
@@ -884,7 +885,8 @@ function appendAuditLog(auditData) {
 }
 
 async function main() {
-  const countArg = Number(process.argv[2]) || 50;
+  const startTime = Date.now();
+  const countArg = Number(process.argv[2]) || 20;
   console.log('==========================================================================');
   console.log(`  STARTING ONCE-DAILY SWEEPR DEEPBLOCK AUTHORITY DIRECTORY, STORE BACKLINK AUDIT & GSC PRIORITY INDEXING WORKFLOW`);
   console.log('  DOMAIN: sweeprdeepblock.com | PROJECT: deepblock');
@@ -912,6 +914,21 @@ async function main() {
 
   appendAuditLog(auditData);
 
+  const durationMs = Date.now() - startTime;
+  const stateFile = path.join(ROOT_DIR, 'data', 'automation-scheduler-state.json');
+  if (fs.existsSync(stateFile)) {
+    try {
+      const state = JSON.parse(fs.readFileSync(stateFile, 'utf8'));
+      state['deepblock_seo_drip'] = {
+        status: 'ok',
+        lastRunAt: new Date().toISOString(),
+        durationMs,
+        error: null
+      };
+      fs.writeFileSync(stateFile, JSON.stringify(state, null, 2), 'utf8');
+    } catch {}
+  }
+
   console.log('\n==========================================================================');
   console.log('  ONCE-DAILY SWEEPR DEEPBLOCK WORKFLOW COMPLETE');
   console.log('==========================================================================');
@@ -922,6 +939,7 @@ async function main() {
   console.log(`✓ Search Indexing: ${indexingResult.sitemapUrls} sitemap URLs verified; ${indexingResult.submittedCount} priority URLs submitted via IndexNow (Bing, IndexNow.org & Yandex)`);
   console.log(`✓ CRM Sync: Synced to outreach & backlinks log with automatic verification.`);
   console.log(`✓ STRICT RULE: 0 emails sent. SMTP completely disabled.`);
+  console.log(`✓ Total Execution Time: ${(durationMs / 1000).toFixed(1)}s`);
   console.log('==========================================================================\n');
 }
 

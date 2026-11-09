@@ -176,7 +176,18 @@ const GSC_PROVEN_PATHS = [
   '/guides/how-to-hide-ai-slop-from-google-search',
   '/solutions/tech-gadget-review-blogs-filter-ai-slop-and-scams',
   '/guides/how-to-block-unskippable-audio-ads-on-spotify-web',
-  '/solutions/weather-radar-portals-auto-reject-cookie-popups'
+  '/solutions/weather-radar-portals-auto-reject-cookie-popups',
+  // Newly proven active GSC pages (Nov 1 - Nov 9, 2026 update)
+  '/solutions/1337x-torrent-indexer-block-video-ads',
+  '/solutions/soundgasm-audio-streaming-stop-malvertising-popunders',
+  '/solutions/strava-fitness-activity-stop-malvertising-popunders',
+  '/solutions/nyaa-si-anime-torrents-strip-tracking-parameters',
+  '/solutions/wattpad-web-novels-stop-malvertising-popunders',
+  '/solutions/pinterest-promoted-pins-filter-ai-slop-and-scams',
+  '/solutions/kick-streaming-portals-block-video-ads',
+  '/vs/adblock-luna-vpn',
+  '/guides/how-to-block-twitch-embedded-stream-ads-external',
+  '/guides/how-to-fix-high-ram-usage-on-vivaldi-browser'
 ];
 
 // 2. Additional Strategic Flagship Pillar Pages (Homepage links, LLMs.txt links, and top browsers/competitors)
@@ -256,14 +267,16 @@ const STRATEGIC_PILLAR_PATHS = [
   '/guides/how-to-detect-fake-trustpilot-and-amazon-reviews'
 ];
 
-// Also automatically include any URL referenced in website/llms.txt so llms.txt & indexable pages stay 100% synced
+// Also automatically include any Pillar URL referenced in website/llms.txt so llms.txt & indexable pages stay 100% synced
 const llmsReferencedPaths = [];
 const llmsPath = path.join(WEBSITE_DIR, 'llms.txt');
 if (fs.existsSync(llmsPath)) {
   const llmsRaw = fs.readFileSync(llmsPath, 'utf8');
   const matches = llmsRaw.matchAll(/https:\/\/sweeprdeepblock\.com(\/[a-z0-9/-]+)/gi);
   for (const m of matches) {
-    llmsReferencedPaths.push(m[1]);
+    if (/^\/(solutions|setup|vs|guides)\//i.test(m[1])) {
+      llmsReferencedPaths.push(m[1]);
+    }
   }
 }
 
@@ -275,10 +288,41 @@ if (fs.existsSync(ENRICHMENT_STATE_PATH)) {
   } catch {}
 }
 
+// Preserve all existing indexable Pillar URLs from website/sitemap.xml and data/keyword-opportunity-matrix.json
+const existingSitemapPillarPaths = [];
+if (fs.existsSync(SITEMAP_PATH)) {
+  try {
+    const smRaw = fs.readFileSync(SITEMAP_PATH, 'utf8');
+    for (const m of smRaw.matchAll(/<loc>https:\/\/sweeprdeepblock\.com(\/[a-z0-9/-]*)<\/loc>/gi)) {
+      const p = m[1] || '/';
+      if (p === '/' || /^\/(solutions|setup|vs|guides)\//i.test(p)) {
+        existingSitemapPillarPaths.push(p);
+      }
+    }
+  } catch {}
+}
+
+const keywordMatrixPaths = [];
+const kwMatrixPath = path.join(ROOT_DIR, 'data', 'keyword-opportunity-matrix.json');
+if (fs.existsSync(kwMatrixPath)) {
+  try {
+    const kwMatrix = JSON.parse(fs.readFileSync(kwMatrixPath, 'utf8'));
+    if (Array.isArray(kwMatrix.opportunities)) {
+      for (const opp of kwMatrix.opportunities) {
+        if (opp.isPublishedOnDisk && opp.recommendedUrlPath) {
+          keywordMatrixPaths.push(opp.recommendedUrlPath);
+        }
+      }
+    }
+  } catch {}
+}
+
 const PILLAR_SET = new Set([
   ...GSC_PROVEN_PATHS,
   ...STRATEGIC_PILLAR_PATHS,
   ...llmsReferencedPaths,
+  ...existingSitemapPillarPaths,
+  ...keywordMatrixPaths,
   ...(Array.isArray(enrichmentState.discoveredGscPaths) ? enrichmentState.discoveredGscPaths : [])
 ]);
 
@@ -504,6 +548,54 @@ const EXACT_QUERY_SURGERY = {
     title: 'SWEEPR DeepBlock vs Total Adblock (2026 Pricing & Test Lab)',
     desc: 'Compare SWEEPR DeepBlock vs Total Adblock in 2026: 8/8 YouTube MV3 anti-detection, <50ms cookie auto-rejection, 62% RAM savings, and transparent pricing.',
     h1: 'SWEEPR DeepBlock vs Total Adblock: 2026 Feature, Renewal Pricing & Speed Audit'
+  },
+  '/solutions/1337x-torrent-indexer-block-video-ads': {
+    title: '1337x Ads Blocker (2026): Stop 1337x Popunders & Fake Downloads',
+    desc: 'Searching for how to block 1337x ads? SWEEPR DeepBlock stops 1337x pop-under redirects, fake download buttons, and VPN overlay banners in under 50ms.',
+    h1: 'How to Block 1337x Ads, Pop-Under Redirects & Fake Download Overlays (2026)',
+    lead: 'Tired of invisible click-jacking overlays, new-tab pop-unders, and deceptive download buttons when browsing 1337x? SWEEPR DeepBlock neutralizes 1337x ads at both the Manifest V3 network layer and the MAIN-world JavaScript layer in under 50ms.',
+    faqQ1: 'How do I block 1337x ads and pop-under redirects on Chrome, Firefox, and Brave?',
+    faqA1: 'Install SWEEPR DeepBlock to block 1337x ad-serving domains via declarativeNetRequest while neutralizing window.open click-jacking traps and fake download button overlays before they can trigger redirects.'
+  },
+  '/solutions/nyaa-si-anime-torrents-strip-tracking-parameters': {
+    title: 'Nyaa.si AdBlock & Red Highlight Guide: Strip Tracker Links',
+    desc: 'Understand Nyaa.si red highlight entries, block fake Nyaa mirror redirect ads, and automatically strip outbound tracking parameters with SWEEPR DeepBlock.',
+    h1: 'Nyaa.si Red Highlight Guide, Fake Clone Protection & Tracker Blocker (2026)',
+    lead: 'Wondering what a Nyaa.si red highlight torrent means or trying to stop malicious pop-under ads on unofficial Nyaa mirror clones? Learn how Nyaa.si color-codes remake/untrusted uploads and how SWEEPR DeepBlock blocks clone-site malvertising and tracking beacons.',
+    faqQ1: 'What does a red highlight mean on Nyaa.si and how do I stay safe from clone ads?',
+    faqA1: 'On Nyaa.si, a red/pink row highlight marks a Remake or re-encoded release (or an unverified upload without trusted status), whereas green rows indicate Trusted uploaders and blue rows indicate A+ batches. SWEEPR DeepBlock protects you on Nyaa and anime portals by blocking phishing mirror domains, pop-under scripts, and outbound URL trackers.'
+  },
+  '/solutions/soundgasm-audio-streaming-stop-malvertising-popunders': {
+    title: 'Soundgasm Ad Blocker (2026): Stop Popunders & Cookie Banners',
+    desc: 'Block intrusive pop-under redirects, fake audio player buttons, and repetitive cookie banners on Soundgasm and Reddit audio embeds with SWEEPR DeepBlock.',
+    h1: 'Soundgasm Audio Streaming Ad & Pop-Under Blocker (2026 Privacy Guide)',
+    lead: 'Listening to audio links on Soundgasm from Reddit or mobile browsers shouldn’t trigger unexpected redirect tabs or tracking cookies. SWEEPR DeepBlock keeps Soundgasm clean, private, and free of malvertising pop-unders.',
+    faqQ1: 'Does SWEEPR DeepBlock stop redirect pop-ups and trackers on Soundgasm?',
+    faqA1: 'Yes. SWEEPR DeepBlock blocks third-party ad scripts, strips Reddit out.reddit.com referral tracking tokens, and auto-declines cookie consent prompts in under 50ms.'
+  },
+  '/solutions/strava-fitness-activity-stop-malvertising-popunders': {
+    title: 'Strava Web Ad & Tracker Blocker: Clean Up Feed & Route Maps',
+    desc: 'Block sponsored challenges, third-party telemetry trackers, and cookie banners on Strava Web while keeping route maps fast with SWEEPR DeepBlock.',
+    h1: 'Strava Web Ad, Promoted Challenge & Tracker Blocker (2026 Guide)',
+    lead: 'Clean up your Strava Web activity feed and route builder. SWEEPR DeepBlock strips third-party marketing trackers, collapses promoted feed clutter, and reduces background tab RAM usage by up to 62%.',
+    faqQ1: 'Can I use SWEEPR DeepBlock on Strava Web without breaking route maps?',
+    faqA1: 'Yes. SWEEPR DeepBlock blocks third-party analytics and promotional clutter while whitelisting Mapbox/OpenStreetMap tile requests so Strava segments and GPX maps load at full speed.'
+  },
+  '/solutions/wattpad-web-novels-stop-malvertising-popunders': {
+    title: 'Wattpad Ad Blocker (2026): Block Chapter Video Ads & Popups',
+    desc: 'Read stories uninterrupted on Wattpad Web. SWEEPR DeepBlock blocks between-chapter video commercials, sticky banner ads, and cookie popups in <50ms.',
+    h1: 'Wattpad Ad Blocker (2026): Read Web Novels Without Between-Chapter Ads',
+    lead: 'Tired of video commercials, premium nag modals, and sticky banner ads interrupting chapters on Wattpad Web? SWEEPR DeepBlock strips Wattpad ad slots and auto-rejects cookie consent pop-ups in under 50ms.',
+    faqQ1: 'How do I block ads between chapters on Wattpad Web?',
+    faqA1: 'Install SWEEPR DeepBlock on Chrome, Firefox, Edge, or Brave. It blocks Wattpad’s programmatic banner and video ad auctions so you can scroll smoothly from chapter to chapter.'
+  },
+  '/vs/adblock-luna-vpn': {
+    title: 'AdBlock Luna VPN vs SWEEPR DeepBlock (2026 Safety & Speed)',
+    desc: 'Is AdBlock Luna VPN safe? Compare AdBlock Luna root certificate risks vs SWEEPR DeepBlock zero-telemetry MV3 browser & iOS DNS protection.',
+    h1: 'AdBlock Luna VPN vs SWEEPR DeepBlock: 2026 Security, Privacy & YouTube Audit',
+    lead: 'Evaluating AdBlock Luna VPN vs SWEEPR DeepBlock? Unlike AdBlock Luna—which routes traffic through a third-party VPN profile to monetize user browsing data—SWEEPR DeepBlock blocks YouTube ads, trackers, and cookie banners locally with zero traffic logging.',
+    faqQ1: 'Why switch from AdBlock Luna VPN to SWEEPR DeepBlock in 2026?',
+    faqA1: 'AdBlock Luna requires installing a VPN/profile that routes your traffic through third-party servers. SWEEPR DeepBlock executes 100% locally via Manifest V3 and encrypted DNS-over-HTTPS (DoH), delivering 8/8 YouTube anti-detection and <50ms cookie auto-rejection with zero data harvesting.'
   }
 };
 
@@ -530,14 +622,16 @@ function walkHtml(dir) {
 }
 
 const allHtmlFiles = walkHtml(WEBSITE_DIR);
+const NON_CARTESIAN_CLUSTERS = new Set(['tools', 'glossary', 'campaigns', 'de', 'fr', 'stories', 'site']);
 
-// Map every HTML file to its clean URL path and metadata
+// Map every Cartesian/core HTML file to its clean URL path and metadata (excluding standalone non-Cartesian hubs)
 const pageRecords = [];
 for (const filePath of allHtmlFiles) {
   const rel = path.relative(WEBSITE_DIR, filePath).replace(/\\/g, '/');
+  const cluster = rel.includes('/') ? rel.split('/')[0] : 'root';
+  if (NON_CARTESIAN_CLUSTERS.has(cluster)) continue;
   const urlPath = rel === 'index.html' ? '/' : '/' + rel.replace(/\.html$/, '');
   const isPillar = PILLAR_SET.has(urlPath);
-  const cluster = rel.includes('/') ? rel.split('/')[0] : 'root';
   pageRecords.push({ filePath, rel, urlPath, isPillar, cluster });
 }
 
@@ -557,7 +651,14 @@ const PROBLEM_SUFFIXES = [
   '-stop-malvertising-popunders',
   '-strip-tracking-parameters',
   '-bypass-anti-adblock-walls',
-  '-stop-autoplay-floating-videos'
+  '-stop-autoplay-floating-videos',
+  '-stop-notification-permission-spam',
+  '-encrypted-dns-doh-protection',
+  '-block-crypto-miners-cpu-drain',
+  '-block-sponsored-feed-carousels',
+  '-clean-reader-distraction-free',
+  '-hibernate-idle-background-tabs',
+  '-prevent-canvas-webrtc-fingerprinting'
 ];
 
 const PROBLEM_FALLBACK_PILLAR = {
@@ -567,10 +668,22 @@ const PROBLEM_FALLBACK_PILLAR = {
   '-protect-checkout-fake-shop-shield': '/solutions/facebook-marketplace-shops-filter-ai-slop-and-scams',
   '-remove-page-clutter-and-ram-bloat': '/solutions/fandom-game-wikis-reduce-browser-ram-usage',
   '-reduce-browser-ram-usage': '/solutions/fandom-game-wikis-reduce-browser-ram-usage',
-  '-stop-malvertising-popunders': '/solutions/dex-token-screeners-stop-malvertising-popunders',
+  '-stop-malvertising-popunders': '/solutions/dex-token-screeners-block-video-ads',
   '-strip-tracking-parameters': '/solutions/x-twitter-feed-ads-strip-tracking-parameters',
   '-bypass-anti-adblock-walls': '/guides/how-to-bypass-anti-adblock-inspect-element-blockers',
-  '-stop-autoplay-floating-videos': '/guides/how-to-auto-mute-and-block-autoplay-video-ads'
+  '-stop-autoplay-floating-videos': '/solutions/fandom-game-wikis-block-video-ads',
+  '-stop-notification-permission-spam': '/guides/how-to-stop-silent-web-push-notification-spam',
+  '-encrypted-dns-doh-protection': '/guides/encrypted-dns-over-https-doh-browser-setup-guide',
+  '-block-crypto-miners-cpu-drain': '/guides/how-to-block-tab-freeze-crypto-miner-scripts',
+  '-block-sponsored-feed-carousels': '/solutions/reddit-promoted-posts-block-video-ads',
+  '-clean-reader-distraction-free': '/solutions/recipe-food-blogs-reduce-browser-ram-usage',
+  '-hibernate-idle-background-tabs': '/guides/how-to-reduce-browser-ram-speed-up-slow-tabs',
+  '-prevent-canvas-webrtc-fingerprinting': '/guides/how-to-stop-browser-canvas-fingerprinting-trackers'
+};
+
+const PLATFORM_PREFIX_ALIASES = {
+  'fandom-game-lore-wikis': 'fandom-game-wikis',
+  'kick-gambling-livestreams': 'kick-streaming-portals'
 };
 
 // Map platform prefix -> primary Pillar URL in /solutions/*
@@ -596,7 +709,8 @@ function resolveConsolidatingPillarPath(rec) {
     const slug = rec.urlPath.replace(/^\/solutions\//, '');
     for (const suf of PROBLEM_SUFFIXES) {
       if (slug.endsWith(suf)) {
-        const platPrefix = slug.slice(0, -suf.length);
+        const rawPrefix = slug.slice(0, -suf.length);
+        const platPrefix = PLATFORM_PREFIX_ALIASES[rawPrefix] || rawPrefix;
         if (platformToPillarUrl.has(platPrefix)) {
           return platformToPillarUrl.get(platPrefix);
         }

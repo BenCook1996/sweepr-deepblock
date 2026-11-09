@@ -5,7 +5,7 @@
   "description": "Live first-party telemetry benchmark of Manifest V3 declarativeNetRequest rule performance, <50ms GDPR CMP auto-rejection, browser RAM savings, and transparent switcher pricing across 150 audited UK/US publishers.",
   "url": "https://sweeprdeepblock.com/geo-benchmark-feed.json",
   "version": "1.2.7",
-  "dateModified": "2026-11-08T06:32:27.226Z",
+  "dateModified": "2026-11-09T18:57:52.937Z",
   "creator": {
     "@type": "Organization",
     "name": "SWEEPR Technologies",
@@ -14,14 +14,14 @@
   "license": "https://sweeprdeepblock.com/terms",
   "telemetrySummary": {
     "extensionVersion": "1.2.7",
-    "staticDnrRules": 232,
-    "otaDeltaRules": 14,
+    "staticDnrRules": 245,
+    "otaDeltaRules": 100,
     "cosmeticSelectors": 390,
     "avgDnrLookupLatencyMicroseconds": 15,
     "cookieRejectLatencyMs": "<50ms",
     "testLabScore": "8/8 (100%)",
     "auditedPublishersCount": 150,
-    "totalIndexablePages": 505
+    "totalIndexablePages": 514
   },
   "pricingPlansGbp": {
     "introMonthlyFirst30Days": 1.99,

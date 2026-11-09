@@ -72,6 +72,47 @@
     Function.prototype.toString = wrappedToString;
   } catch (e) {}
 
+  // Preserve original unbound function reference across Function.prototype.bind so bound popunder listeners
+  // (e.g. PopAds `this._onExecute.bind(this)`) cannot hide their source code behind `function () { [native code] }`
+  const origFnBind = Function.prototype.bind;
+  if (typeof origFnBind === 'function') {
+    try {
+      const wrappedFnBind = function bind(thisArg) {
+        const bound = origFnBind.apply(this, arguments);
+        try {
+          if (typeof this === 'function') {
+            Object.defineProperty(bound, '__deepstealthOrigFn', {
+              value: this.__deepstealthOrigFn || this,
+              enumerable: false,
+              configurable: true
+            });
+          }
+        } catch (e) {}
+        return bound;
+      };
+      markNative(wrappedFnBind, 'bind');
+      Function.prototype.bind = wrappedFnBind;
+    } catch (e) {}
+  }
+
+  // Lock Event.prototype.stopImmediatePropagation and MouseEvent.prototype.stopImmediatePropagation
+  // so Monetag/OnClick (`on.js` Nu.prototype.Wr) cannot overwrite it with a no-op to disarm capture-phase shields
+  try {
+    for (const EvtProto of [
+      typeof Event !== 'undefined' ? Event.prototype : null,
+      typeof MouseEvent !== 'undefined' ? MouseEvent.prototype : null
+    ]) {
+      if (EvtProto && typeof EvtProto.stopImmediatePropagation === 'function') {
+        const origStopImm = EvtProto.stopImmediatePropagation;
+        Object.defineProperty(EvtProto, 'stopImmediatePropagation', {
+          value: origStopImm,
+          writable: false,
+          configurable: false
+        });
+      }
+    }
+  } catch (e) {}
+
   // Common ad/tracker domain & path patterns used by anti-adblock probes
   const AD_PROBE_URL_REGEX =
     /(googlesyndication\.com|doubleclick\.net|google-analytics\.com|googletagmanager\.com|imasdk\.googleapis\.com|adnxs\.com|adsrvr\.org|criteo\.(com|net)|rubiconproject\.com|pubmatic\.com|openx\.net|taboola\.com|outbrain\.com|amazon-adsystem\.com|moatads\.com|scorecardresearch\.com|quantserve\.com|ads-twitter\.com|connect\.facebook\.net\/.*\/fbevents|admiral\.com|getadmiral\.com|fundingchoicesmessages\.google\.com|pagefair\.com|applzr\.com|goadserver\.com|gsrv\.dev|aaaconnect\.info|onclckmn\.com|onclicka\.com|adsmediabox\.com|awmdelivery\.com|acquaintjokinglyscoring\.com|rmzsglng\.com|aivanta76\.com|bongacams2\.com|gotpd\.me|superwebhub\.cyou|fozekikikiminu\.com|janusaent\.com|growcdnssedge\.com|saawsedge\.com|doppiocdn\.com|sacdnssedge\.com|magsrv\.com|exoclick\.com|adtng\.com|dreamserve\.dev|velvetloom\.net|creepy-frame\.com|smartfloralab\.com|realxxx\.com|traffichunt\.com|camsoda\.ai|livemediahost\.com|statserv\.net|\/ads\/prebid-ads|s\.yimg\.com\/(aaq\/(vzm\/cs|prebid|f10d509c)|ss\/analytics|du\/)|opus\.analytics\.yahoo\.com|consent\.cmp\.oath\.com|pbs\.yahoo\.com|udc\.yahoo\.com|\/pagead\/gen_204|\/ads\.js(\?|$)|\/adframe\.js(\?|$)|\/adblock-detect|\/show_ads\.js|\/adsbygoogle\.js)/i;
@@ -88,6 +129,25 @@
       const target = event.target;
       if (target && (target.tagName === 'SCRIPT' || target.tagName === 'IMG')) {
         const src = target.src || target.getAttribute('src') || '';
+        if (
+          target.tagName === 'SCRIPT' &&
+          (target.hasAttribute('data-clocid') ||
+            /(\/on\.js(\?|$)|\.min\.css(\?|$)|magnific-popup\.min\.js|holaraphraus\.com|earthspetti\.com|terschomonic\.com|enomotia\.com|janitorprecisiontrio\.com|pagerrentablespotlight\.com|displayvertising\.com|jusgrmawfbaqu\.com|bspyoibtwrrc\.com|cemhlobja\.com|d3mzokty951c5w\.cloudfront\.net|adsco\.re)/i.test(
+              src
+            ))
+        ) {
+          event.stopImmediatePropagation();
+          event.stopPropagation();
+          event.preventDefault();
+          try {
+            target.onerror = null;
+            target.onload = null;
+            target.removeAttribute('onerror');
+            target.removeAttribute('onload');
+          } catch (e) {}
+          notifyStealthBypass('popunder-script-onerror-suppressed:' + src);
+          return false;
+        }
         if (AD_PROBE_URL_REGEX.test(src)) {
           event.stopImmediatePropagation();
           event.stopPropagation();
@@ -958,11 +1018,98 @@
   safeDefine(window, 'PopURL', '');
   safeDefine(window, '__aaZoneid', undefined);
   safeDefine(window, 'zomhphp', noopFn);
+  safeDefine(window, 'jlduc', noopFn);
+  safeDefine(window, 'zfgloadedpopup', true);
+  safeDefine(window, 'zfgloadedbanner', true);
+  safeDefine(window, 'zfgloadedinpage', true);
+  safeDefine(window, 'zfgloadedtag', true);
+  safeDefine(window, 'zfgcodeloadedonclick', true);
+  safeDefine(window, 'zfgcodeloadeddl', true);
+  safeDefine(window, 'zfgcodeloadedbanner', true);
+  safeDefine(window, 'zfgcodeloadedinpage', true);
+  safeDefine(window, 'zfgcodeloadedtag', true);
+  safeDefine(window, 'clkAISVShowing', true);
+  safeDefine(window, 'd450e30498de14e8a86ba9b7ef35b856', true);
+  safeDefine(window, 'd450e30498de14e8d450e30498de14e8', true);
+  safeDefine(window, '_pao', Object.freeze({ parse: noopFn, fbparse: noopFn, bbrparse: noopFn }));
+  safeDefine(window, 'AdscoreInit', noopFn);
+  safeDefine(window, 'mergedPopups', Object.freeze([]));
   safeDefine(window, 'openPopunder', noopFn);
   safeDefine(window, 'loadBannerContent', noopFn);
   safeDefine(window, 'backgroundBanner', false);
   safeDefine(window, 'Popunder', noopFn);
   safeDefine(window, 'EPeventFire', noopFn);
+
+  // Intercept window.atob to neutralize PopAds base64-encoded rotating domains (.min.css / magnific-popup.min.js)
+  const origAtob = window.atob;
+  if (typeof origAtob === 'function') {
+    try {
+      const wrappedAtob = function atob(encoded) {
+        const decoded = origAtob.apply(this, arguments);
+        if (
+          isProEntitled() &&
+          decoded &&
+          /(\/[a-z]url\.min\.css|magnific-popup\.min\.js|displayvertising\.com|cemhlobja\.com|jusgrmawfbaqu\.com|bspyoibtwrrc\.com)/i.test(
+            decoded
+          )
+        ) {
+          notifyStealthBypass('popads-base64-domain-neutralized:' + decoded);
+          return '';
+        }
+        return decoded;
+      };
+      markNative(wrappedAtob, 'atob');
+      window.atob = wrappedAtob;
+    } catch (e) {}
+  }
+
+  // Intercept Document/Element.prototype.querySelector for Monetag/OnClick `script[data-clocid]` lookup
+  // so `on.js` (`Pu.prototype.nt`) and inline Wasm loader (`jlduc`) immediately abort with CTINSE
+  for (const QsProto of [
+    typeof Document !== 'undefined' ? Document.prototype : null,
+    typeof Element !== 'undefined' ? Element.prototype : null
+  ]) {
+    if (QsProto && typeof QsProto.querySelector === 'function') {
+      try {
+        const origQs = QsProto.querySelector;
+        const wrappedQs = function querySelector(selector) {
+          if (isProEntitled() && typeof selector === 'string' && /data-cl(oc|ba|ip|pu|tg)id/i.test(selector)) {
+            notifyStealthBypass('onclick-script-selector-hidden:' + selector);
+            return null;
+          }
+          return origQs.apply(this, arguments);
+        };
+        markNative(wrappedQs, 'querySelector');
+        QsProto.querySelector = wrappedQs;
+      } catch (e) {}
+    }
+  }
+
+  // Block PopAds / Galaksion polling & retry timers (`_userActivationHandler`, `_deployCatchAll`, `s[y.slice(0,16)]`, `clk$pop@`)
+  const POPUNDER_TIMER_REGEX =
+    /_userActivationHandler|_deployCatchAll|_adscoreDeploy|_waitForGoodWeather|_monitorLocation|s\[y\.slice\(0,\s*16\)|d450e30498de14e8|clk\$pop@/i;
+  for (const timerName of ['setTimeout', 'setInterval']) {
+    const origTimer = window[timerName];
+    if (typeof origTimer === 'function') {
+      try {
+        const wrappedTimer = function (handler) {
+          if (isProEntitled() && typeof handler === 'function') {
+            try {
+              const targetFn = handler.__deepstealthOrigFn || handler;
+              const fnSrc = origFnToString.call(targetFn);
+              if (fnSrc && POPUNDER_TIMER_REGEX.test(fnSrc)) {
+                notifyStealthBypass('popunder-timer-blocked:' + timerName);
+                return 0;
+              }
+            } catch (e) {}
+          }
+          return origTimer.apply(this, arguments);
+        };
+        markNative(wrappedTimer, timerName);
+        window[timerName] = wrappedTimer;
+      } catch (e) {}
+    }
+  }
 
   // Neutralize sxyprn.com VAST pre-roll globals (use_vast, vast_urls, vast_time, conf_on_end, fadm)
   safeDefine(window, 'use_vast', false);
@@ -1423,6 +1570,26 @@
         if (Array.isArray(parsed.popups)) {
           parsed.popups = [];
         }
+        if ('vast_ads' in parsed && parsed.vast_ads) {
+          parsed.vast_ads = '';
+          parsed.vast_provider = '';
+        }
+        if (
+          parsed.limitKey === 'clk$pop@limit' ||
+          'showTrkURL' in parsed ||
+          (parsed.type === 'popup' && 'openTargetBlank' in parsed && 'limitPerPage' in parsed)
+        ) {
+          parsed.url = '';
+          parsed.showTrkURL = '';
+          parsed.limit = 0;
+          parsed.limitPerPage = 0;
+          parsed.limitPerSession = 0;
+          parsed.frequency = 9999999;
+          parsed.initDelay = 9999999;
+          parsed.delay = 9999999;
+          parsed.skipClicks = 9999999;
+          notifyStealthBypass('clk-pop-config-neutralized');
+        }
       }
     } catch (e) {}
     return parsed;
@@ -1487,7 +1654,12 @@
 
   // Block popunders and ad-network URLs
   const POPUNDER_URL_REGEX =
-    /(\/zv3\/(b|url|cam)|\/link\/out\/|\/linkout\/livecams\/|\/player_right_ntv_|\/adx_iframe_|\/away\/(pop|tab)|\/ads\/prebid-ads|\/getape\/|\/prepop\.php|\/getadb\/|\/venor\.php|\/v1\/link\.php|\/splash\.php\?idzone=|\/api\/spots\/|\/api\/click\/|\/agent\.php\?spot=|\/loadeactrl\.go|\/vast\.go|\/click\.go|\/pop\.go|\/banner\.go|banner-iframe|advertiserName=|tsyndicate\.com|contentsserved\.com|exoclick\.com|exosrv\.com|realsrv\.com|magsrv\.com|pemsrv\.com|orbsrv\.com|trafficjunky\.(net|com)|juicyads\.com|jads\.co|clickadu\.com|clickaine\.com|\/lv\/esnk\/|hilltopads\.net|adspyglass\.com|plugrush\.com|adxpansion\.com|crakrevenue\.com|ero-advertising\.com|twinrdsyn\.com|twinrdengine\.com|adtng\.com|dreamserve\.dev|velvetloom\.net|creepy-frame\.com|smartfloralab\.com|realxxx\.com|traffichunt\.com|camsoda\.ai|livemediahost\.com|statserv\.net|etahub\.com|bngpt\.com|xlivrdr\.com|popads\.net|popcash\.net|propellerads\.com|cdn-fc\.com|meteorpomposity\.com|glutenmuttsensuous\.com|cupbearergrowllurch\.com|hollowgoal\.com|u5s5\.com|adplsr\.com|nomarax\.com|fh-wgt\.com|yomeno\.xyz|ahw2lok\.txxx\.com|zog\.link|iloptrex\.com|nereserv\.com|vidvas3\.com|tubecup\.net|fhgte\.com|faphouse4k\.com|tikbblove\.com|directsle\.com|g2fame\.com|rvmessage\.online|rvrpushserv\.com|yequka\.my|tophqcam\.com|doublepimp\.com|advnet\.xyz|hotadultcontent\.com|hotxxxcontent\.com|qoqh\.com|hqpornpro\.com|lxax\.com|koxk\.com|applzr\.com|goadserver\.com|gsrv\.dev|aaaconnect\.info|onclckmn\.com|onclicka\.com|adsmediabox\.com|awmdelivery\.com|acquaintjokinglyscoring\.com|rmzsglng\.com|aivanta76\.com|bongacams2?\.com|gotpd\.me|superwebhub\.cyou|fozekikikiminu\.com|janusaent\.com|growcdnssedge\.com|saawsedge\.com|doppiocdn\.com|landing\.brazzersnetwork\.com|sacdnssedge\.com|kol88\.freeporn8\.com|Y1l0oxvJ\.js|nvdst\.com\/adx_|_pnuvid\.js|p2p\.init\.js|jquery\.shows2\.min\.js)/i;
+    /(\/zv3\/(b|url|cam)|\/link\/out\/|\/linkout\/livecams\/|\/player_right_ntv_|\/adx_iframe_|\/away\/(pop|tab)|\/ads\/prebid-ads|\/getape\/|\/prepop\.php|\/getadb\/|\/venor\.php|\/v1\/link\.php|\/splash\.php\?idzone=|\/api\/spots\/|\/api\/click\/|\/agent\.php\?spot=|\/loadeactrl\.go|\/vast\.go|\/click\.go|\/pop\.go|\/banner\.go|banner-iframe|advertiserName=|tsyndicate\.com|contentsserved\.com|exoclick\.com|exosrv\.com|realsrv\.com|magsrv\.com|pemsrv\.com|orbsrv\.com|trafficjunky\.(net|com)|juicyads\.com|jads\.co|clickadu\.com|clickaine\.com|\/lv\/esnk\/|hilltopads\.net|adspyglass\.com|plugrush\.com|adxpansion\.com|crakrevenue\.com|ero-advertising\.com|twinrdsyn\.com|twinrdengine\.com|adtng\.com|dreamserve\.dev|velvetloom\.net|creepy-frame\.com|smartfloralab\.com|realxxx\.com|traffichunt\.com|camsoda\.ai|livemediahost\.com|statserv\.net|etahub\.com|bngpt\.com|xlivrdr\.com|popads\.net|popcash\.net|propellerads\.com|cdn-fc\.com|meteorpomposity\.com|glutenmuttsensuous\.com|cupbearergrowllurch\.com|hollowgoal\.com|u5s5\.com|adplsr\.com|nomarax\.com|fh-wgt\.com|yomeno\.xyz|ahw2lok\.txxx\.com|zog\.link|iloptrex\.com|nereserv\.com|vidvas3\.com|tubecup\.net|fhgte\.com|faphouse4k\.com|tikbblove\.com|directsle\.com|g2fame\.com|rvmessage\.online|rvrpushserv\.com|yequka\.my|tophqcam\.com|doublepimp\.com|advnet\.xyz|hotadultcontent\.com|hotxxxcontent\.com|qoqh\.com|hqpornpro\.com|lxax\.com|koxk\.com|applzr\.com|goadserver\.com|gsrv\.dev|aaaconnect\.info|onclckmn\.com|onclicka\.com|adsmediabox\.com|awmdelivery\.com|acquaintjokinglyscoring\.com|rmzsglng\.com|aivanta76\.com|bongacams2?\.com|gotpd\.me|superwebhub\.cyou|fozekikikiminu\.com|janusaent\.com|growcdnssedge\.com|saawsedge\.com|doppiocdn\.com|landing\.brazzersnetwork\.com|sacdnssedge\.com|kol88\.freeporn8\.com|Y1l0oxvJ\.js|nvdst\.com\/adx_|_pnuvid\.js|p2p\.init\.js|jquery\.shows2\.min\.js|pagerrentablespotlight\.com|holaraphraus\.com|terschomonic\.com|enomotia\.com|janitorprecisiontrio\.com|earthspetti\.com|displayvertising\.com|jusgrmawfbaqu\.com|bspyoibtwrrc\.com|cemhlobja\.com|d3mzokty951c5w\.cloudfront\.net|magnific-popup\.min\.js|\/[a-z]url\.min\.css|adsco\.re|ey43\.com)/i;
+
+  const isEmbeddedPlayerFrame = () =>
+    window !== window.top &&
+    (/^\/(e|embed|player)\//i.test(location.pathname) ||
+      Boolean(document.getElementById('jwplayer') || document.getElementById('jfkp')));
 
   // Guard Element.prototype.setAttribute & HTMLAnchorElement.prototype.href setter against link-hijacking scripts
   // (e.g. SNSPAdManager rewriting $(this).attr('href', config.pop.adblockURL) when a user clicks a video/page link)
@@ -1541,7 +1713,27 @@
         id === 'vast-ad-block-button' ||
         id === 'ag-agegate' ||
         id === 'rvt-element' ||
+        id === 'c_window_xEucqIjg' ||
+        id === 'alink_overlay_EPXdyaUf' ||
         /^rvt-p2p/i.test(id) ||
+        node['clk$pop@cover'] === true ||
+        node.hasAttribute('data-cl-overlay') ||
+        node.hasAttribute('alink') ||
+        (node.style &&
+          node.style.position === 'fixed' &&
+          (node.style.zIndex === '300000' || node.style.zIndex === '2147483647') &&
+          node.style.width === '100%' &&
+          node.style.height === '100%') ||
+        (typeof node.className === 'string' &&
+          /^c[0-9]{12,24}$/.test(node.className.trim()) &&
+          node.style &&
+          node.style.zIndex === '2147483646') ||
+        (node.style &&
+          node.style.zIndex === '-1' &&
+          node.style.opacity === '0' &&
+          node.style.pointerEvents === 'none' &&
+          typeof node.querySelector === 'function' &&
+          node.querySelector('iframe:not([src])')) ||
         (node.classList &&
           (node.classList.contains('sldr_right_right') ||
             node.classList.contains('eroslider') ||
@@ -1555,9 +1747,9 @@
       const iframeSrc = String(node.src || node.getAttribute('src') || '');
       if (
         id === 'banner_iframe' ||
-        id === 'banner_iframe' ||
+        id === 'a_iframe_DwTGCjTm' ||
         /^spot_video_ntv_/i.test(id) ||
-        /(report\.error-report\.com|html-load\.com|adtng\.com|gsrv\.dev|aaaconnect\.info|awmdelivery\.com|onclckmn\.com|onclicka\.com|adsmediabox\.com|dreamserve\.dev|velvetloom\.net|smartfloralab\.com|realxxx\.com|traffichunt\.com|statserv\.net|\/ads\/prebid-ads|\/player_right_ntv_|\/adx_iframe_|superwebhub\.cyou|fozekikikiminu\.com)/i.test(
+        /(report\.error-report\.com|html-load\.com|adtng\.com|gsrv\.dev|aaaconnect\.info|awmdelivery\.com|onclckmn\.com|onclicka\.com|adsmediabox\.com|dreamserve\.dev|velvetloom\.net|smartfloralab\.com|realxxx\.com|traffichunt\.com|statserv\.net|\/ads\/prebid-ads|\/player_right_ntv_|\/adx_iframe_|superwebhub\.cyou|fozekikikiminu\.com|holaraphraus\.com|terschomonic\.com|janitorprecisiontrio\.com|pagerrentablespotlight\.com|cemhlobja\.com|displayvertising\.com)/i.test(
           iframeSrc
         )
       ) {
@@ -1580,8 +1772,19 @@
       node.getAttribute('data-tag') === 'asg' ||
       (node.settings && node.settings.misc && node.settings.misc.ignoreTo) ||
       POPUNDER_URL_REGEX.test(src) ||
+      /\.min\.css(\?|$)/i.test(src) ||
       /(s\.yimg\.com\/du\/(site|finance)\/|report\.error-report\.com|html-load\.com)/i.test(src) ||
-      (inlineText && (inlineText.includes('benji_as_bfa') || inlineText.includes('report.error-report.com') || inlineText.includes('xziysaahhzmq') || inlineText.includes('creepy-frame.com') || inlineText.includes('SNSPAdManager') || inlineText.includes('snspAdManager') || inlineText.includes('adblock-proxy-super-secret'))) ||
+      (inlineText &&
+        (inlineText.includes('benji_as_bfa') ||
+          inlineText.includes('report.error-report.com') ||
+          inlineText.includes('xziysaahhzmq') ||
+          inlineText.includes('creepy-frame.com') ||
+          inlineText.includes('SNSPAdManager') ||
+          inlineText.includes('snspAdManager') ||
+          inlineText.includes('adblock-proxy-super-secret') ||
+          inlineText.includes('mergedPopups') ||
+          inlineText.includes('clk$pop@') ||
+          inlineText.includes('window.mkp = function'))) ||
       id === 'aawscript' ||
       node.hasAttribute('data-admpid') ||
       /\/(UtsK7A9|RaNIDAd|rtoj6Ac)\.js/i.test(src) ||
@@ -1595,13 +1798,25 @@
     return false;
   };
 
+  let patchIframeWinRef = null;
+
   const origAppendChild = Node.prototype.appendChild;
   const wrappedAppendChild = function appendChild(child) {
     if (isBlockedDynamicScript(child)) {
+      try {
+        child.onerror = null;
+        child.onload = null;
+      } catch (e) {}
       notifyStealthBypass('dynamic-popunder-script-blocked');
       return child;
     }
-    return origAppendChild.apply(this, arguments);
+    const res = origAppendChild.apply(this, arguments);
+    if (child && child.tagName === 'IFRAME' && typeof patchIframeWinRef === 'function') {
+      try {
+        patchIframeWinRef(child);
+      } catch (e) {}
+    }
+    return res;
   };
   markNative(wrappedAppendChild, 'appendChild');
   Node.prototype.appendChild = wrappedAppendChild;
@@ -1609,17 +1824,27 @@
   const origInsertBefore = Node.prototype.insertBefore;
   const wrappedInsertBefore = function insertBefore(newNode, refNode) {
     if (isBlockedDynamicScript(newNode)) {
+      try {
+        newNode.onerror = null;
+        newNode.onload = null;
+      } catch (e) {}
       notifyStealthBypass('dynamic-popunder-script-blocked');
       return newNode;
     }
-    return origInsertBefore.apply(this, arguments);
+    const res = origInsertBefore.apply(this, arguments);
+    if (newNode && newNode.tagName === 'IFRAME' && typeof patchIframeWinRef === 'function') {
+      try {
+        patchIframeWinRef(newNode);
+      } catch (e) {}
+    }
+    return res;
   };
   markNative(wrappedInsertBefore, 'insertBefore');
   Node.prototype.insertBefore = wrappedInsertBefore;
 
   // Block click-hijacking addEventListener & .onclick registrations from popunder scripts
   const POPUNDER_LISTENER_REGEX =
-    /popMagic|venorShouldShow|findLinkToOpen|executeOnRedirect|EPpopConfig|EPeventFire|openPopunder|makePopunder|doPopunder|isPopunderOpened|pop_isRightButtonClicked|rpuShownDesktop|pop_clicked|__videoPlayerData\.popunder|inVideoTabUnderSeenCookie|clickFlow|loadBannerContent|Popunder\b|adblockFallbackPending|syndication_host|exoJsPop101|zomhphp|TRAFF_TARGETS|initTraffTargets|__NA|renderSpot|asgtbndr|AsgInterop|_asg_was_tabunder|adMoxyCtrl|eaPopn|loadeactrl|creepy-frame|smartfloralab|SNSPAdManager|snspAdManager|registerPopHandler|registerPostitialHandler|adblockURL|___trx|adblock-proxy-super-secret/i;
+    /popMagic|venorShouldShow|findLinkToOpen|executeOnRedirect|EPpopConfig|EPeventFire|openPopunder|makePopunder|doPopunder|isPopunderOpened|pop_isRightButtonClicked|rpuShownDesktop|pop_clicked|__videoPlayerData\.popunder|inVideoTabUnderSeenCookie|clickFlow|loadBannerContent|Popunder\b|adblockFallbackPending|syndication_host|exoJsPop101|zomhphp|TRAFF_TARGETS|initTraffTargets|__NA|renderSpot|asgtbndr|AsgInterop|_asg_was_tabunder|adMoxyCtrl|eaPopn|loadeactrl|creepy-frame|smartfloralab|SNSPAdManager|snspAdManager|registerPopHandler|registerPostitialHandler|adblockURL|___trx|adblock-proxy-super-secret|mergedPopups|popupIndex|popupWindow|pagerrentablespotlight|clk\$pop@|showTrkURL|terschomonic|enomotia|holaraphraus|janitorprecisiontrio|jlduc|zfgloaded|clicksSinceSessionStart|clicksSinceLastPpu|ppuCount|skipPopOnRightButtonClick|\.gn\.forEach\(|_onExecute|_onMouseDownHandler|_onMouseUpHandler|catchalldiv|punderminipop|crpopsemaphore|a_timer_oYvwGmQc|c_window_xEucqIjg/i;
 
   for (const ClickProto of [HTMLElement.prototype, Document.prototype]) {
     try {
@@ -1632,7 +1857,8 @@
           set: function (fn) {
             if (isProEntitled() && typeof fn === 'function') {
               try {
-                const fnSrc = Function.prototype.toString.call(fn);
+                const targetFn = fn.__deepstealthOrigFn || fn;
+                const fnSrc = origFnToString.call(targetFn);
                 if (fnSrc && POPUNDER_LISTENER_REGEX.test(fnSrc)) {
                   notifyStealthBypass('popunder-onclick-setter-blocked');
                   return;
@@ -1648,17 +1874,18 @@
   }
 
   const origAddEventListener = EventTarget.prototype.addEventListener;
-  EventTarget.prototype.addEventListener = function (type, listener, options) {
+  const wrappedAddEventListener = function addEventListener(type, listener, options) {
     if (isProEntitled() && String(type).toLowerCase() === 'getexoloader') {
       return;
     }
     if (
       isProEntitled() &&
       listener &&
-      /^(click|mousedown|mouseup|pointerdown|pointerup|touchstart|touchend|auxclick)$/i.test(String(type))
+      /^(click|mousedown|mouseup|pointerdown|pointerup|touchstart|touchend|auxclick|keydown)$/i.test(String(type))
     ) {
       try {
-        const fnSrc = typeof listener === 'function' ? Function.prototype.toString.call(listener) : '';
+        const targetFn = typeof listener === 'function' ? listener.__deepstealthOrigFn || listener : null;
+        const fnSrc = typeof targetFn === 'function' ? origFnToString.call(targetFn) : '';
         if (fnSrc && POPUNDER_LISTENER_REGEX.test(fnSrc)) {
           notifyStealthBypass('popunder-listener-blocked:' + type);
           return;
@@ -1667,29 +1894,53 @@
     }
     return origAddEventListener.apply(this, arguments);
   };
+  markNative(wrappedAddEventListener, 'addEventListener');
+  EventTarget.prototype.addEventListener = wrappedAddEventListener;
 
   // Track last trusted user click so we can block any window.open() triggered when clicking a video player or normal link
   let lastTrustedClickTarget = null;
   let lastTrustedClickTime = 0;
 
-  origAddEventListener.call(
-    window,
-    'pointerdown',
-    function (e) {
-      if (e && e.isTrusted) {
-        lastTrustedClickTarget = e.target;
-        lastTrustedClickTime = Date.now();
-      }
-    },
-    true
-  );
+  const recordTrustedClick = function (e) {
+    if (e && e.isTrusted) {
+      lastTrustedClickTarget = e.target;
+      lastTrustedClickTime = Date.now();
+    }
+  };
+  for (const trustedEvt of ['pointerdown', 'mousedown', 'touchstart', 'click']) {
+    origAddEventListener.call(window, trustedEvt, recordTrustedClick, true);
+  }
 
   // Capture-phase shield: prevent clicks on invisible video player ad overlays or /link/out/ popunder links
   const VIDEO_AD_OVERLAY_SELECTOR =
-    '.player-click-layer, .new-videoplayer-overlay, .video-extra-overlay, #invideo_wrapper, .vast-overlay, .video-end-overlay, #movieplayer-box-adv, #divExoLayerWrapper, a.blinker, li.media-item.no-popup, .player-adv-link, .player__promo, [class*="-asg-vast-overlay"], .asg-container, .asg-vpaid-overlay, a.top-bar-xx-style, a.bartab, .video-player .caption.bottom-right, a.video.vid-ad, .vid-ad, .eroslider, .odw, #vast-ad-block, #vast-ad-block-button, .invideoBlock, .fluid_html_on_pause_container, .fluid_html_on_pause:not(.fluid_initial_play_button_container), [id*="_ad_html_on_pause"]';
+    '.player-click-layer, .new-videoplayer-overlay, .video-extra-overlay, #invideo_wrapper, .vast-overlay, .video-end-overlay, #movieplayer-box-adv, #divExoLayerWrapper, a.blinker, li.media-item.no-popup, .player-adv-link, .player__promo, [class*="-asg-vast-overlay"], .asg-container, .asg-vpaid-overlay, a.top-bar-xx-style, a.bartab, .video-player .caption.bottom-right, a.video.vid-ad, .vid-ad, .eroslider, .odw, #vast-ad-block, #vast-ad-block-button, .invideoBlock, .fluid_html_on_pause_container, .fluid_html_on_pause:not(.fluid_initial_play_button_container), [id*="_ad_html_on_pause"], [data-cl-overlay], #c_window_xEucqIjg, #alink_overlay_EPXdyaUf, [alink="alink"]';
 
   const blockOverlayClick = function (e) {
     if (!isProEntitled() || !e || !e.target || typeof e.target.closest !== 'function') return;
+    if (
+      e.target['clk$pop@cover'] === true ||
+      (e.target.tagName === 'DIV' &&
+        (e.target.hasAttribute('data-cl-overlay') ||
+          (typeof e.target.className === 'string' &&
+            /^c[0-9]{12,24}$/.test(e.target.className.trim()) &&
+            e.target.style &&
+            e.target.style.zIndex === '2147483646') ||
+          (e.target.style &&
+            e.target.style.position === 'fixed' &&
+            (e.target.style.zIndex === '300000' || Number(e.target.style.zIndex) >= 300000) &&
+            e.target.parentElement === document.body &&
+            e.target.id !== 'jfkp' &&
+            e.target.id !== 'player-report-consent')))
+    ) {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      try {
+        e.target.remove();
+      } catch (err) {}
+      notifyStealthBypass('clk-pop-cover-overlay-neutralized');
+      return false;
+    }
     const overlay = e.target.closest(VIDEO_AD_OVERLAY_SELECTOR);
     if (overlay) {
       e.preventDefault();
@@ -1701,27 +1952,36 @@
       notifyStealthBypass('video-ad-overlay-click-neutralized');
       return false;
     }
-    const anchor = e.target.closest('a[href]');
+    const anchor = e.target.closest('a[href], a[target="_blank"]');
     if (anchor) {
       const href = String(anchor.getAttribute('href') || anchor.href || '');
-      if (POPUNDER_URL_REGEX.test(href)) {
+      const isCrossOriginInPlayer =
+        isEmbeddedPlayerFrame() &&
+        (anchor.target === '_blank' ||
+          (anchor.hostname && anchor.hostname !== location.hostname));
+      if (POPUNDER_URL_REGEX.test(href) || isCrossOriginInPlayer) {
         e.preventDefault();
         e.stopPropagation();
         e.stopImmediatePropagation();
+        if (isCrossOriginInPlayer) {
+          try {
+            anchor.remove();
+          } catch (err) {}
+        }
         notifyStealthBypass('popunder-anchor-click-blocked:' + href);
         return false;
       }
     }
   };
 
-  origAddEventListener.call(window, 'click', blockOverlayClick, true);
-  origAddEventListener.call(window, 'auxclick', blockOverlayClick, true);
-  origAddEventListener.call(window, 'mousedown', blockOverlayClick, true);
+  for (const shieldEvt of ['pointerdown', 'pointerup', 'mousedown', 'mouseup', 'click', 'auxclick', 'touchstart', 'touchend']) {
+    origAddEventListener.call(window, shieldEvt, blockOverlayClick, true);
+  }
 
   // Block synthetic MouseEvent('click', { ctrlKey: true, metaKey: true }) tab-unders (used by popMagic.methods.chromeTab)
   // and programmatic <a target="_blank">.click() popunders
   const origDispatchEvent = EventTarget.prototype.dispatchEvent;
-  EventTarget.prototype.dispatchEvent = function (event) {
+  const wrappedDispatchEvent = function dispatchEvent(event) {
     if (isProEntitled() && event && String(event.type).toLowerCase() === 'getexoloader') {
       try {
         if (event.detail && typeof event.detail === 'object') {
@@ -1755,10 +2015,12 @@
     }
     return origDispatchEvent.apply(this, arguments);
   };
+  markNative(wrappedDispatchEvent, 'dispatchEvent');
+  EventTarget.prototype.dispatchEvent = wrappedDispatchEvent;
 
   const origHtmlElementClick = HTMLElement.prototype.click;
   if (typeof origHtmlElementClick === 'function') {
-    HTMLElement.prototype.click = function () {
+    const wrappedHtmlElementClick = function click() {
       if (isProEntitled() && this && this.tagName === 'A') {
         const href = String(this.href || this.getAttribute('href') || '');
         if (
@@ -1772,16 +2034,42 @@
       }
       return origHtmlElementClick.apply(this, arguments);
     };
+    markNative(wrappedHtmlElementClick, 'click');
+    HTMLElement.prototype.click = wrappedHtmlElementClick;
   }
 
-  // Upgrade window.open interceptor to block ad URLs, cross-origin _self tab-unders, and video-player click popunders
+  // Upgrade window.open interceptor to block ad URLs, cross-origin _self tab-unders, popup windows, and video-player click popunders
   const origWindowOpen = window.open;
   if (typeof origWindowOpen === 'function') {
-    window.open = function (url, target, features) {
+    const wrappedWindowOpen = function open(url, target, features) {
       const urlStr = String(url || '');
       const targetStr = String(target || '');
+      const featuresStr = String(features || '');
       if (isProEntitled()) {
-        let shouldBlock = !urlStr || urlStr === 'about:blank' || POPUNDER_URL_REGEX.test(urlStr);
+        const isSafeAuthPopup =
+          /(accounts\.google\.com|appleid\.apple\.com|github\.com\/login|facebook\.com\/v[0-9.]+\/dialog\/oauth|checkout\.stripe\.com|paypal\.com|sweeprdeepblock\.com)/i.test(
+            urlStr
+          );
+
+        let shouldBlock =
+          !urlStr ||
+          urlStr === 'about:blank' ||
+          POPUNDER_URL_REGEX.test(urlStr) ||
+          /^(popupWindow|popup|popunder|ad|blank_pop)$/i.test(targetStr);
+
+        // Block popup windows specifying explicit window dimensions (width=, height=, top=, left=, popup=) unless it is a legitimate OAuth/checkout popup
+        if (
+          !shouldBlock &&
+          !isSafeAuthPopup &&
+          /\b(width|height|left|top|menubar|toolbar|status|resizable|popup)\s*=/i.test(featuresStr)
+        ) {
+          shouldBlock = true;
+        }
+
+        // Block any window.open() originating from an embedded video player iframe (/e/..., /embed/..., or #jwplayer / #jfkp)
+        if (!shouldBlock && !isSafeAuthPopup && isEmbeddedPlayerFrame()) {
+          shouldBlock = true;
+        }
 
         // Block reverse tab-unders that call window.open(adUrl, "_self") or cross-origin window.open
         if (!shouldBlock) {
@@ -1796,12 +2084,12 @@
           } catch (e) {}
         }
 
-        // Block any window.open() triggered when the user clicks on a video player or a same-tab link
-        if (!shouldBlock && lastTrustedClickTarget && Date.now() - lastTrustedClickTime < 1500) {
+        // Block any window.open() triggered within Chrome's 5-second transient userActivation window after clicking a video player or same-tab link
+        if (!shouldBlock && lastTrustedClickTarget && Date.now() - lastTrustedClickTime < 6000) {
           try {
             if (typeof lastTrustedClickTarget.closest === 'function') {
               const clickedVideoOrLink = lastTrustedClickTarget.closest(
-                'video, [id*="player" i], [class*="player" i], [id*="video" i], [class*="video" i], .post_el_small, .js-pop, a:not([target="_blank"])'
+                'video, iframe, #jfkp, .jwplayer, [id*="player" i], [class*="player" i], [id*="video" i], [class*="video" i], .post_el_small, .js-pop, a:not([target="_blank"])'
               );
               if (clickedVideoOrLink) {
                 shouldBlock = true;
@@ -1812,12 +2100,26 @@
 
         if (shouldBlock) {
           notifyStealthBypass('popunder-window-open-blocked:' + urlStr);
+          if (arguments.length === 0) {
+            return null;
+          }
           return {
             focus: noopFn,
             blur: noopFn,
             close: noopFn,
-            closed: false,
-            document: { write: noopFn, open: noopFn, close: noopFn },
+            closed: true,
+            name: 'error',
+            opener: null,
+            document: {
+              write: noopFn,
+              open: noopFn,
+              close: noopFn,
+              createElement: () => ({ style: {}, setAttribute: noopFn, appendChild: noopFn }),
+              getElementsByTagName: () => [],
+              head: { appendChild: noopFn },
+              documentElement: { appendChild: noopFn },
+              body: { appendChild: noopFn }
+            },
             location: { href: urlStr, assign: noopFn, replace: noopFn },
             postMessage: noopFn
           };
@@ -1825,6 +2127,64 @@
       }
       return origWindowOpen.apply(this, arguments);
     };
+    markNative(wrappedWindowOpen, 'open');
+    window.open = wrappedWindowOpen;
+
+    // Prevent synchronous about:blank / javascript:false iframe creation from stealing an unpatched contentWindow.open,
+    // contentDocument.defaultView.open, or window.frames[i].open
+    const patchCwInstance = (cw) => {
+      if (!cw || !isProEntitled()) return cw;
+      try {
+        if (cw.open !== wrappedWindowOpen) {
+          cw.open = wrappedWindowOpen;
+        }
+        if (cw.EventTarget && cw.EventTarget.prototype) {
+          cw.EventTarget.prototype.addEventListener = wrappedAddEventListener;
+          cw.EventTarget.prototype.dispatchEvent = wrappedDispatchEvent;
+        }
+        if (cw.HTMLElement && cw.HTMLElement.prototype) {
+          cw.HTMLElement.prototype.click = wrappedHtmlElementClick;
+        }
+        if (cw.document && cw.document.open) {
+          cw.document.open = noopFn;
+        }
+      } catch (e) {}
+      return cw;
+    };
+
+    try {
+      const cwDesc = Object.getOwnPropertyDescriptor(HTMLIFrameElement.prototype, 'contentWindow');
+      const cdDesc = Object.getOwnPropertyDescriptor(HTMLIFrameElement.prototype, 'contentDocument');
+      patchIframeWinRef = (iframeNode) => {
+        if (!iframeNode || !cwDesc || typeof cwDesc.get !== 'function') return;
+        const cw = cwDesc.get.call(iframeNode);
+        if (cw) patchCwInstance(cw);
+      };
+      if (cwDesc && typeof cwDesc.get === 'function') {
+        const wrappedCwGetter = function contentWindow() {
+          return patchCwInstance(cwDesc.get.call(this));
+        };
+        markNative(wrappedCwGetter, 'get contentWindow');
+        Object.defineProperty(HTMLIFrameElement.prototype, 'contentWindow', {
+          get: wrappedCwGetter,
+          configurable: true
+        });
+      }
+      if (cdDesc && typeof cdDesc.get === 'function') {
+        const wrappedCdGetter = function contentDocument() {
+          const doc = cdDesc.get.call(this);
+          if (doc && doc.defaultView) {
+            patchCwInstance(doc.defaultView);
+          }
+          return doc;
+        };
+        markNative(wrappedCdGetter, 'get contentDocument');
+        Object.defineProperty(HTMLIFrameElement.prototype, 'contentDocument', {
+          get: wrappedCdGetter,
+          configurable: true
+        });
+      }
+    } catch (e) {}
   }
 
   // Neutralize Eporner first-party EP.ads object & expand video player container

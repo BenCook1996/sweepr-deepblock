@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Alternative 2: "Single-Choice Progressive Disclosure" (x.ai / Linear Minimalist) — SWEEPR Ergonomic Pre vs Post Audit</title>
+  <script src="https://cdn.tailwindcss.com/3.4.5"></script>
+  <style>
+    body { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0B1120; color: #F8FAFC; }
+    .tabular-nums { font-variant-numeric: tabular-nums; }
+    body.xray-active .xray-only { display: flex !important; }
+    body.xray-active .xray-target-bad { outline: 2px dashed #EF4444 !important; outline-offset: 2px; position: relative; }
+    body.xray-active .xray-target-good { outline: 2px solid #10B981 !important; outline-offset: 2px; position: relative; }
+    body.pro-mode .state-free-only { display: none !important; }
+    body.pro-mode .state-pro-only { display: block !important; }
+    body.view-pre-only .col-post { display: none !important; }
+    body.view-post-only .col-pre { display: none !important; }
+    body.view-pre-only .comparison-grid, body.view-post-only .comparison-grid { grid-template-columns: 1fr !important; max-width: 760px; margin-left: auto; margin-right: auto; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- TOP WORKBENCH BAR -->
+  <header class="sticky top-0 z-50 bg-slate-950/95 backdrop-blur-md border-b border-slate-800 px-4 py-3">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-lg bg-emerald-600 text-white font-black text-xs flex items-center justify-center">UX</div>
+        <div>
+          <div class="text-xs font-extrabold uppercase tracking-wider text-emerald-400">SWEEPR Deepblock Ergonomic Audit · Pre vs Post Workbench</div>
+          <div class="text-sm font-black text-white">Alternative 2: "Single-Choice Progressive Disclosure" (x.ai / Linear Minimalist)</div>
+        </div>
+      </div>
+
+      <!-- 5 Alternative Mockup Switcher URLs -->
+      <nav class="flex flex-wrap items-center gap-1.5" aria-label="Mockup Alternatives">
+        <a href="/ergonomic-mockup-1.html" class="px-3 py-1.5 rounded-xl text-xs font-bold no-underline transition-all bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white">1. Zero-Travel Anchor</a>
+<a href="/ergonomic-mockup-2.html" class="px-3 py-1.5 rounded-xl text-xs font-bold no-underline transition-all bg-emerald-600 text-white shadow-xs">2. Progressive Disclosure</a>
+<a href="/ergonomic-mockup-3.html" class="px-3 py-1.5 rounded-xl text-xs font-bold no-underline transition-all bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white">3. Tactile Cockpit</a>
+<a href="/ergonomic-mockup-4.html" class="px-3 py-1.5 rounded-xl text-xs font-bold no-underline transition-all bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white">4. Command & Thumb-Zone</a>
+<a href="/ergonomic-mockup-5.html" class="px-3 py-1.5 rounded-xl text-xs font-bold no-underline transition-all bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white">5. Context-Aware Surface</a>
+      </nav>
+    </div>
+
+    <!-- Interactive Workbench Controls Bar -->
+    <div class="max-w-7xl mx-auto mt-3 pt-2.5 border-t border-slate-800/90 flex flex-wrap items-center justify-between gap-3 text-xs">
+      <!-- Surface Selector (Popup vs Welcome Dashboard vs Website Funnel) -->
+      <div class="flex flex-wrap items-center gap-1.5 bg-slate-900 p-1 rounded-xl border border-slate-800">
+        <button type="button" id="tabBtn-popup" onclick="switchSurface('popup')" class="px-3 py-1.5 rounded-lg font-bold bg-emerald-600 text-white cursor-pointer transition-all">
+          1. Extension Popup (popup.html · 21 Controls)
+        </button>
+        <button type="button" id="tabBtn-welcome" onclick="switchSurface('welcome')" class="px-3 py-1.5 rounded-lg font-bold text-slate-300 hover:text-white cursor-pointer transition-all">
+          2. Extension Welcome &amp; Settings (welcome.html · 22 Controls)
+        </button>
+        <button type="button" id="tabBtn-website" onclick="switchSurface('website')" class="px-3 py-1.5 rounded-lg font-bold text-slate-300 hover:text-white cursor-pointer transition-all">
+          3. Website Funnel (index / pricing / order / download)
+        </button>
+      </div>
+
+      <!-- Ergonomic Overlays & State Toggles -->
+      <div class="flex flex-wrap items-center gap-2">
+        <button type="button" id="xrayToggleBtn" onclick="toggleXray()" class="px-3 py-1.5 rounded-xl font-bold bg-emerald-500/20 border border-emerald-500/50 text-emerald-300 hover:bg-emerald-500/30 cursor-pointer transition-all">
+          🎯 Fitts's Law &amp; Hit-Target X-Ray: OFF
+        </button>
+        <button type="button" id="proModeBtn" onclick="toggleProMode()" class="px-3 py-1.5 rounded-xl font-bold bg-slate-800 border border-slate-700 text-slate-200 hover:bg-slate-700 cursor-pointer transition-all">
+          🔑 User State: Free / Unactivated
+        </button>
+        <div class="inline-flex rounded-xl bg-slate-900 p-0.5 border border-slate-800">
+          <button type="button" onclick="setViewMode('split')" id="viewBtn-split" class="px-2.5 py-1 rounded-lg font-bold bg-slate-700 text-white cursor-pointer">Side-by-Side</button>
+          <button type="button" onclick="setViewMode('pre')" id="viewBtn-pre" class="px-2.5 py-1 rounded-lg font-bold text-slate-400 hover:text-white cursor-pointer">Pre Only</button>
+          <button type="button" onclick="setViewMode('post')" id="viewBtn-post" class="px-2.5 py-1 rounded-lg font-bold text-slate-400 hover:text-white cursor-pointer">Post Only</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- QUANTITATIVE SCOREBOARD BANNER -->
+  <section class="bg-slate-900/90 border-b border-slate-800 px-4 py-3">
+    <div class="max-w-7xl mx-auto">
+      <p class="text-xs text-slate-300 mb-2.5 leading-relaxed">Strict Hick’s Law (n ≤ 3) architecture: presents only 1 primary decision card per state with generous whitespace, high-contrast typography, and progressive disclosure drawers for page fixes, module tuning, and SEO directories.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
+        <div class="p-2.5 rounded-xl bg-slate-950/90 border border-slate-800 flex items-center justify-between">
+          <span class="text-slate-400 font-semibold">Fitts's Law Index of Difficulty:</span>
+          <span class="font-mono font-bold text-emerald-400">0.19 bits (-89% effort · W=328×64px Hero Card)</span>
+        </div>
+        <div class="p-2.5 rounded-xl bg-slate-950/90 border border-slate-800 flex items-center justify-between">
+          <span class="text-slate-400 font-semibold">Hick's Law Visible Choices (n):</span>
+          <span class="font-mono font-bold text-sky-400">n = 3 strict visible choices (-73% cognitive load)</span>
+        </div>
+        <div class="p-2.5 rounded-xl bg-slate-950/90 border border-slate-800 flex items-center justify-between">
+          <span class="text-slate-400 font-semibold">Taste + Unslop + Pro Max:</span>
+          <span class="font-mono font-bold text-amber-300">Zero decorative badges · 100% monochrome + emerald signal</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN WORKBENCH CONTENT -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 py-6">
+
+    <!-- =====================================================================
+         SURFACE 1: EXTENSION POPUP (popup.html) — PRE VS POST
+         ===================================================================== -->
+    <div id="surface-popup" class="space-y-6">
+      <div class="comparison-grid grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+
+        <!-- PRE (CURRENT popup.html) -->
+        <div class="col-pre bg-slate-900/70 border border-red-500/30 rounded-2xl p-5 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div>
+              <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-red-500/20 text-red-300 border border-red-500/40">PRE · Current Production (extension/popup.html)</span>
+              <h2 class="text-base font-black text-white mt-1">Current Popup — 11 Competing Elements &amp; Small Targets</h2>
+            </div>
+            <span class="font-mono text-xs text-red-300">1.81 bits (D=72px, W=48×26px)</span>
+          </div>
+
+          <!-- Replica of Current popup.html -->
+          <div class="flex justify-center py-2">
+            <div class="w-[360px] bg-[#F8FAFC] text-slate-900 rounded-2xl border border-slate-300 shadow-lg p-3.5 space-y-2.5 font-sans relative select-none">
+              <!-- Top-Right Cursor Entry Vector -->
+              <div class="xray-only hidden absolute top-0 right-4 z-30 pointer-events-none flex flex-col items-end">
+                <div class="px-1.5 py-0.5 bg-red-600 text-white text-[9px] font-mono font-bold rounded-b">Cursor Entry (332,0) · D=72px to switch ↓</div>
+              </div>
+
+              <!-- Header with 28x28px Gear Button -->
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <div class="w-6 h-6 rounded-md bg-emerald-600 text-white font-black text-xs flex items-center justify-center">S</div>
+                  <div class="text-xs font-extrabold text-slate-900">SWEEPR <span class="text-emerald-600">Deepblock</span></div>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300">TRIAL</span>
+                  <button type="button" class="xray-target-bad w-7 h-7 rounded-lg border border-slate-200 bg-white flex items-center justify-center text-slate-500" title="28×28px — Below 44px minimum">
+                    ⚙
+                  </button>
+                </div>
+              </div>
+
+              <!-- Site Bar where ONLY the 48x26 switch is clickable -->
+              <div class="p-3 rounded-xl bg-white border border-slate-200 flex items-center justify-between">
+                <div>
+                  <div class="text-xs font-extrabold text-slate-900">youtube.com</div>
+                  <div class="text-[11px] font-semibold text-emerald-600">Protection Active (Row Not Clickable)</div>
+                </div>
+                <button type="button" onclick="this.classList.toggle('bg-slate-300');this.classList.toggle('bg-emerald-600')" class="xray-target-bad w-12 h-[26px] rounded-full bg-emerald-600 p-0.5 flex items-center justify-end cursor-pointer" title="Only this 48×26px switch is clickable!">
+                  <span class="w-5 h-5 rounded-full bg-white shadow"></span>
+                </button>
+              </div>
+
+              <!-- 24px Tall Escape Row Micro-Buttons -->
+              <div class="grid grid-cols-2 gap-1.5">
+                <button type="button" class="xray-target-bad h-6 rounded-lg border border-slate-200 bg-white text-[10px] font-semibold text-slate-600">
+                  Pause 5m (Fix Page) [24px]
+                </button>
+                <button type="button" class="xray-target-bad h-6 rounded-lg border border-slate-200 bg-white text-[10px] font-semibold text-slate-600">
+                  Hide Element [24px]
+                </button>
+              </div>
+
+              <!-- Dead Telemetry Row -->
+              <div class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 flex items-center justify-between text-[11px] text-slate-600">
+                <span>Ads: <b>14</b> · Cookies: <b>3</b> · <b>180 MB</b></span>
+                <span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[9px] font-extrabold">SAFE</span>
+              </div>
+
+              <!-- Open License Drawer + Tiny 18px Paste Button + Unlock Button + Upgrade CTA ALL visible at once -->
+              <div class="state-free-only space-y-2 pt-1 border-t border-slate-200">
+                <div class="flex gap-1.5 items-center">
+                  <div class="relative flex-1">
+                    <input type="text" placeholder="Enter 6-digit code or key" class="w-full h-[30px] pl-2 pr-12 rounded-lg border border-slate-300 text-[10px] font-mono" />
+                    <button type="button" class="xray-target-bad absolute right-1 top-1.5 h-[18px] px-1.5 rounded bg-slate-100 border border-slate-300 text-[9px] font-bold">Paste</button>
+                  </div>
+                  <button type="button" class="xray-target-bad h-[30px] px-2.5 rounded-lg bg-emerald-600 text-white text-[10px] font-bold">Unlock</button>
+                </div>
+                <a href="/order?plan=annual" target="_blank" class="w-full h-[42px] rounded-xl bg-emerald-600 text-white font-extrabold text-xs flex items-center justify-center no-underline">
+                  Get Pro Protection →
+                </a>
+              </div>
+
+              <div class="state-pro-only hidden pt-1">
+                <button type="button" class="w-full h-[42px] rounded-xl bg-emerald-600 text-white font-extrabold text-xs flex items-center justify-center">
+                  ⚡ Free Up RAM Now (Emoji Icon)
+                </button>
+              </div>
+
+              <!-- Conditional Upsell Banner with 20px tall buttons -->
+              <div class="p-2 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center justify-between text-[10px]">
+                <span class="font-bold text-emerald-950 truncate">🎉 17+ items blocked! Lock in £2.50/mo</span>
+                <div class="flex items-center gap-1 shrink-0">
+                  <button type="button" class="xray-target-bad h-5 px-2 rounded bg-emerald-600 text-white text-[9px] font-bold">Save 50%</button>
+                  <button type="button" class="xray-target-bad w-4 h-4 text-slate-400 text-[10px]">✕</button>
+                </div>
+              </div>
+
+              <!-- 16px Tall Bare Footer Links -->
+              <div class="pt-1.5 border-t border-slate-200 flex items-center justify-between text-[10px] font-semibold text-slate-500">
+                <button type="button" onclick="switchSurface('welcome')" class="xray-target-bad h-4">All Settings &amp; Tabs ↗ [16px]</button>
+                <a href="/test-lab" target="_blank" class="xray-target-bad h-4 no-underline text-slate-500">Test Shield ↗ [16px]</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pre Audit Callouts -->
+          <ul class="space-y-1.5 text-xs text-slate-300 bg-slate-950/80 p-3.5 rounded-xl border border-slate-800">
+            <li><strong class="text-red-400">Fitts Violation #1:</strong> Clicking the domain or text inside <code class="text-slate-200">#siteBar</code> does nothing—only the <code class="text-slate-200">48×26px</code> switch works.</li>
+            <li><strong class="text-red-400">Fitts Violation #2:</strong> <code class="text-slate-200">#openDashboardBtn</code> (<code class="text-slate-200">28×28px</code>), <code class="text-slate-200">#pasteKeyBtn</code> (<code class="text-slate-200">40×18px</code>), <code class="text-slate-200">.escape-btn</code> (<code class="text-slate-200">24px</code>), and footer links (<code class="text-slate-200">16px</code>) are all below the ergonomic target threshold.</li>
+            <li><strong class="text-red-400">Hick's Violation:</strong> Unactivated users see an open text input, Paste chip, Unlock button, AND "Get Pro Protection →" CTA simultaneously.</li>
+          </ul>
+        </div>
+
+        <!-- POST (PROPOSED popup.html) -->
+        <div class="col-post bg-slate-900/70 border border-emerald-500/40 rounded-2xl p-5 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div>
+              <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">POST · Proposed 2. Progressive Disclosure</span>
+              <h2 class="text-base font-black text-white mt-1">Proposed Popup — Whole-Row Hit Zones &amp; Auto-Unlock</h2>
+            </div>
+            <span class="font-mono text-xs text-emerald-300">0.19 bits (-89% effort · W=328×64px Hero Card)</span>
+          </div>
+
+          <div class="flex justify-center py-2">
+            
+      <!-- POST POPUP ALT 2: STRICT HICK'S LAW (n=3) PROGRESSIVE DISCLOSURE -->
+      <div class="w-[360px] bg-white text-slate-950 rounded-2xl border border-slate-200 shadow-xl overflow-hidden font-sans p-4 space-y-3 select-none">
+        <!-- Choice 1: Single Unified Site Status & Toggle Card -->
+        <button type="button" onclick="toggleDemoShield(this)" class="xray-target-good w-full p-4 rounded-2xl bg-slate-950 text-white flex items-center justify-between gap-3 cursor-pointer transition-all text-left">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+              <span class="font-mono text-xs uppercase tracking-wider text-emerald-400 demo-badge">Shield Active</span>
+            </div>
+            <div class="text-base font-extrabold tracking-tight mt-1">youtube.com</div>
+            <div class="text-[11px] text-slate-400 mt-0.5 tabular-nums demo-sub">17 items blocked · 180 MB saved</div>
+          </div>
+          <div class="demo-switch w-12 h-7 rounded-full bg-emerald-500 p-1 flex items-center justify-end">
+            <div class="w-5 h-5 rounded-full bg-white"></div>
+          </div>
+        </button>
+
+        <!-- Choice 2: Primary Context Action (Upgrade OR Boost RAM) -->
+        <div class="state-free-only">
+          <a href="/order?plan=annual" target="_blank" class="xray-target-good w-full min-h-[48px] rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-between px-4 no-underline transition-all">
+            <span>Upgrade to Pro (£2.50/mo)</span>
+            <span class="font-mono text-[11px] bg-emerald-700/80 px-2 py-1 rounded">Enter Code / Buy →</span>
+          </a>
+        </div>
+        <div class="state-pro-only hidden">
+          <button type="button" onclick="flashToast(this, '✓ 410 MB RAM reclaimed')" class="xray-target-good w-full min-h-[48px] rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-between px-4 cursor-pointer transition-all">
+            <span>Free Up RAM Now</span>
+            <span class="font-mono text-[11px] bg-emerald-700/80 px-2 py-1 rounded">410 MB Ready</span>
+          </button>
+        </div>
+
+        <!-- Choice 3: Progressive Disclosure Drawer for Page Troubleshooting & Settings -->
+        <details class="group rounded-xl border border-slate-200 bg-slate-50/60 overflow-hidden">
+          <summary class="xray-target-good min-h-[44px] px-3.5 flex items-center justify-between text-xs font-semibold text-slate-700 cursor-pointer list-none">
+            <span>Page Tools &amp; All Settings</span>
+            <span class="text-slate-400 group-open:rotate-180 transition-transform">▾</span>
+          </summary>
+          <div class="p-2.5 pt-0 border-t border-slate-200/70 space-y-1.5 bg-white">
+            <button type="button" onclick="flashToast(this, 'Paused 5 minutes')" class="xray-target-good w-full min-h-[40px] px-3 rounded-lg hover:bg-slate-100 flex items-center justify-between text-xs font-medium text-slate-700 cursor-pointer">
+              <span>Pause for 5 minutes (Fix broken page)</span>
+              <span class="font-mono text-[10px] text-slate-400">5m</span>
+            </button>
+            <button type="button" onclick="flashToast(this, 'Click any element on page to hide')" class="xray-target-good w-full min-h-[40px] px-3 rounded-lg hover:bg-slate-100 flex items-center justify-between text-xs font-medium text-slate-700 cursor-pointer">
+              <span>Hide custom element on this page</span>
+              <span class="font-mono text-[10px] text-slate-400">Picker</span>
+            </button>
+            <button type="button" onclick="switchSurface('welcome')" class="xray-target-good w-full min-h-[40px] px-3 rounded-lg hover:bg-slate-100 flex items-center justify-between text-xs font-semibold text-emerald-700 cursor-pointer">
+              <span>Open Full Dashboard &amp; License Key</span>
+              <span>↗</span>
+            </button>
+          </div>
+        </details>
+      </div>
+    
+          </div>
+
+          <!-- Post Improvements Summary -->
+          <ul class="space-y-1.5 text-xs text-slate-300 bg-slate-950/80 p-3.5 rounded-xl border border-emerald-500/30">
+            <li><strong class="text-emerald-400">7× Larger Primary Hit Target:</strong> Entire top card (<code class="text-slate-200">336×60px</code>) toggles site protection in 1 click directly beneath the toolbar icon.</li>
+            <li><strong class="text-emerald-400">Zero Micro-Targets:</strong> Every interactive control is <code class="text-slate-200">≥42px–68px</code> tall with custom SVG icons instead of emojis.</li>
+            <li><strong class="text-emerald-400">1-Click Auto-Paste Unlock:</strong> License input is progressively disclosed and auto-verifies the moment a 6-digit code is pasted or typed.</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- =====================================================================
+         SURFACE 2: EXTENSION WELCOME & FULL SETTINGS (welcome.html) — PRE VS POST
+         ===================================================================== -->
+    <div id="surface-welcome" class="hidden space-y-6">
+      <div class="comparison-grid grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+
+        <!-- PRE (CURRENT welcome.html) -->
+        <div class="col-pre bg-slate-900/70 border border-red-500/30 rounded-2xl p-5 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div>
+              <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-red-500/20 text-red-300 border border-red-500/40">PRE · Current Production (extension/welcome.html)</span>
+              <h2 class="text-base font-black text-white mt-1">Current Welcome &amp; Settings — Competing Green CTAs &amp; 44×24px Switches</h2>
+            </div>
+          </div>
+
+          <div class="bg-[#F8FAFC] text-slate-900 rounded-2xl p-4 space-y-4 border border-slate-300">
+            <!-- Pre Hero Key Panel with TWO competing full-width green buttons -->
+            <div class="bg-white p-4 rounded-xl border border-slate-200 space-y-2.5">
+              <div class="text-xs font-extrabold uppercase text-slate-500">Tab A: "I Have a License / Code" (#welcomePanelKey)</div>
+              <div class="flex gap-1.5">
+                <input type="text" placeholder="Enter 6-digit code or license key" class="flex-1 h-10 px-3 rounded-lg border border-slate-300 text-xs font-mono" />
+                <button type="button" class="xray-target-bad px-2.5 rounded-lg border border-slate-200 text-xs font-bold">Paste (Step 1)</button>
+              </div>
+              <button type="button" class="w-full h-11 rounded-xl bg-emerald-600 text-white font-extrabold text-xs">
+                Activate Pro Protection (Step 2 — Requires 2nd Click)
+              </button>
+              <div class="pt-2 border-t border-dashed border-slate-200 text-center space-y-1.5">
+                <div class="text-[11px] text-slate-500">Don't have a code yet?</div>
+                <a href="/order?offer=intro" target="_blank" class="xray-target-bad block w-full py-2.5 rounded-xl bg-emerald-600 text-white font-extrabold text-xs no-underline">
+                  Start 30-Day Pro Trial (£1.99) — Competing Green Button!
+                </a>
+              </div>
+            </div>
+
+            <!-- Pre 6 Modules (Only 44x24px switch works) -->
+            <div class="bg-white p-4 rounded-xl border border-slate-200 space-y-2">
+              <div class="text-xs font-extrabold text-slate-900">Protection Modules (Rows are DEAD — only 44×24px switch works)</div>
+              <div class="divide-y divide-slate-100 text-xs">
+                <div class="py-2.5 flex items-center justify-between">
+                  <div><div class="font-bold">Ad &amp; Video Blocking</div><div class="text-[11px] text-slate-500">Clicking this text does nothing</div></div>
+                  <button type="button" class="xray-target-bad w-11 h-6 rounded-full bg-emerald-600 p-0.5 flex justify-end"><span class="w-5 h-5 rounded-full bg-white"></span></button>
+                </div>
+                <div class="py-2.5 flex items-center justify-between">
+                  <div><div class="font-bold">Auto-Close Cookie Pop-Ups</div><div class="text-[11px] text-slate-500">Clicking this text does nothing</div></div>
+                  <button type="button" class="xray-target-bad w-11 h-6 rounded-full bg-emerald-600 p-0.5 flex justify-end"><span class="w-5 h-5 rounded-full bg-white"></span></button>
+                </div>
+                <div class="py-2.5 flex items-center justify-between">
+                  <div><div class="font-bold">Fake Online Shop Alerts</div><div class="text-[11px] text-slate-500">Clicking this text does nothing</div></div>
+                  <button type="button" class="xray-target-bad w-11 h-6 rounded-full bg-emerald-600 p-0.5 flex justify-end"><span class="w-5 h-5 rounded-full bg-white"></span></button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Pre 4 Stacked Empty Lists + Always-Open Support Form -->
+            <div class="bg-white p-4 rounded-xl border border-slate-200 space-y-2">
+              <div class="text-xs font-extrabold text-slate-900">4 Uncollapsed Empty Lists Stacked Vertically</div>
+              <div class="p-2.5 rounded-lg border border-dashed border-slate-300 text-[11px] text-slate-400 text-center">No saved tab sessions yet.</div>
+              <div class="p-2.5 rounded-lg border border-dashed border-slate-300 text-[11px] text-slate-400 text-center">No paused websites.</div>
+              <div class="p-2.5 rounded-lg border border-dashed border-slate-300 text-[11px] text-slate-400 text-center">No excluded websites.</div>
+              <div class="p-2.5 rounded-lg border border-dashed border-slate-300 text-[11px] text-slate-400 text-center">No custom hidden elements yet.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- POST (PROPOSED welcome.html) -->
+        <div class="col-post bg-slate-900/70 border border-emerald-500/40 rounded-2xl p-5 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div>
+              <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">POST · Proposed 2. Progressive Disclosure (welcome.html)</span>
+              <h2 class="text-base font-black text-white mt-1">1-Click Paste+Unlock, Whole-Row Module Toggles &amp; Tabbed Lists</h2>
+            </div>
+          </div>
+
+          <div class="bg-[#F8FAFC] text-slate-900 rounded-2xl p-4 space-y-4 border border-emerald-300">
+            <p class="text-xs text-slate-600 bg-emerald-50 border border-emerald-200 rounded-xl p-3 font-medium">x.ai / Linear single-column focus: shows only the 6 core module rows by default (with whole-row clickability) and places Saved Sessions, Whitelisted Domains, Custom Rules, and Support inside clean progressive disclosure drawers.</p>
+
+            <!-- Post 1-Click Auto-Verifying Activation Card (Single Primary CTA) -->
+            <div class="bg-white p-4 rounded-xl border border-slate-200 space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-extrabold text-slate-900">Instant License / 6-Digit Code Activation</span>
+                <span class="text-[11px] font-semibold text-emerald-700">Auto-unlocks on 6th digit</span>
+              </div>
+              <div class="flex gap-2">
+                <input type="text" placeholder="Type or paste 6-digit code..." oninput="if(this.value.length>=6) flashToast(this.parentElement, '✓ Pro Protection Unlocked Automatically!')" class="flex-1 min-h-[44px] px-3 rounded-xl border border-slate-300 text-xs font-mono" />
+                <button type="button" onclick="this.previousElementSibling.value='849201';flashToast(this.parentElement, '✓ Pasted & Activated in 1 Click!')" class="xray-target-good min-h-[44px] px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs cursor-pointer">
+                  Paste &amp; Unlock
+                </button>
+              </div>
+              <div class="flex items-center justify-between text-xs pt-1">
+                <span class="text-slate-500">Need a license key?</span>
+                <a href="/order?plan=annual" target="_blank" class="font-bold text-emerald-700 hover:underline">Get Pro (£2.50/mo Annual or £1.99 Trial) →</a>
+              </div>
+            </div>
+
+            <!-- Post Whole-Row Clickable Protection Modules (10.5x Hit Area) -->
+            <div class="bg-white p-4 rounded-xl border border-slate-200 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-extrabold text-slate-900">6 Core Protection Engines (Click Entire Row to Toggle)</span>
+                <span class="font-mono text-[10px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">520×54px Hit Zone</span>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <label class="xray-target-good min-h-[54px] p-3 rounded-xl border border-slate-200 hover:border-emerald-400 bg-slate-50/60 flex items-center justify-between gap-2 cursor-pointer select-none">
+                  <div>
+                    <div class="text-xs font-bold text-slate-900">Ad &amp; Video Blocking</div>
+                    <div class="text-[10px] text-slate-500">YouTube, Twitch &amp; banners</div>
+                  </div>
+                  <input type="checkbox" checked class="w-5 h-5 accent-emerald-600 rounded cursor-pointer" />
+                </label>
+                <label class="xray-target-good min-h-[54px] p-3 rounded-xl border border-slate-200 hover:border-emerald-400 bg-slate-50/60 flex items-center justify-between gap-2 cursor-pointer select-none">
+                  <div>
+                    <div class="text-xs font-bold text-slate-900">Auto-Reject Cookies</div>
+                    <div class="text-[10px] text-slate-500">Closes GDPR pop-ups</div>
+                  </div>
+                  <input type="checkbox" checked class="w-5 h-5 accent-emerald-600 rounded cursor-pointer" />
+                </label>
+                <label class="xray-target-good min-h-[54px] p-3 rounded-xl border border-slate-200 hover:border-emerald-400 bg-slate-50/60 flex items-center justify-between gap-2 cursor-pointer select-none">
+                  <div>
+                    <div class="text-xs font-bold text-slate-900">Search Slop Filter</div>
+                    <div class="text-[10px] text-slate-500">Cleans Google &amp; Bing</div>
+                  </div>
+                  <input type="checkbox" checked class="w-5 h-5 accent-emerald-600 rounded cursor-pointer" />
+                </label>
+                <label class="xray-target-good min-h-[54px] p-3 rounded-xl border border-slate-200 hover:border-emerald-400 bg-slate-50/60 flex items-center justify-between gap-2 cursor-pointer select-none">
+                  <div>
+                    <div class="text-xs font-bold text-slate-900">Fake Shop Detector</div>
+                    <div class="text-[10px] text-slate-500">Flags scam stores</div>
+                  </div>
+                  <input type="checkbox" checked class="w-5 h-5 accent-emerald-600 rounded cursor-pointer" />
+                </label>
+              </div>
+            </div>
+
+            <!-- Post 4-Tab Segmented List Switcher (Replaces 4 vertical empty lists) -->
+            <div class="bg-white p-4 rounded-xl border border-slate-200 space-y-3">
+              <div class="p-1 rounded-xl bg-slate-100 grid grid-cols-4 gap-1 text-[11px] font-bold">
+                <button type="button" onclick="switchWelcomeListTab(this, 'No saved tab sessions yet — click Free Up RAM in the popup to save open tabs.')" class="py-2 rounded-lg bg-white text-slate-900 shadow-2xs cursor-pointer">Sessions (0)</button>
+                <button type="button" onclick="switchWelcomeListTab(this, 'No paused websites — all domains are actively protected.')" class="py-2 rounded-lg text-slate-600 hover:text-slate-900 cursor-pointer">Paused (0)</button>
+                <button type="button" onclick="switchWelcomeListTab(this, 'No never-snooze exceptions configured.')" class="py-2 rounded-lg text-slate-600 hover:text-slate-900 cursor-pointer">Pinned (0)</button>
+                <button type="button" onclick="switchWelcomeListTab(this, 'No custom hidden elements yet — use Hide Element in the popup.')" class="py-2 rounded-lg text-slate-600 hover:text-slate-900 cursor-pointer">Hidden (0)</button>
+              </div>
+              <div id="welcomeListTabContent" class="p-4 rounded-xl bg-slate-50 border border-slate-200/80 text-xs text-slate-600 text-center">
+                No saved tab sessions yet — click Free Up RAM in the popup to save open tabs.
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- =====================================================================
+         SURFACE 3: WEBSITE FUNNEL (index / pricing / order / download) — PRE VS POST
+         ===================================================================== -->
+    <div id="surface-website" class="hidden space-y-6">
+      <div class="comparison-grid grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+
+        <!-- PRE (CURRENT WEBSITE FUNNEL) -->
+        <div class="col-pre bg-slate-900/70 border border-red-500/30 rounded-2xl p-5 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div>
+              <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-red-500/20 text-red-300 border border-red-500/40">PRE · Current Website (index.html / order.html / download.html)</span>
+              <h2 class="text-base font-black text-white mt-1">5 Stacked Hero Boxes, Emoji Overload &amp; 44-Link Footer Wall</h2>
+            </div>
+          </div>
+
+          <div class="bg-[#F8FAFC] text-slate-900 rounded-2xl p-4 space-y-3 border border-slate-300">
+            <div class="text-xs font-extrabold text-red-700 uppercase">Current Homepage Hero Left Column (8 Competing Visual Blocks):</div>
+            <div class="space-y-2 bg-white p-3.5 rounded-xl border border-slate-200">
+              <div class="inline-block px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-900 text-[10px] font-bold">Block #1: ✓ Works on Chrome, Safari, Edge, Firefox &amp; Brave</div>
+              <div class="text-lg font-black text-slate-900 leading-tight">Block #2: Stop YouTube Ads &amp; Auto-Reject Cookie Pop-Ups</div>
+              <div class="text-xs text-slate-600 space-y-1">
+                <div>✓ Block #3a: Blocks YouTube &amp; video ads</div>
+                <div>✓ Block #3b: Auto-rejects cookie pop-ups</div>
+                <div>✓ Block #3c: Warns about fake shops</div>
+              </div>
+              <div class="flex gap-2 items-center">
+                <span class="px-4 py-2.5 rounded-xl bg-emerald-600 text-white font-bold text-xs">Block #4: Install Free Extension</span>
+                <span class="text-xs font-bold text-emerald-700 underline">Block #5: Get Pro Access</span>
+              </div>
+              <div class="xray-target-bad p-2.5 rounded-xl bg-amber-50 border border-amber-300 text-[11px] text-amber-950 font-semibold">
+                Block #6 (Competing Amber Box): 🔍 Scanning your browser... 3 tracking vectors exposed · <u>Run 8-Point Test Lab →</u>
+              </div>
+              <div class="text-[11px] text-slate-500">Block #7 (Emoji Row): 🛡️ 14-Day Guarantee • 🔒 Zero Data • ⚡ 1-Click Cancel</div>
+              <div class="text-[11px] text-emerald-700 font-bold">Block #8: Verified Live: 10,218+ Ad/Scam Domains • 242 C++ DNR Rules</div>
+            </div>
+
+            <div class="bg-white p-3.5 rounded-xl border border-slate-200 space-y-1.5">
+              <div class="text-xs font-extrabold text-red-700">Current Footer &amp; Download Page Issues:</div>
+              <div class="text-[11px] text-slate-600">• <strong>44 SEO links</strong> are rendered fully expanded in a 4-column wall on every page.</div>
+              <div class="text-[11px] text-slate-600">• On <code class="font-mono">/download</code>, Chrome desktop users still see 5 raw file links (<code class="font-mono">.exe • .command • .apk • .mobileconfig • .zip</code>) right below the primary button.</div>
+              <div class="text-[11px] text-slate-600">• On <code class="font-mono">/order</code>, users must parse <strong>2 separate pre-checked legal/renewal checkboxes</strong> right above the submit button.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- POST (PROPOSED WEBSITE FUNNEL) -->
+        <div class="col-post bg-slate-900/70 border border-emerald-500/40 rounded-2xl p-5 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div>
+              <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">POST · Proposed 2. Progressive Disclosure Website Funnel</span>
+              <h2 class="text-base font-black text-white mt-1">figma.com / x.ai Editorial Clarity &amp; Progressive Disclosure</h2>
+            </div>
+          </div>
+
+          <div class="bg-[#F8FAFC] text-slate-900 rounded-2xl p-4 space-y-3.5 border border-emerald-300">
+            <p class="text-xs text-slate-600 bg-emerald-50 border border-emerald-200 rounded-xl p-3 font-medium">Ultra-clean editorial hero with equal left/right margins, zero floating badges, a single high-contrast CTA pair, and collapsible technical benchmarks & footer directories.</p>
+
+            <!-- Post Clean Hero -->
+            <div class="bg-white p-5 rounded-2xl border border-slate-200/90 space-y-3.5 shadow-xs">
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 text-slate-800 text-[11px] font-semibold">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                <span>Chrome, Safari, Edge, Firefox &amp; Brave · 10,218+ Verified Rules</span>
+              </div>
+              <h3 class="text-2xl font-black text-slate-950 tracking-tight leading-tight">
+                Browse without video ads, cookie walls, or scam stores.
+              </h3>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                SWEEPR Deepblock blocks YouTube &amp; mid-roll video ads in 15µs, declines GDPR cookie pop-ups automatically, and flags fake online shops before checkout.
+              </p>
+              <div class="flex flex-wrap items-center gap-2.5 pt-1">
+                <a href="/download?install=1" target="_blank" class="xray-target-good min-h-[46px] px-5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs inline-flex items-center gap-2 no-underline shadow-xs">
+                  <span>Add to Chrome — Free</span>
+                  <span>→</span>
+                </a>
+                <a href="/pricing" target="_blank" class="xray-target-good min-h-[46px] px-4 rounded-xl bg-slate-100 hover:bg-slate-200/80 text-slate-800 font-bold text-xs inline-flex items-center no-underline">
+                  Compare Pro Plans (£2.50/mo)
+                </a>
+              </div>
+              <div class="pt-2 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-500 tabular-nums">
+                <span>14-day money-back guarantee · Zero browsing data collected</span>
+                <a href="/test-lab" target="_blank" class="font-bold text-emerald-700 hover:underline">Run 8/8 Live Shield Benchmark →</a>
+              </div>
+            </div>
+
+            <!-- Post Progressive Disclosure for Download & 44-Link SEO Footer -->
+            <div class="bg-white p-4 rounded-2xl border border-slate-200/90 space-y-2.5">
+              <div class="text-xs font-extrabold text-slate-900">Progressive Disclosure Drawers (100% Crawlable by Googlebot, Zero Visual Clutter)</div>
+              <details class="group rounded-xl border border-slate-200 bg-slate-50/70 overflow-hidden">
+                <summary class="xray-target-good min-h-[42px] px-3.5 flex items-center justify-between text-xs font-semibold text-slate-700 cursor-pointer list-none">
+                  <span>/download: Need an installer for another OS or device? (Windows, macOS, Android, iOS)</span>
+                  <span class="text-slate-400 group-open:rotate-180 transition-transform">▾</span>
+                </summary>
+                <div class="p-3 border-t border-slate-200 bg-white flex flex-wrap gap-2 text-xs">
+                  <a href="/download/SWEEPRDeepblockSetup.exe?v=1.3.0" class="px-3 py-1.5 rounded-lg bg-slate-100 font-semibold text-slate-700 no-underline">Windows (.exe)</a>
+                  <a href="/download/SWEEPR-Deepblock-Installer.command" class="px-3 py-1.5 rounded-lg bg-slate-100 font-semibold text-slate-700 no-underline">macOS (.command)</a>
+                  <a href="/download/SWEEPRDeepblock.apk" class="px-3 py-1.5 rounded-lg bg-slate-100 font-semibold text-slate-700 no-underline">Android (.apk)</a>
+                  <a href="/download/sweepr-deepblock.mobileconfig" class="px-3 py-1.5 rounded-lg bg-slate-100 font-semibold text-slate-700 no-underline">iOS / Safari (.mobileconfig)</a>
+                </div>
+              </details>
+
+              <details class="group rounded-xl border border-slate-200 bg-slate-50/70 overflow-hidden">
+                <summary class="xray-target-good min-h-[42px] px-3.5 flex items-center justify-between text-xs font-semibold text-slate-700 cursor-pointer list-none">
+                  <span>Footer SEO Hub: Browse All 44 Browser Setup Guides, Platform Solutions &amp; Comparisons</span>
+                  <span class="text-slate-400 group-open:rotate-180 transition-transform">▾</span>
+                </summary>
+                <div class="p-3 border-t border-slate-200 bg-white grid grid-cols-2 sm:grid-cols-4 gap-3 text-[11px] text-slate-600">
+                  <div><strong class="text-slate-900 block mb-1">Browsers</strong>Chrome MV3 · Firefox · Brave · Orion · Arc · Zen</div>
+                  <div><strong class="text-slate-900 block mb-1">Platforms</strong>YouTube · Twitch · Crunchyroll · Fandom · UK News</div>
+                  <div><strong class="text-slate-900 block mb-1">Comparisons</strong>vs Total Adblock · vs uBlock Lite · vs AdGuard · vs Ghostery</div>
+                  <div><strong class="text-slate-900 block mb-1">Guides</strong>Cookie Auto-Reject · Reduce RAM 62% · Scam Shop Detector</div>
+                </div>
+              </details>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <!-- INTERACTIVE WORKBENCH SCRIPT -->
+  <script>
+    function switchSurface(surface) {
+      ['popup', 'welcome', 'website'].forEach(s => {
+        const panel = document.getElementById('surface-' + s);
+        const btn = document.getElementById('tabBtn-' + s);
+        if (panel) panel.classList.toggle('hidden', s !== surface);
+        if (btn) {
+          btn.className = s === surface
+            ? 'px-3 py-1.5 rounded-lg font-bold bg-emerald-600 text-white cursor-pointer transition-all'
+            : 'px-3 py-1.5 rounded-lg font-bold text-slate-300 hover:text-white cursor-pointer transition-all';
+        }
+      });
+    }
+
+    function toggleXray() {
+      const active = document.body.classList.toggle('xray-active');
+      const btn = document.getElementById('xrayToggleBtn');
+      if (btn) {
+        btn.textContent = active
+          ? "🎯 Fitts's Law & Hit-Target X-Ray: ON (Red = <44px Violation · Green = Ergonomic)"
+          : "🎯 Fitts's Law & Hit-Target X-Ray: OFF";
+      }
+    }
+
+    function toggleProMode() {
+      const isPro = document.body.classList.toggle('pro-mode');
+      const btn = document.getElementById('proModeBtn');
+      if (btn) {
+        btn.textContent = isPro
+          ? '🔑 User State: Active Pro Subscriber'
+          : '🔑 User State: Free / Unactivated';
+      }
+    }
+
+    function setViewMode(mode) {
+      document.body.classList.remove('view-pre-only', 'view-post-only');
+      if (mode === 'pre') document.body.classList.add('view-pre-only');
+      if (mode === 'post') document.body.classList.add('view-post-only');
+      ['split', 'pre', 'post'].forEach(m => {
+        const b = document.getElementById('viewBtn-' + m);
+        if (b) {
+          b.className = m === mode
+            ? 'px-2.5 py-1 rounded-lg font-bold bg-slate-700 text-white cursor-pointer'
+            : 'px-2.5 py-1 rounded-lg font-bold text-slate-400 hover:text-white cursor-pointer';
+        }
+      });
+    }
+
+    function toggleDemoShield(btn) {
+      const badge = btn.querySelector('.demo-badge');
+      const sub = btn.querySelector('.demo-sub');
+      const sw = btn.querySelector('.demo-switch');
+      const isPaused = btn.dataset.paused === '1';
+      if (!isPaused) {
+        btn.dataset.paused = '1';
+        if (badge) badge.textContent = 'Paused';
+        if (sub) sub.textContent = 'Protection paused on this site — click row to resume';
+        if (sw) { sw.classList.remove('bg-emerald-600', 'bg-emerald-500', 'justify-end'); sw.classList.add('bg-slate-400', 'justify-start'); }
+      } else {
+        btn.dataset.paused = '0';
+        if (badge) badge.textContent = 'Protected';
+        if (sub) sub.textContent = 'Click anywhere on card to pause site';
+        if (sw) { sw.classList.remove('bg-slate-400', 'justify-start'); sw.classList.add('bg-emerald-600', 'justify-end'); }
+      }
+    }
+
+    function flashToast(el, msg) {
+      const orig = el.innerHTML;
+      el.setAttribute('data-orig', orig);
+      el.innerHTML = '<span class="text-emerald-600 font-bold text-xs">' + msg + '</span>';
+      setTimeout(() => { el.innerHTML = orig; }, 1600);
+    }
+
+    function switchWelcomeListTab(btn, text) {
+      const parent = btn.parentElement;
+      Array.from(parent.children).forEach(c => {
+        c.className = 'py-2 rounded-lg text-slate-600 hover:text-slate-900 cursor-pointer';
+      });
+      btn.className = 'py-2 rounded-lg bg-white text-slate-900 shadow-2xs cursor-pointer';
+      const box = document.getElementById('welcomeListTabContent');
+      if (box) box.textContent = text;
+    }
+
+    function setSmartContext(btn, ctx) {
+      const parent = btn.parentElement;
+      Array.from(parent.children).forEach(c => {
+        c.className = 'py-1.5 rounded-lg text-slate-600 hover:text-slate-900 cursor-pointer';
+      });
+      btn.className = 'py-1.5 rounded-lg bg-white text-slate-900 shadow-2xs cursor-pointer';
+      const badge = document.getElementById('smartCtxBadge');
+      const title = document.getElementById('smartCtxTitle');
+      const sub = document.getElementById('smartCtxSub');
+      const t1 = document.getElementById('smartPrimaryTool');
+      const t2 = document.getElementById('smartSecondaryTool');
+      if (ctx === 'video') {
+        badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span><span>YouTube Stream Shield</span>';
+        title.textContent = '14 Video & Banner Ads Blocked';
+        sub.textContent = 'Auto-skipping pre-rolls · 180 MB RAM saved';
+        t1.textContent = 'Pause 5m (Fix Video)';
+        t2.textContent = 'Boost RAM (180 MB)';
+      } else if (ctx === 'shop') {
+        badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span><span>Verified Merchant Audit</span>';
+        title.textContent = 'Store Safety: Verified Authentic';
+        sub.textContent = 'SSL valid · Established domain · 3 cookie walls declined';
+        t1.textContent = 'Inspect Store Trust';
+        t2.textContent = 'Clean Tracking Links';
+      } else {
+        badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span><span>Quick Page Recovery</span>';
+        title.textContent = 'Page Layout or Video Not Loading?';
+        sub.textContent = 'Temporarily pause filtering for 5 minutes or zap an overlay';
+        t1.textContent = 'Pause 5m & Reload Now';
+        t2.textContent = 'Pick Element to Hide';
+      }
+    }
+  </script>
+</body>
+</html>

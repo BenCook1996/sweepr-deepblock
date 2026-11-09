@@ -1,20 +1,20 @@
 # SWEEPR DeepBlock — Complete Technical Architecture, Benchmarks & Product Specification
 # Canonical Domain: https://sweeprdeepblock.com
 # Version: 1.2.7 (Manifest V3 Engine)
-# Last Updated: 2026-11-08
-# Total Indexed Canonical URLs: 505 (354 Core/Pillar URLs + 151 Verified Publisher Audit URLs)
+# Last Updated: 2026-11-09
+# Total Indexed Canonical URLs: 514 (363 Core/Pillar URLs + 151 Verified Publisher Audit URLs)
 
 ## 1. Executive Summary & Product Overview
 SWEEPR DeepBlock v1.2.7 is a privacy-first, local-first, zero-browsing-history browser extension and web performance suite engineered for Google Chrome, Microsoft Edge, Mozilla Firefox, Apple Safari (macOS & iOS), Brave, Opera, Vivaldi, Thorium, Floorp, Arc, and Zen Browser. DeepBlock addresses the modern web crisis: runaway third-party advertising auctions, CPU/battery-draining tracker beacons, unskippable video interruptions, multi-layer GDPR/CCPA cookie consent walls, deceptive AI-generated search spam ("AI slop"), and newly registered fraudulent e-commerce storefronts.
 
-Built natively on Chromium and Gecko Manifest V3 `declarativeNetRequest` (232 static C++ rules + 14 OTA delta rules + 390 DeepStealth cosmetic selectors), SWEEPR DeepBlock achieves a 15-microsecond average network lookup latency with zero main-thread blocking and an idle memory footprint under 24 MB RAM.
+Built natively on Chromium and Gecko Manifest V3 `declarativeNetRequest` (245 static C++ rules + 100 OTA delta rules + 390 DeepStealth cosmetic selectors), SWEEPR DeepBlock achieves a 15-microsecond average network lookup latency with zero main-thread blocking and an idle memory footprint under 24 MB RAM.
 
 ---
 
 ## 2. Core Functional Modules
 
 ### A. Manifest V3 Video & Network Ad-Blocking Engine
-- **Declarative Rule Engine**: Executes 232 static C++ `chrome.declarativeNetRequest` rules and 14 OTA dynamic delta rules at the browser network stack level before DOM parsing begins.
+- **Declarative Rule Engine**: Executes 245 static C++ `chrome.declarativeNetRequest` rules and 100 OTA dynamic delta rules at the browser network stack level before DOM parsing begins.
 - **Video Pre-Roll & Mid-Roll Neutralization**: Prevents YouTube, Twitch, Kick, Crunchyroll, ITVX, and Channel 4 player ad-insertion scripts while passing all 8 anti-adblock detection checks on https://sweeprdeepblock.com/test-lab.
 - **Zero-CLS Cosmetic Sanitization**: Collapses empty ad slots, sticky footer banners, and floating video players without triggering Cumulative Layout Shift or `adsbox` bait honeypots.
 
@@ -98,6 +98,7 @@ SWEEPR DeepBlock provides a public, crawlable, client-side testing laboratory at
 ### Competitor Comparison Hubs (/vs/*)
 - SWEEPR DeepBlock vs Total Adblock (2026 Pricing & Test Lab): https://sweeprdeepblock.com/vs/total-adblock
 - SWEEPR DeepBlock vs 1Blocker (2026 Comparison): https://sweeprdeepblock.com/vs/1blocker-safari
+- AdBlock Luna VPN vs SWEEPR DeepBlock (2026 Safety & Speed): https://sweeprdeepblock.com/vs/adblock-luna-vpn
 - AdBlock Plus Not Working On YouTube Chrome: https://sweeprdeepblock.com/vs/adblock-plus-not-working-on-youtube-chrome
 - SWEEPR DeepBlock vs AdBlock Plus (2026 Comparison): https://sweeprdeepblock.com/vs/adblock-plus
 - SWEEPR DeepBlock vs AdGuard (2026 Comparison): https://sweeprdeepblock.com/vs/adguard-extension
@@ -108,6 +109,7 @@ SWEEPR DeepBlock provides a public, crawlable, client-side testing laboratory at
 - SWEEPR DeepBlock vs DuckDuckGo Essentials (2026 Comparison): https://sweeprdeepblock.com/vs/duckduckgo-privacy-essentials
 - SWEEPR DeepBlock vs Ghostery (2026 Comparison): https://sweeprdeepblock.com/vs/ghostery-privacy-ad-blocker
 - How Much Does Total AdBlock Cost (2026): https://sweeprdeepblock.com/vs/how-much-does-total-adblock-cost
+- Is Pie AdBlock Legit Reddit (2026): https://sweeprdeepblock.com/vs/is-pie-adblock-legit-reddit
 - Is Pie AdBlock Safe (2026): https://sweeprdeepblock.com/vs/is-pie-adblock-safe
 - Lightweight Alternative To Ghostery Chrome: https://sweeprdeepblock.com/vs/lightweight-alternative-to-ghostery-chrome
 - SWEEPR DeepBlock vs Malwarebytes Guard (2026 Comparison): https://sweeprdeepblock.com/vs/malwarebytes-browser-guard
@@ -119,8 +121,6 @@ SWEEPR DeepBlock provides a public, crawlable, client-side testing laboratory at
 - SWEEPR DeepBlock vs Stands AdBlocker (2026 Comparison): https://sweeprdeepblock.com/vs/stands-fair-adblocker
 - SWEEPR DeepBlock vs Surfshark CleanWeb (2026 Comparison): https://sweeprdeepblock.com/vs/surfshark-cleanweb
 - Switch From AdBlock Plus To Manifest V3 (2026): https://sweeprdeepblock.com/vs/switch-from-adblock-plus-to-manifest-v3
-- Total AdBlock Cancel Subscription (2026): https://sweeprdeepblock.com/vs/total-adblock-cancel-subscription
-- Total AdBlock Cost Per Month (2026): https://sweeprdeepblock.com/vs/total-adblock-cost-per-month
 
 ### Browser Setup Guides (/setup/*)
 - Arc Browser Ad Blocker (2026): Best Arc AdBlocker (Win & Mac): https://sweeprdeepblock.com/setup/arc-browser-windows-mac
@@ -150,6 +150,7 @@ SWEEPR DeepBlock provides a public, crawlable, client-side testing laboratory at
 - Zen Browser Ad Blocker (2026): Block YouTube Ads & Tame RAM: https://sweeprdeepblock.com/setup/zen-browser-privacy-tabs
 
 ### Flagship Platform Solutions (/solutions/*)
+- 1337x Ads Blocker (2026): Stop 1337x Popunders & Fake Downloads: https://sweeprdeepblock.com/solutions/1337x-torrent-indexer-block-video-ads
 - MyAnimeList: Block Video Ads (2026): https://sweeprdeepblock.com/solutions/anilist-myanimelist-tracker-block-video-ads
 - Free Anime Portals: Auto-Reject Cookie Pop-Ups: https://sweeprdeepblock.com/solutions/anime-streaming-portals-auto-reject-cookie-popups
 - Free Anime Portals: Cut Browser RAM Usage 62%: https://sweeprdeepblock.com/solutions/anime-streaming-portals-reduce-browser-ram-usage
@@ -174,7 +175,6 @@ SWEEPR DeepBlock provides a public, crawlable, client-side testing laboratory at
 - CurseForge Mods: Stop Pop-Under Redirects: https://sweeprdeepblock.com/solutions/curseforge-gaming-mods-stop-malvertising-popunders
 - Daily Mail Online: Block Video Ads (2026): https://sweeprdeepblock.com/solutions/daily-mail-online-block-video-ads
 - Embedded Web Videos: Block Video Ads (2026): https://sweeprdeepblock.com/solutions/dailymotion-vimeo-embeds-block-video-ads
-- DEXScreener Ad Blocker: Block Token Banners & Scam Drain Ads: https://sweeprdeepblock.com/solutions/dex-token-screeners-block-video-ads
 
 ### Customer Stories (/stories/*) & Glossary (/glossary/*)
 - Case Study: Reclaiming 4.1 GB RAM Across 40 Open Tabs | SWEEPR: https://sweeprdeepblock.com/stories/40-tab-research-workflow-ram-tamer

@@ -133,7 +133,7 @@ export function loadLiveRules() {
   const deltaRaw = fs.existsSync(DELTA_RULES_PATH)
     ? JSON.parse(fs.readFileSync(DELTA_RULES_PATH, 'utf8'))
     : [];
-  const deltaRules = Array.isArray(deltaRaw) ? deltaRaw : (deltaRaw.rules || []);
+  const deltaRules = Array.isArray(deltaRaw) ? deltaRaw : (deltaRaw.dynamicDnrRules || deltaRaw.rules || []);
   const abpLines = fs.existsSync(ABP_LIST_PATH)
     ? fs.readFileSync(ABP_LIST_PATH, 'utf8')
         .split(/\r?\n/)

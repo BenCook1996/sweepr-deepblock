@@ -63,8 +63,8 @@
   }
   </script>
   <script src="https://cdn.tailwindcss.com/3.4.5"></script>
-  <link rel="stylesheet" href="/style.css">
-  <script src="/nav.js" defer></script>
+  <link rel="stylesheet" href="/style.css?v=20261108">
+  <script src="/nav.js?v=20261108" defer></script>
   <script src="/i18n.js" defer></script>
   <!-- Google tag (gtag.js) - Sweepr Deepblock -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-01MNBQSL9K"></script>
@@ -184,7 +184,7 @@
         </div>
 
         <button type="submit" class="btn btn-go w-full justify-center font-bold" id="loginBtn">
-          <span id="loginBtnText">Continue</span>
+          <span id="loginBtnText">Send 6-Digit Login Code</span>
         </button>
       </form>
 
@@ -228,7 +228,7 @@
 
         <div class="flex flex-col gap-2.5 pt-2">
           <a href="/download?install=1" class="btn btn-go w-full justify-center text-xs font-bold">Install Browser Extension</a>
-          <button type="button" onclick="cancelInOneClick()" id="cancelBtn" class="btn bg-red-50 hover:bg-red-100 text-red-700 border-red-200 text-xs font-bold w-full justify-center">
+          <button type="button" onclick="cancelInOneClick()" id="cancelBtn" class="btn bg-white hover:bg-red-50 focus-visible:bg-red-50 text-slate-600 hover:text-red-700 focus-visible:text-red-700 border-slate-200 hover:border-red-300 focus-visible:border-red-300 text-xs font-bold w-full justify-center transition-colors">
             1-Click Cancel Auto-Renewal
           </button>
         </div>
@@ -307,7 +307,7 @@
       emailSection.classList.remove('hidden');
       otpSection.classList.add('hidden');
       resEl.classList.add('hidden');
-      loginBtnText.textContent = 'Continue';
+      loginBtnText.textContent = 'Send 6-Digit Login Code';
       loginBtn.disabled = false;
       showMessage('', false);
       emailInput.focus();
@@ -318,7 +318,7 @@
       emailSection.classList.add('hidden');
       otpSection.classList.remove('hidden');
       targetEmail.textContent = email;
-      loginBtnText.textContent = 'Verify Code';
+      loginBtnText.textContent = 'Verify & Open Portal';
       loginBtn.disabled = false;
       otpInput.value = '';
       otpInput.focus();
@@ -526,13 +526,13 @@
         } else {
           showMessage(data.error || 'No account found for this email address. Please sign up first or check your email.', 'error');
           loginBtn.disabled = false;
-          loginBtnText.textContent = 'Continue';
+          loginBtnText.textContent = 'Send 6-Digit Login Code';
           return false;
         }
       } catch {
         showMessage('Network error. Please try again.', 'error');
         loginBtn.disabled = false;
-        loginBtnText.textContent = 'Continue';
+        loginBtnText.textContent = 'Send 6-Digit Login Code';
         return false;
       }
     }
@@ -621,12 +621,12 @@
         } else {
           showMessage(data.error || 'Invalid or expired 6-digit login code.', 'error');
           loginBtn.disabled = false;
-          loginBtnText.textContent = 'Verify Code';
+          loginBtnText.textContent = 'Verify & Open Portal';
         }
       } catch {
         showMessage('Network error. Please try again.', 'error');
         loginBtn.disabled = false;
-        loginBtnText.textContent = 'Verify Code';
+        loginBtnText.textContent = 'Verify & Open Portal';
       }
     });
 

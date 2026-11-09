@@ -1,4 +1,4 @@
-// SWEEPR Deepblock — Full-Tab Dashboard & Options Controller (v1.3 UX Audited)
+// SWEEPR Deepblock — Full-Tab Dashboard & Options Controller (Option 1 Zero-Travel Ergonomics)
 const isDevExtension = typeof chrome !== 'undefined' && chrome.runtime && !('update_url' in chrome.runtime.getManifest());
 const WELCOME_VERIFY_ENDPOINTS = [
   'https://sweeprdeepblock.com/api/license-verify',
@@ -179,18 +179,20 @@ document.addEventListener('DOMContentLoaded', () => {
     tabBuyBtn.addEventListener('click', () => setActiveWelcomeTab('buy', false));
   }
 
-  if (pasteBtn && input) {
-    pasteBtn.addEventListener('click', async () => {
-      try {
-        const text = await navigator.clipboard.readText();
-        if (text && text.trim()) {
-          input.value = text.trim();
-          input.dispatchEvent(new Event('input'));
-          input.focus();
-        }
-      } catch (e) {
-        input.focus();
-      }
+  // 4-Tab Segmented Switcher for Saved Sessions, Paused Sites, Pinned Sites & Hidden Elements
+  const listTabsBar = document.getElementById('welcomeListTabsBar');
+  if (listTabsBar) {
+    listTabsBar.querySelectorAll('[data-list-tab]').forEach((tabBtn) => {
+      tabBtn.addEventListener('click', () => {
+        const target = tabBtn.getAttribute('data-list-tab');
+        listTabsBar.querySelectorAll('[data-list-tab]').forEach((b) => {
+          b.classList.toggle('active', b === tabBtn);
+        });
+        ['sessions', 'paused', 'pinned', 'hidden'].forEach((paneId) => {
+          const pane = document.getElementById(`listPane-${paneId}`);
+          if (pane) pane.classList.toggle('hidden', paneId !== target);
+        });
+      });
     });
   }
 
@@ -210,7 +212,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('[data-setting]').forEach((sw) => {
       const key = sw.getAttribute('data-setting');
       if (!proActive) {
-        sw.textContent = '🔒 PRO';
+        sw.textContent = 'PRO';
         sw.className = 'switch-btn pro-lock';
         return;
       }
@@ -225,12 +227,14 @@ document.addEventListener('DOMContentLoaded', () => {
     dashboardState.licenseKey = licenseKey || dashboardState.licenseKey || input.value.trim();
     if (settings) dashboardState.settings = settings;
     setActiveWelcomeTab('key', false);
-    if (inlineTrialBtn) inlineTrialBtn.style.display = 'none';
+    if (inlineTrialBtn && inlineTrialBtn.parentElement) {
+      inlineTrialBtn.parentElement.style.display = 'none';
+    }
     feedback.style.display = 'block';
     feedback.style.color = '#10b981';
     feedback.textContent =
-      '✓ Paid Pro Subscription Verified! All protection features are now active across your browser (up to 3 devices).';
-    btn.textContent = '✓ Activated';
+      '✓ Paid Pro Subscription Verified! All protection features are now active across your browser.';
+    btn.textContent = '✓ Pro Protection Active';
     btn.style.background = '#047857';
     if (badge) {
       badge.textContent = '✓ Pro Subscription Active — All Protection Modules Unlocked';
@@ -323,7 +327,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (neverSnoozeSites.length === 0) {
         const empty = document.createElement('div');
         empty.style.cssText = 'font-size:12.5px;color:var(--muted);';
-        empty.textContent = 'No sites pinned awake yet. Use "📌 Keep Site Awake" in the popup.';
+        empty.textContent = 'No sites pinned awake yet.';
         neverSnoozeList.appendChild(empty);
       } else {
         neverSnoozeSites.forEach((domain) => {
@@ -361,7 +365,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (zappedDomains.length === 0) {
         const empty = document.createElement('div');
         empty.style.cssText = 'font-size:12.5px;color:var(--muted);';
-        empty.textContent = 'No custom hidden elements yet. Right-click any page to hide distracting elements.';
+        empty.textContent = 'No custom hidden elements yet. Use Hide Element in the popup.';
         customZappedList.appendChild(empty);
       } else {
         zappedDomains.forEach((domain) => {
@@ -402,7 +406,6 @@ document.addEventListener('DOMContentLoaded', () => {
           }
           setActiveWelcomeTab('key', false);
         } else {
-          // Brand-new organic Web Store install with no license key or active web session: default to Tab B (Get Pro License)
           setActiveWelcomeTab('buy', false);
         }
         renderModuleSwitches(false, {});
@@ -422,44 +425,35 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Module toggle switches inside full-tab dashboard
-  document.querySelectorAll('[data-setting]').forEach((sw) => {
-    sw.addEventListener('click', () => {
-      if (!dashboardState.proActive) {
-        input.focus();
-        feedback.style.display = 'block';
-        feedback.style.color = '#f59e0b';
-        feedback.textContent = '🔒 Enter your Pro license key or 6-digit code above to unlock module controls.';
-        return;
+  // Whole-Row & Switch Module Toggles inside Full-Tab Dashboard
+  function triggerModuleSettingToggle(settingKey) {
+    if (!settingKey) return;
+    if (!dashboardState.proActive) {
+      setActiveWelcomeTab('key', true);
+      feedback.style.display = 'block';
+      feedback.style.color = '#d97706';
+      feedback.textContent = 'Enter your Pro license key or 6-digit code above to unlock module controls.';
+      return;
+    }
+    chrome.runtime.sendMessage({ type: 'TOGGLE_SETTING', settingKey }, (res) => {
+      if (res && res.ok) {
+        dashboardState.settings = res.settings;
+        renderModuleSwitches(true, dashboardState.settings);
       }
-      const settingKey = sw.getAttribute('data-setting');
-      chrome.runtime.sendMessage({ type: 'TOGGLE_SETTING', settingKey }, (res) => {
-        if (res && res.ok) {
-          dashboardState.settings = res.settings;
-          renderModuleSwitches(true, dashboardState.settings);
-        }
-      });
+    });
+  }
+
+  document.querySelectorAll('.module-row[data-row-setting]').forEach((row) => {
+    row.addEventListener('click', () => {
+      triggerModuleSettingToggle(row.getAttribute('data-row-setting'));
     });
   });
 
-  input.addEventListener('input', () => {
-    const raw = (input.value || '').trim();
-    chrome.storage.local.set({ draftLicenseKey: input.value });
-    if (feedback && !dashboardState.proActive) {
-      if (/^\d{6}$/.test(raw)) {
-        feedback.style.display = 'block';
-        feedback.style.color = '#059669';
-        feedback.textContent = '✓ Valid 6-digit activation code format — click Activate Pro Protection';
-      } else if (/^SWEEPR-DB-[A-Z0-9-]{4,}$/i.test(raw) || /^ptk_[a-zA-Z0-9_-]{6,}$/.test(raw)) {
-        feedback.style.display = 'block';
-        feedback.style.color = '#059669';
-        feedback.textContent = '✓ Valid SWEEPR Pro license key format — click Activate Pro Protection';
-      } else {
-        feedback.style.display = 'block';
-        feedback.style.color = '#94a3b8';
-        feedback.textContent = 'Found in your welcome email or Customer Portal.';
-      }
-    }
+  document.querySelectorAll('[data-setting]').forEach((sw) => {
+    sw.addEventListener('click', (e) => {
+      e.stopPropagation();
+      triggerModuleSettingToggle(sw.getAttribute('data-setting'));
+    });
   });
 
   async function handleActivate() {
@@ -491,7 +485,7 @@ document.addEventListener('DOMContentLoaded', () => {
           silentMode: true
         });
       } else {
-        btn.textContent = 'Activate Pro';
+        btn.textContent = 'Activate Pro Protection';
         feedback.style.display = 'block';
         feedback.style.color = '#ef4444';
         feedback.textContent =
@@ -500,6 +494,39 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
+
+  if (pasteBtn && input) {
+    pasteBtn.addEventListener('click', async () => {
+      try {
+        const text = await navigator.clipboard.readText();
+        if (text && text.trim()) {
+          input.value = text.trim();
+        }
+      } catch (e) {}
+      if ((input.value || '').trim()) {
+        handleActivate();
+      } else {
+        input.focus();
+      }
+    });
+  }
+
+  input.addEventListener('input', () => {
+    const raw = (input.value || '').trim();
+    chrome.storage.local.set({ draftLicenseKey: input.value });
+    if (!dashboardState.proActive) {
+      if (/^\d{6}$/.test(raw) || /^SWEEPR-DB-[A-Z0-9-]{4,}$/i.test(raw) || /^ptk_[a-zA-Z0-9_-]{6,}$/i.test(raw)) {
+        feedback.style.display = 'block';
+        feedback.style.color = '#059669';
+        feedback.textContent = 'Verifying code automatically...';
+        handleActivate();
+      } else if (feedback) {
+        feedback.style.display = 'block';
+        feedback.style.color = '#94a3b8';
+        feedback.textContent = 'Found in your welcome email or Customer Portal.';
+      }
+    }
+  });
 
   btn.addEventListener('click', handleActivate);
   input.addEventListener('keydown', (e) => {
