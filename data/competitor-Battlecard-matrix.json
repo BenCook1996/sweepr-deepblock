@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-09T14:46:01.804Z",
+  "generatedAt": "2026-11-10T15:16:00.476Z",
   "automation": "A6_Competitor_Review_Mining_And_Ad_Copy_Refresher",
   "version": "1.2.7",
   "pricingModel": {
@@ -14,8 +14,8 @@
     "Pie Adblock",
     "Ghostery"
   ],
-  "vsPagesAudited": 124,
-  "lowKdMatrixOpportunitiesSynced": 1,
+  "vsPagesAudited": 125,
+  "lowKdMatrixOpportunitiesSynced": 2,
   "vsCoverage": [
     {
       "page": "/vs/1blocker-safari",
@@ -295,7 +295,7 @@
       "mentionsRenewalPricing": true,
       "mentionsMv3Engine": true,
       "mentionsCookieRejector": true,
-      "mentionsScamDetector": false
+      "mentionsScamDetector": true
     },
     {
       "page": "/vs/clamav-web-filter",
@@ -439,6 +439,13 @@
     },
     {
       "page": "/vs/how-much-does-total-adblock-cost",
+      "mentionsRenewalPricing": true,
+      "mentionsMv3Engine": true,
+      "mentionsCookieRejector": true,
+      "mentionsScamDetector": false
+    },
+    {
+      "page": "/vs/is-pie-adblock-legit-reddit",
       "mentionsRenewalPricing": true,
       "mentionsMv3Engine": true,
       "mentionsCookieRejector": true,
@@ -743,7 +750,7 @@
       "mentionsRenewalPricing": true,
       "mentionsMv3Engine": true,
       "mentionsCookieRejector": true,
-      "mentionsScamDetector": true
+      "mentionsScamDetector": false
     },
     {
       "page": "/vs/total-adblock-android-apk",
@@ -757,7 +764,7 @@
       "mentionsRenewalPricing": true,
       "mentionsMv3Engine": true,
       "mentionsCookieRejector": true,
-      "mentionsScamDetector": true
+      "mentionsScamDetector": false
     },
     {
       "page": "/vs/total-adblock-cost-per-month",
@@ -799,7 +806,7 @@
       "mentionsRenewalPricing": true,
       "mentionsMv3Engine": true,
       "mentionsCookieRejector": true,
-      "mentionsScamDetector": true
+      "mentionsScamDetector": false
     },
     {
       "page": "/vs/total-adblock-windows-app",
@@ -841,7 +848,7 @@
       "mentionsRenewalPricing": true,
       "mentionsMv3Engine": true,
       "mentionsCookieRejector": true,
-      "mentionsScamDetector": false
+      "mentionsScamDetector": true
     },
     {
       "page": "/vs/ublock-origin-lite",
@@ -855,7 +862,7 @@
       "mentionsRenewalPricing": true,
       "mentionsMv3Engine": true,
       "mentionsCookieRejector": true,
-      "mentionsScamDetector": true
+      "mentionsScamDetector": false
     },
     {
       "page": "/vs/whoer-vpn-adblock",

@@ -1,61 +1,61 @@
 {
-  "generatedAt": "2026-11-09T07:12:29.075Z",
+  "generatedAt": "2026-11-10T19:46:27.728Z",
   "engineVersion": "2.0.0",
   "summary": {
-    "totalIndexablePagesChecked": 505,
-    "seedQueriesExpanded": 306,
-    "rawAutocompleteHarvested": 521,
+    "totalIndexablePagesChecked": 519,
+    "seedQueriesExpanded": 339,
+    "rawAutocompleteHarvested": 523,
     "junkDisqualifiedCount": 3,
-    "lowIntentRejectedCount": 447,
-    "intraBatchSynonymsMerged": 4,
-    "alreadyCoveredOrEnrichedCount": 24,
-    "approvedLowKdOpportunitiesCount": 1,
-    "ctrEnrichmentQueueCount": 7
+    "lowIntentRejectedCount": 459,
+    "intraBatchSynonymsMerged": 2,
+    "alreadyCoveredOrEnrichedCount": 27,
+    "approvedLowKdOpportunitiesCount": 2,
+    "ctrEnrichmentQueueCount": 10
   },
   "opportunities": [
     {
-      "id": "kw_vs_pieadblock_legit_reddit",
-      "keyword": "is pie adblock legit reddit",
+      "id": "kw_solutions_waterfox_adblock_mv3_extension",
+      "keyword": "waterfox adblock mv3 extension",
       "secondaryKeywords": [],
-      "tokenFingerprint": "legit|pieadblock|reddit",
-      "pillar": "P1_COMMERCIAL_SWITCHER",
-      "intentTier": "commercial_switcher",
-      "cluster": "vs",
-      "recommendedFormat": "competitor_comparison",
-      "targetRoute": "/vs/is-pie-adblock-legit-reddit",
-      "relPath": "vs/is-pie-adblock-legit-reddit.html",
+      "tokenFingerprint": "adblock|extension|mv3|waterfox",
+      "pillar": "P2_MV3_PLATFORM_BLOCKING",
+      "intentTier": "high_urgency_fix",
+      "cluster": "solutions",
+      "recommendedFormat": "platform_solution",
+      "targetRoute": "/solutions/waterfox-adblock-mv3-extension",
+      "relPath": "solutions/waterfox-adblock-mv3-extension.html",
       "isPublishedOnDisk": true,
       "status": "published",
       "metrics": {
-        "opportunityScore": 74.7,
-        "volumeScore": 47,
-        "lowCompetitionScore": 93,
-        "transactionalScore": 80,
-        "estimatedKD": 7,
-        "wordCount": 5
+        "opportunityScore": 82.1,
+        "volumeScore": 74,
+        "lowCompetitionScore": 85,
+        "transactionalScore": 72,
+        "estimatedKD": 15,
+        "wordCount": 4
       },
       "volumeBreakdown": {
-        "volumeScore": 47,
-        "slotAnchorScore": 25.5,
-        "engineConsensusScore": 8.6,
-        "modifierDepthScore": 13,
+        "volumeScore": 74,
+        "slotAnchorScore": 51.5,
+        "engineConsensusScore": 10.5,
+        "modifierDepthScore": 12,
         "enginesMatched": [
-          "bing",
-          "ddg"
+          "google",
+          "bing"
         ],
         "bestRankByEngine": {
-          "bing": 5,
-          "ddg": 5
+          "google": 2,
+          "bing": 3
         }
       },
       "serpCompetition": {
         "inspectionSource": "lexical_heuristic_fallback",
-        "lowCompetitionScore": 93,
-        "estimatedKD": 7,
+        "lowCompetitionScore": 85,
+        "estimatedKD": 15,
         "signals": {
-          "ugcPoints": 22,
-          "titleGapPoints": 14,
-          "freshnessGapPoints": 12,
+          "ugcPoints": 0,
+          "titleGapPoints": 22,
+          "freshnessGapPoints": 18,
           "longTailPoints": 15,
           "editorialWallPenalty": 0,
           "ugcMatchedUrls": [],
@@ -65,25 +65,25 @@
       },
       "cannibalization": {
         "status": "clean",
-        "closestExistingPage": "/vs/pie-adblock",
-        "maxCannibScore": 0.281,
-        "tokenOverlapRatio": 0.305,
-        "jaccardSimilarity": 0.25
+        "closestExistingPage": "/setup/waterfox-privacy-browser",
+        "maxCannibScore": 0.328,
+        "tokenOverlapRatio": 0.368,
+        "jaccardSimilarity": 0.143
       },
       "pageBlueprint": {
-        "title": "Is Pie AdBlock Legit Reddit (2026) | SWEEPR DeepBlock",
-        "h1": "Is Pie AdBlock Legit Reddit: Verified 2026 Manifest V3 Protection & Fix",
-        "metaDescription": "Is Pie AdBlock Legit Reddit compared in 2026: 8/8 Manifest V3 ad & tracker defense, <50ms cookie auto-rejection, and transparent £29.99/yr Pro pricing.",
-        "shortLinkTitle": "Is Pie AdBlock Legit Reddit",
-        "linkBadge": "VS • KD 7 • Score 74.7",
-        "painPointIssue": "Eliminating is pie adblock legit reddit with verified C++ declarativeNetRequest filtering, <50ms CMP auto-rejection, and local-first privacy protection",
+        "title": "Waterfox AdBlock MV3 Extension (2026) | SWEEPR DeepBlock",
+        "h1": "Waterfox AdBlock MV3 Extension: Verified 2026 Manifest V3 Protection & Fix",
+        "metaDescription": "Waterfox AdBlock MV3 Extension: pass all 8/8 Manifest V3 anti-detection checks in 2026 with C++ declarativeNetRequest filtering, zero video ads, and <50ms.",
+        "shortLinkTitle": "Waterfox AdBlock MV3 Extension",
+        "linkBadge": "SOLUTIONS • KD 15 • Score 82.1",
+        "painPointIssue": "Eliminating waterfox adblock mv3 extension with verified C++ declarativeNetRequest filtering, <50ms CMP auto-rejection, and local-first privacy protection",
         "beforeStat": "Unskippable Ads & Tracker Walls",
         "afterStat": "0 Video Ads • <50ms Auto-Reject",
         "perfStat": "15µs C++ DNR Match",
         "recommendedToolWidget": {
-          "toolRoute": "/tools/is-this-shop-a-scam",
-          "ctaHeadline": "Verify Any Online Store in 5 Seconds (14-Point Scam Audit)",
-          "ctaButton": "Open Free Scam Shop Detector →"
+          "toolRoute": "/tools/is-my-adblocker-working",
+          "ctaHeadline": "Test Your Current Browser Against 8 Live MV3 Ad & Tracker Vectors",
+          "ctaButton": "Run Free 8/8 MV3 Adblock Diagnostic →"
         },
         "primaryCta": {
           "href": "/order?plan=annual",
@@ -95,7 +95,7 @@
         },
         "customFaqs": [
           {
-            "q": "How does SWEEPR DeepBlock solve \"is pie adblock legit reddit\" in 2026?",
+            "q": "How does SWEEPR DeepBlock solve \"waterfox adblock mv3 extension\" in 2026?",
             "a": "SWEEPR DeepBlock v1.2.7 combines 242 C++ declarativeNetRequest network rules (15µs match latency) with local-first DOM & player sanitization, eliminating video ad interruptions, cookie walls, and tracker bloat without triggering anti-adblock modals."
           },
           {
@@ -103,8 +103,144 @@
             "a": "Yes. Every SWEEPR DeepBlock rule pack is compiled natively for Chromium Manifest V3 (Chrome, Edge, Brave, Thorium, Vivaldi, Opera, Arc) and Firefox WebExtensions with zero cloud browsing telemetry."
           },
           {
-            "q": "Does SWEEPR DeepBlock charge surprise Year-2 renewal price hikes like legacy ad blockers?",
-            "a": "Never. Unlike legacy ad blockers that lure users in with a £19 intro offer and auto-renew at £99–£120/yr, SWEEPR DeepBlock Pro is locked at a transparent £29.99/yr (£2.50/mo eq.) across 4 devices, backed by a 1-click cancellation toggle and a 14-day money-back guarantee."
+            "q": "Why do standard ad blockers fail or break page scrolling on modern sites?",
+            "a": "Legacy CSS-hiding extensions delete the visual overlay while leaving body{overflow:hidden} locked and consented tracker scripts active. SWEEPR DeepBlock executes the genuine \"Reject All\" CMP signal in under 50ms and restores clean scrolling automatically."
+          },
+          {
+            "q": "What is included in SWEEPR DeepBlock Pro vs the Complete Security Suite?",
+            "a": "SWEEPR DeepBlock Pro (£29.99/yr or £1.99 1st-Month Intro) unlocks all 6 browser protection modules across 4 devices. The Sweepr Complete Security Suite (£89.99/yr, save 45%) bundles DeepBlock Pro, Total Tab & RAM Tamer, Sweepr VPN Pro, and Sweepr Desktop Cleaner Pro across 5 devices."
+          }
+        ]
+      }
+    },
+    {
+      "id": "kw_solutions_youtube_ad_blocker_chrome",
+      "keyword": "youtube ads blocker chrome extension",
+      "secondaryKeywords": [],
+      "tokenFingerprint": "ad|blocker|chrome|extension|youtube",
+      "pillar": "P2_MV3_PLATFORM_BLOCKING",
+      "intentTier": "high_urgency_fix",
+      "cluster": "solutions",
+      "recommendedFormat": "platform_solution",
+      "targetRoute": "/solutions/youtube-ads-blocker-chrome-extension",
+      "relPath": "solutions/youtube-ads-blocker-chrome-extension.html",
+      "isPublishedOnDisk": true,
+      "status": "published",
+      "metrics": {
+        "opportunityScore": 72.6,
+        "volumeScore": 53,
+        "lowCompetitionScore": 90,
+        "transactionalScore": 72,
+        "estimatedKD": 10,
+        "wordCount": 5
+      },
+      "volumeBreakdown": {
+        "volumeScore": 53,
+        "slotAnchorScore": 29.9,
+        "engineConsensusScore": 9.1,
+        "modifierDepthScore": 14,
+        "enginesMatched": [
+          "bing",
+          "ddg"
+        ],
+        "bestRankByEngine": {
+          "bing": 4,
+          "ddg": 4
+        }
+      },
+      "serpCompetition": {
+        "inspectionSource": "bing_rss_live",
+        "lowCompetitionScore": 90,
+        "estimatedKD": 10,
+        "signals": {
+          "ugcPoints": 0,
+          "titleGapPoints": 25,
+          "freshnessGapPoints": 20,
+          "longTailPoints": 15,
+          "editorialWallPenalty": 0,
+          "ugcMatchedUrls": [],
+          "editorialDomainsFound": []
+        },
+        "top5Organic": [
+          {
+            "rank": 1,
+            "url": "https://www.youtube.com/",
+            "domain": "youtube.com",
+            "title": "YouTube",
+            "snippet": "Enjoy the videos and music you love, upload original content, and share it all with friends, family, and the world on YouTube."
+          },
+          {
+            "rank": 2,
+            "url": "https://www.youtube.com/youtube",
+            "domain": "youtube.com",
+            "title": "YouTube - YouTube",
+            "snippet": "Tanner from @SerpaDesign is taking over the YouTube channel to break down the art of aquascaping step by step. Watch as he transforms an empty glass fish tank into a living underwater ecosystem."
+          },
+          {
+            "rank": 3,
+            "url": "https://music.youtube.com/",
+            "domain": "music.youtube.com",
+            "title": "YouTube Music",
+            "snippet": "With the YouTube Music app, enjoy over 100 million songs at your fingertips, plus albums, playlists, remixes, music videos, live performances, covers, and hard-to-find music you can’t get..."
+          },
+          {
+            "rank": 4,
+            "url": "https://www.youtube.com/feed",
+            "domain": "youtube.com",
+            "title": "YouTube",
+            "snippet": "AboutPressCopyrightContact usCreatorsAdvertiseDevelopersTermsPrivacyPolicy &amp; SafetyHow YouTube worksTest new featuresNFL Sunday Ticket © 2026 Google LLC"
+          },
+          {
+            "rank": 5,
+            "url": "https://www.youtube.com/feed/homepage",
+            "domain": "youtube.com",
+            "title": "YouTube",
+            "snippet": "Videos you watch may be added to the TV's watch history and influence TV recommendations. To avoid this, cancel and sign in to YouTube on your computer."
+          }
+        ]
+      },
+      "cannibalization": {
+        "status": "clean",
+        "closestExistingPage": "/guides/how-to-block-youtube-ads-chrome-manifest-v3-2026",
+        "maxCannibScore": 0.42,
+        "tokenOverlapRatio": 0.474,
+        "jaccardSimilarity": 0.375
+      },
+      "pageBlueprint": {
+        "title": "YouTube Ads Blocker Chrome Extension (2026) | SWEEPR DeepBlock",
+        "h1": "YouTube Ads Blocker Chrome Extension: Verified 2026 Manifest V3 Protection & Fix",
+        "metaDescription": "YouTube Ads Blocker Chrome Extension: pass all 8/8 Manifest V3 anti-detection checks in 2026 with C++ declarativeNetRequest filtering, zero video ads, and.",
+        "shortLinkTitle": "YouTube Ads Blocker Chrome Extension",
+        "linkBadge": "SOLUTIONS • KD 10 • Score 72.6",
+        "painPointIssue": "Eliminating youtube ads blocker chrome extension with verified C++ declarativeNetRequest filtering, <50ms CMP auto-rejection, and local-first privacy protection",
+        "beforeStat": "Unskippable Ads & Tracker Walls",
+        "afterStat": "0 Video Ads • <50ms Auto-Reject",
+        "perfStat": "15µs C++ DNR Match",
+        "recommendedToolWidget": {
+          "toolRoute": "/tools/is-my-adblocker-working",
+          "ctaHeadline": "Test Your Current Browser Against 8 Live MV3 Ad & Tracker Vectors",
+          "ctaButton": "Run Free 8/8 MV3 Adblock Diagnostic →"
+        },
+        "primaryCta": {
+          "href": "/order?plan=annual",
+          "label": "Unlock SWEEPR DeepBlock Pro (£29.99/yr — Save 58%)"
+        },
+        "secondaryCta": {
+          "href": "/order?plan=suite_annual",
+          "label": "Bundle VPN + Cleaner + DeepBlock + RAM Tamer (£89.99/yr)"
+        },
+        "customFaqs": [
+          {
+            "q": "How does SWEEPR DeepBlock solve \"youtube ads blocker chrome extension\" in 2026?",
+            "a": "SWEEPR DeepBlock v1.2.7 combines 242 C++ declarativeNetRequest network rules (15µs match latency) with local-first DOM & player sanitization, eliminating video ad interruptions, cookie walls, and tracker bloat without triggering anti-adblock modals."
+          },
+          {
+            "q": "Does this work on Chrome, Edge, Brave, and Firefox Manifest V3?",
+            "a": "Yes. Every SWEEPR DeepBlock rule pack is compiled natively for Chromium Manifest V3 (Chrome, Edge, Brave, Thorium, Vivaldi, Opera, Arc) and Firefox WebExtensions with zero cloud browsing telemetry."
+          },
+          {
+            "q": "Why do standard ad blockers fail or break page scrolling on modern sites?",
+            "a": "Legacy CSS-hiding extensions delete the visual overlay while leaving body{overflow:hidden} locked and consented tracker scripts active. SWEEPR DeepBlock executes the genuine \"Reject All\" CMP signal in under 50ms and restores clean scrolling automatically."
           },
           {
             "q": "What is included in SWEEPR DeepBlock Pro vs the Complete Security Suite?",
@@ -120,7 +256,7 @@
       "secondaryKeywords": [],
       "targetExistingPage": "/guides/how-to-block-twitch-midroll-commercials-without-black-screen",
       "targetExistingTitle": "Blocking Mid-Roll Ads on Twitch &amp; YouTube Without Black Screen",
-      "cannibalizationScore": 0.615,
+      "cannibalizationScore": 0.613,
       "metrics": {
         "opportunityScore": 75,
         "volumeScore": 74,
@@ -138,7 +274,7 @@
       ],
       "targetExistingPage": "/vs/ublock-origin-lite",
       "targetExistingTitle": "SWEEPR DeepBlock vs uBlock Origin Lite (2026 Comparison)",
-      "cannibalizationScore": 0.591,
+      "cannibalizationScore": 0.593,
       "metrics": {
         "opportunityScore": 74.7,
         "volumeScore": 74,
@@ -150,11 +286,43 @@
       "recommendedAction": "ENRICH_EXISTING_PILLAR_FAQ_AND_CTR"
     },
     {
+      "keyword": "is pie adblock safe reddit",
+      "secondaryKeywords": [],
+      "targetExistingPage": "/vs/is-pie-adblock-safe",
+      "targetExistingTitle": "Is Pie AdBlock Safe (2026) | SWEEPR DeepBlock",
+      "cannibalizationScore": 0.62,
+      "metrics": {
+        "opportunityScore": 74.3,
+        "volumeScore": 67,
+        "lowCompetitionScore": 95,
+        "transactionalScore": 80,
+        "estimatedKD": 5,
+        "wordCount": 5
+      },
+      "recommendedAction": "ENRICH_EXISTING_PILLAR_FAQ_AND_CTR"
+    },
+    {
+      "keyword": "vivaldi high ram usage fix extension",
+      "secondaryKeywords": [],
+      "targetExistingPage": "/guides/how-to-fix-high-ram-usage-on-vivaldi-browser",
+      "targetExistingTitle": "Fix Vivaldi High RAM Usage | SWEEPR DeepBlock",
+      "cannibalizationScore": 0.67,
+      "metrics": {
+        "opportunityScore": 74,
+        "volumeScore": 74,
+        "lowCompetitionScore": 95,
+        "transactionalScore": 73,
+        "estimatedKD": 5,
+        "wordCount": 6
+      },
+      "recommendedAction": "ENRICH_EXISTING_PILLAR_FAQ_AND_CTR"
+    },
+    {
       "keyword": "ublock origin vs adblock best ad blocker",
       "secondaryKeywords": [],
       "targetExistingPage": "/vs/ublock-origin-vs-adguard",
       "targetExistingTitle": "uBlock Origin Vs AdGuard (2026) | SWEEPR DeepBlock",
-      "cannibalizationScore": 0.613,
+      "cannibalizationScore": 0.616,
       "metrics": {
         "opportunityScore": 72.9,
         "volumeScore": 67,
@@ -166,20 +334,18 @@
       "recommendedAction": "ENRICH_EXISTING_PILLAR_FAQ_AND_CTR"
     },
     {
-      "keyword": "block youtube ads chrome extension",
-      "secondaryKeywords": [
-        "chrome extension to block youtube ads"
-      ],
+      "keyword": "chrome extension to block youtube ads",
+      "secondaryKeywords": [],
       "targetExistingPage": "/guides/how-to-block-youtube-ads-chrome-manifest-v3-2026",
       "targetExistingTitle": "Block YouTube Ads Chrome MV3 (2026) | SWEEPR DeepBlock",
-      "cannibalizationScore": 0.569,
+      "cannibalizationScore": 0.568,
       "metrics": {
-        "opportunityScore": 65,
-        "volumeScore": 56,
-        "lowCompetitionScore": 100,
+        "opportunityScore": 60.3,
+        "volumeScore": 52,
+        "lowCompetitionScore": 90,
         "transactionalScore": 72,
-        "estimatedKD": 1,
-        "wordCount": 5
+        "estimatedKD": 10,
+        "wordCount": 6
       },
       "recommendedAction": "ENRICH_EXISTING_PILLAR_FAQ_AND_CTR"
     },
@@ -188,7 +354,7 @@
       "secondaryKeywords": [],
       "targetExistingPage": "/guides/best-manifest-v3-adblockers-for-google-chrome-2026",
       "targetExistingTitle": "Best Manifest V3 Adblockers 2026 | SWEEPR DeepBlock",
-      "cannibalizationScore": 0.618,
+      "cannibalizationScore": 0.616,
       "metrics": {
         "opportunityScore": 55.3,
         "volumeScore": 67,
@@ -204,7 +370,7 @@
       "secondaryKeywords": [],
       "targetExistingPage": "/vs/adguard-vs-ublock-origin-lite-chrome-2026",
       "targetExistingTitle": "AdGuard Vs uBlock Origin Lite Chrome 2026 | SWEEPR DeepBlock",
-      "cannibalizationScore": 0.827,
+      "cannibalizationScore": 0.828,
       "metrics": {
         "opportunityScore": 0,
         "volumeScore": 73,
@@ -220,7 +386,7 @@
       "secondaryKeywords": [],
       "targetExistingPage": "/vs/ublock-origin-vs-adguard",
       "targetExistingTitle": "uBlock Origin Vs AdGuard (2026) | SWEEPR DeepBlock",
-      "cannibalizationScore": 0.701,
+      "cannibalizationScore": 0.703,
       "metrics": {
         "opportunityScore": 0,
         "volumeScore": 52,
@@ -228,6 +394,22 @@
         "transactionalScore": 100,
         "estimatedKD": 21,
         "wordCount": 5
+      },
+      "recommendedAction": "ENRICH_EXISTING_PILLAR_FAQ_AND_CTR"
+    },
+    {
+      "keyword": "is pie adblock legit",
+      "secondaryKeywords": [],
+      "targetExistingPage": "/vs/is-pie-adblock-legit-reddit",
+      "targetExistingTitle": "Is Pie AdBlock Legit Reddit (2026) | SWEEPR DeepBlock",
+      "cannibalizationScore": 0.753,
+      "metrics": {
+        "opportunityScore": 0,
+        "volumeScore": 65,
+        "lowCompetitionScore": 79,
+        "transactionalScore": 80,
+        "estimatedKD": 21,
+        "wordCount": 4
       },
       "recommendedAction": "ENRICH_EXISTING_PILLAR_FAQ_AND_CTR"
     }

@@ -1,4 +1,6 @@
 {
+  "cooldownDays": 14,
+  "lastRunAt": "2026-11-10T19:46:12.484Z",
   "titleUpdatedAt": {
     "/setup/thorium-chromium-browser": "2026-11-03T20:45:00.000Z",
     "/setup/orion-browser-macos-ios": "2026-11-03T20:45:00.000Z",
@@ -280,61 +282,6 @@
       "source": "gcp_service_account"
     }
   ],
-  "ga4FunnelHistory": [
-    {
-      "date": "2026-11-03",
-      "activeUsers28d": 97,
-      "sessions28d": 118,
-      "engagementRate": "37.29%",
-      "mobileEngagementSec": 1,
-      "extensionInstallsStarted": 14,
-      "testLabRuns": 0,
-      "beginCheckout": 0,
-      "orderPaymentErrors": 0,
-      "purchases": 0,
-      "note": "Baseline before first-party /metrics GA4 proxy, GSC link, Key Events, mobile hero tailoring & order draft redirect trap removal"
-    },
-    {
-      "date": "2026-11-04",
-      "activeUsers28d": 104,
-      "sessions28d": 126,
-      "engagementRate": "41.2%",
-      "mobileEngagementSec": 12,
-      "extensionInstallsStarted": 18,
-      "testLabRuns": 4,
-      "beginCheckout": 1,
-      "orderPaymentErrors": 0,
-      "purchases": 0,
-      "note": "First-party /metrics proxy active, verified zero self-blocking on rules 43/44, order draft trap cleared"
-    },
-    {
-      "date": "2026-11-05",
-      "activeUsers28d": 112,
-      "sessions28d": 139,
-      "engagementRate": "44.8%",
-      "mobileEngagementSec": 15,
-      "extensionInstallsStarted": 22,
-      "testLabRuns": 6,
-      "beginCheckout": 2,
-      "orderPaymentErrors": 0,
-      "purchases": 0,
-      "note": "First-party /metrics proxy 100% active; rules 6/43/44 self-blocking verified excluded; zero cartesian bloat"
-    },
-    {
-      "date": "2026-11-10",
-      "activeUsers28d": 121,
-      "sessions28d": 147,
-      "engagementRate": 33.33,
-      "extensionInstallsStarted": 2,
-      "testLabRuns": 0,
-      "beginCheckout": 2,
-      "orderPaymentErrors": 0,
-      "purchases": 0,
-      "source": "gcp_service_account"
-    }
-  ],
-  "cooldownDays": 14,
-  "lastRunAt": "2026-11-10T00:14:32.641Z",
   "proofUpdatedAt": {
     "/setup/arc-browser-windows-mac": "2026-11-05T00:24:02.868Z",
     "/setup/brave-browser-deepstealth": "2026-11-05T00:24:02.868Z",
@@ -565,7 +512,7 @@
     "/guides/how-to-block-twitch-embedded-stream-takeovers-fandom": "2026-11-05T00:24:02.868Z",
     "/guides/how-to-block-twitch-midroll-commercials-without-black-screen": "2026-11-05T00:24:02.868Z",
     "/guides/how-to-block-unskippable-audio-ads-on-spotify-web": "2026-11-05T00:24:02.868Z",
-    "/guides/how-to-block-youtube-ads-chrome-manifest-v3-2026": "2026-11-09T07:32:57.833Z",
+    "/guides/how-to-block-youtube-ads-chrome-manifest-v3-2026": "2026-11-10T19:46:12.484Z",
     "/guides/how-to-bypass-anti-adblock-inspect-element-blockers-news": "2026-11-05T00:24:02.868Z",
     "/guides/how-to-bypass-anti-adblock-inspect-element-blockers": "2026-11-05T00:24:02.868Z",
     "/guides/how-to-detect-ai-generated-scam-reviews-amazon": "2026-11-05T00:24:02.868Z",
@@ -582,7 +529,7 @@
     "/guides/how-to-fix-high-ram-usage-on-snapdragon-x-elite-chrome": "2026-11-05T00:24:02.868Z",
     "/guides/how-to-fix-high-ram-usage-on-snapdragon-x-plus-laptops": "2026-11-05T00:24:02.868Z",
     "/guides/how-to-fix-high-ram-usage-on-steam-deck-desktop": "2026-11-05T00:24:02.868Z",
-    "/guides/how-to-fix-high-ram-usage-on-vivaldi-browser": "2026-11-05T00:24:02.868Z",
+    "/guides/how-to-fix-high-ram-usage-on-vivaldi-browser": "2026-11-10T19:46:12.484Z",
     "/guides/how-to-fix-slow-chrome-high-memory-usage": "2026-11-05T00:24:02.868Z",
     "/guides/how-to-fix-twitch-network-error-2000-adblock": "2026-11-05T00:24:02.868Z",
     "/guides/how-to-fix-twitch-purple-screen-adblock-2026": "2026-11-05T00:24:02.868Z",
@@ -631,7 +578,7 @@
     "/vs/adguard-vs-ublock-origin-lite-chrome-2026": "2026-11-05T06:34:14.290Z",
     "/vs/chrome-manifest-v3-adblock-plus": "2026-11-05T00:24:02.868Z",
     "/vs/how-much-does-total-adblock-cost": "2026-11-05T00:24:02.868Z",
-    "/vs/is-pie-adblock-safe": "2026-11-05T00:24:02.868Z",
+    "/vs/is-pie-adblock-safe": "2026-11-10T19:46:12.484Z",
     "/vs/lightweight-alternative-to-ghostery-chrome": "2026-11-05T00:24:02.868Z",
     "/vs/pie-adblock-is-a-scam": "2026-11-05T00:24:02.868Z",
     "/vs/pie-adblock-safe-or-scam-alternative": "2026-11-05T00:24:02.868Z",
@@ -649,13 +596,15 @@
     "/solutions/strava-fitness-activity-stop-malvertising-popunders": "2026-11-09T18:52:04.569Z",
     "/solutions/wattpad-web-novels-stop-malvertising-popunders": "2026-11-09T18:52:04.569Z",
     "/vs/adblock-luna-vpn": "2026-11-09T18:52:04.569Z",
-    "/vs/is-pie-adblock-legit-reddit": "2026-11-09T18:55:12.665Z",
+    "/vs/is-pie-adblock-legit-reddit": "2026-11-10T19:46:12.484Z",
     "/solutions/nexus-mods-community-auto-reject-cookie-popups": "2026-11-10T00:14:32.641Z",
     "/solutions/soundgasm-audio-streaming-auto-reject-cookie-popups": "2026-11-10T00:14:32.641Z",
     "/solutions/twitch-live-streams-encrypted-dns-doh-protection": "2026-11-10T00:14:32.641Z",
     "/solutions/twitch-live-streams-stop-notification-permission-spam": "2026-11-10T00:14:32.641Z",
     "/solutions/x-twitter-feed-ads-bypass-anti-adblock-walls": "2026-11-10T00:14:32.641Z",
-    "/solutions/x-twitter-feed-ads-encrypted-dns-doh-protection": "2026-11-10T00:14:32.641Z"
+    "/solutions/x-twitter-feed-ads-encrypted-dns-doh-protection": "2026-11-10T00:14:32.641Z",
+    "/solutions/waterfox-adblock-mv3-extension": "2026-11-10T19:46:12.484Z",
+    "/solutions/youtube-ads-blocker-chrome-extension": "2026-11-10T19:46:12.484Z"
   },
   "contentHashes": {
     "/setup/arc-browser-windows-mac": "da77e780adaf6967",
@@ -887,7 +836,7 @@
     "/guides/how-to-block-twitch-embedded-stream-takeovers-fandom": "9043d334838f641b",
     "/guides/how-to-block-twitch-midroll-commercials-without-black-screen": "8fd75f10860172e1",
     "/guides/how-to-block-unskippable-audio-ads-on-spotify-web": "0b7d3f261c25400a",
-    "/guides/how-to-block-youtube-ads-chrome-manifest-v3-2026": "28626b76bd3fbeb3",
+    "/guides/how-to-block-youtube-ads-chrome-manifest-v3-2026": "088a1eec4edc7ef5",
     "/guides/how-to-bypass-anti-adblock-inspect-element-blockers-news": "e05c5644b896726e",
     "/guides/how-to-bypass-anti-adblock-inspect-element-blockers": "21f704dc39a360b2",
     "/guides/how-to-detect-ai-generated-scam-reviews-amazon": "2bf46b973cd8580d",
@@ -904,7 +853,7 @@
     "/guides/how-to-fix-high-ram-usage-on-snapdragon-x-elite-chrome": "bf000b9f7bb82858",
     "/guides/how-to-fix-high-ram-usage-on-snapdragon-x-plus-laptops": "3d1e53486d8b7f8b",
     "/guides/how-to-fix-high-ram-usage-on-steam-deck-desktop": "0111198af1cd613b",
-    "/guides/how-to-fix-high-ram-usage-on-vivaldi-browser": "3a0ed703a106cf71",
+    "/guides/how-to-fix-high-ram-usage-on-vivaldi-browser": "0a8da38416948954",
     "/guides/how-to-fix-slow-chrome-high-memory-usage": "08257fc6522bc0a7",
     "/guides/how-to-fix-twitch-network-error-2000-adblock": "290e7135eda324d6",
     "/guides/how-to-fix-twitch-purple-screen-adblock-2026": "847465a45e1edacc",
@@ -953,7 +902,7 @@
     "/vs/adguard-vs-ublock-origin-lite-chrome-2026": "61ee8aed276bde56",
     "/vs/chrome-manifest-v3-adblock-plus": "b7e3708cf9516332",
     "/vs/how-much-does-total-adblock-cost": "8eaf67646b9bca20",
-    "/vs/is-pie-adblock-safe": "5d9bdaa851c378a1",
+    "/vs/is-pie-adblock-safe": "17330e4862f49d8f",
     "/vs/lightweight-alternative-to-ghostery-chrome": "185c6a1df54f6117",
     "/vs/pie-adblock-is-a-scam": "510bcb319ffb8d3a",
     "/vs/pie-adblock-safe-or-scam-alternative": "5fdbddd1fa8cdf5e",
@@ -971,12 +920,67 @@
     "/solutions/strava-fitness-activity-stop-malvertising-popunders": "702c11037206bf35",
     "/solutions/wattpad-web-novels-stop-malvertising-popunders": "1e4dcf2bbf00729b",
     "/vs/adblock-luna-vpn": "0535293d771ae862",
-    "/vs/is-pie-adblock-legit-reddit": "3b1d8bd105ed745b",
+    "/vs/is-pie-adblock-legit-reddit": "08323ace6f1648e0",
     "/solutions/nexus-mods-community-auto-reject-cookie-popups": "3cf18d0430e5672c",
     "/solutions/soundgasm-audio-streaming-auto-reject-cookie-popups": "60b9f1a6f4534c46",
     "/solutions/twitch-live-streams-encrypted-dns-doh-protection": "24569818566ec791",
     "/solutions/twitch-live-streams-stop-notification-permission-spam": "dc0eca3c9be0ab89",
     "/solutions/x-twitter-feed-ads-bypass-anti-adblock-walls": "e91d8e6e575e6f28",
-    "/solutions/x-twitter-feed-ads-encrypted-dns-doh-protection": "bdf9e67ee13d5737"
-  }
+    "/solutions/x-twitter-feed-ads-encrypted-dns-doh-protection": "bdf9e67ee13d5737",
+    "/solutions/waterfox-adblock-mv3-extension": "7693afa21a7fe5fe",
+    "/solutions/youtube-ads-blocker-chrome-extension": "e9048c4170a3724a"
+  },
+  "ga4FunnelHistory": [
+    {
+      "date": "2026-11-03",
+      "activeUsers28d": 97,
+      "sessions28d": 118,
+      "engagementRate": "37.29%",
+      "mobileEngagementSec": 1,
+      "extensionInstallsStarted": 14,
+      "testLabRuns": 0,
+      "beginCheckout": 0,
+      "orderPaymentErrors": 0,
+      "purchases": 0,
+      "note": "Baseline before first-party /metrics GA4 proxy, GSC link, Key Events, mobile hero tailoring & order draft redirect trap removal"
+    },
+    {
+      "date": "2026-11-04",
+      "activeUsers28d": 104,
+      "sessions28d": 126,
+      "engagementRate": "41.2%",
+      "mobileEngagementSec": 12,
+      "extensionInstallsStarted": 18,
+      "testLabRuns": 4,
+      "beginCheckout": 1,
+      "orderPaymentErrors": 0,
+      "purchases": 0,
+      "note": "First-party /metrics proxy active, verified zero self-blocking on rules 43/44, order draft trap cleared"
+    },
+    {
+      "date": "2026-11-05",
+      "activeUsers28d": 112,
+      "sessions28d": 139,
+      "engagementRate": "44.8%",
+      "mobileEngagementSec": 15,
+      "extensionInstallsStarted": 22,
+      "testLabRuns": 6,
+      "beginCheckout": 2,
+      "orderPaymentErrors": 0,
+      "purchases": 0,
+      "note": "First-party /metrics proxy 100% active; rules 6/43/44 self-blocking verified excluded; zero cartesian bloat"
+    },
+    {
+      "date": "2026-11-10",
+      "activeUsers28d": 121,
+      "sessions28d": 147,
+      "engagementRate": 33.33,
+      "extensionInstallsStarted": 2,
+      "testLabRuns": 0,
+      "beginCheckout": 2,
+      "orderPaymentErrors": 0,
+      "purchases": 0,
+      "source": "gcp_service_account"
+    }
+  ]
 }

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-09T21:16:02.820Z",
+  "generatedAt": "2026-11-10T16:46:02.522Z",
   "currentStage": "Stage 1 (£10.00/day)",
   "recommendedDailyBudgetGbp": 25,
   "stageGate": {
@@ -8,7 +8,7 @@
     "unlockStage2AtDailyGbp": 19,
     "unlockStage3AtDailyGbp": 42
   },
-  "recommendedAction": "UNLOCK_STAGE_2_REINVESTMENT (£25.00/day — Top CPAU Winner: MS_AG3_LowKD_Matrix_Switchers at £14.3 CPAU)",
+  "recommendedAction": "UNLOCK_STAGE_2_REINVESTMENT (£25.00/day — Top CPAU Winner: MS_AG1_Competitor_Switchers at £14.96 CPAU)",
   "metrics": {
     "dailySpendGbp": 10,
     "blendedCacGbp": 15.6,
@@ -47,19 +47,6 @@
   "cpauAdGroupRanking": [
     {
       "rank": 1,
-      "adGroupId": "MS_AG3_LowKD_Matrix_Switchers",
-      "channel": "Microsoft Ads (Low-KD Matrix Exact)",
-      "currentDailySpendGbp": 1.25,
-      "cacGbp": 12.9,
-      "permissionActivationRatePct": 90.2,
-      "targetLandingPage": "/vs/is-pie-adblock-legit-reddit",
-      "cpauGbp": 14.3,
-      "efficiencyScore": 6.993,
-      "recommendedBudgetSharePct": 19.4,
-      "recommendedStage2DailyGbp": 4.17
-    },
-    {
-      "rank": 2,
       "adGroupId": "MS_AG1_Competitor_Switchers",
       "channel": "Microsoft Ads (Exact Search)",
       "currentDailySpendGbp": 1.5,
@@ -68,11 +55,11 @@
       "targetLandingPage": "/vs/total-adblock-cancel-subscription",
       "cpauGbp": 14.96,
       "efficiencyScore": 6.6845,
-      "recommendedBudgetSharePct": 18.5,
-      "recommendedStage2DailyGbp": 3.98
+      "recommendedBudgetSharePct": 23,
+      "recommendedStage2DailyGbp": 4.94
     },
     {
-      "rank": 3,
+      "rank": 2,
       "adGroupId": "RD_AG3_Renewal_Shock_Switchers",
       "channel": "Reddit Ads (Competitor Switchers)",
       "currentDailySpendGbp": 2,
@@ -81,11 +68,11 @@
       "targetLandingPage": "/campaigns/renewal-shock-switcher",
       "cpauGbp": 16.06,
       "efficiencyScore": 6.2267,
-      "recommendedBudgetSharePct": 17.3,
-      "recommendedStage2DailyGbp": 3.71
+      "recommendedBudgetSharePct": 21.4,
+      "recommendedStage2DailyGbp": 4.6
     },
     {
-      "rank": 4,
+      "rank": 3,
       "adGroupId": "MS_AG2_MV3_Privacy_Blocking",
       "channel": "Microsoft Ads (Exact Search)",
       "currentDailySpendGbp": 1,
@@ -94,11 +81,11 @@
       "targetLandingPage": "/vs/ublock-origin-alternative-for-chrome",
       "cpauGbp": 16.97,
       "efficiencyScore": 5.8928,
-      "recommendedBudgetSharePct": 16.3,
-      "recommendedStage2DailyGbp": 3.51
+      "recommendedBudgetSharePct": 20.3,
+      "recommendedStage2DailyGbp": 4.36
     },
     {
-      "rank": 5,
+      "rank": 4,
       "adGroupId": "RD_AG1_MV3_Benchmark_Tech",
       "channel": "Reddit Ads (UK Privacy & Browsers)",
       "currentDailySpendGbp": 3,
@@ -107,11 +94,11 @@
       "targetLandingPage": "/tools/is-my-adblocker-working",
       "cpauGbp": 18.62,
       "efficiencyScore": 5.3706,
-      "recommendedBudgetSharePct": 14.9,
-      "recommendedStage2DailyGbp": 3.2
+      "recommendedBudgetSharePct": 18.5,
+      "recommendedStage2DailyGbp": 3.97
     },
     {
-      "rank": 6,
+      "rank": 5,
       "adGroupId": "RD_AG2_UK_News_Cookie_Walls",
       "channel": "Reddit Ads (UK News & Casual)",
       "currentDailySpendGbp": 2.5,
@@ -120,8 +107,8 @@
       "targetLandingPage": "/campaigns/uk-ad-load-index",
       "cpauGbp": 20.34,
       "efficiencyScore": 4.9164,
-      "recommendedBudgetSharePct": 13.6,
-      "recommendedStage2DailyGbp": 2.93
+      "recommendedBudgetSharePct": 16.9,
+      "recommendedStage2DailyGbp": 3.63
     }
   ],
   "retargetingAudiencesConfigured": [

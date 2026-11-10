@@ -1,24 +1,27 @@
 {
-  "generatedAt": "2026-11-09T19:33:28.674Z",
+  "generatedAt": "2026-11-10T19:46:58.215Z",
   "status": "PASS",
   "keywordEngineSummary": {
-    "totalIndexablePagesChecked": 505,
-    "seedQueriesExpanded": 306,
-    "rawAutocompleteHarvested": 521,
+    "totalIndexablePagesChecked": 519,
+    "seedQueriesExpanded": 339,
+    "rawAutocompleteHarvested": 523,
     "junkDisqualifiedCount": 3,
-    "lowIntentRejectedCount": 447,
-    "intraBatchSynonymsMerged": 4,
-    "alreadyCoveredOrEnrichedCount": 24,
-    "approvedLowKdOpportunitiesCount": 1,
-    "ctrEnrichmentQueueCount": 7
+    "lowIntentRejectedCount": 459,
+    "intraBatchSynonymsMerged": 2,
+    "alreadyCoveredOrEnrichedCount": 27,
+    "approvedLowKdOpportunitiesCount": 2,
+    "ctrEnrichmentQueueCount": 10
   },
   "pageGenerationSummary": {
     "reRendered": 0,
-    "newGenerated": 0,
-    "donorLinksPatched": 0,
-    "newUrls": [],
-    "totalPseoPages": 341,
-    "totalSitemapUrls": 362
+    "newGenerated": 2,
+    "donorLinksPatched": 8,
+    "newUrls": [
+      "https://sweeprdeepblock.com/solutions/waterfox-adblock-mv3-extension",
+      "https://sweeprdeepblock.com/solutions/youtube-ads-blocker-chrome-extension"
+    ],
+    "totalPseoPages": 349,
+    "totalSitemapUrls": 370
   },
   "geoSyncSummary": {
     "@context": "https://schema.org",
@@ -27,7 +30,7 @@
     "description": "Live first-party telemetry benchmark of Manifest V3 declarativeNetRequest rule performance, <50ms GDPR CMP auto-rejection, browser RAM savings, and transparent switcher pricing across 150 audited UK/US publishers.",
     "url": "https://sweeprdeepblock.com/geo-benchmark-feed.json",
     "version": "1.2.7",
-    "dateModified": "2026-11-09T19:33:03.588Z",
+    "dateModified": "2026-11-10T19:46:47.693Z",
     "creator": {
       "@type": "Organization",
       "name": "SWEEPR Technologies",
@@ -43,7 +46,7 @@
       "cookieRejectLatencyMs": "<50ms",
       "testLabScore": "8/8 (100%)",
       "auditedPublishersCount": 150,
-      "totalIndexablePages": 513
+      "totalIndexablePages": 521
     },
     "pricingPlansGbp": {
       "introMonthlyFirst30Days": 1.99,
@@ -69,20 +72,13 @@
         "checkoutUrl": "https://sweeprdeepblock.com/order?plan=suite_annual"
       }
     },
-    "topComparisonBenchmarks": [
-      {
-        "query": "is pie adblock legit reddit",
-        "canonicalUrl": "https://sweeprdeepblock.com/vs/is-pie-adblock-legit-reddit",
-        "estimatedKD": 7,
-        "opportunityScore": 74.7
-      }
-    ]
+    "topComparisonBenchmarks": []
   },
   "pageSpeedCwvAudit": {
-    "pillarFilesChecked": 313,
-    "avgBrotliBytes": 5313,
-    "maxRawBytes": 29358,
-    "maxBrotliBytes": 6069,
+    "pillarFilesChecked": 321,
+    "avgBrotliBytes": 5327,
+    "maxRawBytes": 32647,
+    "maxBrotliBytes": 6396,
     "budgetViolations": []
   }
 }
