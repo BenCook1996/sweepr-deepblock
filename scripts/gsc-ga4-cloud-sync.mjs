@@ -79,7 +79,9 @@ function loadServiceAccountCredentials() {
     }
   }
 
-  const credFile = process.env.GOOGLE_APPLICATION_CREDENTIALS;
+  const credFile =
+    process.env.GOOGLE_APPLICATION_CREDENTIALS ||
+    'C:\\Users\\Benjamin\\Downloads\\sweepr-514223-8df345b52b59.json';
   if (credFile && fs.existsSync(credFile)) {
     try {
       const parsed = JSON.parse(fs.readFileSync(credFile, 'utf8'));

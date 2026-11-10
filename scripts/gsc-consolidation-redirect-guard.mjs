@@ -111,8 +111,12 @@ function main() {
   let allHtmlFiles = walkHtml(WEBSITE_DIR);
   const syncCheck = checkNeedsConsolidationSync(allHtmlFiles);
   if (syncCheck.needed) {
-    console.log(`[GSC-GUARD] 1/4 Drift detected (${syncCheck.reason}); running consolidate-and-optimize-gsc.mjs...`);
+    console.log(`[GSC-GUARD] 1/4 Drift detected (${syncCheck.reason}); running consolidate-and-optimize-gsc.mjs & gsc-strike-zone-optimizer.mjs...`);
     execFileSync(process.execPath, [path.join(__dirname, 'consolidate-and-optimize-gsc.mjs')], {
+      cwd: ROOT_DIR,
+      stdio: 'inherit'
+    });
+    execFileSync(process.execPath, [path.join(__dirname, 'gsc-strike-zone-optimizer.mjs')], {
       cwd: ROOT_DIR,
       stdio: 'inherit'
     });
