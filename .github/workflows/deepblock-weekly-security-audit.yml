@@ -22,5 +22,5 @@ jobs:
 
       - name: Verify Server Syntax, Technical SEO & MV3 Manifest Security
         run: |
-          node --check website/server.mjs
+          node --check server.js
           node scripts/technical-seo-audit.mjs
