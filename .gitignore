@@ -5,3 +5,9 @@ node_modules/
 *.db-shm
 *.db-wal
 *.sqlite*
+
+# Google Cloud Service Account keys
+.gcp-service-account.json
+*.service-account.json
+sweepr-*.json
+

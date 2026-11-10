@@ -1,6 +1,4 @@
 {
-  "cooldownDays": 14,
-  "lastRunAt": "2026-11-10T00:14:32.641Z",
   "titleUpdatedAt": {
     "/setup/thorium-chromium-browser": "2026-11-03T20:45:00.000Z",
     "/setup/orion-browser-macos-ios": "2026-11-03T20:45:00.000Z",
@@ -192,7 +190,13 @@
     "/vs/adblock-plus",
     "/vs/avast-secure-browser-guard",
     "/vs/total-adblock",
-    "/vs/windscribe-robert-adblock"
+    "/vs/windscribe-robert-adblock",
+    "/",
+    "/download",
+    "/pricing",
+    "/refund",
+    "/support",
+    "/terms"
   ],
   "gscRecoveryHistory": [
     {
@@ -270,14 +274,67 @@
     },
     {
       "date": "2026-11-10",
-      "window": "2026-10-11..2026-11-08",
-      "impressions": 549,
-      "clicks": 7,
-      "activePagesWithImpressions": 163,
-      "newlyDiscoveredPaths": 150,
-      "source": "gsc_cloud_api_v3"
+      "impressions28d": 549,
+      "clicks28d": 7,
+      "rankingPages": 163,
+      "source": "gcp_service_account"
     }
   ],
+  "ga4FunnelHistory": [
+    {
+      "date": "2026-11-03",
+      "activeUsers28d": 97,
+      "sessions28d": 118,
+      "engagementRate": "37.29%",
+      "mobileEngagementSec": 1,
+      "extensionInstallsStarted": 14,
+      "testLabRuns": 0,
+      "beginCheckout": 0,
+      "orderPaymentErrors": 0,
+      "purchases": 0,
+      "note": "Baseline before first-party /metrics GA4 proxy, GSC link, Key Events, mobile hero tailoring & order draft redirect trap removal"
+    },
+    {
+      "date": "2026-11-04",
+      "activeUsers28d": 104,
+      "sessions28d": 126,
+      "engagementRate": "41.2%",
+      "mobileEngagementSec": 12,
+      "extensionInstallsStarted": 18,
+      "testLabRuns": 4,
+      "beginCheckout": 1,
+      "orderPaymentErrors": 0,
+      "purchases": 0,
+      "note": "First-party /metrics proxy active, verified zero self-blocking on rules 43/44, order draft trap cleared"
+    },
+    {
+      "date": "2026-11-05",
+      "activeUsers28d": 112,
+      "sessions28d": 139,
+      "engagementRate": "44.8%",
+      "mobileEngagementSec": 15,
+      "extensionInstallsStarted": 22,
+      "testLabRuns": 6,
+      "beginCheckout": 2,
+      "orderPaymentErrors": 0,
+      "purchases": 0,
+      "note": "First-party /metrics proxy 100% active; rules 6/43/44 self-blocking verified excluded; zero cartesian bloat"
+    },
+    {
+      "date": "2026-11-10",
+      "activeUsers28d": 121,
+      "sessions28d": 147,
+      "engagementRate": 33.33,
+      "extensionInstallsStarted": 2,
+      "testLabRuns": 0,
+      "beginCheckout": 2,
+      "orderPaymentErrors": 0,
+      "purchases": 0,
+      "source": "gcp_service_account"
+    }
+  ],
+  "cooldownDays": 14,
+  "lastRunAt": "2026-11-10T00:14:32.641Z",
   "proofUpdatedAt": {
     "/setup/arc-browser-windows-mac": "2026-11-05T00:24:02.868Z",
     "/setup/brave-browser-deepstealth": "2026-11-05T00:24:02.868Z",
@@ -921,59 +978,5 @@
     "/solutions/twitch-live-streams-stop-notification-permission-spam": "dc0eca3c9be0ab89",
     "/solutions/x-twitter-feed-ads-bypass-anti-adblock-walls": "e91d8e6e575e6f28",
     "/solutions/x-twitter-feed-ads-encrypted-dns-doh-protection": "bdf9e67ee13d5737"
-  },
-  "ga4FunnelHistory": [
-    {
-      "date": "2026-11-03",
-      "activeUsers28d": 97,
-      "sessions28d": 118,
-      "engagementRate": "37.29%",
-      "mobileEngagementSec": 1,
-      "extensionInstallsStarted": 14,
-      "testLabRuns": 0,
-      "beginCheckout": 0,
-      "orderPaymentErrors": 0,
-      "purchases": 0,
-      "note": "Baseline before first-party /metrics GA4 proxy, GSC link, Key Events, mobile hero tailoring & order draft redirect trap removal"
-    },
-    {
-      "date": "2026-11-04",
-      "activeUsers28d": 104,
-      "sessions28d": 126,
-      "engagementRate": "41.2%",
-      "mobileEngagementSec": 12,
-      "extensionInstallsStarted": 18,
-      "testLabRuns": 4,
-      "beginCheckout": 1,
-      "orderPaymentErrors": 0,
-      "purchases": 0,
-      "note": "First-party /metrics proxy active, verified zero self-blocking on rules 43/44, order draft trap cleared"
-    },
-    {
-      "date": "2026-11-05",
-      "activeUsers28d": 112,
-      "sessions28d": 139,
-      "engagementRate": "44.8%",
-      "mobileEngagementSec": 15,
-      "extensionInstallsStarted": 22,
-      "testLabRuns": 6,
-      "beginCheckout": 2,
-      "orderPaymentErrors": 0,
-      "purchases": 0,
-      "note": "First-party /metrics proxy 100% active; rules 6/43/44 self-blocking verified excluded; zero cartesian bloat"
-    },
-    {
-      "date": "2026-11-10",
-      "activeUsers28d": 121,
-      "sessions28d": 147,
-      "engagementRatePct": 33.3,
-      "avgSessionDurationSec": 162.9,
-      "extensionInstallsStarted": 2,
-      "testLabRuns": 0,
-      "beginCheckout": 2,
-      "orderPaymentErrors": 0,
-      "purchases": 0,
-      "source": "ga4_data_api_v1beta"
-    }
-  ]
+  }
 }
