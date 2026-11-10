@@ -1,7 +1,7 @@
 {
   "ok": true,
-  "version": "1.1.69133",
-  "updatedAt": "2026-11-10T00:05:33.122Z",
+  "version": "1.1.92760",
+  "updatedAt": "2026-11-10T06:39:20.592Z",
   "featureFlags": {
     "cookieAutoClose": true,
     "hideSearchSpam": true,
@@ -13,7 +13,6 @@
   "extraCmpSelectors": [],
   "extraAntiAdblockSelectors": [],
   "extraCosmeticSelectors": [
-    "#spot_video_ntv_b",
     "#spot_video_ntv_c",
     "#spot_video_inside_player",
     ".drt-spot-box",
@@ -112,7 +111,8 @@
     "a[href*=\"ey43.com\"]",
     "[data-cl-overlay]",
     "#c_window_xEucqIjg",
-    "#alink_overlay_EPXdyaUf"
+    "#alink_overlay_EPXdyaUf",
+    ".ad-slot"
   ],
   "dynamicDnrRules": [
     {

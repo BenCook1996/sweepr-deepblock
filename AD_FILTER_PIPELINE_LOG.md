@@ -393,3 +393,17 @@ Automated daily 24-hour pipeline (`00:00 UTC`) sampling 1,000 unique ad-heavy do
 - **Cross-Site Non-Regression Suite:** PASS (15/15 Golden Network & DeepStealth Surrogate Canaries | 10/10 Legitimate Site Canaries Unblocked | 24 Cross-Module Selectors Protected)
 - **Git Commit / Deployment Ref:** `2859a960`
 
+## Run `adpipe-2026-11-10-384cu` — 2026-11-10T06:39:20.646Z
+- **Sites Sampled (30-Day Deduplicated):** 1000
+- **Sites Evaluated:** 1000
+- **Ad Leaks Detected:** 1
+- **Rules Auto-Patched (Verified Self-Healing):** 1
+- **Flagged for Manual Review:** 0
+- **Repository Ruleset Totals:** 245 MV3 Static DNR Rules | 390 ABP/uBO Rules | 100 OTA Delta Rules
+- **Cross-Site Non-Regression Suite:** PASS (15/15 Golden Network & DeepStealth Surrogate Canaries | 10/10 Legitimate Site Canaries Unblocked | 24 Cross-Module Selectors Protected)
+- **Git Commit / Deployment Ref:** `d2918937`
+
+| Target URL | Ad Type | Generated Rule | Fix Status | Verification Notes |
+| :--- | :--- | :--- | :--- | :--- |
+| `https://otakuradar.fr` | DOM | `otakuradar.fr##.ad-slot` | **Auto-Patched** | Verified: Cosmetic rule otakuradar.fr##.ad-slot collapses ad container (.ad-slot) with main content wrappers and scroll state intact. |
+
