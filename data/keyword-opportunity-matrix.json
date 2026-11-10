@@ -1,262 +1,25 @@
 {
-  "generatedAt": "2026-11-10T19:46:27.728Z",
+  "generatedAt": "2026-11-10T21:00:46.922Z",
   "engineVersion": "2.0.0",
   "summary": {
-    "totalIndexablePagesChecked": 519,
+    "totalIndexablePagesChecked": 521,
     "seedQueriesExpanded": 339,
     "rawAutocompleteHarvested": 523,
     "junkDisqualifiedCount": 3,
     "lowIntentRejectedCount": 459,
     "intraBatchSynonymsMerged": 2,
-    "alreadyCoveredOrEnrichedCount": 27,
-    "approvedLowKdOpportunitiesCount": 2,
+    "alreadyCoveredOrEnrichedCount": 29,
+    "approvedLowKdOpportunitiesCount": 0,
     "ctrEnrichmentQueueCount": 10
   },
-  "opportunities": [
-    {
-      "id": "kw_solutions_waterfox_adblock_mv3_extension",
-      "keyword": "waterfox adblock mv3 extension",
-      "secondaryKeywords": [],
-      "tokenFingerprint": "adblock|extension|mv3|waterfox",
-      "pillar": "P2_MV3_PLATFORM_BLOCKING",
-      "intentTier": "high_urgency_fix",
-      "cluster": "solutions",
-      "recommendedFormat": "platform_solution",
-      "targetRoute": "/solutions/waterfox-adblock-mv3-extension",
-      "relPath": "solutions/waterfox-adblock-mv3-extension.html",
-      "isPublishedOnDisk": true,
-      "status": "published",
-      "metrics": {
-        "opportunityScore": 82.1,
-        "volumeScore": 74,
-        "lowCompetitionScore": 85,
-        "transactionalScore": 72,
-        "estimatedKD": 15,
-        "wordCount": 4
-      },
-      "volumeBreakdown": {
-        "volumeScore": 74,
-        "slotAnchorScore": 51.5,
-        "engineConsensusScore": 10.5,
-        "modifierDepthScore": 12,
-        "enginesMatched": [
-          "google",
-          "bing"
-        ],
-        "bestRankByEngine": {
-          "google": 2,
-          "bing": 3
-        }
-      },
-      "serpCompetition": {
-        "inspectionSource": "lexical_heuristic_fallback",
-        "lowCompetitionScore": 85,
-        "estimatedKD": 15,
-        "signals": {
-          "ugcPoints": 0,
-          "titleGapPoints": 22,
-          "freshnessGapPoints": 18,
-          "longTailPoints": 15,
-          "editorialWallPenalty": 0,
-          "ugcMatchedUrls": [],
-          "editorialDomainsFound": []
-        },
-        "top5Organic": []
-      },
-      "cannibalization": {
-        "status": "clean",
-        "closestExistingPage": "/setup/waterfox-privacy-browser",
-        "maxCannibScore": 0.328,
-        "tokenOverlapRatio": 0.368,
-        "jaccardSimilarity": 0.143
-      },
-      "pageBlueprint": {
-        "title": "Waterfox AdBlock MV3 Extension (2026) | SWEEPR DeepBlock",
-        "h1": "Waterfox AdBlock MV3 Extension: Verified 2026 Manifest V3 Protection & Fix",
-        "metaDescription": "Waterfox AdBlock MV3 Extension: pass all 8/8 Manifest V3 anti-detection checks in 2026 with C++ declarativeNetRequest filtering, zero video ads, and <50ms.",
-        "shortLinkTitle": "Waterfox AdBlock MV3 Extension",
-        "linkBadge": "SOLUTIONS • KD 15 • Score 82.1",
-        "painPointIssue": "Eliminating waterfox adblock mv3 extension with verified C++ declarativeNetRequest filtering, <50ms CMP auto-rejection, and local-first privacy protection",
-        "beforeStat": "Unskippable Ads & Tracker Walls",
-        "afterStat": "0 Video Ads • <50ms Auto-Reject",
-        "perfStat": "15µs C++ DNR Match",
-        "recommendedToolWidget": {
-          "toolRoute": "/tools/is-my-adblocker-working",
-          "ctaHeadline": "Test Your Current Browser Against 8 Live MV3 Ad & Tracker Vectors",
-          "ctaButton": "Run Free 8/8 MV3 Adblock Diagnostic →"
-        },
-        "primaryCta": {
-          "href": "/order?plan=annual",
-          "label": "Unlock SWEEPR DeepBlock Pro (£29.99/yr — Save 58%)"
-        },
-        "secondaryCta": {
-          "href": "/order?plan=suite_annual",
-          "label": "Bundle VPN + Cleaner + DeepBlock + RAM Tamer (£89.99/yr)"
-        },
-        "customFaqs": [
-          {
-            "q": "How does SWEEPR DeepBlock solve \"waterfox adblock mv3 extension\" in 2026?",
-            "a": "SWEEPR DeepBlock v1.2.7 combines 242 C++ declarativeNetRequest network rules (15µs match latency) with local-first DOM & player sanitization, eliminating video ad interruptions, cookie walls, and tracker bloat without triggering anti-adblock modals."
-          },
-          {
-            "q": "Does this work on Chrome, Edge, Brave, and Firefox Manifest V3?",
-            "a": "Yes. Every SWEEPR DeepBlock rule pack is compiled natively for Chromium Manifest V3 (Chrome, Edge, Brave, Thorium, Vivaldi, Opera, Arc) and Firefox WebExtensions with zero cloud browsing telemetry."
-          },
-          {
-            "q": "Why do standard ad blockers fail or break page scrolling on modern sites?",
-            "a": "Legacy CSS-hiding extensions delete the visual overlay while leaving body{overflow:hidden} locked and consented tracker scripts active. SWEEPR DeepBlock executes the genuine \"Reject All\" CMP signal in under 50ms and restores clean scrolling automatically."
-          },
-          {
-            "q": "What is included in SWEEPR DeepBlock Pro vs the Complete Security Suite?",
-            "a": "SWEEPR DeepBlock Pro (£29.99/yr or £1.99 1st-Month Intro) unlocks all 6 browser protection modules across 4 devices. The Sweepr Complete Security Suite (£89.99/yr, save 45%) bundles DeepBlock Pro, Total Tab & RAM Tamer, Sweepr VPN Pro, and Sweepr Desktop Cleaner Pro across 5 devices."
-          }
-        ]
-      }
-    },
-    {
-      "id": "kw_solutions_youtube_ad_blocker_chrome",
-      "keyword": "youtube ads blocker chrome extension",
-      "secondaryKeywords": [],
-      "tokenFingerprint": "ad|blocker|chrome|extension|youtube",
-      "pillar": "P2_MV3_PLATFORM_BLOCKING",
-      "intentTier": "high_urgency_fix",
-      "cluster": "solutions",
-      "recommendedFormat": "platform_solution",
-      "targetRoute": "/solutions/youtube-ads-blocker-chrome-extension",
-      "relPath": "solutions/youtube-ads-blocker-chrome-extension.html",
-      "isPublishedOnDisk": true,
-      "status": "published",
-      "metrics": {
-        "opportunityScore": 72.6,
-        "volumeScore": 53,
-        "lowCompetitionScore": 90,
-        "transactionalScore": 72,
-        "estimatedKD": 10,
-        "wordCount": 5
-      },
-      "volumeBreakdown": {
-        "volumeScore": 53,
-        "slotAnchorScore": 29.9,
-        "engineConsensusScore": 9.1,
-        "modifierDepthScore": 14,
-        "enginesMatched": [
-          "bing",
-          "ddg"
-        ],
-        "bestRankByEngine": {
-          "bing": 4,
-          "ddg": 4
-        }
-      },
-      "serpCompetition": {
-        "inspectionSource": "bing_rss_live",
-        "lowCompetitionScore": 90,
-        "estimatedKD": 10,
-        "signals": {
-          "ugcPoints": 0,
-          "titleGapPoints": 25,
-          "freshnessGapPoints": 20,
-          "longTailPoints": 15,
-          "editorialWallPenalty": 0,
-          "ugcMatchedUrls": [],
-          "editorialDomainsFound": []
-        },
-        "top5Organic": [
-          {
-            "rank": 1,
-            "url": "https://www.youtube.com/",
-            "domain": "youtube.com",
-            "title": "YouTube",
-            "snippet": "Enjoy the videos and music you love, upload original content, and share it all with friends, family, and the world on YouTube."
-          },
-          {
-            "rank": 2,
-            "url": "https://www.youtube.com/youtube",
-            "domain": "youtube.com",
-            "title": "YouTube - YouTube",
-            "snippet": "Tanner from @SerpaDesign is taking over the YouTube channel to break down the art of aquascaping step by step. Watch as he transforms an empty glass fish tank into a living underwater ecosystem."
-          },
-          {
-            "rank": 3,
-            "url": "https://music.youtube.com/",
-            "domain": "music.youtube.com",
-            "title": "YouTube Music",
-            "snippet": "With the YouTube Music app, enjoy over 100 million songs at your fingertips, plus albums, playlists, remixes, music videos, live performances, covers, and hard-to-find music you can’t get..."
-          },
-          {
-            "rank": 4,
-            "url": "https://www.youtube.com/feed",
-            "domain": "youtube.com",
-            "title": "YouTube",
-            "snippet": "AboutPressCopyrightContact usCreatorsAdvertiseDevelopersTermsPrivacyPolicy &amp; SafetyHow YouTube worksTest new featuresNFL Sunday Ticket © 2026 Google LLC"
-          },
-          {
-            "rank": 5,
-            "url": "https://www.youtube.com/feed/homepage",
-            "domain": "youtube.com",
-            "title": "YouTube",
-            "snippet": "Videos you watch may be added to the TV's watch history and influence TV recommendations. To avoid this, cancel and sign in to YouTube on your computer."
-          }
-        ]
-      },
-      "cannibalization": {
-        "status": "clean",
-        "closestExistingPage": "/guides/how-to-block-youtube-ads-chrome-manifest-v3-2026",
-        "maxCannibScore": 0.42,
-        "tokenOverlapRatio": 0.474,
-        "jaccardSimilarity": 0.375
-      },
-      "pageBlueprint": {
-        "title": "YouTube Ads Blocker Chrome Extension (2026) | SWEEPR DeepBlock",
-        "h1": "YouTube Ads Blocker Chrome Extension: Verified 2026 Manifest V3 Protection & Fix",
-        "metaDescription": "YouTube Ads Blocker Chrome Extension: pass all 8/8 Manifest V3 anti-detection checks in 2026 with C++ declarativeNetRequest filtering, zero video ads, and.",
-        "shortLinkTitle": "YouTube Ads Blocker Chrome Extension",
-        "linkBadge": "SOLUTIONS • KD 10 • Score 72.6",
-        "painPointIssue": "Eliminating youtube ads blocker chrome extension with verified C++ declarativeNetRequest filtering, <50ms CMP auto-rejection, and local-first privacy protection",
-        "beforeStat": "Unskippable Ads & Tracker Walls",
-        "afterStat": "0 Video Ads • <50ms Auto-Reject",
-        "perfStat": "15µs C++ DNR Match",
-        "recommendedToolWidget": {
-          "toolRoute": "/tools/is-my-adblocker-working",
-          "ctaHeadline": "Test Your Current Browser Against 8 Live MV3 Ad & Tracker Vectors",
-          "ctaButton": "Run Free 8/8 MV3 Adblock Diagnostic →"
-        },
-        "primaryCta": {
-          "href": "/order?plan=annual",
-          "label": "Unlock SWEEPR DeepBlock Pro (£29.99/yr — Save 58%)"
-        },
-        "secondaryCta": {
-          "href": "/order?plan=suite_annual",
-          "label": "Bundle VPN + Cleaner + DeepBlock + RAM Tamer (£89.99/yr)"
-        },
-        "customFaqs": [
-          {
-            "q": "How does SWEEPR DeepBlock solve \"youtube ads blocker chrome extension\" in 2026?",
-            "a": "SWEEPR DeepBlock v1.2.7 combines 242 C++ declarativeNetRequest network rules (15µs match latency) with local-first DOM & player sanitization, eliminating video ad interruptions, cookie walls, and tracker bloat without triggering anti-adblock modals."
-          },
-          {
-            "q": "Does this work on Chrome, Edge, Brave, and Firefox Manifest V3?",
-            "a": "Yes. Every SWEEPR DeepBlock rule pack is compiled natively for Chromium Manifest V3 (Chrome, Edge, Brave, Thorium, Vivaldi, Opera, Arc) and Firefox WebExtensions with zero cloud browsing telemetry."
-          },
-          {
-            "q": "Why do standard ad blockers fail or break page scrolling on modern sites?",
-            "a": "Legacy CSS-hiding extensions delete the visual overlay while leaving body{overflow:hidden} locked and consented tracker scripts active. SWEEPR DeepBlock executes the genuine \"Reject All\" CMP signal in under 50ms and restores clean scrolling automatically."
-          },
-          {
-            "q": "What is included in SWEEPR DeepBlock Pro vs the Complete Security Suite?",
-            "a": "SWEEPR DeepBlock Pro (£29.99/yr or £1.99 1st-Month Intro) unlocks all 6 browser protection modules across 4 devices. The Sweepr Complete Security Suite (£89.99/yr, save 45%) bundles DeepBlock Pro, Total Tab & RAM Tamer, Sweepr VPN Pro, and Sweepr Desktop Cleaner Pro across 5 devices."
-          }
-        ]
-      }
-    }
-  ],
+  "opportunities": [],
   "ctrEnrichmentQueue": [
     {
       "keyword": "stop twitch mid roll ads without purple screen",
       "secondaryKeywords": [],
       "targetExistingPage": "/guides/how-to-block-twitch-midroll-commercials-without-black-screen",
       "targetExistingTitle": "Blocking Mid-Roll Ads on Twitch &amp; YouTube Without Black Screen",
-      "cannibalizationScore": 0.613,
+      "cannibalizationScore": 0.614,
       "metrics": {
         "opportunityScore": 75,
         "volumeScore": 74,
@@ -274,7 +37,7 @@
       ],
       "targetExistingPage": "/vs/ublock-origin-lite",
       "targetExistingTitle": "SWEEPR DeepBlock vs uBlock Origin Lite (2026 Comparison)",
-      "cannibalizationScore": 0.593,
+      "cannibalizationScore": 0.594,
       "metrics": {
         "opportunityScore": 74.7,
         "volumeScore": 74,
@@ -290,7 +53,7 @@
       "secondaryKeywords": [],
       "targetExistingPage": "/vs/is-pie-adblock-safe",
       "targetExistingTitle": "Is Pie AdBlock Safe (2026) | SWEEPR DeepBlock",
-      "cannibalizationScore": 0.62,
+      "cannibalizationScore": 0.622,
       "metrics": {
         "opportunityScore": 74.3,
         "volumeScore": 67,
@@ -306,7 +69,7 @@
       "secondaryKeywords": [],
       "targetExistingPage": "/guides/how-to-fix-high-ram-usage-on-vivaldi-browser",
       "targetExistingTitle": "Fix Vivaldi High RAM Usage | SWEEPR DeepBlock",
-      "cannibalizationScore": 0.67,
+      "cannibalizationScore": 0.677,
       "metrics": {
         "opportunityScore": 74,
         "volumeScore": 74,
@@ -322,7 +85,7 @@
       "secondaryKeywords": [],
       "targetExistingPage": "/vs/ublock-origin-vs-adguard",
       "targetExistingTitle": "uBlock Origin Vs AdGuard (2026) | SWEEPR DeepBlock",
-      "cannibalizationScore": 0.616,
+      "cannibalizationScore": 0.618,
       "metrics": {
         "opportunityScore": 72.9,
         "volumeScore": 67,
@@ -334,27 +97,11 @@
       "recommendedAction": "ENRICH_EXISTING_PILLAR_FAQ_AND_CTR"
     },
     {
-      "keyword": "chrome extension to block youtube ads",
-      "secondaryKeywords": [],
-      "targetExistingPage": "/guides/how-to-block-youtube-ads-chrome-manifest-v3-2026",
-      "targetExistingTitle": "Block YouTube Ads Chrome MV3 (2026) | SWEEPR DeepBlock",
-      "cannibalizationScore": 0.568,
-      "metrics": {
-        "opportunityScore": 60.3,
-        "volumeScore": 52,
-        "lowCompetitionScore": 90,
-        "transactionalScore": 72,
-        "estimatedKD": 10,
-        "wordCount": 6
-      },
-      "recommendedAction": "ENRICH_EXISTING_PILLAR_FAQ_AND_CTR"
-    },
-    {
       "keyword": "best manifest v3 adblock",
       "secondaryKeywords": [],
       "targetExistingPage": "/guides/best-manifest-v3-adblockers-for-google-chrome-2026",
       "targetExistingTitle": "Best Manifest V3 Adblockers 2026 | SWEEPR DeepBlock",
-      "cannibalizationScore": 0.616,
+      "cannibalizationScore": 0.614,
       "metrics": {
         "opportunityScore": 55.3,
         "volumeScore": 67,
@@ -370,7 +117,7 @@
       "secondaryKeywords": [],
       "targetExistingPage": "/vs/adguard-vs-ublock-origin-lite-chrome-2026",
       "targetExistingTitle": "AdGuard Vs uBlock Origin Lite Chrome 2026 | SWEEPR DeepBlock",
-      "cannibalizationScore": 0.828,
+      "cannibalizationScore": 0.831,
       "metrics": {
         "opportunityScore": 0,
         "volumeScore": 73,
@@ -386,7 +133,7 @@
       "secondaryKeywords": [],
       "targetExistingPage": "/vs/ublock-origin-vs-adguard",
       "targetExistingTitle": "uBlock Origin Vs AdGuard (2026) | SWEEPR DeepBlock",
-      "cannibalizationScore": 0.703,
+      "cannibalizationScore": 0.715,
       "metrics": {
         "opportunityScore": 0,
         "volumeScore": 52,
@@ -402,7 +149,7 @@
       "secondaryKeywords": [],
       "targetExistingPage": "/vs/is-pie-adblock-legit-reddit",
       "targetExistingTitle": "Is Pie AdBlock Legit Reddit (2026) | SWEEPR DeepBlock",
-      "cannibalizationScore": 0.753,
+      "cannibalizationScore": 0.755,
       "metrics": {
         "opportunityScore": 0,
         "volumeScore": 65,
@@ -410,6 +157,22 @@
         "transactionalScore": 80,
         "estimatedKD": 21,
         "wordCount": 4
+      },
+      "recommendedAction": "ENRICH_EXISTING_PILLAR_FAQ_AND_CTR"
+    },
+    {
+      "keyword": "chrome extension to block youtube ads",
+      "secondaryKeywords": [],
+      "targetExistingPage": "/solutions/youtube-ads-blocker-chrome-extension",
+      "targetExistingTitle": "YouTube Ads Blocker Chrome Extension (2026) | SWEEPR DeepBlock",
+      "cannibalizationScore": 0.727,
+      "metrics": {
+        "opportunityScore": 0,
+        "volumeScore": 52,
+        "lowCompetitionScore": 90,
+        "transactionalScore": 72,
+        "estimatedKD": 10,
+        "wordCount": 6
       },
       "recommendedAction": "ENRICH_EXISTING_PILLAR_FAQ_AND_CTR"
     }

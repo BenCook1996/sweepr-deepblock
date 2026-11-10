@@ -1,41 +1,12 @@
 {
-  "generatedAt": "2026-11-10T19:46:27.728Z",
+  "generatedAt": "2026-11-10T21:00:46.922Z",
   "engineVersion": "2.0.0",
   "seedsQueried": 339,
-  "indexablePagesChecked": 519,
+  "indexablePagesChecked": 521,
   "totalAutocompleteQueriesDiscovered": 523,
-  "alreadyCoveredCount": 27,
-  "uncoveredIntentGapsCount": 2,
-  "topPriorityGaps": [
-    {
-      "query": "waterfox adblock mv3 extension",
-      "secondaryKeywords": [],
-      "seed": "P2_MV3_PLATFORM_BLOCKING",
-      "intentScore": 72,
-      "volumeScore": 74,
-      "lowCompetitionScore": 85,
-      "estimatedKD": 15,
-      "opportunityScore": 82.1,
-      "recommendedFormat": "platform_solution",
-      "suggestedRoute": "/solutions/waterfox-adblock-mv3-extension",
-      "closestExistingPage": "/setup/waterfox-privacy-browser",
-      "overlapRatio": 0.368
-    },
-    {
-      "query": "youtube ads blocker chrome extension",
-      "secondaryKeywords": [],
-      "seed": "P2_MV3_PLATFORM_BLOCKING",
-      "intentScore": 72,
-      "volumeScore": 53,
-      "lowCompetitionScore": 90,
-      "estimatedKD": 10,
-      "opportunityScore": 72.6,
-      "recommendedFormat": "platform_solution",
-      "suggestedRoute": "/solutions/youtube-ads-blocker-chrome-extension",
-      "closestExistingPage": "/guides/how-to-block-youtube-ads-chrome-manifest-v3-2026",
-      "overlapRatio": 0.474
-    }
-  ],
+  "alreadyCoveredCount": 29,
+  "uncoveredIntentGapsCount": 0,
+  "topPriorityGaps": [],
   "sampleCoveredQueries": [
     {
       "query": "total adblock renewal charge alternative",
@@ -65,6 +36,11 @@
     {
       "query": "lightweight alternative to ghostery chrome",
       "matchedPage": "/vs/lightweight-alternative-to-ghostery-chrome",
+      "overlapRatio": 1
+    },
+    {
+      "query": "waterfox adblock mv3 extension",
+      "matchedPage": "/solutions/waterfox-adblock-mv3-extension",
       "overlapRatio": 1
     },
     {
@@ -105,6 +81,11 @@
     {
       "query": "ublock origin vs adguard",
       "matchedPage": "/vs/ublock-origin-vs-adguard",
+      "overlapRatio": 1
+    },
+    {
+      "query": "youtube ads blocker chrome extension",
+      "matchedPage": "/solutions/youtube-ads-blocker-chrome-extension",
       "overlapRatio": 1
     },
     {

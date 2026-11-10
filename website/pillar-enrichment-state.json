@@ -1,6 +1,6 @@
 {
   "cooldownDays": 14,
-  "lastRunAt": "2026-11-10T19:46:12.484Z",
+  "lastRunAt": "2026-11-10T21:00:45.606Z",
   "titleUpdatedAt": {
     "/setup/thorium-chromium-browser": "2026-11-03T20:45:00.000Z",
     "/setup/orion-browser-macos-ios": "2026-11-03T20:45:00.000Z",
@@ -276,10 +276,12 @@
     },
     {
       "date": "2026-11-10",
-      "impressions28d": 549,
-      "clicks28d": 7,
-      "rankingPages": 163,
-      "source": "gcp_service_account"
+      "window": "2026-10-11..2026-11-08",
+      "impressions": 551,
+      "clicks": 7,
+      "activePagesWithImpressions": 163,
+      "newlyDiscoveredPaths": 0,
+      "source": "gsc_cloud_api_v3"
     }
   ],
   "proofUpdatedAt": {
@@ -604,7 +606,7 @@
     "/solutions/x-twitter-feed-ads-bypass-anti-adblock-walls": "2026-11-10T00:14:32.641Z",
     "/solutions/x-twitter-feed-ads-encrypted-dns-doh-protection": "2026-11-10T00:14:32.641Z",
     "/solutions/waterfox-adblock-mv3-extension": "2026-11-10T19:46:12.484Z",
-    "/solutions/youtube-ads-blocker-chrome-extension": "2026-11-10T19:46:12.484Z"
+    "/solutions/youtube-ads-blocker-chrome-extension": "2026-11-10T21:00:45.606Z"
   },
   "contentHashes": {
     "/setup/arc-browser-windows-mac": "da77e780adaf6967",
@@ -928,7 +930,7 @@
     "/solutions/x-twitter-feed-ads-bypass-anti-adblock-walls": "e91d8e6e575e6f28",
     "/solutions/x-twitter-feed-ads-encrypted-dns-doh-protection": "bdf9e67ee13d5737",
     "/solutions/waterfox-adblock-mv3-extension": "7693afa21a7fe5fe",
-    "/solutions/youtube-ads-blocker-chrome-extension": "e9048c4170a3724a"
+    "/solutions/youtube-ads-blocker-chrome-extension": "d666a365e3126db2"
   },
   "ga4FunnelHistory": [
     {
@@ -972,15 +974,16 @@
     },
     {
       "date": "2026-11-10",
-      "activeUsers28d": 121,
-      "sessions28d": 147,
-      "engagementRate": 33.33,
+      "activeUsers28d": 124,
+      "sessions28d": 150,
+      "engagementRatePct": 33.3,
+      "avgSessionDurationSec": 159.8,
       "extensionInstallsStarted": 2,
       "testLabRuns": 0,
       "beginCheckout": 2,
       "orderPaymentErrors": 0,
       "purchases": 0,
-      "source": "gcp_service_account"
+      "source": "ga4_data_api_v1beta"
     }
   ]
 }

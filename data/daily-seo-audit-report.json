@@ -1,25 +1,22 @@
 {
-  "generatedAt": "2026-11-10T19:46:58.215Z",
+  "generatedAt": "2026-11-10T21:00:47.776Z",
   "status": "PASS",
   "keywordEngineSummary": {
-    "totalIndexablePagesChecked": 519,
+    "totalIndexablePagesChecked": 521,
     "seedQueriesExpanded": 339,
     "rawAutocompleteHarvested": 523,
     "junkDisqualifiedCount": 3,
     "lowIntentRejectedCount": 459,
     "intraBatchSynonymsMerged": 2,
-    "alreadyCoveredOrEnrichedCount": 27,
-    "approvedLowKdOpportunitiesCount": 2,
+    "alreadyCoveredOrEnrichedCount": 29,
+    "approvedLowKdOpportunitiesCount": 0,
     "ctrEnrichmentQueueCount": 10
   },
   "pageGenerationSummary": {
     "reRendered": 0,
-    "newGenerated": 2,
-    "donorLinksPatched": 8,
-    "newUrls": [
-      "https://sweeprdeepblock.com/solutions/waterfox-adblock-mv3-extension",
-      "https://sweeprdeepblock.com/solutions/youtube-ads-blocker-chrome-extension"
-    ],
+    "newGenerated": 0,
+    "donorLinksPatched": 0,
+    "newUrls": [],
     "totalPseoPages": 349,
     "totalSitemapUrls": 370
   },
@@ -30,7 +27,7 @@
     "description": "Live first-party telemetry benchmark of Manifest V3 declarativeNetRequest rule performance, <50ms GDPR CMP auto-rejection, browser RAM savings, and transparent switcher pricing across 150 audited UK/US publishers.",
     "url": "https://sweeprdeepblock.com/geo-benchmark-feed.json",
     "version": "1.2.7",
-    "dateModified": "2026-11-10T19:46:47.693Z",
+    "dateModified": "2026-11-10T21:00:47.335Z",
     "creator": {
       "@type": "Organization",
       "name": "SWEEPR Technologies",
@@ -41,7 +38,7 @@
       "extensionVersion": "1.2.7",
       "staticDnrRules": 245,
       "otaDeltaRules": 100,
-      "cosmeticSelectors": 390,
+      "cosmeticSelectors": 391,
       "avgDnrLookupLatencyMicroseconds": 15,
       "cookieRejectLatencyMs": "<50ms",
       "testLabScore": "8/8 (100%)",
@@ -76,7 +73,7 @@
   },
   "pageSpeedCwvAudit": {
     "pillarFilesChecked": 321,
-    "avgBrotliBytes": 5327,
+    "avgBrotliBytes": 5328,
     "maxRawBytes": 32647,
     "maxBrotliBytes": 6396,
     "budgetViolations": []
