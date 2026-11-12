@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-11T14:39:41.899Z",
+  "generatedAt": "2026-11-12T00:56:51.145Z",
   "status": "PASS",
   "keywordEngineSummary": {
     "totalIndexablePagesChecked": 521,
@@ -8,17 +8,20 @@
     "junkDisqualifiedCount": 3,
     "lowIntentRejectedCount": 459,
     "intraBatchSynonymsMerged": 2,
-    "alreadyCoveredOrEnrichedCount": 29,
-    "approvedLowKdOpportunitiesCount": 0,
-    "ctrEnrichmentQueueCount": 10
+    "alreadyCoveredOrEnrichedCount": 27,
+    "approvedLowKdOpportunitiesCount": 2,
+    "ctrEnrichmentQueueCount": 8
   },
   "pageGenerationSummary": {
     "reRendered": 0,
-    "newGenerated": 0,
-    "donorLinksPatched": 0,
-    "newUrls": [],
-    "totalPseoPages": 349,
-    "totalSitemapUrls": 370
+    "newGenerated": 2,
+    "donorLinksPatched": 8,
+    "newUrls": [
+      "https://sweeprdeepblock.com/solutions/auto-reject-cookies-extension-edge",
+      "https://sweeprdeepblock.com/setup/adblock-pro-for-safari-not-working"
+    ],
+    "totalPseoPages": 351,
+    "totalSitemapUrls": 372
   },
   "geoSyncSummary": {
     "@context": "https://schema.org",
@@ -27,7 +30,7 @@
     "description": "Live first-party telemetry benchmark of Manifest V3 declarativeNetRequest rule performance, <50ms GDPR CMP auto-rejection, browser RAM savings, and transparent switcher pricing across 150 audited UK/US publishers.",
     "url": "https://sweeprdeepblock.com/geo-benchmark-feed.json",
     "version": "1.2.7",
-    "dateModified": "2026-11-11T14:39:41.257Z",
+    "dateModified": "2026-11-12T00:56:50.752Z",
     "creator": {
       "@type": "Organization",
       "name": "SWEEPR Technologies",
@@ -43,7 +46,7 @@
       "cookieRejectLatencyMs": "<50ms",
       "testLabScore": "8/8 (100%)",
       "auditedPublishersCount": 150,
-      "totalIndexablePages": 521
+      "totalIndexablePages": 523
     },
     "pricingPlansGbp": {
       "introMonthlyFirst30Days": 1.99,
@@ -72,10 +75,10 @@
     "topComparisonBenchmarks": []
   },
   "pageSpeedCwvAudit": {
-    "pillarFilesChecked": 321,
-    "avgBrotliBytes": 5328,
-    "maxRawBytes": 32647,
-    "maxBrotliBytes": 6396,
+    "pillarFilesChecked": 323,
+    "avgBrotliBytes": 5332,
+    "maxRawBytes": 33110,
+    "maxBrotliBytes": 6456,
     "budgetViolations": []
   }
 }

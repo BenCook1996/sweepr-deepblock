@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-11T14:39:40.668Z",
+  "generatedAt": "2026-11-12T00:56:49.612Z",
   "engineVersion": "2.0.0",
   "summary": {
     "totalIndexablePagesChecked": 521,
@@ -8,12 +8,305 @@
     "junkDisqualifiedCount": 3,
     "lowIntentRejectedCount": 459,
     "intraBatchSynonymsMerged": 2,
-    "alreadyCoveredOrEnrichedCount": 29,
-    "approvedLowKdOpportunitiesCount": 0,
-    "ctrEnrichmentQueueCount": 10
+    "alreadyCoveredOrEnrichedCount": 27,
+    "approvedLowKdOpportunitiesCount": 2,
+    "ctrEnrichmentQueueCount": 8
   },
-  "opportunities": [],
+  "opportunities": [
+    {
+      "id": "kw_solutions_auto_reject_cookie_extension",
+      "keyword": "auto reject cookies extension edge",
+      "secondaryKeywords": [
+        "auto reject all cookies extension"
+      ],
+      "tokenFingerprint": "auto|cookie|edge|extension|reject",
+      "pillar": "P4_COOKIE_CONSENT_GDPR",
+      "intentTier": "high_urgency_fix",
+      "cluster": "solutions",
+      "recommendedFormat": "platform_solution",
+      "targetRoute": "/solutions/auto-reject-cookies-extension-edge",
+      "relPath": "solutions/auto-reject-cookies-extension-edge.html",
+      "isPublishedOnDisk": true,
+      "status": "published",
+      "metrics": {
+        "opportunityScore": 86.2,
+        "volumeScore": 70,
+        "lowCompetitionScore": 100,
+        "transactionalScore": 72,
+        "estimatedKD": 1,
+        "wordCount": 5
+      },
+      "volumeBreakdown": {
+        "volumeScore": 70,
+        "slotAnchorScore": 48.4,
+        "engineConsensusScore": 11,
+        "modifierDepthScore": 11,
+        "enginesMatched": [
+          "bing",
+          "ddg"
+        ],
+        "bestRankByEngine": {
+          "bing": 1,
+          "ddg": 1
+        }
+      },
+      "serpCompetition": {
+        "inspectionSource": "ddg_html_live",
+        "lowCompetitionScore": 100,
+        "estimatedKD": 1,
+        "signals": {
+          "ugcPoints": 25,
+          "titleGapPoints": 25,
+          "freshnessGapPoints": 20,
+          "longTailPoints": 0,
+          "editorialWallPenalty": 0,
+          "ugcMatchedUrls": [
+            "https://www.reddit.com/r/PrivacyGuides/comments/tsryvs/are_there_any_extension_that_automatically_reject/"
+          ],
+          "editorialDomainsFound": []
+        },
+        "top5Organic": [
+          {
+            "rank": 1,
+            "url": "https://microsoftedge.microsoft.com/addons/detail/cookieblock/mnfolmjlccppcgdeinhidialajfiopcc",
+            "domain": "microsoftedge.microsoft.com",
+            "title": "CookieBlock - Microsoft Edge Add-ons",
+            "snippet": ""
+          },
+          {
+            "rank": 2,
+            "url": "https://microsoftedge.microsoft.com/addons/detail/gcpagokdnccfbabnlnoimgdmhfleagdf",
+            "domain": "microsoftedge.microsoft.com",
+            "title": "Cookie Shield - Auto Reject - Microsoft Edge Add-ons",
+            "snippet": ""
+          },
+          {
+            "rank": 3,
+            "url": "https://www.ghostery.com/blog/how-to-block-cookies-on-most-browsers",
+            "domain": "ghostery.com",
+            "title": "Best Cookie Blocker | Auto Reject Cookies | Ghostery",
+            "snippet": ""
+          },
+          {
+            "rank": 4,
+            "url": "https://www.noypigeeks.com/featured/browser-extensions-auto-accept-deny-cookie/",
+            "domain": "noypigeeks.com",
+            "title": "7 browser extensions to auto accept or deny cookie pop-ups",
+            "snippet": ""
+          },
+          {
+            "rank": 5,
+            "url": "https://www.reddit.com/r/PrivacyGuides/comments/tsryvs/are_there_any_extension_that_automatically_reject/",
+            "domain": "reddit.com",
+            "title": "Are there any extension that automatically reject all cookies?",
+            "snippet": ""
+          }
+        ]
+      },
+      "cannibalization": {
+        "status": "clean",
+        "closestExistingPage": "/guides/how-to-auto-reject-usercentrics-cookie-banners",
+        "maxCannibScore": 0.329,
+        "tokenOverlapRatio": 0.295,
+        "jaccardSimilarity": 0.25
+      },
+      "pageBlueprint": {
+        "title": "Auto Reject Cookies Extension Edge (2026) | SWEEPR DeepBlock",
+        "h1": "Auto Reject Cookies Extension Edge: Verified 2026 Manifest V3 Protection & Fix",
+        "metaDescription": "Auto Reject Cookies Extension Edge: pass all 8/8 Manifest V3 anti-detection checks in 2026 with C++ declarativeNetRequest filtering, zero video ads, and.",
+        "shortLinkTitle": "Auto Reject Cookies Extension Edge",
+        "linkBadge": "SOLUTIONS • KD 1 • Score 86.2",
+        "painPointIssue": "Eliminating auto reject cookies extension edge with verified C++ declarativeNetRequest filtering, <50ms CMP auto-rejection, and local-first privacy protection",
+        "beforeStat": "Unskippable Ads & Tracker Walls",
+        "afterStat": "0 Video Ads • <50ms Auto-Reject",
+        "perfStat": "15µs C++ DNR Match",
+        "recommendedToolWidget": {
+          "toolRoute": "/tools/is-my-adblocker-working",
+          "ctaHeadline": "Test Your Current Browser Against 8 Live MV3 Ad & Tracker Vectors",
+          "ctaButton": "Run Free 8/8 MV3 Adblock Diagnostic →"
+        },
+        "primaryCta": {
+          "href": "/order?plan=annual",
+          "label": "Unlock SWEEPR DeepBlock Pro (£29.99/yr — Save 58%)"
+        },
+        "secondaryCta": {
+          "href": "/order?plan=suite_annual",
+          "label": "Bundle VPN + Cleaner + DeepBlock + RAM Tamer (£89.99/yr)"
+        },
+        "customFaqs": [
+          {
+            "q": "How does SWEEPR DeepBlock solve \"auto reject cookies extension edge\" in 2026?",
+            "a": "SWEEPR DeepBlock v1.2.7 combines 242 C++ declarativeNetRequest network rules (15µs match latency) with local-first DOM & player sanitization, eliminating video ad interruptions, cookie walls, and tracker bloat without triggering anti-adblock modals."
+          },
+          {
+            "q": "What about auto reject all cookies extension?",
+            "a": "Yes. Every SWEEPR DeepBlock rule pack is compiled natively for Chromium Manifest V3 (Chrome, Edge, Brave, Thorium, Vivaldi, Opera, Arc) and Firefox WebExtensions with zero cloud browsing telemetry."
+          },
+          {
+            "q": "Why do standard ad blockers fail or break page scrolling on modern sites?",
+            "a": "Legacy CSS-hiding extensions delete the visual overlay while leaving body{overflow:hidden} locked and consented tracker scripts active. SWEEPR DeepBlock executes the genuine \"Reject All\" CMP signal in under 50ms and restores clean scrolling automatically."
+          },
+          {
+            "q": "What is included in SWEEPR DeepBlock Pro vs the Complete Security Suite?",
+            "a": "SWEEPR DeepBlock Pro (£29.99/yr or £1.99 1st-Month Intro) unlocks all 6 browser protection modules across 4 devices. The Sweepr Complete Security Suite (£89.99/yr, save 45%) bundles DeepBlock Pro, Total Tab & RAM Tamer, Sweepr VPN Pro, and Sweepr Desktop Cleaner Pro across 5 devices."
+          }
+        ]
+      }
+    },
+    {
+      "id": "kw_setup_adblock_pro_safari_notwork",
+      "keyword": "adblock pro for safari not working",
+      "secondaryKeywords": [],
+      "tokenFingerprint": "adblock|notwork|pro|safari",
+      "pillar": "P3_URGENT_TROUBLESHOOTING",
+      "intentTier": "transactional_purchase",
+      "cluster": "setup",
+      "recommendedFormat": "browser_setup_guide",
+      "targetRoute": "/setup/adblock-pro-for-safari-not-working",
+      "relPath": "setup/adblock-pro-for-safari-not-working.html",
+      "isPublishedOnDisk": true,
+      "status": "published",
+      "metrics": {
+        "opportunityScore": 76,
+        "volumeScore": 49,
+        "lowCompetitionScore": 75,
+        "transactionalScore": 100,
+        "estimatedKD": 25,
+        "wordCount": 6
+      },
+      "volumeBreakdown": {
+        "volumeScore": 49,
+        "slotAnchorScore": 40.5,
+        "engineConsensusScore": 0,
+        "modifierDepthScore": 8,
+        "enginesMatched": [
+          "google"
+        ],
+        "bestRankByEngine": {
+          "google": 3
+        }
+      },
+      "serpCompetition": {
+        "inspectionSource": "bing_rss_live",
+        "lowCompetitionScore": 75,
+        "estimatedKD": 25,
+        "signals": {
+          "ugcPoints": 0,
+          "titleGapPoints": 25,
+          "freshnessGapPoints": 20,
+          "longTailPoints": 0,
+          "editorialWallPenalty": 0,
+          "ugcMatchedUrls": [],
+          "editorialDomainsFound": []
+        },
+        "top5Organic": [
+          {
+            "rank": 1,
+            "url": "https://www.youtube.com/",
+            "domain": "youtube.com",
+            "title": "YouTube",
+            "snippet": "Share your videos with friends, family, and the world."
+          },
+          {
+            "rank": 2,
+            "url": "https://support.google.com/youtubetv/answer/7129668?hl=en&amp;co=GENIE.Platform%3DDesktop",
+            "domain": "support.google.com",
+            "title": "Cancel or pause your YouTube TV membership - Google Help",
+            "snippet": "Cancel or pause your YouTube TV membership You can cancel or pause your YouTube TV membership at any time. When you cancel or pause your membership, you'll still have access to YouTube TV until the end of your payment period. Canceling YouTube TV does not immediately remove your access to the service, even during the free trialperiod."
+          },
+          {
+            "rank": 3,
+            "url": "https://support.google.com/youtube/answer/6159254?hl=it",
+            "domain": "support.google.com",
+            "title": "Problemi di accesso a YouTube",
+            "snippet": "Problemi di accesso a YouTube Se visualizzi una pagina di errore anziché YouTube quando navighi su youtube.com, la causa potrebbe essere una delle seguenti: Potrebbe trattarsi di un problema legato alla tua connessione. Assicurati di riuscire ad accedere normalmente ad altri siti web."
+          },
+          {
+            "rank": 4,
+            "url": "https://www.zhihu.com/question/1903231775980913051",
+            "domain": "zhihu.com",
+            "title": "如何在中国大陆用「合法」的方式观看到youtube上面的「有价值」的视频？ - 知乎",
+            "snippet": "YouTube 将自动为 添加翻译后的中文字幕，这一功能有效解决了语言障碍问题。 当你向下浏览时，部分 会标注相关信息。 例如，博主 Jeff Su 的这条 支持 4K 分辨率并配有字幕，我们可以点击查看详情。 这位博主可能是华裔，他贴心地提供了英文字幕和中文字幕。"
+          },
+          {
+            "rank": 5,
+            "url": "https://www.zhihu.com/topic/19550532/hot",
+            "domain": "zhihu.com",
+            "title": "YouTube公司 - 知乎",
+            "snippet": "YouTube，全球最大的视频分享网站，早期公司总部位于加利福尼亚州的圣布里诺。公司由华裔美籍华人陈士骏等人创立并于2005年2月15日注册，网站的口号为“Broadcast Yourself”（表现你自己），网站的名称和标志皆是自早期电视所使用的阴极射线管发想而成。2006年11月，Google公司以16.5亿美元收购了 ..."
+          }
+        ]
+      },
+      "cannibalization": {
+        "status": "clean",
+        "closestExistingPage": "/guides/adblock-not-working-on-twitch-2026",
+        "maxCannibScore": 0.368,
+        "tokenOverlapRatio": 0.407,
+        "jaccardSimilarity": 0.333
+      },
+      "pageBlueprint": {
+        "title": "AdBlock Pro For Safari Not Working (2026) | SWEEPR DeepBlock",
+        "h1": "AdBlock Pro For Safari Not Working: Verified 2026 Manifest V3 Protection & Fix",
+        "metaDescription": "AdBlock Pro For Safari Not Working: pass all 8/8 Manifest V3 anti-detection checks in 2026 with C++ declarativeNetRequest filtering, zero video ads, and.",
+        "shortLinkTitle": "AdBlock Pro For Safari Not Working",
+        "linkBadge": "SETUP • KD 25 • Score 76",
+        "painPointIssue": "Eliminating adblock pro for safari not working with verified C++ declarativeNetRequest filtering, <50ms CMP auto-rejection, and local-first privacy protection",
+        "beforeStat": "Unskippable Ads & Tracker Walls",
+        "afterStat": "0 Video Ads • <50ms Auto-Reject",
+        "perfStat": "15µs C++ DNR Match",
+        "recommendedToolWidget": {
+          "toolRoute": "/tools/is-my-adblocker-working",
+          "ctaHeadline": "Test Your Current Browser Against 8 Live MV3 Ad & Tracker Vectors",
+          "ctaButton": "Run Free 8/8 MV3 Adblock Diagnostic →"
+        },
+        "primaryCta": {
+          "href": "/order?plan=annual",
+          "label": "Unlock SWEEPR DeepBlock Pro (£29.99/yr — Save 58%)"
+        },
+        "secondaryCta": {
+          "href": "/order?plan=suite_annual",
+          "label": "Bundle VPN + Cleaner + DeepBlock + RAM Tamer (£89.99/yr)"
+        },
+        "customFaqs": [
+          {
+            "q": "How does SWEEPR DeepBlock solve \"adblock pro for safari not working\" in 2026?",
+            "a": "SWEEPR DeepBlock v1.2.7 combines 242 C++ declarativeNetRequest network rules (15µs match latency) with local-first DOM & player sanitization, eliminating video ad interruptions, cookie walls, and tracker bloat without triggering anti-adblock modals."
+          },
+          {
+            "q": "Does this work on Chrome, Edge, Brave, and Firefox Manifest V3?",
+            "a": "Yes. Every SWEEPR DeepBlock rule pack is compiled natively for Chromium Manifest V3 (Chrome, Edge, Brave, Thorium, Vivaldi, Opera, Arc) and Firefox WebExtensions with zero cloud browsing telemetry."
+          },
+          {
+            "q": "Why do standard ad blockers fail or break page scrolling on modern sites?",
+            "a": "Legacy CSS-hiding extensions delete the visual overlay while leaving body{overflow:hidden} locked and consented tracker scripts active. SWEEPR DeepBlock executes the genuine \"Reject All\" CMP signal in under 50ms and restores clean scrolling automatically."
+          },
+          {
+            "q": "What is included in SWEEPR DeepBlock Pro vs the Complete Security Suite?",
+            "a": "SWEEPR DeepBlock Pro (£29.99/yr or £1.99 1st-Month Intro) unlocks all 6 browser protection modules across 4 devices. The Sweepr Complete Security Suite (£89.99/yr, save 45%) bundles DeepBlock Pro, Total Tab & RAM Tamer, Sweepr VPN Pro, and Sweepr Desktop Cleaner Pro across 5 devices."
+          }
+        ]
+      }
+    }
+  ],
   "ctrEnrichmentQueue": [
+    {
+      "keyword": "best manifest v3 adblocker vs ublock origin lite",
+      "secondaryKeywords": [
+        "adblock vs ublock origin lite"
+      ],
+      "targetExistingPage": "/vs/ublock-origin-lite",
+      "targetExistingTitle": "SWEEPR DeepBlock vs uBlock Origin Lite (2026 Comparison)",
+      "cannibalizationScore": 0.594,
+      "metrics": {
+        "opportunityScore": 81.7,
+        "volumeScore": 74,
+        "lowCompetitionScore": 90,
+        "transactionalScore": 100,
+        "estimatedKD": 10,
+        "wordCount": 8
+      },
+      "recommendedAction": "ENRICH_EXISTING_PILLAR_FAQ_AND_CTR"
+    },
     {
       "keyword": "stop twitch mid roll ads without purple screen",
       "secondaryKeywords": [],
@@ -26,24 +319,6 @@
         "lowCompetitionScore": 100,
         "transactionalScore": 71,
         "estimatedKD": 1,
-        "wordCount": 8
-      },
-      "recommendedAction": "ENRICH_EXISTING_PILLAR_FAQ_AND_CTR"
-    },
-    {
-      "keyword": "best manifest v3 adblocker vs ublock origin lite",
-      "secondaryKeywords": [
-        "adblock vs ublock origin lite"
-      ],
-      "targetExistingPage": "/vs/ublock-origin-lite",
-      "targetExistingTitle": "SWEEPR DeepBlock vs uBlock Origin Lite (2026 Comparison)",
-      "cannibalizationScore": 0.594,
-      "metrics": {
-        "opportunityScore": 74.7,
-        "volumeScore": 74,
-        "lowCompetitionScore": 70,
-        "transactionalScore": 100,
-        "estimatedKD": 30,
         "wordCount": 8
       },
       "recommendedAction": "ENRICH_EXISTING_PILLAR_FAQ_AND_CTR"
@@ -77,22 +352,6 @@
         "transactionalScore": 73,
         "estimatedKD": 5,
         "wordCount": 6
-      },
-      "recommendedAction": "ENRICH_EXISTING_PILLAR_FAQ_AND_CTR"
-    },
-    {
-      "keyword": "ublock origin vs adblock best ad blocker",
-      "secondaryKeywords": [],
-      "targetExistingPage": "/vs/ublock-origin-vs-adguard",
-      "targetExistingTitle": "uBlock Origin Vs AdGuard (2026) | SWEEPR DeepBlock",
-      "cannibalizationScore": 0.618,
-      "metrics": {
-        "opportunityScore": 72.9,
-        "volumeScore": 67,
-        "lowCompetitionScore": 71,
-        "transactionalScore": 100,
-        "estimatedKD": 29,
-        "wordCount": 7
       },
       "recommendedAction": "ENRICH_EXISTING_PILLAR_FAQ_AND_CTR"
     },
@@ -137,26 +396,10 @@
       "metrics": {
         "opportunityScore": 0,
         "volumeScore": 52,
-        "lowCompetitionScore": 79,
+        "lowCompetitionScore": 90,
         "transactionalScore": 100,
-        "estimatedKD": 21,
+        "estimatedKD": 10,
         "wordCount": 5
-      },
-      "recommendedAction": "ENRICH_EXISTING_PILLAR_FAQ_AND_CTR"
-    },
-    {
-      "keyword": "is pie adblock legit",
-      "secondaryKeywords": [],
-      "targetExistingPage": "/vs/is-pie-adblock-legit-reddit",
-      "targetExistingTitle": "Is Pie AdBlock Legit Reddit (2026) | SWEEPR DeepBlock",
-      "cannibalizationScore": 0.755,
-      "metrics": {
-        "opportunityScore": 0,
-        "volumeScore": 65,
-        "lowCompetitionScore": 79,
-        "transactionalScore": 80,
-        "estimatedKD": 21,
-        "wordCount": 4
       },
       "recommendedAction": "ENRICH_EXISTING_PILLAR_FAQ_AND_CTR"
     },

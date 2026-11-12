@@ -1,6 +1,6 @@
 {
   "cooldownDays": 14,
-  "lastRunAt": "2026-11-11T14:39:38.301Z",
+  "lastRunAt": "2026-11-12T00:56:42.304Z",
   "titleUpdatedAt": {
     "/setup/thorium-chromium-browser": "2026-11-03T20:45:00.000Z",
     "/setup/orion-browser-macos-ios": "2026-11-03T20:45:00.000Z",
@@ -291,6 +291,15 @@
       "activePagesWithImpressions": 164,
       "newlyDiscoveredPaths": 0,
       "source": "gsc_cloud_api_v3"
+    },
+    {
+      "date": "2026-11-12",
+      "window": "2026-10-13..2026-11-10",
+      "impressions": 552,
+      "clicks": 7,
+      "activePagesWithImpressions": 164,
+      "newlyDiscoveredPaths": 0,
+      "source": "gsc_cloud_api_v3"
     }
   ],
   "proofUpdatedAt": {
@@ -469,7 +478,7 @@
     "/vs/stands-fair-adblocker": "2026-11-05T00:24:02.868Z",
     "/vs/surfshark-cleanweb": "2026-11-05T00:24:02.868Z",
     "/vs/total-adblock": "2026-11-04T23:50:27.227Z",
-    "/vs/ublock-origin-lite": "2026-11-05T00:24:02.868Z",
+    "/vs/ublock-origin-lite": "2026-11-12T00:56:42.304Z",
     "/vs/windscribe-robert-adblock": "2026-11-05T00:24:02.868Z",
     "/guides/best-manifest-v3-adblockers-for-google-chrome-2026": "2026-11-05T00:24:02.868Z",
     "/guides/how-to-auto-mute-and-block-autoplay-video-ads": "2026-11-05T00:24:02.868Z",
@@ -584,7 +593,7 @@
     "/vs/total-adblock-renewal-charge-alternative": "2026-11-05T00:24:02.868Z",
     "/vs/ublock-origin-alternative-for-chrome": "2026-11-05T00:24:02.868Z",
     "/vs/ublock-origin-lite-vs-ublock-origin": "2026-11-05T00:24:02.868Z",
-    "/vs/ublock-origin-vs-adguard": "2026-11-05T00:24:02.868Z",
+    "/vs/ublock-origin-vs-adguard": "2026-11-12T00:56:42.304Z",
     "/vs/adblock-plus-not-working-on-youtube-chrome": "2026-11-05T00:24:02.868Z",
     "/vs/adguard-vs-ublock-origin-lite-chrome-2026": "2026-11-05T06:34:14.290Z",
     "/vs/chrome-manifest-v3-adblock-plus": "2026-11-05T00:24:02.868Z",
@@ -615,7 +624,9 @@
     "/solutions/x-twitter-feed-ads-bypass-anti-adblock-walls": "2026-11-10T00:14:32.641Z",
     "/solutions/x-twitter-feed-ads-encrypted-dns-doh-protection": "2026-11-10T00:14:32.641Z",
     "/solutions/waterfox-adblock-mv3-extension": "2026-11-10T19:46:12.484Z",
-    "/solutions/youtube-ads-blocker-chrome-extension": "2026-11-10T21:00:45.606Z"
+    "/solutions/youtube-ads-blocker-chrome-extension": "2026-11-10T21:00:45.606Z",
+    "/setup/adblock-pro-for-safari-not-working": "2026-11-12T00:56:42.304Z",
+    "/solutions/auto-reject-cookies-extension-edge": "2026-11-12T00:56:42.304Z"
   },
   "contentHashes": {
     "/setup/arc-browser-windows-mac": "da77e780adaf6967",
@@ -793,7 +804,7 @@
     "/vs/stands-fair-adblocker": "7b99469d14aef836",
     "/vs/surfshark-cleanweb": "871581aeaf5e40f4",
     "/vs/total-adblock": "9ae8bc51a6aa355b",
-    "/vs/ublock-origin-lite": "6e93511ded0fe5f5",
+    "/vs/ublock-origin-lite": "0a7590038895b6bd",
     "/vs/windscribe-robert-adblock": "491489b9c7179cea",
     "/guides/best-manifest-v3-adblockers-for-google-chrome-2026": "c50ccdcadef9480e",
     "/guides/how-to-auto-mute-and-block-autoplay-video-ads": "aeca9d97ff06a581",
@@ -908,7 +919,7 @@
     "/vs/total-adblock-renewal-charge-alternative": "07ec3f5856d8a936",
     "/vs/ublock-origin-alternative-for-chrome": "d1db78d6129a21ab",
     "/vs/ublock-origin-lite-vs-ublock-origin": "6ed0f6d7d8c1c3a1",
-    "/vs/ublock-origin-vs-adguard": "6b54bc0641f6afc5",
+    "/vs/ublock-origin-vs-adguard": "0acd6e9dcfc93478",
     "/vs/adblock-plus-not-working-on-youtube-chrome": "c25d7e1562436858",
     "/vs/adguard-vs-ublock-origin-lite-chrome-2026": "61ee8aed276bde56",
     "/vs/chrome-manifest-v3-adblock-plus": "b7e3708cf9516332",
@@ -939,7 +950,9 @@
     "/solutions/x-twitter-feed-ads-bypass-anti-adblock-walls": "e91d8e6e575e6f28",
     "/solutions/x-twitter-feed-ads-encrypted-dns-doh-protection": "bdf9e67ee13d5737",
     "/solutions/waterfox-adblock-mv3-extension": "7693afa21a7fe5fe",
-    "/solutions/youtube-ads-blocker-chrome-extension": "d666a365e3126db2"
+    "/solutions/youtube-ads-blocker-chrome-extension": "d666a365e3126db2",
+    "/setup/adblock-pro-for-safari-not-working": "13ed587e522d2d36",
+    "/solutions/auto-reject-cookies-extension-edge": "b01f215a9f92392b"
   },
   "ga4FunnelHistory": [
     {
@@ -1000,6 +1013,19 @@
       "sessions28d": 151,
       "engagementRatePct": 33.1,
       "avgSessionDurationSec": 158.7,
+      "extensionInstallsStarted": 2,
+      "testLabRuns": 0,
+      "beginCheckout": 2,
+      "orderPaymentErrors": 0,
+      "purchases": 0,
+      "source": "ga4_data_api_v1beta"
+    },
+    {
+      "date": "2026-11-12",
+      "activeUsers28d": 126,
+      "sessions28d": 152,
+      "engagementRatePct": 32.9,
+      "avgSessionDurationSec": 157.7,
       "extensionInstallsStarted": 2,
       "testLabRuns": 0,
       "beginCheckout": 2,
