@@ -1,7 +1,7 @@
 {
   "ok": true,
-  "version": "1.1.74802",
-  "updatedAt": "2026-11-11T05:26:42.562Z",
+  "version": "1.1.65053",
+  "updatedAt": "2026-11-12T06:30:53.582Z",
   "featureFlags": {
     "cookieAutoClose": true,
     "hideSearchSpam": true,
@@ -13,7 +13,6 @@
   "extraCmpSelectors": [],
   "extraAntiAdblockSelectors": [],
   "extraCosmeticSelectors": [
-    "#spot_video_ntv_c",
     "#spot_video_inside_player",
     ".drt-spot-box",
     ".drt-spot-bottom-box",
@@ -112,7 +111,8 @@
     "[data-cl-overlay]",
     "#c_window_xEucqIjg",
     "#alink_overlay_EPXdyaUf",
-    ".ad-slot"
+    ".ad-slot",
+    ".dfp-ad"
   ],
   "dynamicDnrRules": [
     {

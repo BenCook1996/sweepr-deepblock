@@ -417,3 +417,17 @@ Automated daily 24-hour pipeline (`00:00 UTC`) sampling 1,000 unique ad-heavy do
 - **Cross-Site Non-Regression Suite:** PASS (15/15 Golden Network & DeepStealth Surrogate Canaries | 10/10 Legitimate Site Canaries Unblocked | 24 Cross-Module Selectors Protected)
 - **Git Commit / Deployment Ref:** `dc6c07e5`
 
+## Run `adpipe-2026-11-12-d5xx3` — 2026-11-12T06:30:53.618Z
+- **Sites Sampled (30-Day Deduplicated):** 1000
+- **Sites Evaluated:** 1000
+- **Ad Leaks Detected:** 1
+- **Rules Auto-Patched (Verified Self-Healing):** 1
+- **Flagged for Manual Review:** 0
+- **Repository Ruleset Totals:** 245 MV3 Static DNR Rules | 391 ABP/uBO Rules | 100 OTA Delta Rules
+- **Cross-Site Non-Regression Suite:** PASS (15/15 Golden Network & DeepStealth Surrogate Canaries | 10/10 Legitimate Site Canaries Unblocked | 24 Cross-Module Selectors Protected)
+- **Git Commit / Deployment Ref:** `b5a3fb27`
+
+| Target URL | Ad Type | Generated Rule | Fix Status | Verification Notes |
+| :--- | :--- | :--- | :--- | :--- |
+| `https://dailytribune.net` | DOM | `dailytribune.net##.dfp-ad` | **Auto-Patched** | Verified: Cosmetic rule dailytribune.net##.dfp-ad collapses ad container (.dfp-ad) with main content wrappers and scroll state intact. |
+
