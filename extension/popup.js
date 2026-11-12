@@ -760,7 +760,10 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
+  let popupActivationInFlight = false;
+
   async function handlePopupActivate() {
+    if (popupActivationInFlight) return;
     const key = (licenseKeyInput.value || '').trim();
     if (!key) {
       licenseFeedbackEl.style.display = 'block';
@@ -768,6 +771,7 @@ document.addEventListener('DOMContentLoaded', () => {
       licenseFeedbackEl.textContent = 'Please paste your license key or 6-digit code first.';
       return;
     }
+    popupActivationInFlight = true;
     activateKeyBtn.textContent = '...';
     activateKeyBtn.disabled = true;
     licenseFeedbackEl.style.display = 'block';
@@ -775,33 +779,39 @@ document.addEventListener('DOMContentLoaded', () => {
     licenseFeedbackEl.textContent = 'Verifying subscription...';
 
     chrome.runtime.sendMessage({ type: 'ACTIVATE_LICENSE', licenseKey: key }, async (res) => {
-      const finalRes =
-        res && typeof res === 'object' ? res : await directVerifyFromPopup(key);
-      activateKeyBtn.textContent = 'Unlock';
-      activateKeyBtn.disabled = false;
-      if (finalRes && finalRes.ok && finalRes.valid) {
-        await chrome.storage.local.set({ draftLicenseKey: '', licenseDrawerOpen: false });
-        currentState.proActive = true;
-        currentState.settings = {
-          cookieAutoClose: true,
-          hideSearchSpam: true,
-          fakeShopAlerts: true,
-          trackerProtection: true,
-          adBlocking: true,
-          silentMode: true,
-          autoRamTamer: true
-        };
-        licenseFeedbackEl.style.display = 'block';
-        licenseFeedbackEl.style.color = '#10b981';
-        licenseFeedbackEl.textContent = '✓ Pro Activated! All protection features are ON.';
-        renderState(currentState);
-      } else {
-        currentState.proActive = false;
-        licenseFeedbackEl.style.display = 'block';
-        licenseFeedbackEl.style.color = '#ef4444';
-        licenseFeedbackEl.textContent =
-          (finalRes && finalRes.error) || '✗ Invalid or unpaid license key.';
-        renderState(currentState);
+      try {
+        const finalRes =
+          res && typeof res === 'object' ? res : await directVerifyFromPopup(key);
+        activateKeyBtn.textContent = 'Unlock';
+        activateKeyBtn.disabled = false;
+        if (finalRes && finalRes.ok && finalRes.valid) {
+          await chrome.storage.local.set({ draftLicenseKey: '', licenseDrawerOpen: false });
+          currentState.proActive = true;
+          currentState.settings = {
+            cookieAutoClose: true,
+            hideSearchSpam: true,
+            fakeShopAlerts: true,
+            trackerProtection: true,
+            adBlocking: true,
+            silentMode: true,
+            autoRamTamer: true
+          };
+          licenseFeedbackEl.style.display = 'block';
+          licenseFeedbackEl.style.color = '#10b981';
+          licenseFeedbackEl.textContent = '✓ Pro Activated! All protection features are ON.';
+          renderState(currentState);
+        } else {
+          if (!(finalRes && finalRes.networkError && currentState.proActive)) {
+            currentState.proActive = false;
+          }
+          licenseFeedbackEl.style.display = 'block';
+          licenseFeedbackEl.style.color = '#ef4444';
+          licenseFeedbackEl.textContent =
+            (finalRes && finalRes.error) || '✗ Invalid or unpaid license key.';
+          renderState(currentState);
+        }
+      } finally {
+        popupActivationInFlight = false;
       }
     });
   }

@@ -640,15 +640,29 @@ async function syncSubscriptionWithSweeprCrm(acc, { amountCents, currency = 'gbp
   try {
     const crmRes = await crm.syncSubscription(syncPayload);
     if (crmRes.ok && crmRes.data) {
-      if (crmRes.data.activation_code && crmRes.data.activation_code !== acc.activation_code) {
-        licenses.delete(acc.activation_code);
-        licenses.delete(`SWEEPR-DB-${acc.activation_code}`);
-        licenses.delete(`DEEPBLOCK-${acc.activation_code}`);
-        acc.activation_code = String(crmRes.data.activation_code);
-      }
-      if (crmRes.data.license_key && crmRes.data.license_key !== acc.licenseKey) {
-        licenses.delete(acc.licenseKey);
-        acc.licenseKey = String(crmRes.data.license_key);
+      const crmCode = crmRes.data.activation_code ? String(crmRes.data.activation_code).trim() : '';
+      const crmKey = crmRes.data.license_key ? String(crmRes.data.license_key).trim() : '';
+      if (acc.isSeededAccount) {
+        if (crmCode && (acc.status === 'active' || acc.status === 'trialing')) {
+          licenses.set(crmCode, acc);
+          licenses.set(`SWEEPR-DB-${crmCode}`, acc);
+          licenses.set(`DEEPBLOCK-${crmCode}`, acc);
+        }
+        if (crmKey && (acc.status === 'active' || acc.status === 'trialing')) {
+          licenses.set(crmKey, acc);
+          licenses.set(crmKey.toUpperCase(), acc);
+        }
+      } else {
+        if (crmCode && crmCode !== acc.activation_code) {
+          licenses.delete(acc.activation_code);
+          licenses.delete(`SWEEPR-DB-${acc.activation_code}`);
+          licenses.delete(`DEEPBLOCK-${acc.activation_code}`);
+          acc.activation_code = crmCode;
+        }
+        if (crmKey && crmKey !== acc.licenseKey) {
+          licenses.delete(acc.licenseKey);
+          acc.licenseKey = crmKey;
+        }
       }
       if (crmRes.data.account_id) {
         acc.crm_account_id = crmRes.data.account_id;
@@ -1094,12 +1108,21 @@ function registerLocalDeviceForAccount(acc, deviceId, meta = {}) {
     return { ok: true, used: acc.devices.size, max: MAX_DEVICES_PER_LICENSE };
   }
   if (acc.devices.size >= MAX_DEVICES_PER_LICENSE) {
-    return {
-      ok: false,
-      used: acc.devices.size,
-      max: MAX_DEVICES_PER_LICENSE,
-      devices: listAccountDevices(acc)
-    };
+    if (acc.isSeededAccount || cleanId.startsWith('ext_db_')) {
+      const oldest = listAccountDevices(acc).pop();
+      if (oldest && oldest.device_id) {
+        acc.devices.delete(oldest.device_id);
+        acc.deviceMeta.delete(oldest.device_id);
+      }
+    }
+    if (acc.devices.size >= MAX_DEVICES_PER_LICENSE) {
+      return {
+        ok: false,
+        used: acc.devices.size,
+        max: MAX_DEVICES_PER_LICENSE,
+        devices: listAccountDevices(acc)
+      };
+    }
   }
   acc.devices.add(cleanId);
   acc.deviceMeta.set(cleanId, {

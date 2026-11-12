@@ -2,6 +2,7 @@
 const isDevExtension = typeof chrome !== 'undefined' && chrome.runtime && !('update_url' in chrome.runtime.getManifest());
 const LICENSE_VERIFY_ENDPOINTS = [
   'https://sweeprdeepblock.com/api/license-verify',
+  'https://sweepr-crm-production.up.railway.app/v1/license/verify-key?project=deepblock',
   ...(isDevExtension
     ? [
         'http://localhost:8787/v1/license/verify-key?project=deepblock',
@@ -25,6 +26,7 @@ const scamReasonsByTab = new Map();
 const tabLastActiveAt = new Map();
 const AUTO_RAM_IDLE_MS = 10 * 60 * 1000; // 10 minutes idle threshold for automatic background snooze
 const OFFLINE_GRACE_MS = 7 * 24 * 60 * 60 * 1000; // 7-day offline verification grace window
+const VERIFIED_SESSION_CACHE_TTL_MS = 12 * 60 * 60 * 1000; // 12-hour cache TTL for cold service-worker wakeups
 
 let tabActivityHydrated = false;
 let tabActivitySaveScheduled = false;
@@ -308,6 +310,8 @@ let verifiedSession = {
   deviceId: '',
   internalWriteInProgress: false
 };
+let integrityCheckInFlight = null;
+const verifyInFlightByKey = new Map();
 
 async function getOrCreateDeviceId() {
   if (verifiedSession.deviceId) return verifiedSession.deviceId;
@@ -433,142 +437,206 @@ async function checkHostPermissionsAndProtection() {
   return Boolean(granted);
 }
 
+async function preserveOfflineGraceSession() {
+  const stored = await chrome.storage.local.get(['proActive', 'ramTamerActive', 'licenseKey', 'licenseVerifiedAt', 'entitlements', 'settings']);
+  const withinOfflineGrace =
+    Boolean(stored.proActive && stored.licenseKey && stored.licenseVerifiedAt) &&
+    Date.now() - Number(stored.licenseVerifiedAt) <= OFFLINE_GRACE_MS;
+  if (!withinOfflineGrace) {
+    return null;
+  }
+  const adBlockingOn = !stored.settings || stored.settings.adBlocking !== false;
+  verifiedSession.proActive = true;
+  verifiedSession.ramTamerActive = Boolean(stored.ramTamerActive);
+  verifiedSession.licenseKey = String(stored.licenseKey).trim();
+  verifiedSession.coldChecked = true;
+  await syncExtensionProtectionRules(adBlockingOn);
+  return {
+    ok: true,
+    valid: true,
+    networkError: true,
+    offlineGrace: true,
+    licenseKey: verifiedSession.licenseKey,
+    ramTamerActive: verifiedSession.ramTamerActive,
+    entitlements: Array.isArray(stored.entitlements) ? stored.entitlements : []
+  };
+}
+
 // Verify license key against Central SWEEPR CRM & SWEEPR Deepblock Licensing API
 async function verifyLicenseWithServer(rawKey) {
   const key = String(rawKey || '').trim();
   if (!key || key.length < 6 || key.length > 512 || key.includes('@')) {
-    await revokeProState('invalid_key_format');
+    await revokeProState('invalid_key_format', { preserveLicenseKey: true });
     return { ok: false, valid: false, error: 'Invalid license key format.' };
   }
 
-  const deviceId = await getOrCreateDeviceId();
-  let lastNetworkError = false;
-  for (const baseUrl of LICENSE_VERIFY_ENDPOINTS) {
-    for (let attempt = 0; attempt <= 1; attempt++) {
-      try {
-        const sep = baseUrl.includes('?') ? '&' : '?';
-        const res = await fetch(`${baseUrl}${sep}key=${encodeURIComponent(key)}&device_id=${encodeURIComponent(deviceId)}`, {
-          method: 'GET',
-          headers: { Accept: 'application/json', 'x-sweepr-project': 'deepblock' },
-          signal: AbortSignal.timeout(5000)
-        });
-        if ((res.status === 429 || res.status === 502 || res.status === 503 || res.status === 504) && attempt === 0) {
-          const delayMs = 150 + Math.floor(Math.random() * 100);
-          await new Promise((r) => setTimeout(r, delayMs));
-          continue;
-        }
-        const data = await res.json().catch(() => ({}));
+  if (verifyInFlightByKey.has(key)) {
+    return verifyInFlightByKey.get(key);
+  }
 
-        if (res.ok && data && data.valid === true) {
-          const subStatus = String(data.status || 'active').toLowerCase();
-          if (subStatus === 'active' || subStatus === 'trialing') {
-            const addonsList = Array.isArray(data.addons) ? data.addons : [];
-            const ramTamerActive = Boolean(
-              data.ramTamerAddon === true ||
-                addonsList.includes('ram_tamer') ||
-                addonsList.includes('sweepr_secure_bundle')
-            );
-            const entitlements = Array.isArray(data.entitlements)
-              ? data.entitlements
-              : [
-                  'pro_cookie_autoreject',
-                  'pro_ai_slop_purifier',
-                  'pro_clutter_stripper',
-                  'bundle_fake_store_detector',
-                  'bundle_encrypted_dns_proxy',
-                  ...(ramTamerActive ? ['addon_total_tab_and_ram_tamer'] : [])
-                ];
-            const canonicalKey = data.licenseKey || data.license_key || key;
-            verifiedSession.proActive = true;
-            verifiedSession.ramTamerActive = ramTamerActive;
-            verifiedSession.licenseKey = canonicalKey;
-            verifiedSession.internalWriteInProgress = true;
-            await chrome.storage.local.set({
-              proActive: true,
-              ramTamerActive,
-              licenseKey: canonicalKey,
-              draftLicenseKey: '',
-              licenseDrawerOpen: false,
-              licenseToken: data.token || data.license_token || '',
-              crmAccountId: data.account_id || '',
-              subscriptionStatus: subStatus,
-              stepUpSaveEligible: Boolean(data.stepUpSaveEligible || data.plan === 'monthly_intro'),
-              previousLicenseKey: canonicalKey,
-              licenseVerifiedAt: Date.now(),
-              entitlements,
-              encryptedDnsEnabled: true,
-              settings: {
-                cookieAutoClose: true,
-                hideSearchSpam: true,
-                fakeShopAlerts: true,
-                trackerProtection: true,
-                adBlocking: true,
-                silentMode: true,
-                autoRamTamer: true
-              }
-            });
-            verifiedSession.internalWriteInProgress = false;
-            chrome.alarms.create('ramTamerCheck', { periodInMinutes: 5 });
-            await syncExtensionProtectionRules(true);
-            await updateActionBadge();
-            return {
-              ok: true,
-              valid: true,
-              status: subStatus,
-              licenseKey: canonicalKey,
-              ramTamerActive,
-              entitlements
-            };
+  const runVerification = (async () => {
+    const deviceId = await getOrCreateDeviceId();
+    let lastNetworkError = false;
+    let sawTransientHttpError = false;
+    let lastRejectedResult = null;
+
+    for (const baseUrl of LICENSE_VERIFY_ENDPOINTS) {
+      for (let attempt = 0; attempt <= 1; attempt++) {
+        try {
+          const sep = baseUrl.includes('?') ? '&' : '?';
+          const res = await fetch(`${baseUrl}${sep}key=${encodeURIComponent(key)}&device_id=${encodeURIComponent(deviceId)}`, {
+            method: 'GET',
+            headers: { Accept: 'application/json', 'x-sweepr-project': 'deepblock' },
+            signal: AbortSignal.timeout(10000)
+          });
+          if (res.status === 429 || res.status >= 500) {
+            sawTransientHttpError = true;
+            if (attempt === 0) {
+              const delayMs = 250 + Math.floor(Math.random() * 150);
+              await new Promise((r) => setTimeout(r, delayMs));
+              continue;
+            }
+            break;
           }
-        }
+          const data = await res.json().catch(() => ({}));
 
-        if (res.status === 400 || res.status === 403 || res.status === 404 || data?.valid === false) {
-          const statusReason = data?.status || data?.error || 'inactive';
-          await revokeProState(statusReason);
-          return {
-            ok: false,
-            valid: false,
-            status: statusReason,
-            error:
-              res.status === 403
-                ? 'Your Pro subscription is no longer active. Please renew to unlock Pro features.'
-                : 'License key not recognized or no active paid subscription found.'
-          };
-        }
-        break;
-      } catch (e) {
-        lastNetworkError = true;
-        if (attempt === 0) {
-          const delayMs = 150 + Math.floor(Math.random() * 100);
-          await new Promise((r) => setTimeout(r, delayMs));
+          if (res.ok && data && data.valid === true) {
+            const subStatus = String(data.status || 'active').toLowerCase();
+            if (subStatus === 'active' || subStatus === 'trialing') {
+              const addonsList = Array.isArray(data.addons) ? data.addons : [];
+              const ramTamerActive = Boolean(
+                data.ramTamerAddon === true ||
+                  addonsList.includes('ram_tamer') ||
+                  addonsList.includes('sweepr_secure_bundle')
+              );
+              const entitlements = Array.isArray(data.entitlements)
+                ? data.entitlements
+                : [
+                    'pro_cookie_autoreject',
+                    'pro_ai_slop_purifier',
+                    'pro_clutter_stripper',
+                    'bundle_fake_store_detector',
+                    'bundle_encrypted_dns_proxy',
+                    ...(ramTamerActive ? ['addon_total_tab_and_ram_tamer'] : [])
+                  ];
+              const canonicalKey = data.licenseKey || data.license_key || key;
+              verifiedSession.proActive = true;
+              verifiedSession.ramTamerActive = ramTamerActive;
+              verifiedSession.licenseKey = canonicalKey;
+              verifiedSession.coldChecked = true;
+              verifiedSession.internalWriteInProgress = true;
+              await chrome.storage.local.set({
+                proActive: true,
+                ramTamerActive,
+                licenseKey: canonicalKey,
+                draftLicenseKey: '',
+                licenseDrawerOpen: false,
+                licenseToken: data.token || data.license_token || '',
+                crmAccountId: data.account_id || '',
+                subscriptionStatus: subStatus,
+                stepUpSaveEligible: Boolean(data.stepUpSaveEligible || data.plan === 'monthly_intro'),
+                previousLicenseKey: canonicalKey,
+                licenseVerifiedAt: Date.now(),
+                entitlements,
+                encryptedDnsEnabled: true,
+                settings: {
+                  cookieAutoClose: true,
+                  hideSearchSpam: true,
+                  fakeShopAlerts: true,
+                  trackerProtection: true,
+                  adBlocking: true,
+                  silentMode: true,
+                  autoRamTamer: true
+                }
+              });
+              verifiedSession.internalWriteInProgress = false;
+              chrome.alarms.create('ramTamerCheck', { periodInMinutes: 5 });
+              await syncExtensionProtectionRules(true);
+              await updateActionBadge();
+              return {
+                ok: true,
+                valid: true,
+                status: subStatus,
+                licenseKey: canonicalKey,
+                ramTamerActive,
+                entitlements
+              };
+            }
+          }
+
+          if (res.status === 400 || res.status === 401 || res.status === 403 || res.status === 404 || data?.valid === false) {
+            const statusReason = String(data?.status || data?.error || 'inactive').toLowerCase();
+            const isExplicitlyInactive =
+              res.status === 403 &&
+              (statusReason === 'subscription_inactive' ||
+                statusReason === 'canceled' ||
+                statusReason === 'expired' ||
+                statusReason === 'unpaid');
+            if (isExplicitlyInactive) {
+              await revokeProState(statusReason, { preserveLicenseKey: true });
+              return {
+                ok: false,
+                valid: false,
+                status: statusReason,
+                error: 'Your Pro subscription is no longer active. Please renew to unlock Pro features.'
+              };
+            }
+            lastRejectedResult = {
+              ok: false,
+              valid: false,
+              status: statusReason,
+              error: 'License key not recognized or no active paid subscription found.'
+            };
+            break;
+          }
+          break;
+        } catch (e) {
+          lastNetworkError = true;
+          if (attempt === 0) {
+            const delayMs = 250 + Math.floor(Math.random() * 150);
+            await new Promise((r) => setTimeout(r, delayMs));
+          }
         }
       }
     }
-  }
 
-  if (lastNetworkError) {
+    const graced = await preserveOfflineGraceSession();
+    if (graced) {
+      return graced;
+    }
+
+    if (lastRejectedResult && !lastNetworkError && !sawTransientHttpError) {
+      return lastRejectedResult;
+    }
+
     return {
       ok: false,
       valid: false,
       networkError: true,
       error: 'Could not reach licensing server to verify subscription. Please check your connection.'
     };
-  }
+  })();
 
-  await revokeProState('unverified');
-  return { ok: false, valid: false, error: 'Invalid or unpaid license key.' };
+  verifyInFlightByKey.set(key, runVerification);
+  try {
+    return await runVerification;
+  } finally {
+    verifyInFlightByKey.delete(key);
+  }
 }
 
-async function revokeProState(reason = 'inactive') {
+async function revokeProState(reason = 'inactive', options = {}) {
   verifiedSession.proActive = false;
   verifiedSession.ramTamerActive = false;
   verifiedSession.licenseKey = '';
   verifiedSession.internalWriteInProgress = true;
-  const existing = await chrome.storage.local.get(['churnedAt']);
+  const existing = await chrome.storage.local.get(['churnedAt', 'licenseKey', 'previousLicenseKey']);
+  const preservedKey = options.clearLicenseKey ? '' : (existing?.licenseKey || '');
   await chrome.storage.local.set({
     proActive: false,
     ramTamerActive: false,
-    licenseKey: '',
+    licenseKey: preservedKey,
+    previousLicenseKey: existing?.previousLicenseKey || existing?.licenseKey || '',
     subscriptionStatus: String(reason),
     churnedAt: existing?.churnedAt || Date.now(),
     licenseVerifiedAt: Date.now(),
@@ -616,29 +684,61 @@ if (chrome.storage && chrome.storage.onChanged) {
   });
 }
 
-async function enforceStoredSubscriptionIntegrity() {
-  const store = await chrome.storage.local.get(['proActive', 'ramTamerActive', 'licenseKey', 'licenseVerifiedAt', 'settings']);
-  const key = String(store.licenseKey || '').trim();
-  if (!key || !store.proActive) {
+async function enforceStoredSubscriptionIntegrity(options = {}) {
+  const force = Boolean(options && options.force);
+  if (integrityCheckInFlight && !force) {
+    return integrityCheckInFlight;
+  }
+
+  const runIntegrityCheck = (async () => {
+    const store = await chrome.storage.local.get(['proActive', 'ramTamerActive', 'licenseKey', 'licenseVerifiedAt', 'settings']);
+    const key = String(store.licenseKey || '').trim();
+    if (!key || !store.proActive) {
+      verifiedSession.coldChecked = true;
+      verifiedSession.proActive = false;
+      verifiedSession.ramTamerActive = false;
+      verifiedSession.licenseKey = '';
+      await syncExtensionProtectionRules(false);
+      return { proActive: false, ramTamerActive: false };
+    }
+
+    const verifiedAt = Number(store.licenseVerifiedAt || 0);
+    const ageMs = Date.now() - verifiedAt;
+    if (!force && verifiedAt > 0 && ageMs >= 0 && ageMs < VERIFIED_SESSION_CACHE_TTL_MS) {
+      verifiedSession.proActive = true;
+      verifiedSession.ramTamerActive = Boolean(store.ramTamerActive);
+      verifiedSession.licenseKey = key;
+      verifiedSession.coldChecked = true;
+      const adBlockingOn = !store.settings || store.settings.adBlocking !== false;
+      await syncExtensionProtectionRules(adBlockingOn);
+      return { proActive: true, ramTamerActive: verifiedSession.ramTamerActive };
+    }
+
+    const verified = await verifyLicenseWithServer(key);
     verifiedSession.coldChecked = true;
-    await revokeProState('unactivated');
-    return { proActive: false, ramTamerActive: false };
+    if (verified.networkError || verified.offlineGrace) {
+      const withinOfflineGrace =
+        Boolean(store.licenseVerifiedAt) && Date.now() - Number(store.licenseVerifiedAt) <= OFFLINE_GRACE_MS;
+      verifiedSession.proActive = Boolean(store.proActive && key && withinOfflineGrace);
+      verifiedSession.ramTamerActive = Boolean(store.proActive && store.ramTamerActive && key && withinOfflineGrace);
+      verifiedSession.licenseKey = withinOfflineGrace ? key : '';
+      await syncExtensionProtectionRules(verifiedSession.proActive && (!store.settings || store.settings.adBlocking !== false));
+      return { proActive: verifiedSession.proActive, ramTamerActive: verifiedSession.ramTamerActive };
+    }
+    return {
+      proActive: Boolean(verified.valid),
+      ramTamerActive: Boolean(verified.valid && verified.ramTamerActive)
+    };
+  })();
+
+  integrityCheckInFlight = runIntegrityCheck;
+  try {
+    return await runIntegrityCheck;
+  } finally {
+    if (integrityCheckInFlight === runIntegrityCheck) {
+      integrityCheckInFlight = null;
+    }
   }
-  const verified = await verifyLicenseWithServer(key);
-  verifiedSession.coldChecked = true;
-  if (verified.networkError) {
-    const withinOfflineGrace =
-      Boolean(store.licenseVerifiedAt) && Date.now() - Number(store.licenseVerifiedAt) <= OFFLINE_GRACE_MS;
-    verifiedSession.proActive = Boolean(store.proActive && key && withinOfflineGrace);
-    verifiedSession.ramTamerActive = Boolean(store.proActive && store.ramTamerActive && key && withinOfflineGrace);
-    verifiedSession.licenseKey = withinOfflineGrace ? key : '';
-    await syncExtensionProtectionRules(verifiedSession.proActive);
-    return { proActive: verifiedSession.proActive, ramTamerActive: verifiedSession.ramTamerActive };
-  }
-  return {
-    proActive: Boolean(verified.valid),
-    ramTamerActive: Boolean(verified.valid && verified.ramTamerActive)
-  };
 }
 
 async function ensureVerifiedProSession() {
@@ -738,7 +838,7 @@ chrome.runtime.onInstalled.addListener(async (details) => {
   }
 
   chrome.alarms.create('ramTamerCheck', { periodInMinutes: 5 });
-  chrome.alarms.create('licenseVerifyCheck', { periodInMinutes: 60 });
+  chrome.alarms.create('licenseVerifyCheck', { periodInMinutes: 720 });
   chrome.alarms.create('filterDeltaSync', { periodInMinutes: 720 });
   chrome.alarms.create('weeklyHeartbeat', { periodInMinutes: 10080 });
 });
@@ -746,7 +846,7 @@ chrome.runtime.onInstalled.addListener(async (details) => {
 chrome.runtime.onStartup.addListener(async () => {
   registerContextMenus();
   chrome.alarms.create('ramTamerCheck', { periodInMinutes: 5 });
-  chrome.alarms.create('licenseVerifyCheck', { periodInMinutes: 60 });
+  chrome.alarms.create('licenseVerifyCheck', { periodInMinutes: 720 });
   chrome.alarms.create('filterDeltaSync', { periodInMinutes: 720 });
   chrome.alarms.create('weeklyHeartbeat', { periodInMinutes: 10080 });
   await checkHostPermissionsAndProtection();
@@ -1137,7 +1237,7 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
     return;
   }
   if (alarm.name === 'licenseVerifyCheck') {
-    await enforceStoredSubscriptionIntegrity();
+    await enforceStoredSubscriptionIntegrity({ force: true });
     return;
   }
   if (alarm.name === 'filterDeltaSync') {
@@ -1534,8 +1634,8 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     return true;
   }
 
-  if (msg.type === 'ACTIVATE_LICENSE') {
-    const key = String(msg.licenseKey || '').trim();
+  if (msg.type === 'ACTIVATE_LICENSE' || msg.type === 'VERIFY_LICENSE') {
+    const key = String(msg.licenseKey || msg.key || '').trim();
     if (!key) {
       sendResponse({ ok: false, valid: false, error: 'Please enter a valid license key.' });
       return true;

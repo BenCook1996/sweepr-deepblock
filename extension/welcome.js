@@ -456,7 +456,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  let welcomeActivationInFlight = false;
+
   async function handleActivate() {
+    if (welcomeActivationInFlight) return;
     const key = (input.value || '').trim();
     if (!key) {
       feedback.style.display = 'block';
@@ -465,6 +468,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
+    welcomeActivationInFlight = true;
     btn.textContent = 'Verifying...';
     btn.disabled = true;
     feedback.style.display = 'block';
@@ -472,25 +476,29 @@ document.addEventListener('DOMContentLoaded', () => {
     feedback.textContent = 'Checking active subscription status...';
 
     chrome.runtime.sendMessage({ type: 'ACTIVATE_LICENSE', licenseKey: key }, async (res) => {
-      const finalRes =
-        res && typeof res === 'object' ? res : await directVerifyAndPersistLicense(key);
-      btn.disabled = false;
-      if (finalRes && finalRes.ok && finalRes.valid) {
-        markProActivated(finalRes.licenseKey || key, finalRes.settings || {
-          cookieAutoClose: true,
-          hideSearchSpam: true,
-          fakeShopAlerts: true,
-          trackerProtection: true,
-          adBlocking: true,
-          silentMode: true
-        });
-      } else {
-        btn.textContent = 'Activate Pro Protection';
-        feedback.style.display = 'block';
-        feedback.style.color = '#ef4444';
-        feedback.textContent =
-          (finalRes && finalRes.error) ||
-          '✗ Invalid or unpaid license key. Please complete checkout first.';
+      try {
+        const finalRes =
+          res && typeof res === 'object' ? res : await directVerifyAndPersistLicense(key);
+        btn.disabled = false;
+        if (finalRes && finalRes.ok && finalRes.valid) {
+          markProActivated(finalRes.licenseKey || key, finalRes.settings || {
+            cookieAutoClose: true,
+            hideSearchSpam: true,
+            fakeShopAlerts: true,
+            trackerProtection: true,
+            adBlocking: true,
+            silentMode: true
+          });
+        } else {
+          btn.textContent = 'Activate Pro Protection';
+          feedback.style.display = 'block';
+          feedback.style.color = '#ef4444';
+          feedback.textContent =
+            (finalRes && finalRes.error) ||
+            '✗ Invalid or unpaid license key. Please complete checkout first.';
+        }
+      } finally {
+        welcomeActivationInFlight = false;
       }
     });
   }
