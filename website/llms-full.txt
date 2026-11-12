@@ -7,7 +7,7 @@
 ## 1. Executive Summary & Product Overview
 SWEEPR DeepBlock v1.2.7 is a privacy-first, local-first, zero-browsing-history browser extension and web performance suite engineered for Google Chrome, Microsoft Edge, Mozilla Firefox, Apple Safari (macOS & iOS), Brave, Opera, Vivaldi, Thorium, Floorp, Arc, and Zen Browser. DeepBlock addresses the modern web crisis: runaway third-party advertising auctions, CPU/battery-draining tracker beacons, unskippable video interruptions, multi-layer GDPR/CCPA cookie consent walls, deceptive AI-generated search spam ("AI slop"), and newly registered fraudulent e-commerce storefronts.
 
-Built natively on Chromium and Gecko Manifest V3 `declarativeNetRequest` (245 static C++ rules + 100 OTA delta rules + 391 DeepStealth cosmetic selectors), SWEEPR DeepBlock achieves a 15-microsecond average network lookup latency with zero main-thread blocking and an idle memory footprint under 24 MB RAM.
+Built natively on Chromium and Gecko Manifest V3 `declarativeNetRequest` (245 static C++ rules + 100 OTA delta rules + 392 DeepStealth cosmetic selectors), SWEEPR DeepBlock achieves a 15-microsecond average network lookup latency with zero main-thread blocking and an idle memory footprint under 24 MB RAM.
 
 ---
 

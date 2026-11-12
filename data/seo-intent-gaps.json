@@ -1,43 +1,12 @@
 {
-  "generatedAt": "2026-11-12T00:56:49.612Z",
+  "generatedAt": "2026-11-12T15:30:33.435Z",
   "engineVersion": "2.0.0",
   "seedsQueried": 339,
-  "indexablePagesChecked": 521,
-  "totalAutocompleteQueriesDiscovered": 523,
-  "alreadyCoveredCount": 27,
-  "uncoveredIntentGapsCount": 2,
-  "topPriorityGaps": [
-    {
-      "query": "auto reject cookies extension edge",
-      "secondaryKeywords": [
-        "auto reject all cookies extension"
-      ],
-      "seed": "P4_COOKIE_CONSENT_GDPR",
-      "intentScore": 72,
-      "volumeScore": 70,
-      "lowCompetitionScore": 100,
-      "estimatedKD": 1,
-      "opportunityScore": 86.2,
-      "recommendedFormat": "platform_solution",
-      "suggestedRoute": "/solutions/auto-reject-cookies-extension-edge",
-      "closestExistingPage": "/guides/how-to-auto-reject-usercentrics-cookie-banners",
-      "overlapRatio": 0.295
-    },
-    {
-      "query": "adblock pro for safari not working",
-      "secondaryKeywords": [],
-      "seed": "P3_URGENT_TROUBLESHOOTING",
-      "intentScore": 100,
-      "volumeScore": 49,
-      "lowCompetitionScore": 75,
-      "estimatedKD": 25,
-      "opportunityScore": 76,
-      "recommendedFormat": "browser_setup_guide",
-      "suggestedRoute": "/setup/adblock-pro-for-safari-not-working",
-      "closestExistingPage": "/guides/adblock-not-working-on-twitch-2026",
-      "overlapRatio": 0.407
-    }
-  ],
+  "indexablePagesChecked": 523,
+  "totalAutocompleteQueriesDiscovered": 526,
+  "alreadyCoveredCount": 30,
+  "uncoveredIntentGapsCount": 0,
+  "topPriorityGaps": [],
   "sampleCoveredQueries": [
     {
       "query": "total adblock renewal charge alternative",
@@ -120,8 +89,8 @@
       "overlapRatio": 1
     },
     {
-      "query": "adblock plus not working on youtube chrome",
-      "matchedPage": "/vs/adblock-plus-not-working-on-youtube-chrome",
+      "query": "adblock pro for safari not working",
+      "matchedPage": "/setup/adblock-pro-for-safari-not-working",
       "overlapRatio": 1
     },
     {
@@ -130,8 +99,13 @@
       "overlapRatio": 1
     },
     {
-      "query": "chrome manifest v3 adblock plus",
-      "matchedPage": "/vs/chrome-manifest-v3-adblock-plus",
+      "query": "adblock plus not working on youtube chrome",
+      "matchedPage": "/vs/adblock-plus-not-working-on-youtube-chrome",
+      "overlapRatio": 1
+    },
+    {
+      "query": "auto reject cookies extension edge",
+      "matchedPage": "/solutions/auto-reject-cookies-extension-edge",
       "overlapRatio": 1
     }
   ]
