@@ -538,14 +538,52 @@ function enqueueCrmDlq(task) {
   crmSyncDlq.push({ ...task, attempts: (task.attempts || 0) + 1, queuedAt: Date.now() });
 }
 
-const dlqFlushTimer = setInterval(async () => {
-  if (crmSyncDlq.length === 0) return;
+function safeCompareSecret(a, b) {
+  if (!a || !b) return false;
+  const ha = crypto.createHash('sha256').update(String(a)).digest();
+  const hb = crypto.createHash('sha256').update(String(b)).digest();
+  return crypto.timingSafeEqual(ha, hb);
+}
+
+function buildDeepblockHealthSnapshot() {
+  const sorted = [...sliMetrics.recentLatenciesMs].sort((a, b) => a - b);
+  const p95LatencyMs = sorted.length > 0 ? sorted[Math.floor(sorted.length * 0.95)] : 0;
+  const availabilityPct =
+    sliMetrics.totalRequests > 0
+      ? +(((sliMetrics.totalRequests - sliMetrics.error5xxCount) / sliMetrics.totalRequests) * 100).toFixed(3)
+      : 100;
+  const degraded = Date.now() < crm.circuitOpenUntil || crmSyncDlq.length > 25 || availabilityPct < 99.0;
+  return {
+    service_id: 'sweepr-deepblock',
+    project_id: 'deepblock',
+    status: degraded ? 'degraded' : 'ok',
+    uptime_sec: Math.floor((Date.now() - sliMetrics.startedAt) / 1000),
+    dlq_depth: crmSyncDlq.length,
+    cmo_running: global.__cmoRunningJob ? 1 : 0,
+    cmo_queued: Array.isArray(global.__cmoAutomationQueue) ? global.__cmoAutomationQueue.length : 0,
+    sli: {
+      availabilityPct,
+      p95LatencyMs,
+      totalRequests: sliMetrics.totalRequests,
+      error5xxCount: sliMetrics.error5xxCount,
+      crmCircuitOpen: Date.now() < crm.circuitOpenUntil
+    },
+    extra: {
+      cmo_running_id: global.__cmoRunningJob?.id || null
+    }
+  };
+}
+
+async function flushCrmDlqNow() {
+  if (crmSyncDlq.length === 0) return { flushed: 0, remaining: 0 };
   const batch = crmSyncDlq.splice(0, 10);
+  let flushed = 0;
   for (const item of batch) {
     try {
       if (item.type === 'subscription_sync' && item.payload) {
         const res = await crm.syncSubscription(item.payload);
         if (!res.ok && item.attempts < 5) enqueueCrmDlq(item);
+        else flushed++;
       } else if (item.type === 'raw_webhook' && item.rawBody) {
         const res = await fetch(`${SWEEPR_CRM_URL}/api/webhooks/stripe/deepblock`, {
           method: 'POST',
@@ -557,11 +595,17 @@ const dlqFlushTimer = setInterval(async () => {
           signal: AbortSignal.timeout(4000)
         });
         if (!res.ok && item.attempts < 5) enqueueCrmDlq(item);
+        else flushed++;
       }
     } catch {
       if (item.attempts < 5) enqueueCrmDlq(item);
     }
   }
+  return { flushed, remaining: crmSyncDlq.length };
+}
+
+const dlqFlushTimer = setInterval(() => {
+  flushCrmDlqNow().catch(() => {});
 }, 60000);
 if (typeof dlqFlushTimer.unref === 'function') dlqFlushTimer.unref();
 
@@ -2489,6 +2533,47 @@ const server = http.createServer(async (req, res) => {
         crmDlqDepth: crmSyncDlq.length,
         crmCircuitOpen: Date.now() < crm.circuitOpenUntil
       }
+    });
+  }
+
+  // API -1a2: Signed CRM Mobile Ops Command Bridge (enqueue CMO, flush DLQ, status, bust caches)
+  if (req.method === 'POST' && pathname === '/api/admin/crm-command') {
+    const expectedSecret = SWEEPR_CRM_API_KEY || CRM_ADMIN_PASSWORD;
+    if (!expectedSecret) {
+      return sendJson(res, 503, { error: 'crm_command_secret_not_configured' });
+    }
+    const provided = String(req.headers['x-sweepr-api-key'] || req.headers['x-crm-api-key'] || '').trim();
+    if (!safeCompareSecret(provided, expectedSecret)) {
+      return sendJson(res, 401, { error: 'unauthorized' });
+    }
+    const body = await readBody(req);
+    if (!body || body.__tooLarge) {
+      return sendJson(res, body?.__tooLarge ? 413 : 400, { error: body?.__tooLarge ? 'payload_too_large' : 'invalid_json' });
+    }
+    const cmd = String(body.command || 'status').trim();
+    if (cmd === 'enqueue_cmo') {
+      const targetId = String(body.job_id || 'all').trim();
+      const queuedIds = typeof global.__enqueueCmoAutomation === 'function' ? global.__enqueueCmoAutomation(targetId) : [];
+      return sendJson(res, 200, { ok: true, command: cmd, queued: queuedIds, snapshot: buildDeepblockHealthSnapshot() });
+    }
+    if (cmd === 'flush_dlq') {
+      const flushResult = await flushCrmDlqNow();
+      return sendJson(res, 200, { ok: true, command: cmd, ...flushResult, snapshot: buildDeepblockHealthSnapshot() });
+    }
+    if (cmd === 'bust_caches') {
+      global.__kwMatrixCache = null;
+      global.__liveProofCache = null;
+      if (typeof cachedDynamicDelta === 'object' && cachedDynamicDelta) {
+        cachedDynamicDelta = { mtimeMs: 0, data: null };
+      }
+      return sendJson(res, 200, { ok: true, command: cmd, busted: true });
+    }
+    return sendJson(res, 200, {
+      ok: true,
+      command: 'status',
+      snapshot: buildDeepblockHealthSnapshot(),
+      queued_jobs: (global.__cmoAutomationQueue || []).map((j) => j.id),
+      running_job: global.__cmoRunningJob?.id || null
     });
   }
 
@@ -6390,6 +6475,12 @@ function drainCmoAutomationQueue() {
       if (nextJob.id === 'keyword_research_engine') global.__kwMatrixCache = null;
       if (nextJob.id === 'sync_geo_and_llms') global.__liveProofCache = null;
       global.__cmoRunningJob = null;
+      if (SWEEPR_CRM_API_KEY || CRM_ADMIN_PASSWORD) {
+        crm.reportServiceHealth({
+          ...buildDeepblockHealthSnapshot(),
+          extra: { last_cmo_job: nextJob.id, last_cmo_status: err ? 'error' : 'ok', duration_ms: durationMs }
+        }).catch(() => {});
+      }
       setTimeout(drainCmoAutomationQueue, 2000).unref();
     }
   );
@@ -6419,6 +6510,13 @@ if (require.main === module) {
     altServer.on('error', () => {});
     altServer.listen(altPort, '0.0.0.0');
   }
+  // Report Deepblock service health to SWEEPR CRM every 60 seconds when configured
+  const pushServiceHealth = () => {
+    if (!(SWEEPR_CRM_API_KEY || CRM_ADMIN_PASSWORD)) return;
+    crm.reportServiceHealth(buildDeepblockHealthSnapshot()).catch(() => {});
+  };
+  setTimeout(pushServiceHealth, 8000).unref();
+  setInterval(pushServiceHealth, 60000).unref();
   // Check for stale CMO automation artifacts 15s after boot and every 30 minutes
   const checkStaleCmoJobs = () => {
     try {

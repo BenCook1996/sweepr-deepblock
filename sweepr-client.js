@@ -297,6 +297,23 @@ class SweeprCrmClient {
       { timeoutMs: 3500, maxRetries: 0 }
     );
   }
+
+  async reportServiceHealth(snapshot) {
+    if (!this.crmUrl || !this.apiKey) return { ok: false };
+    return this._fetchWithRetry(
+      `${this.crmUrl}/v1/mobile/service-health`,
+      {
+        method: 'POST',
+        headers: this.headers(),
+        body: JSON.stringify({
+          service_id: 'sweepr-deepblock',
+          project_id: this.projectId,
+          ...snapshot
+        })
+      },
+      { timeoutMs: 3500, maxRetries: 0 }
+    );
+  }
 }
 
 module.exports = { SweeprCrmClient };
