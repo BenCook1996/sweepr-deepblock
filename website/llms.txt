@@ -1,8 +1,8 @@
-# SWEEPR DeepBlock v1.2.7 — Zero Ads. Zero Pop-Ups. Browse in Peace.
+# SWEEPR DeepBlock v1.2.8 — Zero Ads. Zero Pop-Ups. Browse in Peace.
 
 > SWEEPR DeepBlock (https://sweeprdeepblock.com) is a privacy-first, local-first Manifest V3 browser extension for Google Chrome, Microsoft Edge, Brave, Opera, Mozilla Firefox, and Apple Safari. It blocks video & banner ads (245 C++ declarativeNetRequest rules + 100 OTA delta rules, 15µs lookup latency), automatically clicks "Reject All" on GDPR cookie pop-ups in under 50ms across 150+ CMP frameworks without breaking page scrolling, cleans up search engine AI slop, strips tracking parameters, and warns shoppers before checkout on fake scam stores.
 
-## Key Consumer Benefits & Verified Telemetry (v1.2.7)
+## Key Consumer Benefits & Verified Telemetry (v1.2.8)
 - **Zero Video & Banner Ads:** Blocks pre-roll and mid-roll video ads on YouTube, Twitch, Kick, and streaming sites using native C++ `declarativeNetRequest` rules (`15µs` lookup latency) + DeepStealth DOM sanitization.
 - **Automatic Cookie Pop-Up Rejector (<50ms):** Automatically executes the genuine "Reject All / Necessary Only" signal on 150+ consent frameworks (OneTrust, Didomi, Usercentrics, Quantcast, Sourcepoint, TrustArc, Cookiebot) while keeping page scrolling unlocked.
 - **Clean Search Results (AI Slop & Scam Filter):** Hides copy-paste programmatic AI content farms and sponsored scam links on Google, Bing, and DuckDuckGo.

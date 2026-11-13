@@ -1,4 +1,4 @@
-# SWEEPR DeepBlock v1.2.7 — Store ASO Listing Pack (English (UK / US) [en])
+# SWEEPR DeepBlock v1.2.8 — Store ASO Listing Pack (English (UK / US) [en])
 
 ## 1. Validated Manifest Metadata
 - **Locale Code**: `en`
@@ -18,7 +18,7 @@
 ## 3. Store Description Copy (Chrome Web Store / Edge Add-ons / Firefox AMO)
 SWEEPR DeepBlock is a native Manifest V3 ad blocker, automated GDPR/CMP cookie consent responder, AI search slop filter, and browser RAM optimizer engineered for sub-15µs C++ DeclarativeNetRequest filtering.
 
-### Verified Engineering Benchmarks (v1.2.7)
+### Verified Engineering Benchmarks (v1.2.8)
 - **242 C++ DeclarativeNetRequest Rules**: Evaluates network requests in `<15µs` inside the browser's native C++ engine with zero JavaScript heap bloat.
 - **10,218+ Verified Ad, Tracker & Scam Domains Blocked**: Updated daily via automated multi-source filter harvesting.
 - **Automated GDPR / CCPA Cookie Consent Responder**: Auto-clicks "Reject All" on OneTrust, Quantcast, TrustArc, Didomi, Sourcepoint, and Cookiebot in `<200ms` while preserving page scroll locks.

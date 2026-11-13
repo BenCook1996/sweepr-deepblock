@@ -1,4 +1,4 @@
-# SWEEPR DeepBlock v1.2.7 — Store ASO Listing Pack (日本語 (JP) [ja])
+# SWEEPR DeepBlock v1.2.8 — Store ASO Listing Pack (日本語 (JP) [ja])
 
 ## 1. Validated Manifest Metadata
 - **Locale Code**: `ja`
@@ -18,7 +18,7 @@
 ## 3. Store Description Copy (Chrome Web Store / Edge Add-ons / Firefox AMO)
 SWEEPR DeepBlockは、C++ DeclarativeNetRequestエンジン（15マイクロ秒未満）で動画広告・バナー広告・トラッカーを高速遮断し、Cookie同意ポップアップの自動拒否や偽通販サイトの検知、メモリ節約を実現します。
 
-### Verified Engineering Benchmarks (v1.2.7)
+### Verified Engineering Benchmarks (v1.2.8)
 - **242 C++ DeclarativeNetRequest Rules**: Evaluates network requests in `<15µs` inside the browser's native C++ engine with zero JavaScript heap bloat.
 - **10,218+ Verified Ad, Tracker & Scam Domains Blocked**: Updated daily via automated multi-source filter harvesting.
 - **Automated GDPR / CCPA Cookie Consent Responder**: Auto-clicks "Reject All" on OneTrust, Quantcast, TrustArc, Didomi, Sourcepoint, and Cookiebot in `<200ms` while preserving page scroll locks.

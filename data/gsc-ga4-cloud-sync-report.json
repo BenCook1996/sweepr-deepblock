@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-12T23:46:39.438Z",
-  "durationMs": 52090,
+  "generatedAt": "2026-11-13T14:48:45.164Z",
+  "durationMs": 67053,
   "mode": "live_google_cloud_service_account_api",
   "serviceAccountConfigured": true,
   "serviceAccountEmail": "sweepr-seo-bot@sweepr-514223.iam.gserviceaccount.com",
@@ -220,5 +220,7 @@
     "purchases": 0,
     "source": "ga4_data_api_v1beta"
   },
-  "warnings": []
+  "warnings": [
+    "GA4 API warning: The operation was aborted due to timeout"
+  ]
 }
