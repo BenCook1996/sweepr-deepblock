@@ -167,9 +167,9 @@ console.log(' - Chrome Web Store MV3:', chromeZip, fs.statSync(chromeZip).size, 
 console.log(' - Edge/Chrome MV3:     ', edgeZip, fs.statSync(edgeZip).size, 'bytes');
 console.log(' - Firefox AMO MV3:     ', ffZip, fs.statSync(ffZip).size, 'bytes');
 
-fs.writeFileSync(path.join(DIST_DIR, 'sweepr-deepblock-v1.2.7-chrome-webstore.zip'), fs.readFileSync(chromeZip));
-fs.writeFileSync(path.join(DIST_DIR, 'sweepr-deepblock-v1.2.7-firefox-amo.zip'), fs.readFileSync(ffZip));
+fs.writeFileSync(path.join(DIST_DIR, `sweepr-deepblock-v${baseManifest.version}-chrome-webstore.zip`), fs.readFileSync(chromeZip));
+fs.writeFileSync(path.join(DIST_DIR, `sweepr-deepblock-v${baseManifest.version}-firefox-amo.zip`), fs.readFileSync(ffZip));
 fs.writeFileSync(path.join(ROOT_DIR, 'website', 'sweepr-deepblock-extension.zip'), fs.readFileSync(chromeZip));
 fs.writeFileSync(path.join(ROOT_DIR, 'website', 'sweepr-deepblock-firefox.xpi'), fs.readFileSync(ffZip));
 fs.writeFileSync(path.join(ROOT_DIR, 'website', 'sweepr-deepblock.xpi'), fs.readFileSync(ffZip));
-console.log(' - Synced v1.2.7 packages + website/sweepr-deepblock-extension.zip and .xpi');
+console.log(` - Synced v${baseManifest.version} packages + website/sweepr-deepblock-extension.zip and .xpi`);
