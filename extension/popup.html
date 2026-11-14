@@ -106,7 +106,7 @@
       background: var(--card-bg);
       border: 2px solid rgba(16, 185, 129, 0.75);
       border-radius: var(--radius-card-outer, 18px);
-      padding: var(--space-card-pad, 10px) 12px;
+      padding: var(--space-card-pad, 10px);
       box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
       transition: border-color 140ms ease, background 140ms ease;
     }
@@ -308,6 +308,20 @@
       color: #a7f3d0;
       line-height: 1.2;
     }
+    .escape-row > :first-child .kbd-tooltip {
+      left: 0;
+      right: auto;
+    }
+    .btn-ram-boost .kbd-tooltip {
+      left: 50%;
+      right: auto;
+      transform: translateX(-50%) translateY(3px);
+    }
+    .btn-ram-boost.has-kbd-tooltip:hover .kbd-tooltip,
+    .btn-ram-boost.has-kbd-tooltip:focus-visible .kbd-tooltip,
+    .btn-ram-boost.has-kbd-tooltip:focus-within .kbd-tooltip {
+      transform: translateX(-50%) translateY(0);
+    }
 
     /* ROW 3: De-Containerized Keyline Tabular Telemetry Row (@Memorisely [VpXDo2_PbIQ]) */
     .telemetry-pill-row {
@@ -471,14 +485,26 @@
     .drawer-box.open {
       display: block;
     }
+    .license-label-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 4px;
+      padding: 0 2px;
+    }
     .license-input-label {
       display: block;
       font-size: 10px;
       font-weight: 800;
       color: var(--text-secondary);
-      margin-bottom: 4px;
-      padding-left: 2px;
+      margin-bottom: 0;
+      padding-left: 0;
       letter-spacing: 0.01em;
+    }
+    .license-auto-hint {
+      font-size: 9.5px;
+      font-weight: 800;
+      color: #047857;
     }
     .license-input-row {
       display: flex;
@@ -615,9 +641,10 @@
 
   <!-- ROW 2: 44px Ergonomic Quick-Fix Bar -->
   <div class="escape-row">
-    <button type="button" id="pause5MinBtn" class="btn-chip" title="Temporarily pause for 5 minutes and reload if a page is broken">
+    <button type="button" id="pause5MinBtn" class="btn-chip has-kbd-tooltip">
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
       <span>Pause 5m (Fix)</span>
+      <span class="kbd-tooltip" role="tooltip">Reloads page paused for 5m</span>
     </button>
     <button type="button" id="startZapperBtn" class="btn-chip has-kbd-tooltip">
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
@@ -665,10 +692,13 @@
         <span style="color:#059669;font-weight:800;">▾</span>
       </button>
       <div id="licenseDrawer" class="drawer-box">
-        <label for="licenseKeyInput" class="license-input-label">Pro License Key or 6-Digit Code</label>
+        <div class="license-label-row">
+          <label for="licenseKeyInput" class="license-input-label">6-Digit Code or License Key</label>
+          <span class="license-auto-hint">Auto-Unlocks</span>
+        </div>
         <div class="license-input-row">
           <input type="text" id="licenseKeyInput" class="license-input" placeholder="e.g. 482910 or SWEEPR-DB-..." autocomplete="off" spellcheck="false" />
-          <button type="button" id="pasteKeyBtn" class="paste-unlock-btn" title="Paste &amp; Unlock in 1 click">Paste &amp; Unlock</button>
+          <button type="button" id="pasteKeyBtn" class="paste-unlock-btn">Paste &amp; Unlock</button>
           <button type="button" id="activateKeyBtn" class="sr-compat">Unlock</button>
         </div>
         <div id="licenseFeedback" style="font-size:10px;color:#059669;font-weight:700;margin-top:5px;display:none;"></div>
@@ -677,9 +707,10 @@
     <div id="upgradeSubtitleText" class="sr-compat"></div>
 
     <!-- Pro Active Single Action: 1-Click Speed Boost (Zero prices or amounts in green button) -->
-    <button type="button" id="reclaimRamBtn" class="btn-ram-boost" title="Shortcut: Alt+Shift+Z">
+    <button type="button" id="reclaimRamBtn" class="btn-ram-boost has-kbd-tooltip">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
       <span>Boost Browser Speed Now</span>
+      <span class="kbd-tooltip" role="tooltip">Snooze inactive tabs <kbd class="kbd-badge">Alt+Shift+Z</kbd></span>
     </button>
   </div>
 

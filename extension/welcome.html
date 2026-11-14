@@ -691,6 +691,71 @@
       outline: none;
       box-shadow: var(--focus-ring);
     }
+    .module-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+    .module-icon-badge {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: #ecfdf5;
+      border: 1px solid #d1fae5;
+      color: #059669;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .support-topic-chips {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .welcome-topic-chip {
+      min-height: 38px;
+      padding: 7px 11px;
+      border-radius: 9px;
+      border: 1.5px solid #e2e8f0;
+      background: #f8fafc;
+      color: #334155;
+      font-size: 11.5px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      transition: all 140ms ease;
+    }
+    .welcome-topic-chip:hover {
+      border-color: #10b981;
+      background: #ffffff;
+      color: #0f172a;
+    }
+    .welcome-topic-chip:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+    .welcome-topic-chip::after {
+      content: "✓";
+      opacity: 0;
+      font-weight: 900;
+      color: #059669;
+      transition: opacity 120ms ease;
+    }
+    .welcome-topic-chip.active {
+      border-color: #059669;
+      background: #ecfdf5;
+      color: #065f46;
+    }
+    .welcome-topic-chip.active::after {
+      opacity: 1;
+    }
   </style>
 </head>
 <body>
@@ -782,7 +847,7 @@
                 autocomplete="off"
                 spellcheck="false"
               />
-              <button type="button" id="welcomePasteBtn" class="paste-btn" title="Paste &amp; Unlock in 1 click">
+              <button type="button" id="welcomePasteBtn" class="paste-btn">
                 <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
                 <span>Paste &amp; Unlock</span>
               </button>
@@ -844,7 +909,7 @@
                 </div>
               </div>
             </div>
-            <div class="pro-chevron" title="Open Customer Portal">
+            <div class="pro-chevron">
               <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
             </div>
           </a>
@@ -862,44 +927,74 @@
         <div class="panel-sub">Fine-tune individual SWEEPR Deepblock engines across your browser.</div>
         <div>
           <div class="list-item module-row" data-row-setting="adBlocking">
-            <div>
-              <div style="font-weight:800;">Video &amp; Page Ad Blocking</div>
-              <div style="font-size:11px;color:var(--muted);">YouTube pre-roll &amp; anti-adblock cloaking</div>
+            <div class="module-left">
+              <span class="module-icon-badge" aria-hidden="true">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon stroke-linecap="round" stroke-linejoin="round" points="6 4 20 12 6 20 6 4"/></svg>
+              </span>
+              <div>
+                <div style="font-weight:800;">Video &amp; Page Ad Blocking</div>
+                <div style="font-size:11px;color:var(--muted);">YouTube pre-roll &amp; anti-adblock cloaking</div>
+              </div>
             </div>
             <button type="button" data-setting="adBlocking" data-pro="1" class="switch-btn pro-lock">PRO</button>
           </div>
           <div class="list-item module-row" data-row-setting="cookieAutoClose">
-            <div>
-              <div style="font-weight:800;">Auto-Decline Cookie Pop-Ups</div>
-              <div style="font-size:11px;color:var(--muted);">Silently rejects CMP banners in &lt;50ms</div>
+            <div class="module-left">
+              <span class="module-icon-badge" aria-hidden="true">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              </span>
+              <div>
+                <div style="font-weight:800;">Auto-Decline Cookie Pop-Ups</div>
+                <div style="font-size:11px;color:var(--muted);">Silently rejects CMP banners in &lt;50ms</div>
+              </div>
             </div>
             <button type="button" data-setting="cookieAutoClose" data-pro="1" class="switch-btn pro-lock">PRO</button>
           </div>
           <div class="list-item module-row" data-row-setting="hideSearchSpam">
-            <div>
-              <div style="font-weight:800;">Hide Search Engine Spam</div>
-              <div style="font-size:11px;color:var(--muted);">Cleans Google, Bing &amp; DuckDuckGo SERPs</div>
+            <div class="module-left">
+              <span class="module-icon-badge" aria-hidden="true">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+              </span>
+              <div>
+                <div style="font-weight:800;">Hide Search Engine Spam</div>
+                <div style="font-size:11px;color:var(--muted);">Cleans Google, Bing &amp; DuckDuckGo SERPs</div>
+              </div>
             </div>
             <button type="button" data-setting="hideSearchSpam" data-pro="1" class="switch-btn pro-lock">PRO</button>
           </div>
           <div class="list-item module-row" data-row-setting="fakeShopAlerts">
-            <div>
-              <div style="font-weight:800;">Scam Online Shop Alerts</div>
-              <div style="font-size:11px;color:var(--muted);">Warns on fake urgency countdown stores</div>
+            <div class="module-left">
+              <span class="module-icon-badge" aria-hidden="true">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+              </span>
+              <div>
+                <div style="font-weight:800;">Scam Online Shop Alerts</div>
+                <div style="font-size:11px;color:var(--muted);">Warns on fake urgency countdown stores</div>
+              </div>
             </div>
             <button type="button" data-setting="fakeShopAlerts" data-pro="1" class="switch-btn pro-lock">PRO</button>
           </div>
           <div class="list-item module-row" data-row-setting="trackerProtection">
-            <div>
-              <div style="font-weight:800;">Tracker-Free Links</div>
-              <div style="font-size:11px;color:var(--muted);">Strips click tracking parameters</div>
+            <div class="module-left">
+              <span class="module-icon-badge" aria-hidden="true">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+              </span>
+              <div>
+                <div style="font-weight:800;">Tracker-Free Links</div>
+                <div style="font-size:11px;color:var(--muted);">Strips click tracking parameters</div>
+              </div>
             </div>
             <button type="button" data-setting="trackerProtection" data-pro="1" class="switch-btn pro-lock">PRO</button>
           </div>
           <div class="list-item module-row" data-row-setting="silentMode">
-            <div>
-              <div style="font-weight:800;">100% Silent Mode</div>
-              <div style="font-size:11px;color:var(--muted);">Hide on-page toasts &amp; counter badges</div>
+            <div class="module-left">
+              <span class="module-icon-badge" aria-hidden="true">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/></svg>
+              </span>
+              <div>
+                <div style="font-weight:800;">100% Silent Mode</div>
+                <div style="font-size:11px;color:var(--muted);">Hide on-page toasts &amp; counter badges</div>
+              </div>
             </div>
             <button type="button" data-setting="silentMode" data-pro="1" class="switch-btn pro-lock">PRO</button>
           </div>
@@ -973,6 +1068,15 @@
         </summary>
         <div style="margin-top:12px;">
           <div class="panel-sub">Have a question or found a website with stubborn ads? Send a message directly to our support team.</div>
+          <div class="support-field" style="margin-bottom:8px;">
+            <span class="support-label" id="welcomeSupportTopicLabel">Quick Topic (1 Tap)</span>
+            <div id="welcomeSupportChips" class="support-topic-chips" role="radiogroup" aria-labelledby="welcomeSupportTopicLabel">
+              <button type="button" role="radio" aria-checked="false" data-support-topic="Ad Blocking Report" class="welcome-topic-chip"><span>Ad Blocking Report</span></button>
+              <button type="button" role="radio" aria-checked="false" data-support-topic="License / 6-Digit Activation" class="welcome-topic-chip"><span>Activation / Key</span></button>
+              <button type="button" role="radio" aria-checked="false" data-support-topic="Billing or Refund Request" class="welcome-topic-chip"><span>Billing &amp; Refund</span></button>
+              <button type="button" role="radio" aria-checked="false" data-support-topic="General Question" class="welcome-topic-chip"><span>General Question</span></button>
+            </div>
+          </div>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:10px;">
             <div class="support-field">
               <label for="welcomeSupportEmail" class="support-label">Your Email Address</label>

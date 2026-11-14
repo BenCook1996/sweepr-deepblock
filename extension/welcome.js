@@ -551,6 +551,31 @@ document.addEventListener('DOMContentLoaded', () => {
   const supportSendBtn = document.getElementById('welcomeSupportSendBtn');
   const supportFeedback = document.getElementById('welcomeSupportFeedback');
 
+  const welcomeSupportChipsWrap = document.getElementById('welcomeSupportChips');
+  if (welcomeSupportChipsWrap) {
+    const presetTopics = new Set();
+    welcomeSupportChipsWrap.querySelectorAll('[data-support-topic]').forEach((chip) => {
+      const val = chip.getAttribute('data-support-topic') || '';
+      if (val) presetTopics.add(val);
+    });
+    welcomeSupportChipsWrap.querySelectorAll('[data-support-topic]').forEach((chip) => {
+      chip.addEventListener('click', () => {
+        welcomeSupportChipsWrap.querySelectorAll('[data-support-topic]').forEach((b) => {
+          const isTarget = b === chip;
+          b.classList.toggle('active', isTarget);
+          b.setAttribute('aria-checked', isTarget ? 'true' : 'false');
+        });
+        const topic = chip.getAttribute('data-support-topic') || '';
+        if (supportSubjectEl && topic) {
+          const cur = (supportSubjectEl.value || '').trim();
+          if (!cur || presetTopics.has(cur)) {
+            supportSubjectEl.value = topic;
+          }
+        }
+      });
+    });
+  }
+
   if (supportSendBtn && supportEmailEl && supportMessageEl && supportFeedback) {
     supportSendBtn.addEventListener('click', async () => {
       const email = (supportEmailEl.value || '').trim().toLowerCase();
@@ -616,6 +641,12 @@ document.addEventListener('DOMContentLoaded', () => {
       if (sentOk) {
         supportMessageEl.value = '';
         if (supportSubjectEl) supportSubjectEl.value = '';
+        if (welcomeSupportChipsWrap) {
+          welcomeSupportChipsWrap.querySelectorAll('[data-support-topic]').forEach((b) => {
+            b.classList.remove('active');
+            b.setAttribute('aria-checked', 'false');
+          });
+        }
         supportFeedback.style.color = '#10b981';
         supportFeedback.textContent =
           `✓ Sent to SWEEPR Support${ticketId ? ` (Ticket #${ticketId})` : ''} — we'll reply by email.`;
