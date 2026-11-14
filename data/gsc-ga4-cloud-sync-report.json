@@ -1,17 +1,19 @@
 {
-  "generatedAt": "2026-11-14T13:44:26.332Z",
-  "durationMs": 52443,
+  "generatedAt": "2026-11-14T22:40:18.038Z",
+  "durationMs": 52252,
   "mode": "live_google_cloud_service_account_api",
   "serviceAccountConfigured": true,
   "serviceAccountEmail": "sweepr-seo-bot@sweepr-514223.iam.gserviceaccount.com",
   "gscSiteUrl": "sc-domain:sweeprdeepblock.com",
   "ga4PropertyId": "559863555",
-  "trackedDiscoveredGscPathsCount": 166,
+  "trackedDiscoveredGscPathsCount": 167,
   "latestGscSnapshot": {
-    "totalImpressions": 552,
+    "totalImpressions": 554,
     "totalClicks": 7,
-    "activePagesWithImpressions": 164,
-    "newlyDiscoveredPaths": [],
+    "activePagesWithImpressions": 165,
+    "newlyDiscoveredPaths": [
+      "/solutions/investing-tradingview-charts-filter-ai-slop-and-scams"
+    ],
     "strikeZoneCandidates": [
       {
         "urlPath": "/guides/how-to-block-reddit-sponsored-promoted-posts-in-feed",
@@ -209,13 +211,13 @@
   },
   "latestGa4Snapshot": {
     "date": "2026-11-14",
-    "activeUsers28d": 134,
-    "sessions28d": 160,
-    "engagementRatePct": 33.1,
-    "avgSessionDurationSec": 150.2,
+    "activeUsers28d": 136,
+    "sessions28d": 162,
+    "engagementRatePct": 33.3,
+    "avgSessionDurationSec": 148.4,
     "extensionInstallsStarted": 2,
     "testLabRuns": 0,
-    "beginCheckout": 4,
+    "beginCheckout": 6,
     "orderPaymentErrors": 0,
     "purchases": 0,
     "source": "ga4_data_api_v1beta"
