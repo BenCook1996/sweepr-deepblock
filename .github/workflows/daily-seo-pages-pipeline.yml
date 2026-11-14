@@ -68,6 +68,10 @@ jobs:
           node scripts/technical-seo-audit.mjs
 
       - name: 6. Commit & Push Updated SEO, Telemetry & CMO Reports to Main (Triggers Railway Deploy)
+        env:
+          SWEEPR_RAILWAY_CRM: ${{ secrets.SWEEPR_RAILWAY_CRM || 'https://sweepr-crm-production.up.railway.app' }}
+          CRM_ADMIN_USER: ${{ secrets.CRM_ADMIN_USER || 'admin' }}
+          CRM_ADMIN_PASSWORD: ${{ secrets.CRM_ADMIN_PASSWORD }}
         run: |
           git config user.name "SWEEPR DeepBlock Cloud CMO Bot"
           git config user.email "bot@sweeprdeepblock.com"
@@ -78,4 +82,12 @@ jobs:
             git commit -m "chore(cloud-cmo): automated GSC/GA4 sync, pillar SEO guard, and IndexNow pipeline"
             git pull --rebase -X ours origin main
             git push origin main
+            if [ -n "${CRM_ADMIN_PASSWORD:-}" ]; then
+              COMMIT_SHA=$(git rev-parse --short HEAD)
+              curl -fsS -m 10 -X POST "${SWEEPR_RAILWAY_CRM}/api/crm/seo/changelog" \
+                -u "${CRM_ADMIN_USER:-admin}:${CRM_ADMIN_PASSWORD}" \
+                -H "Content-Type: application/json" \
+                -d "{\"project_id\":\"deepblock\",\"category\":\"gsc_indexing\",\"title\":\"Daily Cloud CMO & Pillar SEO Pipeline (${COMMIT_SHA})\",\"description\":\"Automated GSC/GA4 sync, pillar consolidation guard, PAD 4.0 check, and IndexNow pipeline pushed to main.\",\"impact_area\":\"sweeprdeepblock.com pillars & sitemap\",\"author\":\"SWEEPR DeepBlock Cloud CMO Bot\",\"status\":\"deployed\"}" \
+                || echo "::warning::Central CRM changelog sync skipped or unreachable"
+            fi
           fi
