@@ -132,7 +132,11 @@
         if (
           target.tagName === 'SCRIPT' &&
           (target.hasAttribute('data-clocid') ||
-            /(\/on\.js(\?|$)|\.min\.css(\?|$)|magnific-popup\.min\.js|holaraphraus\.com|earthspetti\.com|terschomonic\.com|enomotia\.com|janitorprecisiontrio\.com|pagerrentablespotlight\.com|displayvertising\.com|jusgrmawfbaqu\.com|bspyoibtwrrc\.com|cemhlobja\.com|d3mzokty951c5w\.cloudfront\.net|adsco\.re)/i.test(
+            target.hasAttribute('data-clbaid') ||
+            target.hasAttribute('data-clipid') ||
+            target.hasAttribute('data-clpcid') ||
+            target.hasAttribute('data-clscid') ||
+            /(\/on\.js(\?|$)|\/bn\.js(\?|$)|\/js\/epo\.js(\?|$)|\/player\/p12\.js(\?|$)|demandingoverdriveunthread\.com|vitting\.org|\.min\.css(\?|$)|magnific-popup\.min\.js|holaraphraus\.com|earthspetti\.com|terschomonic\.com|enomotia\.com|janitorprecisiontrio\.com|pagerrentablespotlight\.com|displayvertising\.com|jusgrmawfbaqu\.com|bspyoibtwrrc\.com|cemhlobja\.com|d3mzokty951c5w\.cloudfront\.net|adsco\.re)/i.test(
               src
             ))
         ) {
@@ -966,6 +970,12 @@
     });
   } catch (e) {}
 
+  if (isProEntitled()) {
+    try {
+      window.localStorage.removeItem('clabdfr');
+    } catch (e) {}
+  }
+
   try {
     const popMagicStub = new Proxy(
       {
@@ -1768,6 +1778,10 @@
       id === 'EyNGRRuNI' ||
       /^y-l\//i.test(sdk) ||
       node.hasAttribute('data-clocid') ||
+      node.hasAttribute('data-clbaid') ||
+      node.hasAttribute('data-clipid') ||
+      node.hasAttribute('data-clpcid') ||
+      node.hasAttribute('data-clscid') ||
       node.hasAttribute('data-spots') ||
       node.getAttribute('data-tag') === 'asg' ||
       (node.settings && node.settings.misc && node.settings.misc.ignoreTo) ||
@@ -1784,14 +1798,19 @@
           inlineText.includes('adblock-proxy-super-secret') ||
           inlineText.includes('mergedPopups') ||
           inlineText.includes('clk$pop@') ||
-          inlineText.includes('window.mkp = function'))) ||
+          inlineText.includes('window.mkp = function') ||
+          (inlineText.includes('AGFzbQEAAAAB') && inlineText.includes('-st"')))) ||
       id === 'aawscript' ||
       node.hasAttribute('data-admpid') ||
       /\/(UtsK7A9|RaNIDAd|rtoj6Ac)\.js/i.test(src) ||
       /\/pxo\/www\/js-v[0-9.]+\/[a-z0-9]{8}\.min\.js/i.test(src) ||
       /\/pxo\/www\/js.*\.min\.js\?url=/i.test(src) ||
       (/(^|\.)(txxx|hclips|upornia|voyeurhit|hotmovs|tubecup|vjav|shemalez)\.(me|com|tube)$/i.test(location.hostname) && /\/[0-9a-z]{8,12}\/[0-9a-z]{8,12}\.js(\?|$)/i.test(src)) ||
-      /\/on\.js(\?|$)/i.test(src)
+      /\/on\.js(\?|$)/i.test(src) ||
+      /\/bn\.js(\?|$)/i.test(src) ||
+      /\/js\/epo\.js(\?|$)/i.test(src) ||
+      /\/player\/p12\.js(\?|$)/i.test(src) ||
+      /(demandingoverdriveunthread\.com|vitting\.org)/i.test(src)
     ) {
       return true;
     }

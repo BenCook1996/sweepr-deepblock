@@ -4052,5 +4052,133 @@
         "other"
       ]
     }
+  },
+  {
+    "id": 279,
+    "priority": 5,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||demandingoverdriveunthread.com^",
+      "resourceTypes": [
+        "script",
+        "sub_frame",
+        "xmlhttprequest",
+        "image",
+        "ping",
+        "other"
+      ]
+    }
+  },
+  {
+    "id": 280,
+    "priority": 5,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "||vitting.org^",
+      "resourceTypes": [
+        "script",
+        "sub_frame",
+        "xmlhttprequest",
+        "image",
+        "ping",
+        "other"
+      ]
+    }
+  },
+  {
+    "id": 281,
+    "priority": 5,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "/js/fad.json",
+      "resourceTypes": [
+        "xmlhttprequest",
+        "script",
+        "other"
+      ]
+    }
+  },
+  {
+    "id": 282,
+    "priority": 5,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "/js/epo.js",
+      "resourceTypes": [
+        "script",
+        "xmlhttprequest",
+        "other"
+      ]
+    }
+  },
+  {
+    "id": 283,
+    "priority": 5,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "/player/p12.js",
+      "resourceTypes": [
+        "script",
+        "xmlhttprequest",
+        "other"
+      ]
+    }
+  },
+  {
+    "id": 284,
+    "priority": 5,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "/dot/dot.php",
+      "resourceTypes": [
+        "xmlhttprequest",
+        "script",
+        "sub_frame",
+        "ping"
+      ]
+    }
+  },
+  {
+    "id": 285,
+    "priority": 5,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "/dot/pop",
+      "resourceTypes": [
+        "script",
+        "xmlhttprequest"
+      ]
+    }
+  },
+  {
+    "id": 286,
+    "priority": 5,
+    "action": {
+      "type": "block"
+    },
+    "condition": {
+      "urlFilter": "/zv3/",
+      "resourceTypes": [
+        "sub_frame",
+        "script",
+        "xmlhttprequest",
+        "ping",
+        "other"
+      ]
+    }
   }
 ]

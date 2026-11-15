@@ -552,6 +552,7 @@ async function verifyLicenseWithServer(rawKey) {
               verifiedSession.internalWriteInProgress = false;
               chrome.alarms.create('ramTamerCheck', { periodInMinutes: 5 });
               await syncExtensionProtectionRules(true);
+              syncRemoteFilterDelta().catch(() => {});
               await updateActionBadge();
               return {
                 ok: true,
@@ -674,6 +675,7 @@ if (chrome.storage && chrome.storage.onChanged) {
       verifiedSession.licenseKey = freshKey;
       verifiedSession.coldChecked = true;
       syncExtensionProtectionRules(true).catch(() => {});
+      syncRemoteFilterDelta().catch(() => {});
       return;
     }
     const tamperedPro = changes.proActive && changes.proActive.newValue === true && !verifiedSession.proActive;

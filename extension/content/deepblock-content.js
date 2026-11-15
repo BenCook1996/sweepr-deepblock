@@ -928,6 +928,7 @@
     [id^="epad-"],
     [data-ep-adzone],
     [data-ts-spot],
+    [data-cl-spot],
     [class^="__clb-"],
     #divExoLayerWrapper,
     ins[class^="eas6a97888e"],
