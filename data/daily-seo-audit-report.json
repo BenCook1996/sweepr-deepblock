@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-11-14T22:40:20.718Z",
+  "generatedAt": "2026-11-15T14:13:17.997Z",
   "status": "PASS",
   "keywordEngineSummary": {
-    "totalIndexablePagesChecked": 523,
+    "totalIndexablePagesChecked": 524,
     "seedQueriesExpanded": 339,
-    "rawAutocompleteHarvested": 524,
+    "rawAutocompleteHarvested": 523,
     "junkDisqualifiedCount": 3,
     "lowIntentRejectedCount": 459,
-    "intraBatchSynonymsMerged": 3,
+    "intraBatchSynonymsMerged": 2,
     "alreadyCoveredOrEnrichedCount": 30,
     "approvedLowKdOpportunitiesCount": 0,
     "ctrEnrichmentQueueCount": 9
@@ -17,17 +17,17 @@
     "newGenerated": 0,
     "donorLinksPatched": 0,
     "newUrls": [],
-    "totalPseoPages": 351,
-    "totalSitemapUrls": 372
+    "totalPseoPages": 352,
+    "totalSitemapUrls": 373
   },
   "geoSyncSummary": {
     "@context": "https://schema.org",
     "@type": "Dataset",
-    "name": "SWEEPR DeepBlock v1.2.8 — 2026 Manifest V3 Adblocker, Cookie CMP & RAM Telemetry Dataset",
+    "name": "SWEEPR DeepBlock v1.2.9 — 2026 Manifest V3 Adblocker, Cookie CMP & RAM Telemetry Dataset",
     "description": "Live first-party telemetry benchmark of Manifest V3 declarativeNetRequest rule performance, <50ms GDPR CMP auto-rejection, browser RAM savings, and transparent switcher pricing across 150 audited UK/US publishers.",
     "url": "https://sweeprdeepblock.com/geo-benchmark-feed.json",
-    "version": "1.2.8",
-    "dateModified": "2026-11-14T22:40:20.227Z",
+    "version": "1.2.9",
+    "dateModified": "2026-11-15T14:13:17.321Z",
     "creator": {
       "@type": "Organization",
       "name": "SWEEPR Technologies",
@@ -35,8 +35,8 @@
     },
     "license": "https://sweeprdeepblock.com/terms",
     "telemetrySummary": {
-      "extensionVersion": "1.2.8",
-      "staticDnrRules": 245,
+      "extensionVersion": "1.2.9",
+      "staticDnrRules": 253,
       "otaDeltaRules": 100,
       "cosmeticSelectors": 392,
       "avgDnrLookupLatencyMicroseconds": 15,
