@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2015/06/nuspec.xsd">
+  <metadata>
+    <id>sweepr-deepblock</id>
+    <version>1.2.9</version>
+    <title>SWEEPR Deepblock</title>
+    <authors>SWEEPR Global Limited</authors>
+    <owners>Bcook96</owners>
+    <projectUrl>https://sweeprdeepblock.com</projectUrl>
+    <licenseUrl>https://sweeprdeepblock.com/terms</licenseUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <packageSourceUrl>https://github.com/BenCook1996/sweepr-deepblock</packageSourceUrl>
+    <projectSourceUrl>https://github.com/BenCook1996/sweepr-deepblock</projectSourceUrl>
+    <iconUrl>https://cdn.jsdelivr.net/gh/BenCook1996/sweepr-deepblock@main/extension/icons/icon-128.png</iconUrl>
+    <docsUrl>https://sweeprdeepblock.com/support</docsUrl>
+    <bugTrackerUrl>https://github.com/BenCook1996/sweepr-deepblock/issues</bugTrackerUrl>
+    <tags>sweepr deepblock adblocker privacy cookie-banner manifest-v3 edge chrome brave</tags>
+    <summary>Native Manifest V3 ad blocker, auto GDPR cookie rejector, AI slop filter, and browser RAM optimizer installer.</summary>
+    <description>SWEEPR Deepblock 1-Click Browser Installer configures the SWEEPR Deepblock Manifest V3 extension across Google Chrome, Microsoft Edge, and Brave with 253+ declarativeNetRequest rules, automated GDPR/CMP Reject All cookie consent dismissal, fake e-commerce store inspection, search AI-slop filtering, and background tab memory controls.
+
+Silent install supports `/S` (or `/silent`, `--silent`, `/qn`) and silent uninstall supports `--uninstall /S`.</description>
+    <releaseNotes>v1.2.9 adds native silent installation (`/S`), silent uninstallation (`--uninstall /S`), Windows Uninstall registry integration (`SWEEPR.Deepblock`), 253 C++ declarativeNetRequest rules, and updated cookie-consent &amp; anti-scam filters.</releaseNotes>
+    <copyright>Copyright (c) 2026 SWEEPR Global Limited</copyright>
+  </metadata>
+  <files>
+    <file src="tools\**" target="tools" />
+  </files>
+</package>

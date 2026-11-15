@@ -274,8 +274,10 @@ ${formatUrlList(glossaryUrls, 20)}
   fs.writeFileSync(path.join(WEBSITE_DIR, 'llms-full.txt'), llmsFullTxt, 'utf8');
 
   // 3. Build website/pad.xml (fixing line 20 <Contact_Email>...</Contact_Email> and syncing v1.2.7 + £29.99/yr pricing)
+  const exePath = path.join(WEBSITE_DIR, 'SWEEPRDeepblockSetup.exe');
   const zipPath = path.join(WEBSITE_DIR, 'sweepr-deepblock-extension.zip');
-  const fileSizeBytes = fs.existsSync(zipPath) ? fs.statSync(zipPath).size : 88858;
+  const primaryArtifact = fs.existsSync(exePath) ? exePath : zipPath;
+  const fileSizeBytes = fs.existsSync(primaryArtifact) ? fs.statSync(primaryArtifact).size : 136192;
   const fileSizeK = Math.max(1, Math.round(fileSizeBytes / 1024));
   const fileSizeMb = (fileSizeBytes / (1024 * 1024)).toFixed(2);
 
@@ -356,7 +358,7 @@ Key Features:
       <Application_Info_URL>https://sweeprdeepblock.com/</Application_Info_URL>
       <Application_Order_URL>https://sweeprdeepblock.com/pricing</Application_Order_URL>
       <Application_Screenshot_URL>https://sweeprdeepblock.com/og-image.png</Application_Screenshot_URL>
-      <Application_Icon_URL>https://sweeprdeepblock.com/logo.svg</Application_Icon_URL>
+      <Application_Icon_URL>https://sweeprdeepblock.com/icon-128.png</Application_Icon_URL>
       <Application_XML_File_URL>https://sweeprdeepblock.com/pad.xml</Application_XML_File_URL>
     </Application_URLs>
     <Download_URLs>
