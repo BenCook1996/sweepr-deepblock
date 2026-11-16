@@ -1,8 +1,8 @@
 # SWEEPR DeepBlock — Complete Technical Architecture, Benchmarks & Product Specification
 # Canonical Domain: https://sweeprdeepblock.com
 # Version: 1.2.9 (Manifest V3 Engine)
-# Last Updated: 2026-11-15
-# Total Indexed Canonical URLs: 524 (373 Core/Pillar URLs + 151 Verified Publisher Audit URLs)
+# Last Updated: 2026-11-16
+# Total Indexed Canonical URLs: 455 (304 Core/Pillar URLs + 151 Verified Publisher Audit URLs)
 
 ## 1. Executive Summary & Product Overview
 SWEEPR DeepBlock v1.2.9 is a privacy-first, local-first, zero-browsing-history browser extension and web performance suite engineered for Google Chrome, Microsoft Edge, Mozilla Firefox, Apple Safari (macOS & iOS), Brave, Opera, Vivaldi, Thorium, Floorp, Arc, and Zen Browser. DeepBlock addresses the modern web crisis: runaway third-party advertising auctions, CPU/battery-draining tracker beacons, unskippable video interruptions, multi-layer GDPR/CCPA cookie consent walls, deceptive AI-generated search spam ("AI slop"), and newly registered fraudulent e-commerce storefronts.
@@ -96,11 +96,10 @@ SWEEPR DeepBlock provides a public, crawlable, client-side testing laboratory at
 - AdBlocker Renewal Shock Calculator: Escape £99/yr Charges | SWEEPR: https://sweeprdeepblock.com/campaigns/renewal-shock-switcher
 
 ### Competitor Comparison Hubs (/vs/*)
-- SWEEPR DeepBlock vs Total Adblock (2026 Pricing & Test Lab): https://sweeprdeepblock.com/vs/total-adblock
 - SWEEPR DeepBlock vs 1Blocker (2026 Comparison): https://sweeprdeepblock.com/vs/1blocker-safari
 - AdBlock Luna VPN vs SWEEPR DeepBlock (2026 Safety & Speed): https://sweeprdeepblock.com/vs/adblock-luna-vpn
-- AdBlock Plus Not Working On YouTube Chrome: https://sweeprdeepblock.com/vs/adblock-plus-not-working-on-youtube-chrome
 - SWEEPR DeepBlock vs AdBlock Plus (2026 Comparison): https://sweeprdeepblock.com/vs/adblock-plus
+- AdBlock Plus Not Working On YouTube Chrome: https://sweeprdeepblock.com/vs/adblock-plus-not-working-on-youtube-chrome
 - SWEEPR DeepBlock vs AdGuard (2026 Comparison): https://sweeprdeepblock.com/vs/adguard-extension
 - AdGuard Vs uBlock Origin Lite Chrome 2026: https://sweeprdeepblock.com/vs/adguard-vs-ublock-origin-lite-chrome-2026
 - Avast Secure Browser vs AdGuard vs SWEEPR DeepBlock (2026): https://sweeprdeepblock.com/vs/avast-secure-browser-guard
@@ -114,13 +113,14 @@ SWEEPR DeepBlock provides a public, crawlable, client-side testing laboratory at
 - Lightweight Alternative To Ghostery Chrome: https://sweeprdeepblock.com/vs/lightweight-alternative-to-ghostery-chrome
 - SWEEPR DeepBlock vs Malwarebytes Guard (2026 Comparison): https://sweeprdeepblock.com/vs/malwarebytes-browser-guard
 - SWEEPR DeepBlock vs Nord Threat Protection (2026 Comparison): https://sweeprdeepblock.com/vs/nordvpn-threat-protection
+- SWEEPR DeepBlock vs Pie Adblock (2026 Comparison): https://sweeprdeepblock.com/vs/pie-adblock
 - Pie AdBlock Is A Scam (2026): https://sweeprdeepblock.com/vs/pie-adblock-is-a-scam
 - Pie AdBlock Safe Or Scam Alternative (2026): https://sweeprdeepblock.com/vs/pie-adblock-safe-or-scam-alternative
-- SWEEPR DeepBlock vs Pie Adblock (2026 Comparison): https://sweeprdeepblock.com/vs/pie-adblock
 - SWEEPR DeepBlock vs Privacy Badger (2026 Comparison): https://sweeprdeepblock.com/vs/privacy-badger-eff
 - SWEEPR DeepBlock vs Stands AdBlocker (2026 Comparison): https://sweeprdeepblock.com/vs/stands-fair-adblocker
 - SWEEPR DeepBlock vs Surfshark CleanWeb (2026 Comparison): https://sweeprdeepblock.com/vs/surfshark-cleanweb
 - Switch From AdBlock Plus To Manifest V3 (2026): https://sweeprdeepblock.com/vs/switch-from-adblock-plus-to-manifest-v3
+- SWEEPR DeepBlock vs Total Adblock (2026 Pricing & Test Lab): https://sweeprdeepblock.com/vs/total-adblock
 
 ### Browser Setup Guides (/setup/*)
 - AdBlock Pro For Safari Not Working (2026): https://sweeprdeepblock.com/setup/adblock-pro-for-safari-not-working
@@ -152,29 +152,29 @@ SWEEPR DeepBlock provides a public, crawlable, client-side testing laboratory at
 ### Flagship Platform Solutions (/solutions/*)
 - 1337x Ads Blocker (2026): Stop 1337x Popunders & Fake Downloads: https://sweeprdeepblock.com/solutions/1337x-torrent-indexer-block-video-ads
 - MyAnimeList: Block Video Ads (2026): https://sweeprdeepblock.com/solutions/anilist-myanimelist-tracker-block-video-ads
-- Free Anime Portals: Auto-Reject Cookie Pop-Ups: https://sweeprdeepblock.com/solutions/anime-streaming-portals-auto-reject-cookie-popups
-- Free Anime Portals: Cut Browser RAM Usage 62%: https://sweeprdeepblock.com/solutions/anime-streaming-portals-reduce-browser-ram-usage
 - Free Anime Portals: Stop Pop-Under Redirects: https://sweeprdeepblock.com/solutions/anime-streaming-portals-stop-malvertising-popunders
 - Auto Reject Cookies Extension Edge (2026): https://sweeprdeepblock.com/solutions/auto-reject-cookies-extension-edge
 - Car Classifieds: Block Video Ads (2026): https://sweeprdeepblock.com/solutions/automotive-car-classifieds-block-video-ads
-- Car Classifieds: Cut Browser RAM Usage 62%: https://sweeprdeepblock.com/solutions/automotive-car-classifieds-reduce-browser-ram-usage
-- Car Classifieds: Strip URL Tracking Beacons: https://sweeprdeepblock.com/solutions/automotive-car-classifieds-strip-tracking-parameters
-- Bilibili Web: Block Video Ads (2026): https://sweeprdeepblock.com/solutions/bilibili-anime-video-block-video-ads
 - Bilibili Web: Stop Pop-Under Redirects (2026): https://sweeprdeepblock.com/solutions/bilibili-anime-video-stop-malvertising-popunders
 - Bing & Edge: Cut Browser RAM Usage 62%: https://sweeprdeepblock.com/solutions/bing-copilot-search-reduce-browser-ram-usage
 - Chess.com Blitz: Block Video Ads (2026): https://sweeprdeepblock.com/solutions/chesscom-blitz-gaming-block-video-ads
 - CNN News: Auto-Reject Cookie Pop-Ups: https://sweeprdeepblock.com/solutions/cnn-news-network-auto-reject-cookie-popups
-- CNN News: Cut Browser RAM Usage 62%: https://sweeprdeepblock.com/solutions/cnn-news-network-reduce-browser-ram-usage
-- CNN News: Strip URL Tracking Beacons: https://sweeprdeepblock.com/solutions/cnn-news-network-strip-tracking-parameters
 - CoinMarketCap: Stop Pop-Under Redirects (2026): https://sweeprdeepblock.com/solutions/coinmarketcap-crypto-prices-stop-malvertising-popunders
 - E-Learning: Cut Browser RAM Usage 62%: https://sweeprdeepblock.com/solutions/coursera-edx-learning-reduce-browser-ram-usage
-- Crunchyroll: Auto-Reject Cookie Pop-Ups: https://sweeprdeepblock.com/solutions/crunchyroll-anime-streams-auto-reject-cookie-popups
 - How to Get No Ads on Crunchyroll PC (Best Crunchyroll AdBlock): https://sweeprdeepblock.com/solutions/crunchyroll-anime-streams-block-video-ads
-- Crunchyroll: Cut Browser RAM Usage 62%: https://sweeprdeepblock.com/solutions/crunchyroll-anime-streams-reduce-browser-ram-usage
-- Crunchyroll: Strip URL Tracking Beacons: https://sweeprdeepblock.com/solutions/crunchyroll-anime-streams-strip-tracking-parameters
 - Crypto & Forex: Auto-Reject Cookie Pop-Ups: https://sweeprdeepblock.com/solutions/crypto-exchange-news-sites-auto-reject-cookie-popups
 - CurseForge Mods: Stop Pop-Under Redirects: https://sweeprdeepblock.com/solutions/curseforge-gaming-mods-stop-malvertising-popunders
 - Daily Mail Online: Block Video Ads (2026): https://sweeprdeepblock.com/solutions/daily-mail-online-block-video-ads
+- Embedded Web Videos: Block Video Ads (2026): https://sweeprdeepblock.com/solutions/dailymotion-vimeo-embeds-block-video-ads
+- DEXScreener Ad Blocker: Block Token Banners & Scam Drain Ads: https://sweeprdeepblock.com/solutions/dex-token-screeners-block-video-ads
+- ESPN Sports: Stop Pop-Under Redirects (2026): https://sweeprdeepblock.com/solutions/espn-sports-streaming-stop-malvertising-popunders
+- Etsy Shops: Stop Pop-Under Redirects (2026): https://sweeprdeepblock.com/solutions/etsy-marketplace-shops-stop-malvertising-popunders
+- Motorsport Sites: Block Video Ads (2026): https://sweeprdeepblock.com/solutions/f1-motorsport-news-block-video-ads
+- Social & Shops: Hide AI Slop & Scam Shops: https://sweeprdeepblock.com/solutions/facebook-marketplace-shops-filter-ai-slop-and-scams
+- Why Does Fandom Use So Much RAM? Fix Fandom Memory & Video Ads: https://sweeprdeepblock.com/solutions/fandom-game-wikis-reduce-browser-ram-usage
+- Fextralife Wikis: Stop Pop-Under Redirects: https://sweeprdeepblock.com/solutions/fextralife-game-wikis-stop-malvertising-popunders
+- Flight Radars: Stop Pop-Under Redirects (2026): https://sweeprdeepblock.com/solutions/flight-tracker-radars-stop-malvertising-popunders
+- Forbes Media: Hide AI Slop & Scam Shops: https://sweeprdeepblock.com/solutions/forbes-business-media-filter-ai-slop-and-scams
 
 ### Customer Stories (/stories/*) & Glossary (/glossary/*)
 - Case Study: Reclaiming 4.1 GB RAM Across 40 Open Tabs | SWEEPR: https://sweeprdeepblock.com/stories/40-tab-research-workflow-ram-tamer

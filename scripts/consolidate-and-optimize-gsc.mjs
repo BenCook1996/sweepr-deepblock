@@ -22,6 +22,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = path.resolve(__dirname, '..');
 const WEBSITE_DIR = path.join(ROOT_DIR, 'website');
 const SITEMAP_PATH = path.join(WEBSITE_DIR, 'sitemap.xml');
+const SITEMAP_CONSOLIDATIONS_PATH = path.join(WEBSITE_DIR, 'sitemap-consolidations.xml');
+const CONSOLIDATION_SITEMAP_EXPIRES_AT = '2026-12-16T00:00:00Z';
 
 // 1. All 150 URLs that ever earned impressions in Google Search Console (Oct 19 - Nov 2, 2026)
 const GSC_PROVEN_PATHS = [
@@ -318,14 +320,14 @@ if (fs.existsSync(kwMatrixPath)) {
   } catch {}
 }
 
-const PILLAR_SET = new Set([
+const RAW_PILLAR_PATHS = [
   ...GSC_PROVEN_PATHS,
   ...STRATEGIC_PILLAR_PATHS,
   ...llmsReferencedPaths,
   ...existingSitemapPillarPaths,
   ...keywordMatrixPaths,
   ...(Array.isArray(enrichmentState.discoveredGscPaths) ? enrichmentState.discoveredGscPaths : [])
-]);
+];
 
 // 3. Exact-Query CTR & Technical Differentiation Overrides for the Top Proven GSC Pages
 const EXACT_QUERY_SURGERY = {
@@ -600,6 +602,140 @@ const EXACT_QUERY_SURGERY = {
   }
 };
 
+const PROBLEM_SUFFIXES = [
+  '-block-video-ads',
+  '-auto-reject-cookie-popups',
+  '-filter-ai-slop-and-scams',
+  '-protect-checkout-fake-shop-shield',
+  '-remove-page-clutter-and-ram-bloat',
+  '-reduce-browser-ram-usage',
+  '-stop-malvertising-popunders',
+  '-strip-tracking-parameters',
+  '-bypass-anti-adblock-walls',
+  '-stop-autoplay-floating-videos',
+  '-stop-notification-permission-spam',
+  '-encrypted-dns-doh-protection',
+  '-block-crypto-miners-cpu-drain',
+  '-block-sponsored-feed-carousels',
+  '-clean-reader-distraction-free',
+  '-hibernate-idle-background-tabs',
+  '-prevent-canvas-webrtc-fingerprinting'
+];
+
+const PLATFORM_PREFIX_ALIASES = {
+  'fandom-game-lore-wikis': 'fandom-game-wikis',
+  'kick-gambling-livestreams': 'kick-streaming-portals'
+};
+
+// Preferred canonical Pillar when collapsing multiple Cartesian problem variants on the same platform
+const PRIMARY_PLATFORM_PILLAR_OVERRIDES = {
+  'fandom-game-wikis': '/solutions/fandom-game-wikis-reduce-browser-ram-usage',
+  'crunchyroll-anime-streams': '/solutions/crunchyroll-anime-streams-block-video-ads',
+  'tumblr-blog-feeds': '/solutions/tumblr-blog-feeds-block-video-ads',
+  'soundcloud-audio-player': '/solutions/soundcloud-audio-player-block-video-ads',
+  'reddit-promoted-posts': '/solutions/reddit-promoted-posts-block-video-ads',
+  'twitch-live-streams': '/solutions/twitch-live-streams-block-video-ads',
+  'youtube-chrome-mv3': '/solutions/youtube-chrome-mv3-block-video-ads',
+  'linkedin-feed-ads': '/solutions/linkedin-feed-ads-block-video-ads',
+  'webtoon-manhwa-readers': '/solutions/webtoon-manhwa-readers-block-video-ads',
+  'manga-comic-readers': '/solutions/manga-comic-readers-block-video-ads',
+  'rumble-video-streams': '/solutions/rumble-video-streams-block-video-ads',
+  'geeksforgeeks-dev-portals': '/solutions/geeksforgeeks-dev-portals-block-video-ads',
+  'roblox-web-community': '/solutions/roblox-web-community-filter-ai-slop-and-scams',
+  'kick-streaming-portals': '/solutions/kick-streaming-portals-block-video-ads',
+  'facebook-marketplace-shops': '/solutions/facebook-marketplace-shops-filter-ai-slop-and-scams',
+  'x-twitter-feed-ads': '/solutions/x-twitter-feed-ads-strip-tracking-parameters',
+  'recipe-food-blogs': '/solutions/recipe-food-blogs-reduce-browser-ram-usage'
+};
+
+function extractSolutionPlatformPrefix(urlPath) {
+  if (!/^\/solutions\//i.test(urlPath)) return null;
+  const slug = urlPath.replace(/^\/solutions\//, '');
+  for (const suf of PROBLEM_SUFFIXES) {
+    if (slug.endsWith(suf)) {
+      const rawPrefix = slug.slice(0, -suf.length);
+      return PLATFORM_PREFIX_ALIASES[rawPrefix] || rawPrefix;
+    }
+  }
+  return null;
+}
+
+const rawPillarSet = new Set(RAW_PILLAR_PATHS);
+const keywordMatrixPathSet = new Set(keywordMatrixPaths);
+const gscProvenRank = new Map(GSC_PROVEN_PATHS.map((p, idx) => [p, idx]));
+const strategicRank = new Map(STRATEGIC_PILLAR_PATHS.map((p, idx) => [p, idx]));
+
+const solutionGroupsByPlatform = new Map();
+for (const p of rawPillarSet) {
+  if (!/^\/solutions\//i.test(p) || keywordMatrixPathSet.has(p)) continue;
+  const platPrefix = extractSolutionPlatformPrefix(p);
+  if (!platPrefix) continue;
+  if (!solutionGroupsByPlatform.has(platPrefix)) {
+    solutionGroupsByPlatform.set(platPrefix, []);
+  }
+  solutionGroupsByPlatform.get(platPrefix).push(p);
+}
+
+const collapsedSiblings = new Set();
+const collapsedSiblingToWinner = new Map();
+for (const [platPrefix, candidates] of solutionGroupsByPlatform.entries()) {
+  if (candidates.length <= 1) continue;
+  const override = PRIMARY_PLATFORM_PILLAR_OVERRIDES[platPrefix];
+  let winner = override && candidates.includes(override) ? override : null;
+  if (!winner) {
+    const sorted = [...candidates].sort((a, b) => {
+      const aSurg = EXACT_QUERY_SURGERY[a] ? 0 : 1;
+      const bSurg = EXACT_QUERY_SURGERY[b] ? 0 : 1;
+      if (aSurg !== bSurg) return aSurg - bSurg;
+      const aStrat = strategicRank.has(a) ? strategicRank.get(a) : 99999;
+      const bStrat = strategicRank.has(b) ? strategicRank.get(b) : 99999;
+      if (aStrat !== bStrat) return aStrat - bStrat;
+      const aGsc = gscProvenRank.has(a) ? gscProvenRank.get(a) : 99999;
+      const bGsc = gscProvenRank.has(b) ? gscProvenRank.get(b) : 99999;
+      if (aGsc !== bGsc) return aGsc - bGsc;
+      return a.localeCompare(b);
+    });
+    winner = sorted[0];
+  }
+  for (const cand of candidates) {
+    if (cand !== winner) {
+      collapsedSiblings.add(cand);
+      collapsedSiblingToWinner.set(cand, winner);
+    }
+  }
+}
+
+const PILLAR_SET = new Set([...rawPillarSet].filter((p) => !collapsedSiblings.has(p)));
+
+if (collapsedSiblings.size > 0 && Array.isArray(enrichmentState.discoveredGscPaths)) {
+  const beforeLen = enrichmentState.discoveredGscPaths.length;
+  enrichmentState.discoveredGscPaths = enrichmentState.discoveredGscPaths.filter((p) => !collapsedSiblings.has(p));
+  if (enrichmentState.discoveredGscPaths.length !== beforeLen && fs.existsSync(ENRICHMENT_STATE_PATH)) {
+    fs.writeFileSync(ENRICHMENT_STATE_PATH, JSON.stringify(enrichmentState, null, 2), 'utf8');
+  }
+}
+console.log(`[CONSOLIDATE] Collapsed ${collapsedSiblings.size} multi-variant /solutions/ siblings across ${solutionGroupsByPlatform.size} platforms.`);
+
+const PROBLEM_FALLBACK_PILLAR = {
+  '-block-video-ads': '/solutions/youtube-chrome-mv3-block-video-ads',
+  '-auto-reject-cookie-popups': '/solutions/uk-news-websites-auto-reject-cookie-popups',
+  '-filter-ai-slop-and-scams': '/solutions/google-search-results-filter-ai-slop-and-scams',
+  '-protect-checkout-fake-shop-shield': '/solutions/facebook-marketplace-shops-filter-ai-slop-and-scams',
+  '-remove-page-clutter-and-ram-bloat': '/solutions/fandom-game-wikis-reduce-browser-ram-usage',
+  '-reduce-browser-ram-usage': '/solutions/fandom-game-wikis-reduce-browser-ram-usage',
+  '-stop-malvertising-popunders': '/solutions/dex-token-screeners-block-video-ads',
+  '-strip-tracking-parameters': '/solutions/x-twitter-feed-ads-strip-tracking-parameters',
+  '-bypass-anti-adblock-walls': '/guides/how-to-bypass-anti-adblock-inspect-element-blockers',
+  '-stop-autoplay-floating-videos': '/solutions/fandom-game-wikis-reduce-browser-ram-usage',
+  '-stop-notification-permission-spam': '/guides/how-to-stop-silent-web-push-notification-spam',
+  '-encrypted-dns-doh-protection': '/guides/encrypted-dns-over-https-doh-browser-setup-guide',
+  '-block-crypto-miners-cpu-drain': '/guides/how-to-block-tab-freeze-crypto-miner-scripts',
+  '-block-sponsored-feed-carousels': '/solutions/reddit-promoted-posts-block-video-ads',
+  '-clean-reader-distraction-free': '/solutions/recipe-food-blogs-reduce-browser-ram-usage',
+  '-hibernate-idle-background-tabs': '/guides/how-to-reduce-browser-ram-speed-up-slow-tabs',
+  '-prevent-canvas-webrtc-fingerprinting': '/guides/how-to-stop-browser-canvas-fingerprinting-trackers'
+};
+
 function escapeHtml(str) {
   return String(str)
     .replace(/&/g, '&amp;')
@@ -642,64 +778,13 @@ pageRecords.sort((a, b) => a.urlPath.localeCompare(b.urlPath));
 const pillarPages = pageRecords.filter((p) => p.isPillar);
 const pseoPillarPages = pillarPages.filter((p) => p.cluster !== 'root');
 
-const PROBLEM_SUFFIXES = [
-  '-block-video-ads',
-  '-auto-reject-cookie-popups',
-  '-filter-ai-slop-and-scams',
-  '-protect-checkout-fake-shop-shield',
-  '-remove-page-clutter-and-ram-bloat',
-  '-reduce-browser-ram-usage',
-  '-stop-malvertising-popunders',
-  '-strip-tracking-parameters',
-  '-bypass-anti-adblock-walls',
-  '-stop-autoplay-floating-videos',
-  '-stop-notification-permission-spam',
-  '-encrypted-dns-doh-protection',
-  '-block-crypto-miners-cpu-drain',
-  '-block-sponsored-feed-carousels',
-  '-clean-reader-distraction-free',
-  '-hibernate-idle-background-tabs',
-  '-prevent-canvas-webrtc-fingerprinting'
-];
-
-const PROBLEM_FALLBACK_PILLAR = {
-  '-block-video-ads': '/solutions/youtube-chrome-mv3-block-video-ads',
-  '-auto-reject-cookie-popups': '/solutions/uk-news-websites-auto-reject-cookie-popups',
-  '-filter-ai-slop-and-scams': '/solutions/google-search-results-filter-ai-slop-and-scams',
-  '-protect-checkout-fake-shop-shield': '/solutions/facebook-marketplace-shops-filter-ai-slop-and-scams',
-  '-remove-page-clutter-and-ram-bloat': '/solutions/fandom-game-wikis-reduce-browser-ram-usage',
-  '-reduce-browser-ram-usage': '/solutions/fandom-game-wikis-reduce-browser-ram-usage',
-  '-stop-malvertising-popunders': '/solutions/dex-token-screeners-block-video-ads',
-  '-strip-tracking-parameters': '/solutions/x-twitter-feed-ads-strip-tracking-parameters',
-  '-bypass-anti-adblock-walls': '/guides/how-to-bypass-anti-adblock-inspect-element-blockers',
-  '-stop-autoplay-floating-videos': '/solutions/fandom-game-wikis-block-video-ads',
-  '-stop-notification-permission-spam': '/guides/how-to-stop-silent-web-push-notification-spam',
-  '-encrypted-dns-doh-protection': '/guides/encrypted-dns-over-https-doh-browser-setup-guide',
-  '-block-crypto-miners-cpu-drain': '/guides/how-to-block-tab-freeze-crypto-miner-scripts',
-  '-block-sponsored-feed-carousels': '/solutions/reddit-promoted-posts-block-video-ads',
-  '-clean-reader-distraction-free': '/solutions/recipe-food-blogs-reduce-browser-ram-usage',
-  '-hibernate-idle-background-tabs': '/guides/how-to-reduce-browser-ram-speed-up-slow-tabs',
-  '-prevent-canvas-webrtc-fingerprinting': '/guides/how-to-stop-browser-canvas-fingerprinting-trackers'
-};
-
-const PLATFORM_PREFIX_ALIASES = {
-  'fandom-game-lore-wikis': 'fandom-game-wikis',
-  'kick-gambling-livestreams': 'kick-streaming-portals'
-};
-
 // Map platform prefix -> primary Pillar URL in /solutions/*
 const platformToPillarUrl = new Map();
 for (const p of pseoPillarPages) {
   if (p.cluster === 'solutions') {
-    const slug = p.urlPath.replace(/^\/solutions\//, '');
-    for (const suf of PROBLEM_SUFFIXES) {
-      if (slug.endsWith(suf)) {
-        const platPrefix = slug.slice(0, -suf.length);
-        if (!platformToPillarUrl.has(platPrefix)) {
-          platformToPillarUrl.set(platPrefix, p.urlPath);
-        }
-        break;
-      }
+    const platPrefix = extractSolutionPlatformPrefix(p.urlPath);
+    if (platPrefix && !platformToPillarUrl.has(platPrefix)) {
+      platformToPillarUrl.set(platPrefix, p.urlPath);
     }
   }
 }
@@ -748,12 +833,17 @@ function getPillarCardMeta(rec) {
 }
 
 const modifiedFilePaths = new Set();
+const substantiveModifiedPaths = new Set();
 
-function writeFileSafe(filePath, content) {
+function writeFileSafe(filePath, content, isSubstantive = false) {
   for (let attempt = 0; attempt < 5; attempt++) {
     try {
       fs.writeFileSync(filePath, content, 'utf8');
-      modifiedFilePaths.add(path.resolve(filePath));
+      const resolved = path.resolve(filePath);
+      modifiedFilePaths.add(resolved);
+      if (isSubstantive) {
+        substantiveModifiedPaths.add(resolved);
+      }
       return;
     } catch (err) {
       if (attempt === 4) throw err;
@@ -889,7 +979,7 @@ for (const rec of pageRecords) {
   }
 
   if (html !== origHtml) {
-    writeFileSafe(rec.filePath, html);
+    writeFileSafe(rec.filePath, html, true);
   }
 }
 console.log(`[CONSOLIDATE] Applied Exact-Query CTR Surgery to ${exactSurgeryApplied} top GSC pages.`);
@@ -899,23 +989,39 @@ const pseoRingPages = pseoPillarPages.filter((rec) => rec.urlPath !== '/vs/total
 const pseoPillarCards = pseoRingPages.map((rec) => getPillarCardMeta(rec));
 const pillarCardByPath = new Map(pseoPillarCards.map((c) => [c.urlPath, c]));
 
-// Second pass: Rewire the 8-link internal link mesh on ALL PSEO pages (both the 285 Pillar pages AND the 1,293 noindex, follow secondary pages)
-// so 100% of outgoing links across the entire site point EXCLUSIVELY to the 285 indexable Pillar Pages (zero links to noindex pages)
+// Second pass: Preserve already-valid 8-link meshes so adding 1 Pillar doesn't churn all 1,800 HTML files.
+// Only rewrite <section> meshes that reference non-Pillar / collapsed siblings, lack links, or miss parentPillarPath.
 const M = pseoPillarCards.length;
 const OFFSETS = [1, 2, 3, 5, 11, 23, 47, 89];
 let meshUpdatedCount = 0;
+let meshPreservedCount = 0;
 
+const RELATED_SECTION_RE = /<section style="margin-top:36px;padding-top:24px;border-top:1px solid #1e293b;">[\s\S]*?<\/section>/i;
 const allPseoPages = pageRecords.filter((rec) => rec.cluster !== 'root' && rec.urlPath !== '/vs/total-adblock');
 for (let i = 0; i < allPseoPages.length; i++) {
   const rec = allPseoPages[i];
   const origHtml = fs.readFileSync(rec.filePath, 'utf8');
   let html = origHtml;
 
+  const existingSectionMatch = origHtml.match(RELATED_SECTION_RE);
+  if (!existingSectionMatch) continue;
+
+  const existingHrefMatches = [...existingSectionMatch[0].matchAll(/<a\s+[^>]*href=["'](\/[^"'#?]+)["']/gi)].map((m) => m[1]);
+  const expectedParent = !rec.isPillar ? resolveConsolidatingPillarPath(rec) : null;
+  const allTargetsAreValidPillars =
+    existingHrefMatches.length >= 8 &&
+    existingHrefMatches.every((href) => href !== rec.urlPath && PILLAR_SET.has(href)) &&
+    (!expectedParent || existingHrefMatches.includes(expectedParent));
+
+  if (allTargetsAreValidPillars) {
+    meshPreservedCount++;
+    continue;
+  }
+
   const relatedCards = [];
   const seen = new Set([rec.urlPath]);
-  if (!rec.isPillar) {
-    const parentPillarPath = resolveConsolidatingPillarPath(rec);
-    const parentCard = pillarCardByPath.get(parentPillarPath);
+  if (expectedParent) {
+    const parentCard = pillarCardByPath.get(expectedParent);
     if (parentCard && !seen.has(parentCard.urlPath)) {
       seen.add(parentCard.urlPath);
       relatedCards.push(parentCard);
@@ -941,21 +1047,16 @@ for (let i = 0; i < allPseoPages.length; i++) {
       </div>
     </section>`;
 
-  if (/<section style="margin-top:36px;padding-top:24px;border-top:1px solid #1e293b;">[\s\S]*?<\/section>/i.test(html)) {
-    html = html.replace(
-      /<section style="margin-top:36px;padding-top:24px;border-top:1px solid #1e293b;">[\s\S]*?<\/section>/i,
-      newRelatedSection
-    );
-    if (html !== origHtml) {
-      writeFileSafe(rec.filePath, html);
-    }
+  html = html.replace(RELATED_SECTION_RE, newRelatedSection);
+  if (html !== origHtml) {
+    writeFileSafe(rec.filePath, html, false);
     meshUpdatedCount++;
   }
 }
-console.log(`[CONSOLIDATE] Rewired internal link mesh on ${meshUpdatedCount} pages to point exclusively to the ${M} PSEO Pillar Pages.`);
+console.log(`[CONSOLIDATE] Preserved ${meshPreservedCount} healthy link meshes; repaired ${meshUpdatedCount} stale/collapsed meshes -> ${M} PSEO Pillar Pages.`);
 
 // Third pass: Rebuild website/sitemap.xml with ONLY the Authoritative Indexable Pillar Pages
-// while preserving existing <lastmod> dates on unchanged pages (zero fake <lastmod> churn)
+// while preserving existing <lastmod> dates unless Pass 1 made substantive content/canonical edits (zero footer-mesh <lastmod> churn)
 const todayStr = new Date().toISOString().slice(0, 10);
 const existingLastModMap = new Map();
 if (fs.existsSync(SITEMAP_PATH)) {
@@ -997,10 +1098,10 @@ const sitemapEntries = orderedPillarPages.map((p) => {
     priority: GSC_PROVEN_PATHS.includes(p.urlPath) ? '0.85' : '0.8'
   };
   const loc = `https://sweeprdeepblock.com${p.urlPath}`;
-  const wasModified = modifiedFilePaths.has(path.resolve(p.filePath));
+  const wasSubstantive = substantiveModifiedPaths.has(path.resolve(p.filePath));
   return {
     loc,
-    lastmod: wasModified ? todayStr : (existingLastModMap.get(loc) || todayStr),
+    lastmod: wasSubstantive ? todayStr : (existingLastModMap.get(loc) || todayStr),
     changefreq: meta.changefreq,
     priority: meta.priority
   };
@@ -1029,3 +1130,33 @@ ${sitemapEntries.map((e) => `  <url>\n    <loc>${e.loc}</loc>\n    <lastmod>${e.
 `;
 fs.writeFileSync(SITEMAP_PATH, sitemapXml, 'utf8');
 console.log(`[CONSOLIDATE] Wrote ${sitemapEntries.length} high-signal Pillar URLs to website/sitemap.xml.`);
+
+// Fourth pass: Temporary 30-day sitemap-consolidations.xml (expires 2026-12-16) so Googlebot crawls the HTTP 301s and flushes stale doorway snapshots
+if (Date.now() < Date.parse(CONSOLIDATION_SITEMAP_EXPIRES_AT)) {
+  const existingConsolLastMod = new Map();
+  if (fs.existsSync(SITEMAP_CONSOLIDATIONS_PATH)) {
+    const prevConsol = fs.readFileSync(SITEMAP_CONSOLIDATIONS_PATH, 'utf8');
+    for (const m of prevConsol.matchAll(/<url>\s*<loc>([^<]+)<\/loc>\s*<lastmod>([^<]+)<\/lastmod>/g)) {
+      existingConsolLastMod.set(m[1].trim(), m[2].trim());
+    }
+  }
+  const consolidatedRecords = pageRecords.filter(
+    (p) => !p.isPillar && /^(solutions|setup|vs|guides)\//i.test(p.rel)
+  );
+  const consolXml = `<?xml version="1.0" encoding="UTF-8"?>
+<!-- Temporary 30-day HTTP 301 discovery sitemap (expires ${CONSOLIDATION_SITEMAP_EXPIRES_AT}) to clear stale indexed Cartesian snapshots -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${consolidatedRecords.map((p) => {
+  const loc = `https://sweeprdeepblock.com${p.urlPath}`;
+  const defaultMod = substantiveModifiedPaths.has(path.resolve(p.filePath)) ? todayStr : '2026-11-09';
+  const lastmod = existingConsolLastMod.get(loc) || defaultMod;
+  return `  <url>\n    <loc>${loc}</loc>\n    <lastmod>${lastmod}</lastmod>\n  </url>`;
+}).join('\n')}
+</urlset>
+`;
+  fs.writeFileSync(SITEMAP_CONSOLIDATIONS_PATH, consolXml, 'utf8');
+  console.log(`[CONSOLIDATE] Wrote ${consolidatedRecords.length} temporary HTTP 301 discovery URLs to website/sitemap-consolidations.xml (expires ${CONSOLIDATION_SITEMAP_EXPIRES_AT}).`);
+} else if (fs.existsSync(SITEMAP_CONSOLIDATIONS_PATH)) {
+  fs.unlinkSync(SITEMAP_CONSOLIDATIONS_PATH);
+  console.log(`[CONSOLIDATE] Removed expired website/sitemap-consolidations.xml (past ${CONSOLIDATION_SITEMAP_EXPIRES_AT}).`);
+}

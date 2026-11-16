@@ -254,6 +254,27 @@ function main() {
     }
   }
 
+  // Validate temporary 30-day consolidation sitemap (redirects / noindex, follow only)
+  const consolidationSmPath = path.join(WEBSITE_DIR, 'sitemap-consolidations.xml');
+  if (fs.existsSync(consolidationSmPath)) {
+    const cXml = fs.readFileSync(consolidationSmPath, 'utf8');
+    for (const m of cXml.matchAll(/<loc>([^<]+)<\/loc>/g)) {
+      const cUrl = m[1].trim();
+      const cPath = cUrl.replace(/^https?:\/\/sweeprdeepblock\.com/i, '') || '/';
+      for (const prefix of disallowPrefixes) {
+        if (cPath === prefix || cPath.startsWith(prefix + '/') || (prefix.endsWith('/') && cPath.startsWith(prefix))) {
+          sitemapRobotsConflicts.push({ sitemap: 'sitemap-consolidations.xml', url: cUrl, disallowRule: prefix });
+        }
+      }
+      const rec = routeMap.get(cPath);
+      if (!rec) {
+        brokenCanonicalTargets.push({ sitemap: 'sitemap-consolidations.xml', url: cUrl, reason: 'missing_on_disk' });
+      } else if (!rec.isNoIndex) {
+        brokenCanonicalTargets.push({ sitemap: 'sitemap-consolidations.xml', url: cUrl, reason: 'expected_noindex_follow' });
+      }
+    }
+  }
+
   const healthy =
     redirectLoops.length === 0 &&
     redirectChains.length === 0 &&

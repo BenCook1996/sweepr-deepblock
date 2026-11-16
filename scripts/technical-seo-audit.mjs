@@ -433,6 +433,97 @@ if (fs.existsSync(sitemapPath)) {
   results.htmlIssues.push({ file: 'sitemap.xml', type: 'missing_sitemap', msg: 'sitemap.xml not found!' });
 }
 
+// Validate temporary 30-day consolidation sitemap (expires 2026-12-16) without altering indexable sitemapUrls count
+const consolidationSitemapUrl = new URL('../website/sitemap-consolidations.xml', import.meta.url);
+if (fs.existsSync(consolidationSitemapUrl)) {
+  const cXml = fs.readFileSync(consolidationSitemapUrl, 'utf8');
+  const hasUrlsetOpen = /<urlset\b[^>]*>/.test(cXml);
+  const hasUrlsetClose = /<\/urlset>\s*$/.test(cXml.trim());
+  const urlBlockCount = (cXml.match(/<url>/g) || []).length;
+  const urlEndBlockCount = (cXml.match(/<\/url>/g) || []).length;
+  const cLocs = [...cXml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1].trim());
+  if (!hasUrlsetOpen || !hasUrlsetClose || urlBlockCount !== urlEndBlockCount || urlBlockCount !== cLocs.length) {
+    results.htmlIssues.push({
+      file: 'sitemap-consolidations.xml',
+      type: 'malformed_sitemap_xml',
+      msg: `sitemap-consolidations.xml XML structure mismatch (<url>=${urlBlockCount}, </url>=${urlEndBlockCount}, <loc>=${cLocs.length})`
+    });
+  }
+
+  const indexableUrlSet = new Set(
+    sitemapUrls.map((u) => (typeof u === 'string' ? u : u?.url || u?.loc || '').trim().replace(/\/+$/, ''))
+  );
+  const robotsUrl = new URL('../website/robots.txt', import.meta.url);
+  const disallowRules = [];
+  if (fs.existsSync(robotsUrl)) {
+    const robotsTxt = fs.readFileSync(robotsUrl, 'utf8');
+    let activeGlobalAgent = false;
+    for (const rawLine of robotsTxt.split(/\r?\n/)) {
+      const line = rawLine.replace(/#.*$/, '').trim();
+      if (!line) continue;
+      if (/^user-agent:\s*(.+)$/i.test(line)) {
+        const ua = line.replace(/^user-agent:\s*/i, '').trim().toLowerCase();
+        activeGlobalAgent = ua === '*' || ua === 'googlebot';
+      } else if (activeGlobalAgent && /^disallow:\s*(.+)$/i.test(line)) {
+        const rule = line.replace(/^disallow:\s*/i, '').trim();
+        if (rule) disallowRules.push(rule);
+      }
+    }
+  }
+
+  for (const loc of cLocs) {
+    const normLoc = loc.replace(/\/+$/, '');
+    if (/\.html(?:$|[?#])/i.test(loc)) {
+      results.htmlIssues.push({
+        file: 'sitemap-consolidations.xml',
+        type: 'consolidation_html_extension',
+        msg: `Consolidation sitemap URL contains .html extension: ${loc}`
+      });
+    }
+    if (indexableUrlSet.has(normLoc)) {
+      results.htmlIssues.push({
+        file: 'sitemap-consolidations.xml',
+        type: 'consolidation_sitemap_overlap',
+        msg: `URL appears in both indexable sitemap and sitemap-consolidations.xml: ${loc}`
+      });
+    }
+    const urlPath = loc.replace(/^https?:\/\/sweeprdeepblock\.com/i, '') || '/';
+    for (const rule of disallowRules) {
+      const matchesDisallow = rule.includes('*')
+        ? new RegExp('^' + rule.replace(/[.+?^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*')).test(urlPath)
+        : urlPath.startsWith(rule);
+      if (matchesDisallow) {
+        results.htmlIssues.push({
+          file: 'sitemap-consolidations.xml',
+          type: 'consolidation_robots_disallow',
+          msg: `Consolidation sitemap URL ${loc} is blocked by robots.txt Disallow: ${rule}`
+        });
+      }
+    }
+    const relPath = urlPath === '/' ? 'index.html' : `${urlPath.replace(/^\/+|\/+$/g, '')}.html`;
+    const diskUrl = new URL(`../website/${relPath}`, import.meta.url);
+    const dirIndexUrl = new URL(`../website/${urlPath.replace(/^\/+|\/+$/g, '')}/index.html`, import.meta.url);
+    const targetFileUrl = fs.existsSync(diskUrl) ? diskUrl : fs.existsSync(dirIndexUrl) ? dirIndexUrl : null;
+    if (!targetFileUrl) {
+      results.htmlIssues.push({
+        file: 'sitemap-consolidations.xml',
+        type: 'consolidation_missing_file',
+        msg: `Consolidation sitemap URL missing HTML file on disk: ${loc}`
+      });
+    } else {
+      const html = fs.readFileSync(targetFileUrl, 'utf8');
+      const robotsMeta = html.match(/<meta[^>]+name=["']robots["'][^>]+content=["']([^"']+)["']/i)?.[1] || '';
+      if (!/noindex/i.test(robotsMeta) || !/follow/i.test(robotsMeta)) {
+        results.htmlIssues.push({
+          file: 'sitemap-consolidations.xml',
+          type: 'consolidation_not_noindex_follow',
+          msg: `Consolidation sitemap URL ${loc} must have meta robots noindex, follow (got "${robotsMeta}")`
+        });
+      }
+    }
+  }
+}
+
 // Check robots.txt
 const robotsPath = path.join(WEBSITE_DIR, 'robots.txt');
 if (fs.existsSync(robotsPath)) {

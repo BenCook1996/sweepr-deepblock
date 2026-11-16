@@ -51,6 +51,62 @@ const SCHEDULER_STATE_PATH = path.join(DATA_DIR, 'automation-scheduler-state.jso
 const GSC_SITE_URL = process.env.GSC_SITE_URL || 'sc-domain:sweeprdeepblock.com';
 const GA4_PROPERTY_ID = process.env.GA4_PROPERTY_ID || '559863555';
 const COOLDOWN_MS = 14 * 24 * 60 * 60 * 1000;
+const CONSOLIDATION_SITEMAP_EXPIRES_AT = Date.parse('2026-12-16T00:00:00Z');
+const SOLUTION_PROBLEM_SUFFIXES = [
+  '-prevent-canvas-webrtc-fingerprinting',
+  '-stop-notification-permission-spam',
+  '-protect-checkout-fake-shop-shield',
+  '-hibernate-idle-background-tabs',
+  '-block-sponsored-feed-carousels',
+  '-stop-autoplay-floating-videos',
+  '-encrypted-dns-doh-protection',
+  '-clean-reader-distraction-free',
+  '-block-crypto-miners-cpu-drain',
+  '-auto-reject-cookie-popups',
+  '-strip-tracking-parameters',
+  '-stop-malvertising-popunders',
+  '-bypass-anti-adblock-walls',
+  '-reduce-browser-ram-usage',
+  '-filter-ai-slop-and-scams',
+  '-block-video-ads'
+];
+const PLATFORM_PREFIX_ALIASES = {
+  'fandom-game-lore-wikis': 'fandom-game-wikis',
+  'kick-gambling-livestreams': 'kick-streaming-portals'
+};
+
+function extractSolutionPlatPrefix(urlPath) {
+  if (!urlPath || !urlPath.startsWith('/solutions/')) return null;
+  const slug = urlPath.slice('/solutions/'.length);
+  for (const suffix of SOLUTION_PROBLEM_SUFFIXES) {
+    if (slug.endsWith(suffix)) {
+      const rawPrefix = slug.slice(0, -suffix.length);
+      return PLATFORM_PREFIX_ALIASES[rawPrefix] || rawPrefix;
+    }
+  }
+  return null;
+}
+
+let cachedActiveSolutions = null;
+function getActiveSolutionsInSitemap() {
+  if (cachedActiveSolutions) return cachedActiveSolutions;
+  const urls = new Set();
+  const platPrefixes = new Set();
+  const smPath = path.join(WEBSITE_DIR, 'sitemap.xml');
+  if (fs.existsSync(smPath)) {
+    const xml = fs.readFileSync(smPath, 'utf8');
+    for (const m of xml.matchAll(/<loc>([^<]+)<\/loc>/g)) {
+      const p = m[1].trim().replace(/^https?:\/\/sweeprdeepblock\.com/i, '').replace(/\/+$/, '') || '/';
+      if (p.startsWith('/solutions/')) {
+        urls.add(p);
+        const pref = extractSolutionPlatPrefix(p);
+        if (pref) platPrefixes.add(pref);
+      }
+    }
+  }
+  cachedActiveSolutions = { urls, platPrefixes };
+  return cachedActiveSolutions;
+}
 
 function base64UrlEncode(input) {
   const buf = Buffer.isBuffer(input) ? input : Buffer.from(String(input), 'utf8');
@@ -206,7 +262,13 @@ async function syncGscSearchAnalytics(accessToken, enrichmentState) {
     const urlPath = fullUrl.replace(/^https?:\/\/sweeprdeepblock\.com/i, '').replace(/\/+$/, '') || '/';
     if (impressions > 0 && /^\/(solutions|setup|vs|guides)\/[a-z0-9-]+$/i.test(urlPath)) {
       const relHtml = path.join(WEBSITE_DIR, `${urlPath.slice(1)}.html`);
-      if (fs.existsSync(relHtml) && !discoveredSet.has(urlPath)) {
+      const activeSolutions = getActiveSolutionsInSitemap();
+      const platPrefix = extractSolutionPlatPrefix(urlPath);
+      const isCollapsedSolutionSibling =
+        Boolean(platPrefix) &&
+        activeSolutions.platPrefixes.has(platPrefix) &&
+        !activeSolutions.urls.has(urlPath);
+      if (!isCollapsedSolutionSibling && fs.existsSync(relHtml) && !discoveredSet.has(urlPath)) {
         discoveredSet.add(urlPath);
         newlyDiscovered.push(urlPath);
       }
@@ -259,9 +321,16 @@ async function syncGscSearchAnalytics(accessToken, enrichmentState) {
     enrichmentState.gscRecoveryHistory.push(snapshot);
   }
 
-  // 3. Submit both sitemaps via GSC Sitemaps API
+  // 3. Submit active sitemaps via GSC Sitemaps API
+  const sitemapUrlsToSubmit = [
+    'https://sweeprdeepblock.com/sitemap.xml',
+    'https://sweeprdeepblock.com/sitemap-sites.xml'
+  ];
+  if (Date.now() < CONSOLIDATION_SITEMAP_EXPIRES_AT && fs.existsSync(path.join(WEBSITE_DIR, 'sitemap-consolidations.xml'))) {
+    sitemapUrlsToSubmit.push('https://sweeprdeepblock.com/sitemap-consolidations.xml');
+  }
   const sitemapStatuses = {};
-  for (const smUrl of ['https://sweeprdeepblock.com/sitemap.xml', 'https://sweeprdeepblock.com/sitemap-sites.xml']) {
+  for (const smUrl of sitemapUrlsToSubmit) {
     try {
       const smRes = await fetch(`${baseUrl}/sitemaps/${encodeURIComponent(smUrl)}`, {
         method: 'PUT',

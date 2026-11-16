@@ -7,9 +7,9 @@ on:
   workflow_dispatch:
     inputs:
       batch_size:
-        description: 'Max researched low-KD keyword blueprint pages to materialize per run (default 3)'
+        description: 'Max researched low-KD keyword blueprint pages to materialize per run (paused at 0 during GSC stabilization)'
         required: false
-        default: '3'
+        default: '0'
 
 permissions:
   contents: write
@@ -42,9 +42,9 @@ jobs:
         run: |
           node scripts/gsc-ga4-cloud-sync.mjs
 
-      - name: 2. Run Keyword Research, Blueprint Materialization (<=3/run), Consolidation Guard & CWV Audit
+      - name: 2. Run Keyword Research, Blueprint Materialization (<=0/run during GSC stabilization), Consolidation Guard & CWV Audit
         run: |
-          node scripts/daily-seo-pagespeed-audit.mjs ${{ inputs.batch_size || '3' }}
+          node scripts/daily-seo-pagespeed-audit.mjs ${{ inputs.batch_size || '0' }}
 
       - name: 3. Run GSC Strike-Zone Optimizer, Funnel CRO, Stage-Gate & ASO/Ads Builders
         run: |
