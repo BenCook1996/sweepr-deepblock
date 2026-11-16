@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-15T23:03:51.908Z",
-  "durationMs": 52931,
+  "generatedAt": "2026-11-16T16:16:06.047Z",
+  "durationMs": 53453,
   "mode": "live_google_cloud_service_account_api",
   "serviceAccountConfigured": true,
   "serviceAccountEmail": "sweepr-seo-bot@sweepr-514223.iam.gserviceaccount.com",
   "gscSiteUrl": "sc-domain:sweeprdeepblock.com",
   "ga4PropertyId": "559863555",
-  "trackedDiscoveredGscPathsCount": 168,
+  "trackedDiscoveredGscPathsCount": 100,
   "latestGscSnapshot": {
     "totalImpressions": 555,
     "totalClicks": 7,
@@ -162,7 +162,8 @@
     ],
     "sitemapStatuses": {
       "https://sweeprdeepblock.com/sitemap.xml": "HTTP 204",
-      "https://sweeprdeepblock.com/sitemap-sites.xml": "HTTP 204"
+      "https://sweeprdeepblock.com/sitemap-sites.xml": "HTTP 204",
+      "https://sweeprdeepblock.com/sitemap-consolidations.xml": "HTTP 204"
     },
     "inspectedUrls": [
       {
@@ -208,15 +209,15 @@
     ]
   },
   "latestGa4Snapshot": {
-    "date": "2026-11-15",
-    "activeUsers28d": 157,
-    "sessions28d": 183,
-    "engagementRatePct": 31.1,
-    "avgSessionDurationSec": 131.7,
+    "date": "2026-11-16",
+    "activeUsers28d": 164,
+    "sessions28d": 192,
+    "engagementRatePct": 32.3,
+    "avgSessionDurationSec": 127.3,
     "extensionInstallsStarted": 2,
-    "testLabRuns": 0,
-    "beginCheckout": 6,
-    "orderPaymentErrors": 0,
+    "testLabRuns": 2,
+    "beginCheckout": 8,
+    "orderPaymentErrors": 2,
     "purchases": 0,
     "source": "ga4_data_api_v1beta"
   },

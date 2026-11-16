@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-11-15T23:03:53.220Z",
+  "generatedAt": "2026-11-16T16:16:07.991Z",
   "engineVersion": "2.0.0",
   "summary": {
-    "totalIndexablePagesChecked": 524,
+    "totalIndexablePagesChecked": 455,
     "seedQueriesExpanded": 339,
-    "rawAutocompleteHarvested": 523,
+    "rawAutocompleteHarvested": 525,
     "junkDisqualifiedCount": 3,
-    "lowIntentRejectedCount": 459,
-    "intraBatchSynonymsMerged": 2,
+    "lowIntentRejectedCount": 460,
+    "intraBatchSynonymsMerged": 3,
     "alreadyCoveredOrEnrichedCount": 30,
     "approvedLowKdOpportunitiesCount": 0,
     "ctrEnrichmentQueueCount": 9
@@ -21,7 +21,7 @@
       ],
       "targetExistingPage": "/vs/ublock-origin-lite",
       "targetExistingTitle": "SWEEPR DeepBlock vs uBlock Origin Lite (2026 Comparison)",
-      "cannibalizationScore": 0.594,
+      "cannibalizationScore": 0.595,
       "metrics": {
         "opportunityScore": 81.7,
         "volumeScore": 74,
@@ -37,7 +37,7 @@
       "secondaryKeywords": [],
       "targetExistingPage": "/guides/how-to-block-twitch-midroll-commercials-without-black-screen",
       "targetExistingTitle": "Blocking Mid-Roll Ads on Twitch &amp; YouTube Without Black Screen",
-      "cannibalizationScore": 0.614,
+      "cannibalizationScore": 0.617,
       "metrics": {
         "opportunityScore": 75,
         "volumeScore": 74,
@@ -53,7 +53,7 @@
       "secondaryKeywords": [],
       "targetExistingPage": "/vs/is-pie-adblock-safe",
       "targetExistingTitle": "Is Pie AdBlock Safe (2026) | SWEEPR DeepBlock",
-      "cannibalizationScore": 0.624,
+      "cannibalizationScore": 0.608,
       "metrics": {
         "opportunityScore": 74.3,
         "volumeScore": 67,
@@ -69,7 +69,7 @@
       "secondaryKeywords": [],
       "targetExistingPage": "/guides/best-manifest-v3-adblockers-for-google-chrome-2026",
       "targetExistingTitle": "Best Manifest V3 Adblockers 2026 | SWEEPR DeepBlock",
-      "cannibalizationScore": 0.613,
+      "cannibalizationScore": 0.611,
       "metrics": {
         "opportunityScore": 55.3,
         "volumeScore": 67,
@@ -85,7 +85,7 @@
       "secondaryKeywords": [],
       "targetExistingPage": "/vs/adguard-vs-ublock-origin-lite-chrome-2026",
       "targetExistingTitle": "AdGuard Vs uBlock Origin Lite Chrome 2026 | SWEEPR DeepBlock",
-      "cannibalizationScore": 0.834,
+      "cannibalizationScore": 0.833,
       "metrics": {
         "opportunityScore": 0,
         "volumeScore": 73,
@@ -133,7 +133,7 @@
       "secondaryKeywords": [],
       "targetExistingPage": "/guides/how-to-fix-high-ram-usage-on-vivaldi-browser",
       "targetExistingTitle": "Fix Vivaldi High RAM Usage | SWEEPR DeepBlock",
-      "cannibalizationScore": 0.68,
+      "cannibalizationScore": 0.683,
       "metrics": {
         "opportunityScore": 0,
         "volumeScore": 74,
@@ -146,10 +146,12 @@
     },
     {
       "keyword": "chrome extension to block youtube ads",
-      "secondaryKeywords": [],
+      "secondaryKeywords": [
+        "block youtube ads chrome extension"
+      ],
       "targetExistingPage": "/solutions/youtube-ads-blocker-chrome-extension",
       "targetExistingTitle": "YouTube Ads Blocker Chrome Extension (2026) | SWEEPR DeepBlock",
-      "cannibalizationScore": 0.727,
+      "cannibalizationScore": 0.726,
       "metrics": {
         "opportunityScore": 0,
         "volumeScore": 52,

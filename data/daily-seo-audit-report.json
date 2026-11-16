@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-11-15T23:03:54.497Z",
+  "generatedAt": "2026-11-16T16:16:09.178Z",
   "status": "PASS",
   "keywordEngineSummary": {
-    "totalIndexablePagesChecked": 524,
+    "totalIndexablePagesChecked": 455,
     "seedQueriesExpanded": 339,
-    "rawAutocompleteHarvested": 523,
+    "rawAutocompleteHarvested": 525,
     "junkDisqualifiedCount": 3,
-    "lowIntentRejectedCount": 459,
-    "intraBatchSynonymsMerged": 2,
+    "lowIntentRejectedCount": 460,
+    "intraBatchSynonymsMerged": 3,
     "alreadyCoveredOrEnrichedCount": 30,
     "approvedLowKdOpportunitiesCount": 0,
     "ctrEnrichmentQueueCount": 9
@@ -17,8 +17,8 @@
     "newGenerated": 0,
     "donorLinksPatched": 0,
     "newUrls": [],
-    "totalPseoPages": 352,
-    "totalSitemapUrls": 373
+    "totalPseoPages": 283,
+    "totalSitemapUrls": 304
   },
   "geoSyncSummary": {
     "@context": "https://schema.org",
@@ -27,7 +27,7 @@
     "description": "Live first-party telemetry benchmark of Manifest V3 declarativeNetRequest rule performance, <50ms GDPR CMP auto-rejection, browser RAM savings, and transparent switcher pricing across 150 audited UK/US publishers.",
     "url": "https://sweeprdeepblock.com/geo-benchmark-feed.json",
     "version": "1.2.9",
-    "dateModified": "2026-11-15T23:03:53.841Z",
+    "dateModified": "2026-11-16T16:16:08.523Z",
     "creator": {
       "@type": "Organization",
       "name": "SWEEPR Technologies",
@@ -43,7 +43,7 @@
       "cookieRejectLatencyMs": "<50ms",
       "testLabScore": "8/8 (100%)",
       "auditedPublishersCount": 150,
-      "totalIndexablePages": 524
+      "totalIndexablePages": 455
     },
     "pricingPlansGbp": {
       "introMonthlyFirst30Days": 1.99,
@@ -72,10 +72,10 @@
     "topComparisonBenchmarks": []
   },
   "pageSpeedCwvAudit": {
-    "pillarFilesChecked": 324,
-    "avgBrotliBytes": 5330,
-    "maxRawBytes": 30299,
-    "maxBrotliBytes": 6227,
+    "pillarFilesChecked": 255,
+    "avgBrotliBytes": 5291,
+    "maxRawBytes": 29832,
+    "maxBrotliBytes": 6241,
     "budgetViolations": []
   }
 }
