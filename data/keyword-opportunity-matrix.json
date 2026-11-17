@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-11-17T01:57:13.072Z",
+  "generatedAt": "2026-11-17T16:22:31.116Z",
   "engineVersion": "2.0.0",
   "summary": {
     "totalIndexablePagesChecked": 455,
     "seedQueriesExpanded": 339,
-    "rawAutocompleteHarvested": 528,
+    "rawAutocompleteHarvested": 526,
     "junkDisqualifiedCount": 3,
-    "lowIntentRejectedCount": 463,
-    "intraBatchSynonymsMerged": 3,
+    "lowIntentRejectedCount": 462,
+    "intraBatchSynonymsMerged": 2,
     "alreadyCoveredOrEnrichedCount": 30,
     "approvedLowKdOpportunitiesCount": 0,
     "ctrEnrichmentQueueCount": 9
@@ -146,9 +146,7 @@
     },
     {
       "keyword": "chrome extension to block youtube ads",
-      "secondaryKeywords": [
-        "block youtube ads chrome extension"
-      ],
+      "secondaryKeywords": [],
       "targetExistingPage": "/solutions/youtube-ads-blocker-chrome-extension",
       "targetExistingTitle": "YouTube Ads Blocker Chrome Extension (2026) | SWEEPR DeepBlock",
       "cannibalizationScore": 0.726,
