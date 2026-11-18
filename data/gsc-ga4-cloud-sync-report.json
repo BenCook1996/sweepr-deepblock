@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-18T01:08:51.753Z",
-  "durationMs": 53980,
+  "generatedAt": "2026-11-18T15:54:16.848Z",
+  "durationMs": 53175,
   "mode": "live_google_cloud_service_account_api",
   "serviceAccountConfigured": true,
   "serviceAccountEmail": "sweepr-seo-bot@sweepr-514223.iam.gserviceaccount.com",
@@ -8,11 +8,26 @@
   "ga4PropertyId": "559863555",
   "trackedDiscoveredGscPathsCount": 100,
   "latestGscSnapshot": {
-    "totalImpressions": 555,
+    "totalImpressions": 557,
     "totalClicks": 7,
     "activePagesWithImpressions": 166,
     "newlyDiscoveredPaths": [],
     "strikeZoneCandidates": [
+      {
+        "urlPath": "/",
+        "impressions": 7,
+        "clicks": 0,
+        "ctrPct": 0,
+        "position": 10.1,
+        "topQueries": [
+          {
+            "query": "snoopblocker",
+            "impressions": 1,
+            "clicks": 0,
+            "position": 58
+          }
+        ]
+      },
       {
         "urlPath": "/guides/how-to-block-reddit-sponsored-promoted-posts-in-feed",
         "impressions": 3,
@@ -177,14 +192,6 @@
         "ctrPct": 0,
         "position": 5.4,
         "topQueries": []
-      },
-      {
-        "urlPath": "/solutions/espn-sports-streaming-block-video-ads",
-        "impressions": 3,
-        "clicks": 0,
-        "ctrPct": 0,
-        "position": 8,
-        "topQueries": []
       }
     ],
     "sitemapStatuses": {
@@ -210,8 +217,8 @@
       },
       {
         "url": "https://sweeprdeepblock.com/test-lab",
-        "verdict": "PASS",
-        "coverageState": "Submitted and indexed"
+        "verdict": "NEUTRAL",
+        "coverageState": "Crawled - currently not indexed"
       },
       {
         "url": "https://sweeprdeepblock.com/tools/is-my-adblocker-working",
@@ -237,10 +244,10 @@
   },
   "latestGa4Snapshot": {
     "date": "2026-11-18",
-    "activeUsers28d": 173,
-    "sessions28d": 203,
-    "engagementRatePct": 31.5,
-    "avgSessionDurationSec": 123.8,
+    "activeUsers28d": 163,
+    "sessions28d": 191,
+    "engagementRatePct": 30.9,
+    "avgSessionDurationSec": 131.5,
     "extensionInstallsStarted": 2,
     "testLabRuns": 2,
     "beginCheckout": 8,
