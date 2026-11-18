@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-17T16:22:27.183Z",
-  "durationMs": 53254,
+  "generatedAt": "2026-11-18T01:08:51.753Z",
+  "durationMs": 53980,
   "mode": "live_google_cloud_service_account_api",
   "serviceAccountConfigured": true,
   "serviceAccountEmail": "sweepr-seo-bot@sweepr-514223.iam.gserviceaccount.com",
@@ -53,11 +53,105 @@
         "topQueries": []
       },
       {
+        "urlPath": "/setup/arc-browser-windows-mac",
+        "impressions": 19,
+        "clicks": 0,
+        "ctrPct": 0,
+        "position": 17.1,
+        "topQueries": [
+          {
+            "query": "arc adblocker",
+            "impressions": 1,
+            "clicks": 0,
+            "position": 10
+          },
+          {
+            "query": "arc browser ad blocker",
+            "impressions": 1,
+            "clicks": 0,
+            "position": 6
+          }
+        ]
+      },
+      {
+        "urlPath": "/setup/floorp-browser-firefox-fork",
+        "impressions": 19,
+        "clicks": 0,
+        "ctrPct": 0,
+        "position": 5.6,
+        "topQueries": [
+          {
+            "query": "floorp adblock",
+            "impressions": 2,
+            "clicks": 0,
+            "position": 5.5
+          }
+        ]
+      },
+      {
+        "urlPath": "/setup/kiwi-browser-android",
+        "impressions": 14,
+        "clicks": 0,
+        "ctrPct": 0,
+        "position": 13.1,
+        "topQueries": [
+          {
+            "query": "kiwi browser ad blocker",
+            "impressions": 2,
+            "clicks": 0,
+            "position": 9.5
+          },
+          {
+            "query": "kiwi unblocker",
+            "impressions": 2,
+            "clicks": 0,
+            "position": 17.5
+          },
+          {
+            "query": "kiwi browser adblock extension",
+            "impressions": 1,
+            "clicks": 0,
+            "position": 8
+          }
+        ]
+      },
+      {
+        "urlPath": "/setup/librewolf-hardened-firefox",
+        "impressions": 5,
+        "clicks": 0,
+        "ctrPct": 0,
+        "position": 7.8,
+        "topQueries": []
+      },
+      {
+        "urlPath": "/setup/orion-browser-macos-ios",
+        "impressions": 23,
+        "clicks": 0,
+        "ctrPct": 0,
+        "position": 7.3,
+        "topQueries": [
+          {
+            "query": "orion browser ad blocker",
+            "impressions": 1,
+            "clicks": 0,
+            "position": 7
+          }
+        ]
+      },
+      {
         "urlPath": "/setup/ungoogled-chromium-mv3",
         "impressions": 7,
         "clicks": 0,
         "ctrPct": 0,
         "position": 4.7,
+        "topQueries": []
+      },
+      {
+        "urlPath": "/setup/zen-browser-privacy-tabs",
+        "impressions": 15,
+        "clicks": 0,
+        "ctrPct": 0,
+        "position": 9.6,
         "topQueries": []
       },
       {
@@ -90,73 +184,6 @@
         "clicks": 0,
         "ctrPct": 0,
         "position": 8,
-        "topQueries": []
-      },
-      {
-        "urlPath": "/solutions/espn-sports-streaming-stop-malvertising-popunders",
-        "impressions": 5,
-        "clicks": 0,
-        "ctrPct": 0,
-        "position": 15.2,
-        "topQueries": []
-      },
-      {
-        "urlPath": "/solutions/etsy-marketplace-shops-filter-ai-slop-and-scams",
-        "impressions": 3,
-        "clicks": 0,
-        "ctrPct": 0,
-        "position": 9.3,
-        "topQueries": []
-      },
-      {
-        "urlPath": "/solutions/etsy-marketplace-shops-stop-malvertising-popunders",
-        "impressions": 4,
-        "clicks": 0,
-        "ctrPct": 0,
-        "position": 13.3,
-        "topQueries": []
-      },
-      {
-        "urlPath": "/solutions/fandom-game-wikis-auto-reject-cookie-popups",
-        "impressions": 8,
-        "clicks": 0,
-        "ctrPct": 0,
-        "position": 6.9,
-        "topQueries": []
-      },
-      {
-        "urlPath": "/solutions/fandom-game-wikis-block-video-ads",
-        "impressions": 13,
-        "clicks": 0,
-        "ctrPct": 0,
-        "position": 12.6,
-        "topQueries": [
-          {
-            "query": "adblock fandom",
-            "impressions": 1,
-            "clicks": 0,
-            "position": 36
-          },
-          {
-            "query": "fandom ad block",
-            "impressions": 1,
-            "clicks": 0,
-            "position": 32
-          },
-          {
-            "query": "fandom anti adblock",
-            "impressions": 1,
-            "clicks": 0,
-            "position": 10
-          }
-        ]
-      },
-      {
-        "urlPath": "/solutions/fextralife-game-wikis-stop-malvertising-popunders",
-        "impressions": 3,
-        "clicks": 0,
-        "ctrPct": 0,
-        "position": 8.3,
         "topQueries": []
       }
     ],
@@ -209,11 +236,11 @@
     ]
   },
   "latestGa4Snapshot": {
-    "date": "2026-11-17",
-    "activeUsers28d": 171,
-    "sessions28d": 200,
-    "engagementRatePct": 32,
-    "avgSessionDurationSec": 125.6,
+    "date": "2026-11-18",
+    "activeUsers28d": 173,
+    "sessions28d": 203,
+    "engagementRatePct": 31.5,
+    "avgSessionDurationSec": 123.8,
     "extensionInstallsStarted": 2,
     "testLabRuns": 2,
     "beginCheckout": 8,
