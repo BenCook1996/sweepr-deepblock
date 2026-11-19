@@ -5756,15 +5756,15 @@ function getCachedDynamicDelta() {
   // API 4: Customer Support Ticket Submission -> Central CRM
   if (req.method === 'POST' && (pathname === '/api/support' || pathname === '/api/support-ticket')) {
     if (!isSameOriginWriteRequest(req, { allowExtension: true })) {
-      return sendJson(res, 403, { ok: false, error: 'cross_origin_forbidden' });
+      return sendJson(res, 403, { ok: false, error: 'cross_origin_forbidden' }, {}, req);
     }
     if (!checkRateLimit(req, 'support', 10, 60000)) {
-      return sendJson(res, 429, { ok: false, error: 'rate_limit_exceeded' });
+      return sendJson(res, 429, { ok: false, error: 'rate_limit_exceeded' }, {}, req);
     }
     const data = await readBody(req);
-    if (data && data.__tooLarge) return sendJson(res, 413, { ok: false, error: 'payload_too_large' });
+    if (data && data.__tooLarge) return sendJson(res, 413, { ok: false, error: 'payload_too_large' }, {}, req);
     if (!data || !isValidEmail(String(data.email || '').trim()) || !data.subject || !data.message) {
-      return sendJson(res, 400, { ok: false, error: 'email_subject_and_message_required' });
+      return sendJson(res, 400, { ok: false, error: 'email_subject_and_message_required' }, {}, req);
     }
     const ticketPayload = {
       project_id: 'deepblock',
@@ -5784,7 +5784,7 @@ function getCachedDynamicDelta() {
       ok: true,
       ticket_number: crmRes.data?.ticket_number || crmRes.data?.id || fallbackTicketNo,
       ...(crmRes.ok && crmRes.data ? crmRes.data : {})
-    });
+    }, {}, req);
   }
 
   // API 5: Extension Telemetry & Funnel Events -> Central CRM (Strict Local-First Privacy Filter: No URLs, Domains, Queries, or Browsing History)

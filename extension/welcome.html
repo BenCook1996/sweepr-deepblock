@@ -4,153 +4,164 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="color-scheme" content="light">
-  <title>SWEEPR Deepblock — Dashboard &amp; Options</title>
+  <title>SWEEPR Deepblock — Welcome &amp; Activation</title>
   <style>
     :root {
       color-scheme: light;
-      /* Primitive Tokens (@Memorisely Design System Pillar 9) */
       --emerald-500: #10b981;
       --emerald-600: #059669;
       --emerald-700: #047857;
       --slate-50: #f8fafc;
       --slate-100: #f1f5f9;
       --slate-200: #e2e8f0;
+      --slate-400: #94a3b8;
       --slate-500: #64748b;
       --slate-700: #334155;
       --slate-900: #0f172a;
 
-      /* Semantic Tokens & Concentric Radius Math (R_outer = R_inner + Padding) */
       --bg: var(--slate-50);
-      --bg-gradient:
-        radial-gradient(circle at 10% 15%, rgba(209, 250, 229, 0.7) 0%, rgba(248, 250, 252, 0) 45%),
-        radial-gradient(circle at 90% 85%, rgba(167, 243, 208, 0.5) 0%, rgba(248, 250, 252, 0) 45%);
       --card-bg: #ffffff;
       --card-border: var(--slate-200);
       --surface-muted: var(--slate-50);
       --text: var(--slate-900);
       --text-secondary: var(--slate-700);
       --muted: var(--slate-500);
-      --radius-seg-inner: 10px;
-      --space-seg-pad: 6px;
-      --radius-seg-outer: calc(var(--radius-seg-inner) + var(--space-seg-pad)); /* 16px */
-      --radius-tabs-inner: 8px;
-      --space-tabs-pad: 4px;
-      --radius-tabs-outer: calc(var(--radius-tabs-inner) + var(--space-tabs-pad)); /* 12px */
+
+      /* Concentric radius scale (outer = inner + padding) */
+      --radius-seg-outer: 12px;
+      --space-seg-pad: 4px;
+      --radius-seg-inner: 8px;
+      --radius-input-outer: 10px;
+      --space-input-pad: 4px;
+      --radius-input-inner: 6px;
       --focus-ring: 0 0 0 2px #ffffff, 0 0 0 4px var(--emerald-500);
     }
 
     * { box-sizing: border-box; }
+
     body {
       margin: 0;
-      padding: 36px 20px 64px;
+      padding: 40px 20px 56px;
       font-family: "Plus Jakarta Sans", "Segoe UI Variable", "Segoe UI", -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
       color: var(--text);
       background-color: var(--bg);
-      background-image: var(--bg-gradient);
-      background-attachment: fixed;
+      background-image: radial-gradient(circle at 50% 0%, rgba(209, 250, 229, 0.45) 0%, rgba(248, 250, 252, 0) 58%);
       min-height: 100vh;
+      display: flex;
+      flex-direction: column;
       -webkit-font-smoothing: antialiased;
     }
+
     .container {
-      max-width: 1060px;
-      margin: 0 auto;
+      max-width: 920px;
+      width: 100%;
+      margin: auto;
     }
+
     .mono {
       font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
     }
 
-    /* =========================================================================
-       VERSION 3.1 SPLIT HERO MODAL (v2.2 Left Obsidian Stage + Option 1 Right Card)
-       ========================================================================= */
+    /* Split Activation Shell */
     .v31-shell {
-      border-radius: 26px;
+      border-radius: 20px;
       overflow: hidden;
-      border: 1px solid rgba(15, 23, 42, 0.09);
-      background: #ffffff;
-      box-shadow: 0 24px 54px -12px rgba(6, 78, 59, 0.12), 0 4px 16px rgba(15, 23, 42, 0.04);
+      border: 1px solid var(--slate-200);
+      background: var(--card-bg);
+      box-shadow: 0 16px 36px -12px rgba(15, 23, 42, 0.08);
       display: grid;
       grid-template-columns: 5fr 7fr;
     }
-    @media (max-width: 860px) {
+
+    @media (max-width: 820px) {
       .v31-shell {
         grid-template-columns: 1fr;
       }
     }
 
-    /* Left Side: Emerald Obsidian Stage */
+    /* Left Stage: Deep Emerald Surface */
     .obsidian-stage {
-      background:
-        radial-gradient(120% 90% at 15% 10%, rgba(16, 185, 129, 0.25) 0%, rgba(6, 78, 59, 0.12) 48%, transparent 100%),
-        linear-gradient(160deg, #071712 0%, #0b241c 55%, #06130e 100%);
+      background: linear-gradient(165deg, #071712 0%, #0b241c 60%, #06130e 100%);
       color: #ffffff;
-      padding: 34px 32px;
+      padding: 32px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      gap: 24px;
     }
+
     .brand-row {
       display: flex;
       align-items: center;
       gap: 10px;
     }
+
     .brand-logo {
       width: 32px;
       height: 32px;
       border-radius: 8px;
       display: grid;
       place-items: center;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
       flex-shrink: 0;
     }
+
     .brand-name {
-      font-size: 18px;
-      font-weight: 900;
-      letter-spacing: -0.02em;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.015em;
       color: #ffffff;
     }
+
     .brand-name span {
       color: #34d399;
     }
+
     .obsidian-title {
-      font-size: 28px;
-      font-weight: 900;
+      font-size: 26px;
+      font-weight: 700;
       letter-spacing: -0.025em;
-      line-height: 1.18;
+      line-height: 1.2;
       margin: 20px 0 8px;
       color: #ffffff;
     }
+
     .obsidian-sub {
       font-size: 13.5px;
       line-height: 1.55;
-      color: rgba(209, 250, 229, 0.82);
+      color: rgba(209, 250, 229, 0.8);
       margin: 0;
     }
+
     .metrics-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
       margin-top: 24px;
     }
+
     .metric-card {
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(255, 255, 255, 0.04);
       border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 14px;
-      padding: 14px;
+      border-radius: 12px;
+      padding: 12px 14px;
     }
+
     .metric-val {
-      font-size: 20px;
-      font-weight: 900;
+      font-size: 18px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
       color: #34d399;
       letter-spacing: -0.02em;
     }
+
     .metric-lbl {
-      font-size: 11px;
-      font-weight: 600;
-      color: rgba(209, 250, 229, 0.8);
-      margin-top: 3px;
+      font-size: 11.5px;
+      font-weight: 500;
+      color: rgba(209, 250, 229, 0.78);
+      margin-top: 4px;
     }
+
     .shortcuts-footer {
-      margin-top: 24px;
       padding-top: 16px;
       border-top: 1px solid rgba(255, 255, 255, 0.1);
       display: flex;
@@ -159,30 +170,34 @@
       justify-content: space-between;
       gap: 8px;
       font-size: 12px;
-      font-weight: 600;
-      color: rgba(167, 243, 208, 0.82);
+      font-weight: 500;
+      color: rgba(167, 243, 208, 0.8);
     }
+
     .shortcuts-footer kbd {
       background: rgba(255, 255, 255, 0.12);
       color: #ffffff;
       border: 1px solid rgba(255, 255, 255, 0.18);
       border-radius: 6px;
       padding: 2px 6px;
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
       font-size: 10.5px;
-      font-weight: 700;
+      font-weight: 600;
     }
 
-    /* Right Side: Option 1 Single-Focus Card + Full-Width Mobile QR Card */
+    /* Right Stage: Activation Controls */
     .daylight-stage {
-      padding: 34px 36px;
+      padding: 32px 36px;
       background: #ffffff;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      gap: 24px;
     }
+
     @media (max-width: 600px) {
-      .obsidian-stage, .daylight-stage {
+      .obsidian-stage,
+      .daylight-stage {
         padding: 24px 20px;
       }
     }
@@ -190,582 +205,503 @@
     .status-badge-row {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 14px;
+      margin-bottom: 16px;
     }
+
     .badge {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       background: #ecfdf5;
-      color: #047857;
+      color: var(--emerald-700);
       border: 1px solid #a7f3d0;
-      font-size: 11px;
-      font-weight: 800;
+      font-size: 12px;
+      font-weight: 600;
       padding: 5px 12px;
       border-radius: 999px;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
     }
 
-    /* Segmented Switcher (Concentric Radius: 16px outer = 10px inner + 6px pad) */
+    .badge::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--emerald-600);
+      flex-shrink: 0;
+    }
+
+    /* Segmented Switcher (12px outer = 8px inner + 4px pad) */
     .seg-bar {
-      background: #f1f5f9;
-      padding: var(--space-seg-pad, 6px);
-      border-radius: var(--radius-seg-outer, 16px);
-      border: 1px solid rgba(226, 232, 240, 0.9);
+      background: var(--slate-100);
+      padding: var(--space-seg-pad);
+      border-radius: var(--radius-seg-outer);
+      border: 1px solid var(--slate-200);
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 6px;
-      margin-bottom: 22px;
+      gap: 4px;
+      margin-bottom: 24px;
     }
+
     .seg-btn {
-      min-height: 44px;
-      padding: 10px 12px;
-      border-radius: var(--radius-seg-inner, 10px);
+      min-height: 40px;
+      padding: 8px 12px;
+      border-radius: var(--radius-seg-inner);
       border: none;
       background: transparent;
-      color: #475569;
-      font-size: 12.5px;
-      font-weight: 800;
+      color: var(--slate-500);
+      font-size: 13px;
+      font-weight: 600;
+      font-family: inherit;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      transition: all 140ms ease;
+      transition: background 140ms ease, color 140ms ease, box-shadow 140ms ease;
     }
+
     .seg-btn:hover {
-      color: #0f172a;
+      color: var(--slate-900);
     }
+
     .seg-btn:focus-visible {
       outline: none;
       box-shadow: var(--focus-ring);
     }
+
     .seg-btn.active {
       background: #ffffff;
-      color: #0f172a;
-      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.06);
+      color: var(--slate-900);
+      box-shadow: 0 1px 4px rgba(15, 23, 42, 0.08);
     }
+
     .seg-btn svg {
       width: 16px;
       height: 16px;
-      color: #059669;
+      color: var(--emerald-600);
       flex-shrink: 0;
     }
 
     .tab-panel {
       display: block;
     }
+
     .tab-panel.hidden {
       display: none !important;
     }
 
-    /* Input Field + 1-Click Paste & Unlock Button */
+    /* License Key Input with Integrated Paste Action */
     .field-header {
       display: flex;
-      flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      gap: 8px;
       margin-bottom: 8px;
     }
+
     .field-label {
-      font-size: 11.5px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: #64748b;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--slate-700);
     }
-    .field-tag {
-      font-size: 11px;
-      font-weight: 700;
-      color: #047857;
-      background: #ecfdf5;
-      border: 1px solid #a7f3d0;
-      padding: 2px 9px;
-      border-radius: 6px;
-    }
+
     .input-wrap {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
+      padding: var(--space-input-pad);
+      border-radius: var(--radius-input-outer);
+      background: var(--slate-50);
+      border: 1.5px solid var(--slate-200);
+      transition: border-color 140ms ease, background 140ms ease;
     }
-    .key-input {
-      flex: 1;
-      min-height: 46px;
-      padding: 12px 14px;
-      border-radius: 12px;
-      background: #f8fafc;
-      border: 2px solid #e2e8f0;
-      font-size: 14px;
-      font-weight: 700;
-      color: #0f172a;
-      outline: none;
-      transition: all 140ms ease;
-    }
-    .key-input:focus {
-      border-color: #10b981;
+
+    .input-wrap:focus-within {
+      border-color: var(--emerald-500);
       background: #ffffff;
     }
+
+    .key-input {
+      flex: 1;
+      min-width: 0;
+      min-height: 36px;
+      padding: 6px 10px;
+      border: none;
+      background: transparent;
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--slate-900);
+      outline: none;
+    }
+
+    .key-input::placeholder {
+      color: var(--slate-400);
+    }
+
     .paste-btn {
-      min-height: 46px;
-      padding: 10px 14px;
-      border-radius: 12px;
-      background: #0f172a;
-      border: 1px solid #0f172a;
+      min-height: 36px;
+      padding: 6px 12px;
+      border-radius: var(--radius-input-inner);
+      background: var(--slate-900);
+      border: none;
       color: #ffffff;
-      font-size: 12.5px;
-      font-weight: 800;
+      font-size: 12px;
+      font-weight: 600;
+      font-family: inherit;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 6px;
       white-space: nowrap;
-      transition: all 120ms ease;
+      transition: background 140ms ease;
     }
+
     .paste-btn:hover {
       background: #1e293b;
     }
+
     .paste-btn:focus-visible {
       outline: none;
       box-shadow: var(--focus-ring);
     }
+
     .key-hint {
       font-size: 12px;
-      font-weight: 600;
-      color: #64748b;
+      font-weight: 500;
+      color: var(--muted);
       margin-top: 8px;
+      min-height: 18px;
     }
 
-    /* Primary Full-Width Green CTA Button (Zero Prices or Amounts + Complete 5-State Matrix) */
+    /* Primary CTA */
     .primary-cta-btn {
       margin-top: 16px;
       width: 100%;
-      min-height: 48px;
-      padding: 14px 24px;
-      border-radius: 12px;
+      min-height: 44px;
+      padding: 12px 20px;
+      border-radius: 10px;
       border: none;
-      background: #059669;
+      background: var(--emerald-600);
       color: #ffffff;
       font-size: 14px;
-      font-weight: 900;
+      font-weight: 600;
+      font-family: inherit;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
       text-decoration: none;
-      box-shadow: 0 6px 16px rgba(5, 150, 105, 0.25);
       transition: background 140ms ease, transform 140ms ease;
     }
+
     .primary-cta-btn:hover {
-      background: #047857;
+      background: var(--emerald-700);
       transform: translateY(-1px);
     }
+
     .primary-cta-btn:focus-visible {
       outline: none;
       box-shadow: var(--focus-ring);
     }
+
     .primary-cta-btn:active {
       transform: translateY(0) scale(0.995);
     }
+
     .primary-cta-btn:disabled {
       opacity: 0.65;
       cursor: not-allowed;
+      transform: none;
     }
 
-    /* Tab 2: Clutter-Free Order Redirect Box */
-    .order-card {
-      border-radius: 16px;
-      background: rgba(236, 253, 245, 0.65);
-      border: 1px solid #a7f3d0;
-      padding: 20px;
+    .inline-link-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid var(--slate-100);
+      font-size: 12.5px;
     }
+
+    .inline-link-row span {
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .inline-link-row a {
+      color: var(--emerald-600);
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .inline-link-row a:hover {
+      color: var(--emerald-700);
+      text-decoration: underline;
+    }
+
+    /* Tab 2: Direct Activation Copy without Nested Box */
+    .order-card {
+      padding: 4px 0 0;
+    }
+
     .order-card-title {
-      font-size: 16px;
-      font-weight: 900;
-      color: #0f172a;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.015em;
+      color: var(--slate-900);
       margin: 0;
     }
+
     .order-card-desc {
-      font-size: 12.5px;
-      line-height: 1.55;
-      color: #475569;
-      margin: 6px 0 0;
+      font-size: 13.5px;
+      line-height: 1.6;
+      color: var(--slate-700);
+      margin: 8px 0 0;
     }
 
-    /* Full-Width Executive Mobile QR Sync Action Card */
+    /* Quiet Mobile QR Sync Footer Action */
     .qr-footer-section {
-      margin-top: 24px;
-      padding-top: 20px;
-      border-top: 1px solid #e2e8f0;
+      padding-top: 16px;
+      border-top: 1px solid var(--slate-200);
     }
+
     .pro-action-btn {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 14px;
-      width: 100%;
-      text-align: left;
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 16px;
-      padding: 14px 16px;
-      cursor: pointer;
+      gap: 12px;
+      padding: 8px 10px;
+      margin: -8px -10px;
+      width: calc(100% + 20px);
+      border-radius: 10px;
       text-decoration: none;
-      transition: all 140ms cubic-bezier(0.16, 1, 0.3, 1);
-      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.03);
+      transition: background 140ms ease;
     }
+
     .pro-action-btn:hover {
-      border-color: #10b981;
-      background: #f8fafc;
-      transform: translateY(-1px);
+      background: var(--slate-50);
     }
+
     .pro-action-btn:focus-visible {
       outline: none;
       box-shadow: var(--focus-ring);
     }
-    .pro-action-left {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-    .pro-icon-box {
-      width: 42px;
-      height: 42px;
-      border-radius: 12px;
-      background: #ecfdf5;
-      border: 1px solid #a7f3d0;
-      color: #059669;
-      display: grid;
-      place-items: center;
-      flex-shrink: 0;
-      transition: all 140ms ease;
-    }
-    .pro-action-btn:hover .pro-icon-box {
-      background: #059669;
-      border-color: #059669;
-      color: #ffffff;
-    }
-    .pro-action-title-row {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 8px;
-    }
-    .pro-action-title {
-      font-size: 14px;
-      font-weight: 800;
-      color: #0f172a;
-    }
-    .pro-action-pill {
-      padding: 2px 8px;
-      border-radius: 6px;
-      font-size: 10px;
-      font-weight: 800;
-      background: #ecfdf5;
-      color: #047857;
-      border: 1px solid #a7f3d0;
-    }
-    .pro-action-sub {
-      font-size: 12px;
-      font-weight: 500;
-      color: #475569;
-      margin-top: 3px;
-      line-height: 1.4;
-    }
-    .pro-chevron {
-      width: 30px;
-      height: 30px;
-      border-radius: 9px;
-      background: #f1f5f9;
-      color: #475569;
-      display: grid;
-      place-items: center;
-      flex-shrink: 0;
-      transition: all 140ms ease;
-    }
 
-    /* =========================================================================
-       OFFLOADED DASHBOARD PANELS (6 Whole-Row Modules + 4-Tab Switcher + Support)
-       ========================================================================= */
-    .dashboard-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 18px;
-      margin-top: 24px;
-      text-align: left;
-    }
-    .panel-card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 20px;
-      padding: 22px;
-      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
-    }
-    .panel-title {
-      font-size: 15px;
-      font-weight: 800;
-      color: var(--text);
-      margin: 0 0 6px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .panel-sub {
-      font-size: 12.5px;
-      color: var(--muted);
-      margin-bottom: 14px;
-    }
-    /* De-containerized Keyline List Rows (@Memorisely [VpXDo2_PbIQ], [sXDujQ09xJE], [OcibTxoU6Us]) */
-    .list-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      min-height: 52px;
-      padding: 12px 10px;
-      background: transparent;
-      border: none;
-      border-bottom: 1px solid #f1f5f9;
-      border-radius: 0;
-      margin-bottom: 0;
-      font-size: 12.5px;
-      font-weight: 600;
-      color: var(--text-secondary);
-      transition: background 0.14s ease, border-radius 0.14s ease;
-    }
-    .list-item:last-child {
-      border-bottom: none;
-    }
-    .list-item.module-row {
-      cursor: pointer;
-      user-select: none;
-    }
-    .list-item.module-row:hover {
-      background: #f8fafc;
-      border-radius: 10px;
-    }
-    /* Concentric 4-Tab Bar (12px outer = 8px inner + 4px pad) */
-    .list-tabs-bar {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 4px;
-      padding: var(--space-tabs-pad, 4px);
-      background: #f1f5f9;
-      border-radius: var(--radius-tabs-outer, 12px);
-      margin-bottom: 14px;
-    }
-    .list-tab-btn {
-      min-height: 38px;
-      border: none;
-      border-radius: var(--radius-tabs-inner, 8px);
-      background: transparent;
-      color: #475569;
-      font-size: 11.5px;
-      font-weight: 800;
-      cursor: pointer;
-      transition: all 0.14s ease;
-    }
-    .list-tab-btn:focus-visible {
-      outline: none;
-      box-shadow: var(--focus-ring);
-    }
-    .list-tab-btn.active {
-      background: #ffffff;
-      color: #0f172a;
-      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
-    }
-    .list-tab-pane.hidden {
-      display: none;
-    }
-    .mini-btn {
-      background: #ecfdf5;
-      color: #047857;
-      border: 1px solid #a7f3d0;
-      border-radius: 8px;
-      padding: 6px 12px;
-      font-size: 11px;
-      font-weight: 800;
-      cursor: pointer;
-      flex-shrink: 0;
-    }
-    .mini-btn:focus-visible {
-      outline: none;
-      box-shadow: var(--focus-ring);
-    }
-    .switch-btn {
-      width: 44px;
-      height: 24px;
-      border-radius: 999px;
-      background: #059669;
-      border: none;
-      position: relative;
-      cursor: pointer;
-      padding: 0;
-      flex-shrink: 0;
-      transition: background 0.16s ease;
-    }
-    .switch-btn:focus-visible {
-      outline: none;
-      box-shadow: var(--focus-ring);
-    }
-    .switch-btn::after {
-      content: "";
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      background: #ffffff;
-      position: absolute;
-      top: 3px;
-      right: 3px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.22);
-      transition: all 0.16s ease;
-    }
-    .switch-btn.off {
-      background: #cbd5e1;
-    }
-    .switch-btn.off::after {
-      right: auto;
-      left: 3px;
-    }
-    .switch-btn.pro-lock {
-      width: auto;
-      height: auto;
-      background: #fffbeb;
-      color: #b45309;
-      border: 1px solid #fde68a;
-      font-size: 10px;
-      font-weight: 800;
-      padding: 4px 9px;
-    }
-    .switch-btn.pro-lock::after {
-      display: none;
-    }
-    .support-field {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
-    .support-label {
-      font-size: 11.5px;
-      font-weight: 800;
-      color: var(--text-secondary);
-      letter-spacing: 0.01em;
-    }
-    .support-input {
-      width: 100%;
-      padding: 10px 13px;
-      border: 1px solid var(--card-border);
-      background: var(--surface-muted);
-      color: var(--text);
-      border-radius: 10px;
-      font-size: 13px;
-      font-family: inherit;
-      outline: none;
-      transition: border-color 140ms ease, background 140ms ease;
-    }
-    .support-input:focus {
-      border-color: #10b981;
-      background: #ffffff;
-      box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.16);
-    }
-    .support-btn {
-      min-height: 44px;
-      background: #059669;
-      color: #ffffff;
-      border: none;
-      border-radius: 10px;
-      padding: 10px 18px;
-      font-size: 13px;
-      font-weight: 800;
-      cursor: pointer;
-      transition: background 140ms ease;
-    }
-    .support-btn:hover {
-      background: #047857;
-    }
-    .support-btn:focus-visible {
-      outline: none;
-      box-shadow: var(--focus-ring);
-    }
-    .module-left {
+    .pro-action-left {
       display: flex;
       align-items: center;
       gap: 12px;
       min-width: 0;
     }
-    .module-icon-badge {
-      width: 32px;
-      height: 32px;
+
+    .pro-icon-box {
+      width: 36px;
+      height: 36px;
       border-radius: 8px;
       background: #ecfdf5;
       border: 1px solid #d1fae5;
-      color: #059669;
+      color: var(--emerald-600);
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      transition: background 140ms ease, border-color 140ms ease, color 140ms ease;
+    }
+
+    .pro-action-btn:hover .pro-icon-box {
+      background: var(--emerald-600);
+      border-color: var(--emerald-600);
+      color: #ffffff;
+    }
+
+    .pro-action-title {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--slate-900);
+    }
+
+    .pro-action-sub {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .pro-chevron {
+      color: var(--slate-400);
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      transition: color 140ms ease, transform 140ms ease;
+    }
+
+    .pro-action-btn:hover .pro-chevron {
+      color: var(--emerald-600);
+      transform: translateX(2px);
+    }
+
+    /* Compact Support Drawer */
+    .support-drawer {
+      margin-top: 16px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 16px 20px;
+    }
+
+    .support-summary {
+      cursor: pointer;
+      list-style: none;
       display: flex;
       align-items: center;
-      justify-content: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--slate-900);
+    }
+
+    .support-summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .support-summary-hint {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--emerald-600);
       flex-shrink: 0;
     }
+
+    .support-body {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--slate-100);
+    }
+
+    .support-sub {
+      font-size: 12.5px;
+      color: var(--muted);
+      margin: 0 0 14px;
+    }
+
+    .support-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .support-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .support-input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--card-border);
+      background: var(--surface-muted);
+      color: var(--text);
+      border-radius: 8px;
+      font-size: 13px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 140ms ease, background 140ms ease;
+    }
+
+    .support-input:focus {
+      border-color: var(--emerald-500);
+      background: #ffffff;
+    }
+
+    .support-btn {
+      min-height: 40px;
+      background: var(--emerald-600);
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 140ms ease;
+    }
+
+    .support-btn:hover {
+      background: var(--emerald-700);
+    }
+
+    .support-btn:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+
     .support-topic-chips {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
       gap: 8px;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
     }
+
     .welcome-topic-chip {
-      min-height: 38px;
-      padding: 7px 11px;
-      border-radius: 9px;
-      border: 1.5px solid #e2e8f0;
-      background: #f8fafc;
-      color: #334155;
-      font-size: 11.5px;
-      font-weight: 700;
+      min-height: 36px;
+      padding: 6px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--slate-200);
+      background: var(--slate-50);
+      color: var(--slate-700);
+      font-size: 12px;
+      font-weight: 500;
       font-family: inherit;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 6px;
-      transition: all 140ms ease;
+      transition: border-color 140ms ease, background 140ms ease, color 140ms ease;
     }
+
     .welcome-topic-chip:hover {
-      border-color: #10b981;
+      border-color: var(--emerald-500);
       background: #ffffff;
-      color: #0f172a;
+      color: var(--slate-900);
     }
+
     .welcome-topic-chip:focus-visible {
       outline: none;
       box-shadow: var(--focus-ring);
     }
+
     .welcome-topic-chip::after {
-      content: "✓";
-      opacity: 0;
-      font-weight: 900;
-      color: #059669;
-      transition: opacity 120ms ease;
+      content: "\2713";
+      display: none;
+      font-weight: 700;
+      color: var(--emerald-600);
     }
+
     .welcome-topic-chip.active {
-      border-color: #059669;
+      border-color: var(--emerald-600);
       background: #ecfdf5;
       color: #065f46;
+      font-weight: 600;
     }
+
     .welcome-topic-chip.active::after {
-      opacity: 1;
+      display: inline;
+    }
+
+    .support-row-2col {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin-bottom: 12px;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <!-- =======================================================================
-         OPTION 1 SPLIT HERO CARD
-         ======================================================================= -->
-    <div class="v31-shell">
-      <!-- LEFT SIDE -->
-      <div class="obsidian-stage">
+    <main class="v31-shell">
+      <section class="obsidian-stage" aria-label="SWEEPR Deepblock Overview">
         <div>
           <div class="brand-row">
             <div class="brand-logo">
@@ -779,76 +715,72 @@
           </div>
 
           <h1 class="obsidian-title">
-            Complete Browser Privacy &amp; Speed.
+            Complete Browser Privacy &amp; Speed
           </h1>
           <p class="obsidian-sub">
-            Engineered for Chrome, Firefox, Edge, Safari, iOS &amp; Android with one unified Pro license key.
+            One Pro key for Chrome, Firefox, Edge, Safari, iOS &amp; Android.
           </p>
 
           <div class="metrics-grid">
             <div class="metric-card">
               <div class="metric-val">&lt;50ms</div>
-              <div class="metric-lbl">Cookie Banner Reject</div>
+              <div class="metric-lbl">Cookie banner reject</div>
             </div>
             <div class="metric-card">
               <div class="metric-val">100%</div>
-              <div class="metric-lbl">YouTube &amp; Pre-Roll Ads</div>
+              <div class="metric-lbl">YouTube &amp; pre-roll ads</div>
             </div>
             <div class="metric-card">
               <div class="metric-val">5 Devices</div>
-              <div class="metric-lbl">Desktop + Mobile QR</div>
+              <div class="metric-lbl">Desktop &amp; mobile QR</div>
             </div>
             <div class="metric-card">
               <div class="metric-val">14-Day</div>
-              <div class="metric-lbl">Money-Back Guarantee</div>
+              <div class="metric-lbl">Money-back guarantee</div>
             </div>
           </div>
         </div>
 
         <div class="shortcuts-footer">
-          <span>Shortcuts: <kbd>Alt+Shift+S</kbd> Site Shield</span>
+          <span><kbd>Alt+Shift+S</kbd> Site Shield</span>
           <span><kbd>Alt+Shift+Z</kbd> Snooze Tabs</span>
         </div>
-      </div>
+      </section>
 
-      <!-- RIGHT SIDE (Option 1: 1-Click Paste+Unlock, Zero Competing Green Buttons, Zero Prices in Green Buttons) -->
-      <div class="daylight-stage">
+      <section class="daylight-stage" aria-label="License Activation">
         <div>
           <div class="status-badge-row">
-            <div class="badge" id="welcomeStatusBadge">Extension Installed — Activate Subscription</div>
+            <div class="badge" id="welcomeStatusBadge">Extension installed — activate Pro</div>
           </div>
 
-          <!-- Segmented Switcher -->
-          <div class="seg-bar" id="welcomeSegBar">
-            <button type="button" id="welcomeTabKey" class="seg-btn">
-              <svg fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
-              <span>I Have a License / Code</span>
+          <div class="seg-bar" id="welcomeSegBar" role="tablist">
+            <button type="button" id="welcomeTabKey" class="seg-btn" role="tab">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+              <span>I Have a License Key</span>
             </button>
-            <button type="button" id="welcomeTabBuy" class="seg-btn active">
-              <svg fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+            <button type="button" id="welcomeTabBuy" class="seg-btn active" role="tab">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
               <span>Get Pro License</span>
             </button>
           </div>
 
-          <!-- Tab A: Enter License / 6-Digit Code -->
           <div id="welcomePanelKey" class="tab-panel hidden">
             <div class="field-header">
               <label for="welcomeLicenseInput" class="field-label">
-                Instant License / 6-Digit Code Activation
+                License key or pairing code
               </label>
-              <span class="field-tag">Auto-Unlocks on 6th Digit</span>
             </div>
             <div class="input-wrap">
               <input
                 type="text"
                 id="welcomeLicenseInput"
                 class="key-input mono"
-                placeholder="Type or paste 6-digit code or license key..."
+                placeholder="SWEEPR-DB-XXXX-XXXX-XXXX or ptk_..."
                 autocomplete="off"
                 spellcheck="false"
               />
               <button type="button" id="welcomePasteBtn" class="paste-btn">
-                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
                 <span>Paste &amp; Unlock</span>
               </button>
             </div>
@@ -858,246 +790,103 @@
 
             <button type="button" id="welcomeActivateBtn" class="primary-cta-btn">
               <span>Activate Pro Protection</span>
-              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
             </button>
 
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:10px;border-top:1px solid #f1f5f9;font-size:12px;">
-              <span style="color:var(--muted);font-weight:600;">Need a license key?</span>
+            <div class="inline-link-row">
+              <span>Need a license key?</span>
               <a
                 href="https://sweeprdeepblock.com/order?offer=intro&amp;utm_source=extension&amp;utm_medium=welcome_tab"
                 target="_blank"
                 rel="noopener"
                 id="welcomeInlineTrialBtn"
-                style="color:#059669;font-weight:800;text-decoration:none;"
               >
-                Get Pro Protection &rarr;
+                Get Pro protection &rarr;
               </a>
             </div>
           </div>
 
-          <!-- Tab B: Default for Brand-New Store Installs without a License Key -->
           <div id="welcomePanelBuy" class="tab-panel">
             <div class="order-card">
-              <h2 class="order-card-title">Unlock SWEEPR Deepblock Pro All-Access</h2>
+              <h2 class="order-card-title">Unlock SWEEPR Deepblock Pro</h2>
               <p class="order-card-desc">
-                Enable autonomous YouTube &amp; web ad blocking, automatic cookie consent rejection, scam store alerts, and background tab speed optimization across up to 5 devices.
+                Block YouTube and web ads, auto-reject cookie banners, flag scam stores, and hibernate background tabs across up to 5 devices.
               </p>
-              <a href="https://sweeprdeepblock.com/order?offer=intro&amp;utm_source=extension&amp;utm_medium=welcome_tab" target="_blank" rel="noopener" class="primary-cta-btn">
+              <a
+                href="https://sweeprdeepblock.com/order?offer=intro&amp;utm_source=extension&amp;utm_medium=welcome_tab"
+                target="_blank"
+                rel="noopener"
+                class="primary-cta-btn"
+              >
                 <span>Unlock Full Pro Protection</span>
-                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
               </a>
             </div>
           </div>
         </div>
 
-        <!-- FULL-WIDTH EXECUTIVE MOBILE QR SYNC CARD -->
         <div class="qr-footer-section">
-          <a href="https://sweeprdeepblock.com/login?utm_source=extension&amp;utm_medium=welcome_tab" target="_blank" rel="noopener" class="pro-action-btn">
+          <a
+            href="https://sweeprdeepblock.com/login?utm_source=extension&amp;utm_medium=welcome_tab"
+            target="_blank"
+            rel="noopener"
+            class="pro-action-btn"
+          >
             <div class="pro-action-left">
-              <div class="pro-icon-box">
-                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <div class="pro-icon-box" aria-hidden="true">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
                 </svg>
               </div>
               <div>
-                <div class="pro-action-title-row">
-                  <span class="pro-action-title">Mobile QR Sync</span>
-                  <span class="pro-action-pill">iOS Safari &amp; Android</span>
-                </div>
-                <div class="pro-action-sub">
-                  Open Customer Portal to scan your QR code and link your mobile devices
-                </div>
+                <div class="pro-action-title">Mobile QR Sync for iOS Safari &amp; Android</div>
+                <div class="pro-action-sub">Scan in the Customer Portal to link your mobile devices</div>
               </div>
             </div>
-            <div class="pro-chevron">
-              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+            <div class="pro-chevron" aria-hidden="true">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
             </div>
           </a>
         </div>
-      </div>
-    </div>
+      </section>
+    </main>
 
-    <!-- Offloaded Full-Tab Controls: 6 Whole-Row Protection Modules + 4-Tab Segmented Lists + Support Drawer -->
-    <div class="dashboard-grid" id="modulesSection">
-      <div class="panel-card">
-        <div class="panel-title">
-          <span>6 Core Protection Engines</span>
-          <span style="font-size:11px;color:#059669;background:#ecfdf5;padding:3px 8px;border-radius:6px;">Click Entire Row to Toggle</span>
+    <details class="support-drawer">
+      <summary class="support-summary">
+        <span>Need help or found a stubborn ad?</span>
+        <span class="support-summary-hint">Message SWEEPR Support &#9662;</span>
+      </summary>
+      <div class="support-body">
+        <p class="support-sub">Send a message directly to our UK engineering support team.</p>
+        <div class="support-field" style="margin-bottom: 12px;">
+          <span class="support-label" id="welcomeSupportTopicLabel">Quick topic</span>
+          <div id="welcomeSupportChips" class="support-topic-chips" role="radiogroup" aria-labelledby="welcomeSupportTopicLabel">
+            <button type="button" role="radio" aria-checked="false" data-support-topic="Ad Blocking Report" class="welcome-topic-chip"><span>Ad Blocking Report</span></button>
+            <button type="button" role="radio" aria-checked="false" data-support-topic="License Key Activation" class="welcome-topic-chip"><span>Activation / Key</span></button>
+            <button type="button" role="radio" aria-checked="false" data-support-topic="Billing or Refund Request" class="welcome-topic-chip"><span>Billing &amp; Refund</span></button>
+            <button type="button" role="radio" aria-checked="false" data-support-topic="General Question" class="welcome-topic-chip"><span>General Question</span></button>
+          </div>
         </div>
-        <div class="panel-sub">Fine-tune individual SWEEPR Deepblock engines across your browser.</div>
-        <div>
-          <div class="list-item module-row" data-row-setting="adBlocking">
-            <div class="module-left">
-              <span class="module-icon-badge" aria-hidden="true">
-                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon stroke-linecap="round" stroke-linejoin="round" points="6 4 20 12 6 20 6 4"/></svg>
-              </span>
-              <div>
-                <div style="font-weight:800;">Video &amp; Page Ad Blocking</div>
-                <div style="font-size:11px;color:var(--muted);">YouTube pre-roll &amp; anti-adblock cloaking</div>
-              </div>
-            </div>
-            <button type="button" data-setting="adBlocking" data-pro="1" class="switch-btn pro-lock">PRO</button>
+        <div class="support-row-2col">
+          <div class="support-field">
+            <label for="welcomeSupportEmail" class="support-label">Your email address</label>
+            <input type="email" id="welcomeSupportEmail" class="support-input" placeholder="you@example.com" />
           </div>
-          <div class="list-item module-row" data-row-setting="cookieAutoClose">
-            <div class="module-left">
-              <span class="module-icon-badge" aria-hidden="true">
-                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-              </span>
-              <div>
-                <div style="font-weight:800;">Auto-Decline Cookie Pop-Ups</div>
-                <div style="font-size:11px;color:var(--muted);">Silently rejects CMP banners in &lt;50ms</div>
-              </div>
-            </div>
-            <button type="button" data-setting="cookieAutoClose" data-pro="1" class="switch-btn pro-lock">PRO</button>
+          <div class="support-field">
+            <label for="welcomeSupportSubject" class="support-label">Issue summary</label>
+            <input type="text" id="welcomeSupportSubject" class="support-input" autocomplete="off" placeholder="e.g. Ad report or billing help" />
           </div>
-          <div class="list-item module-row" data-row-setting="hideSearchSpam">
-            <div class="module-left">
-              <span class="module-icon-badge" aria-hidden="true">
-                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-              </span>
-              <div>
-                <div style="font-weight:800;">Hide Search Engine Spam</div>
-                <div style="font-size:11px;color:var(--muted);">Cleans Google, Bing &amp; DuckDuckGo SERPs</div>
-              </div>
-            </div>
-            <button type="button" data-setting="hideSearchSpam" data-pro="1" class="switch-btn pro-lock">PRO</button>
-          </div>
-          <div class="list-item module-row" data-row-setting="fakeShopAlerts">
-            <div class="module-left">
-              <span class="module-icon-badge" aria-hidden="true">
-                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-              </span>
-              <div>
-                <div style="font-weight:800;">Scam Online Shop Alerts</div>
-                <div style="font-size:11px;color:var(--muted);">Warns on fake urgency countdown stores</div>
-              </div>
-            </div>
-            <button type="button" data-setting="fakeShopAlerts" data-pro="1" class="switch-btn pro-lock">PRO</button>
-          </div>
-          <div class="list-item module-row" data-row-setting="trackerProtection">
-            <div class="module-left">
-              <span class="module-icon-badge" aria-hidden="true">
-                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
-              </span>
-              <div>
-                <div style="font-weight:800;">Tracker-Free Links</div>
-                <div style="font-size:11px;color:var(--muted);">Strips click tracking parameters</div>
-              </div>
-            </div>
-            <button type="button" data-setting="trackerProtection" data-pro="1" class="switch-btn pro-lock">PRO</button>
-          </div>
-          <div class="list-item module-row" data-row-setting="silentMode">
-            <div class="module-left">
-              <span class="module-icon-badge" aria-hidden="true">
-                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/></svg>
-              </span>
-              <div>
-                <div style="font-weight:800;">100% Silent Mode</div>
-                <div style="font-size:11px;color:var(--muted);">Hide on-page toasts &amp; counter badges</div>
-              </div>
-            </div>
-            <button type="button" data-setting="silentMode" data-pro="1" class="switch-btn pro-lock">PRO</button>
-          </div>
+        </div>
+        <div class="support-field" style="margin-bottom: 12px;">
+          <label for="welcomeSupportMessage" class="support-label">Diagnostic details</label>
+          <textarea id="welcomeSupportMessage" class="support-input" rows="3" autocomplete="off" style="resize: vertical;" placeholder="Include website URL or steps to reproduce..."></textarea>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+          <button type="button" id="welcomeSupportSendBtn" class="support-btn">Send Message to Support</button>
+          <span id="welcomeSupportFeedback" style="font-size: 12.5px; font-weight: 600; display: none;"></span>
         </div>
       </div>
-
-      <div class="panel-card">
-        <div class="panel-title">
-          <span>Saved Sessions &amp; Site Lists</span>
-          <span style="font-size:11px;color:var(--muted);">Segmented View</span>
-        </div>
-        <div class="panel-sub">Switch between saved tab snapshots, paused domains, pinned sites, and hidden page elements.</div>
-
-        <!-- 4-Tab Segmented Switcher (Replaces 4 Stacked Empty Lists) -->
-        <div class="list-tabs-bar" id="welcomeListTabsBar">
-          <button type="button" class="list-tab-btn active" data-list-tab="sessions">Sessions</button>
-          <button type="button" class="list-tab-btn" data-list-tab="paused">Paused</button>
-          <button type="button" class="list-tab-btn" data-list-tab="pinned">Pinned</button>
-          <button type="button" class="list-tab-btn" data-list-tab="hidden">Hidden</button>
-        </div>
-
-        <div id="listPane-sessions" class="list-tab-pane">
-          <div class="panel-title" style="font-size:13px;">
-            <span>Saved Tab Session History</span>
-            <span id="fullSavedSessionsCount" style="font-size:11.5px;color:#059669;">0 snapshots</span>
-          </div>
-          <div class="panel-sub">Snapshots automatically saved when background tabs are put to sleep.</div>
-          <div id="fullSavedSessionsList">
-            <div style="font-size:12.5px;color:var(--muted);">No saved tab groups yet.</div>
-          </div>
-        </div>
-
-        <div id="listPane-paused" class="list-tab-pane hidden">
-          <div class="panel-title" style="font-size:13px;">
-            <span>Paused Websites (Whitelist)</span>
-            <span id="pausedSitesCount" style="font-size:11.5px;color:#059669;">0 sites</span>
-          </div>
-          <div class="panel-sub">Websites where SWEEPR Deepblock protection is currently paused.</div>
-          <div id="pausedSitesList">
-            <div style="font-size:12.5px;color:var(--muted);">Protection is active on all websites.</div>
-          </div>
-        </div>
-
-        <div id="listPane-pinned" class="list-tab-pane hidden">
-          <div class="panel-title" style="font-size:13px;">
-            <span>Kept-Awake Websites (Never Snooze)</span>
-            <span id="neverSnoozeCount" style="font-size:11.5px;color:#059669;">0 sites</span>
-          </div>
-          <div class="panel-sub">Websites excluded from automatic background tab hibernation.</div>
-          <div id="neverSnoozeList">
-            <div style="font-size:12.5px;color:var(--muted);">No sites pinned awake yet.</div>
-          </div>
-        </div>
-
-        <div id="listPane-hidden" class="list-tab-pane hidden">
-          <div class="panel-title" style="font-size:13px;">
-            <span>Custom Hidden Elements</span>
-            <span id="customZappedCount" style="font-size:11.5px;color:#059669;">0 sites</span>
-          </div>
-          <div class="panel-sub">Elements hidden using the right-click / popup Element Hider.</div>
-          <div id="customZappedList">
-            <div style="font-size:12.5px;color:var(--muted);">No custom hidden elements yet.</div>
-          </div>
-        </div>
-      </div>
-
-      <details class="panel-card" style="grid-column: 1 / -1;">
-        <summary class="panel-title" style="cursor:pointer;list-style:none;margin:0;">
-          <span>Need Help? Message SWEEPR Support</span>
-          <span style="font-size:12px;color:#059669;">Direct UK Engineering Support ▾</span>
-        </summary>
-        <div style="margin-top:12px;">
-          <div class="panel-sub">Have a question or found a website with stubborn ads? Send a message directly to our support team.</div>
-          <div class="support-field" style="margin-bottom:8px;">
-            <span class="support-label" id="welcomeSupportTopicLabel">Quick Topic (1 Tap)</span>
-            <div id="welcomeSupportChips" class="support-topic-chips" role="radiogroup" aria-labelledby="welcomeSupportTopicLabel">
-              <button type="button" role="radio" aria-checked="false" data-support-topic="Ad Blocking Report" class="welcome-topic-chip"><span>Ad Blocking Report</span></button>
-              <button type="button" role="radio" aria-checked="false" data-support-topic="License / 6-Digit Activation" class="welcome-topic-chip"><span>Activation / Key</span></button>
-              <button type="button" role="radio" aria-checked="false" data-support-topic="Billing or Refund Request" class="welcome-topic-chip"><span>Billing &amp; Refund</span></button>
-              <button type="button" role="radio" aria-checked="false" data-support-topic="General Question" class="welcome-topic-chip"><span>General Question</span></button>
-            </div>
-          </div>
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:10px;">
-            <div class="support-field">
-              <label for="welcomeSupportEmail" class="support-label">Your Email Address</label>
-              <input type="email" id="welcomeSupportEmail" class="support-input" placeholder="you@example.com" />
-            </div>
-            <div class="support-field">
-              <label for="welcomeSupportSubject" class="support-label">Issue Summary</label>
-              <input type="text" id="welcomeSupportSubject" class="support-input" placeholder="e.g. Ad report or billing help" />
-            </div>
-          </div>
-          <div class="support-field" style="margin-bottom:10px;">
-            <label for="welcomeSupportMessage" class="support-label">Diagnostic Details</label>
-            <textarea id="welcomeSupportMessage" class="support-input" rows="3" style="resize:vertical;" placeholder="Include website URL or steps to reproduce..."></textarea>
-          </div>
-          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-            <button type="button" id="welcomeSupportSendBtn" class="support-btn">Send Message to Support</button>
-            <span id="welcomeSupportFeedback" style="font-size:12.5px;font-weight:700;display:none;"></span>
-          </div>
-        </div>
-      </details>
-    </div>
+    </details>
   </div>
   <script src="welcome.js"></script>
 </body>

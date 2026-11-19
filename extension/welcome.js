@@ -1,27 +1,42 @@
 // SWEEPR Deepblock — Full-Tab Dashboard & Options Controller (Option 1 Zero-Travel Ergonomics)
-const isDevExtension = typeof chrome !== 'undefined' && chrome.runtime && !('update_url' in chrome.runtime.getManifest());
 const WELCOME_VERIFY_ENDPOINTS = [
-  'https://sweeprdeepblock.com/api/license-verify',
-  ...(isDevExtension ? ['http://localhost:3000/api/license-verify'] : [])
+  'https://sweeprdeepblock.com/api/license-verify'
 ];
 
 const WELCOME_REDEEM_ENDPOINTS = [
-  'https://sweeprdeepblock.com/api/device-link/redeem',
-  ...(isDevExtension ? ['http://localhost:3000/api/device-link/redeem'] : [])
+  'https://sweeprdeepblock.com/api/device-link/redeem'
 ];
+
+const FULL_LICENSE_KEY_RE = /^SWEEPR-[A-Z0-9]{2,8}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/i;
+const PAIRING_TOKEN_RE = /^ptk_[A-Za-z0-9_-]{12,64}$/;
+const hasChromeStorage = typeof chrome !== 'undefined' && Boolean(chrome.storage && chrome.storage.local);
+const hasChromeRuntime = typeof chrome !== 'undefined' && Boolean(chrome.runtime && chrome.runtime.sendMessage);
+
+function createExtDeviceId() {
+  if (typeof crypto !== 'undefined') {
+    if (typeof crypto.randomUUID === 'function') {
+      return `ext_db_${crypto.randomUUID().replace(/-/g, '').slice(0, 16)}`;
+    }
+    if (typeof crypto.getRandomValues === 'function') {
+      const buf = new Uint8Array(8);
+      crypto.getRandomValues(buf);
+      return `ext_db_${Array.from(buf, (b) => b.toString(16).padStart(2, '0')).join('')}`;
+    }
+  }
+  return `ext_db_${Date.now().toString(16)}`;
+}
 
 async function directVerifyAndPersistLicense(rawKey) {
   const key = String(rawKey || '').trim();
-  if (!key || key.length < 6) {
-    return { ok: false, valid: false, error: 'Please enter a valid license key, ptk_ pairing code, or 6-digit code.' };
+  const ptkMatch = key.match(/ptk_[A-Za-z0-9_-]{12,64}/);
+  if (!ptkMatch && !FULL_LICENSE_KEY_RE.test(key)) {
+    return { ok: false, valid: false, error: 'Please enter a full SWEEPR-DB-XXXX-XXXX-XXXX license key or ptk_ pairing token.' };
   }
-  const stored = await chrome.storage.local.get(['deviceId']);
+  const stored = hasChromeStorage ? await chrome.storage.local.get(['deviceId']) : {};
   const deviceId =
     stored && typeof stored.deviceId === 'string' && stored.deviceId.startsWith('ext_db_')
       ? stored.deviceId
-      : `ext_db_${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36)}`;
-
-  const ptkMatch = key.match(/ptk_[A-Za-z0-9_-]{12,64}/);
+      : createExtDeviceId();
   if (ptkMatch) {
     for (const redeemUrl of WELCOME_REDEEM_ENDPOINTS) {
       try {
@@ -47,21 +62,25 @@ async function directVerifyAndPersistLicense(rawKey) {
             adBlocking: true,
             silentMode: true
           };
-          await chrome.storage.local.set({
-            deviceId,
-            proActive: true,
-            ramTamerActive: Boolean(d.ramTamerAddon),
-            licenseKey: canonicalKey,
-            draftLicenseKey: '',
-            licenseDrawerOpen: false,
-            subscriptionStatus: 'active',
-            licenseVerifiedAt: Date.now(),
-            encryptedDnsEnabled: true,
-            settings
-          });
-          try {
-            chrome.runtime.sendMessage({ type: 'VERIFY_LICENSE', key: canonicalKey }).catch(() => {});
-          } catch (e) {}
+          if (hasChromeStorage) {
+            await chrome.storage.local.set({
+              deviceId,
+              proActive: true,
+              ramTamerActive: Boolean(d.ramTamerAddon),
+              licenseKey: canonicalKey,
+              draftLicenseKey: '',
+              licenseDrawerOpen: false,
+              subscriptionStatus: 'active',
+              licenseVerifiedAt: Date.now(),
+              encryptedDnsEnabled: true,
+              settings
+            });
+          }
+          if (hasChromeRuntime) {
+            try {
+              chrome.runtime.sendMessage({ type: 'VERIFY_LICENSE', key: canonicalKey }).catch(() => {});
+            } catch (e) {}
+          }
           return { ok: true, valid: true, licenseKey: canonicalKey, settings };
         }
       } catch (e) {}
@@ -97,22 +116,24 @@ async function directVerifyAndPersistLicense(rawKey) {
             adBlocking: true,
             silentMode: true
           };
-          await chrome.storage.local.set({
-            deviceId,
-            proActive: true,
-            ramTamerActive,
-            licenseKey: canonicalKey,
-            draftLicenseKey: '',
-            licenseDrawerOpen: false,
-            licenseToken: data.token || data.license_token || '',
-            crmAccountId: data.account_id || '',
-            subscriptionStatus: subStatus,
-            licenseVerifiedAt: Date.now(),
-            encryptedDnsEnabled: true,
-            settings
-          });
+          if (hasChromeStorage) {
+            await chrome.storage.local.set({
+              deviceId,
+              proActive: true,
+              ramTamerActive,
+              licenseKey: canonicalKey,
+              draftLicenseKey: '',
+              licenseDrawerOpen: false,
+              licenseToken: data.token || data.license_token || '',
+              crmAccountId: data.account_id || '',
+              subscriptionStatus: subStatus,
+              licenseVerifiedAt: Date.now(),
+              encryptedDnsEnabled: true,
+              settings
+            });
+          }
           try {
-            if (chrome.declarativeNetRequest && chrome.declarativeNetRequest.updateEnabledRulesets) {
+            if (typeof chrome !== 'undefined' && chrome.declarativeNetRequest && chrome.declarativeNetRequest.updateEnabledRulesets) {
               await chrome.declarativeNetRequest.updateEnabledRulesets({
                 enableRulesetIds: ['ads_and_trackers', 'cryptominers_and_heavy_scripts'],
                 disableRulesetIds: []
@@ -149,14 +170,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const inlineTrialBtn = document.getElementById('welcomeInlineTrialBtn');
   const feedback = document.getElementById('welcomeKeyFeedback');
   const badge = document.getElementById('welcomeStatusBadge');
-  const fullSavedSessionsCount = document.getElementById('fullSavedSessionsCount');
-  const fullSavedSessionsList = document.getElementById('fullSavedSessionsList');
-  const pausedSitesCount = document.getElementById('pausedSitesCount');
-  const pausedSitesList = document.getElementById('pausedSitesList');
-  const neverSnoozeCount = document.getElementById('neverSnoozeCount');
-  const neverSnoozeList = document.getElementById('neverSnoozeList');
-  const customZappedCount = document.getElementById('customZappedCount');
-  const customZappedList = document.getElementById('customZappedList');
 
   function setActiveWelcomeTab(tab, focusInput = false) {
     if (!tabKeyBtn || !tabBuyBtn || !panelKey || !panelBuy) return;
@@ -179,48 +192,12 @@ document.addEventListener('DOMContentLoaded', () => {
     tabBuyBtn.addEventListener('click', () => setActiveWelcomeTab('buy', false));
   }
 
-  // 4-Tab Segmented Switcher for Saved Sessions, Paused Sites, Pinned Sites & Hidden Elements
-  const listTabsBar = document.getElementById('welcomeListTabsBar');
-  if (listTabsBar) {
-    listTabsBar.querySelectorAll('[data-list-tab]').forEach((tabBtn) => {
-      tabBtn.addEventListener('click', () => {
-        const target = tabBtn.getAttribute('data-list-tab');
-        listTabsBar.querySelectorAll('[data-list-tab]').forEach((b) => {
-          b.classList.toggle('active', b === tabBtn);
-        });
-        ['sessions', 'paused', 'pinned', 'hidden'].forEach((paneId) => {
-          const pane = document.getElementById(`listPane-${paneId}`);
-          if (pane) pane.classList.toggle('hidden', paneId !== target);
-        });
-      });
-    });
-  }
-
   let dashboardState = {
     proActive: false,
-    settings: {},
-    cloudTabSessions: [],
-    pausedSites: [],
-    neverSnoozeSites: [],
-    customHiddenSelectors: {}
+    settings: {}
   };
 
   if (!btn || !input || !feedback) return;
-
-  function renderModuleSwitches(proActive, settings) {
-    const s = settings || {};
-    document.querySelectorAll('[data-setting]').forEach((sw) => {
-      const key = sw.getAttribute('data-setting');
-      if (!proActive) {
-        sw.textContent = 'PRO';
-        sw.className = 'switch-btn pro-lock';
-        return;
-      }
-      sw.textContent = '';
-      const isOn = s[key] !== false;
-      sw.className = isOn ? 'switch-btn' : 'switch-btn off';
-    });
-  }
 
   function markProActivated(licenseKey, settings) {
     dashboardState.proActive = true;
@@ -237,170 +214,21 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.textContent = '✓ Pro Protection Active';
     btn.style.background = '#047857';
     if (badge) {
-      badge.textContent = '✓ Pro Subscription Active — All Protection Modules Unlocked';
+      badge.textContent = 'Pro subscription active — all modules unlocked';
     }
     if (licenseKey && !input.value) {
       input.value = licenseKey;
     }
-    renderModuleSwitches(true, dashboardState.settings);
   }
 
-  function renderOffloadedPanels(stored) {
-    const sessions = Array.isArray(stored && stored.cloudTabSessions) ? stored.cloudTabSessions : [];
-    const pausedSites = Array.isArray(stored && stored.pausedSites) ? stored.pausedSites : [];
-    const neverSnoozeSites = Array.isArray(stored && stored.neverSnoozeSites) ? stored.neverSnoozeSites : [];
-    const customMap = (stored && stored.customHiddenSelectors) || {};
-
-    if (fullSavedSessionsCount) {
-      fullSavedSessionsCount.textContent = `${sessions.length} snapshot${sessions.length === 1 ? '' : 's'}`;
-    }
-    if (fullSavedSessionsList) {
-      fullSavedSessionsList.textContent = '';
-      if (sessions.length === 0) {
-        const empty = document.createElement('div');
-        empty.style.cssText = 'font-size:12.5px;color:var(--muted);';
-        empty.textContent = 'No saved tab groups yet. Press Alt+Shift+Z to snooze inactive tabs.';
-        fullSavedSessionsList.appendChild(empty);
-      } else {
-        sessions.forEach((sess) => {
-          const row = document.createElement('div');
-          row.className = 'list-item';
-          const label = document.createElement('span');
-          label.textContent = `Saved at ${sess.savedAt || 'earlier'} (${Number(sess.tabCount) || 0} tabs)`;
-          const restoreBtn = document.createElement('button');
-          restoreBtn.type = 'button';
-          restoreBtn.className = 'mini-btn';
-          restoreBtn.textContent = 'Reopen Tabs';
-          restoreBtn.addEventListener('click', () => {
-            restoreBtn.textContent = 'Opening...';
-            chrome.runtime.sendMessage({ type: 'RESTORE_SAVED_SESSION', sessionId: sess.id }, () => {
-              restoreBtn.textContent = '✓ Reopened';
-            });
-          });
-          row.appendChild(label);
-          row.appendChild(restoreBtn);
-          fullSavedSessionsList.appendChild(row);
-        });
-      }
-    }
-
-    if (pausedSitesCount) {
-      pausedSitesCount.textContent = `${pausedSites.length} site${pausedSites.length === 1 ? '' : 's'}`;
-    }
-    if (pausedSitesList) {
-      pausedSitesList.textContent = '';
-      if (pausedSites.length === 0) {
-        const empty = document.createElement('div');
-        empty.style.cssText = 'font-size:12.5px;color:var(--muted);';
-        empty.textContent = 'Protection is active on all websites.';
-        pausedSitesList.appendChild(empty);
-      } else {
-        pausedSites.forEach((domain) => {
-          const row = document.createElement('div');
-          row.className = 'list-item';
-          const label = document.createElement('span');
-          label.textContent = domain;
-          const resumeBtn = document.createElement('button');
-          resumeBtn.type = 'button';
-          resumeBtn.className = 'mini-btn';
-          resumeBtn.textContent = 'Resume Protection';
-          resumeBtn.addEventListener('click', () => {
-            chrome.runtime.sendMessage({ type: 'TOGGLE_SITE_PAUSE', hostname: domain }, (res) => {
-              if (res && res.ok) {
-                dashboardState.pausedSites = res.pausedSites;
-                renderOffloadedPanels(dashboardState);
-              }
-            });
-          });
-          row.appendChild(label);
-          row.appendChild(resumeBtn);
-          pausedSitesList.appendChild(row);
-        });
-      }
-    }
-
-    if (neverSnoozeCount) {
-      neverSnoozeCount.textContent = `${neverSnoozeSites.length} site${neverSnoozeSites.length === 1 ? '' : 's'}`;
-    }
-    if (neverSnoozeList) {
-      neverSnoozeList.textContent = '';
-      if (neverSnoozeSites.length === 0) {
-        const empty = document.createElement('div');
-        empty.style.cssText = 'font-size:12.5px;color:var(--muted);';
-        empty.textContent = 'No sites pinned awake yet.';
-        neverSnoozeList.appendChild(empty);
-      } else {
-        neverSnoozeSites.forEach((domain) => {
-          const row = document.createElement('div');
-          row.className = 'list-item';
-          const label = document.createElement('span');
-          label.textContent = domain;
-          const removeBtn = document.createElement('button');
-          removeBtn.type = 'button';
-          removeBtn.className = 'mini-btn';
-          removeBtn.textContent = 'Allow Snooze';
-          removeBtn.addEventListener('click', () => {
-            chrome.runtime.sendMessage({ type: 'TOGGLE_NEVER_SNOOZE_SITE', hostname: domain }, (res) => {
-              if (res && res.ok) {
-                dashboardState.neverSnoozeSites = res.neverSnoozeSites;
-                renderOffloadedPanels(dashboardState);
-              }
-            });
-          });
-          row.appendChild(label);
-          row.appendChild(removeBtn);
-          neverSnoozeList.appendChild(row);
-        });
-      }
-    }
-
-    const zappedDomains = Object.keys(customMap).filter(
-      (d) => Array.isArray(customMap[d]) && customMap[d].length > 0
-    );
-    if (customZappedCount) {
-      customZappedCount.textContent = `${zappedDomains.length} site${zappedDomains.length === 1 ? '' : 's'}`;
-    }
-    if (customZappedList) {
-      customZappedList.textContent = '';
-      if (zappedDomains.length === 0) {
-        const empty = document.createElement('div');
-        empty.style.cssText = 'font-size:12.5px;color:var(--muted);';
-        empty.textContent = 'No custom hidden elements yet. Use Hide Element in the popup.';
-        customZappedList.appendChild(empty);
-      } else {
-        zappedDomains.forEach((domain) => {
-          const count = customMap[domain].length;
-          const row = document.createElement('div');
-          row.className = 'list-item';
-          const label = document.createElement('span');
-          label.textContent = `${domain} (${count} hidden element${count === 1 ? '' : 's'})`;
-          const resetBtn = document.createElement('button');
-          resetBtn.type = 'button';
-          resetBtn.className = 'mini-btn';
-          resetBtn.textContent = 'Restore Elements';
-          resetBtn.addEventListener('click', () => {
-            delete customMap[domain];
-            chrome.storage.local.set({ customHiddenSelectors: customMap }, () => {
-              dashboardState.customHiddenSelectors = customMap;
-              renderOffloadedPanels(dashboardState);
-            });
-          });
-          row.appendChild(label);
-          row.appendChild(resetBtn);
-          customZappedList.appendChild(row);
-        });
-      }
-    }
-  }
-
-  chrome.storage.local.get(
-    ['proActive', 'licenseKey', 'draftLicenseKey', 'settings', 'cloudTabSessions', 'pausedSites', 'neverSnoozeSites', 'customHiddenSelectors'],
-    (stored) => {
-      dashboardState = { ...dashboardState, ...(stored || {}) };
-      if (stored && stored.proActive && stored.licenseKey) {
-        markProActivated(stored.licenseKey, stored.settings);
-      } else {
-        if (stored && (stored.licenseKey || stored.draftLicenseKey)) {
+  if (hasChromeStorage) {
+    chrome.storage.local.get(
+      ['proActive', 'licenseKey', 'draftLicenseKey', 'settings'],
+      (stored) => {
+        dashboardState = { ...dashboardState, ...(stored || {}) };
+        if (stored && stored.proActive && stored.licenseKey) {
+          markProActivated(stored.licenseKey, stored.settings);
+        } else if (stored && (stored.licenseKey || stored.draftLicenseKey)) {
           if (!input.value) {
             input.value = stored.licenseKey || stored.draftLicenseKey;
           }
@@ -408,55 +236,45 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
           setActiveWelcomeTab('buy', false);
         }
-        renderModuleSwitches(false, {});
       }
-      renderOffloadedPanels(dashboardState);
+    );
+
+    if (chrome.storage.onChanged) {
+      chrome.storage.onChanged.addListener((changes, area) => {
+        if (area !== 'local') return;
+        if (changes.proActive && changes.proActive.newValue === true) {
+          chrome.storage.local.get(['licenseKey', 'settings'], (s) => {
+            markProActivated(s.licenseKey, s.settings);
+          });
+        }
+      });
     }
-  );
-
-  if (chrome.storage && chrome.storage.onChanged) {
-    chrome.storage.onChanged.addListener((changes, area) => {
-      if (area !== 'local') return;
-      if (changes.proActive && changes.proActive.newValue === true) {
-        chrome.storage.local.get(['licenseKey', 'settings'], (s) => {
-          markProActivated(s.licenseKey, s.settings);
-        });
-      }
-    });
+  } else {
+    setActiveWelcomeTab('buy', false);
   }
-
-  // Whole-Row & Switch Module Toggles inside Full-Tab Dashboard
-  function triggerModuleSettingToggle(settingKey) {
-    if (!settingKey) return;
-    if (!dashboardState.proActive) {
-      setActiveWelcomeTab('key', true);
-      feedback.style.display = 'block';
-      feedback.style.color = '#d97706';
-      feedback.textContent = 'Enter your Pro license key or 6-digit code above to unlock module controls.';
-      return;
-    }
-    chrome.runtime.sendMessage({ type: 'TOGGLE_SETTING', settingKey }, (res) => {
-      if (res && res.ok) {
-        dashboardState.settings = res.settings;
-        renderModuleSwitches(true, dashboardState.settings);
-      }
-    });
-  }
-
-  document.querySelectorAll('.module-row[data-row-setting]').forEach((row) => {
-    row.addEventListener('click', () => {
-      triggerModuleSettingToggle(row.getAttribute('data-row-setting'));
-    });
-  });
-
-  document.querySelectorAll('[data-setting]').forEach((sw) => {
-    sw.addEventListener('click', (e) => {
-      e.stopPropagation();
-      triggerModuleSettingToggle(sw.getAttribute('data-setting'));
-    });
-  });
 
   let welcomeActivationInFlight = false;
+
+  async function applyActivationResult(finalRes, key) {
+    btn.disabled = false;
+    if (finalRes && finalRes.ok && finalRes.valid) {
+      markProActivated(finalRes.licenseKey || key, finalRes.settings || {
+        cookieAutoClose: true,
+        hideSearchSpam: true,
+        fakeShopAlerts: true,
+        trackerProtection: true,
+        adBlocking: true,
+        silentMode: true
+      });
+    } else {
+      btn.textContent = 'Activate Pro Protection';
+      feedback.style.display = 'block';
+      feedback.style.color = '#ef4444';
+      feedback.textContent =
+        (finalRes && finalRes.error) ||
+        '✗ Invalid or unpaid license key. Please complete checkout first.';
+    }
+  }
 
   async function handleActivate() {
     if (welcomeActivationInFlight) return;
@@ -464,7 +282,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!key) {
       feedback.style.display = 'block';
       feedback.style.color = '#ef4444';
-      feedback.textContent = 'Please paste your license key, ptk_ pairing code, or 6-digit code first.';
+      feedback.textContent = 'Please paste your SWEEPR-DB-... license key or ptk_ pairing token first.';
+      return;
+    }
+    if (!FULL_LICENSE_KEY_RE.test(key) && !PAIRING_TOKEN_RE.test(key)) {
+      feedback.style.display = 'block';
+      feedback.style.color = '#ef4444';
+      feedback.textContent = 'Enter your full SWEEPR-DB-XXXX-XXXX-XXXX license key or ptk_ pairing token.';
       return;
     }
 
@@ -475,32 +299,24 @@ document.addEventListener('DOMContentLoaded', () => {
     feedback.style.color = '#9ca3af';
     feedback.textContent = 'Checking active subscription status...';
 
-    chrome.runtime.sendMessage({ type: 'ACTIVATE_LICENSE', licenseKey: key }, async (res) => {
-      try {
-        const finalRes =
-          res && typeof res === 'object' ? res : await directVerifyAndPersistLicense(key);
-        btn.disabled = false;
-        if (finalRes && finalRes.ok && finalRes.valid) {
-          markProActivated(finalRes.licenseKey || key, finalRes.settings || {
-            cookieAutoClose: true,
-            hideSearchSpam: true,
-            fakeShopAlerts: true,
-            trackerProtection: true,
-            adBlocking: true,
-            silentMode: true
-          });
-        } else {
-          btn.textContent = 'Activate Pro Protection';
-          feedback.style.display = 'block';
-          feedback.style.color = '#ef4444';
-          feedback.textContent =
-            (finalRes && finalRes.error) ||
-            '✗ Invalid or unpaid license key. Please complete checkout first.';
+    if (hasChromeRuntime) {
+      chrome.runtime.sendMessage({ type: 'ACTIVATE_LICENSE', licenseKey: key }, async (res) => {
+        try {
+          const finalRes =
+            res && typeof res === 'object' ? res : await directVerifyAndPersistLicense(key);
+          await applyActivationResult(finalRes, key);
+        } finally {
+          welcomeActivationInFlight = false;
         }
+      });
+    } else {
+      try {
+        const finalRes = await directVerifyAndPersistLicense(key);
+        await applyActivationResult(finalRes, key);
       } finally {
         welcomeActivationInFlight = false;
       }
-    });
+    }
   }
 
   if (pasteBtn && input) {
@@ -521,12 +337,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   input.addEventListener('input', () => {
     const raw = (input.value || '').trim();
-    chrome.storage.local.set({ draftLicenseKey: input.value });
+    if (hasChromeStorage) {
+      chrome.storage.local.set({ draftLicenseKey: input.value });
+    }
     if (!dashboardState.proActive) {
-      if (/^\d{6}$/.test(raw) || /^SWEEPR-DB-[A-Z0-9-]{4,}$/i.test(raw) || /^ptk_[a-zA-Z0-9_-]{6,}$/i.test(raw)) {
+      if (FULL_LICENSE_KEY_RE.test(raw) || PAIRING_TOKEN_RE.test(raw)) {
         feedback.style.display = 'block';
         feedback.style.color = '#059669';
-        feedback.textContent = 'Verifying code automatically...';
+        feedback.textContent = 'Verifying license key automatically...';
         handleActivate();
       } else if (feedback) {
         feedback.style.display = 'block';
@@ -551,6 +369,26 @@ document.addEventListener('DOMContentLoaded', () => {
   const supportSendBtn = document.getElementById('welcomeSupportSendBtn');
   const supportFeedback = document.getElementById('welcomeSupportFeedback');
 
+  const SUPPORT_TOPIC_CONFIG = {
+    'Ad Blocking Report': {
+      category: 'ad_report',
+      placeholder: 'Include the website URL where ads or popups appeared...'
+    },
+    'License Key Activation': {
+      category: 'activation_key',
+      placeholder: 'Include your checkout email or SWEEPR-DB-... license key...'
+    },
+    'Billing or Refund Request': {
+      category: 'billing_refund',
+      placeholder: 'Include your checkout email or invoice number...'
+    },
+    'General Question': {
+      category: 'general',
+      placeholder: 'Include website URL or details so our team can help...'
+    }
+  };
+  let selectedSupportCategory = 'general';
+
   const welcomeSupportChipsWrap = document.getElementById('welcomeSupportChips');
   if (welcomeSupportChipsWrap) {
     const presetTopics = new Set();
@@ -566,11 +404,25 @@ document.addEventListener('DOMContentLoaded', () => {
           b.setAttribute('aria-checked', isTarget ? 'true' : 'false');
         });
         const topic = chip.getAttribute('data-support-topic') || '';
+        const topicCfg = SUPPORT_TOPIC_CONFIG[topic] || SUPPORT_TOPIC_CONFIG['General Question'];
+        selectedSupportCategory = topicCfg.category;
+        if (supportMessageEl && topicCfg.placeholder) {
+          supportMessageEl.placeholder = topicCfg.placeholder;
+        }
         if (supportSubjectEl && topic) {
-          const cur = (supportSubjectEl.value || '').trim();
-          if (!cur || presetTopics.has(cur)) {
-            supportSubjectEl.value = topic;
+          let customSuffix = (supportSubjectEl.value || '').trim();
+          for (const preset of presetTopics) {
+            if (customSuffix.toLowerCase() === preset.toLowerCase()) {
+              customSuffix = '';
+              break;
+            }
+            const prefix = `${preset}: `;
+            if (customSuffix.toLowerCase().startsWith(prefix.toLowerCase())) {
+              customSuffix = customSuffix.slice(prefix.length).trim();
+              break;
+            }
           }
+          supportSubjectEl.value = customSuffix ? `${topic}: ${customSuffix}` : topic;
         }
       });
     });
@@ -606,17 +458,12 @@ document.addEventListener('DOMContentLoaded', () => {
         email,
         subject,
         message,
+        category: selectedSupportCategory,
         os: 'browser_extension'
       };
       const supportUrls = [
         'https://sweeprdeepblock.com/api/support',
-        ...(isDevExtension
-          ? [
-              'http://127.0.0.1:8788/api/support/contact',
-              'http://localhost:8788/api/support/contact',
-              'http://localhost:3000/api/support'
-            ]
-          : [])
+        'https://sweepr-crm-production.up.railway.app/api/support/contact'
       ];
       let sentOk = false;
       let ticketId = '';
@@ -628,9 +475,9 @@ document.addEventListener('DOMContentLoaded', () => {
             body: JSON.stringify(payload)
           });
           const d = await r.json().catch(() => ({}));
-          if (r.ok && d && d.ok) {
+          if (r.ok && d && (d.ok || d.ticket_number || d.ticket_id || d.id)) {
             sentOk = true;
-            ticketId = d.ticket_id || d.ticket_number || '';
+            ticketId = d.ticket_id || d.ticket_number || d.id || '';
             break;
           }
         } catch (e) {}
@@ -641,6 +488,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (sentOk) {
         supportMessageEl.value = '';
         if (supportSubjectEl) supportSubjectEl.value = '';
+        selectedSupportCategory = 'general';
         if (welcomeSupportChipsWrap) {
           welcomeSupportChipsWrap.querySelectorAll('[data-support-topic]').forEach((b) => {
             b.classList.remove('active');
