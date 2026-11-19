@@ -1,5 +1,4 @@
 // SWEEPR Deepblock — Zero-Scroll 360x500px Unified Popup Controller (v2.0 UX Architect Refactored)
-const isDevExtension = typeof chrome !== 'undefined' && chrome.runtime && !('update_url' in chrome.runtime.getManifest());
 document.addEventListener('DOMContentLoaded', () => {
   const adsCountEl = document.getElementById('adsCount');
   const cookieCountEl = document.getElementById('cookieCount');
@@ -57,6 +56,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  const FULL_LICENSE_KEY_RE = /^SWEEPR-[A-Z0-9]{2,8}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/i;
+  const PAIRING_TOKEN_RE = /^ptk_[A-Za-z0-9_-]{12,64}$/;
+  function createExtDeviceId() {
+    if (typeof crypto !== 'undefined') {
+      if (typeof crypto.randomUUID === 'function') {
+        return `ext_db_${crypto.randomUUID().replace(/-/g, '').slice(0, 16)}`;
+      }
+      if (typeof crypto.getRandomValues === 'function') {
+        const buf = new Uint8Array(8);
+        crypto.getRandomValues(buf);
+        return `ext_db_${Array.from(buf, (b) => b.toString(16).padStart(2, '0')).join('')}`;
+      }
+    }
+    return `ext_db_${Date.now().toString(16)}`;
+  }
+
   if (licenseKeyInput) {
     licenseKeyInput.addEventListener('input', () => {
       const raw = (licenseKeyInput.value || '').trim();
@@ -64,11 +79,11 @@ document.addEventListener('DOMContentLoaded', () => {
         draftLicenseKey: licenseKeyInput.value,
         licenseDrawerOpen: true
       });
-      if (/^\d{6}$/.test(raw) || /^SWEEPR-DB-[A-Z0-9-]{4,}$/i.test(raw) || /^ptk_[a-zA-Z0-9_-]{6,}$/i.test(raw)) {
+      if (FULL_LICENSE_KEY_RE.test(raw) || PAIRING_TOKEN_RE.test(raw)) {
         if (licenseFeedbackEl) {
           licenseFeedbackEl.style.display = 'block';
           licenseFeedbackEl.style.color = '#059669';
-          licenseFeedbackEl.textContent = 'Verifying code automatically...';
+          licenseFeedbackEl.textContent = 'Verifying license key automatically...';
         }
         handlePopupActivate();
       } else if (!raw && licenseFeedbackEl) {
@@ -115,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
     licenseFeedbackEl.style.color = '#d97706';
     licenseFeedbackEl.textContent =
       customMsg ||
-      '🔒 Unlock Pro or enter your 6-digit activation code above.';
+      '🔒 Unlock Pro or enter your SWEEPR-DB-XXXX-XXXX-XXXX license key above.';
     licenseKeyInput.focus();
   }
 
@@ -140,13 +155,35 @@ document.addEventListener('DOMContentLoaded', () => {
       siteBarEl.classList.add('paused');
       sitePauseBtn.className = 'switch-btn off';
       currentSiteSubEl.textContent = 'Protection paused — click card to resume';
-      if (pause5MinBtn) pause5MinBtn.innerHTML = '<span>Resume Protection</span>';
+      if (pause5MinBtn) {
+        pause5MinBtn.textContent = '';
+        const sp = document.createElement('span');
+        sp.textContent = 'Resume Protection';
+        pause5MinBtn.appendChild(sp);
+      }
     } else {
       siteBarEl.classList.remove('paused');
       sitePauseBtn.className = 'switch-btn';
       currentSiteSubEl.textContent = 'Click anywhere on card to pause site';
       if (pause5MinBtn) {
-        pause5MinBtn.innerHTML = '<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span>Pause 5m (Fix)</span>';
+        pause5MinBtn.textContent = '';
+        const ns = 'http://www.w3.org/2000/svg';
+        const svg = document.createElementNS(ns, 'svg');
+        svg.setAttribute('width', '15');
+        svg.setAttribute('height', '15');
+        svg.setAttribute('fill', 'none');
+        svg.setAttribute('stroke', 'currentColor');
+        svg.setAttribute('stroke-width', '2');
+        svg.setAttribute('viewBox', '0 0 24 24');
+        const p = document.createElementNS(ns, 'path');
+        p.setAttribute('stroke-linecap', 'round');
+        p.setAttribute('stroke-linejoin', 'round');
+        p.setAttribute('d', 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z');
+        svg.appendChild(p);
+        const sp = document.createElement('span');
+        sp.textContent = 'Pause 5m (Fix)';
+        pause5MinBtn.appendChild(svg);
+        pause5MinBtn.appendChild(sp);
       }
     }
 
@@ -258,6 +295,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     updateSiteBarState();
     renderStoreSafety(currentState);
+    renderPopupMenu(currentState);
 
     const reviewMilestoneBanner = document.getElementById('reviewMilestoneBanner');
     const reviewMilestoneText = document.getElementById('reviewMilestoneText');
@@ -653,16 +691,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function directVerifyFromPopup(rawKey) {
     const key = String(rawKey || '').trim();
-    if (!key || key.length < 6) {
-      return { ok: false, valid: false, error: 'Please enter a valid license key or 6-digit code.' };
+    if (!FULL_LICENSE_KEY_RE.test(key) && !PAIRING_TOKEN_RE.test(key)) {
+      return { ok: false, valid: false, error: 'Please enter a full SWEEPR-DB-XXXX-XXXX-XXXX license key or ptk_ pairing token.' };
     }
     const stored = await chrome.storage.local.get(['deviceId']);
     const deviceId =
       stored && typeof stored.deviceId === 'string' && stored.deviceId.startsWith('ext_db_')
         ? stored.deviceId
-        : `ext_db_${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36)}`;
+        : createExtDeviceId();
     if (key.startsWith('ptk_')) {
-      for (const origin of ['https://sweeprdeepblock.com', ...(isDevExtension ? ['http://localhost:3000'] : [])]) {
+      for (const origin of ['https://sweeprdeepblock.com']) {
         try {
           const r = await fetch(`${origin}/api/device-link/redeem`, {
             method: 'POST',
@@ -681,8 +719,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return { ok: false, valid: false, error: 'Invalid or expired website QR pairing code.' };
     }
     const endpoints = [
-      'https://sweeprdeepblock.com/api/license-verify',
-      ...(isDevExtension ? ['http://localhost:3000/api/license-verify'] : [])
+      'https://sweeprdeepblock.com/api/license-verify'
     ];
     for (const baseUrl of endpoints) {
       try {
@@ -768,7 +805,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!key) {
       licenseFeedbackEl.style.display = 'block';
       licenseFeedbackEl.style.color = '#ef4444';
-      licenseFeedbackEl.textContent = 'Please paste your license key or 6-digit code first.';
+      licenseFeedbackEl.textContent = 'Please paste your SWEEPR-DB-... license key or ptk_ pairing token first.';
+      return;
+    }
+    if (!FULL_LICENSE_KEY_RE.test(key) && !PAIRING_TOKEN_RE.test(key)) {
+      licenseFeedbackEl.style.display = 'block';
+      licenseFeedbackEl.style.color = '#ef4444';
+      licenseFeedbackEl.textContent = 'Enter your full SWEEPR-DB-XXXX-XXXX-XXXX license key or ptk_ pairing token.';
       return;
     }
     popupActivationInFlight = true;
@@ -853,12 +896,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const deviceId =
       stored && typeof stored.deviceId === 'string' && stored.deviceId.startsWith('ext_db_')
         ? stored.deviceId
-        : `ext_db_${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36)}`;
+        : createExtDeviceId();
     await chrome.storage.local.set({ deviceId });
 
     const baseOrigins = [
-      'https://sweeprdeepblock.com',
-      ...(isDevExtension ? ['http://localhost:3000'] : [])
+      'https://sweeprdeepblock.com'
     ];
     let challengeData = null;
     let activeOrigin = baseOrigins[0];
@@ -890,16 +932,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     popupQrSvg.textContent = '';
-    if (typeof challengeData.qr_svg === 'string' && challengeData.qr_svg.includes('<svg')) {
-      try {
-        const parsedDoc = new DOMParser().parseFromString(challengeData.qr_svg, 'image/svg+xml');
-        const parsedSvg = parsedDoc.querySelector('svg');
-        if (parsedSvg && !parsedDoc.querySelector('parsererror') && !parsedSvg.querySelector('script, foreignObject')) {
-          parsedSvg.style.width = '100%';
-          parsedSvg.style.height = '100%';
-          popupQrSvg.appendChild(document.importNode(parsedSvg, true));
-        }
-      } catch (e) {}
+    if (
+      typeof challengeData.qr_svg === 'string' &&
+      challengeData.qr_svg.trim().startsWith('<svg') &&
+      !/<script|foreignObject|\bon[a-z]+\s*=/i.test(challengeData.qr_svg)
+    ) {
+      const qrImg = document.createElement('img');
+      qrImg.alt = 'SWEEPR Pairing QR Code';
+      qrImg.style.width = '100%';
+      qrImg.style.height = '100%';
+      qrImg.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(challengeData.qr_svg);
+      popupQrSvg.appendChild(qrImg);
     }
     let rem = Number(challengeData.expires_in) || 120;
     popupQrStatus.textContent = `Scan with phone • Expires in ${rem}s`;
@@ -975,9 +1018,243 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  if (openDashboardBtn) openDashboardBtn.addEventListener('click', openFullDashboard);
-  if (openFullSessionsBtn) openFullSessionsBtn.addEventListener('click', openFullDashboard);
-  if (openCustomModulesBtn) openCustomModulesBtn.addEventListener('click', openFullDashboard);
+  // Slide-Over Popup Menu (Option 1): 6 Core Engines + Saved Sessions & Site Lists
+  const popupMainView = document.getElementById('popupMainView');
+  const popupMenuView = document.getElementById('popupMenuView');
+  const popupMenuBackBtn = document.getElementById('popupMenuBackBtn');
+  const popupOpenWelcomeBtn = document.getElementById('popupOpenWelcomeBtn');
+  const popupMenuTabEngines = document.getElementById('popupMenuTabEngines');
+  const popupMenuTabLists = document.getElementById('popupMenuTabLists');
+  const popupEnginesPane = document.getElementById('popupEnginesPane');
+  const popupListsPane = document.getElementById('popupListsPane');
+  const popupListTabsBar = document.getElementById('popupListTabsBar');
+  const popupSessionsList = document.getElementById('popupSessionsList');
+  const popupPausedList = document.getElementById('popupPausedList');
+  const popupPinnedList = document.getElementById('popupPinnedList');
+  const popupHiddenList = document.getElementById('popupHiddenList');
+
+  function setPopupMenuVisible(showMenu) {
+    if (!popupMainView || !popupMenuView) return;
+    popupMainView.style.display = showMenu ? 'none' : 'block';
+    popupMenuView.style.display = showMenu ? 'block' : 'none';
+    if (showMenu) renderPopupMenu(currentState);
+  }
+
+  function setPopupMenuTab(tabName) {
+    const isEngines = tabName !== 'lists';
+    if (popupMenuTabEngines) popupMenuTabEngines.classList.toggle('active', isEngines);
+    if (popupMenuTabLists) popupMenuTabLists.classList.toggle('active', !isEngines);
+    if (popupEnginesPane) popupEnginesPane.style.display = isEngines ? 'block' : 'none';
+    if (popupListsPane) popupListsPane.style.display = isEngines ? 'none' : 'block';
+  }
+
+  function setPopupListSubTab(subTab) {
+    if (popupListTabsBar) {
+      popupListTabsBar.querySelectorAll('[data-popup-list-tab]').forEach((b) => {
+        b.classList.toggle('active', b.getAttribute('data-popup-list-tab') === subTab);
+      });
+    }
+    const map = {
+      sessions: popupSessionsList,
+      paused: popupPausedList,
+      pinned: popupPinnedList,
+      hidden: popupHiddenList
+    };
+    Object.entries(map).forEach(([id, el]) => {
+      if (el) el.style.display = id === subTab ? 'block' : 'none';
+    });
+  }
+
+  function makeEmptyRow(text) {
+    const empty = document.createElement('div');
+    empty.className = 'popup-list-empty';
+    empty.textContent = text;
+    return empty;
+  }
+
+  function renderPopupMenu(state) {
+    const st = state || currentState || {};
+    const isPro = Boolean(st.proActive);
+    const settings = st.settings || {};
+
+    document.querySelectorAll('#popupEnginesPane [data-setting]').forEach((sw) => {
+      const key = sw.getAttribute('data-setting');
+      if (!isPro) {
+        sw.textContent = 'PRO';
+        sw.className = 'switch-btn pro-lock';
+        return;
+      }
+      sw.textContent = '';
+      sw.className = settings[key] !== false ? 'switch-btn' : 'switch-btn off';
+    });
+
+    const sessions = Array.isArray(st.cloudTabSessions) ? st.cloudTabSessions : [];
+    const pausedSites = Array.isArray(st.pausedSites) ? st.pausedSites : [];
+    const pinnedSites = Array.isArray(st.neverSnoozeSites) ? st.neverSnoozeSites : [];
+    const hiddenMap = (st.customHiddenSelectors && typeof st.customHiddenSelectors === 'object') ? st.customHiddenSelectors : {};
+    const hiddenDomains = Object.keys(hiddenMap).filter((d) => Array.isArray(hiddenMap[d]) && hiddenMap[d].length > 0);
+
+    if (popupSessionsList) {
+      popupSessionsList.textContent = '';
+      if (sessions.length === 0) {
+        popupSessionsList.appendChild(makeEmptyRow('No saved sessions yet. Press Alt+Shift+Z to snooze idle tabs.'));
+      } else {
+        sessions.forEach((sess) => {
+          const row = document.createElement('div');
+          row.className = 'popup-list-row';
+          const lbl = document.createElement('span');
+          lbl.textContent = `${sess.savedAt || 'Earlier'} (${Number(sess.tabCount) || 0} tabs)`;
+          const act = document.createElement('button');
+          act.type = 'button';
+          act.className = 'popup-mini-btn';
+          act.textContent = 'Reopen';
+          act.addEventListener('click', () => {
+            act.textContent = 'Opening...';
+            chrome.runtime.sendMessage({ type: 'RESTORE_SAVED_SESSION', sessionId: sess.id }, () => {
+              act.textContent = 'Reopened';
+            });
+          });
+          row.appendChild(lbl);
+          row.appendChild(act);
+          popupSessionsList.appendChild(row);
+        });
+      }
+    }
+
+    if (popupPausedList) {
+      popupPausedList.textContent = '';
+      if (pausedSites.length === 0) {
+        popupPausedList.appendChild(makeEmptyRow('Protection is active on all websites.'));
+      } else {
+        pausedSites.forEach((domain) => {
+          const row = document.createElement('div');
+          row.className = 'popup-list-row';
+          const lbl = document.createElement('span');
+          lbl.textContent = domain;
+          const act = document.createElement('button');
+          act.type = 'button';
+          act.className = 'popup-mini-btn';
+          act.textContent = 'Resume';
+          act.addEventListener('click', () => {
+            chrome.runtime.sendMessage({ type: 'TOGGLE_SITE_PAUSE', hostname: domain }, (res) => {
+              if (res && res.ok) {
+                currentState.pausedSites = res.pausedSites;
+                updateSiteBarState();
+                renderPopupMenu(currentState);
+              }
+            });
+          });
+          row.appendChild(lbl);
+          row.appendChild(act);
+          popupPausedList.appendChild(row);
+        });
+      }
+    }
+
+    if (popupPinnedList) {
+      popupPinnedList.textContent = '';
+      if (pinnedSites.length === 0) {
+        popupPinnedList.appendChild(makeEmptyRow('No sites pinned awake yet.'));
+      } else {
+        pinnedSites.forEach((domain) => {
+          const row = document.createElement('div');
+          row.className = 'popup-list-row';
+          const lbl = document.createElement('span');
+          lbl.textContent = domain;
+          const act = document.createElement('button');
+          act.type = 'button';
+          act.className = 'popup-mini-btn';
+          act.textContent = 'Allow Snooze';
+          act.addEventListener('click', () => {
+            chrome.runtime.sendMessage({ type: 'TOGGLE_NEVER_SNOOZE_SITE', hostname: domain }, (res) => {
+              if (res && res.ok) {
+                currentState.neverSnoozeSites = res.neverSnoozeSites;
+                updateSiteBarState();
+                renderPopupMenu(currentState);
+              }
+            });
+          });
+          row.appendChild(lbl);
+          row.appendChild(act);
+          popupPinnedList.appendChild(row);
+        });
+      }
+    }
+
+    if (popupHiddenList) {
+      popupHiddenList.textContent = '';
+      if (hiddenDomains.length === 0) {
+        popupHiddenList.appendChild(makeEmptyRow('No custom hidden elements yet.'));
+      } else {
+        hiddenDomains.forEach((domain) => {
+          const cnt = hiddenMap[domain].length;
+          const row = document.createElement('div');
+          row.className = 'popup-list-row';
+          const lbl = document.createElement('span');
+          lbl.textContent = `${domain} (${cnt})`;
+          const act = document.createElement('button');
+          act.type = 'button';
+          act.className = 'popup-mini-btn';
+          act.textContent = 'Restore';
+          act.addEventListener('click', () => {
+            delete hiddenMap[domain];
+            chrome.storage.local.set({ customHiddenSelectors: hiddenMap }, () => {
+              currentState.customHiddenSelectors = hiddenMap;
+              renderPopupMenu(currentState);
+            });
+          });
+          row.appendChild(lbl);
+          row.appendChild(act);
+          popupHiddenList.appendChild(row);
+        });
+      }
+    }
+  }
+
+  document.querySelectorAll('#popupEnginesPane [data-popup-setting]').forEach((row) => {
+    row.addEventListener('click', () => {
+      const settingKey = row.getAttribute('data-popup-setting');
+      if (!settingKey) return;
+      if (!currentState.proActive) {
+        setPopupMenuVisible(false);
+        openProRequiredPrompt();
+        return;
+      }
+      chrome.runtime.sendMessage({ type: 'TOGGLE_SETTING', settingKey }, (res) => {
+        if (res && res.requiresPro) {
+          currentState.proActive = false;
+          setPopupMenuVisible(false);
+          renderState(currentState);
+          openProRequiredPrompt(res.error);
+          return;
+        }
+        if (res && res.ok && res.settings) {
+          currentState.settings = res.settings;
+          renderPopupMenu(currentState);
+        }
+      });
+    });
+  });
+
+  if (popupMenuTabEngines) popupMenuTabEngines.addEventListener('click', () => setPopupMenuTab('engines'));
+  if (popupMenuTabLists) popupMenuTabLists.addEventListener('click', () => setPopupMenuTab('lists'));
+  if (popupMenuBackBtn) popupMenuBackBtn.addEventListener('click', () => setPopupMenuVisible(false));
+  if (popupOpenWelcomeBtn) popupOpenWelcomeBtn.addEventListener('click', openFullDashboard);
+  if (popupListTabsBar) {
+    popupListTabsBar.querySelectorAll('[data-popup-list-tab]').forEach((btn) => {
+      btn.addEventListener('click', () => setPopupListSubTab(btn.getAttribute('data-popup-list-tab')));
+    });
+  }
+
+  if (openDashboardBtn) openDashboardBtn.addEventListener('click', () => setPopupMenuVisible(true));
+  if (openFullSessionsBtn) {
+    openFullSessionsBtn.addEventListener('click', () => {
+      setPopupMenuTab('lists');
+      setPopupListSubTab('sessions');
+      setPopupMenuVisible(true);
+    });
+  }
+  if (openCustomModulesBtn) openCustomModulesBtn.addEventListener('click', () => setPopupMenuVisible(true));
 
   if (openTestLabBtn) {
     openTestLabBtn.addEventListener('click', () => {

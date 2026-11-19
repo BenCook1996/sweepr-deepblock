@@ -587,6 +587,169 @@
       box-shadow: inset 0 0 0 2px var(--emerald-500);
     }
 
+    /* Slide-Over Menu Sub-View (6 Core Engines + Saved Sessions & Site Lists) */
+    .popup-menu-nav {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+    .popup-back-btn,
+    .popup-help-btn {
+      min-height: 34px;
+      padding: 6px 10px;
+      border-radius: 10px;
+      border: 1px solid var(--border-muted);
+      background: #ffffff;
+      color: var(--text-secondary);
+      font-size: 11px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: border-color 120ms ease, color 120ms ease, background 120ms ease;
+    }
+    .popup-back-btn:hover,
+    .popup-help-btn:hover {
+      border-color: var(--emerald-500);
+      color: var(--emerald-700);
+      background: #f8fafc;
+    }
+    .popup-back-btn:focus-visible,
+    .popup-help-btn:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+    .popup-seg-bar {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px;
+      padding: 3px;
+      border-radius: 10px;
+      background: var(--surface-muted);
+      border: 1px solid var(--border-muted);
+    }
+    .popup-seg-btn {
+      min-height: 28px;
+      border: none;
+      border-radius: 7px;
+      background: transparent;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 120ms ease, color 120ms ease;
+    }
+    .popup-seg-btn.active {
+      background: #ffffff;
+      color: var(--text);
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
+    }
+    .popup-menu-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+    .popup-engine-row {
+      width: 100%;
+      padding: 8px 10px;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid var(--slate-100);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      text-align: left;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 120ms ease;
+    }
+    .popup-engine-row:last-child {
+      border-bottom: none;
+    }
+    .popup-engine-row:hover {
+      background: var(--slate-50);
+    }
+    .popup-engine-row:focus-visible {
+      outline: none;
+      box-shadow: inset 0 0 0 2px var(--emerald-500);
+    }
+    .popup-engine-title {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .popup-engine-sub {
+      font-size: 10px;
+      color: var(--muted);
+      margin-top: 1px;
+    }
+    .popup-list-tabs {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 3px;
+      padding: 4px;
+      background: var(--surface-muted);
+      border-bottom: 1px solid var(--border-muted);
+    }
+    .popup-list-tab {
+      min-height: 28px;
+      border: none;
+      border-radius: 7px;
+      background: transparent;
+      color: var(--muted);
+      font-size: 10.5px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+    }
+    .popup-list-tab.active {
+      background: #ffffff;
+      color: var(--text);
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
+    }
+    .popup-list-body {
+      padding: 8px 10px;
+      max-height: 250px;
+      overflow-y: auto;
+    }
+    .popup-list-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 6px 0;
+      border-bottom: 1px solid var(--slate-100);
+      font-size: 11px;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+    .popup-list-row:last-child {
+      border-bottom: none;
+    }
+    .popup-mini-btn {
+      background: #ecfdf5;
+      color: #047857;
+      border: 1px solid #a7f3d0;
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 10px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .popup-list-empty {
+      font-size: 11px;
+      color: var(--muted);
+      padding: 10px 2px;
+      text-align: center;
+    }
+
     /* Hidden compatibility nodes so popup.js telemetry/hooks never fail */
     .sr-compat {
       display: none !important;
@@ -621,6 +784,7 @@
   </div>
 
   <!-- ROW 1: Zero-Travel Top-Right Anchor — Full-Row Clickable Master Site Shield Card (336x60px) -->
+  <div id="popupMainView">
   <div id="siteBar" class="site-card">
     <div class="site-top-row has-kbd-tooltip" id="siteBarClickRow" role="switch" aria-checked="true" tabindex="0">
       <div class="site-brand-left">
@@ -688,16 +852,16 @@
     <!-- Progressive Disclosure License Input -->
     <div class="license-disclosure-wrap">
       <button type="button" id="toggleLicenseDrawerBtn" class="license-disclosure-btn">
-        <span>Already have a 6-digit code or key?</span>
+        <span>Have a Pro License Key?</span>
         <span style="color:#059669;font-weight:800;">▾</span>
       </button>
       <div id="licenseDrawer" class="drawer-box">
         <div class="license-label-row">
-          <label for="licenseKeyInput" class="license-input-label">6-Digit Code or License Key</label>
+          <label for="licenseKeyInput" class="license-input-label">Pro License Key</label>
           <span class="license-auto-hint">Auto-Unlocks</span>
         </div>
         <div class="license-input-row">
-          <input type="text" id="licenseKeyInput" class="license-input" placeholder="e.g. 482910 or SWEEPR-DB-..." autocomplete="off" spellcheck="false" />
+          <input type="text" id="licenseKeyInput" class="license-input" placeholder="SWEEPR-DB-XXXX-XXXX-XXXX or ptk_..." autocomplete="off" spellcheck="false" />
           <button type="button" id="pasteKeyBtn" class="paste-unlock-btn">Paste &amp; Unlock</button>
           <button type="button" id="activateKeyBtn" class="sr-compat">Unlock</button>
         </div>
@@ -768,6 +932,79 @@
   <div id="extUpdateBanner" style="display:none;margin-top:8px;padding:8px 10px;border-radius:10px;background:#ecfdf5;border:1px solid #10b981;align-items:center;justify-content:space-between;gap:8px;">
     <span id="extUpdateBannerText" style="font-size:10px;font-weight:800;color:#065f46;">New update available</span>
     <button type="button" id="extUpdateBannerBtn" style="background:#059669;color:#fff;border:none;border-radius:6px;padding:5px 8px;font-size:10px;font-weight:800;cursor:pointer;">Update Now</button>
+  </div>
+  </div>
+
+  <!-- Slide-Over Menu View (Option 1: 6 Core Engines + Saved Sessions & Site Lists) -->
+  <div id="popupMenuView" style="display:none;">
+    <div class="popup-menu-nav">
+      <button type="button" id="popupMenuBackBtn" class="popup-back-btn">&larr; Shield</button>
+      <div class="popup-seg-bar" role="tablist">
+        <button type="button" id="popupMenuTabEngines" class="popup-seg-btn active" role="tab">6 Engines</button>
+        <button type="button" id="popupMenuTabLists" class="popup-seg-btn" role="tab">Lists &amp; Tabs</button>
+      </div>
+      <button type="button" id="popupOpenWelcomeBtn" class="popup-help-btn" title="Activation &amp; Support">Help &#8599;</button>
+    </div>
+
+    <div id="popupEnginesPane" class="popup-menu-card">
+      <button type="button" class="popup-engine-row" data-popup-setting="adBlocking">
+        <div>
+          <div class="popup-engine-title">Video &amp; Page Ad Blocking</div>
+          <div class="popup-engine-sub">YouTube pre-roll &amp; anti-adblock cloaking</div>
+        </div>
+        <span class="switch-btn pro-lock" data-setting="adBlocking">PRO</span>
+      </button>
+      <button type="button" class="popup-engine-row" data-popup-setting="cookieAutoClose">
+        <div>
+          <div class="popup-engine-title">Auto-Decline Cookie Pop-Ups</div>
+          <div class="popup-engine-sub">Silently rejects CMP banners in &lt;50ms</div>
+        </div>
+        <span class="switch-btn pro-lock" data-setting="cookieAutoClose">PRO</span>
+      </button>
+      <button type="button" class="popup-engine-row" data-popup-setting="hideSearchSpam">
+        <div>
+          <div class="popup-engine-title">Hide Search Engine Spam</div>
+          <div class="popup-engine-sub">Cleans Google, Bing &amp; DuckDuckGo SERPs</div>
+        </div>
+        <span class="switch-btn pro-lock" data-setting="hideSearchSpam">PRO</span>
+      </button>
+      <button type="button" class="popup-engine-row" data-popup-setting="fakeShopAlerts">
+        <div>
+          <div class="popup-engine-title">Scam Online Shop Alerts</div>
+          <div class="popup-engine-sub">Warns on fake urgency countdown stores</div>
+        </div>
+        <span class="switch-btn pro-lock" data-setting="fakeShopAlerts">PRO</span>
+      </button>
+      <button type="button" class="popup-engine-row" data-popup-setting="trackerProtection">
+        <div>
+          <div class="popup-engine-title">Tracker-Free Links</div>
+          <div class="popup-engine-sub">Strips click tracking parameters</div>
+        </div>
+        <span class="switch-btn pro-lock" data-setting="trackerProtection">PRO</span>
+      </button>
+      <button type="button" class="popup-engine-row" data-popup-setting="silentMode">
+        <div>
+          <div class="popup-engine-title">100% Silent Mode</div>
+          <div class="popup-engine-sub">Hide on-page toasts &amp; counter badges</div>
+        </div>
+        <span class="switch-btn pro-lock" data-setting="silentMode">PRO</span>
+      </button>
+    </div>
+
+    <div id="popupListsPane" class="popup-menu-card" style="display:none;">
+      <div class="popup-list-tabs" id="popupListTabsBar">
+        <button type="button" class="popup-list-tab active" data-popup-list-tab="sessions">Sessions</button>
+        <button type="button" class="popup-list-tab" data-popup-list-tab="paused">Paused</button>
+        <button type="button" class="popup-list-tab" data-popup-list-tab="pinned">Pinned</button>
+        <button type="button" class="popup-list-tab" data-popup-list-tab="hidden">Hidden</button>
+      </div>
+      <div class="popup-list-body">
+        <div id="popupSessionsList"></div>
+        <div id="popupPausedList" style="display:none;"></div>
+        <div id="popupPinnedList" style="display:none;"></div>
+        <div id="popupHiddenList" style="display:none;"></div>
+      </div>
+    </div>
   </div>
 
   <!-- Non-Dismissible Mandatory Update Overlay -->
