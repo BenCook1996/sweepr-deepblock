@@ -584,6 +584,10 @@ async function flushCrmDlqNow() {
         const res = await crm.syncSubscription(item.payload);
         if (!res.ok && item.attempts < 5) enqueueCrmDlq(item);
         else flushed++;
+      } else if (item.type === 'billing_event' && item.payload) {
+        const res = await crm.reportBillingEvent(item.payload);
+        if (!res.ok && item.attempts < 5) enqueueCrmDlq(item);
+        else flushed++;
       } else if (item.type === 'raw_webhook' && item.rawBody) {
         const res = await fetch(`${SWEEPR_CRM_URL}/api/webhooks/stripe/deepblock`, {
           method: 'POST',
@@ -662,7 +666,7 @@ async function requestSweeprCrm(pathAndQuery, { method = 'GET', body } = {}) {
   }
 }
 
-async function syncSubscriptionWithSweeprCrm(acc, { amountCents, currency = 'gbp', ref, notes } = {}) {
+async function syncSubscriptionWithSweeprCrm(acc, { amountCents, currency = 'gbp', ref, notes, canceledAt, cancelReason, skipInvoice } = {}) {
   if (!acc || !acc.email) return acc;
   const syncPayload = {
     email: acc.email,
@@ -677,6 +681,9 @@ async function syncSubscriptionWithSweeprCrm(acc, { amountCents, currency = 'gbp
     activationCode: acc.activation_code,
     licenseKey: acc.licenseKey,
     cancelAtPeriodEnd: Boolean(acc.cancelAtPeriodEnd),
+    ...(canceledAt !== undefined ? { canceledAt } : {}),
+    ...(cancelReason ? { cancelReason } : {}),
+    ...(skipInvoice !== undefined ? { skipInvoice } : {}),
     addons: acc.ramTamerAddon ? ['ram_tamer'] : [],
     ref: ref || acc.ref || undefined,
     notes: notes || `Synced from SWEEPR Deepblock (${acc.licenseKey})`
@@ -725,6 +732,19 @@ async function syncSubscriptionWithSweeprCrm(acc, { amountCents, currency = 'gbp
     enqueueCrmDlq({ type: 'subscription_sync', payload: syncPayload });
   }
   return acc;
+}
+
+async function reportBillingEventWithDlq(payload) {
+  try {
+    const crmRes = await crm.reportBillingEvent(payload);
+    if (!crmRes.ok) {
+      enqueueCrmDlq({ type: 'billing_event', payload });
+    }
+    return crmRes;
+  } catch {
+    enqueueCrmDlq({ type: 'billing_event', payload });
+    return { ok: false };
+  }
 }
 
 const DATA_DIR = process.env.DATA_DIR ? path.resolve(process.env.DATA_DIR) : path.join(__dirname, 'data');
@@ -4044,22 +4064,84 @@ function getCachedDynamicDelta() {
           const metaPlan = obj.metadata?.plan || 'annual';
           const hasRamTamer = obj.metadata?.ram_tamer === 'true' || (obj.metadata?.addons || '').includes('ram_tamer');
           if (metaEmail || obj.id) {
+            const custId = typeof obj.customer === 'string' ? obj.customer : obj.customer?.id;
+            const cancelAtPeriodEnd = Boolean(obj.cancel_at_period_end);
+            const canceledAtSec = obj.canceled_at ?? obj.ended_at ?? undefined;
+            const cancelReason =
+              obj.cancellation_details?.comment ||
+              obj.cancellation_details?.feedback ||
+              obj.cancellation_details?.reason ||
+              undefined;
+            const isCancelOrSchedule = subStatus === 'canceled' || cancelAtPeriodEnd;
             const syncedAcc = upsertLocalAccount({
               email: metaEmail || `${obj.id}@stripe.sweeprdeepblock.com`,
-              stripeCustomerId: typeof obj.customer === 'string' ? obj.customer : obj.customer?.id,
+              stripeCustomerId: custId,
               subscriptionId: obj.id,
               plan: metaPlan,
               ramTamerAddon: hasRamTamer,
               status: subStatus
             });
-            syncedAcc.cancelAtPeriodEnd = Boolean(obj.cancel_at_period_end);
+            syncedAcc.cancelAtPeriodEnd = cancelAtPeriodEnd;
             await syncPayPalCustomerEmail(obj, syncedAcc);
             if (obj.metadata?.ref) syncedAcc.ref = obj.metadata.ref;
             await syncSubscriptionWithSweeprCrm(syncedAcc, {
               currency: obj.currency || 'gbp',
               ref: obj.metadata?.ref || syncedAcc.ref,
+              canceledAt: isCancelOrSchedule ? canceledAtSec : undefined,
+              cancelReason,
+              skipInvoice: isCancelOrSchedule,
               notes: `Stripe Webhook (${event.type}) ${obj.id}`
             });
+            if (event.type === 'customer.subscription.deleted' || subStatus === 'canceled') {
+              await reportBillingEventWithDlq({
+                email: syncedAcc.email,
+                accountId: syncedAcc.crm_account_id,
+                stripeCustomerId: custId,
+                eventType: 'cancellation_completed',
+                provider: 'stripe',
+                source: 'service_bridge',
+                externalEventId: `stripe_sub_canceled_${obj.id}`,
+                externalSubscriptionId: obj.id,
+                plan: syncedAcc.plan || metaPlan,
+                cancelAtPeriodEnd: false,
+                effectiveAt: canceledAtSec || Math.floor(Date.now() / 1000),
+                reason: cancelReason || 'subscription_deleted',
+                actor: 'stripe_webhook'
+              });
+            } else if (cancelAtPeriodEnd) {
+              const capSec = obj.cancel_at || obj.current_period_end || Math.floor(Date.now() / 1000);
+              await reportBillingEventWithDlq({
+                email: syncedAcc.email,
+                accountId: syncedAcc.crm_account_id,
+                stripeCustomerId: custId,
+                eventType: 'cancellation_scheduled',
+                provider: 'stripe',
+                source: 'service_bridge',
+                externalEventId: `stripe_sub_cap_${obj.id}_${capSec}`,
+                externalSubscriptionId: obj.id,
+                plan: syncedAcc.plan || metaPlan,
+                cancelAtPeriodEnd: true,
+                effectiveAt: capSec,
+                reason: cancelReason || 'cancel_at_period_end',
+                actor: 'stripe_webhook'
+              });
+            } else if (event.data?.previous_attributes?.cancel_at_period_end === true && subStatus === 'active') {
+              const periodEndSec = obj.current_period_end || Math.floor(Date.now() / 1000);
+              await reportBillingEventWithDlq({
+                email: syncedAcc.email,
+                accountId: syncedAcc.crm_account_id,
+                stripeCustomerId: custId,
+                eventType: 'cancellation_reactivated',
+                provider: 'stripe',
+                source: 'service_bridge',
+                externalEventId: `stripe_sub_react_${obj.id}_${periodEndSec}`,
+                externalSubscriptionId: obj.id,
+                plan: syncedAcc.plan || metaPlan,
+                cancelAtPeriodEnd: false,
+                reason: 'reactivated',
+                actor: 'stripe_webhook'
+              });
+            }
             syncedViaApi = true;
           }
         }
@@ -4091,6 +4173,68 @@ function getCachedDynamicDelta() {
             syncedViaApi = true;
           }
         }
+      } else if (event.type === 'charge.refunded' || event.type === 'charge.dispute.created') {
+        const isDispute = event.type === 'charge.dispute.created';
+        const custId = typeof obj.customer === 'string' ? obj.customer : obj.customer?.id;
+        const chargeEmail = (
+          obj.billing_details?.email ||
+          obj.receipt_email ||
+          obj.evidence_details?.customer_email_address ||
+          ''
+        ).trim().toLowerCase();
+        const targetAcc =
+          (chargeEmail ? accountsByEmail.get(chargeEmail) : null) ||
+          Array.from(accountsById.values()).find((a) => custId && a.stripe_customer_id === custId);
+        const chargeAmountCents = Number(obj.amount || 0);
+        const totalRefundedCents = isDispute ? Number(obj.amount || 0) : Number(obj.amount_refunded || 0);
+        const isFullRefund = isDispute || (chargeAmountCents > 0 ? totalRefundedCents >= chargeAmountCents : true);
+        if (targetAcc && isFullRefund) {
+          targetAcc.status = isDispute ? 'disputed' : 'canceled';
+          if (targetAcc.licenseKey) {
+            licenses.delete(targetAcc.licenseKey);
+            licenses.delete(String(targetAcc.licenseKey).toUpperCase());
+          }
+          if (targetAcc.activation_code) {
+            licenses.delete(targetAcc.activation_code);
+            licenses.delete(`SWEEPR-DB-${targetAcc.activation_code}`);
+            licenses.delete(`DEEPBLOCK-${targetAcc.activation_code}`);
+          }
+        }
+        const latestRefund = Array.isArray(obj.refunds?.data) ? obj.refunds.data[0] : null;
+        const addonMeta = String(obj.metadata?.addon || '').trim() || undefined;
+        const chargeId = isDispute
+          ? (typeof obj.charge === 'string' ? obj.charge : obj.charge?.id)
+          : obj.id;
+        await reportBillingEventWithDlq({
+          email: targetAcc?.email || chargeEmail || undefined,
+          accountId: targetAcc?.crm_account_id,
+          stripeCustomerId: custId || targetAcc?.stripe_customer_id,
+          eventType: isDispute
+            ? 'dispute_created'
+            : addonMeta
+              ? 'refund_addon'
+              : isFullRefund
+                ? 'refund_full'
+                : 'refund_partial',
+          provider: 'stripe',
+          source: 'service_bridge',
+          externalEventId: isDispute
+            ? `stripe_dispute_${obj.id}`
+            : latestRefund?.id
+              ? `stripe_refund_${latestRefund.id}`
+              : `stripe_charge_refund_${chargeId}_${totalRefundedCents}`,
+          externalChargeId: chargeId,
+          externalRefundId: isDispute ? obj.id : latestRefund?.id,
+          externalInvoiceId: typeof obj.invoice === 'string' ? obj.invoice : obj.invoice?.id,
+          plan: targetAcc?.plan,
+          amountCents: isDispute ? Number(obj.amount || 0) : Number(latestRefund?.amount || totalRefundedCents || 0),
+          chargeAmountCents: chargeAmountCents || undefined,
+          totalRefundedCents: isDispute ? undefined : totalRefundedCents,
+          addon: addonMeta,
+          currency: obj.currency || 'gbp',
+          reason: isDispute ? obj.reason || 'dispute_created' : latestRefund?.reason || 'refunded',
+          actor: 'stripe_webhook'
+        });
       }
       // Forward raw webhook to central sweepr-crm only for event types not already synced via syncSubscriptionWithSweeprCrm
       if (!syncedViaApi) {
@@ -4881,7 +5025,8 @@ function getCachedDynamicDelta() {
       record.cancelAtPeriodEnd = true;
     }
 
-    const crmCancel = await crm.portalCancel(effectiveLookup, false, keyOrCode);
+    const cancelReason = typeof body?.reason === 'string' ? body.reason.trim().slice(0, 500) : '';
+    const crmCancel = await crm.portalCancel(effectiveLookup, false, keyOrCode, cancelReason);
     if (crmCancel.ok && crmCancel.data && crmCancel.data.ok) {
       return sendJson(res, 200, {
         ok: true,

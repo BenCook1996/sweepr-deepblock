@@ -233,10 +233,46 @@ class SweeprCrmClient {
         activation_code: params.activationCode ?? params.activation_code,
         license_key: params.licenseKey ?? params.license_key,
         cancel_at_period_end: params.cancelAtPeriodEnd ?? params.cancel_at_period_end,
+        canceled_at: params.canceledAt ?? params.canceled_at,
+        cancel_reason: params.cancelReason ?? params.cancel_reason,
+        skip_invoice: params.skipInvoice ?? params.skip_invoice,
         ref: params.ref ?? params.affiliateCode ?? params.affiliate_code,
         affiliate_code: params.affiliateCode ?? params.affiliate_code ?? params.ref,
         addons: params.addons || [],
         notes: params.notes
+      })
+    });
+  }
+
+  async reportBillingEvent(params = {}) {
+    return this._fetchWithRetry(`${this.crmUrl}/api/crm/billing-events?project=${encodeURIComponent(this.projectId)}`, {
+      method: 'POST',
+      headers: this.headers(),
+      body: JSON.stringify({
+        project_id: this.projectId,
+        account_id: params.accountId ?? params.account_id,
+        email: params.email ?? params.account_email,
+        stripe_customer_id: params.stripeCustomerId ?? params.stripe_customer_id,
+        event_type: params.eventType ?? params.event_type,
+        provider: params.provider,
+        source: params.source || 'service_bridge',
+        external_event_id: params.externalEventId ?? params.external_event_id,
+        external_subscription_id: params.externalSubscriptionId ?? params.external_subscription_id ?? params.stripeSubscriptionId ?? params.stripe_subscription_id,
+        external_charge_id: params.externalChargeId ?? params.external_charge_id ?? params.chargeId ?? params.charge_id,
+        external_refund_id: params.externalRefundId ?? params.external_refund_id ?? params.refundId ?? params.refund_id,
+        external_invoice_id: params.externalInvoiceId ?? params.external_invoice_id ?? params.invoiceId ?? params.invoice_id,
+        plan: params.plan,
+        amount_cents: params.amountCents ?? params.amount_cents,
+        charge_amount_cents: params.chargeAmountCents ?? params.charge_amount_cents,
+        total_refunded_cents: params.totalRefundedCents ?? params.total_refunded_cents,
+        addon: params.addon,
+        currency: params.currency,
+        cancel_at_period_end: params.cancelAtPeriodEnd ?? params.cancel_at_period_end,
+        effective_at: params.effectiveAt ?? params.effective_at,
+        reason: params.reason,
+        actor: params.actor,
+        metadata: params.metadata,
+        created_at: params.createdAt ?? params.created_at
       })
     });
   }
@@ -272,7 +308,7 @@ class SweeprCrmClient {
     });
   }
 
-  async portalCancel(lookup, immediate = false, keyOrCode = '') {
+  async portalCancel(lookup, immediate = false, keyOrCode = '', reason = '') {
     return this._fetchWithRetry(`${this.crmUrl}/v1/license/portal-cancel`, {
       method: 'POST',
       headers: this.headers(),
@@ -280,7 +316,8 @@ class SweeprCrmClient {
         project_id: this.projectId,
         lookup,
         immediate,
-        ...(keyOrCode ? { key: keyOrCode } : {})
+        ...(keyOrCode ? { key: keyOrCode } : {}),
+        ...(reason ? { reason } : {})
       })
     });
   }
