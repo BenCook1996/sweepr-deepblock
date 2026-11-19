@@ -60,7 +60,9 @@ async function directVerifyAndPersistLicense(rawKey) {
             fakeShopAlerts: true,
             trackerProtection: true,
             adBlocking: true,
-            silentMode: true
+            silentMode: true,
+            autoRamTamer: true,
+            cloudTabSyncEnabled: true
           };
           if (hasChromeStorage) {
             await chrome.storage.local.set({
@@ -72,7 +74,6 @@ async function directVerifyAndPersistLicense(rawKey) {
               licenseDrawerOpen: false,
               subscriptionStatus: 'active',
               licenseVerifiedAt: Date.now(),
-              encryptedDnsEnabled: true,
               settings
             });
           }
@@ -114,7 +115,9 @@ async function directVerifyAndPersistLicense(rawKey) {
             fakeShopAlerts: true,
             trackerProtection: true,
             adBlocking: true,
-            silentMode: true
+            silentMode: true,
+            autoRamTamer: true,
+            cloudTabSyncEnabled: true
           };
           if (hasChromeStorage) {
             await chrome.storage.local.set({
@@ -128,14 +131,17 @@ async function directVerifyAndPersistLicense(rawKey) {
               crmAccountId: data.account_id || '',
               subscriptionStatus: subStatus,
               licenseVerifiedAt: Date.now(),
-              encryptedDnsEnabled: true,
               settings
             });
           }
           try {
             if (typeof chrome !== 'undefined' && chrome.declarativeNetRequest && chrome.declarativeNetRequest.updateEnabledRulesets) {
               await chrome.declarativeNetRequest.updateEnabledRulesets({
-                enableRulesetIds: ['ads_and_trackers', 'cryptominers_and_heavy_scripts'],
+                enableRulesetIds: [
+                  'ads_and_trackers',
+                  'tracker_param_stripping',
+                  'cryptominers_and_heavy_scripts'
+                ],
                 disableRulesetIds: []
               });
             }
@@ -170,6 +176,70 @@ document.addEventListener('DOMContentLoaded', () => {
   const inlineTrialBtn = document.getElementById('welcomeInlineTrialBtn');
   const feedback = document.getElementById('welcomeKeyFeedback');
   const badge = document.getElementById('welcomeStatusBadge');
+  const welcomeHostPermBanner = document.getElementById('welcomeHostPermBanner');
+  const welcomeGrantPermBtn = document.getElementById('welcomeGrantPermBtn');
+  const welcomeShortcutsFooter = document.getElementById('welcomeShortcutsFooter');
+
+  if (typeof chrome !== 'undefined' && chrome.i18n && typeof chrome.i18n.getMessage === 'function') {
+    document.querySelectorAll('[data-i18n]').forEach((el) => {
+      try {
+        const msg = chrome.i18n.getMessage(el.getAttribute('data-i18n'));
+        if (msg) el.textContent = msg;
+      } catch (e) {}
+    });
+  }
+
+  const isTouchWelcome =
+    (typeof window !== 'undefined' &&
+      window.matchMedia &&
+      window.matchMedia('(pointer: coarse)').matches) ||
+    (typeof navigator !== 'undefined' &&
+      /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent || ''));
+  if (welcomeShortcutsFooter) {
+    if (isTouchWelcome) {
+      welcomeShortcutsFooter.style.display = 'none';
+    } else if (typeof chrome !== 'undefined' && chrome.commands && typeof chrome.commands.getAll === 'function') {
+      try {
+        chrome.commands.getAll((cmds) => {
+          if (!Array.isArray(cmds)) return;
+          document.querySelectorAll('[data-kbd-cmd]').forEach((kbdEl) => {
+            const name = kbdEl.getAttribute('data-kbd-cmd');
+            const match = cmds.find((c) => c.name === name);
+            if (match && match.shortcut) {
+              kbdEl.textContent = match.shortcut;
+            } else if (kbdEl.parentElement) {
+              kbdEl.parentElement.style.display = 'none';
+            }
+          });
+        });
+      } catch (e) {}
+    }
+  }
+
+  if (typeof chrome !== 'undefined' && chrome.permissions && typeof chrome.permissions.contains === 'function' && welcomeHostPermBanner) {
+    try {
+      chrome.permissions.contains({ origins: ['<all_urls>'] }, (granted) => {
+        welcomeHostPermBanner.style.display = granted ? 'none' : 'flex';
+      });
+    } catch (e) {}
+  }
+
+  if (welcomeGrantPermBtn && typeof chrome !== 'undefined' && chrome.permissions && typeof chrome.permissions.request === 'function') {
+    welcomeGrantPermBtn.addEventListener('click', () => {
+      try {
+        chrome.permissions.request({ origins: ['<all_urls>'] }, (granted) => {
+          if (welcomeHostPermBanner) {
+            welcomeHostPermBanner.style.display = granted ? 'none' : 'flex';
+          }
+          if (hasChromeRuntime) {
+            try {
+              chrome.runtime.sendMessage({ type: 'CHECK_HOST_PERMISSIONS', granted: Boolean(granted) }, () => {});
+            } catch (e) {}
+          }
+        });
+      } catch (e) {}
+    });
+  }
 
   function setActiveWelcomeTab(tab, focusInput = false) {
     if (!tabKeyBtn || !tabBuyBtn || !panelKey || !panelBuy) return;
@@ -321,16 +391,43 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (pasteBtn && input) {
     pasteBtn.addEventListener('click', async () => {
+      let pastedText = '';
+      let clipboardFailed = false;
       try {
-        const text = await navigator.clipboard.readText();
-        if (text && text.trim()) {
-          input.value = text.trim();
+        pastedText = await navigator.clipboard.readText();
+      } catch (err1) {
+        clipboardFailed = true;
+        if (typeof chrome !== 'undefined' && chrome.permissions && typeof chrome.permissions.request === 'function') {
+          try {
+            const granted = await new Promise((resolve) => {
+              chrome.permissions.request({ permissions: ['clipboardRead'] }, (ok) => resolve(Boolean(ok)));
+            });
+            if (granted) {
+              pastedText = await navigator.clipboard.readText();
+              clipboardFailed = false;
+            }
+          } catch (err2) {
+            clipboardFailed = true;
+          }
         }
-      } catch (e) {}
+      }
+      if (pastedText && pastedText.trim()) {
+        input.value = pastedText.trim();
+        handleActivate();
+        return;
+      }
       if ((input.value || '').trim()) {
         handleActivate();
-      } else {
-        input.focus();
+        return;
+      }
+      input.focus();
+      if (clipboardFailed && feedback) {
+        const isMac = typeof navigator !== 'undefined' && /Mac|Darwin/i.test(navigator.platform || '');
+        feedback.style.display = 'block';
+        feedback.style.color = '#d97706';
+        feedback.textContent = isMac
+          ? 'Clipboard blocked — click the field and press ⌘V to paste your key.'
+          : 'Clipboard blocked — click the field and press Ctrl+V to paste your key.';
       }
     });
   }

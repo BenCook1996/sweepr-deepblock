@@ -380,20 +380,20 @@
     <div class="c3-bottom-deck">
       <button class="c3-location-card" onclick="switchTab('filters')">
         <div>
-          <div style="font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em">Active Filter Engine</div>
-          <div style="font-size:14.5px;font-weight:900;margin-top:2px">Video Ads, Trackers &amp; Scam Guard</div>
+          <div style="font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em">Mobile Companion Scope</div>
+          <div style="font-size:14.5px;font-weight:900;margin-top:2px">System-Wide Encrypted DNS Guard</div>
         </div>
-        <span class="c3-change-pill">Filters</span>
+        <span class="c3-change-pill">Details</span>
       </button>
 
       <div class="c3-metrics-row">
         <div class="c3-metric-box">
-          <span style="color:var(--muted)">Rules</span>
-          <span class="mono">340,000+</span>
+          <span style="color:var(--muted)">Protection</span>
+          <span class="mono">Encrypted DNS</span>
         </div>
         <div class="c3-metric-box">
-          <span style="color:var(--muted)">Mode</span>
-          <span class="mono" style="color:var(--accent-fg)">Zero-Latency</span>
+          <span style="color:var(--muted)">Protocol</span>
+          <span class="mono" style="color:var(--accent-fg)">DoH / DoT</span>
         </div>
       </div>
     </div>
@@ -401,23 +401,21 @@
 
   <section id="view-filters" class="view">
     <div class="card">
-      <div style="font-size:17px;font-weight:900;margin-bottom:8px">Active Filter Modules</div>
-      <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);font-size:13.5px;font-weight:700"><span>Video &amp; Pre-Roll Ad Blocker</span><span style="color:var(--accent-fg)">ACTIVE</span></div>
-      <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);font-size:13.5px;font-weight:700"><span>Cookie Consent Auto-Closer</span><span style="color:var(--accent-fg)">ACTIVE</span></div>
-      <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);font-size:13.5px;font-weight:700"><span>Fake Shop &amp; Phishing Guard</span><span style="color:var(--accent-fg)">ACTIVE</span></div>
-      <div style="display:flex;justify-content:space-between;padding:12px 0;font-size:13.5px;font-weight:700"><span>RAM &amp; Tab Memory Tamer</span><span style="color:var(--accent-fg)">ACTIVE</span></div>
+      <div style="font-size:17px;font-weight:900;margin-bottom:8px">Mobile &amp; Browser Protection</div>
+      <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);font-size:13.5px;font-weight:700"><span>DNS Ad &amp; Tracker Domain Blocking</span><span style="color:var(--accent-fg)">DoH / DoT</span></div>
+      <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);font-size:13.5px;font-weight:700"><span>Malware &amp; Phishing Domain Filter</span><span style="color:var(--accent-fg)">DoH / DoT</span></div>
+      <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);font-size:13.5px;font-weight:700"><span>Cookie Pop-ups &amp; Search Cleanser</span><span style="color:var(--muted)">Browser Extension</span></div>
+      <div style="display:flex;justify-content:space-between;padding:12px 0;font-size:13.5px;font-weight:700"><span>YouTube Ad Shield &amp; Tab Hibernation</span><span style="color:var(--muted)">Desktop Extension</span></div>
     </div>
 
     <details class="card" style="padding:14px 16px">
       <summary style="cursor:pointer;font-size:13.5px;font-weight:800;display:flex;justify-content:space-between;align-items:center;list-style:none">
-        <span>Site-Specific Stream &amp; RAM Shields</span>
-        <span class="mono" style="font-size:11px;color:var(--accent-fg)">7 Active ▾</span>
+        <span>How Mobile DNS Shield Differs From Desktop</span>
+        <span class="mono" style="font-size:11px;color:var(--accent-fg)">Info ▾</span>
       </summary>
-      <div style="margin-top:10px;font-size:12px;color:var(--muted);display:flex;flex-direction:column;gap:6px;line-height:1.4">
-        <div>• <strong>Fandom Wiki Video &amp; RAM Tamer:</strong> Blocks autoplay video player &amp; unloads rail bloat</div>
-        <div>• <strong>Crunchyroll &amp; SoundCloud:</strong> Pre-roll, mid-roll &amp; audio interruption blocker</div>
-        <div>• <strong>Roblox Web Memory Saver:</strong> Strips ad iframes &amp; telemetry beacons</div>
-        <div>• <strong>TikTok, Reddit &amp; Pinterest:</strong> Cookie auto-reject, promoted post &amp; signup-wall bypass</div>
+      <div style="margin-top:10px;font-size:12px;color:var(--muted);display:flex;flex-direction:column;gap:6px;line-height:1.45">
+        <div>• <strong>System Encrypted DNS (iOS &amp; Android):</strong> Blocks ad networks, tracking domains, and phishing hosts across apps and browsers.</div>
+        <div>• <strong>Cosmetic &amp; Script Rules:</strong> Full page element hiding, cookie auto-reject, YouTube skipper, and tab hibernation require the Chrome, Edge, Opera, or Firefox extension (Firefox on Android supports MV3 add-ons directly).</div>
       </div>
     </details>
 
@@ -429,8 +427,8 @@
       <div style="margin-top:10px;font-size:12px;color:var(--muted);line-height:1.45">
         <p id="detectedBrowserNote" style="margin-bottom:8px">Native MV3 &amp; WebExtension builds verified for Chromium and Firefox forks:</p>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-          <a href="/sweepr-deepblock-extension.zip" style="text-decoration:none;text-align:center;padding:9px;border-radius:11px;background:var(--accent-soft);color:var(--accent-fg);font-weight:800;font-size:11.5px">Thorium / Arc / Kiwi / Orion (.zip)</a>
-          <a href="/sweepr-deepblock-firefox.xpi" style="text-decoration:none;text-align:center;padding:9px;border-radius:11px;background:var(--card-sub);color:var(--text);font-weight:800;font-size:11.5px">Floorp / Zen / LibreWolf (.xpi)</a>
+          <a href="/sweepr-deepblock-extension.zip" style="text-decoration:none;text-align:center;padding:9px;border-radius:11px;background:var(--accent-soft);color:var(--accent-fg);font-weight:800;font-size:11.5px">Thorium / Arc / Kiwi (.zip)</a>
+          <a href="https://addons.mozilla.org/en-US/firefox/addon/sweepr-deepblock/" target="_blank" rel="noopener" style="text-decoration:none;text-align:center;padding:9px;border-radius:11px;background:var(--card-sub);color:var(--text);font-weight:800;font-size:11.5px">Firefox &amp; Android Add-on ↗</a>
         </div>
       </div>
     </details>
@@ -438,17 +436,17 @@
 
   <section id="view-dns" class="view">
     <div class="card">
-      <div style="font-size:17px;font-weight:900;margin-bottom:6px">Private DNS Shield Setup</div>
-      <p style="font-size:12.5px;color:var(--muted);line-height:1.45">Tap below to copy the SWEEPR Deepblock Private DNS hostname and open system network settings.</p>
-      <button class="btn-primary" onclick="enableAndroidDnsShield()">1-Tap Copy DNS &amp; Open Settings</button>
+      <div id="dnsSetupTitle" style="font-size:17px;font-weight:900;margin-bottom:6px">Private DNS Shield Setup</div>
+      <p id="dnsSetupDesc" style="font-size:12.5px;color:var(--muted);line-height:1.45">Tap below to copy the SWEEPR Deepblock Private DNS hostname and open system network settings.</p>
+      <button id="dnsSetupBtn" class="btn-primary" onclick="enableAndroidDnsShield()">1-Tap Copy DNS &amp; Open Settings</button>
     </div>
   </section>
 
   <section id="view-account" class="view">
     <div class="card">
       <div style="font-size:16px;font-weight:900">Activate Pro Device</div>
-      <p style="font-size:12px;color:var(--muted);margin-top:4px;line-height:1.45">Sign in at <strong>sweeprdeepblock.com/login</strong> to scan your QR code or paste your <code>ptk_...</code> pairing code or license key below (up to 3 devices).</p>
-      <input id="codeInput" class="input mono" placeholder="SWEEPR-DB-XXXX or ptk_..." autocomplete="off" />
+      <p style="font-size:12px;color:var(--muted);margin-top:4px;line-height:1.45">Sign in at <strong>sweeprdeepblock.com/login</strong> to scan your QR code or paste your <code>ptk_...</code> pairing code or license key below (up to 4 devices).</p>
+      <input id="codeInput" class="input mono" placeholder="SWEEPR-DB-XXXX-XXXX-XXXX or ptk_..." autocomplete="off" />
       <input id="emailInput" class="input" type="email" placeholder="Account Email" autocomplete="email" />
       <button class="btn-primary" onclick="activateDeepblock()">Activate Pro on This Device</button>
       <div id="actMsg" style="font-size:12px;font-weight:700;margin-top:10px"></div>
@@ -514,11 +512,23 @@ function switchTab(tab) {
 function getDeviceId() {
   let id = localStorage.getItem('sweepr_db_and_id');
   if (!id) {
-    id = 'db_mob_' + Math.random().toString(36).slice(2, 12) + Date.now().toString(36);
+    if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+      id = 'db_mob_' + window.crypto.randomUUID().replace(/-/g, '').slice(0, 16);
+    } else if (window.crypto && window.crypto.getRandomValues) {
+      const buf = new Uint8Array(10);
+      window.crypto.getRandomValues(buf);
+      id = 'db_mob_' + Array.from(buf, (b) => b.toString(16).padStart(2, '0')).join('');
+    } else {
+      id = 'db_mob_' + Date.now().toString(36);
+    }
     localStorage.setItem('sweepr_db_and_id', id);
   }
   return id;
 }
+
+const isIOSDevice =
+  /iPhone|iPad|iPod/i.test(navigator.userAgent || '') ||
+  (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
 function enableAndroidDnsShield() {
   const key = localStorage.getItem('sweepr_db_key');
@@ -529,11 +539,24 @@ function enableAndroidDnsShield() {
     switchTab('account');
     return;
   }
+  if (isIOSDevice) {
+    const profileUrl = '/download/sweepr-deepblock.mobileconfig';
+    const link = document.createElement('a');
+    link.href = profileUrl;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    document.getElementById('orbLabel').textContent = 'PROFILE READY';
+    document.getElementById('statusHeadline').textContent = 'Install Apple DNS Profile';
+    msg.style.color = 'var(--accent-fg)';
+    msg.textContent = 'Profile downloaded! Open Settings -> General -> VPN & Device Management -> Install.';
+    return;
+  }
   if (window.SweeprAndroid) {
     window.SweeprAndroid.copyText('dns.adguard-dns.com');
     window.SweeprAndroid.openWirelessSettings();
   } else if (navigator.clipboard) {
-    navigator.clipboard.writeText('dns.adguard-dns.com');
+    navigator.clipboard.writeText('dns.adguard-dns.com').catch(() => {});
   }
   document.getElementById('orbLabel').textContent = 'PROTECTED';
   document.getElementById('statusHeadline').textContent = 'Your Browsing is Ad-Free';
@@ -541,30 +564,41 @@ function enableAndroidDnsShield() {
   msg.textContent = 'Copied dns.adguard-dns.com! Paste in Network -> Private DNS and Save.';
 }
 
+const LICENSE_KEY_RE = /^SWEEPR-[A-Z0-9]{2,8}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/i;
+const OFFLINE_GRACE_MS = 7 * 24 * 60 * 60 * 1000;
+
 async function activateDeepblock() {
   const raw = (document.getElementById('codeInput').value || '').trim();
   const email = (document.getElementById('emailInput').value || '').trim();
   const msg = document.getElementById('actMsg');
-  if (!raw) { msg.style.color='#ef4444'; msg.textContent='Enter your license key or ptk_ pairing code.'; return; }
+  if (!raw) { msg.style.color='#ef4444'; msg.textContent='Enter your SWEEPR-DB-XXXX-XXXX-XXXX license key or ptk_ pairing token.'; return; }
+  const ptkMatch = raw.match(/ptk_[A-Za-z0-9_-]{12,64}/);
+  if (!ptkMatch && !LICENSE_KEY_RE.test(raw)) {
+    msg.style.color='#ef4444';
+    msg.textContent='Enter your full SWEEPR-DB-XXXX-XXXX-XXXX license key or a ptk_ pairing token.';
+    return;
+  }
   msg.style.color='var(--muted)'; msg.textContent='Verifying subscription...';
+  const mobPlatform = isIOSDevice ? 'ios' : 'android';
+  const mobDeviceName = isIOSDevice ? 'iPhone / iPad' : 'Android Phone';
   try {
-    const ptkMatch = raw.match(/ptk_[A-Za-z0-9_-]{12,64}/);
-    const url = ptkMatch ? (API_BASE + '/api/device-link/redeem-token') : (API_BASE + '/api/verify-key');
+    const url = ptkMatch ? (API_BASE + '/api/device-link/redeem') : (API_BASE + '/api/license-verify');
     const payload = ptkMatch
-      ? { token: ptkMatch[0], device_id: getDeviceId(), device_name: 'Mobile Phone', platform: 'android' }
-      : { key: raw, email, device_id: getDeviceId(), device_name: 'Mobile Phone', os: 'android' };
+      ? { token: ptkMatch[0], device_id: getDeviceId(), device_name: mobDeviceName, platform: mobPlatform }
+      : { key: raw.toUpperCase(), email, device_id: getDeviceId(), device_name: mobDeviceName, os: mobPlatform };
     const res = await fetch(url, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
     const data = await res.json();
     if (res.ok && (data.ok || data.valid)) {
-      const k = data.license_key || data.licenseKey || raw;
+      const k = data.license_key || data.licenseKey || raw.toUpperCase();
       localStorage.setItem('sweepr_db_key', k);
+      localStorage.setItem('sweepr_db_verified_at', String(Date.now()));
       document.getElementById('proBadge').textContent = 'PRO ACTIVE';
       msg.style.color='var(--accent-fg)';
       msg.textContent='Pro Activated! Returning to Power Orb...';
       setTimeout(() => switchTab('home'), 700);
     } else {
       msg.style.color='#ef4444';
-      msg.textContent = data.message || data.error || 'Invalid activation code.';
+      msg.textContent = data.message || data.error || 'License key is not active or could not be verified.';
     }
   } catch (e) {
     msg.style.color='#ef4444';
@@ -573,6 +607,14 @@ async function activateDeepblock() {
 }
 
 (function init() {
+  if (isIOSDevice) {
+    const dnsTitle = document.getElementById('dnsSetupTitle');
+    const dnsDesc = document.getElementById('dnsSetupDesc');
+    const dnsBtn = document.getElementById('dnsSetupBtn');
+    if (dnsTitle) dnsTitle.textContent = 'Apple Encrypted DNS Shield Setup';
+    if (dnsDesc) dnsDesc.textContent = 'Tap below to install the signed Apple Encrypted DNS Profile (DoH), then confirm in Settings -> General -> VPN & Device Management.';
+    if (dnsBtn) dnsBtn.textContent = 'Install Apple DNS Shield Profile (.mobileconfig)';
+  }
   const ua = navigator.userAgent || '';
   const bBadge = document.getElementById('detectedBrowserBadge');
   const bNote = document.getElementById('detectedBrowserNote');
@@ -587,20 +629,29 @@ async function activateDeepblock() {
   const savedTheme = localStorage.getItem('sweepr_db_theme') || 'light';
   applyTheme(savedTheme);
   const savedKey = localStorage.getItem('sweepr_db_key');
+  const verifiedAt = Number(localStorage.getItem('sweepr_db_verified_at') || 0);
   if (savedKey) {
     document.getElementById('codeInput').value = savedKey;
     fetch(API_BASE + '/api/license-verify?key=' + encodeURIComponent(savedKey) + '&device_id=' + encodeURIComponent(getDeviceId()))
-      .then((r) => r.json())
-      .then((d) => {
-        if (d && d.valid) {
+      .then(async (r) => ({ status: r.status, data: await r.json().catch(() => ({})) }))
+      .then(({ status, data }) => {
+        if (status >= 200 && status < 300 && data && data.valid) {
+          localStorage.setItem('sweepr_db_verified_at', String(Date.now()));
+          document.getElementById('proBadge').textContent = 'PRO ACTIVE';
+        } else if (status === 403 || status === 404 || data?.error === 'subscription_inactive' || data?.reason === 'subscription_inactive') {
+          localStorage.removeItem('sweepr_db_key');
+          localStorage.removeItem('sweepr_db_verified_at');
+          document.getElementById('proBadge').textContent = 'FREE MODE';
+        } else if (verifiedAt && (Date.now() - verifiedAt) < OFFLINE_GRACE_MS) {
           document.getElementById('proBadge').textContent = 'PRO ACTIVE';
         } else {
-          localStorage.removeItem('sweepr_db_key');
           document.getElementById('proBadge').textContent = 'FREE MODE';
         }
       })
       .catch(() => {
-        document.getElementById('proBadge').textContent = 'PRO ACTIVE';
+        if (!verifiedAt || (Date.now() - verifiedAt) < OFFLINE_GRACE_MS) {
+          document.getElementById('proBadge').textContent = 'PRO ACTIVE';
+        }
       });
   }
 })();

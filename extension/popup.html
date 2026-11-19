@@ -755,12 +755,95 @@
       display: none !important;
     }
 
+    .host-perm-banner {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: #fffbeb;
+      border: 1px solid #f59e0b;
+      color: #92400e;
+      font-size: 10.5px;
+      font-weight: 700;
+    }
+    .host-perm-btn {
+      background: #d97706;
+      color: #ffffff;
+      border: none;
+      border-radius: 7px;
+      padding: 6px 10px;
+      font-size: 10px;
+      font-weight: 800;
+      font-family: inherit;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .upgrade-subtitle {
+      font-size: 10.5px;
+      color: var(--muted);
+      text-align: center;
+      font-weight: 600;
+      margin-top: 6px;
+      line-height: 1.35;
+    }
+    .upgrade-subtitle:empty {
+      display: none;
+    }
+    .popup-qr-toggle-btn {
+      margin-top: 8px;
+      width: 100%;
+      padding: 7px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border-muted);
+      background: #f8fafc;
+      color: var(--text-secondary);
+      font-size: 10.5px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+    }
+    .popup-qr-toggle-btn:hover {
+      border-color: #059669;
+      color: #047857;
+      background: #ecfdf5;
+    }
+    .popup-qr-box {
+      display: none;
+      margin-top: 8px;
+      padding: 10px;
+      border-radius: 8px;
+      background: #f8fafc;
+      border: 1px solid var(--border-muted);
+      text-align: center;
+    }
+    .popup-qr-svg {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 6px;
+    }
+    .popup-qr-svg svg {
+      width: 136px;
+      height: 136px;
+      border-radius: 6px;
+      background: #ffffff;
+      padding: 4px;
+      border: 1px solid var(--border-muted);
+    }
+
     @media (pointer: coarse), (max-width: 480px) {
       body {
         width: 100%;
         min-width: 320px;
         max-width: 430px;
         padding: 14px;
+      }
+      .kbd-tooltip,
+      .kbd-badge {
+        display: none !important;
       }
     }
   </style>
@@ -779,12 +862,16 @@
       <span>SWEEPR <span style="color:#059669">Deepblock</span></span>
     </div>
     <div class="header-actions">
-      <span id="tierBadge" class="status-pill">Free Preview</span>
+      <span id="tierBadge" class="status-pill" data-i18n="uiFreePreview">Free Preview</span>
     </div>
   </div>
 
   <!-- ROW 1: Zero-Travel Top-Right Anchor — Full-Row Clickable Master Site Shield Card (336x60px) -->
   <div id="popupMainView">
+  <div id="hostPermBanner" class="host-perm-banner">
+    <span>Site access needed for page ad &amp; cookie blocking</span>
+    <button type="button" id="grantHostPermBtn" class="host-perm-btn" data-i18n="uiGrantPermissions">Grant Site Access</button>
+  </div>
   <div id="siteBar" class="site-card">
     <div class="site-top-row has-kbd-tooltip" id="siteBarClickRow" role="switch" aria-checked="true" tabindex="0">
       <div class="site-brand-left">
@@ -807,12 +894,12 @@
   <div class="escape-row">
     <button type="button" id="pause5MinBtn" class="btn-chip has-kbd-tooltip">
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-      <span>Pause 5m (Fix)</span>
+      <span data-i18n="uiPause5m">Pause 5m (Fix)</span>
       <span class="kbd-tooltip" role="tooltip">Reloads page paused for 5m</span>
     </button>
     <button type="button" id="startZapperBtn" class="btn-chip has-kbd-tooltip">
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-      <span>Hide Element</span>
+      <span data-i18n="uiHideElement">Hide Element</span>
       <span class="kbd-tooltip" role="tooltip">Click element to hide <kbd class="kbd-badge">Esc</kbd></span>
     </button>
   </div>
@@ -820,11 +907,11 @@
   <!-- ROW 3: Tabular Telemetry Row -->
   <div id="storeSafetyCard" class="telemetry-pill-row">
     <div class="telemetry-metrics">
-      <span class="telemetry-item"><span class="stat-num" id="adsCount">0</span> Ads</span>
+      <span class="telemetry-item"><span class="stat-num" id="adsCount">0</span> <span id="adsMetricLabel">Ads</span></span>
       <span class="telemetry-divider">·</span>
       <span class="telemetry-item"><span class="stat-num" id="cookieCount">0</span> Cookies</span>
       <span class="telemetry-divider">·</span>
-      <span class="telemetry-item" id="ramHeadlineMetric" style="color:#059669;font-weight:800;">Fast</span>
+      <span class="telemetry-item" id="ramHeadlineMetric" style="color:#059669;font-weight:800;">0 tabs</span>
     </div>
     <span class="store-pill" id="storeSafetyPill">Verified Safe</span>
     <!-- Hidden compatibility nodes -->
@@ -845,14 +932,14 @@
   <div class="action-stage">
     <!-- Primary Green CTA (Zero prices or amounts) -->
     <button type="button" id="upgradeCtaBtn" class="btn-go">
-      <span>Unlock Full Pro Protection</span>
+      <span data-i18n="uiUnlockPro">Unlock Full Pro Protection</span>
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
     </button>
 
     <!-- Progressive Disclosure License Input -->
     <div class="license-disclosure-wrap">
       <button type="button" id="toggleLicenseDrawerBtn" class="license-disclosure-btn">
-        <span>Have a Pro License Key?</span>
+        <span data-i18n="uiHaveKey">Have a Pro License Key?</span>
         <span style="color:#059669;font-weight:800;">▾</span>
       </button>
       <div id="licenseDrawer" class="drawer-box">
@@ -866,14 +953,20 @@
           <button type="button" id="activateKeyBtn" class="sr-compat">Unlock</button>
         </div>
         <div id="licenseFeedback" style="font-size:10px;color:#059669;font-weight:700;margin-top:5px;display:none;"></div>
+        <button type="button" id="popupShowQrBtn" class="popup-qr-toggle-btn">Or scan QR code to pair another device</button>
+        <div id="popupQrBox" class="popup-qr-box">
+          <div id="popupQrSvg" class="popup-qr-svg"></div>
+          <div id="popupQrStatus" style="font-size:10px;color:var(--muted);font-weight:700;margin-bottom:6px;">Scan with another signed-in device</div>
+          <button type="button" id="popupRefreshQrBtn" class="popup-mini-btn">Refresh QR</button>
+        </div>
       </div>
     </div>
-    <div id="upgradeSubtitleText" class="sr-compat"></div>
+    <div id="upgradeSubtitleText" class="upgrade-subtitle"></div>
 
     <!-- Pro Active Single Action: 1-Click Speed Boost (Zero prices or amounts in green button) -->
     <button type="button" id="reclaimRamBtn" class="btn-ram-boost has-kbd-tooltip">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-      <span>Boost Browser Speed Now</span>
+      <span data-i18n="uiBoostSpeed">Boost Browser Speed Now</span>
       <span class="kbd-tooltip" role="tooltip">Snooze inactive tabs <kbd class="kbd-badge">Alt+Shift+Z</kbd></span>
     </button>
   </div>
@@ -909,11 +1002,11 @@
   <div class="footer-links">
     <button type="button" id="openCustomModulesBtn" class="link-btn">
       <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
-      <span>Settings &amp; Tabs</span>
+      <span data-i18n="uiSettingsTabs">Settings &amp; Tabs</span>
     </button>
     <button type="button" id="openTestLabBtn" class="link-btn">
       <svg width="14" height="14" fill="none" stroke="#059669" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-      <span>Live Shield Test</span>
+      <span data-i18n="uiLiveTest">Live Shield Test</span>
     </button>
     <button type="button" id="openDashboardBtn" class="sr-compat">Settings</button>
     <button type="button" id="openFullSessionsBtn" class="sr-compat">Restore Tabs</button>
@@ -940,7 +1033,7 @@
     <div class="popup-menu-nav">
       <button type="button" id="popupMenuBackBtn" class="popup-back-btn">&larr; Shield</button>
       <div class="popup-seg-bar" role="tablist">
-        <button type="button" id="popupMenuTabEngines" class="popup-seg-btn active" role="tab">6 Engines</button>
+        <button type="button" id="popupMenuTabEngines" class="popup-seg-btn active" role="tab">Engines</button>
         <button type="button" id="popupMenuTabLists" class="popup-seg-btn" role="tab">Lists &amp; Tabs</button>
       </div>
       <button type="button" id="popupOpenWelcomeBtn" class="popup-help-btn" title="Activation &amp; Support">Help &#8599;</button>
@@ -988,6 +1081,20 @@
           <div class="popup-engine-sub">Hide on-page toasts &amp; counter badges</div>
         </div>
         <span class="switch-btn pro-lock" data-setting="silentMode">PRO</span>
+      </button>
+      <button type="button" class="popup-engine-row" data-popup-setting="autoRamTamer" id="popupAutoRamRow">
+        <div>
+          <div class="popup-engine-title">Auto-Hibernate Idle Tabs</div>
+          <div class="popup-engine-sub">Snoozes inactive tabs to free RAM</div>
+        </div>
+        <span class="switch-btn pro-lock" data-setting="autoRamTamer">PRO</span>
+      </button>
+      <button type="button" class="popup-engine-row" data-popup-setting="cloudTabSyncEnabled">
+        <div>
+          <div class="popup-engine-title">Sync Saved Tab Sessions</div>
+          <div class="popup-engine-sub">Backs up saved tabs to browser sync</div>
+        </div>
+        <span class="switch-btn pro-lock" data-setting="cloudTabSyncEnabled">PRO</span>
       </button>
     </div>
 

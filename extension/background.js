@@ -1,14 +1,7 @@
 // SWEEPR Deepblock — Manifest V3 Background Service Worker (v1.2 UX & Architecture Audited)
-const isDevExtension = typeof chrome !== 'undefined' && chrome.runtime && !('update_url' in chrome.runtime.getManifest());
 const LICENSE_VERIFY_ENDPOINTS = [
   'https://sweeprdeepblock.com/api/license-verify',
-  'https://sweepr-crm-production.up.railway.app/v1/license/verify-key?project=deepblock',
-  ...(isDevExtension
-    ? [
-        'http://localhost:8787/v1/license/verify-key?project=deepblock',
-        'http://localhost:3000/api/license-verify'
-      ]
-    : [])
+  'https://sweepr-crm-production.up.railway.app/v1/license/verify-key?project=deepblock'
 ];
 
 const PRO_ONLY_SETTINGS = new Set([
@@ -18,7 +11,8 @@ const PRO_ONLY_SETTINGS = new Set([
   'fakeShopAlerts',
   'trackerProtection',
   'silentMode',
-  'autoRamTamer'
+  'autoRamTamer',
+  'cloudTabSyncEnabled'
 ]);
 
 const scamDetectedTabs = new Set();
@@ -27,6 +21,30 @@ const tabLastActiveAt = new Map();
 const AUTO_RAM_IDLE_MS = 10 * 60 * 1000; // 10 minutes idle threshold for automatic background snooze
 const OFFLINE_GRACE_MS = 7 * 24 * 60 * 60 * 1000; // 7-day offline verification grace window
 const VERIFIED_SESSION_CACHE_TTL_MS = 12 * 60 * 60 * 1000; // 12-hour cache TTL for cold service-worker wakeups
+const FULL_LICENSE_KEY_RE = /^SWEEPR-[A-Z0-9]{2,8}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/i;
+const COMPACT_JWS_RE = /^[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}$/;
+const PAIRING_TOKEN_RE = /^ptk_[A-Za-z0-9_-]{12,64}$/;
+const DEEPSTEALTH_SCRIPT_ID = 'deepstealth-main';
+const tabsDiscardSupported = Boolean(typeof chrome !== 'undefined' && chrome.tabs && typeof chrome.tabs.discard === 'function');
+
+function isValidLicenseCredential(value) {
+  const v = String(value || '').trim();
+  return FULL_LICENSE_KEY_RE.test(v) || COMPACT_JWS_RE.test(v);
+}
+
+function generateSecureDeviceHex(byteLen = 8) {
+  if (typeof crypto !== 'undefined') {
+    if (typeof crypto.randomUUID === 'function' && byteLen === 8) {
+      return crypto.randomUUID().replace(/-/g, '').slice(0, 16);
+    }
+    if (typeof crypto.getRandomValues === 'function') {
+      const buf = new Uint8Array(byteLen);
+      crypto.getRandomValues(buf);
+      return Array.from(buf, (b) => b.toString(16).padStart(2, '0')).join('');
+    }
+  }
+  return Date.now().toString(16).padStart(16, '0');
+}
 
 let tabActivityHydrated = false;
 let tabActivitySaveScheduled = false;
@@ -80,13 +98,16 @@ function sanitizeTabUrlForBackup(rawUrl) {
     const u = new URL(String(rawUrl || ''));
     u.hash = '';
     for (const k of [...u.searchParams.keys()]) {
-      if (/^(token|access_token|id_token|refresh_token|code|auth|secret|key|session|session_id|password|pass|sig|signature|client_secret)$/i.test(k) || /token|secret|auth|session_id/i.test(k)) {
+      if (
+        /^(token|access_token|id_token|refresh_token|code|auth|secret|key|license|license_key|session|session_id|password|pass|sig|signature|client_secret|state|nonce|otp|jwt)$/i.test(k) ||
+        /token|secret|auth|session|password|key/i.test(k)
+      ) {
         u.searchParams.delete(k);
       }
     }
     return u.toString();
   } catch (e) {
-    return String(rawUrl || '').split('#')[0];
+    return String(rawUrl || '').split('#')[0].split('?')[0];
   }
 }
 
@@ -126,7 +147,6 @@ async function syncRemoteFilterDelta() {
       '1.1.6';
     const qs = `?current_version=${encodeURIComponent(currentVersion)}`;
     const endpoints = [
-      ...(isDevExtension ? [`http://localhost:3000/api/filters/delta${qs}`] : []),
       `https://sweeprdeepblock.com/api/filters/delta${qs}`,
       ...(typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getURL
         ? [chrome.runtime.getURL('rules/dynamic_delta.json')]
@@ -182,13 +202,18 @@ async function syncRemoteFilterDelta() {
       const forceUpdate = Boolean(
         (data.forceUpdate && updateAvailable) || isNewerSemverExt(minVersion, currentVersion)
       );
+      const rawUpdateUrl = String(data.storeUpdateUrl || '').trim();
+      const safeUpdateUrl =
+        /^https:\/\/(sweeprdeepblock\.com|chromewebstore\.google\.com|addons\.mozilla\.org|microsoftedge\.microsoft\.com|addons\.opera\.com)\//i.test(rawUpdateUrl)
+          ? rawUpdateUrl
+          : 'https://sweeprdeepblock.com/download';
       updates.extensionUpdateStatus = {
         currentVersion,
         latestVersion,
         minVersion,
         updateAvailable,
         forceUpdate,
-        updateUrl: String(data.storeUpdateUrl || 'https://sweeprdeepblock.com/download'),
+        updateUrl: safeUpdateUrl,
         checkedAt: Date.now()
       };
       if (updateAvailable && chrome.runtime && typeof chrome.runtime.requestUpdateCheck === 'function') {
@@ -205,8 +230,8 @@ async function syncRemoteFilterDelta() {
       sel.length > 0 &&
       sel.length <= maxLen &&
       /^[a-zA-Z0-9#._:() >[\]="'*~$^|,/-]+$/.test(sel) &&
-      !/[{};\\@]/.test(sel) &&
-      !/url\(/i.test(sel);
+      !/[{}<\\@;]/.test(sel) &&
+      !/url\(|@import|-moz-binding|expression\(|javascript:/i.test(sel);
     if (Array.isArray(data.extraCmpSelectors)) {
       updates.extraCmpSelectors = data.extraCmpSelectors.filter((s) => sanitizeRemoteSelector(s, 180)).slice(0, 100);
     }
@@ -215,6 +240,12 @@ async function syncRemoteFilterDelta() {
     }
     if (Array.isArray(data.extraCosmeticSelectors)) {
       updates.extraCosmeticSelectors = data.extraCosmeticSelectors.filter((s) => sanitizeRemoteSelector(s, 180)).slice(0, 200);
+    }
+    if (Array.isArray(data.extraSlopDomains)) {
+      updates.extraSlopDomains = data.extraSlopDomains
+        .map((d) => String(d || '').trim().toLowerCase())
+        .filter((d) => /^[a-z0-9.-]{3,120}$/i.test(d))
+        .slice(0, 500);
     }
     if (Object.keys(updates).length > 0) {
       await chrome.storage.local.set(updates);
@@ -227,16 +258,27 @@ async function syncRemoteFilterDelta() {
       if (!verifiedSession.coldChecked) {
         await enforceStoredSubscriptionIntegrity();
       }
+      const st = await chrome.storage.local.get(['settings']);
+      const adBlockingEnabled = Boolean(
+        verifiedSession.proActive &&
+          verifiedSession.licenseKey &&
+          (!st.settings || st.settings.adBlocking !== false)
+      );
       const existing = await chrome.declarativeNetRequest.getDynamicRules();
       const removeRuleIds = existing.filter((r) => r.id >= 80000 && r.id < 81000).map((r) => r.id);
-      const validRules =
-        verifiedSession.proActive && verifiedSession.licenseKey
-          ? data.dynamicDnrRules
+      const validRules = adBlockingEnabled
+        ? data.dynamicDnrRules
               .filter((r) => {
                 if (!r || typeof r.id !== 'number' || r.id < 80000 || r.id >= 81000) return false;
                 if (!r.action || r.action.type !== 'block') return false;
                 if (!r.condition || typeof r.condition !== 'object') return false;
-                if (typeof r.condition.urlFilter !== 'string' || r.condition.urlFilter.trim().length < 2) return false;
+                if (
+                  typeof r.condition.urlFilter !== 'string' ||
+                  r.condition.urlFilter.trim().length < 2 ||
+                  r.condition.urlFilter.length > 250
+                ) {
+                  return false;
+                }
                 if (Array.isArray(r.condition.resourceTypes) && r.condition.resourceTypes.includes('main_frame')) return false;
                 return true;
               })
@@ -250,55 +292,164 @@ async function syncRemoteFilterDelta() {
   } catch (e) {}
 }
 
-async function syncPausedSiteDnrAllowlist(passedPausedSites) {
+function normalizePunycodeDomain(raw) {
+  const cleaned = String(raw || '').trim().replace(/^www\./i, '').replace(/\.+$/, '').toLowerCase();
+  if (!cleaned || cleaned.length > 253 || /[\s/\\@]/.test(cleaned)) return '';
   try {
-    if (!chrome.declarativeNetRequest || !chrome.declarativeNetRequest.updateDynamicRules) return;
+    const host = new URL(`https://${cleaned}`).hostname.replace(/^www\./i, '').toLowerCase();
+    return /^[a-z0-9](?:[a-z0-9.-]*[a-z0-9])?\.[a-z]{2,63}$/.test(host) ? host : '';
+  } catch (e) {
+    return '';
+  }
+}
+
+async function syncDeepStealthRegistration(enableAdBlocking, passedPausedSites) {
+  try {
+    if (
+      typeof chrome === 'undefined' ||
+      !chrome.scripting ||
+      typeof chrome.scripting.registerContentScripts !== 'function'
+    ) {
+      return;
+    }
+    try {
+      await chrome.scripting.unregisterContentScripts({ ids: [DEEPSTEALTH_SCRIPT_ID] });
+    } catch (e) {}
+
+    if (!enableAdBlocking) {
+      return;
+    }
+
     let pausedSites = passedPausedSites;
     if (!Array.isArray(pausedSites)) {
       const stored = await chrome.storage.local.get(['pausedSites']);
       pausedSites = Array.isArray(stored && stored.pausedSites) ? stored.pausedSites : [];
     }
-    const cleanDomains = pausedSites
-      .map((d) => String(d || '').replace(/^www\./i, '').trim().toLowerCase())
-      .filter(Boolean);
-
-    const existingRules = await chrome.declarativeNetRequest.getDynamicRules();
-    const removeRuleIds = existingRules.filter((r) => r.id >= 90000 && r.id < 91000).map((r) => r.id);
-
-    const addRules = [];
-    if (cleanDomains.length > 0) {
-      addRules.push({
-        id: 90001,
-        priority: 100000,
-        action: { type: 'allow' },
-        condition: {
-          initiatorDomains: cleanDomains
-        }
-      });
+    const cleanDomains = [...new Set(pausedSites.map(normalizePunycodeDomain).filter(Boolean))].slice(0, 200);
+    const excludeMatches = [];
+    for (const host of cleanDomains) {
+      excludeMatches.push(`*://${host}/*`, `*://*.${host}/*`);
     }
 
-    await chrome.declarativeNetRequest.updateDynamicRules({
-      removeRuleIds,
-      addRules
-    });
+    await chrome.scripting.registerContentScripts([
+      {
+        id: DEEPSTEALTH_SCRIPT_ID,
+        matches: ['http://*/*', 'https://*/*'],
+        ...(excludeMatches.length > 0 ? { excludeMatches } : {}),
+        js: ['content/deepstealth-main.js'],
+        runAt: 'document_start',
+        allFrames: true,
+        world: 'MAIN',
+        persistAcrossSessions: true
+      }
+    ]);
   } catch (e) {}
 }
 
-async function syncExtensionProtectionRules(enablePro) {
+async function syncPausedSiteDnrAllowlist(passedPausedSites, options = {}) {
   try {
-    if (!chrome.declarativeNetRequest || !chrome.declarativeNetRequest.updateEnabledRulesets) return;
-    if (enablePro) {
-      await chrome.declarativeNetRequest.updateEnabledRulesets({
-        enableRulesetIds: ['ads_and_trackers'],
-        disableRulesetIds: []
-      });
-      await syncPausedSiteDnrAllowlist();
-    } else {
-      await chrome.declarativeNetRequest.updateEnabledRulesets({
-        enableRulesetIds: [],
-        disableRulesetIds: ['ads_and_trackers']
+    let pausedSites = passedPausedSites;
+    if (!Array.isArray(pausedSites)) {
+      const stored = await chrome.storage.local.get(['pausedSites']);
+      pausedSites = Array.isArray(stored && stored.pausedSites) ? stored.pausedSites : [];
+    }
+    const cleanDomains = [...new Set(pausedSites.map(normalizePunycodeDomain).filter(Boolean))].slice(0, 500);
+
+    if (chrome.declarativeNetRequest && chrome.declarativeNetRequest.updateDynamicRules) {
+      const existingRules = await chrome.declarativeNetRequest.getDynamicRules();
+      const removeRuleIds = existingRules.filter((r) => r.id >= 90000 && r.id < 91000).map((r) => r.id);
+
+      const addRules = [];
+      if (cleanDomains.length > 0) {
+        addRules.push(
+          {
+            id: 90001,
+            priority: 100000,
+            action: { type: 'allow' },
+            condition: {
+              initiatorDomains: cleanDomains
+            }
+          },
+          {
+            id: 90002,
+            priority: 100000,
+            action: { type: 'allowAllRequests' },
+            condition: {
+              requestDomains: cleanDomains,
+              resourceTypes: ['main_frame', 'sub_frame']
+            }
+          }
+        );
+      }
+
+      await chrome.declarativeNetRequest.updateDynamicRules({
+        removeRuleIds,
+        addRules
       });
     }
+
+    if (!options.skipStealthSync) {
+      const st = await chrome.storage.local.get(['proActive', 'licenseKey', 'settings']);
+      const adOn = Boolean(
+        st &&
+          st.proActive &&
+          st.licenseKey &&
+          (!st.settings || st.settings.adBlocking !== false)
+      );
+      await syncDeepStealthRegistration(adOn, cleanDomains);
+    }
+  } catch (e) {}
+}
+
+async function syncExtensionProtectionRules(enableAdBlocking, enableTrackerProtection) {
+  try {
+    const adEnabled = Boolean(enableAdBlocking);
+    let trackerEnabled;
+    if (enableTrackerProtection !== undefined) {
+      trackerEnabled = Boolean(enableTrackerProtection);
+    } else if (!adEnabled) {
+      trackerEnabled = false;
+    } else {
+      const st = await chrome.storage.local.get(['settings']);
+      trackerEnabled = !st.settings || st.settings.trackerProtection !== false;
+    }
+
+    if (chrome.declarativeNetRequest && chrome.declarativeNetRequest.updateEnabledRulesets) {
+      const enableRulesetIds = [];
+      const disableRulesetIds = [];
+      if (adEnabled) {
+        enableRulesetIds.push('ads_and_trackers', 'cryptominers_and_heavy_scripts');
+      } else {
+        disableRulesetIds.push('ads_and_trackers', 'cryptominers_and_heavy_scripts');
+      }
+      if (trackerEnabled) {
+        enableRulesetIds.push('tracker_param_stripping');
+      } else {
+        disableRulesetIds.push('tracker_param_stripping');
+      }
+      await chrome.declarativeNetRequest.updateEnabledRulesets({
+        enableRulesetIds,
+        disableRulesetIds
+      });
+    }
+
+    if (!adEnabled && chrome.declarativeNetRequest && chrome.declarativeNetRequest.updateDynamicRules) {
+      const existing = await chrome.declarativeNetRequest.getDynamicRules();
+      const removeRuleIds = existing.filter((r) => r.id >= 80000 && r.id < 81000).map((r) => r.id);
+      if (removeRuleIds.length > 0) {
+        await chrome.declarativeNetRequest.updateDynamicRules({
+          removeRuleIds,
+          addRules: []
+        });
+      }
+    }
+
+    const stored = await chrome.storage.local.get(['pausedSites']);
+    const pausedSites = Array.isArray(stored && stored.pausedSites) ? stored.pausedSites : [];
+    if (adEnabled || trackerEnabled) {
+      await syncPausedSiteDnrAllowlist(pausedSites, { skipStealthSync: true });
+    }
+    await syncDeepStealthRegistration(adEnabled, pausedSites);
   } catch (e) {}
 }
 
@@ -320,11 +471,7 @@ async function getOrCreateDeviceId() {
     verifiedSession.deviceId = stored.deviceId;
     return stored.deviceId;
   }
-  const randomPart =
-    typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
-      ? crypto.randomUUID().replace(/-/g, '').slice(0, 16)
-      : Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
-  const newId = `ext_db_${randomPart}`;
+  const newId = `ext_db_${generateSecureDeviceHex(8)}`;
   verifiedSession.deviceId = newId;
   await chrome.storage.local.set({ deviceId: newId });
   return newId;
@@ -339,7 +486,6 @@ const DEFAULT_STATE = {
   subscriptionStatus: 'unactivated',
   licenseVerifiedAt: 0,
   entitlements: [],
-  encryptedDnsEnabled: false,
   pausedSites: [],
   neverSnoozeSites: [],
   trustedShopSites: [],
@@ -351,18 +497,19 @@ const DEFAULT_STATE = {
     trackerProtection: false,
     adBlocking: false,
     silentMode: false,
-    autoRamTamer: false
+    autoRamTamer: false,
+    cloudTabSyncEnabled: false
   },
   stats: {
     adsBlocked: 0,
+    adsSpotted: 0,
     cookiePromptsDetected: 0,
     cookiePromptsRejected: 0,
     aiSlopDetected: 0,
     fakeStoresDetected: 0,
     clutterStripped: 0,
     antiAdblockBypassed: 0,
-    tabsHibernated: 0,
-    ramSavedGb: 0
+    tabsHibernated: 0
   },
   cloudTabSessions: []
 };
@@ -446,11 +593,12 @@ async function preserveOfflineGraceSession() {
     return null;
   }
   const adBlockingOn = !stored.settings || stored.settings.adBlocking !== false;
+  const trackerOn = !stored.settings || stored.settings.trackerProtection !== false;
   verifiedSession.proActive = true;
   verifiedSession.ramTamerActive = Boolean(stored.ramTamerActive);
   verifiedSession.licenseKey = String(stored.licenseKey).trim();
   verifiedSession.coldChecked = true;
-  await syncExtensionProtectionRules(adBlockingOn);
+  await syncExtensionProtectionRules(adBlockingOn, trackerOn);
   return {
     ok: true,
     valid: true,
@@ -462,12 +610,58 @@ async function preserveOfflineGraceSession() {
   };
 }
 
+async function redeemPairingToken(rawToken) {
+  const token = String(rawToken || '').trim();
+  if (!PAIRING_TOKEN_RE.test(token)) {
+    return {
+      ok: false,
+      valid: false,
+      error: 'Please enter a valid ptk_ pairing token or SWEEPR-DB-XXXX-XXXX-XXXX license key.'
+    };
+  }
+  const deviceId = await getOrCreateDeviceId();
+  try {
+    const res = await fetch('https://sweeprdeepblock.com/api/device-link/redeem', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json', 'x-sweepr-project': 'deepblock' },
+      body: JSON.stringify({
+        token,
+        device_id: deviceId,
+        device_name: 'SWEEPR Deepblock Extension',
+        platform: 'browser_extension'
+      }),
+      signal: AbortSignal.timeout(10000)
+    });
+    const data = await res.json().catch(() => ({}));
+    const canonicalKey = String(data?.licenseKey || data?.license_key || '').trim();
+    if (res.ok && data && (data.ok || data.valid) && canonicalKey && !canonicalKey.startsWith('ptk_')) {
+      return await verifyLicenseWithServer(canonicalKey);
+    }
+    return {
+      ok: false,
+      valid: false,
+      error: (data && (data.message || data.error)) || 'Invalid or expired website QR pairing code.'
+    };
+  } catch (e) {
+    return {
+      ok: false,
+      valid: false,
+      networkError: true,
+      error: 'Could not reach server to redeem pairing code. Please check your connection.'
+    };
+  }
+}
+
 // Verify license key against Central SWEEPR CRM & SWEEPR Deepblock Licensing API
 async function verifyLicenseWithServer(rawKey) {
   const key = String(rawKey || '').trim();
-  if (!key || key.length < 6 || key.length > 512 || key.includes('@')) {
-    await revokeProState('invalid_key_format', { preserveLicenseKey: true });
-    return { ok: false, valid: false, error: 'Invalid license key format.' };
+  if (!isValidLicenseCredential(key) || key.length > 512) {
+    await revokeProState('invalid_key_format', { preserveLicenseKey: false });
+    return {
+      ok: false,
+      valid: false,
+      error: 'Please enter a full SWEEPR-DB-XXXX-XXXX-XXXX license key.'
+    };
   }
 
   if (verifyInFlightByKey.has(key)) {
@@ -516,10 +710,26 @@ async function verifyLicenseWithServer(rawKey) {
                     'pro_ai_slop_purifier',
                     'pro_clutter_stripper',
                     'bundle_fake_store_detector',
-                    'bundle_encrypted_dns_proxy',
                     ...(ramTamerActive ? ['addon_total_tab_and_ram_tamer'] : [])
                   ];
               const canonicalKey = data.licenseKey || data.license_key || key;
+              const priorState = await chrome.storage.local.get(['proActive', 'settings']);
+              const priorSettings = (priorState && priorState.settings) || {};
+              const nextSettings = priorState && priorState.proActive
+                ? {
+                    ...DEFAULT_STATE.settings,
+                    ...priorSettings
+                  }
+                : {
+                    cookieAutoClose: true,
+                    hideSearchSpam: true,
+                    fakeShopAlerts: true,
+                    trackerProtection: true,
+                    adBlocking: true,
+                    silentMode: true,
+                    autoRamTamer: tabsDiscardSupported,
+                    cloudTabSyncEnabled: Boolean(priorSettings.cloudTabSyncEnabled)
+                  };
               verifiedSession.proActive = true;
               verifiedSession.ramTamerActive = ramTamerActive;
               verifiedSession.licenseKey = canonicalKey;
@@ -538,22 +748,20 @@ async function verifyLicenseWithServer(rawKey) {
                 previousLicenseKey: canonicalKey,
                 licenseVerifiedAt: Date.now(),
                 entitlements,
-                encryptedDnsEnabled: true,
-                settings: {
-                  cookieAutoClose: true,
-                  hideSearchSpam: true,
-                  fakeShopAlerts: true,
-                  trackerProtection: true,
-                  adBlocking: true,
-                  silentMode: true,
-                  autoRamTamer: true
-                }
+                settings: nextSettings
               });
               verifiedSession.internalWriteInProgress = false;
-              chrome.alarms.create('ramTamerCheck', { periodInMinutes: 5 });
-              await syncExtensionProtectionRules(true);
+              if (tabsDiscardSupported && nextSettings.autoRamTamer !== false) {
+                chrome.alarms.create('ramTamerCheck', { periodInMinutes: 5 });
+              } else {
+                chrome.alarms.clear('ramTamerCheck').catch(() => {});
+              }
+              await syncExtensionProtectionRules(
+                nextSettings.adBlocking !== false,
+                nextSettings.trackerProtection !== false
+              );
               syncRemoteFilterDelta().catch(() => {});
-              await updateActionBadge();
+              await updateActionBadge(undefined, nextSettings);
               return {
                 ok: true,
                 valid: true,
@@ -642,7 +850,6 @@ async function revokeProState(reason = 'inactive', options = {}) {
     churnedAt: existing?.churnedAt || Date.now(),
     licenseVerifiedAt: Date.now(),
     entitlements: [],
-    encryptedDnsEnabled: false,
     settings: {
       cookieAutoClose: false,
       hideSearchSpam: false,
@@ -650,11 +857,13 @@ async function revokeProState(reason = 'inactive', options = {}) {
       trackerProtection: false,
       adBlocking: false,
       silentMode: false,
-      autoRamTamer: false
+      autoRamTamer: false,
+      cloudTabSyncEnabled: false
     }
   });
   verifiedSession.internalWriteInProgress = false;
-  await syncExtensionProtectionRules(false);
+  chrome.alarms.clear('ramTamerCheck').catch(() => {});
+  await syncExtensionProtectionRules(false, false);
 }
 
 // Guard against manual DevTools tampering with chrome.storage.local while honoring legitimate popup/welcome activations
@@ -674,7 +883,10 @@ if (chrome.storage && chrome.storage.onChanged) {
       verifiedSession.ramTamerActive = Boolean(changes.ramTamerActive?.newValue);
       verifiedSession.licenseKey = freshKey;
       verifiedSession.coldChecked = true;
-      syncExtensionProtectionRules(true).catch(() => {});
+      chrome.storage.local.get(['settings'], (s) => {
+        const st = (s && s.settings) || {};
+        syncExtensionProtectionRules(st.adBlocking !== false, st.trackerProtection !== false).catch(() => {});
+      });
       syncRemoteFilterDelta().catch(() => {});
       return;
     }
@@ -695,12 +907,12 @@ async function enforceStoredSubscriptionIntegrity(options = {}) {
   const runIntegrityCheck = (async () => {
     const store = await chrome.storage.local.get(['proActive', 'ramTamerActive', 'licenseKey', 'licenseVerifiedAt', 'settings']);
     const key = String(store.licenseKey || '').trim();
-    if (!key || !store.proActive) {
+    if (!key || !store.proActive || !isValidLicenseCredential(key)) {
       verifiedSession.coldChecked = true;
       verifiedSession.proActive = false;
       verifiedSession.ramTamerActive = false;
       verifiedSession.licenseKey = '';
-      await syncExtensionProtectionRules(false);
+      await syncExtensionProtectionRules(false, false);
       return { proActive: false, ramTamerActive: false };
     }
 
@@ -712,7 +924,8 @@ async function enforceStoredSubscriptionIntegrity(options = {}) {
       verifiedSession.licenseKey = key;
       verifiedSession.coldChecked = true;
       const adBlockingOn = !store.settings || store.settings.adBlocking !== false;
-      await syncExtensionProtectionRules(adBlockingOn);
+      const trackerOn = !store.settings || store.settings.trackerProtection !== false;
+      await syncExtensionProtectionRules(adBlockingOn, trackerOn);
       return { proActive: true, ramTamerActive: verifiedSession.ramTamerActive };
     }
 
@@ -724,7 +937,9 @@ async function enforceStoredSubscriptionIntegrity(options = {}) {
       verifiedSession.proActive = Boolean(store.proActive && key && withinOfflineGrace);
       verifiedSession.ramTamerActive = Boolean(store.proActive && store.ramTamerActive && key && withinOfflineGrace);
       verifiedSession.licenseKey = withinOfflineGrace ? key : '';
-      await syncExtensionProtectionRules(verifiedSession.proActive && (!store.settings || store.settings.adBlocking !== false));
+      const adBlockingOn = verifiedSession.proActive && (!store.settings || store.settings.adBlocking !== false);
+      const trackerOn = verifiedSession.proActive && (!store.settings || store.settings.trackerProtection !== false);
+      await syncExtensionProtectionRules(adBlockingOn, trackerOn);
       return { proActive: verifiedSession.proActive, ramTamerActive: verifiedSession.ramTamerActive };
     }
     return {
@@ -797,8 +1012,14 @@ function registerContextMenus() {
 
 chrome.runtime.onInstalled.addListener(async (details) => {
   const existing = await chrome.storage.local.get(Object.keys(DEFAULT_STATE));
+  const mergedSettings = { ...DEFAULT_STATE.settings, ...(existing.settings || {}) };
   let syncedSessions = [];
-  if (chrome.storage && chrome.storage.sync && (!Array.isArray(existing.cloudTabSessions) || existing.cloudTabSessions.length === 0)) {
+  if (
+    mergedSettings.cloudTabSyncEnabled === true &&
+    chrome.storage &&
+    chrome.storage.sync &&
+    (!Array.isArray(existing.cloudTabSessions) || existing.cloudTabSessions.length === 0)
+  ) {
     try {
       const syncData = await chrome.storage.sync.get(['cloudTabSessions']);
       if (syncData && Array.isArray(syncData.cloudTabSessions)) {
@@ -813,7 +1034,7 @@ chrome.runtime.onInstalled.addListener(async (details) => {
       Array.isArray(existing.cloudTabSessions) && existing.cloudTabSessions.length > 0
         ? existing.cloudTabSessions
         : syncedSessions,
-    settings: { ...DEFAULT_STATE.settings, ...(existing.settings || {}) },
+    settings: mergedSettings,
     stats: { ...DEFAULT_STATE.stats, ...(existing.stats || {}) }
   };
   await chrome.storage.local.set(merged);
@@ -1103,30 +1324,54 @@ if (chrome.commands && chrome.commands.onCommand) {
   });
 }
 
-// Compute live RAM Speedometer metrics (Zero-permission tab heuristic)
+// Compute real tab & hibernation state (zero synthetic GB/percentage estimates)
 async function getRamSpeedometerMetrics() {
   const tabs = await chrome.tabs.query({});
   const activeTabs = tabs.filter((t) => !t.discarded);
   const discardedCount = tabs.filter((t) => t.discarded).length;
 
-  const estimatedGb = Math.max(0.8, +(0.65 + activeTabs.length * 0.145).toFixed(1));
-  const slowdownPct = Math.min(78, Math.max(8, Math.round(estimatedGb * 6.2)));
-
   return {
     totalTabs: tabs.length,
     activeTabsCount: activeTabs.length,
     discardedCount,
-    estimatedGb,
-    slowdownPct
+    tabsDiscardSupported
   };
 }
 
-// Hibernate inactive background tabs & snapshot session to Cloud Vault
+function syncSessionsToChromeSync(sessions, enabled) {
+  if (!chrome.storage || !chrome.storage.sync) return;
+  try {
+    if (!enabled) {
+      chrome.storage.sync.remove(['cloudTabSessions']).catch(() => {});
+      return;
+    }
+    if (!Array.isArray(sessions) || sessions.length === 0) return;
+    const compactSyncSessions = sessions.slice(0, 2).map((s) => ({
+      id: s.id,
+      savedAt: s.savedAt,
+      tabCount: s.tabCount,
+      tabs: (s.tabs || []).slice(0, 15).map((t) => ({
+        title: String(t.title || '').slice(0, 60),
+        url: sanitizeTabUrlForBackup(t.url || '').slice(0, 200)
+      }))
+    }));
+    chrome.storage.sync.set({ cloudTabSessions: compactSyncSessions }).catch(() => {});
+  } catch (e) {}
+}
+
+// Hibernate inactive background tabs & snapshot session
 async function hibernateInactiveTabs(options = {}) {
   const isAutoBackground = Boolean(options && options.isAutoBackground);
   const verified = await ensureVerifiedProSession();
   if (!verified.proActive || !verified.licenseKey) {
     return { ok: false, requiresPro: true, error: 'Active paid Pro subscription required.' };
+  }
+  if (!tabsDiscardSupported) {
+    return {
+      ok: false,
+      unsupported: true,
+      error: 'Tab hibernation is not supported on this mobile browser.'
+    };
   }
   await hydrateTabActivityMap();
   const data = await chrome.storage.local.get(['stats', 'cloudTabSessions', 'neverSnoozeSites', 'settings']);
@@ -1197,9 +1442,7 @@ async function hibernateInactiveTabs(options = {}) {
     }
   }
 
-  const savedGbAdd = +(newlyDiscarded * 0.14).toFixed(1);
   stats.tabsHibernated = (stats.tabsHibernated || 0) + newlyDiscarded;
-  stats.ramSavedGb = +((stats.ramSavedGb || 0) + savedGbAdd).toFixed(1);
 
   const updatedSettings = { ...DEFAULT_STATE.settings, ...(data.settings || {}) };
   if (!isAutoBackground) {
@@ -1208,21 +1451,8 @@ async function hibernateInactiveTabs(options = {}) {
   }
 
   await chrome.storage.local.set({ stats, cloudTabSessions: sessions, settings: updatedSettings });
-  if (chrome.storage && chrome.storage.sync && sessions.length > 0) {
-    try {
-      const compactSyncSessions = sessions.slice(0, 2).map((s) => ({
-        id: s.id,
-        savedAt: s.savedAt,
-        tabCount: s.tabCount,
-        tabs: (s.tabs || []).slice(0, 15).map((t) => ({
-          title: String(t.title || '').slice(0, 60),
-          url: String(t.url || '').slice(0, 200)
-        }))
-      }));
-      chrome.storage.sync.set({ cloudTabSessions: compactSyncSessions }).catch(() => {});
-    } catch (e) {}
-  }
-  return { ok: true, newlyDiscarded, savedGbAdd, stats, sessions, settings: updatedSettings };
+  syncSessionsToChromeSync(sessions, updatedSettings.cloudTabSyncEnabled === true);
+  return { ok: true, newlyDiscarded, stats, sessions, settings: updatedSettings };
 }
 
 chrome.alarms.onAlarm.addListener(async (alarm) => {
@@ -1286,7 +1516,7 @@ let statFlushInFlight = false;
 let statFlushCallbacks = [];
 
 function queueDiagnosticStatIncrement(metric, amount, callback) {
-  if (metric && Object.prototype.hasOwnProperty.call(DEFAULT_STATE.stats, metric)) {
+  if (metric && Object.hasOwn(DEFAULT_STATE.stats, metric)) {
     const safeAmount = Math.min(20, Math.max(1, Number(amount) || 1));
     pendingStatIncrements.set(metric, (pendingStatIncrements.get(metric) || 0) + safeAmount);
   }
@@ -1352,8 +1582,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     const tabUrl = String((sender && sender.tab && sender.tab.url) || '');
     const isFrameZero = !sender || sender.frameId === 0;
     const isOfficialUrl = (u) =>
-      /^https:\/\/([a-z0-9-]+\.)?sweeprdeepblock\.com(\/|$)/i.test(u) ||
-      (isDevExtension && /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?(\/|$)/i.test(u));
+      /^https:\/\/([a-z0-9-]+\.)?sweeprdeepblock\.com(\/|$)/i.test(u);
 
     if (!isFrameZero || !isOfficialUrl(senderUrl) || (tabUrl && !isOfficialUrl(tabUrl))) {
       sendResponse({ ok: false, error: 'untrusted_origin' });
@@ -1361,7 +1590,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     }
 
     const key = String(msg.licenseKey || '').trim();
-    if (!key || key.length < 6 || key.length > 128 || key.includes('@')) {
+    if (!isValidLicenseCredential(key) || key.length > 512) {
       sendResponse({ ok: false });
       return true;
     }
@@ -1399,7 +1628,6 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
         'stepUpSaveEligible',
         'previousLicenseKey',
         'churnedAt',
-        'simulatedWinbackTier',
         'abVariantOverride',
         'deviceId'
       ]),
@@ -1413,14 +1641,16 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       const currentTabScamDetected = Boolean(activeTabId && scamDetectedTabs.has(activeTabId));
       const currentTabScamReasons = (activeTabId && scamReasonsByTab.get(activeTabId)) || [];
       const mergedStats = { ...DEFAULT_STATE.stats, ...(store.stats || {}) };
+      const adStatCount = auth.proActive
+        ? Number(mergedStats.adsBlocked) || 0
+        : Number(mergedStats.adsSpotted) || Number(mergedStats.adsBlocked) || 0;
       const totalThreats =
-        (Number(mergedStats.adsBlocked) || 0) +
+        adStatCount +
         (Number(mergedStats.cookiePromptsDetected) || 0) +
         (Number(mergedStats.aiSlopDetected) || 0) +
         (Number(mergedStats.fakeStoresDetected) || 0);
       const milestoneState = {
         totalThreats,
-        secondsSaved: Math.max(1, Math.round(totalThreats * 0.42)),
         reached100: totalThreats >= 100,
         reached500: totalThreats >= 500,
         reached1000: totalThreats >= 1000
@@ -1428,14 +1658,12 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       const stepUpSaveEligible = Boolean(store.stepUpSaveEligible);
       const winbackEligible = Boolean(
         !auth.proActive &&
-          (store.simulatedWinbackTier ||
-            (store.previousLicenseKey &&
-              ['canceled', 'expired', 'inactive', 'unverified'].includes(String(store.subscriptionStatus || ''))))
+          store.previousLicenseKey &&
+          ['canceled', 'expired', 'inactive', 'unverified'].includes(String(store.subscriptionStatus || ''))
       );
       const daysSinceChurn = Math.max(0, Math.floor((Date.now() - Number(store.churnedAt || Date.now())) / 86400000));
       const winbackTier =
-        store.simulatedWinbackTier ||
-        (daysSinceChurn >= 90 ? 'tier_d90' : daysSinceChurn >= 60 ? 'tier_d60' : 'tier_d30');
+        daysSinceChurn >= 90 ? 'tier_d90' : daysSinceChurn >= 60 ? 'tier_d60' : 'tier_d30';
       const charSum = String(deviceId)
         .split('')
         .reduce((acc, ch) => acc + ch.charCodeAt(0), 0);
@@ -1474,14 +1702,6 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
         hostPermissionsGranted: store.hostPermissionsGranted !== false,
         extensionUpdateStatus: store.extensionUpdateStatus || null
       });
-    });
-    return true;
-  }
-
-  if (msg.type === 'SIMULATE_WINBACK_TIER') {
-    const tier = ['tier_d30', 'tier_d60', 'tier_d90'].includes(msg.tier) ? msg.tier : null;
-    chrome.storage.local.set({ simulatedWinbackTier: tier }, () => {
-      sendResponse({ ok: true, simulatedWinbackTier: tier });
     });
     return true;
   }
@@ -1564,11 +1784,11 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 
   if (msg.type === 'TOGGLE_SETTING') {
     const key = String(msg.settingKey || '').trim();
-    if (!Object.prototype.hasOwnProperty.call(DEFAULT_STATE.settings, key)) {
+    if (!key || key === '__proto__' || key === 'constructor' || key === 'prototype' || !Object.hasOwn(DEFAULT_STATE.settings, key)) {
       sendResponse({ ok: false });
       return true;
     }
-    Promise.all([ensureVerifiedProSession(), chrome.storage.local.get(['settings', 'stats'])]).then(async ([auth, res]) => {
+    Promise.all([ensureVerifiedProSession(), chrome.storage.local.get(['settings', 'stats', 'cloudTabSessions'])]).then(async ([auth, res]) => {
       const hasPaidPro = Boolean(auth.proActive && auth.licenseKey);
       if (PRO_ONLY_SETTINGS.has(key) && !hasPaidPro) {
         sendResponse({
@@ -1581,11 +1801,32 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       const current = { ...DEFAULT_STATE.settings, ...(res.settings || {}) };
       current[key] = !current[key];
       await chrome.storage.local.set({ settings: current });
-      if (key === 'adBlocking') {
-        await syncExtensionProtectionRules(Boolean(current.adBlocking));
+      if (key === 'adBlocking' || key === 'trackerProtection') {
+        await syncExtensionProtectionRules(Boolean(current.adBlocking), Boolean(current.trackerProtection));
+        if (key === 'adBlocking' && current.adBlocking) {
+          syncRemoteFilterDelta().catch(() => {});
+        }
       }
       if (key === 'silentMode') {
         await updateActionBadge(res.stats || DEFAULT_STATE.stats, current);
+        if (
+          chrome.declarativeNetRequest &&
+          typeof chrome.declarativeNetRequest.setExtensionActionOptions === 'function'
+        ) {
+          chrome.declarativeNetRequest
+            .setExtensionActionOptions({ displayActionCountAsBadgeText: !current.silentMode })
+            .catch(() => {});
+        }
+      }
+      if (key === 'cloudTabSyncEnabled') {
+        syncSessionsToChromeSync(res.cloudTabSessions || [], Boolean(current.cloudTabSyncEnabled));
+      }
+      if (key === 'autoRamTamer') {
+        if (tabsDiscardSupported && current.autoRamTamer) {
+          chrome.alarms.create('ramTamerCheck', { periodInMinutes: 5 });
+        } else {
+          chrome.alarms.clear('ramTamerCheck').catch(() => {});
+        }
       }
       sendResponse({ ok: true, settings: current });
     });
@@ -1629,6 +1870,12 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     checkHostPermissionsAndProtection().then(async (granted) => {
       if (granted) {
         await chrome.storage.local.set({ activationRescueBadge: false });
+        const auth = await ensureVerifiedProSession();
+        if (auth.proActive) {
+          const st = await chrome.storage.local.get(['settings']);
+          const s = (st && st.settings) || DEFAULT_STATE.settings;
+          await syncExtensionProtectionRules(s.adBlocking !== false, s.trackerProtection !== false);
+        }
         await updateActionBadge();
       }
       sendResponse({ ok: true, hostPermissionsGranted: granted });
@@ -1642,7 +1889,8 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       sendResponse({ ok: false, valid: false, error: 'Please enter a valid license key.' });
       return true;
     }
-    verifyLicenseWithServer(key).then((result) => {
+    const runner = PAIRING_TOKEN_RE.test(key) ? redeemPairingToken(key) : verifyLicenseWithServer(key);
+    runner.then((result) => {
       sendResponse(result);
     });
     return true;

@@ -10,30 +10,28 @@
 (function () {
   'use strict';
 
-  if (window.__sweeprDeepStealthActive) return;
-  Object.defineProperty(window, '__sweeprDeepStealthActive', {
-    value: true,
-    configurable: false,
-    enumerable: false,
-    writable: false
-  });
+  const guardSym = Symbol.for('_ds_v2_g');
+  if (window[guardSym]) return;
+  try {
+    Object.defineProperty(window, guardSym, {
+      value: true,
+      configurable: false,
+      enumerable: false,
+      writable: false
+    });
+  } catch (e) {}
+
+  let extPaused = false;
+  try {
+    window.addEventListener('_ds_cfg', function (ev) {
+      if (ev && ev.detail && typeof ev.detail.p === 'boolean') {
+        extPaused = ev.detail.p;
+      }
+    });
+  } catch (e) {}
 
   function isProEntitled() {
-    try {
-      if (
-        document.documentElement &&
-        document.documentElement.dataset &&
-        document.documentElement.dataset.sweeprPaused === '1'
-      ) {
-        return false;
-      }
-      if (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('__sweepr_unpaid') === '1') {
-        return false;
-      }
-      return true;
-    } catch (e) {
-      return true;
-    }
+    return !extPaused;
   }
 
   let stealthBypassNotified = false;

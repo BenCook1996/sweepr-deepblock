@@ -86,52 +86,6 @@
     }
   },
   {
-    "id": 6,
-    "priority": 2,
-    "action": {
-      "type": "redirect",
-      "redirect": {
-        "transform": {
-          "queryTransform": {
-            "removeParams": [
-              "gclid",
-              "gclsrc",
-              "fbclid",
-              "msclkid",
-              "twclid",
-              "ttclid",
-              "utm_source",
-              "utm_medium",
-              "utm_campaign",
-              "utm_term",
-              "utm_content",
-              "mc_eid",
-              "oly_enc_id",
-              "oly_anon_id",
-              "_hsenc",
-              "_hsmi",
-              "vero_id"
-            ]
-          }
-        }
-      }
-    },
-    "condition": {
-      "excludedRequestDomains": [
-        "sweeprdeepblock.com",
-        "www.sweeprdeepblock.com",
-        "sweeprcleaner.com",
-        "www.sweeprcleaner.com",
-        "sweeprvpn.com",
-        "www.sweeprvpn.com"
-      ],
-      "resourceTypes": [
-        "main_frame",
-        "sub_frame"
-      ]
-    }
-  },
-  {
     "id": 7,
     "priority": 2,
     "action": {
@@ -168,7 +122,7 @@
     "action": {
       "type": "redirect",
       "redirect": {
-        "url": "data:application/javascript;base64,d2luZG93LmNhblJ1bkFkcz10cnVlO3dpbmRvdy5pc0FkQmxvY2tBY3RpdmU9ZmFsc2U7d2luZG93Lmdvb2dsZV9hZF9zdGF0dXM9MTt3aW5kb3cuYWRzYnlnb29nbGU9d2luZG93LmFkc2J5Z29vZ2xlfHx7bG9hZGVkOnRydWUsYWRzYnlnb29nbGU6dHJ1ZSxwdXNoOmZ1bmN0aW9uKCl7fX07"
+        "extensionPath": "/rules/surrogates/ad_status.js"
       }
     },
     "condition": {
@@ -184,7 +138,7 @@
     "action": {
       "type": "redirect",
       "redirect": {
-        "url": "data:application/javascript;base64,d2luZG93LmNhblJ1bkFkcz10cnVlO3dpbmRvdy5pc0FkQmxvY2tBY3RpdmU9ZmFsc2U7d2luZG93Lmdvb2dsZV9hZF9zdGF0dXM9MTt3aW5kb3cuYWRzYnlnb29nbGU9d2luZG93LmFkc2J5Z29vZ2xlfHx7bG9hZGVkOnRydWUsYWRzYnlnb29nbGU6dHJ1ZSxwdXNoOmZ1bmN0aW9uKCl7fX07"
+        "extensionPath": "/rules/surrogates/adsbygoogle.js"
       }
     },
     "condition": {
@@ -200,7 +154,7 @@
     "action": {
       "type": "redirect",
       "redirect": {
-        "url": "data:application/javascript;base64,d2luZG93Lmdvb2dsZXRhZz13aW5kb3cuZ29vZ2xldGFnfHx7Y21kOltdLGFwaVJlYWR5OnRydWUscHViYWRzUmVhZHk6dHJ1ZX07d2luZG93LmNhblJ1bkFkcz10cnVlO3dpbmRvdy5pc0FkQmxvY2tBY3RpdmU9ZmFsc2U7d2luZG93Lmdvb2dsZV9hZF9zdGF0dXM9MTt3aW5kb3cuYWRzYnlnb29nbGU9d2luZG93LmFkc2J5Z29vZ2xlfHx7bG9hZGVkOnRydWUsYWRzYnlnb29nbGU6dHJ1ZSxwdXNoOmZ1bmN0aW9uKCl7fX07"
+        "extensionPath": "/rules/surrogates/gpt.js"
       }
     },
     "condition": {
@@ -216,7 +170,7 @@
     "action": {
       "type": "redirect",
       "redirect": {
-        "url": "data:application/javascript;base64,d2luZG93LmNhblJ1bkFkcz10cnVlO3dpbmRvdy5pc0FkQmxvY2tBY3RpdmU9ZmFsc2U7d2luZG93Lmdvb2dsZV9hZF9zdGF0dXM9MTs="
+        "extensionPath": "/rules/surrogates/show_ads.js"
       }
     },
     "condition": {

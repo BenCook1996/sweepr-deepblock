@@ -17,11 +17,17 @@ const WEBSITE_DIR = path.join(__dirname, 'website');
 const SWEEPR_CRM_URL = (process.env.SWEEPR_CRM_URL || 'http://localhost:8788').replace(/\/+$/, '');
 const SWEEPR_CRM_API_KEY = (process.env.SWEEPR_CRM_API_KEY || '').trim();
 const CRM_ADMIN_PASSWORD = (process.env.CRM_ADMIN_PASSWORD || '').trim();
-const SESSION_SECRET =
-  (process.env.SESSION_SECRET || '').trim() ||
-  (SWEEPR_CRM_API_KEY || CRM_ADMIN_PASSWORD
-    ? crypto.createHmac('sha256', 'sweepr-deepblock-session').update(SWEEPR_CRM_API_KEY || CRM_ADMIN_PASSWORD).digest('hex')
-    : crypto.randomBytes(32).toString('hex'));
+const IS_PRODUCTION_ENV = Boolean(
+  process.env.RAILWAY_ENVIRONMENT ||
+  process.env.RAILWAY_PROJECT_ID ||
+  process.env.RENDER ||
+  process.env.NODE_ENV === 'production'
+);
+const RAW_SESSION_SECRET = (process.env.SESSION_SECRET || '').trim();
+if (IS_PRODUCTION_ENV && !RAW_SESSION_SECRET) {
+  throw new Error('[FATAL] SESSION_SECRET environment variable must be explicitly configured in production.');
+}
+const SESSION_SECRET = RAW_SESSION_SECRET || crypto.randomBytes(32).toString('hex');
 const ALLOW_DEV_MOCK_CHECKOUT = process.env.ALLOW_DEV_MOCK_CHECKOUT === '1';
 const MAX_BODY_BYTES = 64 * 1024;
 const MAX_LOCAL_ACCOUNTS = 10000;
@@ -53,22 +59,27 @@ function maskEmail(rawEmail) {
   return `${local[0]}${'*'.repeat(Math.min(4, local.length - 2))}${local[local.length - 1]}@${domain}`;
 }
 
-const ALLOWED_EXTENSION_IDS = new Set(
-  String(process.env.ALLOWED_EXTENSION_IDS || '')
+const ALLOWED_EXTENSION_IDS = new Set([
+  'bkdfhdgmglfancgpkcbdceinfdlccmpc',
+  'pbidlabhfmaoghmofkaegcgjgmaajhop',
+  'jgbgdcpdhknljbmddooepmkofbgiinci',
+  ...String(process.env.ALLOWED_EXTENSION_IDS || '')
     .split(',')
     .map((s) => s.trim().toLowerCase())
     .filter(Boolean)
-);
+]);
 
 function isAllowedExtensionOrigin(origin) {
   const clean = String(origin || '').trim().replace(/\/+$/, '').toLowerCase();
   if (/^chrome-extension:\/\/([a-p]{32})$/.test(clean)) {
     const extId = clean.slice('chrome-extension://'.length);
-    return ALLOWED_EXTENSION_IDS.size === 0 || ALLOWED_EXTENSION_IDS.has(extId);
+    return !IS_PRODUCTION_ENV || ALLOWED_EXTENSION_IDS.has(extId);
   }
   if (/^moz-extension:\/\/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/.test(clean)) {
-    const extId = clean.slice('moz-extension://'.length);
-    return ALLOWED_EXTENSION_IDS.size === 0 || ALLOWED_EXTENSION_IDS.has(extId);
+    return true;
+  }
+  if (/^safari-web-extension:\/\/[a-z0-9-]+$/i.test(clean)) {
+    return true;
   }
   return false;
 }
@@ -104,7 +115,7 @@ function resolveTrustedOrigin(req) {
 const TRUST_PROXY =
   process.env.TRUST_PROXY === '1' ||
   Boolean(process.env.RAILWAY_ENVIRONMENT || process.env.RAILWAY_PROJECT_ID || process.env.RENDER);
-const TRUST_CLOUDFLARE = process.env.TRUST_CLOUDFLARE !== '0' && (process.env.TRUST_CLOUDFLARE === '1' || TRUST_PROXY);
+const TRUST_CLOUDFLARE = process.env.TRUST_CLOUDFLARE === '1';
 
 function getClientIp(req) {
   if (TRUST_PROXY) {
@@ -525,7 +536,7 @@ function verifyStripeWebhookSignature(rawBody, sigHeader, secret, toleranceSecon
 const crm = new SweeprCrmClient({
   projectId: 'deepblock',
   crmUrl: SWEEPR_CRM_URL,
-  apiKey: SWEEPR_CRM_API_KEY || CRM_ADMIN_PASSWORD,
+  apiKey: SWEEPR_CRM_API_KEY,
   adminPassword: CRM_ADMIN_PASSWORD
 });
 
@@ -678,7 +689,6 @@ async function syncSubscriptionWithSweeprCrm(acc, { amountCents, currency = 'gbp
     currency,
     stripeCustomerId: acc.stripe_customer_id || undefined,
     stripeSubscriptionId: acc.stripe_subscription_id || undefined,
-    activationCode: acc.activation_code,
     licenseKey: acc.licenseKey,
     cancelAtPeriodEnd: Boolean(acc.cancelAtPeriodEnd),
     ...(canceledAt !== undefined ? { canceledAt } : {}),
@@ -691,39 +701,23 @@ async function syncSubscriptionWithSweeprCrm(acc, { amountCents, currency = 'gbp
   try {
     const crmRes = await crm.syncSubscription(syncPayload);
     if (crmRes.ok && crmRes.data) {
-      const crmCode = crmRes.data.activation_code ? String(crmRes.data.activation_code).trim() : '';
-      const crmKey = crmRes.data.license_key ? String(crmRes.data.license_key).trim() : '';
-      if (acc.isSeededAccount) {
-        if (crmCode && (acc.status === 'active' || acc.status === 'trialing')) {
-          licenses.set(crmCode, acc);
-          licenses.set(`SWEEPR-DB-${crmCode}`, acc);
-          licenses.set(`DEEPBLOCK-${crmCode}`, acc);
-        }
-        if (crmKey && (acc.status === 'active' || acc.status === 'trialing')) {
-          licenses.set(crmKey, acc);
-          licenses.set(crmKey.toUpperCase(), acc);
-        }
-      } else {
-        if (crmCode && crmCode !== acc.activation_code) {
-          licenses.delete(acc.activation_code);
-          licenses.delete(`SWEEPR-DB-${acc.activation_code}`);
-          licenses.delete(`DEEPBLOCK-${acc.activation_code}`);
-          acc.activation_code = crmCode;
-        }
-        if (crmKey && crmKey !== acc.licenseKey) {
+      const rawCrmKey = crmRes.data.license_key ? String(crmRes.data.license_key).trim().toUpperCase() : '';
+      const crmKey = HIGH_ENTROPY_LICENSE_KEY_RE.test(rawCrmKey) ? rawCrmKey : '';
+      if (crmKey && crmKey !== acc.licenseKey) {
+        if (acc.licenseKey) {
           licenses.delete(acc.licenseKey);
-          acc.licenseKey = crmKey;
+          licenses.delete(acc.licenseKey.toUpperCase());
         }
+        acc.licenseKey = crmKey;
       }
       if (crmRes.data.account_id) {
         acc.crm_account_id = crmRes.data.account_id;
         accountsById.set(crmRes.data.account_id, acc);
       }
-      if (acc.status === 'active' || acc.status === 'trialing') {
+      if ((acc.status === 'active' || acc.status === 'trialing') && HIGH_ENTROPY_LICENSE_KEY_RE.test(String(acc.licenseKey || ''))) {
+        const upperKey = acc.licenseKey.toUpperCase();
+        licenses.set(upperKey, acc);
         licenses.set(acc.licenseKey, acc);
-        licenses.set(acc.activation_code, acc);
-        licenses.set(`SWEEPR-DB-${acc.activation_code}`, acc);
-        licenses.set(`DEEPBLOCK-${acc.activation_code}`, acc);
       }
     } else if (!crmRes.ok) {
       enqueueCrmDlq({ type: 'subscription_sync', payload: syncPayload });
@@ -785,24 +779,21 @@ function markWebhookEventProcessed(eventId) {
 const MAX_DEVICES_PER_LICENSE = 4; // 1 primary device + 3 additional devices per paid subscription
 const HIGH_ENTROPY_LICENSE_KEY_RE = /^SWEEPR-[A-Z0-9]{2,8}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/i;
 
-// Seed permanent Owner Pro License Key only when explicitly configured or in dev mode
-setImmediate(() => {
-  if (!process.env.OWNER_LICENSE_KEY && !ALLOW_DEV_MOCK_CHECKOUT) return;
+// Seed permanent Owner Pro License Key only when explicitly configured via env vars
+const ownerEmailEnv = (process.env.OWNER_EMAIL || '').trim().toLowerCase();
+const ownerLicenseKeyEnv = (process.env.OWNER_LICENSE_KEY || '').trim().toUpperCase();
+if (ownerEmailEnv && HIGH_ENTROPY_LICENSE_KEY_RE.test(ownerLicenseKeyEnv)) {
   try {
-    const ownerKey = String(process.env.OWNER_LICENSE_KEY || 'SWEEPR-OWNER-PRO-2026').trim();
-    const ownerCode = String(process.env.OWNER_ACTIVATION_CODE || '999888').trim();
-    const ownerAcc = upsertLocalAccount({
-      email: 'owner@sweeprdeepblock.com',
+    upsertLocalAccount({
+      email: ownerEmailEnv,
       name: 'SWEEPR Owner',
       plan: 'annual',
       ramTamerAddon: true,
       status: 'active',
-      activationCode: ownerCode,
-      licenseKey: ownerKey
+      licenseKey: ownerLicenseKeyEnv
     });
-    ownerAcc.isSeededAccount = true;
   } catch {}
-});
+}
 
 // ============================================================================
 // Zero-Dependency ISO/IEC 18004 SVG QR Code Generator (Byte Mode, ECC Level L)
@@ -1103,23 +1094,12 @@ function timingSafeStringMatch(a, b) {
   return crypto.timingSafeEqual(digestA, digestB);
 }
 
-function verifyLocalAccountKeyOrCode(acc, rawKeyOrCode, { allowShortCode = true } = {}) {
+function verifyLocalAccountKeyOrCode(acc, rawKeyOrCode, _opts = {}) {
   if (!acc || !rawKeyOrCode) return false;
   const k = String(rawKeyOrCode).trim().toUpperCase();
-  if (!k || k.includes('@')) return false;
-  const code = String(acc.activation_code || '').trim().toUpperCase();
+  if (!k || k.includes('@') || !HIGH_ENTROPY_LICENSE_KEY_RE.test(k)) return false;
   const lkey = String(acc.licenseKey || '').trim().toUpperCase();
-  if (lkey && timingSafeStringMatch(k, lkey)) return true;
-  if (
-    allowShortCode &&
-    code &&
-    (timingSafeStringMatch(k, code) ||
-      timingSafeStringMatch(k, `SWEEPR-DB-${code}`) ||
-      timingSafeStringMatch(k, `DEEPBLOCK-${code}`))
-  ) {
-    return true;
-  }
-  return false;
+  return Boolean(lkey && timingSafeStringMatch(k, lkey));
 }
 
 function listAccountDevices(acc) {
@@ -1172,21 +1152,12 @@ function registerLocalDeviceForAccount(acc, deviceId, meta = {}) {
     return { ok: true, used: acc.devices.size, max: MAX_DEVICES_PER_LICENSE };
   }
   if (acc.devices.size >= MAX_DEVICES_PER_LICENSE) {
-    if (acc.isSeededAccount || cleanId.startsWith('ext_db_')) {
-      const oldest = listAccountDevices(acc).pop();
-      if (oldest && oldest.device_id) {
-        acc.devices.delete(oldest.device_id);
-        acc.deviceMeta.delete(oldest.device_id);
-      }
-    }
-    if (acc.devices.size >= MAX_DEVICES_PER_LICENSE) {
-      return {
-        ok: false,
-        used: acc.devices.size,
-        max: MAX_DEVICES_PER_LICENSE,
-        devices: listAccountDevices(acc)
-      };
-    }
+    return {
+      ok: false,
+      used: acc.devices.size,
+      max: MAX_DEVICES_PER_LICENSE,
+      devices: listAccountDevices(acc)
+    };
   }
   acc.devices.add(cleanId);
   acc.deviceMeta.set(cleanId, {
@@ -1241,21 +1212,26 @@ function evictStaleLeadAccountsIfNeeded() {
     if (record.status !== 'active') {
       accountsById.delete(id);
       if (record.email) accountsByEmail.delete(record.email);
-      licenses.delete(record.licenseKey);
-      licenses.delete(record.activation_code);
+      if (record.licenseKey) {
+        licenses.delete(record.licenseKey);
+        licenses.delete(record.licenseKey.toUpperCase());
+      }
       break;
     }
   }
 }
 
-function upsertLocalAccount({ email, name, country, stripeCustomerId, plan, ramTamerAddon, subscriptionId, status = 'active', activationCode: customCode, licenseKey: customKey }) {
+function upsertLocalAccount({ email, name, country, stripeCustomerId, plan, ramTamerAddon, subscriptionId, status = 'active', licenseKey: customKey }) {
   const normEmail = (email || '').trim().toLowerCase();
+  const normalizedCustomKey =
+    customKey && HIGH_ENTROPY_LICENSE_KEY_RE.test(String(customKey).trim())
+      ? String(customKey).trim().toUpperCase()
+      : '';
   let acc = (normEmail && accountsByEmail.get(normEmail)) || null;
   if (!acc) {
     evictStaleLeadAccountsIfNeeded();
-    const activationCode = customCode || String(crypto.randomInt(100000, 1000000));
     const accountId = `acc_db_${crypto.randomBytes(6).toString('hex')}`;
-    const licenseKey = customKey || generateHighEntropyLicenseKey();
+    const licenseKey = normalizedCustomKey || generateHighEntropyLicenseKey();
     acc = {
       id: accountId,
       account_id: accountId,
@@ -1264,7 +1240,7 @@ function upsertLocalAccount({ email, name, country, stripeCustomerId, plan, ramT
       country: country || 'GB',
       stripe_customer_id: stripeCustomerId || null,
       stripe_subscription_id: subscriptionId || null,
-      activation_code: activationCode,
+      activation_code: null,
       licenseKey,
       plan: plan || 'annual',
       ramTamerAddon: Boolean(ramTamerAddon || plan === 'suite_annual'),
@@ -1287,15 +1263,13 @@ function upsertLocalAccount({ email, name, country, stripeCustomerId, plan, ramT
       }
       if (status) acc.status = status;
     }
-    if (customCode && customCode !== acc.activation_code) {
-      licenses.delete(acc.activation_code);
-      licenses.delete(`SWEEPR-DB-${acc.activation_code}`);
-      licenses.delete(`DEEPBLOCK-${acc.activation_code}`);
-      acc.activation_code = customCode;
-    }
-    if (customKey && customKey !== acc.licenseKey) {
-      licenses.delete(acc.licenseKey);
-      acc.licenseKey = customKey;
+    acc.activation_code = null;
+    if (normalizedCustomKey && normalizedCustomKey !== acc.licenseKey) {
+      if (acc.licenseKey) {
+        licenses.delete(acc.licenseKey);
+        licenses.delete(acc.licenseKey.toUpperCase());
+      }
+      acc.licenseKey = normalizedCustomKey;
     }
     if (!isAlreadyActive || !isUnpaidTransition) {
       if (stripeCustomerId) acc.stripe_customer_id = stripeCustomerId;
@@ -1313,15 +1287,14 @@ function upsertLocalAccount({ email, name, country, stripeCustomerId, plan, ramT
       usedIntroDiscountEmails.add(canonicalizeEmailForDiscount(normEmail));
     }
     acc.introDiscountUsed = true;
-    licenses.set(acc.licenseKey, acc);
-    licenses.set(acc.activation_code, acc);
-    licenses.set(`SWEEPR-DB-${acc.activation_code}`, acc);
-    licenses.set(`DEEPBLOCK-${acc.activation_code}`, acc);
-  } else {
+    const upperKey = String(acc.licenseKey || '').toUpperCase();
+    if (HIGH_ENTROPY_LICENSE_KEY_RE.test(upperKey)) {
+      licenses.set(upperKey, acc);
+      licenses.set(acc.licenseKey, acc);
+    }
+  } else if (acc.licenseKey) {
     licenses.delete(acc.licenseKey);
-    licenses.delete(acc.activation_code);
-    licenses.delete(`SWEEPR-DB-${acc.activation_code}`);
-    licenses.delete(`DEEPBLOCK-${acc.activation_code}`);
+    licenses.delete(acc.licenseKey.toUpperCase());
   }
   if (subscriptionId && (!acc.stripe_subscription_id || acc.stripe_subscription_id === subscriptionId)) {
     accountsBySubscriptionId.set(subscriptionId, acc);
@@ -1363,18 +1336,21 @@ async function syncPayPalCustomerEmail(sub, acc) {
   } catch {}
 }
 
-// Seed founder account for end-to-end extension license testing across all products
-const seededFounderAcc = upsertLocalAccount({
-  email: (process.env.FOUNDER_EMAIL || 'cookbenjamin1996@gmail.com').trim().toLowerCase(),
-  name: 'Benjamin Cook',
-  country: 'GB',
-  plan: 'annual',
-  ramTamerAddon: true,
-  status: 'active',
-  activationCode: (process.env.FOUNDER_ACTIVATION_CODE || '817797').trim(),
-  licenseKey: (process.env.FOUNDER_LICENSE_KEY || 'SWEEPR-DB-8177-9700-2026').trim()
-});
-seededFounderAcc.isSeededAccount = !process.env.FOUNDER_LICENSE_KEY;
+// Seed founder account for end-to-end extension license testing when explicitly configured via env vars
+const founderEmailEnv = (process.env.FOUNDER_EMAIL || '').trim().toLowerCase();
+const founderKeyEnv = (process.env.FOUNDER_LICENSE_KEY || '').trim().toUpperCase();
+if (founderEmailEnv && HIGH_ENTROPY_LICENSE_KEY_RE.test(founderKeyEnv)) {
+  const seededFounderAcc = upsertLocalAccount({
+    email: founderEmailEnv,
+    name: 'SWEEPR Founder',
+    country: 'GB',
+    plan: 'annual',
+    ramTamerAddon: true,
+    status: 'active',
+    licenseKey: founderKeyEnv
+  });
+  seededFounderAcc.isSeededAccount = false;
+}
 
 // ===========================================================================
 // Deepblock Verified Blocked Sites Registry (Local Mirror + CRM Sync)
@@ -1823,6 +1799,7 @@ const CLEAN_ROUTES = {
   '/glossary': path.join('glossary', 'index.html'),
   '/de': path.join('de', 'index.html'),
   '/fr': path.join('fr', 'index.html'),
+  '/es': path.join('es', 'index.html'),
   '/stories': path.join('stories', 'index.html'),
   '/campaigns/uk-ad-load-index': path.join('campaigns', 'uk-ad-load-index.html'),
   '/campaigns/renewal-shock-switcher': path.join('campaigns', 'renewal-shock-switcher.html'),
@@ -1890,6 +1867,7 @@ function sendJson(res, statusCode, payload, extraHeaders = {}, req = null) {
     'X-Robots-Tag': 'noindex, nofollow',
     'Cache-Control': 'no-store, no-cache, must-revalidate, private',
     'Pragma': 'no-cache',
+    'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
     ...extraHeaders
   });
   res.end(JSON.stringify(payload));
@@ -1899,14 +1877,14 @@ function sendHtml(res, statusCode, html, extraHeaders = {}) {
   res.writeHead(statusCode, {
     'Content-Type': 'text/html; charset=utf-8',
     'X-Content-Type-Options': 'nosniff',
-    'X-Frame-Options': 'SAMEORIGIN',
+    'X-Frame-Options': 'DENY',
     'Referrer-Policy': 'strict-origin-when-cross-origin',
     'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
     'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',
     'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
-    'Link': '<https://fonts.googleapis.com>; rel=preconnect, <https://fonts.gstatic.com>; rel=preconnect; crossorigin, <https://fonts.googleapis.com>; rel=dns-prefetch, <https://fonts.gstatic.com>; rel=dns-prefetch, <https://cdn.tailwindcss.com>; rel=preconnect, </style.css>; rel=preload; as=style, </logo.svg>; rel=preload; as=image',
+    'Link': '<https://fonts.googleapis.com>; rel=preconnect, <https://fonts.gstatic.com>; rel=preconnect; crossorigin, <https://fonts.googleapis.com>; rel=dns-prefetch, <https://fonts.gstatic.com>; rel=dns-prefetch, </sweepr-ui.css>; rel=preload; as=style, </logo.svg>; rel=preload; as=image',
     'Content-Security-Policy':
-      "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://js.stripe.com https://pay.google.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https://api.stripe.com https://www.google-analytics.com https://api.country.is https://get.geojs.io; frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://pay.google.com; frame-ancestors 'self'; base-uri 'self'; object-src 'none'",
+      "default-src 'self'; script-src 'self' 'unsafe-inline' https://js.stripe.com https://pay.google.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https://api.stripe.com https://www.google-analytics.com https://api.country.is https://get.geojs.io; frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://pay.google.com; frame-ancestors 'none'; base-uri 'self'; object-src 'none'",
     ...extraHeaders
   });
   res.end(html);
@@ -2047,7 +2025,7 @@ function serveStaticOptimized(req, res, fullPath) {
       'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',
       'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
       'Content-Security-Policy': isHtml
-        ? "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://js.stripe.com https://pay.google.com https://www.googletagmanager.com https://bat.bing.com https://bat.bing.net https://connect.facebook.net https://www.redditstatic.com https://ads.openai.com https://bzrcdn.openai.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https://api.stripe.com https://www.google-analytics.com https://region1.google-analytics.com https://analytics.google.com https://stats.g.doubleclick.net https://api.country.is https://get.geojs.io https://bat.bing.com https://bat.bing.net https://www.facebook.com https://alb.reddit.com https://conversions-config.reddit.com https://ads.openai.com https://bzrcdn.openai.com; frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://pay.google.com; frame-ancestors 'self'; base-uri 'self'; object-src 'none'"
+        ? "default-src 'self'; script-src 'self' 'unsafe-inline' https://js.stripe.com https://pay.google.com https://www.googletagmanager.com https://bat.bing.com https://bat.bing.net https://connect.facebook.net https://www.redditstatic.com https://ads.openai.com https://bzrcdn.openai.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https://api.stripe.com https://www.google-analytics.com https://region1.google-analytics.com https://analytics.google.com https://stats.g.doubleclick.net https://api.country.is https://get.geojs.io https://bat.bing.com https://bat.bing.net https://www.facebook.com https://alb.reddit.com https://conversions-config.reddit.com https://ads.openai.com https://bzrcdn.openai.com; frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://pay.google.com; frame-ancestors 'self'; base-uri 'self'; object-src 'none'"
         : "frame-ancestors 'self'; base-uri 'self'; object-src 'none'"
     };
 
@@ -2060,8 +2038,14 @@ function serveStaticOptimized(req, res, fullPath) {
 
     if (isHtml) {
       const fileNameLower = path.basename(fullPath).toLowerCase();
-      if (fileNameLower === 'ios-app.html' || fileNameLower === 'login.html') {
+      const isSensitiveAuthOrCheckout = fileNameLower === 'order.html' || fileNameLower === 'login.html';
+      if (fileNameLower === 'ios-app.html' || isSensitiveAuthOrCheckout) {
         headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, private';
+      }
+      if (isSensitiveAuthOrCheckout) {
+        headers['X-Frame-Options'] = 'DENY';
+        headers['Content-Security-Policy'] =
+          "default-src 'self'; script-src 'self' 'unsafe-inline' https://js.stripe.com https://pay.google.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https://api.stripe.com https://www.google-analytics.com https://region1.google-analytics.com https://analytics.google.com https://stats.g.doubleclick.net; frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://pay.google.com; frame-ancestors 'none'; base-uri 'self'; object-src 'none'";
       }
       headers['Accept-CH'] = 'Sec-CH-UA-Platform, Sec-CH-UA-Mobile, Sec-CH-UA-Model, Sec-CH-UA-Arch';
       headers['Vary'] = headers['Vary'] ? `${headers['Vary']}, Sec-CH-UA-Platform` : 'Accept-Encoding, Sec-CH-UA-Platform';
@@ -2073,8 +2057,9 @@ function serveStaticOptimized(req, res, fullPath) {
       } else {
         headers['X-Robots-Tag'] = 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1';
       }
-      const baseResourceHints =
-        '<https://fonts.googleapis.com>; rel=preconnect, <https://fonts.gstatic.com>; rel=preconnect; crossorigin, <https://fonts.googleapis.com>; rel=dns-prefetch, <https://fonts.gstatic.com>; rel=dns-prefetch, <https://cdn.tailwindcss.com>; rel=preconnect, </style.css>; rel=preload; as=style, </logo.svg>; rel=preload; as=image';
+      const baseResourceHints = isSensitiveAuthOrCheckout
+        ? '<https://fonts.googleapis.com>; rel=preconnect, <https://fonts.gstatic.com>; rel=preconnect; crossorigin, <https://fonts.googleapis.com>; rel=dns-prefetch, <https://fonts.gstatic.com>; rel=dns-prefetch, </sweepr-ui.css>; rel=preload; as=style, </logo.svg>; rel=preload; as=image'
+        : '<https://fonts.googleapis.com>; rel=preconnect, <https://fonts.gstatic.com>; rel=preconnect; crossorigin, <https://fonts.googleapis.com>; rel=dns-prefetch, <https://fonts.gstatic.com>; rel=dns-prefetch, </sweepr-tailwind.min.css>; rel=preload; as=style, </style.css>; rel=preload; as=style, </logo.svg>; rel=preload; as=image';
       if (!NON_INDEXABLE_PAGES.has(fileNameLower)) {
         const relFromWebsite = path.relative(path.resolve(WEBSITE_DIR), fullPath).replace(/\\/g, '/');
         const canonicalSlug = relFromWebsite === 'index.html' ? '' : relFromWebsite.replace(/\.html$/, '');
@@ -2201,7 +2186,7 @@ function renderCheckoutSuccessPage(acc, isCancelled = false) {
   <meta name="robots" content="noindex, nofollow">
   <title>Checkout Cancelled — SWEEPR Deepblock</title>
   <link rel="icon" type="image/svg+xml" href="/logo.svg">
-  <script src="https://cdn.tailwindcss.com/3.4.5"></script>
+  <link rel="stylesheet" href="/sweepr-ui.css">
 </head>
 <body class="bg-slate-950 text-white min-h-screen flex items-center justify-center p-6 font-sans">
   <div class="max-w-md w-full bg-slate-900 border border-slate-800 rounded-2xl p-8 text-center space-y-4 shadow-2xl">
@@ -2213,8 +2198,8 @@ function renderCheckoutSuccessPage(acc, isCancelled = false) {
 </html>`;
   }
 
-  const licenseKey = escapeHtml(acc?.licenseKey || 'SWEEPR-DB-PRO');
-  const activationCode = escapeHtml(acc?.activation_code || String(acc?.licenseKey || '').replace('SWEEPR-DB-', ''));
+  const rawKey = HIGH_ENTROPY_LICENSE_KEY_RE.test(String(acc?.licenseKey || '')) ? String(acc.licenseKey).trim().toUpperCase() : '';
+  const licenseKey = escapeHtml(rawKey || 'Check your confirmation email for your SWEEPR-DB key');
   const email = escapeHtml(acc?.email || '');
   const planLabel = escapeHtml(
     acc?.plan === 'annual' ? 'Annual Plan' : acc?.plan === 'six_month' ? '6-Month Plan' : 'Monthly Plan'
@@ -2231,7 +2216,7 @@ function renderCheckoutSuccessPage(acc, isCancelled = false) {
   <meta name="robots" content="noindex, nofollow">
   <title>You're Activated 🎉 — SWEEPR Deepblock Pro</title>
   <link rel="icon" type="image/svg+xml" href="/logo.svg">
-  <script src="https://cdn.tailwindcss.com/3.4.5"></script>
+  <link rel="stylesheet" href="/sweepr-ui.css">
   <script async src="/metrics/js?id=G-01MNBQSL9K"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -2264,7 +2249,7 @@ function renderCheckoutSuccessPage(acc, isCancelled = false) {
       localStorage.removeItem('sweepr_order_draft');
       document.cookie = 'sweepr_visited_order=; path=/; max-age=0';
       document.cookie = 'sweepr_order_draft_active=; path=/; max-age=0; SameSite=Lax';
-      const activeKey = ${JSON.stringify(acc?.licenseKey || 'SWEEPR-DB-PRO')};
+      const activeKey = ${JSON.stringify(rawKey)};
       if (activeKey) {
         localStorage.setItem('sweepr_license_key', activeKey);
         localStorage.setItem('deepblock_license_key', activeKey);
@@ -2299,10 +2284,6 @@ function renderCheckoutSuccessPage(acc, isCancelled = false) {
         <button onclick="navigator.clipboard.writeText(document.getElementById('licenseKeyText').textContent.trim()); this.textContent='Copied ✓';" class="px-3.5 py-2 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 text-xs font-bold cursor-pointer">
           Copy Key
         </button>
-      </div>
-      <div class="flex items-center justify-between text-xs text-slate-300 pt-1">
-        <span>6-Digit Portal Login Code:</span>
-        <span class="font-mono font-bold text-white bg-slate-800 px-2.5 py-1 rounded">${activationCode}</span>
       </div>
       <div class="text-xs text-slate-400 space-y-1 pt-2 border-t border-slate-800/80">
         <div class="font-bold text-slate-200 mb-1">Unlocked on your account (Up to 4 Devices — Desktop or Mobile):</div>
@@ -2428,7 +2409,7 @@ const server = http.createServer(async (req, res) => {
   <meta property="og:url" content="${PUBLIC_URL}${pathname}">
   <meta property="og:image" content="${PUBLIC_URL}/og-image.png">
   <link rel="icon" type="image/svg+xml" href="/logo.svg">
-  <script src="https://cdn.tailwindcss.com/3.4.5"></script>
+  <link rel="stylesheet" href="/sweepr-ui.css">
 </head>
 <body class="bg-slate-950 text-white min-h-screen flex items-center justify-center p-6 font-sans antialiased">
   <main class="max-w-xl w-full bg-slate-900 border border-slate-800 rounded-3xl p-8 text-center shadow-2xl space-y-6">
@@ -2617,7 +2598,7 @@ function getCachedDynamicDelta() {
 }
 
   // API -1b: Dynamic Filter Delta & Remote Feature-Flag Kill-Switch + Extension Version Gate Endpoint
-  const LATEST_EXTENSION_VERSION = String(process.env.LATEST_EXTENSION_VERSION || '1.3.0').trim();
+  const LATEST_EXTENSION_VERSION = String(process.env.LATEST_EXTENSION_VERSION || '1.3.1').trim();
   const MIN_EXTENSION_VERSION = String(process.env.MIN_EXTENSION_VERSION || '1.1.6').trim();
   const FORCE_EXTENSION_UPDATE = process.env.FORCE_EXTENSION_UPDATE === 'true';
   const compareSemver = (latestVer, currentVer) => {
@@ -3326,6 +3307,25 @@ function getCachedDynamicDelta() {
     const body = await readBody(req);
     if (body && body.__tooLarge) return sendJson(res, 413, { error: 'payload_too_large' });
     if (!body) return sendJson(res, 400, { error: 'Invalid request body.' });
+    if (
+      body.cardNumber ||
+      body.card_number ||
+      body.pan ||
+      body.cvc ||
+      body.cvv ||
+      body.securityCode ||
+      body.expMonth ||
+      body.exp_month ||
+      body.expYear ||
+      body.exp_year ||
+      (body.card && (body.card.number || body.card.cvc || body.card.cvv))
+    ) {
+      return sendJson(res, 400, {
+        ok: false,
+        error: 'raw_card_data_prohibited',
+        message: 'Raw card numbers must never be sent to the server. Use Stripe Elements.'
+      });
+    }
     if (!STRIPE_SECRET_KEY) return sendJson(res, 503, { error: 'stripe_not_configured' });
 
     const paymentMethod = typeof body.paymentMethod === 'string' ? body.paymentMethod.toLowerCase() : 'card';
@@ -3361,7 +3361,9 @@ function getCachedDynamicDelta() {
         ? 'six_month'
         : 'monthly';
     const applyDiscount = Boolean(body.applyDiscount || body.discountApplied) && plan === 'monthly';
-    const includeRamTamer = plan === 'suite_annual' || hasRamTamerInBody(body);
+    const winbackTier = String(body.winbackTier || body.winback || '').trim().toLowerCase();
+    const freeRamTamerPromo = plan === 'annual' && winbackTier === 'tier_d60';
+    const includeRamTamer = plan === 'suite_annual' || freeRamTamerPromo || hasRamTamerInBody(body);
 
     const localizedPricing = resolvePricingForRequest(req, parsedUrl, body);
     const existingAcc = accountsByEmail.get(email);
@@ -3416,10 +3418,10 @@ function getCachedDynamicDelta() {
         account_id: acc.id,
         email,
         license_key: acc.licenseKey,
-        activation_code: acc.activation_code,
         plan,
         ram_tamer: includeRamTamer ? 'true' : 'false',
         addons: includeRamTamer ? 'ram_tamer' : '',
+        ...(winbackTier ? { winback_tier: winbackTier } : {}),
         country: localizedPricing.country,
         ...(refCode ? { ref: refCode } : {})
       };
@@ -3488,7 +3490,7 @@ function getCachedDynamicDelta() {
         }
       ];
 
-      if (includeRamTamer && !isSuiteAnnual) {
+      if (includeRamTamer && !isSuiteAnnual && !freeRamTamerPromo) {
         const ramProductId = await getStripeRamTamerProductId();
         const addonUnitAmount = isAnnual
           ? localizedPricing.ramTamerAnnualAmount
@@ -3680,7 +3682,6 @@ function getCachedDynamicDelta() {
           subscriptionId: subscription.id,
           accountId: acc.id,
           licenseKey: acc.licenseKey,
-          activation_code: acc.activation_code,
           entitlements: acc.entitlements,
           plan
         });
@@ -3845,7 +3846,6 @@ function getCachedDynamicDelta() {
           subscriptionId: sub.id,
           accountId: acc.id,
           licenseKey: acc.licenseKey,
-          activation_code: acc.activation_code,
           entitlements: acc.entitlements,
           plan: acc.plan,
           ramTamerAddon: Boolean(acc.ramTamerAddon),
@@ -4003,7 +4003,6 @@ function getCachedDynamicDelta() {
     return sendJson(res, 200, {
       ok: true,
       licenseKey: acc.licenseKey,
-      activation_code: acc.activation_code,
       plan: acc.plan,
       ramTamerAddon: acc.ramTamerAddon,
       entitlements: acc.entitlements,
@@ -4194,11 +4193,6 @@ function getCachedDynamicDelta() {
             licenses.delete(targetAcc.licenseKey);
             licenses.delete(String(targetAcc.licenseKey).toUpperCase());
           }
-          if (targetAcc.activation_code) {
-            licenses.delete(targetAcc.activation_code);
-            licenses.delete(`SWEEPR-DB-${targetAcc.activation_code}`);
-            licenses.delete(`DEEPBLOCK-${targetAcc.activation_code}`);
-          }
         }
         const latestRefund = Array.isArray(obj.refunds?.data) ? obj.refunds.data[0] : null;
         const addonMeta = String(obj.metadata?.addon || '').trim() || undefined;
@@ -4342,24 +4336,53 @@ function getCachedDynamicDelta() {
     }
     const body = await readBody(req);
     if (body && body.__tooLarge) return sendJson(res, 413, { ok: false, error: 'payload_too_large' });
-    const crmRes =
-      pathname === '/v1/license/refresh'
-        ? await crm.refreshLicense({
-            accountId: body?.account_id,
-            refreshToken: body?.refresh_token,
-            deviceId: body?.device_id,
-            appVersion: body?.app_version
-          })
-        : await crm.activateDevice({
-            email: body?.email,
-            otp: body?.otp || body?.activation_code || body?.refresh_token,
-            accountId: body?.account_id,
-            refreshToken: body?.refresh_token,
-            deviceId: body?.device_id || `ext_db_${Date.now()}`,
-            deviceName: body?.device_name || 'SWEEPR Deepblock Extension',
-            os: body?.os || 'browser_extension',
-            appVersion: body?.app_version || '1.0.0'
-          });
+    const clientIp = getClientIp(req);
+    if (pathname === '/v1/license/refresh') {
+      const crmRes = await crm.refreshLicense({
+        accountId: body?.account_id,
+        refreshToken: body?.refresh_token,
+        deviceId: body?.device_id,
+        appVersion: body?.app_version,
+        clientIp
+      });
+      if (crmRes.ok) {
+        return sendJson(res, 200, crmRes.data);
+      }
+      return sendJson(res, crmRes.status || 401, crmRes.data);
+    }
+
+    const submittedEmail = String(body?.email || '').trim().toLowerCase();
+    const rawKeyCandidate = String(body?.key || body?.license_key || body?.licenseKey || '').trim().toUpperCase();
+    const rawCodeCandidate = String(body?.activation_code || '').trim().toUpperCase();
+    const submittedOtp = String(body?.otp || '').trim();
+    const refreshToken = String(body?.refresh_token || '').trim();
+    const verifiedHighKey = HIGH_ENTROPY_LICENSE_KEY_RE.test(rawKeyCandidate)
+      ? rawKeyCandidate
+      : HIGH_ENTROPY_LICENSE_KEY_RE.test(rawCodeCandidate)
+      ? rawCodeCandidate
+      : '';
+    const isEmailOtpFlow = isValidEmail(submittedEmail) && /^\d{6}$/.test(submittedOtp);
+
+    if (!refreshToken && !isEmailOtpFlow && !verifiedHighKey) {
+      return sendJson(res, 400, {
+        ok: false,
+        error: 'invalid_key_format',
+        message: 'Please enter your full SWEEPR-DB-XXXX-XXXX-XXXX license key.'
+      });
+    }
+
+    const crmRes = await crm.activateDevice({
+      email: isEmailOtpFlow ? submittedEmail : body?.email,
+      otp: isEmailOtpFlow ? submittedOtp : undefined,
+      key: verifiedHighKey || undefined,
+      accountId: body?.account_id,
+      refreshToken: refreshToken || undefined,
+      deviceId: body?.device_id || `ext_db_${crypto.randomBytes(6).toString('hex')}`,
+      deviceName: body?.device_name || 'SWEEPR Deepblock Extension',
+      os: body?.os || 'browser_extension',
+      appVersion: body?.app_version || '1.0.0',
+      clientIp
+    });
     if (crmRes.ok) {
       return sendJson(res, 200, crmRes.data);
     }
@@ -4376,16 +4399,24 @@ function getCachedDynamicDelta() {
     }
     const body = req.method === 'POST' ? await readBody(req) : {};
     if (body && body.__tooLarge) return sendJson(res, 413, { valid: false, error: 'payload_too_large' });
-    const key = String(body?.key || parsedUrl.searchParams.get('key') || '').trim();
+    const rawKey = String(body?.key || parsedUrl.searchParams.get('key') || '').trim();
     const deviceId = String(body?.device_id || parsedUrl.searchParams.get('device_id') || '').trim().slice(0, 128);
     const deviceName = String(body?.device_name || parsedUrl.searchParams.get('device_name') || '').trim().slice(0, 80);
     const platform = String(body?.platform || parsedUrl.searchParams.get('platform') || 'browser_extension').trim().slice(0, 32);
-    if (!key || key.length < 6 || key.length > 512 || key.includes('@') || key.startsWith('acc_') || key.startsWith('sub_') || key.startsWith('cus_')) {
-      return sendJson(res, 400, { valid: false, error: 'invalid_key_format' });
+    const isJwsToken = rawKey.split('.').length === 3 && rawKey.length <= 512;
+    const isHighEntropyKey = HIGH_ENTROPY_LICENSE_KEY_RE.test(rawKey);
+    if (!rawKey || (!isJwsToken && !isHighEntropyKey)) {
+      return sendJson(res, 400, {
+        valid: false,
+        error: 'invalid_key_format',
+        message: 'Full SWEEPR-DB-XXXX-XXXX-XXXX license key required.'
+      });
     }
+    const key = isHighEntropyKey ? rawKey.toUpperCase() : rawKey;
+    const clientIp = getClientIp(req);
 
     // 1. Offline Ed25519 JWS token verification if key is a compact JWS token
-    if (key.split('.').length === 3 && crm.publicKeySpki) {
+    if (isJwsToken && crm.publicKeySpki) {
       const offline = crm.verifyLicenseTokenOffline(key, deviceId || undefined);
       if (offline.valid && offline.claims) {
         const hasRamTamer =
@@ -4403,8 +4434,8 @@ function getCachedDynamicDelta() {
       }
     }
 
-    // 2. Central SWEEPR CRM authoritative verification (supports 6-digit activation_code, DEEPBLOCK-xxxxxx, SWEEPR-DB-...)
-    const crmVerify = await crm.verifyKey(key, deviceId);
+    // 2. Central SWEEPR CRM authoritative verification (full high-entropy SWEEPR-DB-... key only)
+    const crmVerify = await crm.verifyKey(key, deviceId, clientIp);
     if (crmVerify.status === 403 && crmVerify.data?.error === 'device_limit_reached') {
       return sendJson(res, 403, {
         valid: false,
@@ -4438,7 +4469,6 @@ function getCachedDynamicDelta() {
           valid: true,
           project_id: 'deepblock',
           account_id: crmVerify.data.account_id || localRec?.id,
-          activation_code: crmVerify.data.activation_code || localRec?.activation_code,
           licenseKey: crmVerify.data.licenseKey || crmVerify.data.license_key || localRec?.licenseKey || key,
           plan: crmVerify.data.plan || localRec?.plan,
           ramTamerAddon: hasRamTamer,
@@ -4465,13 +4495,11 @@ function getCachedDynamicDelta() {
     }
 
     // 3. Stateless live Stripe fallback if server restarted and CRM was unreachable during checkout (60s rate-guarded cache)
-    if (!record && STRIPE_SECRET_KEY && /^(?:\d{6}|[A-Z0-9-]{8,64})$/i.test(key)) {
+    if (!record && STRIPE_SECRET_KEY && isHighEntropyKey) {
       try {
         const activeSubs = await getCachedActiveStripeSubs();
         const matchedSub = activeSubs.find(
-          (s) =>
-            (s.metadata?.license_key && s.metadata.license_key.toUpperCase() === key.toUpperCase()) ||
-            (s.metadata?.activation_code && (s.metadata.activation_code === key || key.toUpperCase().endsWith(s.metadata.activation_code)))
+          (s) => s.metadata?.license_key && s.metadata.license_key.toUpperCase() === key.toUpperCase()
         );
         if (matchedSub) {
           record = upsertLocalAccount({
@@ -4480,12 +4508,9 @@ function getCachedDynamicDelta() {
             subscriptionId: matchedSub.id,
             plan: matchedSub.metadata?.plan || 'annual',
             ramTamerAddon: matchedSub.metadata?.ram_tamer === 'true',
-            status: 'active'
+            status: 'active',
+            licenseKey: matchedSub.metadata?.license_key
           });
-          if (matchedSub.metadata?.license_key) {
-            record.licenseKey = matchedSub.metadata.license_key;
-            licenses.set(record.licenseKey, record);
-          }
           await syncSubscriptionWithSweeprCrm(record, {
             currency: matchedSub.currency || 'gbp',
             notes: `Auto-synced from live Stripe during key verification (${record.licenseKey})`
@@ -4538,7 +4563,6 @@ function getCachedDynamicDelta() {
           valid: true,
           project_id: 'deepblock',
           account_id: record.id,
-          activation_code: record.activation_code,
           licenseKey: record.licenseKey,
           plan: record.plan,
           ramTamerAddon: Boolean(record.ramTamerAddon),
@@ -4622,7 +4646,6 @@ function getCachedDynamicDelta() {
             plan: matchedSub.metadata?.plan || 'annual',
             ramTamerAddon: matchedSub.metadata?.ram_tamer === 'true',
             status: 'active',
-            ...(matchedSub.metadata?.activation_code ? { activationCode: matchedSub.metadata.activation_code } : {}),
             ...(matchedSub.metadata?.license_key ? { licenseKey: matchedSub.metadata.license_key } : {})
           });
           isSignedUp = true;
@@ -4630,11 +4653,12 @@ function getCachedDynamicDelta() {
       } catch {}
     }
 
-    // 3. Request OTP from central sweepr_crm (which also verifies the email is already signed up before sending a 6-digit OTP)
+    // 3. Request OTP from central sweepr_crm (which also verifies the email is already signed up before sending a 6-digit single-use OTP)
+    const clientIp = getClientIp(req);
     let crmOtpSent = false;
     let crmReachable = false;
     try {
-      const crmRes = await crm.sendOtp(email);
+      const crmRes = await crm.sendOtp(email, clientIp);
       if (crmRes && crmRes.status && crmRes.status < 500) {
         crmReachable = true;
         if (crmRes.ok && (crmRes.data?.otpSent || crmRes.data?.ok)) {
@@ -4642,7 +4666,7 @@ function getCachedDynamicDelta() {
         } else if (crmRes.status === 404 && isSignedUp && localAcc) {
           // Sync local active subscription to CRM and retry OTP send
           await syncSubscriptionWithSweeprCrm(localAcc);
-          const retryRes = await crm.sendOtp(email);
+          const retryRes = await crm.sendOtp(email, clientIp);
           if (retryRes && retryRes.ok && (retryRes.data?.otpSent || retryRes.data?.ok)) {
             crmOtpSent = true;
           }
@@ -4693,18 +4717,21 @@ function getCachedDynamicDelta() {
     }
 
     const portalDeviceId = `portal_db_${crypto.createHash('sha256').update(email).digest('hex').slice(0, 12)}`;
+    const clientIp = getClientIp(req);
+    const isHighEntropyCode = HIGH_ENTROPY_LICENSE_KEY_RE.test(code);
     let localAcc = accountsByEmail.get(email) || null;
     let crmReachable = false;
     let verifiedData = null;
 
-    // 1. Verify against central SWEEPR CRM (supports 6-digit email OTP, 6-digit activation_code, or license key)
+    // 1. Verify against central SWEEPR CRM (supports 15-min single-use 6-digit email OTP or full SWEEPR-DB-... license key)
     try {
       const otpVerify = await crm.verifyOtp({
         email,
         code,
         deviceId: portalDeviceId,
         platform: 'web',
-        deviceLabel: 'SWEEPR Deepblock Portal'
+        deviceLabel: 'SWEEPR Deepblock Portal',
+        clientIp
       });
       if (otpVerify && otpVerify.status && otpVerify.status < 500) {
         crmReachable = true;
@@ -4720,18 +4747,15 @@ function getCachedDynamicDelta() {
             plan: d.plan || localAcc?.plan || 'annual',
             ramTamerAddon: hasRamTamer,
             status: d.active || d.status === 'active' || d.status === 'trialing' ? 'active' : d.status || 'active',
-            ...(d.activation_code ? { activationCode: String(d.activation_code) } : {}),
             ...(d.licenseKey || d.license_key ? { licenseKey: String(d.licenseKey || d.license_key) } : {})
           });
-          if (localAcc.activation_code) licenses.set(localAcc.activation_code, localAcc);
-          if (localAcc.licenseKey) licenses.set(localAcc.licenseKey, localAcc);
+          if (localAcc.licenseKey) licenses.set(localAcc.licenseKey.toUpperCase(), localAcc);
           verifiedData = {
             ok: true,
             account_id: d.account_id || localAcc.id,
             email,
             status: localAcc.status,
             plan: localAcc.plan,
-            activation_code: localAcc.activation_code,
             licenseKey: localAcc.licenseKey,
             ramTamerAddon: Boolean(localAcc.ramTamerAddon),
             entitlements: localAcc.entitlements,
@@ -4740,8 +4764,8 @@ function getCachedDynamicDelta() {
         }
       }
 
-      if (!verifiedData) {
-        const crmLookup = await crm.portalLookup(email, code);
+      if (!verifiedData && isHighEntropyCode) {
+        const crmLookup = await crm.portalLookup(email, code, clientIp);
         if (crmLookup && crmLookup.status && crmLookup.status < 500) {
           crmReachable = true;
           if (crmLookup.ok && crmLookup.data?.ok) {
@@ -4752,7 +4776,6 @@ function getCachedDynamicDelta() {
               plan: d.plan || localAcc?.plan || 'annual',
               ramTamerAddon: hasRamTamer,
               status: d.status || 'active',
-              ...(d.activation_code ? { activationCode: String(d.activation_code) } : {}),
               ...(d.licenseKey || d.license_key ? { licenseKey: String(d.licenseKey || d.license_key) } : {})
             });
             localAcc.cancelAtPeriodEnd = Boolean(d.cancelAtPeriodEnd || d.cancel_at_period_end);
@@ -4762,7 +4785,6 @@ function getCachedDynamicDelta() {
               email,
               status: localAcc.status,
               plan: localAcc.plan,
-              activation_code: localAcc.activation_code,
               licenseKey: localAcc.licenseKey,
               ramTamerAddon: hasRamTamer,
               entitlements: buildDeepblockEntitlements(hasRamTamer),
@@ -4774,13 +4796,13 @@ function getCachedDynamicDelta() {
       }
     } catch {}
 
-    // 2. Fallback to local active account verification when CRM is unreachable or matches high-entropy license key
+    // 2. Fallback to local active account verification ONLY when code is a full high-entropy SWEEPR-DB-... license key
     if (
       !verifiedData &&
       localAcc &&
       (localAcc.status === 'active' || localAcc.status === 'trialing') &&
-      (!crmReachable || HIGH_ENTROPY_LICENSE_KEY_RE.test(code)) &&
-      verifyLocalAccountKeyOrCode(localAcc, code, { allowShortCode: !localAcc.isSeededAccount })
+      isHighEntropyCode &&
+      verifyLocalAccountKeyOrCode(localAcc, code)
     ) {
       verifiedData = {
         ok: true,
@@ -4788,7 +4810,6 @@ function getCachedDynamicDelta() {
         email: localAcc.email,
         status: localAcc.status,
         plan: localAcc.plan,
-        activation_code: localAcc.activation_code,
         licenseKey: localAcc.licenseKey,
         ramTamerAddon: Boolean(localAcc.ramTamerAddon),
         entitlements: localAcc.entitlements,
@@ -4858,22 +4879,25 @@ function getCachedDynamicDelta() {
       return sendJson(res, 429, { ok: false, error: 'Too many attempts for this account. Please wait 15 minutes.' });
     }
     const isEmail = effectiveLookup.includes('@');
-    if (isEmail && (!keyOrCode || keyOrCode.includes('@'))) {
+    if (isEmail && (!keyOrCode || keyOrCode.includes('@') || !HIGH_ENTROPY_LICENSE_KEY_RE.test(keyOrCode))) {
       return sendJson(res, 401, {
         ok: false,
-        error: 'Please enter your License Key (SWEEPR-DB-...) or 6-digit Activation Code to access your subscription.'
+        error: 'invalid_key_format',
+        message: 'Please enter your full SWEEPR-DB-XXXX-XXXX-XXXX License Key (or sign in with a 15-minute Email OTP on /login).'
       });
     }
-    const lookupKey = isEmail ? keyOrCode : effectiveLookup;
-    if (!isEmail && !HIGH_ENTROPY_LICENSE_KEY_RE.test(lookupKey)) {
+    const lookupKey = (isEmail ? keyOrCode : effectiveLookup).toUpperCase();
+    if (!HIGH_ENTROPY_LICENSE_KEY_RE.test(lookupKey)) {
       return sendJson(res, 401, {
         ok: false,
-        error: 'Please enter your Account Email along with your 6-digit Activation Code (or enter your full SWEEPR-DB-XXXX-XXXX-XXXX License Key).'
+        error: 'invalid_key_format',
+        message: 'Please enter your full SWEEPR-DB-XXXX-XXXX-XXXX License Key.'
       });
     }
 
+    const clientIp = getClientIp(req);
     // 1. Check Central SWEEPR CRM first
-    const crmLookup = await crm.portalLookup(effectiveLookup, keyOrCode);
+    const crmLookup = await crm.portalLookup(effectiveLookup, lookupKey, clientIp);
     if (crmLookup.ok && crmLookup.data && crmLookup.data.ok) {
       const d = crmLookup.data;
       const hasRamTamer = Boolean(d.ramTamerAddon);
@@ -4886,7 +4910,6 @@ function getCachedDynamicDelta() {
         account_id: d.account_id || localRec?.id,
         status: d.status,
         plan: d.plan,
-        activation_code: d.activation_code,
         licenseKey: d.licenseKey || d.license_key,
         ramTamerAddon: hasRamTamer,
         entitlements: buildDeepblockEntitlements(hasRamTamer),
@@ -4902,7 +4925,7 @@ function getCachedDynamicDelta() {
       ? accountsByEmail.get(effectiveLookup.toLowerCase())
       : licenses.get(lookupKey) || licenses.get(lookupKey.toUpperCase());
 
-    if (isEmail && record && !verifyLocalAccountKeyOrCode(record, keyOrCode)) {
+    if (isEmail && record && !verifyLocalAccountKeyOrCode(record, lookupKey)) {
       record = null;
     }
 
@@ -4911,11 +4934,7 @@ function getCachedDynamicDelta() {
         const activeSubs = await getCachedActiveStripeSubs();
         const matchedSub = activeSubs.find((s) => {
           const metaKey = (s.metadata?.license_key || '').toUpperCase();
-          const metaCode = String(s.metadata?.activation_code || '').trim();
-          const targetKey = lookupKey.toUpperCase();
-          const keyMatches =
-            (metaKey && metaKey === targetKey) ||
-            (metaCode && (metaCode === lookupKey || targetKey === `SWEEPR-DB-${metaCode}` || targetKey === `DEEPBLOCK-${metaCode}`));
+          const keyMatches = Boolean(metaKey && metaKey === lookupKey);
           if (isEmail) {
             return (s.metadata?.email || '').toLowerCase() === effectiveLookup.toLowerCase() && keyMatches;
           }
@@ -4928,12 +4947,9 @@ function getCachedDynamicDelta() {
             subscriptionId: matchedSub.id,
             plan: matchedSub.metadata?.plan || 'annual',
             ramTamerAddon: matchedSub.metadata?.ram_tamer === 'true',
-            status: 'active'
+            status: 'active',
+            ...(matchedSub.metadata?.license_key ? { licenseKey: matchedSub.metadata.license_key } : {})
           });
-          if (matchedSub.metadata?.license_key) {
-            record.licenseKey = matchedSub.metadata.license_key;
-            licenses.set(record.licenseKey, record);
-          }
           await syncSubscriptionWithSweeprCrm(record);
         }
       } catch {}
@@ -4957,7 +4973,6 @@ function getCachedDynamicDelta() {
         email: isEmail ? record.email : maskEmail(record.email),
         status: record.status,
         plan: record.plan,
-        activation_code: record.activation_code,
         licenseKey: record.licenseKey,
         ramTamerAddon: Boolean(record.ramTamerAddon),
         entitlements: record.entitlements,
@@ -4990,27 +5005,27 @@ function getCachedDynamicDelta() {
     }
 
     const isEmail = effectiveLookup.includes('@');
-    if (isEmail && (!keyOrCode || keyOrCode.includes('@'))) {
+    if (isEmail && (!keyOrCode || keyOrCode.includes('@') || !HIGH_ENTROPY_LICENSE_KEY_RE.test(keyOrCode))) {
       return sendJson(res, 401, {
         ok: false,
-        error: 'license_key_or_code_required',
-        message: 'A valid License Key or 6-digit Activation Code is required to cancel a subscription.'
+        error: 'invalid_key_format',
+        message: 'A valid full SWEEPR-DB-XXXX-XXXX-XXXX License Key is required to cancel a subscription.'
       });
     }
 
-    const lookupKey = isEmail ? keyOrCode : effectiveLookup;
-    if (!isEmail && !HIGH_ENTROPY_LICENSE_KEY_RE.test(lookupKey)) {
+    const lookupKey = (isEmail ? keyOrCode : effectiveLookup).toUpperCase();
+    if (!HIGH_ENTROPY_LICENSE_KEY_RE.test(lookupKey)) {
       return sendJson(res, 401, {
         ok: false,
-        error: 'email_required_for_short_code',
-        message: 'Please enter your Account Email along with your 6-digit Activation Code (or enter your full SWEEPR-DB-XXXX-XXXX-XXXX License Key).'
+        error: 'invalid_key_format',
+        message: 'Please enter your full SWEEPR-DB-XXXX-XXXX-XXXX License Key.'
       });
     }
     let record = isEmail
       ? accountsByEmail.get(effectiveLookup.toLowerCase())
       : licenses.get(lookupKey) || licenses.get(lookupKey.toUpperCase());
 
-    if (isEmail && record && !verifyLocalAccountKeyOrCode(record, keyOrCode)) {
+    if (isEmail && record && !verifyLocalAccountKeyOrCode(record, lookupKey)) {
       return sendJson(res, 401, { ok: false, error: 'invalid_credentials' });
     }
 
@@ -5026,7 +5041,7 @@ function getCachedDynamicDelta() {
     }
 
     const cancelReason = typeof body?.reason === 'string' ? body.reason.trim().slice(0, 500) : '';
-    const crmCancel = await crm.portalCancel(effectiveLookup, false, keyOrCode, cancelReason);
+    const crmCancel = await crm.portalCancel(effectiveLookup, false, lookupKey, getClientIp(req), cancelReason);
     if (crmCancel.ok && crmCancel.data && crmCancel.data.ok) {
       return sendJson(res, 200, {
         ok: true,
@@ -5099,12 +5114,15 @@ function getCachedDynamicDelta() {
   // API 3c: Unified 4-Device Management & QR Code Device Linking (Flow A & B)
   // ==========================================================================
   async function resolveAccountFromSessionOrCredentials(reqObj, bodyObj = {}) {
-    const sess = verifySessionCookie(reqObj);
+    const reqOrigin = String(reqObj?.headers?.origin || '').trim().toLowerCase();
+    const isExtOrigin = reqOrigin.startsWith('chrome-extension://') || reqOrigin.startsWith('moz-extension://');
+    const clientIp = getClientIp(reqObj);
+    const sess = isExtOrigin ? null : verifySessionCookie(reqObj);
     if (sess && sess.sub) {
       let bySub = accountsById.get(sess.sub) || (sess.email ? accountsByEmail.get(String(sess.email).toLowerCase()) : null);
       if (!bySub && sess.email) {
         try {
-          const crmLookup = await crm.portalLookup(String(sess.email).toLowerCase(), '');
+          const crmLookup = await crm.portalLookup(String(sess.email).toLowerCase(), '', clientIp);
           if (crmLookup && crmLookup.ok && crmLookup.data?.ok) {
             const d = crmLookup.data;
             bySub = upsertLocalAccount({
@@ -5112,7 +5130,6 @@ function getCachedDynamicDelta() {
               plan: d.plan || 'annual',
               ramTamerAddon: Boolean(d.ramTamerAddon),
               status: d.status || 'active',
-              ...(d.activation_code ? { activationCode: String(d.activation_code) } : {}),
               ...(d.licenseKey || d.license_key ? { licenseKey: String(d.licenseKey || d.license_key) } : {})
             });
           }
@@ -5130,7 +5147,7 @@ function getCachedDynamicDelta() {
       return null;
     }
     if (rawLookup && rawLookup.includes('@')) {
-      if (!keyOrCode && !(sess && sess.email === rawLookup)) {
+      if (!keyOrCode || !HIGH_ENTROPY_LICENSE_KEY_RE.test(keyOrCode)) {
         return null;
       }
       let acc = accountsByEmail.get(rawLookup);
@@ -5138,7 +5155,7 @@ function getCachedDynamicDelta() {
         return acc;
       }
       try {
-        const crmLookup = await crm.portalLookup(rawLookup, keyOrCode);
+        const crmLookup = await crm.portalLookup(rawLookup, keyOrCode.toUpperCase(), clientIp);
         if (crmLookup && crmLookup.ok && crmLookup.data?.ok) {
           const d = crmLookup.data;
           acc = upsertLocalAccount({
@@ -5146,7 +5163,6 @@ function getCachedDynamicDelta() {
             plan: d.plan || 'annual',
             ramTamerAddon: Boolean(d.ramTamerAddon),
             status: d.status || 'active',
-            ...(d.activation_code ? { activationCode: String(d.activation_code) } : {}),
             ...(d.licenseKey || d.license_key ? { licenseKey: String(d.licenseKey || d.license_key) } : {})
           });
           return acc;
@@ -5161,7 +5177,7 @@ function getCachedDynamicDelta() {
         return acc;
       }
       try {
-        const crmVerify = await crm.verifyKey(candidateKey);
+        const crmVerify = await crm.verifyKey(candidateKey.toUpperCase(), '', clientIp);
         if (crmVerify && crmVerify.ok && crmVerify.data?.valid) {
           const d = crmVerify.data;
           acc = upsertLocalAccount({
@@ -5169,7 +5185,6 @@ function getCachedDynamicDelta() {
             plan: d.plan || 'annual',
             ramTamerAddon: Boolean(d.ramTamerAddon),
             status: d.status || 'active',
-            ...(d.activation_code ? { activationCode: String(d.activation_code) } : {}),
             licenseKey: String(d.licenseKey || d.license_key || candidateKey.toUpperCase())
           });
           if (d.account_id) acc.crm_account_id = d.account_id;
@@ -5297,7 +5312,7 @@ function getCachedDynamicDelta() {
     }
     if (acc.licenseKey) {
       try {
-        const crmSeat = await crm.verifyKey(acc.licenseKey, deviceId);
+        const crmSeat = await crm.verifyKey(acc.licenseKey, deviceId, getClientIp(req));
         if (crmSeat && crmSeat.status === 403 && crmSeat.data?.error === 'device_limit_reached') {
           return sendJson(res, 403, {
             ok: false,
@@ -5338,7 +5353,6 @@ function getCachedDynamicDelta() {
         email: maskEmail(acc.email),
         status: acc.status,
         plan: acc.plan,
-        activation_code: acc.activation_code,
         licenseKey: acc.licenseKey,
         ramTamerAddon: Boolean(acc.ramTamerAddon),
         entitlements: acc.entitlements,
@@ -5445,7 +5459,6 @@ function getCachedDynamicDelta() {
         project_id: 'deepblock',
         account_id: acc.id,
         email: maskEmail(acc.email),
-        activation_code: acc.activation_code,
         licenseKey: acc.licenseKey,
         plan: acc.plan,
         ramTamerAddon: Boolean(acc.ramTamerAddon),
@@ -5482,12 +5495,12 @@ function getCachedDynamicDelta() {
       return sendJson(res, 401, {
         ok: false,
         error: 'authentication_required',
-        message: 'Please enter your Account Email and 6-digit Activation Code (or License Key) to approve this device.'
+        message: 'Please enter your Account Email and full SWEEPR-DB-XXXX-XXXX-XXXX License Key to approve this device.'
       });
     }
     if (acc.licenseKey) {
       try {
-        const crmSeat = await crm.verifyKey(acc.licenseKey, ch.deviceId);
+        const crmSeat = await crm.verifyKey(acc.licenseKey, ch.deviceId, getClientIp(req));
         if (crmSeat && crmSeat.status === 403 && crmSeat.data?.error === 'device_limit_reached') {
           return sendJson(res, 403, {
             ok: false,
@@ -5556,7 +5569,7 @@ function getCachedDynamicDelta() {
   <meta name="robots" content="noindex, nofollow">
   <title>Link Device via QR — SWEEPR Deepblock Pro</title>
   <link rel="icon" type="image/svg+xml" href="/logo.svg">
-  <script src="https://cdn.tailwindcss.com/3.4.5"></script>
+  <link rel="stylesheet" href="/sweepr-ui.css">
 </head>
 <body class="bg-[#0b1120] text-white min-h-screen flex items-center justify-center p-5 font-sans antialiased">
   <div class="max-w-md w-full bg-[#131c31] border border-emerald-500/30 rounded-3xl p-7 shadow-2xl space-y-5">
@@ -5584,8 +5597,8 @@ function getCachedDynamicDelta() {
           <input id="pairEmail" type="email" placeholder="you@example.com" value="${escapeHtml(loggedInAcc?.email || '')}" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm">
         </div>
         <div>
-          <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1">6-Digit Code or License Key</label>
-          <input id="pairKey" type="text" placeholder="e.g. 817797 or SWEEPR-DB-XXXX..." class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm font-mono">
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1">Full License Key</label>
+          <input id="pairKey" type="text" placeholder="SWEEPR-DB-XXXX-XXXX-XXXX" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm font-mono uppercase">
         </div>
       </div>
 
@@ -5601,7 +5614,7 @@ function getCachedDynamicDelta() {
         ? `
       <div id="redeemContainer" class="space-y-4">
         <div class="bg-slate-900/90 border border-slate-700/80 rounded-2xl p-4 text-sm text-slate-300">
-          Tap below to link this device to your <strong>SWEEPR Deepblock Pro</strong> subscription (up to 3 devices total).
+          Tap below to link this device to your <strong>SWEEPR Deepblock Pro</strong> subscription (up to 4 devices total).
         </div>
         <div id="redeemStatus" class="hidden text-xs font-bold rounded-xl p-3"></div>
         <button id="redeemBtn" type="button" class="w-full py-3.5 px-5 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-sm shadow-lg cursor-pointer">
@@ -5624,13 +5637,25 @@ function getCachedDynamicDelta() {
     (function() {
       const challengeId = ${JSON.stringify(challengeId)};
       const token = ${JSON.stringify(token)};
+      const KEY_RE = /^SWEEPR-[A-Z0-9]{2,8}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/i;
       const approveBtn = document.getElementById('approveBtn');
       if (approveBtn && challengeId) {
         approveBtn.addEventListener('click', async () => {
           const emailEl = document.getElementById('pairEmail');
           const keyEl = document.getElementById('pairKey');
+          const authFieldsEl = document.getElementById('approveAuthFields');
           const statusEl = document.getElementById('pairStatus');
           const slotsEl = document.getElementById('pairDeviceSlots');
+          const enteredKey = keyEl ? keyEl.value.trim().toUpperCase() : '';
+          const authVisible = authFieldsEl && !authFieldsEl.classList.contains('hidden');
+          if ((authVisible || enteredKey) && !KEY_RE.test(enteredKey)) {
+            if (statusEl) {
+              statusEl.className = 'text-xs font-bold rounded-xl p-3 bg-rose-500/15 border border-rose-500/40 text-rose-300';
+              statusEl.textContent = 'Please enter your full SWEEPR-DB-XXXX-XXXX-XXXX license key.';
+              statusEl.classList.remove('hidden');
+            }
+            return;
+          }
           approveBtn.disabled = true;
           approveBtn.textContent = 'Approving...';
           try {
@@ -5640,7 +5665,7 @@ function getCachedDynamicDelta() {
               body: JSON.stringify({
                 challenge_id: challengeId,
                 email: emailEl ? emailEl.value.trim() : '',
-                key: keyEl ? keyEl.value.trim() : ''
+                key: enteredKey
               })
             });
             const data = await res.json().catch(() => ({}));
@@ -5709,7 +5734,9 @@ function getCachedDynamicDelta() {
           redeemBtn.textContent = 'Linking Device...';
           let devId = localStorage.getItem('sweepr_db_device_id');
           if (!devId) {
-            devId = 'mob_db_' + Math.random().toString(36).slice(2, 10);
+            devId = 'mob_db_' + (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+              ? crypto.randomUUID()
+              : Array.from(crypto.getRandomValues(new Uint8Array(8)), (b) => b.toString(16).padStart(2, '0')).join(''));
             localStorage.setItem('sweepr_db_device_id', devId);
           }
           try {
@@ -5838,14 +5865,19 @@ function getCachedDynamicDelta() {
     });
   }
 
+  function isAdminAuthConfigured() {
+    return Boolean(SWEEPR_CRM_API_KEY || CRM_ADMIN_PASSWORD || (process.env.ADMIN_API_KEY || '').trim());
+  }
+
   function hasBlockedSitesAdminAuth(req) {
     const authKey = String(req.headers['x-sweepr-api-key'] || req.headers['x-crm-api-key'] || '').trim();
     const basicAuth = String(req.headers.authorization || '').trim();
     const adminSecret = SWEEPR_CRM_API_KEY || CRM_ADMIN_PASSWORD || (process.env.ADMIN_API_KEY || '').trim();
-    if (authKey && adminSecret && timingSafeStringMatch(authKey, adminSecret)) {
+    if (!adminSecret) return false;
+    if (authKey && timingSafeStringMatch(authKey, adminSecret)) {
       return true;
     }
-    if (basicAuth.startsWith('Basic ') && adminSecret) {
+    if (basicAuth.startsWith('Basic ')) {
       try {
         const creds = Buffer.from(basicAuth.slice(6), 'base64').toString('utf8');
         const pass = creds.split(':')[1] || '';
@@ -5931,6 +5963,7 @@ function getCachedDynamicDelta() {
 
     if (req.method === 'POST') {
       if (!checkRateLimit(req, 'blocked_sites_write', 30, 60000)) return sendJson(res, 429, { ok: false, error: 'rate_limit_exceeded' });
+      if (!isAdminAuthConfigured()) return sendJson(res, 503, { ok: false, error: 'admin_not_configured', message: 'Administrative secret is not configured.' });
       if (!hasBlockedSitesAdminAuth(req)) return sendJson(res, 401, { ok: false, error: 'unauthorized', message: 'Administrative authentication required.' });
       const body = await readBody(req);
       if (body && body.__tooLarge) return sendJson(res, 413, { ok: false, error: 'payload_too_large' });
@@ -5960,6 +5993,7 @@ function getCachedDynamicDelta() {
 
     if (req.method === 'DELETE') {
       if (!checkRateLimit(req, 'blocked_sites_write', 30, 60000)) return sendJson(res, 429, { ok: false, error: 'rate_limit_exceeded' });
+      if (!isAdminAuthConfigured()) return sendJson(res, 503, { ok: false, error: 'admin_not_configured', message: 'Administrative secret is not configured.' });
       if (!hasBlockedSitesAdminAuth(req)) return sendJson(res, 401, { ok: false, error: 'unauthorized', message: 'Administrative authentication required.' });
       const dom = normalizeSiteDomain(parsedUrl.searchParams.get('domain') || parsedUrl.searchParams.get('url') || '');
       if (!dom) return sendJson(res, 400, { ok: false, error: 'domain_required' });
@@ -5977,6 +6011,9 @@ function getCachedDynamicDelta() {
     if (req.method === 'POST' && pathname === '/api/seo/keyword-opportunities/refresh') {
       if (!checkRateLimit(req, 'seo_kw_refresh', 10, 60000)) {
         return sendJson(res, 429, { ok: false, error: 'rate_limit_exceeded' });
+      }
+      if (!isAdminAuthConfigured()) {
+        return sendJson(res, 503, { ok: false, error: 'admin_not_configured', message: 'Administrative secret is not configured.' });
       }
       if (!hasBlockedSitesAdminAuth(req)) {
         return sendJson(res, 401, { ok: false, error: 'unauthorized', message: 'Administrative authentication required.' });
@@ -6355,7 +6392,7 @@ function getCachedDynamicDelta() {
     }
   }
   if (!candidateRel) {
-    if (/^\/(solutions|setup|vs|guides|tools|site|glossary|campaigns|de|fr|stories)\/[a-z0-9-]+$/i.test(pathname)) {
+    if (/^\/(solutions|setup|vs|guides|tools|site|glossary|campaigns|de|fr|es|stories)\/[a-z0-9-]+$/i.test(pathname)) {
       candidateRel = pathname.slice(1) + '.html';
     } else if (pathname.length > 1 && !path.extname(pathname)) {
       const htmlCandidate = pathname.slice(1) + '.html';
@@ -6435,6 +6472,19 @@ function getCachedDynamicDelta() {
     return sendErrorResponse(res, 403, '403 Forbidden');
   }
 
+  try {
+    const realRoot = fs.realpathSync(resolvedRoot);
+    const realTarget = fs.realpathSync(fullPath);
+    if (realTarget !== realRoot && !realTarget.startsWith(realRoot + path.sep)) {
+      return sendErrorResponse(res, 403, '403 Forbidden');
+    }
+  } catch (fsErr) {
+    if (fsErr && (fsErr.code === 'ENOENT' || fsErr.code === 'ENOTDIR')) {
+      return sendErrorResponse(res, 404, '404 Not Found');
+    }
+    return sendErrorResponse(res, 403, '403 Forbidden');
+  }
+
   return serveStaticOptimized(req, res, fullPath);
   } catch (err) {
     console.error('[SWEEPR SERVER UNCAUGHT ERROR]', err);
@@ -6476,6 +6526,7 @@ global.__cmoAutomationJobs = [
     name: 'E-E-A-T Live Telemetry Proof & CTR Queue Injector',
     script: 'scripts/enrich-pillars-with-live-proof.mjs',
     outputFile: 'website/pillar-enrichment-state.json',
+    mutatesHtml: true,
     intervalMs: 24 * 60 * 60 * 1000,
     timeoutMs: 60000
   },
@@ -6508,6 +6559,7 @@ global.__cmoAutomationJobs = [
     name: 'GSC Strike-Zone & Internal Link Equity Optimizer',
     script: 'scripts/gsc-strike-zone-optimizer.mjs',
     outputFile: 'data/gsc-strike-zone-report.json',
+    mutatesHtml: true,
     intervalMs: 12 * 60 * 60 * 1000,
     timeoutMs: 60000
   },
@@ -6549,7 +6601,8 @@ global.__cmoAutomationJobs = [
     id: 'daily_seo_pagespeed_audit',
     name: 'Technical SEO, Cannibalization & CWV Guardrail Audit',
     script: 'scripts/daily-seo-pagespeed-audit.mjs',
-    args: ['3'],
+    args: ['0'],
+    mutatesHtml: true,
     outputFile: 'data/daily-seo-audit-report.json',
     intervalMs: 24 * 60 * 60 * 1000,
     timeoutMs: 120000
@@ -6558,6 +6611,7 @@ global.__cmoAutomationJobs = [
     id: 'gsc_consolidation_redirect_guard',
     name: 'GSC Consolidation & 301 Redirect Health Guard',
     script: 'scripts/gsc-consolidation-redirect-guard.mjs',
+    mutatesHtml: true,
     outputFile: 'data/gsc-consolidation-health.json',
     intervalMs: 12 * 60 * 60 * 1000,
     timeoutMs: 90000
@@ -6663,10 +6717,13 @@ if (require.main === module) {
   setTimeout(pushServiceHealth, 8000).unref();
   setInterval(pushServiceHealth, 60000).unref();
   // Check for stale CMO automation artifacts 15s after boot and every 30 minutes
+  // (HTML-mutating builders run via GitHub Actions unless ENABLE_IN_PROCESS_SEO_BUILDERS=true)
   const checkStaleCmoJobs = () => {
     try {
       const now = Date.now();
+      const allowHtmlMutations = process.env.ENABLE_IN_PROCESS_SEO_BUILDERS === 'true';
       for (const job of global.__cmoAutomationJobs || []) {
+        if (job.mutatesHtml && !allowHtmlMutations) continue;
         const outAbs = path.join(__dirname, job.outputFile);
         const isStale = !fs.existsSync(outAbs) || now - fs.statSync(outAbs).mtimeMs > job.intervalMs;
         if (isStale) {

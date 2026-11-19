@@ -7,7 +7,6 @@
   <title>Download SWEEPR Deepblock — Chrome, Edge, Firefox, Safari</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preconnect" href="https://cdn.tailwindcss.com">
   <meta name="description" content="Install SWEEPR Deepblock in 30 seconds for Chrome, Edge, Brave, Opera, Firefox, and Safari. Stop video ads, close cookie pop-ups, and shop safely online.">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
   <meta name="author" content="SWEEPR">
@@ -34,48 +33,8 @@
   <meta name="twitter:image" content="https://sweeprdeepblock.com/og-image.png">
 
   <!-- Structured Data (JSON-LD) -->
-  <script type="application/ld+json">{
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "BreadcrumbList",
-      "itemListElement": [
-        {
-          "@type": "ListItem",
-          "position": 1,
-          "name": "Home",
-          "item": "https://sweeprdeepblock.com/"
-        },
-        {
-          "@type": "ListItem",
-          "position": 2,
-          "name": "Download",
-          "item": "https://sweeprdeepblock.com/download"
-        }
-      ]
-    },
-    {
-      "@type": "SoftwareApplication",
-      "name": "SWEEPR Deepblock Browser Extension",
-      "image": "https://sweeprdeepblock.com/og-image.png",
-      "operatingSystem": "Chrome, Microsoft Edge, Brave, Opera, Firefox, Safari",
-      "applicationCategory": "BrowserApplication",
-      "downloadUrl": "https://sweeprdeepblock.com/download",
-      "softwareVersion": "1.2.7",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "GBP",
-        "availability": "https://schema.org/InStock",
-        "url": "https://sweeprdeepblock.com/download",
-        "description": "Free browser extension download with optional Pro upgrade.",
-        "validFrom": "2026-01-01",
-        "priceValidUntil": "2027-12-31"
-      }
-    }
-  ]
-}</script>
-  <script src="https://cdn.tailwindcss.com/3.4.5"></script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://sweeprdeepblock.com/"},{"@type":"ListItem","position":2,"name":"Download","item":"https://sweeprdeepblock.com/download"}]},{"@type":"SoftwareApplication","name":"SWEEPR Deepblock Browser Extension","image":"https://sweeprdeepblock.com/og-image.png","operatingSystem":"Chrome, Microsoft Edge, Brave, Opera, Firefox, Safari","applicationCategory":"BrowserApplication","downloadUrl":"https://sweeprdeepblock.com/download","softwareVersion":"1.2.9","offers":{"@type":"Offer","price":"0","priceCurrency":"GBP","availability":"https://schema.org/InStock","url":"https://sweeprdeepblock.com/download","description":"Free browser extension download with optional Pro upgrade.","validFrom":"2026-01-01","priceValidUntil":"2027-12-31"}}]}</script>
+  <link rel="stylesheet" href="/sweepr-ui.css?v=20261116">
   <link rel="stylesheet" href="/style.css?v=20261108">
   <script src="/nav.js?v=20261108" defer></script>
   <!-- Google tag (gtag.js) - Sweepr Deepblock -->
@@ -174,7 +133,7 @@
         <strong>2. Pin the green shield icon 📌</strong> in the top-right toolbar of your browser so SWEEPR Deepblock is always 1 click away.
       </div>
       <div id="step3Text">
-        <strong>3. Unlock with your 6-digit code or license key 🔑</strong> — enter your paid subscription code on the welcome screen (or inside the extension popup) to unlock YouTube ad blocking, cookie pop-up closing, and scam shop alerts.
+        <strong>3. Unlock with your SWEEPR-DB-... license key 🔑</strong> — enter your paid license key on the welcome screen (or inside the extension popup) to unlock YouTube ad blocking, cookie pop-up closing, and scam shop alerts.
       </div>
     </div>
 
@@ -187,8 +146,9 @@
     // Official Store URLs (automatically used once each store listing is live; falls back to 1-Click Auto-Installer)
     var OFFICIAL_STORE_URLS = {
       chrome: 'https://chromewebstore.google.com/detail/sweepr-deepblock-ad-cooki/bkdfhdgmglfancgpkcbdceinfdlccmpc',
-      edge: '',
+      edge: 'https://microsoftedge.microsoft.com/addons/detail/pbidlabhfmaoghmofkaegcgjgmaajhop',
       firefox: 'https://addons.mozilla.org/firefox/addon/sweepr-deepblock/',
+      opera: 'https://addons.opera.com/en/extensions/details/sweepr-deepblock/',
       safari: ''
     };
 
@@ -261,7 +221,7 @@
         return {
           id: 'safari',
           os: 'mac',
-          name: 'Apple Safari (macOS)',
+          name: 'Apple Safari (macOS — Encrypted DNS Shield)',
           icon: '🧭',
           downloadHref: OFFICIAL_STORE_URLS.safari || '/download/sweepr-deepblock.mobileconfig',
           downloadName: '',
@@ -297,8 +257,8 @@
           os: os,
           name: 'Opera',
           icon: '🔴',
-          downloadHref: OFFICIAL_STORE_URLS.chrome || desktopInstallerHref,
-          downloadName: OFFICIAL_STORE_URLS.chrome ? '' : desktopInstallerName,
+          downloadHref: OFFICIAL_STORE_URLS.opera || desktopInstallerHref,
+          downloadName: OFFICIAL_STORE_URLS.opera ? '' : desktopInstallerName,
           extUrl: 'opera://extensions'
         };
       }
@@ -324,11 +284,17 @@
       var androidCard = document.getElementById('androidDnsCard');
 
       var isOfficialWebStore = Boolean(info.downloadHref && /^https?:\/\/chromewebstore\.google\.com/i.test(info.downloadHref));
+      var isOfficialEdgeStore = Boolean(info.downloadHref && /^https?:\/\/microsoftedge\.microsoft\.com/i.test(info.downloadHref));
+      var isOfficialOperaStore = Boolean(info.downloadHref && /^https?:\/\/addons\.opera\.com/i.test(info.downloadHref));
       var isOfficialFirefoxStore = Boolean(info.downloadHref && /^https?:\/\/addons\.mozilla\.org/i.test(info.downloadHref));
       if (iconEl) iconEl.textContent = info.icon;
       if (textEl) {
         textEl.textContent = isOfficialWebStore
           ? 'Official Chrome Web Store Extension for ' + info.name
+          : isOfficialEdgeStore
+          ? 'Official Microsoft Edge Add-ons Extension for ' + info.name
+          : isOfficialOperaStore
+          ? 'Official Opera Add-ons Extension for ' + info.name
           : isOfficialFirefoxStore
           ? 'Official Firefox Add-ons Store Extension for ' + info.name
           : '1-Click Auto-Setup for ' + info.name;
@@ -351,6 +317,10 @@
           againEl.removeAttribute('download');
           againEl.textContent = isOfficialWebStore
             ? 'Open Chrome Web Store'
+            : isOfficialEdgeStore
+            ? 'Open Microsoft Edge Add-ons'
+            : isOfficialOperaStore
+            ? 'Open Opera Add-ons'
             : isOfficialFirefoxStore
             ? 'Open Firefox Add-ons Store'
             : 'Download again';
@@ -362,20 +332,34 @@
       if (info.os === 'ios') {
         if (btnLabelEl) btnLabelEl.textContent = 'Install on iPhone & iPad';
         if (subtitleEl) {
-          subtitleEl.innerHTML = 'Tap <strong>Install on iPhone &amp; iPad</strong> below to activate the SWEEPR Deepblock iOS Safari &amp; System-Wide Ad Shield in 30 seconds.';
+          subtitleEl.innerHTML = 'Tap <strong>Install on iPhone &amp; iPad</strong> below to activate the SWEEPR Deepblock Apple Encrypted DNS Shield Profile in 30 seconds.';
         }
         if (step1El) {
-          step1El.innerHTML = '<strong>1. Tap "Install on iPhone &amp; iPad" above</strong> and tap <strong>Allow</strong> when Apple asks to download the SWEEPR Deepblock App &amp; Protection Profile.';
+          step1El.innerHTML = '<strong>1. Tap "Install on iPhone &amp; iPad" above</strong> and tap <strong>Allow</strong> when Apple asks to download the SWEEPR Deepblock Apple Encrypted DNS Shield Profile.';
         }
         if (step2El) {
-          step2El.innerHTML = '<strong>2. Tap "Install" in Settings ⚙️</strong> — open <code class="font-mono bg-emerald-50 text-emerald-800 px-1.5 py-0.5 rounded border border-emerald-200">' + info.extUrl + '</code> and tap <strong>Install</strong> to add the SWEEPR Deepblock iOS App &amp; Ad Shield.';
+          step2El.innerHTML = '<strong>2. Tap "Install" in Settings ⚙️</strong> — open <code class="font-mono bg-emerald-50 text-emerald-800 px-1.5 py-0.5 rounded border border-emerald-200">' + info.extUrl + '</code> and tap <strong>Install</strong> to enable system-wide DNS ad &amp; tracker blocking.';
         }
       } else if (info.id === 'safari') {
+        if (btnLabelEl) btnLabelEl.textContent = 'Install Apple Encrypted DNS Profile';
+        if (subtitleEl) {
+          subtitleEl.innerHTML = 'Download the official <strong>Apple Encrypted DNS Shield Profile</strong> for system-wide DNS ad &amp; tracker blocking on macOS &amp; Safari.';
+        }
         if (step1El) {
-          step1El.innerHTML = '<strong>1. Tap "Add to Browser" above</strong> and tap <strong>Allow</strong> when Apple asks to download the SWEEPR Deepblock Protection Profile.';
+          step1El.innerHTML = '<strong>1. Click "Install Apple Encrypted DNS Profile" above</strong> and click <strong>Allow</strong> when Safari asks to download the SWEEPR Deepblock Apple Encrypted DNS Shield Profile.';
         }
         if (step2El) {
-          step2El.innerHTML = '<strong>2. Tap "Install" in Settings ⚙️</strong> — open <code class="font-mono bg-emerald-50 text-emerald-800 px-1.5 py-0.5 rounded border border-emerald-200">' + info.extUrl + '</code> and tap <strong>Install</strong> to activate Encrypted Ad &amp; Tracker Blocking.';
+          step2El.innerHTML = '<strong>2. Approve in System Settings ⚙️</strong> — open <code class="font-mono bg-emerald-50 text-emerald-800 px-1.5 py-0.5 rounded border border-emerald-200">' + info.extUrl + '</code> and install the profile to activate system-wide DNS ad &amp; tracker blocking.';
+        }
+      } else if (isOfficialEdgeStore) {
+        if (btnLabelEl) btnLabelEl.textContent = 'Add to Microsoft Edge — Official Store';
+        if (step1El) {
+          step1El.innerHTML = '<strong>1. Click "Add to Microsoft Edge — Official Store" above</strong> and click <strong>Get</strong> on the official Microsoft Edge Add-ons listing to install SWEEPR Deepblock in 1 click.';
+        }
+      } else if (isOfficialOperaStore) {
+        if (btnLabelEl) btnLabelEl.textContent = 'Add to Opera — Official Store';
+        if (step1El) {
+          step1El.innerHTML = '<strong>1. Click "Add to Opera — Official Store" above</strong> and click <strong>Add to Opera</strong> on the official Opera Add-ons listing to install SWEEPR Deepblock in 1 click.';
         }
       } else if (isOfficialFirefoxStore) {
         if (btnLabelEl) btnLabelEl.textContent = 'Add to Firefox — Official Store';
@@ -424,6 +408,8 @@
       var titleEl = document.getElementById('downloadBannerTitle');
       var descEl = document.getElementById('downloadBannerDesc');
       var isOfficialWebStore = Boolean(currentDetectedBrowser.downloadHref && /^https?:\/\/chromewebstore\.google\.com/i.test(currentDetectedBrowser.downloadHref));
+      var isOfficialEdgeStore = Boolean(currentDetectedBrowser.downloadHref && /^https?:\/\/microsoftedge\.microsoft\.com/i.test(currentDetectedBrowser.downloadHref));
+      var isOfficialOperaStore = Boolean(currentDetectedBrowser.downloadHref && /^https?:\/\/addons\.opera\.com/i.test(currentDetectedBrowser.downloadHref));
       var isOfficialFirefoxStore = Boolean(currentDetectedBrowser.downloadHref && /^https?:\/\/addons\.mozilla\.org/i.test(currentDetectedBrowser.downloadHref));
       if (banner) banner.classList.remove('hidden');
       if (isOfficialWebStore) {
@@ -432,6 +418,24 @@
         }
         if (descEl) {
           descEl.innerHTML = 'Click <strong>Add to Chrome</strong> on the official Chrome Web Store page to install and activate SWEEPR Deepblock in 1 click.';
+        }
+        return;
+      }
+      if (isOfficialEdgeStore) {
+        if (titleEl) {
+          titleEl.textContent = '✓ Opening Official Microsoft Edge Add-ons Store...';
+        }
+        if (descEl) {
+          descEl.innerHTML = 'Click <strong>Get</strong> on the official Microsoft Edge Add-ons page to install and activate SWEEPR Deepblock in 1 click.';
+        }
+        return;
+      }
+      if (isOfficialOperaStore) {
+        if (titleEl) {
+          titleEl.textContent = '✓ Opening Official Opera Add-ons Store...';
+        }
+        if (descEl) {
+          descEl.innerHTML = 'Click <strong>Add to Opera</strong> on the official Opera Add-ons page to install and activate SWEEPR Deepblock in 1 click.';
         }
         return;
       }
@@ -472,25 +476,11 @@
 
       var params = new URLSearchParams(window.location.search);
       if (params.get('install') === '1' || params.get('store') === 'chrome') {
-        try {
-          window.history.replaceState({}, document.title, window.location.pathname);
-        } catch (e) {}
+        // Highlight primary Web Store / installer button cleanly without auto-navigation hijack
         handleAutoBrowserInstall();
-        if (currentDetectedBrowser.downloadHref && currentDetectedBrowser.downloadHref.indexOf('#') !== 0) {
-          if (/^https?:\/\//i.test(currentDetectedBrowser.downloadHref)) {
-            window.location.href = currentDetectedBrowser.downloadHref;
-          } else {
-            setTimeout(function() {
-              var a = document.createElement('a');
-              a.href = currentDetectedBrowser.downloadHref;
-              if (currentDetectedBrowser.downloadName) {
-                a.download = currentDetectedBrowser.downloadName;
-              }
-              document.body.appendChild(a);
-              a.click();
-              a.remove();
-            }, 250);
-          }
+        var ctaEl = document.getElementById('addToBrowserBtn');
+        if (ctaEl && typeof ctaEl.focus === 'function') {
+          try { ctaEl.focus({ preventScroll: true }); } catch (e) {}
         }
       }
     })();

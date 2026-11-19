@@ -1,0 +1,51 @@
+[
+  {
+    "id": 6,
+    "priority": 2,
+    "action": {
+      "type": "redirect",
+      "redirect": {
+        "transform": {
+          "queryTransform": {
+            "removeParams": [
+              "gclid",
+              "gclsrc",
+              "fbclid",
+              "msclkid",
+              "twclid",
+              "ttclid",
+              "utm_source",
+              "utm_medium",
+              "utm_campaign",
+              "utm_term",
+              "utm_content",
+              "mc_eid",
+              "oly_enc_id",
+              "oly_anon_id",
+              "_hsenc",
+              "_hsmi",
+              "vero_id",
+              "igshid",
+              "yclid",
+              "rb_clickid"
+            ]
+          }
+        }
+      }
+    },
+    "condition": {
+      "excludedRequestDomains": [
+        "sweeprdeepblock.com",
+        "www.sweeprdeepblock.com",
+        "sweeprcleaner.com",
+        "www.sweeprcleaner.com",
+        "sweeprvpn.com",
+        "www.sweeprvpn.com"
+      ],
+      "resourceTypes": [
+        "main_frame",
+        "sub_frame"
+      ]
+    }
+  }
+]

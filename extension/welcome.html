@@ -718,7 +718,7 @@
             Complete Browser Privacy &amp; Speed
           </h1>
           <p class="obsidian-sub">
-            One Pro key for Chrome, Firefox, Edge, Safari, iOS &amp; Android.
+            One Pro key for Chrome, Edge, Firefox &amp; Opera — plus iOS/Android DNS Companion.
           </p>
 
           <div class="metrics-grid">
@@ -741,9 +741,9 @@
           </div>
         </div>
 
-        <div class="shortcuts-footer">
-          <span><kbd>Alt+Shift+S</kbd> Site Shield</span>
-          <span><kbd>Alt+Shift+Z</kbd> Snooze Tabs</span>
+        <div class="shortcuts-footer" id="welcomeShortcutsFooter">
+          <span><kbd data-kbd-cmd="toggle-site-shield">Alt+Shift+S</kbd> Site Shield</span>
+          <span><kbd data-kbd-cmd="snooze-inactive-tabs">Alt+Shift+Z</kbd> Snooze Tabs</span>
         </div>
       </section>
 
@@ -753,10 +753,15 @@
             <div class="badge" id="welcomeStatusBadge">Extension installed — activate Pro</div>
           </div>
 
+          <div id="welcomeHostPermBanner" style="display:none;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;padding:10px 12px;border-radius:10px;background:#fffbeb;border:1px solid #f59e0b;color:#92400e;font-size:12px;font-weight:700;">
+            <span>Site access permission is required to block ads &amp; cookie pop-ups automatically on websites.</span>
+            <button type="button" id="welcomeGrantPermBtn" data-i18n="uiGrantPermissions" style="background:#d97706;color:#fff;border:none;border-radius:8px;padding:7px 12px;font-size:11.5px;font-weight:800;cursor:pointer;white-space:nowrap;flex-shrink:0;">Grant Site Access</button>
+          </div>
+
           <div class="seg-bar" id="welcomeSegBar" role="tablist">
             <button type="button" id="welcomeTabKey" class="seg-btn" role="tab">
               <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
-              <span>I Have a License Key</span>
+              <span data-i18n="uiHaveKey">Have a Pro License Key?</span>
             </button>
             <button type="button" id="welcomeTabBuy" class="seg-btn active" role="tab">
               <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
@@ -818,7 +823,7 @@
                 rel="noopener"
                 class="primary-cta-btn"
               >
-                <span>Unlock Full Pro Protection</span>
+                <span data-i18n="uiUnlockPro">Unlock Full Pro Protection</span>
                 <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
               </a>
             </div>
@@ -839,7 +844,7 @@
                 </svg>
               </div>
               <div>
-                <div class="pro-action-title">Mobile QR Sync for iOS Safari &amp; Android</div>
+                <div class="pro-action-title">Mobile Device Pairing QR</div>
                 <div class="pro-action-sub">Scan in the Customer Portal to link your mobile devices</div>
               </div>
             </div>

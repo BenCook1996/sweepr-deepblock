@@ -7,7 +7,6 @@
   <title>Complete Your SWEEPR Deepblock Order — Secure Checkout</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preconnect" href="https://cdn.tailwindcss.com">
   <meta name="description" content="Complete your SWEEPR Deepblock Pro order securely with 256-bit SSL encryption, Apple Pay, Google Pay, or card. Protected by a 14-day money-back guarantee.">
   <meta name="robots" content="noindex, nofollow">
   <meta name="theme-color" content="#0F172A">
@@ -33,37 +32,8 @@
   <meta name="twitter:image" content="https://sweeprdeepblock.com/og-image.png">
 
   <!-- Structured Data (JSON-LD) -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "BreadcrumbList",
-        "itemListElement": [
-          {
-            "@type": "ListItem",
-            "position": 1,
-            "name": "Home",
-            "item": "https://sweeprdeepblock.com/"
-          },
-          {
-            "@type": "ListItem",
-            "position": 2,
-            "name": "Order",
-            "item": "https://sweeprdeepblock.com/order"
-          }
-        ]
-      },
-      {
-        "@type": "CheckoutPage",
-        "name": "SWEEPR Deepblock Order Checkout",
-        "url": "https://sweeprdeepblock.com/order",
-        "description": "Secure checkout for SWEEPR Deepblock Pro licenses with instant activation."
-      }
-    ]
-  }
-  </script>
-  <script src="https://cdn.tailwindcss.com/3.4.5"></script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://sweeprdeepblock.com/"},{"@type":"ListItem","position":2,"name":"Order","item":"https://sweeprdeepblock.com/order"}]},{"@type":"CheckoutPage","name":"SWEEPR Deepblock Order Checkout","url":"https://sweeprdeepblock.com/order","description":"Secure checkout for SWEEPR Deepblock Pro licenses with instant activation."}]}</script>
+  <link rel="stylesheet" href="/sweepr-ui.css?v=20261116">
   <link rel="stylesheet" href="/style.css?v=20261114">
   <script src="https://js.stripe.com/v3/"></script>
   <script src="https://pay.google.com/gp/p/js/pay.js" async></script>
@@ -689,9 +659,7 @@
               <div>
                 <label class="block text-xs font-bold text-gray-700 mb-1">Card Number</label>
                 <div class="relative">
-                  <div id="stripeCardNumber" class="stripe-input-box hidden"></div>
-                  <input type="text" id="fallbackCardNumber" inputmode="numeric" autocomplete="cc-number" placeholder="4000 1234 5678 9010" maxlength="19"
-                    class="w-full p-2.5 sm:p-3 pr-10 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all font-mono">
+                  <div id="stripeCardNumber" class="stripe-input-box"></div>
                   <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-gray-400">
                     <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/></svg>
                   </div>
@@ -701,9 +669,7 @@
               <div class="grid grid-cols-2 gap-3">
                 <div>
                   <label class="block text-xs font-bold text-gray-700 mb-1">Expiry Date (MM/YY)</label>
-                  <div id="stripeCardExpiry" class="stripe-input-box hidden"></div>
-                  <input type="text" id="fallbackCardExpiry" inputmode="numeric" autocomplete="cc-exp" placeholder="MM/YY" maxlength="5"
-                    class="w-full p-2.5 sm:p-3 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all font-mono">
+                  <div id="stripeCardExpiry" class="stripe-input-box"></div>
                 </div>
 
                 <div>
@@ -716,9 +682,7 @@
                       </div>
                     </div>
                   </div>
-                  <div id="stripeCardCvc" class="stripe-input-box hidden"></div>
-                  <input type="password" id="fallbackCardCvc" inputmode="numeric" autocomplete="cc-csc" placeholder="•••" maxlength="4"
-                    class="w-full p-2.5 sm:p-3 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all font-mono tracking-widest">
+                  <div id="stripeCardCvc" class="stripe-input-box"></div>
                 </div>
               </div>
             </div>
@@ -937,6 +901,8 @@
     let selectedPlan = 'annual'; // 'annual' | 'six_month' | 'monthly'
     let isDiscountApplied = false;
     let isRamTamerAdded = true;
+    let activeWinbackTier = '';
+    let isD60FreeRamTamer = false;
     let stripe = null;
     let elements = null;
     let cardElements = null;
@@ -972,9 +938,6 @@
         const billingAddress = (document.getElementById('billingAddress')?.value || '').trim();
         const billingPostcode = (document.getElementById('billingPostcode')?.value || '').trim();
         const email = (document.getElementById('email')?.value || '').trim();
-        const fallbackCardNumber = (document.getElementById('fallbackCardNumber')?.value || '').trim();
-        const fallbackCardExpiry = (document.getElementById('fallbackCardExpiry')?.value || '').trim();
-        const fallbackCardCvc = (document.getElementById('fallbackCardCvc')?.value || '').trim();
 
         const hasAnyInput = Boolean(
           forceHasDetails ||
@@ -983,10 +946,7 @@
           cardName ||
           billingAddress ||
           billingPostcode ||
-          email ||
-          fallbackCardNumber ||
-          fallbackCardExpiry ||
-          fallbackCardCvc
+          email
         );
 
         if (!hasAnyInput) return;
@@ -1008,7 +968,6 @@
           billingAddress: document.getElementById('billingAddress')?.value || '',
           billingPostcode: document.getElementById('billingPostcode')?.value || '',
           email: document.getElementById('email')?.value || '',
-          fallbackCardExpiry: document.getElementById('fallbackCardExpiry')?.value || '',
           plan: selectedPlan,
           isDiscountApplied: Boolean(isDiscountApplied),
           isRamTamerAdded: Boolean(isRamTamerAdded),
@@ -1041,7 +1000,6 @@
         setVal('billingAddress', draft.billingAddress);
         setVal('billingPostcode', draft.billingPostcode);
         setVal('email', draft.email);
-        setVal('fallbackCardExpiry', draft.fallbackCardExpiry);
 
         if (typeof draft.termsConsent === 'boolean') {
           const termsEl = document.getElementById('termsConsent');
@@ -1065,10 +1023,7 @@
         'cardName',
         'billingAddress',
         'billingPostcode',
-        'email',
-        'fallbackCardNumber',
-        'fallbackCardExpiry',
-        'fallbackCardCvc'
+        'email'
       ];
       textIds.forEach((id) => {
         const el = document.getElementById(id);
@@ -1087,6 +1042,7 @@
 
     function getRamAddonPence(plan = selectedPlan) {
       if (plan === 'suite_annual') return 0;
+      if (plan === 'annual' && isD60FreeRamTamer) return 0;
       const p = checkoutConfig && checkoutConfig.pricing;
       if (plan === 'annual') return p?.ramTamerAnnualAmount ?? 1499;
       if (plan === 'six_month') return p?.ramTamerSixMonthAmount ?? 999;
@@ -1160,6 +1116,10 @@
         ramPriceLabel.textContent = `+ ${sixFmt}/6mo (£1.66/mo eq.)`;
         ramAmount.textContent = `+ ${sixFmt}/6 months`;
         if (ramTitle) ramTitle.textContent = 'Total Tab & RAM Tamer Add-On (6-Month)';
+      } else if (selectedPlan === 'annual' && isD60FreeRamTamer) {
+        ramPriceLabel.textContent = 'FREE (D60 Win-Back — 12 Months Included)';
+        ramAmount.textContent = 'FREE (12 mo)';
+        if (ramTitle) ramTitle.textContent = 'Total Tab & RAM Tamer Add-On (Free 12-Month D60 Bonus)';
       } else {
         const yrFmt = p?.ramTamerAnnualFormatted ?? '£14.99';
         ramPriceLabel.textContent = `+ ${yrFmt}/yr (£1.24/mo eq.)`;
@@ -1467,51 +1427,8 @@
     function initAdPixels(adPixels = {}) {
       if (adPixelsInitialized) return;
       adPixelsInitialized = true;
-      const uetTagId = adPixels.uetTagId || '343283087';
-      const metaPixelId = adPixels.metaPixelId || '910118314453383';
-      const redditPixelId = adPixels.redditPixelId || 'a2_jy81fs9ouy2u';
-      const openaiPixelId = adPixels.openaiPixelId || 'DRfCjPsivgeyx2fLbkPzFy';
-      try {
-        if (uetTagId) {
-          const uetScript = document.createElement('script');
-          uetScript.async = true;
-          uetScript.src = 'https://bat.bing.net/bat.js?ti=' + encodeURIComponent(uetTagId);
-          uetScript.onload = () => {
-            if (window.UET) {
-              const o = { ti: uetTagId, enableAutoSpaTracking: true, q: window.uetq };
-              window.uetq = new window.UET(o);
-              window.uetq.push('pageLoad');
-            }
-          };
-          document.head.appendChild(uetScript);
-        }
-        if (metaPixelId) {
-          const fbScript = document.createElement('script');
-          fbScript.async = true;
-          fbScript.src = 'https://connect.facebook.net/en_US/fbevents.js';
-          document.head.appendChild(fbScript);
-          window.fbq('init', metaPixelId);
-          window.fbq('track', 'PageView');
-          window.fbq('track', 'InitiateCheckout');
-        }
-        if (redditPixelId) {
-          const rdtScript = document.createElement('script');
-          rdtScript.async = true;
-          rdtScript.src = 'https://www.redditstatic.com/ads/pixel.js?pixel_id=' + encodeURIComponent(redditPixelId);
-          document.head.appendChild(rdtScript);
-          window.rdt('init', redditPixelId);
-          window.rdt('track', 'PageVisit');
-        }
-        if (openaiPixelId) {
-          const oaiScript = document.createElement('script');
-          oaiScript.async = true;
-          oaiScript.src = 'https://bzrcdn.openai.com/sdk/oaiq.min.js';
-          document.head.appendChild(oaiScript);
-          window.oaiq('init', { pixelId: openaiPixelId });
-          window.oai('init', openaiPixelId);
-          window.oai('track', 'InitiateCheckout');
-        }
-      } catch (e) {}
+      // Conversion tracking is relayed server-side (e.g. /api/conversions/openai) to preserve strict checkout CSP and PCI isolation.
+      void adPixels;
     }
 
     async function firePurchaseConversions(confirmData = {}, fallbackSubId = '') {
@@ -1687,6 +1604,8 @@
       const discountParam = params.get('discount');
       const errorParam = params.get('error');
       const emailParam = params.get('email');
+      activeWinbackTier = String(params.get('winback') || '').trim().toLowerCase();
+      isD60FreeRamTamer = activeWinbackTier === 'tier_d60';
 
       if (emailParam) {
         const emailEl = document.getElementById('email');
@@ -1696,7 +1615,9 @@
         }
       }
 
-      if (params.get('addon') === 'none' || params.get('ram_tamer') === '0') {
+      if (isD60FreeRamTamer) {
+        isRamTamerAdded = true;
+      } else if (params.get('addon') === 'none' || params.get('ram_tamer') === '0') {
         isRamTamerAdded = false;
       } else if (restoredDraft && typeof restoredDraft.isRamTamerAdded === 'boolean') {
         isRamTamerAdded = restoredDraft.isRamTamerAdded;
@@ -1782,12 +1703,9 @@
         const cardExpiryEl = elements.create('cardExpiry', { style: elementStyles });
         const cardCvcEl = elements.create('cardCvc', { style: cvcStyles, placeholder: '•••' });
 
-        document.getElementById('stripeCardNumber').classList.remove('hidden');
-        document.getElementById('fallbackCardNumber').classList.add('hidden');
-        document.getElementById('stripeCardExpiry').classList.remove('hidden');
-        document.getElementById('fallbackCardExpiry').classList.add('hidden');
-        document.getElementById('stripeCardCvc').classList.remove('hidden');
-        document.getElementById('fallbackCardCvc').classList.add('hidden');
+        document.getElementById('stripeCardNumber')?.classList.remove('hidden');
+        document.getElementById('stripeCardExpiry')?.classList.remove('hidden');
+        document.getElementById('stripeCardCvc')?.classList.remove('hidden');
 
         cardNumberEl.mount('#stripeCardNumber');
         cardExpiryEl.mount('#stripeCardExpiry');
@@ -1936,6 +1854,7 @@
             name: payerName,
             applyDiscount: isDiscountApplied && selectedPlan === 'monthly',
             plan: selectedPlan,
+            winbackTier: activeWinbackTier,
             ramTamerAddon: isRamTamerAdded,
             addons: isRamTamerAdded ? ['ram_tamer'] : [],
             paymentMethod: 'google_pay'
@@ -1971,7 +1890,7 @@
         const verifyData = await verifyRes.json();
         await firePurchaseConversions(verifyData, data.subscriptionId);
         clearOrderDraft();
-        window.location.href = verifyData.redirect || '/checkout/success?web=1';
+        window.location.href = safeRedirectUrl(verifyData.redirect, '/checkout/success?web=1');
       } catch (err) {
         if (err && err.statusCode === 'CANCELED') return;
         showError(err.message || 'Google Pay checkout was cancelled or could not be completed.');
@@ -2034,6 +1953,7 @@
                   name: payerName,
                   applyDiscount: isDiscountApplied && selectedPlan === 'monthly',
                   plan: selectedPlan,
+                  winbackTier: activeWinbackTier,
                   ramTamerAddon: isRamTamerAdded,
                   addons: isRamTamerAdded ? ['ram_tamer'] : [],
                   paymentMethod: 'wallet'
@@ -2079,7 +1999,7 @@
               const verifyData = await verifyRes.json();
               await firePurchaseConversions(verifyData, data.subscriptionId);
               clearOrderDraft();
-              window.location.href = verifyData.redirect || '/checkout/success?web=1';
+              window.location.href = safeRedirectUrl(verifyData.redirect, '/checkout/success?web=1');
             } catch (err) {
               ev.complete('fail');
               showError('Connection error during wallet checkout.');
@@ -2091,36 +2011,28 @@
       }
     }
 
-    // 4. Fallback Input Masks
-    function setupFallbackInputMasks() {
-      const cardInput = document.getElementById('fallbackCardNumber');
-      const expInput = document.getElementById('fallbackCardExpiry');
-      const cvcInput = document.getElementById('fallbackCardCvc');
-
-      if (cardInput) {
-        cardInput.addEventListener('input', (e) => {
-          let val = e.target.value.replace(/\D/g, '').substring(0, 16);
-          e.target.value = val.match(/.{1,4}/g)?.join(' ') || val;
-        });
-      }
-      if (expInput) {
-        expInput.addEventListener('input', (e) => {
-          let val = e.target.value.replace(/\D/g, '').substring(0, 4);
-          if (val.length >= 2) {
-            let month = parseInt(val.substring(0, 2), 10);
-            if (month > 12) val = '12' + val.substring(2);
-            else if (month === 0) val = '01' + val.substring(2);
-            val = val.substring(0, 2) + '/' + val.substring(2);
-          }
-          e.target.value = val;
-        });
-      }
-      if (cvcInput) {
-        cvcInput.addEventListener('input', (e) => {
-          e.target.value = e.target.value.replace(/\D/g, '').substring(0, 4);
-        });
-      }
+    function safeRedirectUrl(rawUrl, fallback = '/checkout/success?web=1') {
+      try {
+        const parsed = new URL(String(rawUrl || ''), window.location.origin);
+        if (parsed.origin === window.location.origin) {
+          return parsed.pathname + parsed.search + parsed.hash;
+        }
+        if (
+          parsed.protocol === 'https:' &&
+          (parsed.hostname === 'checkout.stripe.com' ||
+            parsed.hostname.endsWith('.stripe.com') ||
+            parsed.hostname === 'www.paypal.com' ||
+            parsed.hostname === 'paypal.com' ||
+            parsed.hostname === 'www.sandbox.paypal.com')
+        ) {
+          return parsed.toString();
+        }
+      } catch (e) {}
+      return fallback;
     }
+
+    // 4. Legacy Fallback Input Masks removed — Stripe Elements enforces PCI iframe isolation.
+    function setupFallbackInputMasks() {}
 
     // 5. Inactivity Timer (90 Seconds) & Exit Intent Popup
     function startInactivityTimer() {
@@ -2286,6 +2198,7 @@
               postcode: billingPostcode,
               applyDiscount: isDiscountApplied && selectedPlan === 'monthly',
               plan: selectedPlan,
+              winbackTier: activeWinbackTier,
               ramTamerAddon: isRamTamerAdded,
               addons: isRamTamerAdded ? ['ram_tamer'] : [],
               paymentMethod: 'card'
@@ -2328,33 +2241,13 @@
           const confirmData = await confirmRes.json();
           await firePurchaseConversions(confirmData, subData.subscriptionId);
           clearOrderDraft();
-          window.location.href = confirmData.redirect || '/checkout/success?web=1';
+          window.location.href = safeRedirectUrl(confirmData.redirect, '/checkout/success?web=1');
           return;
         }
 
-        // Case B: Fallback on-page Card / Wallet confirmation
-        let rawNum = '';
+        // Case B: Non-card wallet redirect checkout (PayPal / Express). Card payments require live Stripe Elements.
         if (method === 'card') {
-          if (!cardName) {
-            document.getElementById('cardName').focus();
-            throw new Error('Please enter the name on your card.');
-          }
-          rawNum = document.getElementById('fallbackCardNumber').value.replace(/\s/g, '');
-          const rawExp = document.getElementById('fallbackCardExpiry').value.trim();
-          const rawCvc = document.getElementById('fallbackCardCvc').value.trim();
-
-          if (rawNum.length < 13) {
-            document.getElementById('fallbackCardNumber').focus();
-            throw new Error('Please enter a valid 16-digit card number.');
-          }
-          if (rawExp.length < 5) {
-            document.getElementById('fallbackCardExpiry').focus();
-            throw new Error('Please enter your card expiry date (MM/YY).');
-          }
-          if (rawCvc.length < 3) {
-            document.getElementById('fallbackCardCvc').focus();
-            throw new Error('Please enter the 3 or 4 digit security code (CVV).');
-          }
+          throw new Error('Secure card payment form is still loading. Please wait a moment or refresh the page.');
         }
 
         const subRes = await fetch('/api/create-subscription', {
@@ -2367,21 +2260,25 @@
             postcode: billingPostcode || undefined,
             applyDiscount: isDiscountApplied && selectedPlan === 'monthly',
             plan: selectedPlan,
+            winbackTier: activeWinbackTier,
             ramTamerAddon: isRamTamerAdded,
             addons: isRamTamerAdded ? ['ram_tamer'] : [],
             paymentMethod: method,
-            confirmOnServer: true,
-            cardNumber: rawNum || undefined
+            confirmOnServer: true
           })
         });
 
         const subData = await subRes.json();
         if (subRes.ok && subData.redirectUrl) {
-          if (subData.licenseKey || String(subData.redirectUrl).includes('/checkout/success')) {
+          const nextUrl = safeRedirectUrl(subData.redirectUrl, '');
+          if (!nextUrl) {
+            throw new Error('Blocked unsafe checkout redirect URL.');
+          }
+          if (subData.licenseKey || nextUrl.includes('/checkout/success')) {
             await firePurchaseConversions(subData, subData.subscriptionId);
           }
           clearOrderDraft();
-          window.location.href = subData.redirectUrl;
+          window.location.href = nextUrl;
           return;
         } else {
           throw new Error(subData.error || 'Unable to process payment. Please verify your payment details.');

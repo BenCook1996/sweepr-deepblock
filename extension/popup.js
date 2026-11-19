@@ -1,11 +1,14 @@
 // SWEEPR Deepblock — Zero-Scroll 360x500px Unified Popup Controller (v2.0 UX Architect Refactored)
 document.addEventListener('DOMContentLoaded', () => {
   const adsCountEl = document.getElementById('adsCount');
+  const adsMetricLabelEl = document.getElementById('adsMetricLabel');
   const cookieCountEl = document.getElementById('cookieCount');
   const slopCountEl = document.getElementById('slopCount');
   const scamCountEl = document.getElementById('scamCount');
   const adsBlockedTextEl = document.getElementById('adsBlockedText');
   const tierBadgeEl = document.getElementById('tierBadge');
+  const hostPermBannerEl = document.getElementById('hostPermBanner');
+  const grantHostPermBtn = document.getElementById('grantHostPermBtn');
   const ramHeadlineEl = document.getElementById('ramHeadlineMetric');
   const ramDescEl = document.getElementById('ramDescriptionText');
   const ramBarFillEl = document.getElementById('ramBarFill');
@@ -93,18 +96,129 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const pasteKeyBtn = document.getElementById('pasteKeyBtn');
+  const isTouchDevice =
+    (typeof window !== 'undefined' &&
+      window.matchMedia &&
+      window.matchMedia('(pointer: coarse)').matches) ||
+    (typeof navigator !== 'undefined' &&
+      /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent || ''));
+  let snoozeShortcutLabel = '';
+
+  function getMsg(key, fallback) {
+    try {
+      const m = chrome.i18n && chrome.i18n.getMessage && chrome.i18n.getMessage(key);
+      if (m) return m;
+    } catch (e) {}
+    return fallback;
+  }
+
+  function applyI18nStrings() {
+    document.querySelectorAll('[data-i18n]').forEach((el) => {
+      const key = el.getAttribute('data-i18n');
+      const translated = getMsg(key, '');
+      if (translated) el.textContent = translated;
+    });
+  }
+
+  function populateShortcutBadges() {
+    if (isTouchDevice) {
+      document.querySelectorAll('.kbd-badge, .kbd-tooltip').forEach((el) => {
+        el.style.display = 'none';
+      });
+      return;
+    }
+    if (!chrome.commands || typeof chrome.commands.getAll !== 'function') return;
+    try {
+      chrome.commands.getAll((cmds) => {
+        if (!Array.isArray(cmds)) return;
+        const shieldCmd = cmds.find((c) => c.name === 'toggle-site-shield');
+        const snoozeCmd = cmds.find((c) => c.name === 'snooze-inactive-tabs');
+        const shieldBadge = document.querySelector('#siteBarClickRow .kbd-badge');
+        const snoozeBadge = document.querySelector('#reclaimRamBtn .kbd-badge');
+        if (shieldBadge) {
+          if (shieldCmd && shieldCmd.shortcut) {
+            shieldBadge.textContent = shieldCmd.shortcut;
+          } else {
+            shieldBadge.style.display = 'none';
+          }
+        }
+        if (snoozeBadge) {
+          if (snoozeCmd && snoozeCmd.shortcut) {
+            snoozeBadge.textContent = snoozeCmd.shortcut;
+            snoozeShortcutLabel = snoozeCmd.shortcut;
+          } else {
+            snoozeBadge.style.display = 'none';
+          }
+        } else if (snoozeCmd && snoozeCmd.shortcut) {
+          snoozeShortcutLabel = snoozeCmd.shortcut;
+        }
+      });
+    } catch (e) {}
+  }
+
+  applyI18nStrings();
+  populateShortcutBadges();
+
+  if (grantHostPermBtn) {
+    grantHostPermBtn.addEventListener('click', () => {
+      if (!chrome.permissions || typeof chrome.permissions.request !== 'function') return;
+      try {
+        chrome.permissions.request({ origins: ['<all_urls>'] }, (granted) => {
+          chrome.runtime.sendMessage(
+            { type: 'CHECK_HOST_PERMISSIONS', granted: Boolean(granted) },
+            (res) => {
+              if (res && typeof res.hostPermissionsGranted === 'boolean') {
+                currentState.hostPermissionsGranted = res.hostPermissionsGranted;
+              } else {
+                currentState.hostPermissionsGranted = Boolean(granted);
+              }
+              renderState(currentState);
+            }
+          );
+        });
+      } catch (e) {}
+    });
+  }
+
   if (pasteKeyBtn && licenseKeyInput) {
     pasteKeyBtn.addEventListener('click', async () => {
+      let pastedText = '';
+      let clipboardFailed = false;
       try {
-        const text = await navigator.clipboard.readText();
-        if (text && text.trim()) {
-          licenseKeyInput.value = text.trim();
+        pastedText = await navigator.clipboard.readText();
+      } catch (err1) {
+        clipboardFailed = true;
+        if (chrome.permissions && typeof chrome.permissions.request === 'function') {
+          try {
+            const granted = await new Promise((resolve) => {
+              chrome.permissions.request({ permissions: ['clipboardRead'] }, (ok) => resolve(Boolean(ok)));
+            });
+            if (granted) {
+              pastedText = await navigator.clipboard.readText();
+              clipboardFailed = false;
+            }
+          } catch (err2) {
+            clipboardFailed = true;
+          }
         }
-      } catch (e) {}
+      }
+      if (pastedText && pastedText.trim()) {
+        licenseKeyInput.value = pastedText.trim();
+        handlePopupActivate();
+        return;
+      }
       if ((licenseKeyInput.value || '').trim()) {
         handlePopupActivate();
-      } else {
-        licenseKeyInput.focus();
+        return;
+      }
+      licenseKeyInput.focus();
+      if (clipboardFailed && licenseFeedbackEl) {
+        const isMac = typeof navigator !== 'undefined' && /Mac|Darwin/i.test(navigator.platform || '');
+        licenseFeedbackEl.style.display = 'block';
+        licenseFeedbackEl.style.color = '#d97706';
+        licenseFeedbackEl.textContent = isMac
+          ? 'Clipboard blocked — click box and press ⌘V to paste your key.'
+          : 'Clipboard blocked — click box and press Ctrl+V to paste your key.';
       }
     });
   }
@@ -220,12 +334,19 @@ document.addEventListener('DOMContentLoaded', () => {
     currentState = state || currentState;
     const isPro = Boolean(state.proActive);
     const stats = state.stats || {};
-    const ads = (Number(stats.adsBlocked) || 0) + (Number(stats.aiSlopDetected) || 0);
+    const ads = isPro
+      ? (Number(stats.adsBlocked) || 0) + (Number(stats.aiSlopDetected) || 0)
+      : (Number(stats.adsSpotted) || 0) + (Number(stats.adsBlocked) || 0) + (Number(stats.aiSlopDetected) || 0);
     const cookies = Number(stats.cookiePromptsDetected) || 0;
     const slop = Number(stats.aiSlopDetected) || 0;
     const scams = Number(stats.fakeStoresDetected) || 0;
 
+    if (hostPermBannerEl) {
+      hostPermBannerEl.style.display = state.hostPermissionsGranted === false ? 'flex' : 'none';
+    }
+
     if (adsCountEl) adsCountEl.textContent = String(ads);
+    if (adsMetricLabelEl) adsMetricLabelEl.textContent = isPro ? 'Ads' : 'Spotted';
     if (cookieCountEl) cookieCountEl.textContent = String(cookies);
     if (slopCountEl) slopCountEl.textContent = String(slop);
     if (scamCountEl) scamCountEl.textContent = String(scams);
@@ -236,21 +357,28 @@ document.addEventListener('DOMContentLoaded', () => {
     const sessions = Array.isArray(state.cloudTabSessions) ? state.cloudTabSessions : [];
     if (savedTabsCountEl) savedTabsCountEl.textContent = String(sessions.length);
 
+    const popupAutoRamRow = document.getElementById('popupAutoRamRow');
     if (state.ramMetrics) {
       const totalTabs = Number(state.ramMetrics.totalTabs) || 1;
       const discardedCount = Number(state.ramMetrics.discardedCount) || 0;
-      const savedGb = Number(stats.ramSavedGb) || +(discardedCount * 0.14).toFixed(1);
-      ramHeadlineEl.textContent = !isPro
-        ? 'Pro Add-On'
-        : savedGb > 0
-        ? `${savedGb} GB Saved`
-        : `${totalTabs} Tabs`;
-      const scaleRatio = isPro ? Math.min(0.85, Math.max(0.18, (totalTabs * 4) / 100)) : 0;
+      const discardSupported = state.ramMetrics.tabsDiscardSupported !== false;
+      if (reclaimRamBtn) {
+        reclaimRamBtn.style.display = discardSupported ? '' : 'none';
+      }
+      if (popupAutoRamRow) {
+        popupAutoRamRow.style.display = discardSupported ? '' : 'none';
+      }
+      ramHeadlineEl.textContent =
+        discardSupported && discardedCount > 0 ? `${discardedCount} sleeping` : `${totalTabs} tabs`;
+      const scaleRatio = isPro && discardSupported ? Math.min(0.85, Math.max(0.18, (totalTabs * 4) / 100)) : 0;
       ramBarFillEl.style.transform = `scaleX(${scaleRatio.toFixed(2)})`;
       const autoOn = !state.settings || state.settings.autoRamTamer !== false;
       if (autoRamToggleBtn) {
         if (!isPro) {
           autoRamToggleBtn.textContent = '🔒 Auto-Pilot';
+          autoRamToggleBtn.className = 'store-pill';
+        } else if (!discardSupported) {
+          autoRamToggleBtn.textContent = 'Tab Hibernation Unavailable';
           autoRamToggleBtn.className = 'store-pill';
         } else if (autoOn) {
           autoRamToggleBtn.textContent = '● Auto-Pilot ON';
@@ -260,19 +388,21 @@ document.addEventListener('DOMContentLoaded', () => {
           autoRamToggleBtn.className = 'store-pill risk';
         }
       }
-      ramDescEl.textContent = !isPro
-        ? 'Unlock Pro to snooze inactive background tabs automatically and save up to 5.9 GB RAM.'
+      ramDescEl.textContent = !discardSupported
+        ? `Tab hibernation is not supported in this browser · ${totalTabs} open tab${totalTabs === 1 ? '' : 's'}.`
+        : !isPro
+        ? 'Unlock Pro to automatically hibernate idle background tabs.'
         : !autoOn
-        ? 'Auto-Pilot paused. Click "● Auto-Pilot" or "Free Up RAM Now" to resume automatic background snoozing.'
+        ? 'Auto-Pilot paused. Enable Auto-Hibernate or click Boost Browser Speed Now to snooze idle tabs.'
         : discardedCount > 0
-        ? `Auto-Pilot active · ${discardedCount} background tab${discardedCount === 1 ? ' is' : 's are'} sleeping quietly.`
-        : `Auto-Pilot active · ${totalTabs} open tabs monitored automatically in background.`;
+        ? `Auto-Pilot active · ${discardedCount} background tab${discardedCount === 1 ? ' is' : 's are'} sleeping.`
+        : `Auto-Pilot active · ${totalTabs} open tabs monitored in background.`;
     }
 
     if (isPro) {
       document.body.classList.add('pro-mode');
       document.body.classList.remove('unactivated-mode');
-      tierBadgeEl.textContent = 'Pro Active';
+      tierBadgeEl.textContent = getMsg('uiProActive', 'Pro Active');
       tierBadgeEl.classList.add('pro');
       upgradeCtaBtn.style.display = 'none';
       toggleLicenseDrawerBtn.style.display = 'none';
@@ -280,7 +410,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       document.body.classList.add('unactivated-mode');
       document.body.classList.remove('pro-mode');
-      tierBadgeEl.textContent = 'Free Preview';
+      tierBadgeEl.textContent = getMsg('uiFreePreview', 'Free Preview');
       tierBadgeEl.classList.remove('pro');
       upgradeCtaBtn.style.display = 'flex';
       toggleLicenseDrawerBtn.style.display = 'flex';
@@ -289,7 +419,7 @@ document.addEventListener('DOMContentLoaded', () => {
         upgradeSubtitleEl.textContent =
           state.abVariant === 'variant_b_risk_free_14d'
             ? '14-Day 100% Risk-Free Guarantee · 1-Click Portal Cancel'
-            : 'One Subscription · 4 Devices + Sweepr Ecosystem Ready';
+            : 'One Subscription · Chrome, Edge, Firefox & Opera';
       }
     }
 
@@ -313,10 +443,15 @@ document.addEventListener('DOMContentLoaded', () => {
             reviewRateBtn.onclick = () => {
               chrome.storage.local.set({ reviewPromptDismissed: true });
               reviewMilestoneBanner.style.display = 'none';
-              const isFirefox = typeof navigator !== 'undefined' && /Firefox\//i.test(navigator.userAgent);
-              const reviewUrl = isFirefox
-                ? 'https://addons.mozilla.org/en-US/firefox/addon/sweepr-deepblock/reviews/'
-                : 'https://chromewebstore.google.com/detail/bkdfhdgmglfancgpkcbdceinfdlccmpc/reviews';
+              const ua = typeof navigator !== 'undefined' ? navigator.userAgent || '' : '';
+              let reviewUrl = 'https://chromewebstore.google.com/detail/bkdfhdgmglfancgpkcbdceinfdlccmpc/reviews';
+              if (/Firefox\//i.test(ua)) {
+                reviewUrl = 'https://addons.mozilla.org/en-US/firefox/addon/sweepr-deepblock/reviews/';
+              } else if (/Edg\//i.test(ua)) {
+                reviewUrl = 'https://microsoftedge.microsoft.com/addons/detail/pbidlabhfmaoghmofkaegcgjgmaajhop';
+              } else if (/OPR\/|Opera\//i.test(ua)) {
+                reviewUrl = 'https://addons.opera.com/en/extensions/details/sweepr-deepblock/';
+              }
               chrome.tabs.create({ url: reviewUrl });
             };
           }
@@ -338,8 +473,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const a3MilestoneUpgradeBtn = document.getElementById('a3MilestoneUpgradeBtn');
     const a3MilestoneDismissBtn = document.getElementById('a3MilestoneDismissBtn');
     const mState = state.milestoneState || {
-      totalThreats: (Number(stats.adsBlocked) || 0) + (Number(stats.cookiePromptsDetected) || 0) + (Number(stats.aiSlopDetected) || 0) + (Number(stats.fakeStoresDetected) || 0),
-      secondsSaved: 42
+      totalThreats:
+        (Number(stats.adsBlocked) || 0) +
+        (Number(stats.adsSpotted) || 0) +
+        (Number(stats.cookiePromptsDetected) || 0) +
+        (Number(stats.aiSlopDetected) || 0) +
+        (Number(stats.fakeStoresDetected) || 0)
     };
     if (milestoneActionCard) {
       chrome.storage.local.get(['a3MilestoneDismissedAt'], (a3Store) => {
@@ -348,8 +487,8 @@ document.addEventListener('DOMContentLoaded', () => {
           const isHighMilestone = mState.totalThreats >= 1000;
           if (milestoneActionText) {
             milestoneActionText.textContent = isHighMilestone
-              ? `🔥 ${mState.totalThreats.toLocaleString()} threats blocked (~${mState.secondsSaved}s saved)! Lock £29.99/yr Pro or £89.99/yr Suite`
-              : `🛡️ ${mState.totalThreats.toLocaleString()} threats spotted (~${mState.secondsSaved}s saved)! Unlock Pro (£1.99 1st mo or £29.99/yr)`;
+              ? `🔥 ${mState.totalThreats.toLocaleString()} threats spotted — unlock Annual Pro or Complete Security Suite`
+              : `🛡️ ${mState.totalThreats.toLocaleString()} threats spotted — unlock Full Pro protection`;
           }
           if (a3MilestoneUpgradeBtn) {
             a3MilestoneUpgradeBtn.textContent = isHighMilestone ? 'Unlock Pro / Suite' : 'Unlock Pro';
@@ -383,17 +522,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const dismissedRecent = a4Store && a4Store.a4DismissedAt && Date.now() - Number(a4Store.a4DismissedAt) < 7 * 86400 * 1000;
         if ((state.stepUpSaveEligible || state.winbackEligible) && !dismissedRecent) {
           const wbTier = state.winbackTier || 'tier_d30';
-          let bannerCopy = `💡 Intro Month Ending (${mState.totalThreats.toLocaleString()} blocks, ${cookies} cookies) — Lock £29.99/yr (£2.50/mo) Forever`;
+          const countVerb = isPro ? 'blocks' : 'threats spotted';
+          let bannerCopy = `💡 Intro Month Ending (${mState.totalThreats.toLocaleString()} ${countVerb}, ${cookies} cookies) — Switch to Annual Pro`;
           let targetUrl = 'https://sweeprdeepblock.com/order?plan=annual&utm_source=extension_a4';
           if (state.winbackEligible) {
             if (wbTier === 'tier_d90') {
-              bannerCopy = `🛡️ D90 Win-Back: Complete Security Suite (DeepBlock+VPN+Cleaner) £89.99/yr (Save 45%)`;
+              bannerCopy = '🛡️ D90 Win-Back: Complete Security Suite (DeepBlock+VPN+Cleaner) — Save 45%';
               targetUrl = 'https://sweeprdeepblock.com/order?plan=suite_annual&winback=tier_d90&utm_source=extension_d90';
             } else if (wbTier === 'tier_d60') {
-              bannerCopy = `⚡ D60 Win-Back: Lock £29.99/yr (£2.50/mo) Annual + FREE 12-Month RAM Tamer`;
+              bannerCopy = '⚡ D60 Win-Back: Annual Pro + FREE 12-Month RAM Tamer Included';
               targetUrl = 'https://sweeprdeepblock.com/order?plan=annual&winback=tier_d60&utm_source=extension_d60';
             } else {
-              bannerCopy = `⚡ D30 Win-Back (${mState.totalThreats.toLocaleString()} blocks): 6-Month Plan £19.99 (Save 33%)`;
+              bannerCopy = `⚡ D30 Win-Back (${mState.totalThreats.toLocaleString()} ${countVerb}): 6-Month Plan — Save 33%`;
               targetUrl = 'https://sweeprdeepblock.com/order?plan=six_month&winback=tier_d30&utm_source=extension_d30';
             }
           }
@@ -427,18 +567,17 @@ document.addEventListener('DOMContentLoaded', () => {
       chrome.storage.local.get(['a5DismissedAt'], (a5Store) => {
         const dismissedRecent = a5Store && a5Store.a5DismissedAt && Date.now() - Number(a5Store.a5DismissedAt) < 14 * 86400 * 1000;
         const tabsHib = Number(stats.tabsHibernated) || 0;
-        const slowdownPct = Number(state.ramMetrics && state.ramMetrics.slowdownPct) || 0;
         const totalProtected = ads + cookies;
-        const triggerCleaner = !state.ramTamerActive && (tabsHib >= 20 || slowdownPct >= 45);
-        const triggerVpn = !state.ramTamerActive && Boolean(state.encryptedDnsEnabled || (isPro && totalProtected >= 150));
+        const triggerCleaner = !state.ramTamerActive && tabsHib >= 20;
+        const triggerVpn = !state.ramTamerActive && isPro && totalProtected >= 150;
         if (!dismissedRecent && (triggerCleaner || triggerVpn)) {
           const targetUrl = triggerCleaner
             ? 'https://sweeprdeepblock.com/order?plan=suite_annual&utm_source=extension_a5&utm_medium=ram_trigger'
             : 'https://sweeprdeepblock.com/order?plan=suite_annual&utm_source=extension_a5&utm_medium=dns_trigger';
           if (ecosystemCrossSellText) {
             ecosystemCrossSellText.textContent = triggerCleaner
-              ? '🧹 High RAM usage spotted — Unlock Complete Suite (DeepBlock + RAM Tamer + Cleaner + VPN) £89.99/yr'
-              : '🔒 Encrypt ISP & Wi-Fi traffic across 5 devices with Sweepr Complete Security Suite (£89.99/yr)';
+              ? `🧹 ${tabsHib} idle tabs snoozed — Bundle DeepBlock + RAM Tamer + Cleaner + VPN`
+              : '🔒 Protect up to 5 devices with the Sweepr Complete Security Suite';
           }
           if (a5CrossSellCtaBtn) {
             a5CrossSellCtaBtn.textContent = 'Bundle & Save ↗';
@@ -626,7 +765,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    reclaimRamBtn.textContent = 'Freeing RAM...';
+    reclaimRamBtn.textContent = 'Snoozing idle tabs...';
     chrome.runtime.sendMessage({ type: 'HIBERNATE_TABS_NOW' }, (res) => {
       if (res && res.requiresPro) {
         currentState.proActive = false;
@@ -636,10 +775,17 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       if (res && res.ok) {
         const count = Number(res.newlyDiscarded) || 0;
-        const savedGb = (res.stats && res.stats.ramSavedGb) || 0.4;
+        const discardedTotal = Number(res.ramMetrics && res.ramMetrics.discardedCount);
+        const tabsTotal = Number(res.ramMetrics && res.ramMetrics.totalTabs) || 0;
         reclaimRamBtn.textContent =
-          count > 0 ? '✓ Idle Tabs Snoozed' : '✓ Already Optimized';
-        ramHeadlineEl.textContent = `${savedGb} GB Saved`;
+          count > 0 ? `✓ ${count} tab${count === 1 ? '' : 's'} snoozed` : '✓ No idle tabs';
+        if (Number.isFinite(discardedTotal) && discardedTotal > 0) {
+          ramHeadlineEl.textContent = `${discardedTotal} sleeping`;
+        } else if (count > 0) {
+          ramHeadlineEl.textContent = `${count} sleeping`;
+        } else if (tabsTotal > 0) {
+          ramHeadlineEl.textContent = `${tabsTotal} tabs`;
+        }
         ramBarFillEl.style.transform = 'scaleX(0.18)';
         if (ramHeadlineEl.animate) {
           ramHeadlineEl.animate(
@@ -751,7 +897,8 @@ document.addEventListener('DOMContentLoaded', () => {
               trackerProtection: true,
               adBlocking: true,
               silentMode: true,
-              autoRamTamer: true
+              autoRamTamer: true,
+              cloudTabSyncEnabled: true
             };
             await chrome.storage.local.set({
               deviceId,
@@ -764,13 +911,16 @@ document.addEventListener('DOMContentLoaded', () => {
               crmAccountId: data.account_id || '',
               subscriptionStatus: subStatus,
               licenseVerifiedAt: Date.now(),
-              encryptedDnsEnabled: true,
               settings: newSettings
             });
             try {
               if (chrome.declarativeNetRequest && chrome.declarativeNetRequest.updateEnabledRulesets) {
                 await chrome.declarativeNetRequest.updateEnabledRulesets({
-                  enableRulesetIds: ['ads_and_trackers', 'cryptominers_and_heavy_scripts'],
+                  enableRulesetIds: [
+                    'ads_and_trackers',
+                    'tracker_param_stripping',
+                    'cryptominers_and_heavy_scripts'
+                  ],
                   disableRulesetIds: []
                 });
               }
@@ -830,19 +980,24 @@ document.addEventListener('DOMContentLoaded', () => {
         if (finalRes && finalRes.ok && finalRes.valid) {
           await chrome.storage.local.set({ draftLicenseKey: '', licenseDrawerOpen: false });
           currentState.proActive = true;
-          currentState.settings = {
-            cookieAutoClose: true,
-            hideSearchSpam: true,
-            fakeShopAlerts: true,
-            trackerProtection: true,
-            adBlocking: true,
-            silentMode: true,
-            autoRamTamer: true
-          };
+          currentState.settings =
+            (finalRes && finalRes.settings) || {
+              cookieAutoClose: true,
+              hideSearchSpam: true,
+              fakeShopAlerts: true,
+              trackerProtection: true,
+              adBlocking: true,
+              silentMode: true,
+              autoRamTamer: true,
+              cloudTabSyncEnabled: true
+            };
           licenseFeedbackEl.style.display = 'block';
           licenseFeedbackEl.style.color = '#10b981';
           licenseFeedbackEl.textContent = '✓ Pro Activated! All protection features are ON.';
           renderState(currentState);
+          chrome.runtime.sendMessage({ type: 'GET_DASHBOARD_STATE' }, (freshState) => {
+            if (freshState) renderState(freshState);
+          });
         } else {
           if (!(finalRes && finalRes.networkError && currentState.proActive)) {
             currentState.proActive = false;
@@ -874,6 +1029,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const popupQrStatus = document.getElementById('popupQrStatus');
   const popupRefreshQrBtn = document.getElementById('popupRefreshQrBtn');
   let popupQrPollTimer = null;
+  let popupQrRunId = 0;
+
+  function stopPopupQrPolling() {
+    popupQrRunId += 1;
+    if (popupQrPollTimer) {
+      clearInterval(popupQrPollTimer);
+      popupQrPollTimer = null;
+    }
+  }
+
+  window.addEventListener('pagehide', stopPopupQrPolling);
+  window.addEventListener('unload', stopPopupQrPolling);
 
   function setPopupQrPlaceholder(text, color) {
     if (!popupQrSvg) return;
@@ -887,10 +1054,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function startPopupQrChallenge() {
     if (!popupQrBox || !popupQrSvg || !popupQrStatus) return;
+    stopPopupQrPolling();
+    const runId = popupQrRunId;
     popupQrBox.style.display = 'block';
     setPopupQrPlaceholder('Generating...', '#6b7280');
     popupQrStatus.textContent = 'Creating secure 120s QR challenge...';
-    if (popupQrPollTimer) clearInterval(popupQrPollTimer);
 
     const stored = await chrome.storage.local.get(['deviceId']);
     const deviceId =
@@ -948,9 +1116,13 @@ document.addEventListener('DOMContentLoaded', () => {
     popupQrStatus.textContent = `Scan with phone • Expires in ${rem}s`;
 
     popupQrPollTimer = setInterval(async () => {
+      if (runId !== popupQrRunId) {
+        clearInterval(popupQrPollTimer);
+        return;
+      }
       rem = Math.max(0, rem - 2);
       if (rem <= 0) {
-        clearInterval(popupQrPollTimer);
+        stopPopupQrPolling();
         popupQrStatus.textContent = 'QR expired — click Refresh QR.';
         return;
       }
@@ -960,8 +1132,9 @@ document.addEventListener('DOMContentLoaded', () => {
           `${activeOrigin}/api/device-link/poll?challenge_id=${encodeURIComponent(challengeData.challenge_id)}&poll_secret=${encodeURIComponent(challengeData.poll_secret)}`
         );
         const pollData = await pollRes.json().catch(() => ({}));
+        if (runId !== popupQrRunId) return;
         if (pollRes.ok && pollData && pollData.status === 'approved' && pollData.licenseKey) {
-          clearInterval(popupQrPollTimer);
+          stopPopupQrPolling();
           const newSettings = {
             cookieAutoClose: true,
             hideSearchSpam: true,
@@ -969,7 +1142,8 @@ document.addEventListener('DOMContentLoaded', () => {
             trackerProtection: true,
             adBlocking: true,
             silentMode: true,
-            autoRamTamer: true
+            autoRamTamer: true,
+            cloudTabSyncEnabled: true
           };
           await chrome.storage.local.set({
             deviceId,
@@ -981,13 +1155,16 @@ document.addEventListener('DOMContentLoaded', () => {
             crmAccountId: pollData.account_id || '',
             subscriptionStatus: 'active',
             licenseVerifiedAt: Date.now(),
-            encryptedDnsEnabled: true,
             settings: newSettings
           });
           try {
             if (chrome.declarativeNetRequest && chrome.declarativeNetRequest.updateEnabledRulesets) {
               await chrome.declarativeNetRequest.updateEnabledRulesets({
-                enableRulesetIds: ['ads_and_trackers', 'cryptominers_and_heavy_scripts'],
+                enableRulesetIds: [
+                  'ads_and_trackers',
+                  'tracker_param_stripping',
+                  'cryptominers_and_heavy_scripts'
+                ],
                 disableRulesetIds: []
               });
             }
@@ -1097,7 +1274,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (popupSessionsList) {
       popupSessionsList.textContent = '';
       if (sessions.length === 0) {
-        popupSessionsList.appendChild(makeEmptyRow('No saved sessions yet. Press Alt+Shift+Z to snooze idle tabs.'));
+        const emptyHint =
+          !isTouchDevice && snoozeShortcutLabel
+            ? `No saved sessions yet. Press ${snoozeShortcutLabel} to snooze idle tabs.`
+            : 'No saved sessions yet. Click "Boost Browser Speed Now" to snooze idle tabs.';
+        popupSessionsList.appendChild(makeEmptyRow(emptyHint));
       } else {
         sessions.forEach((sess) => {
           const row = document.createElement('div');
@@ -1153,10 +1334,41 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (popupPinnedList) {
       popupPinnedList.textContent = '';
-      if (pinnedSites.length === 0) {
+      if (currentHostname) {
+        const currentPinned = pinnedSites.includes(currentHostname);
+        const curRow = document.createElement('div');
+        curRow.className = 'popup-list-row';
+        const curLbl = document.createElement('span');
+        curLbl.textContent = `Current: ${currentHostname}`;
+        const curAct = document.createElement('button');
+        curAct.type = 'button';
+        curAct.className = 'popup-mini-btn';
+        curAct.textContent = currentPinned ? 'Pinned Awake ✓' : 'Keep this site awake';
+        curAct.addEventListener('click', () => {
+          if (!currentState.proActive) {
+            setPopupMenuVisible(false);
+            openProRequiredPrompt();
+            return;
+          }
+          chrome.runtime.sendMessage({ type: 'TOGGLE_NEVER_SNOOZE_SITE', hostname: currentHostname }, (res) => {
+            if (res && res.ok) {
+              currentState.neverSnoozeSites = res.neverSnoozeSites;
+              updateSiteBarState();
+              renderPopupMenu(currentState);
+            }
+          });
+        });
+        curRow.appendChild(curLbl);
+        curRow.appendChild(curAct);
+        popupPinnedList.appendChild(curRow);
+      }
+      if (pinnedSites.length === 0 && !currentHostname) {
         popupPinnedList.appendChild(makeEmptyRow('No sites pinned awake yet.'));
+      } else if (pinnedSites.length === 0) {
+        popupPinnedList.appendChild(makeEmptyRow('No other sites pinned awake.'));
       } else {
         pinnedSites.forEach((domain) => {
+          if (domain === currentHostname) return;
           const row = document.createElement('div');
           row.className = 'popup-list-row';
           const lbl = document.createElement('span');

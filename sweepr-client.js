@@ -4,6 +4,8 @@
  */
 const crypto = require('node:crypto');
 
+const HIGH_ENTROPY_LICENSE_KEY_RE = /^SWEEPR-[A-Z0-9]{2,8}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/i;
+
 class SweeprCrmClient {
   constructor(opts = {}) {
     this.projectId = String(opts.projectId || 'deepblock').trim().toLowerCase();
@@ -11,7 +13,6 @@ class SweeprCrmClient {
     this.apiKey =
       opts.apiKey ||
       process.env.SWEEPR_CRM_API_KEY ||
-      process.env.CRM_ADMIN_PASSWORD ||
       '';
     this.adminUser = opts.adminUser || process.env.CRM_ADMIN_USER || 'admin';
     this.adminPassword = opts.adminPassword || process.env.CRM_ADMIN_PASSWORD || '';
@@ -71,7 +72,7 @@ class SweeprCrmClient {
     return { ok: false, status: 502, data: { error: lastErr?.message || 'crm_unreachable' } };
   }
 
-  headers(extra = {}) {
+  headers(extra = {}, clientIp = '') {
     const h = {
       'content-type': 'application/json',
       'x-sweepr-project': this.projectId,
@@ -80,6 +81,9 @@ class SweeprCrmClient {
     if (this.apiKey) {
       h['x-crm-api-key'] = this.apiKey;
       h['x-sweepr-api-key'] = this.apiKey;
+      if (clientIp && String(clientIp).trim()) {
+        h['x-sweepr-forwarded-ip'] = String(clientIp).trim().slice(0, 64);
+      }
     }
     if (this.adminPassword && !h.authorization) {
       h.authorization = 'Basic ' + Buffer.from(`${this.adminUser}:${this.adminPassword}`).toString('base64');
@@ -139,14 +143,28 @@ class SweeprCrmClient {
     }
   }
 
-  async activateDevice({ email, otp, accountId, refreshToken, deviceId, deviceName, os, appVersion }) {
+  async activateDevice({ email, otp, key, accountId, refreshToken, deviceId, deviceName, os, appVersion, clientIp = '' }) {
+    const submittedKey = String(key || otp || '').normalize('NFKC').trim();
+    if (!refreshToken && submittedKey && !HIGH_ENTROPY_LICENSE_KEY_RE.test(submittedKey)) {
+      return {
+        ok: false,
+        status: 400,
+        data: {
+          ok: false,
+          valid: false,
+          error: 'invalid_key_format',
+          message: 'Please enter your full Product License Key (e.g. SWEEPR-DB-XXXX-XXXX-XXXX).'
+        }
+      };
+    }
     return this._fetchWithRetry(`${this.crmUrl}/v1/license/activate`, {
       method: 'POST',
-      headers: this.headers(),
+      headers: this.headers({}, clientIp),
       body: JSON.stringify({
         project_id: this.projectId,
         email,
-        otp: otp || refreshToken,
+        key: submittedKey || undefined,
+        otp: submittedKey || refreshToken,
         account_id: accountId,
         refresh_token: refreshToken,
         device_id: deviceId,
@@ -157,10 +175,10 @@ class SweeprCrmClient {
     });
   }
 
-  async refreshLicense({ accountId, refreshToken, deviceId, appVersion }) {
+  async refreshLicense({ accountId, refreshToken, deviceId, appVersion, clientIp = '' }) {
     return this._fetchWithRetry(`${this.crmUrl}/v1/license/refresh`, {
       method: 'POST',
-      headers: this.headers(),
+      headers: this.headers({}, clientIp),
       body: JSON.stringify({
         project_id: this.projectId,
         account_id: accountId,
@@ -171,20 +189,33 @@ class SweeprCrmClient {
     });
   }
 
-  async verifyKey(key, deviceId = '') {
-    const qs = new URLSearchParams({ project: this.projectId, key: String(key || '').trim() });
+  async verifyKey(key, deviceId = '', clientIp = '') {
+    const cleanKey = String(key || '').normalize('NFKC').trim();
+    if (!HIGH_ENTROPY_LICENSE_KEY_RE.test(cleanKey)) {
+      return {
+        ok: false,
+        status: 400,
+        data: {
+          ok: false,
+          valid: false,
+          error: 'invalid_key_format',
+          message: 'Please enter your full Product License Key (e.g. SWEEPR-DB-XXXX-XXXX-XXXX).'
+        }
+      };
+    }
+    const qs = new URLSearchParams({ project: this.projectId, key: cleanKey });
     if (deviceId) qs.set('device_id', String(deviceId).trim().slice(0, 128));
     return this._fetchWithRetry(`${this.crmUrl}/v1/license/verify-key?${qs.toString()}`, {
-      headers: this.headers()
+      headers: this.headers({}, clientIp)
     });
   }
 
-  async sendOtp(email) {
+  async sendOtp(email, clientIp = '') {
     return this._fetchWithRetry(
       `${this.crmUrl}/v1/account/send-otp?project=${encodeURIComponent(this.projectId)}`,
       {
         method: 'POST',
-        headers: this.headers(),
+        headers: this.headers({}, clientIp),
         body: JSON.stringify({
           project_id: this.projectId,
           email: String(email || '').trim().toLowerCase()
@@ -194,17 +225,17 @@ class SweeprCrmClient {
     );
   }
 
-  async verifyOtp({ email, code, deviceId, platform = 'web', deviceLabel = 'SWEEPR Deepblock Portal' } = {}) {
+  async verifyOtp({ email, code, deviceId, platform = 'web', deviceLabel = 'SWEEPR Deepblock Portal', clientIp = '' } = {}) {
     return this._fetchWithRetry(
       `${this.crmUrl}/v1/account/verify-otp?project=${encodeURIComponent(this.projectId)}`,
       {
         method: 'POST',
-        headers: this.headers(),
+        headers: this.headers({}, clientIp),
         body: JSON.stringify({
           project_id: this.projectId,
           email: String(email || '').trim().toLowerCase(),
-          code: String(code || '').trim(),
-          device_id: deviceId || `portal_deepblock_${Date.now()}`,
+          code: String(code || '').normalize('NFKC').trim(),
+          device_id: deviceId || `portal_deepblock_${crypto.randomBytes(6).toString('hex')}`,
           device_type: 'pc',
           platform,
           device_label: deviceLabel
@@ -230,7 +261,6 @@ class SweeprCrmClient {
         currency: params.currency,
         stripe_customer_id: params.stripeCustomerId ?? params.stripe_customer_id,
         stripe_subscription_id: params.stripeSubscriptionId ?? params.stripe_subscription_id,
-        activation_code: params.activationCode ?? params.activation_code,
         license_key: params.licenseKey ?? params.license_key,
         cancel_at_period_end: params.cancelAtPeriodEnd ?? params.cancel_at_period_end,
         canceled_at: params.canceledAt ?? params.canceled_at,
@@ -296,10 +326,10 @@ class SweeprCrmClient {
     );
   }
 
-  async portalLookup(lookup, keyOrCode = '') {
+  async portalLookup(lookup, keyOrCode = '', clientIp = '') {
     return this._fetchWithRetry(`${this.crmUrl}/v1/license/portal-lookup`, {
       method: 'POST',
-      headers: this.headers(),
+      headers: this.headers({}, clientIp),
       body: JSON.stringify({
         project_id: this.projectId,
         lookup,
@@ -308,10 +338,10 @@ class SweeprCrmClient {
     });
   }
 
-  async portalCancel(lookup, immediate = false, keyOrCode = '', reason = '') {
+  async portalCancel(lookup, immediate = false, keyOrCode = '', clientIp = '', reason = '') {
     return this._fetchWithRetry(`${this.crmUrl}/v1/license/portal-cancel`, {
       method: 'POST',
-      headers: this.headers(),
+      headers: this.headers({}, clientIp),
       body: JSON.stringify({
         project_id: this.projectId,
         lookup,
