@@ -6511,7 +6511,7 @@ function getCachedDynamicDelta() {
     BLOCKED_STATIC_FILES.has(baseName) ||
     BLOCKED_EXTENSIONS.has(ext) ||
     hasHiddenSegment ||
-    (ext === '.json' && baseName !== 'manifest.json' && baseName !== 'site.webmanifest')
+    (ext === '.json' && baseName !== 'manifest.json' && baseName !== 'site.webmanifest' && baseName !== 'geo-benchmark-feed.json')
   ) {
     return sendErrorResponse(res, 403, '403 Forbidden');
   }
