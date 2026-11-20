@@ -23,8 +23,19 @@ import path from 'node:path';
 import { ROOT_DIR } from './state-db.mjs';
 
 const STATIC_ADS_PATH = path.join(ROOT_DIR, 'extension', 'rules', 'static_ads_and_trackers.json');
+const TRACKER_PARAMS_PATH = path.join(ROOT_DIR, 'extension', 'rules', 'tracker_params.json');
 const CRYPTOMINERS_PATH = path.join(ROOT_DIR, 'extension', 'rules', 'cryptominers.json');
 const CONTENT_SCRIPT_PATH = path.join(ROOT_DIR, 'extension', 'content', 'deepblock-content.js');
+
+function loadTrackerParamsRules() {
+  try {
+    if (fs.existsSync(TRACKER_PARAMS_PATH)) {
+      const parsed = JSON.parse(fs.readFileSync(TRACKER_PARAMS_PATH, 'utf8'));
+      return Array.isArray(parsed) ? parsed : [];
+    }
+  } catch {}
+  return [];
+}
 
 /**
  * Golden Canary Network Probes representing critical existing blockers across other sites.
@@ -192,7 +203,7 @@ export const PROTECTED_CROSS_MODULE_SELECTORS = [
 export const PROTECTED_LEGITIMATE_NETWORK_CANARIES = [
   {
     name: 'SWEEPR DeepBlock License Verify API',
-    url: 'https://sweeprdeepblock.com/api/license-verify?key=SWEEPR-DB-TEST',
+    url: 'https://sweeprdeepblock.com/api/license-verify?key=SWEEPR-DB-0000-0000-0000',
     resourceType: 'xmlhttprequest',
     initiator: 'sweeprdeepblock.com'
   },
@@ -502,6 +513,7 @@ export function verifyCandidateRuleCrossSiteSafety(candidateRule, existingRules 
 
   const simulatedRuleset = [
     ...existingRules,
+    ...loadTrackerParamsRules(),
     {
       id: 999999,
       priority: dnr.priority || 3,
@@ -600,10 +612,12 @@ export function runFullCrossSiteRegressionSuite({ baselineStaticRules = null } =
     issues.push(`Failed to parse cryptominers.json: ${err.message}`);
   }
 
-  // 5. Run all Golden Network Canaries against staticRules
+  // 5. Run all Golden Network Canaries against staticRules + tracker_params.json
+  const trackerParamsRules = loadTrackerParamsRules();
+  const combinedRules = [...staticRules, ...trackerParamsRules];
   let passedCanaries = 0;
   for (const canary of GOLDEN_NETWORK_CANARIES) {
-    const winner = evaluateDnrRulesForRequest(staticRules, canary);
+    const winner = evaluateDnrRulesForRequest(combinedRules, canary);
     if (!winner) {
       issues.push(`Golden Canary "${canary.name}" matched no rule in static_ads_and_trackers.json`);
     } else if (winner.action?.type !== canary.expectedAction) {
@@ -621,14 +635,14 @@ export function runFullCrossSiteRegressionSuite({ baselineStaticRules = null } =
 
   // 6. Verify Protected Legitimate Network Canaries are NOT blocked
   for (const legit of PROTECTED_LEGITIMATE_NETWORK_CANARIES) {
-    const winner = evaluateDnrRulesForRequest(staticRules, legit);
+    const winner = evaluateDnrRulesForRequest(combinedRules, legit);
     if (winner && winner.action?.type === 'block') {
       issues.push(`Legitimate canary "${legit.name}" (${legit.url}) was falsely blocked by Rule #${winner.id}`);
     }
   }
 
   // 6b. Verify Own-Domain GA4 & UTM Exclusions on Rules #6, #43, and #44 remain intact
-  const rule6 = staticRules.find((r) => r.id === 6);
+  const rule6 = trackerParamsRules.find((r) => r.id === 6) || staticRules.find((r) => r.id === 6);
   const rule43 = staticRules.find((r) => r.id === 43);
   const rule44 = staticRules.find((r) => r.id === 44);
   if (!rule6?.condition?.excludedRequestDomains?.includes('sweeprdeepblock.com')) {

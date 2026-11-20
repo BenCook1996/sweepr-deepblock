@@ -57,6 +57,7 @@ jobs:
       - name: Execute Daily 1,000-Site Ad Detection, Self-Healing Rule Synthesis & CRM Sync
         env:
           SWEEPR_RAILWAY_CRM: ${{ secrets.SWEEPR_RAILWAY_CRM || 'https://sweepr-crm-production.up.railway.app' }}
+          SWEEPR_CRM_API_KEY: ${{ secrets.SWEEPR_CRM_API_KEY }}
           CRM_ADMIN_USER: ${{ secrets.CRM_ADMIN_USER || 'admin' }}
           CRM_ADMIN_PASSWORD: ${{ secrets.CRM_ADMIN_PASSWORD }}
           CRM_WEBHOOK_URL: ${{ secrets.CRM_WEBHOOK_URL }}

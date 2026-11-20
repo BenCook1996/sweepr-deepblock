@@ -66,12 +66,17 @@ export async function fetchCrmBlockedDomains(dedupWindowDays = 30) {
     process.env.SWEEPR_RAILWAY_CRM || 'https://sweepr-crm-production.up.railway.app'
   ];
 
-  const adminUser = process.env.CRM_ADMIN_USER || 'admin';
-  const adminPassword = process.env.CRM_ADMIN_PASSWORD || 'B3njamin123!';
+  const adminUser = (process.env.CRM_ADMIN_USER || 'admin').trim();
+  const adminPassword = (process.env.CRM_ADMIN_PASSWORD || '').trim();
+  const apiKey = (process.env.SWEEPR_CRM_API_KEY || '').trim();
+  if (!adminPassword && !apiKey) {
+    return Array.from(blockedSet);
+  }
   const headers = {
     Accept: 'application/json',
     'X-Sweepr-Project': 'deepblock',
-    Authorization: 'Basic ' + Buffer.from(`${adminUser}:${adminPassword}`).toString('base64')
+    ...(apiKey ? { 'X-Sweepr-Api-Key': apiKey } : {}),
+    ...(adminPassword ? { Authorization: 'Basic ' + Buffer.from(`${adminUser}:${adminPassword}`).toString('base64') } : {})
   };
 
   await Promise.all(

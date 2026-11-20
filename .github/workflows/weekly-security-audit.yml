@@ -29,6 +29,11 @@ jobs:
           node-version: '22'
 
       - name: Run 10-Domain Trust-Boundary Security Audit & Syntax Verification
+        env:
+          SWEEPR_RAILWAY_CRM: ${{ secrets.SWEEPR_RAILWAY_CRM || 'https://sweepr-crm-production.up.railway.app' }}
+          SWEEPR_CRM_API_KEY: ${{ secrets.SWEEPR_CRM_API_KEY }}
+          CRM_ADMIN_USER: ${{ secrets.CRM_ADMIN_USER || 'admin' }}
+          CRM_ADMIN_PASSWORD: ${{ secrets.CRM_ADMIN_PASSWORD }}
         run: |
           node --check server.js
           node --check sweepr-client.js
@@ -44,6 +49,6 @@ jobs:
             echo "No new security audit log changes to commit."
           else
             git commit -m "chore(security): automated weekly cloud white-hat security audit"
-            git pull --rebase -X ours origin main
+            git pull --rebase --autostash -X ours origin main
             git push origin main
           fi

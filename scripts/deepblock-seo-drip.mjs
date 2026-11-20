@@ -43,9 +43,10 @@ if (fs.existsSync(envPath) && typeof process.loadEnvFile === 'function') {
 
 const RAILWAY_CRM_BASE = process.env.SWEEPR_RAILWAY_CRM || 'https://sweepr-crm-production.up.railway.app';
 const CLEANER_CRM_BASE = process.env.SWEEPR_CRM_BASE || 'https://sweeprcleaner.com';
-const CRM_USER = process.env.CRM_ADMIN_USER || 'admin';
-const CRM_PASS = process.env.CRM_ADMIN_PASSWORD || 'B3njamin123!';
-const AUTH_HEADER = 'Basic ' + Buffer.from(`${CRM_USER}:${CRM_PASS}`).toString('base64');
+const CRM_USER = (process.env.CRM_ADMIN_USER || 'admin').trim();
+const CRM_PASS = (process.env.CRM_ADMIN_PASSWORD || '').trim();
+const CRM_API_KEY = (process.env.SWEEPR_CRM_API_KEY || '').trim();
+const AUTH_HEADER = CRM_PASS ? 'Basic ' + Buffer.from(`${CRM_USER}:${CRM_PASS}`).toString('base64') : '';
 
 const LANGUAGES = [
   { code: 'EN', prefix: '2026 Manifest V3 AdBlocker & Cookie Rejector Guide:', cta: 'SWEEPR DeepBlock — Zero Video Ads, Auto Cookie Rejector & Scam Shop Detector' },
@@ -133,10 +134,10 @@ async function auditStoreBacklinks() {
     },
     winget: {
       name: 'Windows Package Manager (Winget)',
-      manifestPath: 'winget-manifests/s/SWEEPR/Deepblock/1.1.6/SWEEPR.Deepblock.installer.yaml',
+      manifestPath: 'winget-manifests/s/SWEEPR/Deepblock/1.2.9/SWEEPR.Deepblock.installer.yaml',
       packageId: 'SWEEPR.Deepblock',
-      version: '1.2.7',
-      installerUrl: 'https://sweeprdeepblock.com/download/SWEEPRDeepblockSetup.exe',
+      version: '1.2.9',
+      installerUrl: 'https://github.com/BenCook1996/sweepr-deepblock/releases/download/v1.2.9/SWEEPRDeepblockSetup.exe',
       status: 'verified'
     },
     downloadPageParity: {
@@ -190,7 +191,7 @@ async function auditStoreBacklinks() {
   const wingetAbs = path.join(ROOT_DIR, storeAudit.winget.manifestPath);
   if (fs.existsSync(wingetAbs)) {
     const content = fs.readFileSync(wingetAbs, 'utf8');
-    storeAudit.winget.status = content.includes('SWEEPR.Deepblock') && content.includes('1.1.6') ? 'Valid Manifest' : 'Incomplete Manifest';
+    storeAudit.winget.status = content.includes('SWEEPR.Deepblock') && content.includes('1.2.9') ? 'Valid Manifest' : 'Incomplete Manifest';
   } else {
     storeAudit.winget.status = 'Manifest Missing';
   }
@@ -383,8 +384,21 @@ function loadSitemapItems() {
   });
 }
 
+function buildCrmHeaders(extra = {}) {
+  const h = { Origin: RAILWAY_CRM_BASE, 'X-Sweepr-Project': 'deepblock', ...extra };
+  if (CRM_API_KEY) {
+    h['X-Sweepr-Api-Key'] = CRM_API_KEY;
+    h['X-Crm-Api-Key'] = CRM_API_KEY;
+  }
+  if (AUTH_HEADER) h.Authorization = AUTH_HEADER;
+  return h;
+}
+
 async function fetchDeepBlockCrmState(seed = []) {
-  const headers = { Authorization: AUTH_HEADER, 'X-Sweepr-Project': 'deepblock' };
+  if (!AUTH_HEADER && !CRM_API_KEY) {
+    return { postedUrls: new Set(), postedCombos: new Set(), postedDirectoryDomains: new Set(), crmCount: 0 };
+  }
+  const headers = buildCrmHeaders();
   const [rOutreach, rBacklinks] = await Promise.all([
     fetch(`${RAILWAY_CRM_BASE}/api/crm/outreach?project=deepblock&limit=5000`, { headers, signal: AbortSignal.timeout(10000) }).then((r) => (r.ok ? r.json() : { rows: [] })).catch(() => ({ rows: [] })),
     fetch(`${RAILWAY_CRM_BASE}/api/crm/seo/backlinks?project=deepblock`, { headers, signal: AbortSignal.timeout(10000) }).then((r) => (r.ok ? r.json() : { backlinks: [] })).catch(() => ({ backlinks: [] }))
@@ -434,7 +448,10 @@ async function runBacklinksWorkflow() {
   );
 
   // Trigger CRM backlink verification for official store & curated software directory profiles only
-  const headers = { 'Content-Type': 'application/json', Authorization: AUTH_HEADER, 'X-Sweepr-Project': 'deepblock' };
+  if (!AUTH_HEADER && !CRM_API_KEY) {
+    return { completed: 0, totalSeed: seed.length, mode: 'white_hat_only_paste_sites_disabled' };
+  }
+  const headers = buildCrmHeaders({ 'Content-Type': 'application/json' });
   const verifyPayload = JSON.stringify({ project_id: 'deepblock', only: 'unchecked', limit: 250 });
   await Promise.all([
     fetch(`${RAILWAY_CRM_BASE}/api/crm/seo/backlinks/verify?project=deepblock`, {

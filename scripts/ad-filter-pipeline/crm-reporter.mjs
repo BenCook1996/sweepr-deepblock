@@ -35,16 +35,15 @@ export class CrmPipelineReporter {
     ).replace(/\/+$/, '');
     this.localCrmUrl = String(process.env.SWEEPR_CRM_URL || 'http://localhost:8788').replace(/\/+$/, '');
     this.customWebhookUrl = String(options.webhookUrl || process.env.CRM_WEBHOOK_URL || '').trim();
-    this.adminUser = process.env.CRM_ADMIN_USER || 'admin';
-    this.adminPassword = process.env.CRM_ADMIN_PASSWORD || 'B3njamin123!';
-    this.apiKey =
-      process.env.SWEEPR_CRM_API_KEY ||
-      'sweepr_crm_live_9f4b8e2c7a1d6f305b8e41c92a70d3e8f61429b50c3a8d7e';
+    this.adminUser = (process.env.CRM_ADMIN_USER || 'admin').trim();
+    this.adminPassword = (process.env.CRM_ADMIN_PASSWORD || '').trim();
+    this.apiKey = (process.env.SWEEPR_CRM_API_KEY || '').trim();
   }
 
   _headers() {
     const h = {
       'Content-Type': 'application/json',
+      'Origin': this.primaryCrmUrl,
       'X-Sweepr-Project': this.projectId
     };
     if (this.apiKey) {
@@ -349,7 +348,20 @@ export class CrmPipelineReporter {
       properties: summaryPayload
     };
 
-    const requests = [this._postJsonWithRetry(`${this.primaryCrmUrl}/v1/telemetry/event`, telemetryBody)];
+    const changelogBody = {
+      project_id: this.projectId,
+      category: 'technical_seo',
+      title: `Daily 1,000-Site Ad-Filter Pipeline (${runId})`,
+      description: `${summaryPayload.Generated_Rule} | Status: ${summaryPayload.Fix_Status} | Commit: ${summaryPayload.Commit_Hash}`,
+      impact_area: 'MV3 DNR & Cosmetic Filter Rulesets',
+      author: 'SWEEPR DeepBlock Auto-Filter Bot',
+      status: 'completed'
+    };
+
+    const requests = [
+      this._postJsonWithRetry(`${this.primaryCrmUrl}/v1/telemetry/event`, telemetryBody),
+      this._postJsonWithRetry(`${this.primaryCrmUrl}/api/crm/seo/changelog?project=deepblock`, changelogBody)
+    ];
     if (this.customWebhookUrl) {
       requests.push(this._postJsonWithRetry(this.customWebhookUrl, summaryPayload));
     }

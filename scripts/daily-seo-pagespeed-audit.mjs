@@ -23,6 +23,7 @@ import { runKeywordResearchEngine } from './keyword-research-engine.mjs';
 import { runDaily50DeepBlockPages } from './daily-50-seo-pages.mjs';
 import { runLiveProofEnrichment } from './enrich-pillars-with-live-proof.mjs';
 import { runGeoAndLlmsSync } from './sync-geo-and-llms.mjs';
+import { logSeoChangesToCrm } from './log-seo-changes-to-crm.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = path.resolve(__dirname, '..');
@@ -40,7 +41,7 @@ function parseLimitArg() {
       if (!Number.isNaN(n) && n >= 0) return n;
     }
   }
-  return 3;
+  return 0;
 }
 
 function auditPageSpeedBudgets() {
@@ -187,6 +188,14 @@ export async function runDailySeoPageSpeedPipeline() {
 
   fs.mkdirSync(DATA_DIR, { recursive: true });
   fs.writeFileSync(REPORT_OUTPUT_PATH, JSON.stringify(finalReport, null, 2), 'utf8');
+
+  if (!process.argv.includes('--no-crm')) {
+    try {
+      await logSeoChangesToCrm();
+    } catch (crmErr) {
+      console.warn('[DAILY-SEO-PAGESPEED-AUDIT] CRM logging warning:', crmErr?.message || crmErr);
+    }
+  }
   return finalReport;
 }
 

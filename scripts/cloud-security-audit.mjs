@@ -25,12 +25,85 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = path.resolve(__dirname, '..');
+const ENV_PATH = path.join(ROOT_DIR, '.env');
+if (fs.existsSync(ENV_PATH) && typeof process.loadEnvFile === 'function') {
+  try {
+    process.loadEnvFile(ENV_PATH);
+  } catch {}
+}
 const DATA_DIR = path.join(ROOT_DIR, 'data');
 const REPORT_PATH = path.join(DATA_DIR, 'security-audit-report.json');
 const SCHEDULER_STATE_PATH = path.join(DATA_DIR, 'automation-scheduler-state.json');
 const SECURITY_LOG_PATH = path.join(ROOT_DIR, 'SECURITY_AUDIT_LOG.md');
 
-export function runCloudSecurityAudit() {
+async function reportSecurityAuditToCrm(report) {
+  const crmBase = String(process.env.SWEEPR_RAILWAY_CRM || 'https://sweepr-crm-production.up.railway.app')
+    .trim()
+    .replace(/\/+$/, '');
+  const apiKey = (process.env.SWEEPR_CRM_API_KEY || '').trim();
+  const adminUser = (process.env.CRM_ADMIN_USER || 'admin').trim();
+  const adminPassword = (process.env.CRM_ADMIN_PASSWORD || '').trim();
+
+  if (!apiKey && !adminPassword) {
+    return { skipped: 'missing_crm_credentials' };
+  }
+
+  const telemetryHeaders = {
+    'Content-Type': 'application/json',
+    'X-Sweepr-Project': 'deepblock',
+    ...(apiKey ? { 'X-Crm-Api-Key': apiKey, 'X-Sweepr-Api-Key': apiKey } : {})
+  };
+  const adminHeaders = {
+    ...telemetryHeaders,
+    Origin: crmBase,
+    ...(adminPassword ? { Authorization: 'Basic ' + Buffer.from(`${adminUser}:${adminPassword}`).toString('base64') } : {})
+  };
+
+  const telemetryPayload = {
+    project_id: 'deepblock',
+    event_name: 'cloud_security_audit_completed',
+    category: 'security_audit',
+    os: 'cloud_runner',
+    properties: {
+      passedChecks: report.passedChecks,
+      totalChecks: report.totalChecks,
+      failedChecks: report.failedChecks,
+      healthy: report.healthy
+    }
+  };
+
+  const changelogPayload = {
+    project_id: 'deepblock',
+    category: 'technical_seo',
+    title: `Cloud White-Hat Security & 10-Domain Trust-Boundary Audit (${report.passedChecks}/${report.totalChecks} PASS)`,
+    description: `Verified ${report.passedChecks}/${report.totalChecks} trust-boundary checks across server.js, sweepr-client.js, extension/manifest.json, static_ads_and_trackers.json, and tracker_params.json (${report.failedChecks} vulnerabilities).`,
+    impact_area: 'server.js, sweepr-client.js & MV3 DNR security',
+    author: 'SWEEPR DeepBlock Security Bot',
+    status: report.healthy ? 'completed' : 'blocked'
+  };
+
+  try {
+    const [telRes, logRes] = await Promise.all([
+      fetch(`${crmBase}/v1/telemetry/event`, {
+        method: 'POST',
+        headers: telemetryHeaders,
+        body: JSON.stringify(telemetryPayload),
+        signal: AbortSignal.timeout(8000)
+      }).then((r) => r.status).catch(() => 0),
+      fetch(`${crmBase}/api/crm/seo/changelog?project=deepblock`, {
+        method: 'POST',
+        headers: adminHeaders,
+        body: JSON.stringify(changelogPayload),
+        signal: AbortSignal.timeout(8000)
+      }).then((r) => r.status).catch(() => 0)
+    ]);
+    return { telemetryStatus: telRes, changelogStatus: logRes };
+  } catch (err) {
+    return { error: err?.message || String(err) };
+  }
+}
+
+export async function runCloudSecurityAudit() {
   const startMs = Date.now();
   fs.mkdirSync(DATA_DIR, { recursive: true });
 
@@ -132,7 +205,11 @@ export function runCloudSecurityAudit() {
     'Ensure extension/manifest.json stays on Manifest V3 with least-privilege permissions.'
   );
 
-  const rule6 = staticRules.find((r) => r.id === 6);
+  const trackerParamsPath = path.join(ROOT_DIR, 'extension', 'rules', 'tracker_params.json');
+  const trackerParamsRules = fs.existsSync(trackerParamsPath)
+    ? JSON.parse(fs.readFileSync(trackerParamsPath, 'utf8'))
+    : [];
+  const rule6 = trackerParamsRules.find((r) => r.id === 6) || staticRules.find((r) => r.id === 6);
   const rule43 = staticRules.find((r) => r.id === 43);
   const rule44 = staticRules.find((r) => r.id === 44);
   assertCheck(
@@ -196,6 +273,11 @@ export function runCloudSecurityAudit() {
     }
   }
 
+  if (!process.argv.includes('--no-crm')) {
+    const crmRes = await reportSecurityAuditToCrm(report);
+    console.log(`[CLOUD-SEC-AUDIT] CRM sync: ${JSON.stringify(crmRes)}`);
+  }
+
   console.log(
     `[CLOUD-SEC-AUDIT] Completed in ${durationMs}ms | Passed: ${passedCount}/${checks.length} | Issues: ${issues.length}`
   );
@@ -208,5 +290,8 @@ export function runCloudSecurityAudit() {
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(fileURLToPath(import.meta.url))) {
-  runCloudSecurityAudit();
+  runCloudSecurityAudit().catch((err) => {
+    console.error('[CLOUD-SEC-AUDIT] Fatal error:', err);
+    process.exit(1);
+  });
 }
