@@ -759,7 +759,7 @@ function walkHtml(dir) {
 }
 
 const allHtmlFiles = walkHtml(WEBSITE_DIR);
-const NON_CARTESIAN_CLUSTERS = new Set(['tools', 'glossary', 'campaigns', 'de', 'fr', 'stories', 'site']);
+const NON_CARTESIAN_CLUSTERS = new Set(['tools', 'glossary', 'campaigns', 'de', 'fr', 'es', 'stories', 'site']);
 
 // Map every Cartesian/core HTML file to its clean URL path and metadata (excluding standalone non-Cartesian hubs)
 const pageRecords = [];
@@ -1107,16 +1107,38 @@ const sitemapEntries = orderedPillarPages.map((p) => {
   };
 });
 
-// Preserve all existing non-pruned hub URLs (/tools/*, /glossary/*, /stories/*, /de/*, /fr/*, /campaigns/*) in sitemap.xml
+// Preserve all existing non-pruned hub URLs (/tools/*, /glossary/*, /stories/*, /de/*, /fr/*, /es/*, /campaigns/*) in sitemap.xml
 const seenSitemapLocs = new Set(sitemapEntries.map((e) => e.loc));
 for (const [existingLoc, existingLastMod] of existingLastModMap.entries()) {
   if (seenSitemapLocs.has(existingLoc)) continue;
   const relPath = existingLoc.replace(/^https?:\/\/sweeprdeepblock\.com/i, '');
-  if (/^\/(tools|glossary|stories|de|fr|campaigns)(\/|$)/i.test(relPath)) {
+  if (/^\/(tools|glossary|stories|de|fr|es|campaigns)(\/|$)/i.test(relPath)) {
     seenSitemapLocs.add(existingLoc);
     sitemapEntries.push({
       loc: existingLoc,
       lastmod: existingLastMod || todayStr,
+      changefreq: 'weekly',
+      priority: '0.85'
+    });
+  }
+}
+
+// Reconcile against all indexable non-site/ HTML files on disk so sitemap counts never drift
+for (const filePath of allHtmlFiles) {
+  const rel = path.relative(WEBSITE_DIR, filePath).replace(/\\/g, '/');
+  if (rel.startsWith('site/')) continue;
+  const rawHtml = fs.readFileSync(filePath, 'utf8');
+  const isNoIndex = /meta\s+name=["']robots["']\s+content=["'][^"']*noindex/i.test(rawHtml);
+  if (isNoIndex) continue;
+  const urlPath = rel === 'index.html'
+    ? '/'
+    : (rel.endsWith('/index.html') ? '/' + rel.replace(/\/index\.html$/, '') : '/' + rel.replace(/\.html$/, ''));
+  const loc = `https://sweeprdeepblock.com${urlPath}`;
+  if (!seenSitemapLocs.has(loc)) {
+    seenSitemapLocs.add(loc);
+    sitemapEntries.push({
+      loc,
+      lastmod: existingLastModMap.get(loc) || todayStr,
       changefreq: 'weekly',
       priority: '0.85'
     });
