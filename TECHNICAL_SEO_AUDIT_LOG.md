@@ -4,6 +4,29 @@ Tracks automated daily technical SEO audits and under-the-hood optimizations (st
 
 ---
 
+## [Brand Social Profiles & Organization.sameAs Entity Graph Sync] — 2026-11-20
+
+- **Live Social Profiles Wired into [website/index.html](website/index.html) `Organization.sameAs`:**
+  - [x] **Facebook Page (`Sweepr Deepblock`):** https://www.facebook.com/profile.php?id=61596889285500 (Category: `Software company`, website & `support@sweeprdeepblock.com` linked; CRM `#414179` `listed`)
+  - [x] **Instagram (`@sweeprdeepblock`):** https://www.instagram.com/sweeprdeepblock/ (Email OTP verified, logo `150x150` uploaded, bio + https://sweeprdeepblock.com saved, 1st `1080x1080` launch post published; CRM `#414181` `listed`)
+  - [ ] **PENDING — X / Twitter (`@sweeprdeepblock`):** https://x.com/i/jf/onboarding/web?mode=signup (Pre-filled `cookbenjamin1996@gmail.com`; stopped at X anti-bot gate — CRM `#414180` `pending`)
+
+
+## [Authority Builders Month 1 Guest Post Campaign (`track_id: 61115`)] — 2026-11-20 (PENDING)
+
+- **Status:** **PENDING — Awaiting Blogger Acceptance & Live Placement URLs** (`Order Started / 30% Complete` on `https://authority.builders/user/orders`)
+- **Spend:** `$539.98` original − `$100.00` (`ABCBLACKFRIDAYGP`) = **`$439.99`** (`~£336 GBP` eq., `$149.99 + $149.99 + $140.00` line items)
+- **CRM Records Synced (`project_id: deepblock`, `status: pending`):**
+  - Local SQLite (`data/sweepr-crm.db`): `outreach_logs` IDs `18849`, `18850`, `18851` + `activities` (`outreach.order_placed`) + `analytics_events` (`authority_builders_order_placed`)
+  - Remote Railway CRM (`https://sweepr-crm-production.up.railway.app`): `outreach_logs` IDs `414176`, `414177`, `414178` (`status: pending`), `seo_changelog` ID `159` (`status: in_progress`)
+
+### Checklist & Order Breakdown
+- [x] Onboard `https://sweeprdeepblock.com/` (`track_id: 61115`) and submit 3 Month 1 guest posts (`500 words`, `drip_feed: none`)
+- [ ] **PENDING (`#414176` / `ID 5434`):** `t*********n.com` (`DR 81`, `DA 72`, `TF 38`, `27,564` RD, `279,689` traffic, `$149.99` net / `$199.99` list) → `https://sweeprdeepblock.com/` (Anchor: `"SWEEPR Deepblock"`) — awaiting blogger acceptance & live URL
+- [ ] **PENDING (`#414177` / `ID 4366`):** `c***********k.com` (`DR 63`, `DA 77`, `TF 59`, `6,263` RD, `8,672` traffic, `$149.99` net / `$199.99` list) → `https://sweeprdeepblock.com/vs/total-adblock` (Anchor: `"Total Adblock alternative"`) — awaiting blogger acceptance & live URL
+- [ ] **PENDING (`#414178` / `ID 18516`):** `s*********s.com` (`DR 45`, `DA 53`, `TF 23`, `2,191` RD, `12,066` traffic, `$140.00` Deal of the Week) → `https://sweeprdeepblock.com/vs/ublock-origin-lite` (Anchor: `"uBlock Origin Lite alternative"`) — awaiting blogger acceptance & live URL
+
+
 ## [Once-Daily SWEEPR DeepBlock Authority Directory, Store Backlink Audit & GSC Priority Indexing Workflow] — 2026-11-20 (14:17 UTC)
 
 - **Execution Timestamp**: 2026-11-20T14:17:58.365Z

@@ -56,3 +56,75 @@ You can run the 8-point client-side verification suite here: https://sweeprdeepb
 - **5 Free Interactive Browser Diagnostic Tools**: Live Adblock Benchmark, DNS & Tracker Sanitizer, Canvas Fingerprint Audit, Fake Shop Scanner, and Browser RAM Calculator (https://sweeprdeepblock.com/tools).
 - **Transparent Pricing**: £1.99 1st-Month Intro, £29.99/yr Pro (4 devices), or the 4-in-1 **£89.99/yr Sweepr Complete Security Suite** (DeepBlock Pro + Total Tab & RAM Tamer + Sweepr VPN + Sweepr Desktop Cleaner for 5 devices).
 ```
+
+---
+
+## Social Profile Setup Kit (`X`, `Facebook`, `Instagram`)
+- **Handle / Username:** `@sweeprdeepblock` (`Sweepr Deepblock` on Facebook & Instagram)
+- **Live Verified Facebook Page:** https://www.facebook.com/profile.php?id=61596889285500 *(upload logo/banner manually; optionally claim custom username `sweeprdeepblock` in Settings)*
+- **Live Verified Instagram Account:** https://www.instagram.com/sweeprdeepblock/ *(created, email verified, logo uploaded, bio + `https://sweeprdeepblock.com` added, 1st launch post published)*
+- **Pending X (Twitter) Account:** https://x.com/i/jf/onboarding/web?mode=signup *(pre-filled `cookbenjamin1996@gmail.com`; finish human verification/OAuth in open Chrome tab and claim `@sweeprdeepblock`)*
+- **Website Bio URL:** `https://sweeprdeepblock.com`
+- **Short Bio (150 chars):** `Zero Ads. Zero Cookie Pop-Ups. MV3 ad blocker, <50ms automatic cookie rejector, fake shop detector & tab RAM tamer for Chrome, Edge, Firefox & Brave.`
+- **Profile Logo Path:** `c:\Users\Benjamin\Downloads\adblocker\dist\uptodown-media\icon-512x512.png`
+- **Banner / Cover Path:** `c:\Users\Benjamin\Downloads\adblocker\dist\store-assets\cws-promo-marquee-1400x560.png`
+
+---
+
+## X (Twitter) — Pinned Launch Thread (`@sweeprdeepblock`)
+**Tweet 1 (Pin to Profile):**
+> Chrome Manifest V3 broke legacy ad blockers—so we built SWEEPR DeepBlock v1.3.1 in pure C++ declarativeNetRequest (~15µs lookups) + <50ms cookie auto-reject.
+>
+> Test if your current blocker actually passes all 8 checks (0–100 score, free): https://sweeprdeepblock.com/test-lab
+
+**Tweet 2 (Reply to Tweet 1):**
+> Most "cookie banner blockers" just hide modals with CSS—leaving `overflow: hidden` frozen so you can't scroll.
+>
+> SWEEPR DeepBlock executes genuine Reject-All Opt-Out signals across 150+ CMPs in <50ms and unlocks scroll cleanly. Benchmark: https://sweeprdeepblock.com/benchmarks
+
+**Tweet 3 (Reply to Tweet 2):**
+> Also tired of "£1.99" blockers silently auto-renewing at £99–£119/yr?
+>
+> Compare your 3-year cost here: https://sweeprdeepblock.com/vs/total-adblock
+> Transparent £29.99/yr Pro (5 devices) + Chrome Web Store, Firefox AMO & Edge listings.
+
+---
+
+## X (Twitter) — High-Intent Search-Reply Templates
+1. **Query: `"YouTube adblock Chrome"` / `"ad blocker detected"`**
+   > If YouTube's anti-adblock check keeps firing on Chrome, check whether your extension is failing `adsbox` or Funding Choices bait probes on this free 8-point MV3 test lab: https://sweeprdeepblock.com/test-lab (full disclosure: built SWEEPR DeepBlock to pass all 8 in C++ DNR).
+2. **Query: `"uBlock Origin disabled Chrome"` / `"uBlock Origin Lite alternative"`**
+   > Under Chrome Manifest V3, pure static rulesets can leave video & cookie-scroll workarounds exposed. Here's a side-by-side technical breakdown of uBlock Origin Lite vs full MV3 + <50ms cookie auto-reject: https://sweeprdeepblock.com/vs/ublock-origin-lite
+3. **Query: `"Total Adblock renewal"` / `"Total Adblock charged"`**
+   > Total Adblock's Year 2 renewal catches a lot of people off guard (£99–£119/yr). Here's our transparent cancellation checklist + flat-price comparison: https://sweeprdeepblock.com/vs/total-adblock
+
+---
+
+## Reddit — `r/chrome` (Manifest V3 Testing & Troubleshooting)
+**Title:** Tested how Chrome Manifest V3 handles `adsbox` / Funding Choices bait probes and cookie scroll-locks across 150 sites — free 8-point lab
+**Target URL:** https://sweeprdeepblock.com/test-lab?utm_source=reddit_organic&utm_medium=community&utm_campaign=r_chrome_mv3
+
+```markdown
+Full disclosure: I'm the developer of SWEEPR DeepBlock. After Chrome's MV2 deprecation pushed everyone onto `declarativeNetRequest`, a lot of users noticed two specific issues even with an ad blocker enabled:
+
+1. **Anti-adblock bait triggers (`adsbox` / `pagead2.googlesyndication.com`)** when requests fail with `ERR_BLOCKED_BY_CLIENT` instead of returning an inert local surrogate response.
+2. **Cookie modal scroll freezes** on OneTrust / Sourcepoint / Didomi where hiding elements with CSS leaves `overflow: hidden` locked on `<body>`.
+
+We published a free client-side 8-point MV3 test page (no signup, works with any blocker installed) so you can check which vectors your current browser setup passes or leaks:
+- Live 8-Point Test Lab: https://sweeprdeepblock.com/test-lab
+- Chrome MV3 Comparison vs uBlock Origin Lite: https://sweeprdeepblock.com/vs/ublock-origin-lite
+
+Happy to share filter-list notes or DNR timing details in the comments.
+```
+
+## Reddit — `r/uBlockOrigin` (Respectful Technical Disclosure — MV3 Architecture Notes)
+**Note:** Read `r/uBlockOrigin` rules carefully before posting — keep discussion focused on Chromium MV3 `declarativeNetRequest` surrogate testing (`rules/empty.js`, Funding Choices, and TCF v2.2 CMP scroll locks) rather than promotional pitching.
+**Title:** Measuring Chrome MV3 `declarativeNetRequest` rule evaluation latency vs `adsbox` surrogate responses across 150 publishers
+**Target URL:** https://sweeprdeepblock.com/benchmarks?utm_source=reddit_organic&utm_medium=community&utm_campaign=r_ubo_benchmarks
+
+```markdown
+Sharing technical methodology notes from benchmarking Chromium Manifest V3 `declarativeNetRequest` rulesets across 150 high-traffic news/tech sites:
+
+- Keeping static C++ DNR rule lookups deterministic (~15µs average) while pairing `redirect` empty-script surrogates with `document_start` MAIN-world `getComputedStyle` guards stops most false-positive `adsbox` checks without heavy `eval()` scripts.
+- Full methodology dataset & 8-check client-side test suite (works with uBO / uBOL or any blocker): https://sweeprdeepblock.com/benchmarks and https://sweeprdeepblock.com/test-lab (disclosure: authored for SWEEPR DeepBlock v1.3.1).
+```
