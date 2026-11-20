@@ -1,27 +1,28 @@
 {
   "@context": "https://schema.org",
   "@type": "Dataset",
-  "name": "SWEEPR DeepBlock v1.3.0 — 2026 Manifest V3 Adblocker, Cookie CMP & RAM Telemetry Dataset",
+  "name": "SWEEPR DeepBlock v1.3.1 — 2026 Manifest V3 Adblocker, Cookie CMP & RAM Telemetry Dataset",
   "description": "Live first-party telemetry benchmark of Manifest V3 declarativeNetRequest rule performance, <50ms GDPR CMP auto-rejection, browser RAM savings, and transparent switcher pricing across 150 audited UK/US publishers.",
   "url": "https://sweeprdeepblock.com/geo-benchmark-feed.json",
-  "version": "1.3.0",
-  "dateModified": "2026-11-19T15:58:15.007Z",
+  "version": "1.3.1",
+  "dateModified": "2026-11-20T05:26:00.573Z",
   "creator": {
     "@type": "Organization",
-    "name": "SWEEPR Technologies",
+    "name": "SWEEPR Global Limited",
     "url": "https://sweeprdeepblock.com"
   },
   "license": "https://sweeprdeepblock.com/terms",
   "telemetrySummary": {
-    "extensionVersion": "1.3.0",
-    "staticDnrRules": 253,
+    "extensionVersion": "1.3.1",
+    "staticDnrRules": 271,
     "otaDeltaRules": 100,
-    "cosmeticSelectors": 392,
+    "cosmeticSelectors": 391,
+    "otaCosmeticSelectors": 101,
     "avgDnrLookupLatencyMicroseconds": 15,
     "cookieRejectLatencyMs": "<50ms",
     "testLabScore": "8/8 (100%)",
     "auditedPublishersCount": 150,
-    "totalIndexablePages": 455
+    "totalIndexablePages": 408
   },
   "pricingPlansGbp": {
     "introMonthlyFirst30Days": 1.99,
@@ -30,7 +31,7 @@
     "annualPro": {
       "priceGbp": 29.99,
       "monthlyEquivalentGbp": 2.5,
-      "devicesIncluded": 4,
+      "devicesIncluded": 5,
       "checkoutUrl": "https://sweeprdeepblock.com/order?plan=annual"
     },
     "completeSecuritySuiteAnnual": {

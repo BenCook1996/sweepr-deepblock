@@ -10,7 +10,6 @@
   <link rel="manifest" href="/site.webmanifest">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preconnect" href="https://cdn.tailwindcss.com">
   <meta name="description" content="SWEEPR Deepblock Privacy Policy: 100% local on-device ad &amp; tracker blocking, zero browsing history uploaded, and GDPR/UK Data Protection compliance.">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
   <link rel="canonical" href="https://sweeprdeepblock.com/privacy" />
@@ -32,44 +31,22 @@
   <meta name="twitter:image" content="https://sweeprdeepblock.com/og-image.png">
 
   <!-- Structured Data -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebPage",
-    "name": "Privacy Policy & Data Protection | SWEEPR Deepblock",
-    "url": "https://sweeprdeepblock.com/privacy",
-    "description": "SWEEPR Deepblock Privacy Policy: 100% local on-device ad & tracker blocking, zero browsing history uploaded, and GDPR/UK Data Protection compliance.",
-    "breadcrumb": {
-      "@type": "BreadcrumbList",
-      "itemListElement": [
-        {
-          "@type": "ListItem",
-          "position": 1,
-          "name": "Home",
-          "item": "https://sweeprdeepblock.com/"
-        },
-        {
-          "@type": "ListItem",
-          "position": 2,
-          "name": "Privacy Policy",
-          "item": "https://sweeprdeepblock.com/privacy"
-        }
-      ]
-    }
-  }
-  </script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Privacy Policy & Data Protection | SWEEPR Deepblock","url":"https://sweeprdeepblock.com/privacy","description":"SWEEPR Deepblock Privacy Policy: 100% local on-device ad & tracker blocking, zero browsing history uploaded, and GDPR/UK Data Protection compliance.","breadcrumb":{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://sweeprdeepblock.com/"},{"@type":"ListItem","position":2,"name":"Privacy Policy","item":"https://sweeprdeepblock.com/privacy"}]}}</script>
 
-  <script src="https://cdn.tailwindcss.com/3.4.5"></script>
+  <link rel="stylesheet" href="/sweepr-tailwind.min.css?v=20261117">
   <link rel="stylesheet" href="/style.css">
   <script src="/nav.js" defer></script>
   <script src="/i18n.js" defer></script>
   <!-- Google tag (gtag.js) - Sweepr Deepblock -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-01MNBQSL9K"></script>
+  <script async src="/metrics/js?id=G-01MNBQSL9K"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-    gtag('config', 'G-01MNBQSL9K');
+    gtag('config', 'G-01MNBQSL9K', {
+      transport_url: window.location.origin + '/metrics',
+      first_party_collection: true
+    });
   </script>
 </head>
 <body class="text-gray-800">
@@ -131,10 +108,10 @@
         </button>
         <div id="langDropdownMenu" class="hidden absolute right-0 mt-2 w-44 bg-white/95 backdrop-blur-xl border border-gray-200/90 rounded-2xl shadow-xl p-1.5 z-50 transition-all">
           <div class="space-y-0.5 text-xs">
-            <button type="button" onclick="setLanguage('en')" class="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-emerald-50 text-gray-800 hover:text-emerald-700 font-medium cursor-pointer"><span>🇬🇧 English</span><span class="text-[10px] text-gray-400 font-mono">EN</span></button>
-            <button type="button" onclick="setLanguage('de')" class="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-emerald-50 text-gray-800 hover:text-emerald-700 font-medium cursor-pointer"><span>🇩🇪 Deutsch</span><span class="text-[10px] text-gray-400 font-mono">DE</span></button>
-            <button type="button" onclick="setLanguage('fr')" class="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-emerald-50 text-gray-800 hover:text-emerald-700 font-medium cursor-pointer"><span>🇫🇷 Français</span><span class="text-[10px] text-gray-400 font-mono">FR</span></button>
-            <button type="button" onclick="setLanguage('es')" class="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-emerald-50 text-gray-800 hover:text-emerald-700 font-medium cursor-pointer"><span>🇪🇸 Español</span><span class="text-[10px] text-gray-400 font-mono">ES</span></button>
+            <a href="/" hreflang="en" onclick="if(window.setLanguage)setLanguage('en',false)" class="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-emerald-50 text-gray-800 hover:text-emerald-700 font-medium no-underline cursor-pointer"><span>🇬🇧 English</span><span class="text-[10px] text-gray-400 font-mono">EN</span></a>
+            <a href="/de" hreflang="de" onclick="if(window.setLanguage)setLanguage('de',false)" class="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-emerald-50 text-gray-800 hover:text-emerald-700 font-medium no-underline cursor-pointer"><span>🇩🇪 Deutsch</span><span class="text-[10px] text-gray-400 font-mono">DE</span></a>
+            <a href="/fr" hreflang="fr" onclick="if(window.setLanguage)setLanguage('fr',false)" class="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-emerald-50 text-gray-800 hover:text-emerald-700 font-medium no-underline cursor-pointer"><span>🇫🇷 Français</span><span class="text-[10px] text-gray-400 font-mono">FR</span></a>
+            <a href="/es" hreflang="es" onclick="if(window.setLanguage)setLanguage('es',false)" class="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-emerald-50 text-gray-800 hover:text-emerald-700 font-medium no-underline cursor-pointer"><span>🇪🇸 Español</span><span class="text-[10px] text-gray-400 font-mono">ES</span></a>
           </div>
         </div>
       </div>
@@ -298,7 +275,13 @@
       <div class="flex flex-wrap justify-center gap-6 text-xs font-medium text-gray-600">
         <a href="/" class="hover:text-gray-900 transition">Overview</a>
         <a href="/pricing" class="hover:text-gray-900 transition">Pricing</a>
+        <a href="/site" class="hover:text-gray-900 transition">Site Reports</a>
+        <a href="/tools" class="hover:text-gray-900 transition">Diagnostic Tools</a>
+        <a href="/test-lab" class="hover:text-gray-900 transition">8/8 Test Lab</a>
         <a href="/download" class="hover:text-gray-900 transition">Download</a>
+        <a href="/de" hreflang="de" class="hover:text-gray-900 transition">DE</a>
+        <a href="/fr" hreflang="fr" class="hover:text-gray-900 transition">FR</a>
+        <a href="/es" hreflang="es" class="hover:text-gray-900 transition">ES</a>
         <a href="/login" class="hover:text-gray-900 transition">Customer Portal</a>
         <a href="/refund" class="hover:text-gray-900 transition">Refund Policy</a>
         <a href="/terms" class="hover:text-gray-900 transition">Terms of Service</a>

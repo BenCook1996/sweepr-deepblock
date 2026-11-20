@@ -9,27 +9,16 @@
   <link rel="manifest" href="/site.webmanifest">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preconnect" href="https://cdn.tailwindcss.com">
-  <script>
-    // Show non-intrusive resume banner if visitor previously started an order (no forced redirect hijack)
-    document.addEventListener('DOMContentLoaded', function() {
-      try {
-        if (localStorage.getItem('deepblock_visited_order') === '1') {
-          var banner = document.getElementById('resumeOrderBanner');
-          if (banner) banner.classList.remove('hidden');
-        }
-      } catch (e) {}
-    });
-  </script>
   <meta name="description" content="Block YouTube &amp; video ads, auto-reject cookie pop-ups in &lt;50ms, hide AI search spam, and spot fake online shops across Chrome, Firefox, Edge &amp; Safari.">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-  <meta name="author" content="SWEEPR">
+  <meta name="author" content="SWEEPR Global Limited">
   <meta name="theme-color" content="#0F172A">
   <link rel="canonical" href="https://sweeprdeepblock.com/" />
-  <link rel="alternate" hreflang="en" href="https://sweeprdeepblock.com/">
-  <link rel="alternate" hreflang="de" href="https://sweeprdeepblock.com/de">
-  <link rel="alternate" hreflang="fr" href="https://sweeprdeepblock.com/fr">
-  <link rel="alternate" hreflang="x-default" href="https://sweeprdeepblock.com/">
+  <link rel="alternate" hreflang="en" href="https://sweeprdeepblock.com/" />
+  <link rel="alternate" hreflang="de" href="https://sweeprdeepblock.com/de" />
+  <link rel="alternate" hreflang="fr" href="https://sweeprdeepblock.com/fr" />
+  <link rel="alternate" hreflang="es" href="https://sweeprdeepblock.com/es" />
+  <link rel="alternate" hreflang="x-default" href="https://sweeprdeepblock.com/" />
 
   <!-- Open Graph / Social Preview -->
   <meta property="og:type" content="website">
@@ -53,122 +42,30 @@
   <meta name="twitter:image" content="https://sweeprdeepblock.com/og-image.png">
 
   <!-- Structured Data (JSON-LD) for Search Rich Snippets & AI Engines -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "Organization",
-        "@id": "https://sweeprdeepblock.com/#organization",
-        "name": "SWEEPR Deepblock",
-        "url": "https://sweeprdeepblock.com/",
-        "logo": {
-          "@type": "ImageObject",
-          "url": "https://sweeprdeepblock.com/logo.svg"
-        },
-        "sameAs": [
-          "https://chromewebstore.google.com/detail/sweepr-deepblock-ad-cooki/bkdfhdgmglfancgpkcbdceinfdlccmpc",
-          "https://addons.mozilla.org/en-US/firefox/addon/sweepr-deepblock/",
-          "https://github.com/BenCook1996/sweepr-deepblock",
-          "https://community.chocolatey.org/packages/sweepr-deepblock"
-        ],
-        "contactPoint": {
-          "@type": "ContactPoint",
-          "email": "support@sweepr.uk",
-          "contactType": "customer support",
-          "availableLanguage": ["English", "German", "French", "Spanish"]
-        }
-      },
-      {
-        "@type": "WebSite",
-        "@id": "https://sweeprdeepblock.com/#website",
-        "url": "https://sweeprdeepblock.com/",
-        "name": "SWEEPR Deepblock",
-        "publisher": {
-          "@id": "https://sweeprdeepblock.com/#organization"
-        },
-        "inLanguage": "en-GB"
-      },
-      {
-        "@type": "SoftwareApplication",
-        "@id": "https://sweeprdeepblock.com/#software",
-        "name": "SWEEPR Deepblock",
-        "image": "https://sweeprdeepblock.com/og-image.png",
-        "operatingSystem": "Chrome, Safari, Microsoft Edge, Firefox, Brave, Opera, Windows, macOS, iOS, Android",
-        "applicationCategory": "SecurityApplication",
-        "description": "All-in-one ad and pop-up blocker that stops YouTube and banner ads, automatically clicks Reject All on cookie pop-ups, hides junk search results, cleans up cluttered articles, and warns about fake online shops.",
-        "offers": {
-          "@type": "AggregateOffer",
-          "lowPrice": "1.99",
-          "highPrice": "89.99",
-          "priceCurrency": "GBP",
-          "offerCount": "4",
-          "validFrom": "2026-01-01",
-          "priceValidUntil": "2027-12-31",
-          "availability": "https://schema.org/InStock",
-          "url": "https://sweeprdeepblock.com/pricing",
-          "description": "Start with your 1st month for £1.99, save 50% on the Annual Plan (£29.99/yr — £2.50/mo), or get the 4-in-1 Sweepr Complete Security Suite (£89.99/yr). Covered by a 14-day money-back guarantee."
-        }
-      },
-      {
-        "@type": "FAQPage",
-        "@id": "https://sweeprdeepblock.com/#faq",
-        "mainEntity": [
-          {
-            "@type": "Question",
-            "name": "How is SWEEPR Deepblock different from a normal ad blocker?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Normal ad blockers only hide basic banner ads and often trigger 'Please turn off your ad blocker' walls on video sites. SWEEPR Deepblock stops video and banner ads undetected, automatically says 'No' to annoying cookie pop-ups, hides copy-paste junk search results, strips away recipe/news page clutter, and warns you before you buy from fake scam online shops."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Does closing cookie pop-ups automatically break websites?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "No. Instead of just hiding the cookie box (which often leaves the page frozen so you cannot scroll), SWEEPR Deepblock clicks the official 'Reject All' or 'Necessary Only' option for you in under 50 milliseconds and keeps the page scrolling normally."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Which browsers does SWEEPR Deepblock work on?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "One SWEEPR Deepblock license covers up to 5 browsers across Chrome, Microsoft Edge, Brave, Opera, Mozilla Firefox, and Apple Safari."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "How does the £1.99 first-month offer and 14-day guarantee work?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "You can try SWEEPR Deepblock Pro for £1.99 for your first 30 days on the Monthly Plan, or save 50% right away with the Annual Plan (£2.50/mo billed at £29.99/yr) or Complete Security Suite (£89.99/yr). Every plan includes a 14-day no-questions-asked money-back guarantee and 1-click cancellation."
-            }
-          }
-        ]
-      }
-    ]
-  }
-  </script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://sweeprdeepblock.com/#organization","name":"SWEEPR Deepblock","legalName":"SWEEPR Global Limited","url":"https://sweeprdeepblock.com/","logo":{"@type":"ImageObject","url":"https://sweeprdeepblock.com/logo.svg"},"sameAs":["https://chromewebstore.google.com/detail/sweepr-deepblock-ad-cooki/bkdfhdgmglfancgpkcbdceinfdlccmpc","https://addons.mozilla.org/firefox/addon/sweepr-deepblock/","https://apps.microsoft.com/detail/9pkqkzk2c5bz"],"contactPoint":{"@type":"ContactPoint","email":"support@sweeprdeepblock.com","contactType":"customer support","availableLanguage":["English","German","French","Spanish"]}},{"@type":"WebSite","@id":"https://sweeprdeepblock.com/#website","url":"https://sweeprdeepblock.com/","name":"SWEEPR Deepblock","publisher":{"@id":"https://sweeprdeepblock.com/#organization"},"inLanguage":"en-GB"},{"@type":"SoftwareApplication","@id":"https://sweeprdeepblock.com/#software","name":"SWEEPR Deepblock","softwareVersion":"1.3.1","image":"https://sweeprdeepblock.com/og-image.png","url":"https://sweeprdeepblock.com/","downloadUrl":"https://sweeprdeepblock.com/download","installUrl":["https://chromewebstore.google.com/detail/sweepr-deepblock-ad-cooki/bkdfhdgmglfancgpkcbdceinfdlccmpc","https://addons.mozilla.org/firefox/addon/sweepr-deepblock/","https://apps.microsoft.com/detail/9pkqkzk2c5bz"],"operatingSystem":"Chrome, Safari, Microsoft Edge, Firefox, Brave, Opera, Windows, macOS, iOS, Android","applicationCategory":"SecurityApplication","featureList":"Manifest V3 declarativeNetRequest ad blocking, <50ms GDPR cookie consent auto-rejection, Search engine AI slop filter, Fake online shop detector, URL tracker stripping, Total Tab & RAM Tamer","author":{"@id":"https://sweeprdeepblock.com/#organization"},"publisher":{"@id":"https://sweeprdeepblock.com/#organization"},"description":"All-in-one ad and pop-up blocker that stops YouTube and banner ads, automatically clicks Reject All on cookie pop-ups, hides junk search results, cleans up cluttered articles, and warns about fake online shops.","offers":{"@type":"AggregateOffer","lowPrice":"1.99","highPrice":"89.99","priceCurrency":"GBP","offerCount":"4","url":"https://sweeprdeepblock.com/pricing","offers":[{"@type":"Offer","name":"Monthly Plan (1st Month Intro)","price":"1.99","priceCurrency":"GBP","priceSpecification":[{"@type":"UnitPriceSpecification","price":"1.99","priceCurrency":"GBP","priceType":"https://schema.org/SalePrice","unitText":"first month"},{"@type":"UnitPriceSpecification","price":"4.99","priceCurrency":"GBP","priceType":"https://schema.org/ListPrice","unitText":"month"}],"availability":"https://schema.org/InStock","url":"https://sweeprdeepblock.com/order?plan=monthly"},{"@type":"Offer","name":"6-Month Plan (Save 33%)","price":"19.99","priceCurrency":"GBP","availability":"https://schema.org/InStock","url":"https://sweeprdeepblock.com/order?plan=six_month"},{"@type":"Offer","name":"Annual Plan (Save 50%)","price":"29.99","priceCurrency":"GBP","priceSpecification":[{"@type":"UnitPriceSpecification","price":"29.99","priceCurrency":"GBP","priceType":"https://schema.org/SalePrice","unitText":"year"},{"@type":"UnitPriceSpecification","price":"59.88","priceCurrency":"GBP","priceType":"https://schema.org/StrikethroughPrice","unitText":"year"}],"availability":"https://schema.org/InStock","url":"https://sweeprdeepblock.com/order?plan=annual"},{"@type":"Offer","name":"Sweepr Complete Security Suite (Annual Bundle)","price":"89.99","priceCurrency":"GBP","priceSpecification":[{"@type":"UnitPriceSpecification","price":"89.99","priceCurrency":"GBP","priceType":"https://schema.org/SalePrice","unitText":"year"},{"@type":"UnitPriceSpecification","price":"164.97","priceCurrency":"GBP","priceType":"https://schema.org/StrikethroughPrice","unitText":"year"}],"availability":"https://schema.org/InStock","url":"https://sweeprdeepblock.com/order?plan=suite_annual"}],"priceValidUntil":"2027-12-31","validFrom":"2026-01-01"}}]}</script>
   <script>
     window.addEventListener('DOMContentLoaded', function() {
       try {
+        var b = document.getElementById('resumeOrderBanner');
+        if (!b) return;
         const rawDraft = localStorage.getItem('sweepr_order_draft');
         if (rawDraft) {
           const draft = JSON.parse(rawDraft);
           if (draft && draft.hasDetails && draft.updatedAt && (Date.now() - Number(draft.updatedAt) <= 30 * 60 * 1000)) {
-            const b = document.getElementById('resumeOrderBanner');
-            if (b) b.classList.remove('hidden');
+            b.classList.remove('hidden');
+            return;
           } else {
             localStorage.removeItem('sweepr_order_draft');
             document.cookie = 'sweepr_order_draft_active=; path=/; max-age=0; SameSite=Lax';
           }
         }
+        if (localStorage.getItem('deepblock_visited_order') === '1') {
+          b.classList.remove('hidden');
+        }
       } catch (e) {}
     });
   </script>
-  <script src="https://cdn.tailwindcss.com/3.4.5"></script>
+  <link rel="stylesheet" href="/sweepr-tailwind.min.css?v=20261117">
   <link rel="stylesheet" href="/style.css?v=20261114">
   <script src="/nav.js?v=20261108" defer></script>
   <script src="/i18n.js" defer></script>
@@ -257,10 +154,10 @@
         </button>
         <div id="langDropdownMenu" class="hidden absolute right-0 mt-2 w-44 bg-white/95 backdrop-blur-xl border border-gray-200/90 rounded-2xl shadow-xl p-1.5 z-50 transition-all">
           <div class="space-y-0.5 text-xs">
-            <button type="button" onclick="setLanguage('en')" class="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-emerald-50 text-gray-800 hover:text-emerald-700 font-medium cursor-pointer"><span>🇬🇧 English</span><span class="text-[10px] text-gray-400 font-mono">EN</span></button>
-            <button type="button" onclick="setLanguage('de')" class="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-emerald-50 text-gray-800 hover:text-emerald-700 font-medium cursor-pointer"><span>🇩🇪 Deutsch</span><span class="text-[10px] text-gray-400 font-mono">DE</span></button>
-            <button type="button" onclick="setLanguage('fr')" class="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-emerald-50 text-gray-800 hover:text-emerald-700 font-medium cursor-pointer"><span>🇫🇷 Français</span><span class="text-[10px] text-gray-400 font-mono">FR</span></button>
-            <button type="button" onclick="setLanguage('es')" class="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-emerald-50 text-gray-800 hover:text-emerald-700 font-medium cursor-pointer"><span>🇪🇸 Español</span><span class="text-[10px] text-gray-400 font-mono">ES</span></button>
+            <a href="/" hreflang="en" onclick="if(window.setLanguage)setLanguage('en',false)" class="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-emerald-50 text-gray-800 hover:text-emerald-700 font-medium no-underline cursor-pointer"><span>🇬🇧 English</span><span class="text-[10px] text-gray-400 font-mono">EN</span></a>
+            <a href="/de" hreflang="de" onclick="if(window.setLanguage)setLanguage('de',false)" class="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-emerald-50 text-gray-800 hover:text-emerald-700 font-medium no-underline cursor-pointer"><span>🇩🇪 Deutsch</span><span class="text-[10px] text-gray-400 font-mono">DE</span></a>
+            <a href="/fr" hreflang="fr" onclick="if(window.setLanguage)setLanguage('fr',false)" class="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-emerald-50 text-gray-800 hover:text-emerald-700 font-medium no-underline cursor-pointer"><span>🇫🇷 Français</span><span class="text-[10px] text-gray-400 font-mono">FR</span></a>
+            <a href="/es" hreflang="es" onclick="if(window.setLanguage)setLanguage('es',false)" class="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-emerald-50 text-gray-800 hover:text-emerald-700 font-medium no-underline cursor-pointer"><span>🇪🇸 Español</span><span class="text-[10px] text-gray-400 font-mono">ES</span></a>
           </div>
         </div>
       </div>
@@ -420,7 +317,7 @@
             <div class="flex-1 grid grid-cols-12 gap-3 p-3 overflow-hidden">
               <div class="col-span-8 flex flex-col justify-between min-w-0">
                 <div class="relative rounded-xl overflow-hidden bg-black aspect-video w-full shadow-md">
-                  <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=900&q=80" alt="Swiss Alps 4K" width="900" height="506" loading="lazy" decoding="async" class="yt-video-motion w-full h-full object-cover"/>
+                  <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=900&h=506&q=80" alt="Swiss Alps 4K" width="900" height="506" loading="lazy" decoding="async" class="yt-video-motion w-full h-full object-cover"/>
                   <div class="absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-slate-950/65 via-slate-950/20 to-transparent pointer-events-none"></div>
                   <div class="absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-black/85 to-transparent"></div>
                   <div class="absolute top-2.5 right-2.5 bg-emerald-600/95 text-white px-2.5 py-0.5 rounded-full text-[9.5px] font-extrabold shadow">
@@ -459,21 +356,21 @@
               <div class="col-span-4 flex flex-col justify-between min-w-0">
                 <div class="text-[10.5px] font-bold text-gray-800 border-b border-gray-200 pb-1">Up Next • Clean Feed</div>
                 <div class="flex gap-2 items-start">
-                  <img src="https://images.unsplash.com/photo-1531366936337-7c912a4589a7?auto=format&fit=crop&w=240&q=75" width="240" height="144" loading="lazy" decoding="async" class="w-20 h-12 rounded-lg object-cover shrink-0" alt="Iceland"/>
+                  <img src="https://images.unsplash.com/photo-1531366936337-7c912a4589a7?auto=format&fit=crop&w=240&h=144&q=75" width="240" height="144" loading="lazy" decoding="async" class="w-20 h-12 rounded-lg object-cover shrink-0" alt="Iceland"/>
                   <div class="min-w-0">
                     <div class="text-[10px] font-bold text-gray-900 leading-tight line-clamp-2">Iceland Northern Lights 4K</div>
                     <div class="text-[8.5px] text-gray-500 truncate">Scenic Earth • 1.9M views</div>
                   </div>
                 </div>
                 <div class="flex gap-2 items-start">
-                  <img src="https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=240&q=75" width="240" height="144" loading="lazy" decoding="async" class="w-20 h-12 rounded-lg object-cover shrink-0" alt="Ocean"/>
+                  <img src="https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=240&h=144&q=75" width="240" height="144" loading="lazy" decoding="async" class="w-20 h-12 rounded-lg object-cover shrink-0" alt="Ocean"/>
                   <div class="min-w-0">
                     <div class="text-[10px] font-bold text-gray-900 leading-tight line-clamp-2">Deep Ocean Coral Reefs 4K</div>
                     <div class="text-[8.5px] text-gray-500 truncate">Blue Planet • 1.4M views</div>
                   </div>
                 </div>
                 <div class="flex gap-2 items-start">
-                  <img src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=240&q=75" width="240" height="144" loading="lazy" decoding="async" class="w-20 h-12 rounded-lg object-cover shrink-0" alt="Forest"/>
+                  <img src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=240&h=144&q=75" width="240" height="144" loading="lazy" decoding="async" class="w-20 h-12 rounded-lg object-cover shrink-0" alt="Forest"/>
                   <div class="min-w-0">
                     <div class="text-[10px] font-bold text-gray-900 leading-tight line-clamp-2">Redwood National Park 4K</div>
                     <div class="text-[8.5px] text-gray-500 truncate">Earth 60fps • 512K views</div>
@@ -486,57 +383,53 @@
             </div>
           </div>
 
-          <!-- BEFORE LAYER (Clipped by Slider Percentage — LIGHT MODE YOUTUBE WITH PRE-ROLL AD + COOKIE MODAL) -->
-          <div id="heroBeforeClip" style="width: 100%; clip-path: inset(0 50% 0 0);" class="absolute inset-0 overflow-hidden bg-white text-[#0f0f0f] flex flex-col">
+          <!-- BEFORE LAYER (Clipped by Slider Percentage — LIGHT MODE VISUAL MOCKUP RENDERED VIA CSS SO MOCK AD TEXT NEVER POLLUTES DOM SEO) -->
+          <div id="heroBeforeClip" aria-hidden="true" style="width: 100%; clip-path: inset(0 50% 0 0);" class="absolute inset-0 overflow-hidden bg-white text-[#0f0f0f] flex flex-col">
             <div class="h-10 px-3 flex items-center justify-between border-b border-rose-200 shrink-0 bg-rose-50">
               <div class="flex items-center gap-2">
                 <svg class="w-6 h-4" viewBox="0 0 28 20" fill="none">
                   <rect width="28" height="20" rx="4.5" fill="#FF0000"/>
                   <polygon points="11,6 11,14 18.5,10" fill="#FFFFFF"/>
                 </svg>
-                <span class="font-bold text-[13.5px] tracking-tighter text-[#0f0f0f]">YouTube</span>
-                <span class="px-2 py-0.5 rounded-md text-[9.5px] font-black uppercase bg-rose-600 text-white">✗ WITHOUT DEEPBLOCK</span>
+                <span class="mock-txt font-bold text-[13.5px] tracking-tighter text-[#0f0f0f]" data-mock-text="YouTube"></span>
+                <span class="mock-txt px-2 py-0.5 rounded-md text-[9.5px] font-black uppercase bg-rose-600 text-white" data-mock-text="✗ WITHOUT DEEPBLOCK"></span>
               </div>
-              <span class="text-[10px] font-bold text-rose-700">⚠ Interrupted by Ads</span>
+              <span class="mock-txt text-[10px] font-bold text-rose-700" data-mock-text="⚠ Interrupted by Ads"></span>
             </div>
 
             <div class="flex-1 grid grid-cols-12 gap-3 p-3 overflow-hidden">
               <div class="col-span-8 flex flex-col justify-between min-w-0">
                 <div class="relative rounded-xl overflow-hidden bg-black aspect-video w-full border-2 border-rose-500">
-                  <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=900&q=80" width="900" height="506" loading="lazy" decoding="async" class="w-full h-full object-cover brightness-75" alt="Pre-Roll Ad"/>
-                  <div class="absolute top-2.5 left-2.5 bg-amber-400 text-black text-[9.5px] font-black px-2 py-0.5 rounded">
-                    Sponsored • Ad 1 of 2 (0:30)
-                  </div>
+                  <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=900&h=506&q=80" width="900" height="506" loading="lazy" decoding="async" class="w-full h-full object-cover brightness-75" alt="" role="presentation"/>
+                  <div class="mock-txt absolute top-2.5 left-2.5 bg-amber-400 text-black text-[9.5px] font-black px-2 py-0.5 rounded" data-mock-text="Sponsored • Ad 1 of 2 (0:30)"></div>
                   <div class="absolute inset-x-2.5 bottom-3 flex items-center justify-between gap-2">
-                    <span class="bg-blue-600 text-white text-[9.5px] font-bold px-2.5 py-1 rounded">Visit Advertiser ↗</span>
-                    <span class="bg-black/85 text-white text-[9.5px] font-semibold px-2.5 py-1 rounded border border-white/25">Video plays after ads ⏳</span>
+                    <span class="mock-txt bg-blue-600 text-white text-[9.5px] font-bold px-2.5 py-1 rounded" data-mock-text="Visit Advertiser ↗"></span>
+                    <span class="mock-txt bg-black/85 text-white text-[9.5px] font-semibold px-2.5 py-1 rounded border border-white/25" data-mock-text="Video plays after ads ⏳"></span>
                   </div>
                   <div class="absolute inset-x-0 bottom-0 h-1 bg-amber-400"></div>
                 </div>
 
                 <div class="mt-2 bg-rose-50 border-2 border-rose-500 rounded-xl p-2.5 flex items-center justify-between gap-2 shadow-lg">
                   <div class="min-w-0">
-                    <div class="text-[10.5px] font-black text-rose-800 truncate">🍪 Before you continue to YouTube</div>
-                    <div class="text-[9px] text-gray-700 line-clamp-2">We &amp; 842 ad partners use cookies to personalize ads and track your clicks.</div>
+                    <div class="mock-txt text-[10.5px] font-black text-rose-800 truncate" data-mock-text="🍪 Before you continue to YouTube"></div>
+                    <div class="mock-txt text-[9px] text-gray-700 line-clamp-2" data-mock-text="We & 842 ad partners use cookies to personalize ads and track your clicks."></div>
                   </div>
-                  <span class="px-2.5 py-1 rounded-full bg-rose-600 text-white text-[9px] font-bold shrink-0">Accept all</span>
+                  <span class="mock-txt px-2.5 py-1 rounded-full bg-rose-600 text-white text-[9px] font-bold shrink-0" data-mock-text="Accept all"></span>
                 </div>
               </div>
 
               <div class="col-span-4 flex flex-col justify-between min-w-0">
                 <div class="bg-amber-50 border border-amber-400 rounded-xl p-2">
-                  <span class="bg-amber-400 text-black text-[8px] font-black px-1 rounded">SPONSORED AD</span>
-                  <div class="text-[10px] font-black text-gray-900 mt-1 leading-tight">🔥 Lose Belly Fat In 7 Days — Doctors Shocked!</div>
-                  <div class="mt-1.5 bg-blue-600 text-white text-center text-[9px] font-bold py-1 rounded">Learn More ↗</div>
+                  <span class="mock-txt bg-amber-400 text-black text-[8px] font-black px-1 rounded" data-mock-text="SPONSORED AD"></span>
+                  <div class="mock-txt text-[10px] font-black text-gray-900 mt-1 leading-tight" data-mock-text="🔥 Lose Belly Fat In 7 Days — Doctors Shocked!"></div>
+                  <div class="mock-txt mt-1.5 bg-blue-600 text-white text-center text-[9px] font-bold py-1 rounded" data-mock-text="Learn More ↗"></div>
                 </div>
                 <div class="bg-rose-50 border border-rose-300 rounded-xl p-2">
-                  <span class="bg-amber-400 text-black text-[8px] font-black px-1 rounded">Ad</span>
-                  <div class="text-[9.5px] font-bold text-gray-900 mt-0.5 truncate">Cheap Replica Watches 90% Off</div>
-                  <div class="text-[8px] text-rose-700 truncate">scam-outlet-deals.top</div>
+                  <span class="mock-txt bg-amber-400 text-black text-[8px] font-black px-1 rounded" data-mock-text="Ad"></span>
+                  <div class="mock-txt text-[9.5px] font-bold text-gray-900 mt-0.5 truncate" data-mock-text="Cheap Replica Watches 90% Off"></div>
+                  <div class="mock-txt text-[8px] text-rose-700 truncate" data-mock-text="scam-outlet-deals.top"></div>
                 </div>
-                <div class="bg-rose-100 border border-rose-300 rounded-lg p-1.5 text-center text-[9px] font-bold text-rose-800">
-                  ✗ Tracking Scripts Active
-                </div>
+                <div class="mock-txt bg-rose-100 border border-rose-300 rounded-lg p-1.5 text-center text-[9px] font-bold text-rose-800" data-mock-text="✗ Tracking Scripts Active"></div>
               </div>
             </div>
           </div>
@@ -661,7 +554,7 @@
             SWEEPR Deepblock Pro + VPN + Cleaner + RAM Tamer
           </h3>
           <p class="text-xs sm:text-sm text-emerald-100/80 leading-relaxed">
-            All 4 apps across 5 devices for <strong class="font-extrabold text-white">£89.99/yr</strong> (<span class="line-through text-emerald-200/50">£164.97/yr standalone</span> &mdash; £7.49/mo eq.).
+            All 4 apps across 5 devices for <strong class="font-extrabold text-white">£89.99/yr</strong> (<span class="line-through text-emerald-200/50">£164.97/yr standalone</span> &mdash; £7.50/mo eq.).
           </p>
         </div>
         <div class="shrink-0 w-full md:w-auto">
@@ -678,8 +571,15 @@
     <div class="max-w-5xl mx-auto px-4">
       <div class="flex flex-wrap justify-center gap-x-6 gap-y-2 mb-3 font-medium text-gray-600">
         <a href="/pricing" class="hover:text-emerald-600 transition-colors">Pricing</a>
+        <a href="/site" class="hover:text-emerald-600 transition-colors">Verified Site Reports</a>
+        <a href="/tools" class="hover:text-emerald-600 transition-colors">Diagnostic Tools</a>
+        <a href="/test-lab" class="hover:text-emerald-600 transition-colors">8/8 Test Lab</a>
+        <a href="/glossary" class="hover:text-emerald-600 transition-colors">Glossary</a>
         <a href="/vs/total-adblock" class="hover:text-emerald-600 transition-colors">vs Total Adblock</a>
         <a href="/download" class="hover:text-emerald-600 transition-colors">Browser Extension</a>
+        <a href="/de" hreflang="de" class="hover:text-emerald-600 transition-colors">Deutsch (DE)</a>
+        <a href="/fr" hreflang="fr" class="hover:text-emerald-600 transition-colors">Français (FR)</a>
+        <a href="/es" hreflang="es" class="hover:text-emerald-600 transition-colors">Español (ES)</a>
         <a href="/login" class="hover:text-emerald-600 transition-colors">Customer Portal</a>
         <a href="/support" class="hover:text-emerald-600 transition-colors">Support &amp; Help</a>
         <a href="/privacy" class="hover:text-emerald-600 transition-colors">Privacy Policy</a>
@@ -719,7 +619,7 @@
             <ul class="space-y-1.5">
               <li><a href="/solutions/crunchyroll-anime-streams-block-video-ads" class="hover:text-emerald-600 transition-colors">How to Get No Ads on Crunchyroll PC</a></li>
               <li><a href="/solutions/fandom-game-wikis-reduce-browser-ram-usage" class="hover:text-emerald-600 transition-colors">Why Does Fandom Use So Much RAM?</a></li>
-              <li><a href="/solutions/1337x-torrent-indexer-block-video-ads" class="hover:text-emerald-600 transition-colors">1337x Ads &amp; Pop-Under Blocker</a></li>
+              <li><a href="/solutions/fandom-game-wikis-reduce-browser-ram-usage" class="hover:text-emerald-600 transition-colors">Fandom Ad Block &amp; Video Stopper</a></li>
               <li><a href="/solutions/webtoon-manhwa-readers-block-video-ads" class="hover:text-emerald-600 transition-colors">Webtoon &amp; Manhwa Ad Blocker</a></li>
               <li><a href="/solutions/manga-comic-readers-block-video-ads" class="hover:text-emerald-600 transition-colors">How to Block Ads on Manga Sites</a></li>
               <li><a href="/solutions/linkedin-feed-ads-block-video-ads" class="hover:text-emerald-600 transition-colors">LinkedIn Promoted Ad Blocker</a></li>
@@ -759,6 +659,7 @@
               <li><a href="/guides/how-to-spot-fake-scam-online-shops-uk" class="hover:text-emerald-600 transition-colors">Spot Fake Scam Online Shops</a></li>
               <li><a href="/guides/how-to-hide-ai-slop-from-google-search" class="hover:text-emerald-600 transition-colors">Hide AI Slop From Google Search</a></li>
               <li><a href="/test-lab" class="hover:text-emerald-600 transition-colors">8/8 Live Anti-Detection Test Lab</a></li>
+              <li><a href="/benchmarks" class="hover:text-emerald-600 transition-colors">v1.3.1 MV3 Benchmarks &amp; Architecture</a></li>
               <li><a href="/tools" class="hover:text-emerald-600 transition-colors">Free Browser Diagnostic Tools</a></li>
               <li><a href="/tools/is-my-adblocker-working" class="hover:text-emerald-600 transition-colors">Is My AdBlocker Working? Test</a></li>
               <li><a href="/tools/dns-leak-test" class="hover:text-emerald-600 transition-colors">DNS &amp; WebRTC Leak Test</a></li>
@@ -768,8 +669,6 @@
               <li><a href="/site" class="hover:text-emerald-600 transition-colors">150 Audited Publisher Ad Reports</a></li>
               <li><a href="/glossary" class="hover:text-emerald-600 transition-colors">MV3 &amp; Privacy Engineering Glossary</a></li>
               <li><a href="/stories" class="hover:text-emerald-600 transition-colors">Verified Switcher Stories</a></li>
-              <li><a href="/de" class="hover:text-emerald-600 transition-colors">SWEEPR Deepblock Deutsch (DE)</a></li>
-              <li><a href="/fr" class="hover:text-emerald-600 transition-colors">SWEEPR Deepblock Français (FR)</a></li>
               <li><a href="/order?plan=suite_annual" class="hover:text-emerald-600 transition-colors">Complete Security Suite Bundle</a></li>
               <li><a href="https://sweeprcleaner.com/?utm_source=sweeprdeepblock.com&amp;utm_medium=ecosystem_footer" target="_blank" rel="noopener" class="hover:text-emerald-600 transition-colors">Sweepr Cleaner (PC &amp; Mac Optimizer)</a></li>
               <li><a href="https://sweeprvpn.com/?utm_source=sweeprdeepblock.com&amp;utm_medium=ecosystem_footer" target="_blank" rel="noopener" class="hover:text-emerald-600 transition-colors">Sweepr VPN (Encrypted Tunnel)</a></li>

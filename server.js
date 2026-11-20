@@ -2002,11 +2002,14 @@ function serveStaticOptimized(req, res, fullPath) {
 
     // Cache-Control strategy
     const isCodeAsset = ext === '.css' || ext === '.js';
+    const hasVersionQuery = Boolean(req.url && req.url.includes('?v='));
     let cacheControl = 'public, max-age=300, stale-while-revalidate=86400';
     if (isInstallerBinary) {
       cacheControl = 'no-store, no-cache, must-revalidate';
     } else if (isCodeAsset) {
-      cacheControl = 'public, max-age=0, must-revalidate';
+      cacheControl = hasVersionQuery
+        ? 'public, max-age=31536000, immutable'
+        : 'public, max-age=86400, stale-while-revalidate=604800';
     } else if (isSeoMetaFile) {
       cacheControl = 'public, max-age=3600, stale-while-revalidate=86400';
     } else if (isStaticAsset) {
@@ -2057,9 +2060,8 @@ function serveStaticOptimized(req, res, fullPath) {
       } else {
         headers['X-Robots-Tag'] = 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1';
       }
-      const baseResourceHints = isSensitiveAuthOrCheckout
-        ? '<https://fonts.googleapis.com>; rel=preconnect, <https://fonts.gstatic.com>; rel=preconnect; crossorigin, <https://fonts.googleapis.com>; rel=dns-prefetch, <https://fonts.gstatic.com>; rel=dns-prefetch, </sweepr-ui.css>; rel=preload; as=style, </logo.svg>; rel=preload; as=image'
-        : '<https://fonts.googleapis.com>; rel=preconnect, <https://fonts.gstatic.com>; rel=preconnect; crossorigin, <https://fonts.googleapis.com>; rel=dns-prefetch, <https://fonts.gstatic.com>; rel=dns-prefetch, </sweepr-tailwind.min.css>; rel=preload; as=style, </style.css>; rel=preload; as=style, </logo.svg>; rel=preload; as=image';
+      const baseResourceHints =
+        '<https://fonts.googleapis.com>; rel=preconnect, <https://fonts.gstatic.com>; rel=preconnect; crossorigin, <https://fonts.googleapis.com>; rel=dns-prefetch, <https://fonts.gstatic.com>; rel=dns-prefetch, </logo.svg>; rel=preload; as=image';
       if (!NON_INDEXABLE_PAGES.has(fileNameLower)) {
         const relFromWebsite = path.relative(path.resolve(WEBSITE_DIR), fullPath).replace(/\\/g, '/');
         const canonicalSlug = relFromWebsite === 'index.html' ? '' : relFromWebsite.replace(/\.html$/, '');
@@ -2465,7 +2467,7 @@ const server = http.createServer(async (req, res) => {
     }
   }
 
-  if (req.method === 'GET' && BOT_UA_RE.test(ua) && !pathname.startsWith('/api/')) {
+  if (req.method === 'GET' && BOT_UA_RE.test(ua) && !pathname.startsWith('/api/') && !pathname.startsWith('/metrics')) {
     reportToSweeprCrm('/api/crm/seo/bot-hit?project=deepblock', { user_agent: ua, path: pathname, status: 200 });
   }
 
@@ -6114,12 +6116,28 @@ function getCachedDynamicDelta() {
     res.writeHead(301, { Location: '/support', 'X-Robots-Tag': 'noindex, nofollow', 'X-Content-Type-Options': 'nosniff' });
     return res.end();
   }
+  if ((req.method === 'GET' || req.method === 'HEAD') && pathname === '/guides/block-youtube-ads') {
+    res.writeHead(301, {
+      Location: '/guides/how-to-block-youtube-ads-chrome-manifest-v3-2026',
+      'Cache-Control': 'public, max-age=604800',
+      'X-Content-Type-Options': 'nosniff'
+    });
+    return res.end();
+  }
+  if ((req.method === 'GET' || req.method === 'HEAD') && pathname === '/features/cookie-consent-blocker') {
+    res.writeHead(301, {
+      Location: '/guides/how-to-automatically-reject-cookie-banners-uk',
+      'Cache-Control': 'public, max-age=604800',
+      'X-Content-Type-Options': 'nosniff'
+    });
+    return res.end();
+  }
   if ((req.method === 'GET' || req.method === 'HEAD') && parsedUrl.pathname.length > 1 && /[).,\]]+$/.test(parsedUrl.pathname)) {
     const cleanTarget = ((parsedUrl.pathname.replace(/[).,\]]+$/, '') || '/').replace(/^\/+/, '/')) + (parsedUrl.search || '');
     res.writeHead(301, { Location: cleanTarget, 'Cache-Control': 'public, max-age=604800', 'X-Content-Type-Options': 'nosniff' });
     return res.end();
   }
-  // First-Party GA4 Script & Measurement Proxy (/metrics/js, /metrics/g/collect, /metrics/collect, /api/analytics/event)
+  // First-Party GA4 Script & Measurement Proxy (/metrics/js, /metrics/g/collect, /metrics/collect, /metrics/_/, /api/analytics/event)
   if ((req.method === 'GET' || req.method === 'HEAD') && pathname === '/metrics/js') {
     const tagId = (parsedUrl.searchParams.get('id') || 'G-01MNBQSL9K').replace(/[^A-Za-z0-9_-]/g, '');
     try {
@@ -6136,13 +6154,19 @@ function getCachedDynamicDelta() {
       if (global.__ga4ScriptCache && global.__ga4ScriptCache.body) {
         res.writeHead(200, {
           'Content-Type': 'application/javascript; charset=utf-8',
-          'Cache-Control': 'public, max-age=3600, stale-while-revalidate=86400',
+          'Cache-Control': 'public, max-age=86400, stale-while-revalidate=604800',
+          'X-Robots-Tag': 'noindex, nofollow',
           'X-Content-Type-Options': 'nosniff'
         });
         return res.end(req.method === 'HEAD' ? undefined : global.__ga4ScriptCache.body);
       }
     } catch {}
-    res.writeHead(200, { 'Content-Type': 'application/javascript; charset=utf-8', 'Cache-Control': 'no-store' });
+    res.writeHead(200, {
+      'Content-Type': 'application/javascript; charset=utf-8',
+      'Cache-Control': 'no-store',
+      'X-Robots-Tag': 'noindex, nofollow',
+      'X-Content-Type-Options': 'nosniff'
+    });
     return res.end('/* first-party analytics fallback */');
   }
 
@@ -6169,9 +6193,29 @@ function getCachedDynamicDelta() {
     } catch {}
     res.writeHead(204, {
       'Cache-Control': 'no-store, no-cache, must-revalidate',
+      'X-Robots-Tag': 'noindex, nofollow',
       'Access-Control-Allow-Origin': PUBLIC_URL
     });
     return res.end();
+  }
+
+  if ((req.method === 'GET' || req.method === 'HEAD') && pathname.startsWith('/metrics/_/')) {
+    if (pathname.endsWith('.js')) {
+      res.writeHead(200, {
+        'Content-Type': 'application/javascript; charset=utf-8',
+        'Cache-Control': 'public, max-age=86400',
+        'X-Robots-Tag': 'noindex, nofollow',
+        'X-Content-Type-Options': 'nosniff'
+      });
+      return res.end(req.method === 'HEAD' ? undefined : '/* noop */');
+    }
+    res.writeHead(200, {
+      'Content-Type': 'text/html; charset=utf-8',
+      'Cache-Control': 'public, max-age=86400',
+      'X-Robots-Tag': 'noindex, nofollow',
+      'X-Content-Type-Options': 'nosniff'
+    });
+    return res.end(req.method === 'HEAD' ? undefined : '<!doctype html><html><head><meta name="robots" content="noindex,nofollow"></head><body></body></html>');
   }
 
   if (req.method === 'POST' && pathname === '/api/analytics/event') {

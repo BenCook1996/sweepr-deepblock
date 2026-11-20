@@ -6,7 +6,10 @@
       if (m && m[1]) return m[1];
       let cid = localStorage.getItem('sweepr_ga4_cid');
       if (!cid) {
-        cid = Math.floor(100000000 + Math.random() * 900000000) + '.' + Math.floor(Date.now() / 1000);
+        const rand = (window.crypto && window.crypto.getRandomValues)
+          ? (100000000 + (window.crypto.getRandomValues(new Uint32Array(1))[0] % 900000000))
+          : Math.floor(100000000 + (Date.now() % 900000000));
+        cid = rand + '.' + Math.floor(Date.now() / 1000);
         localStorage.setItem('sweepr_ga4_cid', cid);
       }
       return cid;
@@ -113,9 +116,7 @@
           if (badgeEl && data.config.badge) {
             badgeEl.textContent = '✓ ' + data.config.badge + ' • ' + data.config.headline;
           }
-          if (headlineEl && data.config.headline) {
-            headlineEl.textContent = data.config.headline;
-          }
+          // Preserve SSR <h1> text so Googlebot and users always see consistent canonical H1 copy.
           if (subheadlineEl && data.config.subheadline) {
             subheadlineEl.textContent = data.config.subheadline;
           }
@@ -219,10 +220,10 @@ document.addEventListener('DOMContentLoaded', () => {
           </button>
           <div id="langDropdownMenu" class="hidden absolute right-0 mt-2 w-44 bg-white/95 backdrop-blur-xl border border-gray-200/90 rounded-2xl shadow-xl p-1.5 z-50 transition-all">
             <div class="space-y-0.5 text-xs">
-              <button type="button" onclick="setLanguage('en')" class="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-emerald-50 text-gray-800 hover:text-emerald-700 font-medium cursor-pointer"><span>🇬🇧 English</span><span class="text-[10px] text-gray-400 font-mono">EN</span></button>
-              <button type="button" onclick="setLanguage('de')" class="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-emerald-50 text-gray-800 hover:text-emerald-700 font-medium cursor-pointer"><span>🇩🇪 Deutsch</span><span class="text-[10px] text-gray-400 font-mono">DE</span></button>
-              <button type="button" onclick="setLanguage('fr')" class="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-emerald-50 text-gray-800 hover:text-emerald-700 font-medium cursor-pointer"><span>🇫🇷 Français</span><span class="text-[10px] text-gray-400 font-mono">FR</span></button>
-              <button type="button" onclick="setLanguage('es')" class="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-emerald-50 text-gray-800 hover:text-emerald-700 font-medium cursor-pointer"><span>🇪🇸 Español</span><span class="text-[10px] text-gray-400 font-mono">ES</span></button>
+              <a href="/" hreflang="en" onclick="if(window.setLanguage)setLanguage('en',false)" class="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-emerald-50 text-gray-800 hover:text-emerald-700 font-medium no-underline cursor-pointer"><span>🇬🇧 English</span><span class="text-[10px] text-gray-400 font-mono">EN</span></a>
+              <a href="/de" hreflang="de" onclick="if(window.setLanguage)setLanguage('de',false)" class="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-emerald-50 text-gray-800 hover:text-emerald-700 font-medium no-underline cursor-pointer"><span>🇩🇪 Deutsch</span><span class="text-[10px] text-gray-400 font-mono">DE</span></a>
+              <a href="/fr" hreflang="fr" onclick="if(window.setLanguage)setLanguage('fr',false)" class="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-emerald-50 text-gray-800 hover:text-emerald-700 font-medium no-underline cursor-pointer"><span>🇫🇷 Français</span><span class="text-[10px] text-gray-400 font-mono">FR</span></a>
+              <a href="/es" hreflang="es" onclick="if(window.setLanguage)setLanguage('es',false)" class="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-emerald-50 text-gray-800 hover:text-emerald-700 font-medium no-underline cursor-pointer"><span>🇪🇸 Español</span><span class="text-[10px] text-gray-400 font-mono">ES</span></a>
             </div>
           </div>
         </div>
@@ -436,12 +437,31 @@ document.addEventListener('DOMContentLoaded', () => {
     // Fire server-backed page_view on PSEO & key funnel pages so privacy browsers are never invisible in GA4
     if (typeof window.sweeprTrackEvent === 'function') {
       const urlParams = new URLSearchParams(window.location.search || '');
+      let refHost = '';
+      try {
+        if (document.referrer) refHost = new URL(document.referrer).hostname.toLowerCase();
+      } catch (e) {}
+      let aiSearchSource = '';
+      if (/chatgpt\.com|openai\.com/.test(refHost)) aiSearchSource = 'chatgpt';
+      else if (/perplexity\.ai/.test(refHost)) aiSearchSource = 'perplexity';
+      else if (/claude\.ai/.test(refHost)) aiSearchSource = 'claude';
+      else if (/copilot\.microsoft\.com|bing\.com/.test(refHost)) aiSearchSource = 'copilot_or_bing';
+      else if (/gemini\.google\.com|bard\.google\.com/.test(refHost)) aiSearchSource = 'gemini';
+
+      const navEntries = (typeof performance !== 'undefined' && performance.getEntriesByType)
+        ? performance.getEntriesByType('navigation')
+        : [];
+      const navUrl = (navEntries[0] && navEntries[0].name) || window.location.href || '';
+      const hasTextFragment = /:~\:text=/i.test(navUrl) || Boolean(document.fragmentDirective && (window.location.href || '').includes(':~:text='));
+
       window.sweeprTrackEvent('page_view_verified', {
         page_path: currentPath,
         platform_detected: detectedPlatform,
         utm_source: urlParams.get('utm_source') || '(direct)',
         utm_medium: urlParams.get('utm_medium') || '(none)',
-        utm_campaign: urlParams.get('utm_campaign') || ''
+        utm_campaign: urlParams.get('utm_campaign') || '',
+        ai_search_source: aiSearchSource,
+        has_text_fragment: hasTextFragment
       });
 
       // Stage-Gated First-Party Retargeting Audience Segmentation

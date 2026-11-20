@@ -24,6 +24,8 @@ const ROOT_DIR = path.resolve(__dirname, '..');
 const WEBSITE_DIR = path.join(ROOT_DIR, 'website');
 const MANIFEST_PATH = path.join(ROOT_DIR, 'extension', 'manifest.json');
 const STATIC_RULES_PATH = path.join(ROOT_DIR, 'extension', 'rules', 'static_ads_and_trackers.json');
+const CRYPTO_RULES_PATH = path.join(ROOT_DIR, 'extension', 'rules', 'cryptominers.json');
+const TRACKER_PARAMS_PATH = path.join(ROOT_DIR, 'extension', 'rules', 'tracker_params.json');
 const DELTA_RULES_PATH = path.join(ROOT_DIR, 'extension', 'rules', 'dynamic_delta.json');
 const ABP_RULES_PATH = path.join(ROOT_DIR, 'extension', 'rules', 'abp_filter_list.txt');
 const SITEMAP_PATH = path.join(WEBSITE_DIR, 'sitemap.xml');
@@ -77,9 +79,15 @@ export function runGeoAndLlmsSync() {
   const [yearStr, monthStr, dayStr] = todayIso.split('-');
 
   const staticRaw = readJsonSafe(STATIC_RULES_PATH, []);
-  const staticCount = Array.isArray(staticRaw) ? staticRaw.length : (staticRaw.rules?.length || 242);
+  const staticBaseCount = Array.isArray(staticRaw) ? staticRaw.length : (staticRaw.rules?.length || 252);
+  const cryptoRaw = readJsonSafe(CRYPTO_RULES_PATH, []);
+  const cryptoCount = Array.isArray(cryptoRaw) ? cryptoRaw.length : (cryptoRaw.rules?.length || 0);
+  const trackerParamsRaw = readJsonSafe(TRACKER_PARAMS_PATH, []);
+  const trackerParamsCount = Array.isArray(trackerParamsRaw) ? trackerParamsRaw.length : (trackerParamsRaw.rules?.length || 0);
+  const staticCount = staticBaseCount + cryptoCount + trackerParamsCount;
   const deltaRaw = readJsonSafe(DELTA_RULES_PATH, []);
   const deltaCount = Array.isArray(deltaRaw) ? deltaRaw.length : (deltaRaw.dynamicDnrRules?.length || deltaRaw.rules?.length || 14);
+  const otaCosmeticCount = Array.isArray(deltaRaw?.extraCosmeticSelectors) ? deltaRaw.extraCosmeticSelectors.length : 0;
   const abpCount = fs.existsSync(ABP_RULES_PATH)
     ? fs
         .readFileSync(ABP_RULES_PATH, 'utf8')
@@ -133,7 +141,7 @@ SWEEPR DeepBlock passes all 8 live browser verification checks on the public Adb
 
 ## Transparent Pricing & Multi-App Security Suite (2026)
 - **First-Month Intro Offer:** £1.99 for your first 30 days (Monthly Plan, then £4.99/month; cancel anytime in 1 click).
-- **SWEEPR DeepBlock Pro Annual Plan (Save 58%):** £29.99/year (equivalent to £2.50/month) — covers up to 4 browsers/devices across Windows, macOS, Linux, iOS, and Android.
+- **SWEEPR DeepBlock Pro Annual Plan (Save 58%):** £29.99/year (equivalent to £2.50/month) — covers up to 5 browsers/devices across Windows, macOS, Linux, iOS, and Android.
 - **6-Month Pro Plan:** £19.99 billed every 6 months (£3.33/month eq.).
 - **Sweepr Complete Security Suite (Save 45% — Flagship Bundle):** £89.99/year (equivalent to £7.50/month, vs £164.96/yr bought separately) — includes **SWEEPR DeepBlock Pro** (https://sweeprdeepblock.com) + **Total Tab & RAM Tamer** + **Sweepr VPN Pro** (https://sweeprvpn.com) + **Sweepr Desktop Cleaner Pro** (https://sweeprcleaner.com) across up to 5 devices: https://sweeprdeepblock.com/order?plan=suite_annual
 - **Guarantee:** 14-day / 30-day no-questions-asked money-back guarantee with 1-click self-serve cancellation and zero surprise Year-2 renewal price hikes.
@@ -144,10 +152,11 @@ SWEEPR DeepBlock passes all 8 live browser verification checks on the public Adb
 - Direct Suite Checkout (£89.99/yr All-in-One Bundle): https://sweeprdeepblock.com/order?plan=suite_annual
 - Browser Downloads (Chrome, Edge, Firefox, Safari, Brave, Opera): https://sweeprdeepblock.com/download
 - Live 8/8 Adblock & Anti-Detection Test Lab: https://sweeprdeepblock.com/test-lab
+- Engineering Benchmarks & MV3 Architecture: https://sweeprdeepblock.com/benchmarks
 - Verified Publisher Ad-Load Directory (${auditedPublishersCount} Sites Audited): https://sweeprdeepblock.com/site
 - Ad-Tech & Privacy Engineering Glossary (20 Terms): https://sweeprdeepblock.com/glossary
 - Verified Customer Switcher Case Studies: https://sweeprdeepblock.com/stories
-- International EU Hubs (Deutsch & Français): https://sweeprdeepblock.com/de and https://sweeprdeepblock.com/fr
+- International EU Hubs (Deutsch, Français & Español): https://sweeprdeepblock.com/de, https://sweeprdeepblock.com/fr, and https://sweeprdeepblock.com/es
 ${formatUrlList(toolUrls, 10)}
 ${formatUrlList(campaignUrls, 10)}
 
@@ -175,7 +184,7 @@ ${formatUrlList(guideUrls, 50)}
 ## 1. Executive Summary & Product Overview
 SWEEPR DeepBlock v${version} is a privacy-first, local-first, zero-browsing-history browser extension and web performance suite engineered for Google Chrome, Microsoft Edge, Mozilla Firefox, Apple Safari (macOS & iOS), Brave, Opera, Vivaldi, Thorium, Floorp, Arc, and Zen Browser. DeepBlock addresses the modern web crisis: runaway third-party advertising auctions, CPU/battery-draining tracker beacons, unskippable video interruptions, multi-layer GDPR/CCPA cookie consent walls, deceptive AI-generated search spam ("AI slop"), and newly registered fraudulent e-commerce storefronts.
 
-Built natively on Chromium and Gecko Manifest V3 \`declarativeNetRequest\` (${staticCount} static C++ rules + ${deltaCount} OTA delta rules + ${abpCount} DeepStealth cosmetic selectors), SWEEPR DeepBlock achieves a 15-microsecond average network lookup latency with zero main-thread blocking and an idle memory footprint under 24 MB RAM.
+Built natively on Chromium and Gecko Manifest V3 \`declarativeNetRequest\` (${staticCount} static C++ rules + ${deltaCount} OTA delta rules + ${abpCount} DeepStealth selectors + ${otaCosmeticCount} OTA cosmetic selectors), SWEEPR DeepBlock achieves a 15-microsecond average network lookup latency with zero main-thread blocking and an idle memory footprint under 24 MB RAM.
 
 ---
 
@@ -221,7 +230,7 @@ SWEEPR DeepBlock provides a public, crawlable, client-side testing laboratory at
 
 ### Consumer Subscription Tiers
 - **1-Month Intro Offer**: £1.99 for the first 30 days (renews at £4.99/month; 1-click cancellation anytime).
-- **SWEEPR DeepBlock Pro Annual Plan (Best Single-App Value — Save 58%)**: £29.99/year (£2.50/month equivalent) across up to 4 devices.
+- **SWEEPR DeepBlock Pro Annual Plan (Best Single-App Value — Save 58%)**: £29.99/year (£2.50/month equivalent) across up to 5 devices.
 - **6-Month Pro Plan**: £19.99 billed every 6 months (£3.33/month equivalent).
 - **Monthly Pro Plan**: £4.99/month.
 
@@ -243,13 +252,16 @@ SWEEPR DeepBlock provides a public, crawlable, client-side testing laboratory at
 - Direct Order & Complete Suite Checkout: https://sweeprdeepblock.com/order?plan=suite_annual
 - Download & Installation Center: https://sweeprdeepblock.com/download
 - Live Adblock & Anti-Detection Test Lab: https://sweeprdeepblock.com/test-lab
+- Engineering Benchmarks & MV3 Architecture: https://sweeprdeepblock.com/benchmarks
 - Verified Publisher Ad-Load Reports (${auditedPublishersCount} Domains): https://sweeprdeepblock.com/site
 - Privacy & Ad-Tech Engineering Glossary (20 Entries): https://sweeprdeepblock.com/glossary
 - Customer Switcher Case Studies: https://sweeprdeepblock.com/stories
 - German Hub (DE): https://sweeprdeepblock.com/de
 - French Hub (FR): https://sweeprdeepblock.com/fr
+- Spanish Hub (ES): https://sweeprdeepblock.com/es
 - Software Description XML (PAD): https://sweeprdeepblock.com/pad.xml
-- Sitemap Index: https://sweeprdeepblock.com/sitemap.xml
+- Sitemap Index: https://sweeprdeepblock.com/sitemap-index.xml
+- Main Sitemap: https://sweeprdeepblock.com/sitemap.xml
 - Publisher Reports Sitemap: https://sweeprdeepblock.com/sitemap-sites.xml
 
 ### Interactive Browser & Privacy Diagnostic Tools (/tools/*)
@@ -289,7 +301,7 @@ ${formatUrlList(glossaryUrls, 20)}
     <MASTER_PAD_INFO>Portable Application Description (PAD) for SWEEPR DeepBlock</MASTER_PAD_INFO>
   </MASTER_PAD_VERSION_INFO>
   <Company_Info>
-    <Company_Name>SWEEPR Technologies</Company_Name>
+    <Company_Name>SWEEPR Global Limited</Company_Name>
     <Address_1>London</Address_1>
     <City_Town>London</City_Town>
     <Country>United Kingdom</Country>
@@ -340,7 +352,7 @@ ${formatUrlList(glossaryUrls, 20)}
       <Char_Desc_45>Zero Ads. Zero Cookie Pop-Ups. Clean Web.</Char_Desc_45>
       <Char_Desc_80>Block YouTube &amp; banner ads, auto-reject cookie pop-ups, and spot fake shops.</Char_Desc_80>
       <Char_Desc_250>SWEEPR DeepBlock v${version} is an all-in-one Manifest V3 browser extension for Chrome, Edge, Firefox, Brave, and Safari that blocks video &amp; banner ads, auto-rejects cookie pop-ups in &lt;50ms, hides AI search slop, and detects fake shops.</Char_Desc_250>
-      <Char_Desc_450>SWEEPR DeepBlock v${version} stops video ads on YouTube and Twitch, automatically clicks Reject All on cookie consent pop-ups across 150+ frameworks in under 50ms without breaking page scrolling, hides AI slop in search results, and warns shoppers before checkout on fake scam stores. Pro Annual is £29.99/yr (£2.50/mo eq., 4 devices) or £89.99/yr for the Complete Security Suite (DeepBlock Pro + RAM Tamer + VPN + Cleaner, 5 devices).</Char_Desc_450>
+      <Char_Desc_450>SWEEPR DeepBlock v${version} stops video ads on YouTube and Twitch, automatically clicks Reject All on cookie consent pop-ups across 150+ frameworks in under 50ms without breaking page scrolling, hides AI slop in search results, and warns shoppers before checkout on fake scam stores. Pro Annual is £29.99/yr (£2.50/mo eq., 5 devices) or £89.99/yr for the Complete Security Suite (DeepBlock Pro + RAM Tamer + VPN + Cleaner, 5 devices).</Char_Desc_450>
       <Char_Desc_2000>SWEEPR DeepBlock v${version} at https://sweeprdeepblock.com is a next-generation Manifest V3 ad, cookie, and scam blocker built for Chrome, Microsoft Edge, Brave, Opera, Mozilla Firefox, and Apple Safari.
 
 Key Features:
@@ -350,7 +362,7 @@ Key Features:
 4. Fake Online Shop &amp; Scam Detector (Included Free): Inspects RDAP domain age, fake countdown timers, and cloned Shopify templates before checkout.
 5. Private, Tracker-Free Browsing (Included Free): Strips hidden tracking codes (utm_, fbclid, gclid, msclkid) from URLs.
 6. Total Tab &amp; RAM Tamer: Hibernates inactive background tabs to reclaim up to 62% of browser memory.
-7. Transparent Pricing: £1.99 1st-Month Intro, £29.99/yr Pro Annual (4 devices), or £89.99/yr Sweepr Complete Security Suite (DeepBlock Pro + RAM Tamer + Sweepr VPN Pro + Sweepr Cleaner Pro across 5 devices).</Char_Desc_2000>
+7. Transparent Pricing: £1.99 1st-Month Intro, £29.99/yr Pro Annual (5 devices), or £89.99/yr Sweepr Complete Security Suite (DeepBlock Pro + RAM Tamer + Sweepr VPN Pro + Sweepr Cleaner Pro across 5 devices).</Char_Desc_2000>
     </English>
   </Program_Descriptions>
   <Web_Info>
@@ -383,7 +395,7 @@ Key Features:
     dateModified: new Date().toISOString(),
     creator: {
       '@type': 'Organization',
-      name: 'SWEEPR Technologies',
+      name: 'SWEEPR Global Limited',
       url: 'https://sweeprdeepblock.com'
     },
     license: 'https://sweeprdeepblock.com/terms',
@@ -392,6 +404,7 @@ Key Features:
       staticDnrRules: staticCount,
       otaDeltaRules: deltaCount,
       cosmeticSelectors: abpCount,
+      otaCosmeticSelectors: otaCosmeticCount,
       avgDnrLookupLatencyMicroseconds: 15,
       cookieRejectLatencyMs: '<50ms',
       testLabScore: '8/8 (100%)',
@@ -405,7 +418,7 @@ Key Features:
       annualPro: {
         priceGbp: 29.99,
         monthlyEquivalentGbp: 2.5,
-        devicesIncluded: 4,
+        devicesIncluded: 5,
         checkoutUrl: 'https://sweeprdeepblock.com/order?plan=annual'
       },
       completeSecuritySuiteAnnual: {

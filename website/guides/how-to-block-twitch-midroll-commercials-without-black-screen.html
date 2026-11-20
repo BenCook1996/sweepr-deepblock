@@ -14,9 +14,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
   <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
-  <link rel="dns-prefetch" href="https://cdn.tailwindcss.com" />
-
-  <!-- Open Graph / Social Sharing -->
+<!-- Open Graph / Social Sharing -->
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="SWEEPR DeepBlock" />
   <meta property="og:locale" content="en_GB" />
@@ -34,9 +32,9 @@
   <meta name="twitter:image" content="https://sweeprdeepblock.com/og-image.png" />
 
   <!-- Structured Data (JSON-LD) -->
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://sweeprdeepblock.com/"},{"@type":"ListItem","position":2,"name":"Guides","item":"https://sweeprdeepblock.com/#guides"},{"@type":"ListItem","position":3,"name":"Block Twitch Mid-Roll Ads (2026) | SWEEPR DeepBlock","item":"https://sweeprdeepblock.com/guides/how-to-block-twitch-midroll-commercials-without-black-screen"}]}</script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why do regular ad blockers cause black screens when blocking mid-roll ads?","acceptedAnswer":{"@type":"Answer","text":"When a basic blocker drops an ad video request without neutralizing the player’s VAST state machine, the video player waits indefinitely for the missing segment. SWEEPR DeepBlock hooks the player state in the MAIN world so playback continues seamlessly."}},{"@type":"Question","name":"Which browsers support this SWEEPR DeepBlock protection module?","acceptedAnswer":{"@type":"Answer","text":"All 6 protection modules are supported across Google Chrome (MV3), Mozilla Firefox, Microsoft Edge, Apple Safari (macOS & iOS), Brave, Opera GX, Vivaldi, Arc, Orion, Floorp, Zen, and Thorium."}},{"@type":"Question","name":"How can I verify that protection is active on my browser?","acceptedAnswer":{"@type":"Answer","text":"Open https://sweeprdeepblock.com/test-lab to run all 8 live anti-detection, tracker-blocking, and fingerprint verification checks."}}]}</script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"SWEEPR DeepBlock","operatingSystem":"Windows, macOS, iOS, Android, Chrome, Edge, Firefox, Safari, Brave, Opera","applicationCategory":"BrowserApplication","offers":{"@type":"AggregateOffer","priceCurrency":"GBP","lowPrice":"1.99","highPrice":"89.99","offerCount":"4","validFrom":"2026-01-01","priceValidUntil":"2027-12-31","availability":"https://schema.org/InStock","url":"https://sweeprdeepblock.com/pricing"}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://sweeprdeepblock.com/"},{"@type":"ListItem","position":2,"name":"Guides","item":"https://sweeprdeepblock.com/guides/how-to-block-youtube-ads-chrome-manifest-v3-2026"},{"@type":"ListItem","position":3,"name":"Block Twitch Mid-Roll Ads (2026) | SWEEPR DeepBlock","item":"https://sweeprdeepblock.com/guides/how-to-block-twitch-midroll-commercials-without-black-screen"}]}</script>
+  
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"SWEEPR DeepBlock","operatingSystem":"Windows, macOS, iOS, Android, Chrome, Edge, Firefox, Safari, Brave, Opera","applicationCategory":"BrowserApplication","offers":{"@type":"AggregateOffer","priceCurrency":"GBP","lowPrice":"1.99","highPrice":"89.99","offerCount":"4","validFrom":"2026-01-01","priceValidUntil":"2027-12-31","availability":"https://schema.org/InStock","url":"https://sweeprdeepblock.com/pricing"},"softwareVersion":"1.2.9"}</script>
   <link rel="stylesheet" href="/style.css" />
   <!-- Google tag (gtag.js) - Sweepr Deepblock -->
   <script async src="/metrics/js?id=G-01MNBQSL9K"></script>
@@ -61,17 +59,24 @@
     </nav>
   </header>
   <main style="max-width:960px;margin:0 auto;padding:42px 24px;">
-    <span style="display:inline-block;background:rgba(16,185,129,0.15);color:#10b981;padding:4px 12px;border-radius:999px;font-size:0.8rem;font-weight:700;margin-bottom:12px;">SWEEPR DeepBlock v1.2.7 • 2026 Verified Guide</span>
+    <span style="display:inline-block;background:rgba(16,185,129,0.15);color:#10b981;padding:4px 12px;border-radius:999px;font-size:0.8rem;font-weight:700;margin-bottom:12px;">SWEEPR DeepBlock v1.2.9 • 2026 Verified Guide</span>
     <h1 style="font-size:2.1rem;line-height:1.22;margin:0 0 16px;">Blocking Mid-Roll Ads on Twitch &amp; YouTube Without Black Screens (2026 Guide)</h1>
     <p style="font-size:1.1rem;color:#94a3b8;margin-bottom:28px;">Legacy ad blockers frequently trigger black screens, infinite buffering spinners, or Twitch’s purple error screen when blocking mid-roll ads. Learn how SWEEPR DeepBlock’s MV3 DeepStealth engine neutralizes mid-roll video commercials cleanly.</p>
+    <section aria-label="Direct Answer Summary" style="margin:20px 0;padding:18px 20px;background:#0f172a;border:1px solid #1e293b;border-left:4px solid #10b981;border-radius:10px;">
+      <p style="margin:0;color:#e2e8f0;font-size:0.96rem;line-height:1.6;"><strong>Summary Answer:</strong> Legacy ad blockers frequently trigger black screens, infinite buffering spinners, or Twitch’s purple error screen when blocking mid-roll ads. Learn how SWEEPR DeepBlock’s MV3 DeepStealth engine neutralizes mid-roll video commercials cleanly.</p>
+      <div style="margin-top:10px;display:flex;gap:14px;flex-wrap:wrap;font-size:0.84rem;font-weight:700;">
+        <a href="/test-lab" style="color:#10b981;text-decoration:underline;">Run 8/8 Live Anti-Detection Test →</a>
+        <a href="/tools/is-my-adblocker-working" style="color:#38bdf8;text-decoration:underline;">Check Adblocker Protection →</a>
+      </div>
+    </section>
     
     <h2>How SWEEPR DeepBlock Solves This Automatically</h2>
     <p>Watch your favourite Twitch streamers without commercial interruptions or 30-second purple error screens using SWEEPR DeepBlock stream patch technology.</p>
-    <p>With Chrome, Edge, Brave, and Chromium browsers enforcing Manifest V3 rules in 2026, legacy script blockers frequently fail or cause page layout freezes. <strong>SWEEPR DeepBlock v1.2.7</strong> resolves this at both the network layer (<code>declarativeNetRequest</code>) and the DOM scriptlet layer in under 50 milliseconds.</p>
+    <p>With Chrome, Edge, Brave, and Chromium browsers enforcing Manifest V3 rules in 2026, legacy script blockers frequently fail or cause page layout freezes. <strong>SWEEPR DeepBlock v1.2.9</strong> resolves this at both the network layer (<code>declarativeNetRequest</code>) and the DOM scriptlet layer in under 50 milliseconds.</p>
 
     <h2>Step-by-Step Implementation Guide</h2>
     <ol>
-      <li><strong>Add SWEEPR DeepBlock v1.2.7:</strong> Install the extension in 30 seconds from <a href="/download">sweeprdeepblock.com/download</a> for Chrome, Firefox, Edge, Safari, Brave, Opera, Arc, or Orion.</li>
+      <li><strong>Add SWEEPR DeepBlock v1.2.9:</strong> Install the extension in 30 seconds from <a href="/download">sweeprdeepblock.com/download</a> for Chrome, Firefox, Edge, Safari, Brave, Opera, Arc, or Orion.</li>
       <li><strong>Enable All 6 Protection Engines:</strong> Open the toolbar popup to confirm Video &amp; Page Ad Blocking, Auto-Decline Cookie Pop-Ups, Hide Search Engine Spam, Scam Online Shop Alerts, and Tracker-Free Links are active.</li>
       <li><strong>Verify in the 8-Point Test Lab:</strong> Run our live <a href="/test-lab">8-Point Adblock &amp; Anti-Detection Test Lab</a> to benchmark your browser in real time.</li>
     </ol>
@@ -92,7 +97,7 @@
         <div style="color:#94a3b8;font-size:0.92rem;margin-top:4px;">Unlock all 6 Pro protection modules across 5 devices with <strong>SWEEPR DeepBlock Pro</strong> (£1.99 1st mo or save 50% on the <strong>£29.99/yr Annual Plan — £2.50/mo</strong>, or bundle all 4 apps in the <strong>£89.99/yr Complete Security Suite</strong>). Backed by our money-back guarantee.</div>
       </div>
       <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
-        <a href="/order?plan=annual" style="background:#10b981;color:#042f2e;font-weight:800;padding:11px 20px;border-radius:8px;text-decoration:none;">Unlock Pro (£4.99/mo Annual) &rarr;</a>
+        <a href="/order?plan=annual" style="background:#10b981;color:#042f2e;font-weight:800;padding:11px 20px;border-radius:8px;text-decoration:none;">Unlock Pro (£2.50/mo Annual) &rarr;</a>
         <a href="/pricing" style="background:#1e293b;color:#f8fafc;border:1px solid #334155;font-weight:700;padding:10px 18px;border-radius:8px;text-decoration:none;">Compare Plans</a>
         <a href="/download" style="color:#94a3b8;font-size:0.85rem;text-decoration:underline;padding:4px 8px;">Install Browser Extension</a>
       </div>
@@ -104,10 +109,10 @@
         <div style="background:#1e293b;border:1px solid #334155;border-radius:10px;padding:14px 16px;">
           <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;">
             <h3 style="font-size:0.98rem;margin:0;color:#f8fafc;text-transform:capitalize;">stop twitch mid roll ads without purple screen (2026 MV3 Benchmark)</h3>
-            <span style="font-size:0.72rem;background:rgba(56,189,248,0.14);color:#38bdf8;padding:2px 8px;border-radius:999px;font-weight:700;">KD 10 &bull; Score 71.5</span>
+            <span style="font-size:0.72rem;background:rgba(56,189,248,0.14);color:#38bdf8;padding:2px 8px;border-radius:999px;font-weight:700;">KD 1 &bull; Score 75</span>
           </div>
           <p style="margin:0;font-size:0.86rem;color:#cbd5e1;line-height:1.55;">
-            SWEEPR DeepBlock v1.3.0 resolves <strong>stop twitch mid roll ads without purple screen</strong> natively via 242 C++ <code>declarativeNetRequest</code> rules (15&micro;s latency), &lt;50ms GDPR cookie auto-rejection, and transparent <strong>&pound;29.99/yr Pro</strong> pricing (or <strong>&pound;89.99/yr Complete Security Suite</strong> with VPN, Cleaner &amp; RAM Tamer).
+            SWEEPR DeepBlock v1.2.9 resolves <strong>stop twitch mid roll ads without purple screen</strong> natively via 242 C++ <code>declarativeNetRequest</code> rules (15&micro;s latency), &lt;50ms GDPR cookie auto-rejection, and transparent <strong>&pound;29.99/yr Pro</strong> pricing (or <strong>&pound;89.99/yr Complete Security Suite</strong> with VPN, Cleaner &amp; RAM Tamer).
           </p>
         </div>
       </div>
@@ -120,7 +125,7 @@
         </span>
       </div>
       <p style="color:#94a3b8;font-size:0.9rem;line-height:1.55;margin:0 0 14px;">
-        Below is a live sample of active Chromium &amp; Gecko rules executed by SWEEPR DeepBlock v1.2.7 for <code>/guides/how-to-block-twitch-midroll-commercials-without-black-screen</code>. Network rules execute in C++ browser memory (avg <strong>30&micro;s</strong> lookup latency, <strong>2.2ms</strong> DOM observer pass, saving <strong>~324 MB RAM</strong> per active session):
+        Below is a live sample of active Chromium &amp; Gecko rules executed by SWEEPR DeepBlock v1.2.9 for <code>/guides/how-to-block-twitch-midroll-commercials-without-black-screen</code>. Network rules execute in C++ browser memory (avg <strong>30&micro;s</strong> lookup latency, <strong>2.2ms</strong> DOM observer pass, saving <strong>~324 MB RAM</strong> per active session):
       </p>
       <div style="overflow-x:auto;">
         <table style="width:100%;border-collapse:collapse;font-size:0.82rem;color:#e2e8f0;">
@@ -142,18 +147,18 @@
               <td style="padding:8px 10px;color:#94a3b8;">Cross-origin tracker/ad request</td>
             </tr>
             <tr style="border-bottom:1px solid rgba(30,41,59,0.7);">
-              <td style="padding:8px 10px;font-family:monospace;color:#34d399;font-weight:700;">#93</td>
-              <td style="padding:8px 10px;font-family:monospace;word-break:break-all;">||eporner.com/dot/pop</td>
-              <td style="padding:8px 10px;color:#cbd5e1;">redirect -&gt; noop surrogate</td>
-              <td style="padding:8px 10px;font-family:monospace;color:#94a3b8;">script</td>
-              <td style="padding:8px 10px;color:#94a3b8;">Cross-origin tracker/ad request</td>
+              <td style="padding:8px 10px;font-family:monospace;color:#34d399;font-weight:700;">#1</td>
+              <td style="padding:8px 10px;font-family:monospace;word-break:break-all;">||doubleclick.net^</td>
+              <td style="padding:8px 10px;color:#cbd5e1;">block (priority 2)</td>
+              <td style="padding:8px 10px;font-family:monospace;color:#94a3b8;">script, sub_frame, xmlhttprequest</td>
+              <td style="padding:8px 10px;color:#94a3b8;">Ad-exchange wrapper</td>
             </tr>
             <tr style="border-bottom:1px solid rgba(30,41,59,0.7);">
-              <td style="padding:8px 10px;font-family:monospace;color:#34d399;font-weight:700;">#151</td>
-              <td style="padding:8px 10px;font-family:monospace;word-break:break-all;">^https?://[^/]+/[A-Za-z0-9]{5}/[A-Za-z0-9]{10}\.(js|php)(\?|$)</td>
-              <td style="padding:8px 10px;color:#cbd5e1;">block (priority 5)</td>
-              <td style="padding:8px 10px;font-family:monospace;color:#94a3b8;">script, xmlhttprequest, sub_frame</td>
-              <td style="padding:8px 10px;color:#94a3b8;">Initiator: nuvid.com, drtuber.com</td>
+              <td style="padding:8px 10px;font-family:monospace;color:#34d399;font-weight:700;">#2</td>
+              <td style="padding:8px 10px;font-family:monospace;word-break:break-all;">||googlesyndication.com^</td>
+              <td style="padding:8px 10px;color:#cbd5e1;">block (priority 2)</td>
+              <td style="padding:8px 10px;font-family:monospace;color:#94a3b8;">script, sub_frame</td>
+              <td style="padding:8px 10px;color:#94a3b8;">Display ad network</td>
             </tr>
             <tr style="border-bottom:1px solid rgba(30,41,59,0.7);">
               <td style="padding:8px 10px;font-family:monospace;color:#34d399;font-weight:700;">#158</td>
@@ -177,42 +182,42 @@
       <h2 style="font-size:1.3rem;margin:0 0 8px;">Related Browser Setups, Platform Solutions &amp; Guides</h2>
       <p style="color:#94a3b8;font-size:0.92rem;margin:0 0 16px;">Explore verified 2026 SWEEPR DeepBlock configurations across popular platforms, browsers, and privacy benchmarks:</p>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;">
-        <a href="/guides/how-to-block-unskippable-audio-ads-on-spotify-web" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:12px 14px;text-decoration:none;color:#f8fafc;">
-          <div style="font-size:0.75rem;color:#10b981;font-weight:700;margin-bottom:4px;">Step-by-Step Privacy Guide</div>
-          <div style="font-size:0.92rem;font-weight:600;line-height:1.35;">Block Spotify Web Audio Ads (2026)</div>
-        </a>
-        <a href="/guides/how-to-block-youtube-ads-chrome-manifest-v3-2026" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:12px 14px;text-decoration:none;color:#f8fafc;">
-          <div style="font-size:0.75rem;color:#10b981;font-weight:700;margin-bottom:4px;">Step-by-Step Privacy Guide</div>
-          <div style="font-size:0.92rem;font-weight:600;line-height:1.35;">Block YouTube Ads Chrome MV3 (2026)</div>
-        </a>
-        <a href="/guides/how-to-bypass-anti-adblock-inspect-element-blockers" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:12px 14px;text-decoration:none;color:#f8fafc;">
-          <div style="font-size:0.75rem;color:#10b981;font-weight:700;margin-bottom:4px;">Step-by-Step Privacy Guide</div>
-          <div style="font-size:0.92rem;font-weight:600;line-height:1.35;">Bypass Anti-Adblock Scripts (2026)</div>
-        </a>
-        <a href="/guides/how-to-detect-ai-generated-scam-reviews-amazon" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:12px 14px;text-decoration:none;color:#f8fafc;">
-          <div style="font-size:0.75rem;color:#10b981;font-weight:700;margin-bottom:4px;">Step-by-Step Privacy Guide</div>
-          <div style="font-size:0.92rem;font-weight:600;line-height:1.35;">Detect Fake AI Reviews (2026)</div>
-        </a>
         <a href="/guides/how-to-fix-high-ram-usage-on-arc-browser" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:12px 14px;text-decoration:none;color:#f8fafc;">
           <div style="font-size:0.75rem;color:#10b981;font-weight:700;margin-bottom:4px;">Step-by-Step Privacy Guide</div>
           <div style="font-size:0.92rem;font-weight:600;line-height:1.35;">Fix Arc Browser RAM Usage</div>
         </a>
-        <a href="/guides/how-to-fix-video-stuttering-caused-by-anti-adblock-scripts" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:12px 14px;text-decoration:none;color:#f8fafc;">
+        <a href="/guides/how-to-fix-high-ram-usage-on-brave-browser" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:12px 14px;text-decoration:none;color:#f8fafc;">
           <div style="font-size:0.75rem;color:#10b981;font-weight:700;margin-bottom:4px;">Step-by-Step Privacy Guide</div>
-          <div style="font-size:0.92rem;font-weight:600;line-height:1.35;">Fix Anti-Adblock Video Stutters</div>
+          <div style="font-size:0.92rem;font-weight:600;line-height:1.35;">Fix Brave Browser RAM Usage</div>
         </a>
-        <a href="/guides/how-to-stop-facebook-instagram-dropshipping-scams" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:12px 14px;text-decoration:none;color:#f8fafc;">
+        <a href="/guides/how-to-fix-high-ram-usage-on-edge-windows-11" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:12px 14px;text-decoration:none;color:#f8fafc;">
           <div style="font-size:0.75rem;color:#10b981;font-weight:700;margin-bottom:4px;">Step-by-Step Privacy Guide</div>
-          <div style="font-size:0.92rem;font-weight:600;line-height:1.35;">Stop Social Dropship Scams (2026)</div>
+          <div style="font-size:0.92rem;font-weight:600;line-height:1.35;">Fix Edge RAM Usage Win 11</div>
         </a>
-        <a href="/solutions/anime-streaming-portals-stop-malvertising-popunders" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:12px 14px;text-decoration:none;color:#f8fafc;">
+        <a href="/guides/how-to-fix-high-ram-usage-on-snapdragon-x-copilot-pcs" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:12px 14px;text-decoration:none;color:#f8fafc;">
+          <div style="font-size:0.75rem;color:#10b981;font-weight:700;margin-bottom:4px;">Step-by-Step Privacy Guide</div>
+          <div style="font-size:0.92rem;font-weight:600;line-height:1.35;">Fix Snapdragon Copilot+ RAM</div>
+        </a>
+        <a href="/guides/how-to-prevent-accelerometer-sensor-fingerprinting" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:12px 14px;text-decoration:none;color:#f8fafc;">
+          <div style="font-size:0.75rem;color:#10b981;font-weight:700;margin-bottom:4px;">Step-by-Step Privacy Guide</div>
+          <div style="font-size:0.92rem;font-weight:600;line-height:1.35;">Block Accelerometer Tracking</div>
+        </a>
+        <a href="/guides/how-to-stop-browser-canvas-fingerprinting-trackers" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:12px 14px;text-decoration:none;color:#f8fafc;">
+          <div style="font-size:0.75rem;color:#10b981;font-weight:700;margin-bottom:4px;">Step-by-Step Privacy Guide</div>
+          <div style="font-size:0.92rem;font-weight:600;line-height:1.35;">Block Canvas Fingerprinting (2026)</div>
+        </a>
+        <a href="/setup/chromeos-chromebook-mv3" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:12px 14px;text-decoration:none;color:#f8fafc;">
+          <div style="font-size:0.75rem;color:#10b981;font-weight:700;margin-bottom:4px;">Browser Setup • MV3 &amp; WebExtensions</div>
+          <div style="font-size:0.92rem;font-weight:600;line-height:1.35;">Ad Blocker for ChromeOS Chromebook (2026 Setup)</div>
+        </a>
+        <a href="/solutions/crunchyroll-anime-streams-block-video-ads" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:12px 14px;text-decoration:none;color:#f8fafc;">
           <div style="font-size:0.75rem;color:#10b981;font-weight:700;margin-bottom:4px;">Platform Solution • Sub-50ms Protection</div>
-          <div style="font-size:0.92rem;font-weight:600;line-height:1.35;">Free Anime Portals: Stop Pop-Under Redirects</div>
+          <div style="font-size:0.92rem;font-weight:600;line-height:1.35;">Crunchyroll: Strip URL Tracking Beacons</div>
         </a>
       </div>
     </section>
     <footer style="margin-top:36px;padding-top:20px;border-top:1px solid #1e293b;color:#64748b;font-size:0.8rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;">
-      <div>Publisher: <strong>SWEEPR</strong> (UK) • Requirements: Windows 10/11, macOS, iOS, Android (Chrome, Edge, Firefox, Safari, Brave, Opera) • Version 1.2.7</div>
+      <div>Publisher: <strong>SWEEPR</strong> (UK) • Requirements: Windows 10/11, macOS, iOS, Android (Chrome, Edge, Firefox, Safari, Brave, Opera) • Version 1.2.9</div>
       <div style="display:flex;gap:14px;flex-wrap:wrap;">
         <a href="/" style="color:#94a3b8;text-decoration:none;">Home</a>
         <a href="/test-lab" style="color:#94a3b8;text-decoration:none;">8/8 Test Lab</a>
@@ -222,6 +227,7 @@
         <a href="/glossary" style="color:#94a3b8;text-decoration:none;">Privacy Glossary</a>
         <a href="/de" style="color:#94a3b8;text-decoration:none;">Deutsch (/de)</a>
         <a href="/fr" style="color:#94a3b8;text-decoration:none;">Français (/fr)</a>
+        <a href="/es" hreflang="es" style="color:#94a3b8;text-decoration:none;">Español (/es)</a>
         <a href="/vs/total-adblock" style="color:#94a3b8;text-decoration:none;">vs Total Adblock</a>
         <a href="https://sweeprcleaner.com?utm_source=sweeprdeepblock&amp;utm_medium=footer" rel="noopener" style="color:#10b981;text-decoration:none;font-weight:600;">Sweepr Cleaner</a>
         <a href="https://sweeprvpn.com?utm_source=sweeprdeepblock&amp;utm_medium=footer" rel="noopener" style="color:#10b981;text-decoration:none;font-weight:600;">Sweepr VPN</a>

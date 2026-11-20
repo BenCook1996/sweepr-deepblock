@@ -456,3 +456,8 @@ button.btn-go:disabled,
     transition-duration: 0.01ms !important;
   }
 }
+
+/* CSS-injected mock UI text keeps hero demo visual without polluting DOM text indexing */
+.mock-txt::before {
+  content: attr(data-mock-text);
+}

@@ -6,7 +6,6 @@
   <title>Customer Portal &amp; License Key Manager — SWEEPR Deepblock</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preconnect" href="https://cdn.tailwindcss.com">
   <meta name="description" content="Sign in to your SWEEPR Deepblock Customer Portal with your email to view your license key, manage connected browsers, or update billing in 1 click.">
   <meta name="robots" content="noindex, nofollow" />
   <meta name="theme-color" content="#0F172A">
@@ -32,37 +31,8 @@
   <meta name="twitter:image" content="https://sweeprdeepblock.com/og-image.png">
 
   <!-- Structured Data (JSON-LD) -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "BreadcrumbList",
-        "itemListElement": [
-          {
-            "@type": "ListItem",
-            "position": 1,
-            "name": "Home",
-            "item": "https://sweeprdeepblock.com/"
-          },
-          {
-            "@type": "ListItem",
-            "position": 2,
-            "name": "Customer Portal",
-            "item": "https://sweeprdeepblock.com/login"
-          }
-        ]
-      },
-      {
-        "@type": "WebPage",
-        "name": "Customer Portal & License Key Manager",
-        "url": "https://sweeprdeepblock.com/login",
-        "description": "Sign in to your SWEEPR Deepblock Customer Portal with your email to view your license key, manage connected browsers, or update billing in 1 click."
-      }
-    ]
-  }
-  </script>
-  <script src="https://cdn.tailwindcss.com/3.4.5"></script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://sweeprdeepblock.com/"},{"@type":"ListItem","position":2,"name":"Customer Portal","item":"https://sweeprdeepblock.com/login"}]},{"@type":"WebPage","name":"Customer Portal & License Key Manager","url":"https://sweeprdeepblock.com/login","description":"Sign in to your SWEEPR Deepblock Customer Portal with your email to view your license key, manage connected browsers, or update billing in 1 click."}]}</script>
+  <link rel="stylesheet" href="/sweepr-ui.css?v=20261116">
   <link rel="stylesheet" href="/style.css?v=20261114">
   <script src="/nav.js?v=20261108" defer></script>
   <script src="/i18n.js" defer></script>
@@ -197,7 +167,6 @@
         </div>
         <div class="text-xs text-gray-600 space-y-1.5">
           <div><strong>License Key:</strong> <span id="portalLicenseKey" class="font-mono font-bold text-emerald-700"></span></div>
-          <div><strong>6-Digit Activation Code:</strong> <span id="portalActivationCode" class="font-mono font-bold text-gray-900"></span></div>
           <div><strong>Active Modules:</strong> Auto-Reject Cookie Cleanser, AI Slop SERP Purifier, Fake Store Detector, Encrypted DNS</div>
           <div id="addonStatusText"><strong>Total Tab &amp; RAM Tamer Add-On:</strong> Enabled</div>
         </div>
@@ -205,7 +174,7 @@
         <div class="rounded-2xl border border-gray-200 bg-gray-50 p-3.5 space-y-2.5">
           <div class="flex items-center justify-between">
             <span class="text-xs font-extrabold uppercase tracking-wider text-gray-800">Linked Devices (Any Mix of Desktop &amp; Mobile)</span>
-            <span id="portalDevicesBadge" class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800">0 / 3 Active</span>
+            <span id="portalDevicesBadge" class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800">0 / 4 Active</span>
           </div>
           <p class="text-[11.5px] text-gray-500">Purchased on desktop and downloaded the app separately on another device? Generate a one-time QR code below to activate your account on your separate device.</p>
           <div id="portalDevicesList" class="space-y-1.5 text-xs text-gray-700"></div>
@@ -334,8 +303,8 @@
 
     function renderSubscriptionResult(data, email, code) {
       currentLookupValue = email;
-      currentKeyValue = data.activation_code || code;
-      const syncKey = data.licenseKey || data.activation_code || code || '';
+      currentKeyValue = data.licenseKey || '';
+      const syncKey = data.licenseKey || '';
       if (syncKey && syncKey !== 'Active') {
         try {
           localStorage.setItem('sweepr_license_key', syncKey);
@@ -346,9 +315,14 @@
         } catch (e) {}
       }
       document.getElementById('portalLicenseKey').textContent = data.licenseKey || 'Active';
-      document.getElementById('portalActivationCode').textContent = data.activation_code || code || '—';
-      document.getElementById('addonStatusText').innerHTML =
-        '<strong>Total Tab &amp; RAM Tamer Add-On:</strong> ' + (data.ramTamerAddon ? 'Enabled' : 'Not Included');
+      const addonEl = document.getElementById('addonStatusText');
+      if (addonEl) {
+        addonEl.textContent = '';
+        const strongEl = document.createElement('strong');
+        strongEl.textContent = 'Total Tab & RAM Tamer Add-On: ';
+        addonEl.appendChild(strongEl);
+        addonEl.appendChild(document.createTextNode(data.ramTamerAddon ? 'Enabled' : 'Not Included'));
+      }
       const badge = document.getElementById('subStatusBadge');
       const cancelBtn = document.getElementById('cancelBtn');
       if (data.cancelAtPeriodEnd) {
@@ -363,7 +337,7 @@
         cancelBtn.disabled = false;
       }
       resEl.classList.remove('hidden');
-      renderPortalDevices(data.devices || [], data.devices_used ?? (data.devices ? data.devices.length : 0), data.devices_max || 3);
+      renderPortalDevices(data.devices || [], data.devices_used ?? (data.devices ? data.devices.length : 0), data.devices_max || 4);
     }
 
     let portalQrInterval = null;
@@ -441,7 +415,11 @@
       const timerEl = document.getElementById('portalQrTimer');
       if (!drawer || !svgBox || !timerEl) return;
       drawer.classList.remove('hidden');
-      svgBox.innerHTML = '<span class="text-xs text-gray-400">Generating QR...</span>';
+      svgBox.textContent = '';
+      const genSpan = document.createElement('span');
+      genSpan.className = 'text-xs text-gray-400';
+      genSpan.textContent = 'Generating QR...';
+      svgBox.appendChild(genSpan);
       if (portalQrInterval) clearInterval(portalQrInterval);
       try {
         const res = await fetch('/api/device-link/create-token', {
@@ -502,7 +480,11 @@
           }
         }, 1000);
       } catch {
-        svgBox.innerHTML = '<span class="text-xs text-red-600">Network error</span>';
+        svgBox.textContent = '';
+        const netErrSpan = document.createElement('span');
+        netErrSpan.className = 'text-xs text-red-600';
+        netErrSpan.textContent = 'Network error';
+        svgBox.appendChild(netErrSpan);
       }
     }
 

@@ -39,6 +39,10 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = path.resolve(__dirname, '..');
+const rootEnvPath = path.join(ROOT_DIR, '.env');
+if (typeof process.loadEnvFile === 'function' && fs.existsSync(rootEnvPath)) {
+  try { process.loadEnvFile(rootEnvPath); } catch {}
+}
 const WEBSITE_DIR = path.join(ROOT_DIR, 'website');
 const DATA_DIR = path.join(ROOT_DIR, 'data');
 
@@ -48,65 +52,15 @@ const FUNNEL_EVENTS_PATH = path.join(DATA_DIR, 'telemetry-funnel-events.json');
 const REPORT_OUT_PATH = path.join(DATA_DIR, 'gsc-ga4-cloud-sync-report.json');
 const SCHEDULER_STATE_PATH = path.join(DATA_DIR, 'automation-scheduler-state.json');
 
+const RAILWAY_CRM_BASE = (process.env.SWEEPR_RAILWAY_CRM || process.env.SWEEPR_CRM_URL || 'https://sweepr-crm-production.up.railway.app').replace(/\/+$/, '');
+const CLEANER_CRM_BASE = (process.env.SWEEPR_CRM_BASE || 'https://sweeprcleaner.com').replace(/\/+$/, '');
+const CRM_USER = process.env.CRM_ADMIN_USER || 'admin';
+const CRM_PASS = (process.env.CRM_ADMIN_PASSWORD || '').trim();
+const CRM_API_KEY = (process.env.SWEEPR_CRM_API_KEY || '').trim();
+
 const GSC_SITE_URL = process.env.GSC_SITE_URL || 'sc-domain:sweeprdeepblock.com';
 const GA4_PROPERTY_ID = process.env.GA4_PROPERTY_ID || '559863555';
 const COOLDOWN_MS = 14 * 24 * 60 * 60 * 1000;
-const CONSOLIDATION_SITEMAP_EXPIRES_AT = Date.parse('2026-12-16T00:00:00Z');
-const SOLUTION_PROBLEM_SUFFIXES = [
-  '-prevent-canvas-webrtc-fingerprinting',
-  '-stop-notification-permission-spam',
-  '-protect-checkout-fake-shop-shield',
-  '-hibernate-idle-background-tabs',
-  '-block-sponsored-feed-carousels',
-  '-stop-autoplay-floating-videos',
-  '-encrypted-dns-doh-protection',
-  '-clean-reader-distraction-free',
-  '-block-crypto-miners-cpu-drain',
-  '-auto-reject-cookie-popups',
-  '-strip-tracking-parameters',
-  '-stop-malvertising-popunders',
-  '-bypass-anti-adblock-walls',
-  '-reduce-browser-ram-usage',
-  '-filter-ai-slop-and-scams',
-  '-block-video-ads'
-];
-const PLATFORM_PREFIX_ALIASES = {
-  'fandom-game-lore-wikis': 'fandom-game-wikis',
-  'kick-gambling-livestreams': 'kick-streaming-portals'
-};
-
-function extractSolutionPlatPrefix(urlPath) {
-  if (!urlPath || !urlPath.startsWith('/solutions/')) return null;
-  const slug = urlPath.slice('/solutions/'.length);
-  for (const suffix of SOLUTION_PROBLEM_SUFFIXES) {
-    if (slug.endsWith(suffix)) {
-      const rawPrefix = slug.slice(0, -suffix.length);
-      return PLATFORM_PREFIX_ALIASES[rawPrefix] || rawPrefix;
-    }
-  }
-  return null;
-}
-
-let cachedActiveSolutions = null;
-function getActiveSolutionsInSitemap() {
-  if (cachedActiveSolutions) return cachedActiveSolutions;
-  const urls = new Set();
-  const platPrefixes = new Set();
-  const smPath = path.join(WEBSITE_DIR, 'sitemap.xml');
-  if (fs.existsSync(smPath)) {
-    const xml = fs.readFileSync(smPath, 'utf8');
-    for (const m of xml.matchAll(/<loc>([^<]+)<\/loc>/g)) {
-      const p = m[1].trim().replace(/^https?:\/\/sweeprdeepblock\.com/i, '').replace(/\/+$/, '') || '/';
-      if (p.startsWith('/solutions/')) {
-        urls.add(p);
-        const pref = extractSolutionPlatPrefix(p);
-        if (pref) platPrefixes.add(pref);
-      }
-    }
-  }
-  cachedActiveSolutions = { urls, platPrefixes };
-  return cachedActiveSolutions;
-}
 
 function base64UrlEncode(input) {
   const buf = Buffer.isBuffer(input) ? input : Buffer.from(String(input), 'utf8');
@@ -135,9 +89,7 @@ function loadServiceAccountCredentials() {
     }
   }
 
-  const credFile =
-    process.env.GOOGLE_APPLICATION_CREDENTIALS ||
-    'C:\\Users\\Benjamin\\Downloads\\sweepr-514223-8df345b52b59.json';
+  const credFile = (process.env.GOOGLE_APPLICATION_CREDENTIALS || '').trim();
   if (credFile && fs.existsSync(credFile)) {
     try {
       const parsed = JSON.parse(fs.readFileSync(credFile, 'utf8'));
@@ -262,13 +214,7 @@ async function syncGscSearchAnalytics(accessToken, enrichmentState) {
     const urlPath = fullUrl.replace(/^https?:\/\/sweeprdeepblock\.com/i, '').replace(/\/+$/, '') || '/';
     if (impressions > 0 && /^\/(solutions|setup|vs|guides)\/[a-z0-9-]+$/i.test(urlPath)) {
       const relHtml = path.join(WEBSITE_DIR, `${urlPath.slice(1)}.html`);
-      const activeSolutions = getActiveSolutionsInSitemap();
-      const platPrefix = extractSolutionPlatPrefix(urlPath);
-      const isCollapsedSolutionSibling =
-        Boolean(platPrefix) &&
-        activeSolutions.platPrefixes.has(platPrefix) &&
-        !activeSolutions.urls.has(urlPath);
-      if (!isCollapsedSolutionSibling && fs.existsSync(relHtml) && !discoveredSet.has(urlPath)) {
+      if (fs.existsSync(relHtml) && !discoveredSet.has(urlPath)) {
         discoveredSet.add(urlPath);
         newlyDiscovered.push(urlPath);
       }
@@ -321,16 +267,9 @@ async function syncGscSearchAnalytics(accessToken, enrichmentState) {
     enrichmentState.gscRecoveryHistory.push(snapshot);
   }
 
-  // 3. Submit active sitemaps via GSC Sitemaps API
-  const sitemapUrlsToSubmit = [
-    'https://sweeprdeepblock.com/sitemap.xml',
-    'https://sweeprdeepblock.com/sitemap-sites.xml'
-  ];
-  if (Date.now() < CONSOLIDATION_SITEMAP_EXPIRES_AT && fs.existsSync(path.join(WEBSITE_DIR, 'sitemap-consolidations.xml'))) {
-    sitemapUrlsToSubmit.push('https://sweeprdeepblock.com/sitemap-consolidations.xml');
-  }
+  // 3. Submit both sitemaps via GSC Sitemaps API
   const sitemapStatuses = {};
-  for (const smUrl of sitemapUrlsToSubmit) {
+  for (const smUrl of ['https://sweeprdeepblock.com/sitemap.xml', 'https://sweeprdeepblock.com/sitemap-sites.xml']) {
     try {
       const smRes = await fetch(`${baseUrl}/sitemaps/${encodeURIComponent(smUrl)}`, {
         method: 'PUT',
@@ -372,12 +311,27 @@ async function syncGscSearchAnalytics(accessToken, enrichmentState) {
     } catch {}
   }
 
+  const gscIngestRows = pqRows
+    .map((r) => ({
+      date: endDate,
+      query: String(r.keys?.[1] || '').trim().toLowerCase(),
+      page: String(r.keys?.[0] || '').trim(),
+      clicks: Math.max(0, Number(r.clicks || 0)),
+      impressions: Math.max(0, Number(r.impressions || 0)),
+      ctr: Number(r.ctr || 0),
+      position: Number(r.position || 0)
+    }))
+    .filter((r) => r.query && r.page && r.position > 0)
+    .sort((a, b) => b.impressions - a.impressions)
+    .slice(0, 500);
+
   return {
     totalImpressions,
     totalClicks,
     activePagesWithImpressions: pageRows.length,
     newlyDiscoveredPaths: newlyDiscovered,
     strikeZoneCandidates: strikeZoneCandidates.slice(0, 15),
+    gscIngestRows,
     sitemapStatuses,
     inspectedUrls
   };
@@ -487,6 +441,148 @@ async function syncGa4Analytics(accessToken, enrichmentState) {
   return ga4Snapshot;
 }
 
+function buildCrmHeaders(baseUrl) {
+  let origin = baseUrl;
+  try { origin = new URL(baseUrl).origin; } catch {}
+  return {
+    'Content-Type': 'application/json',
+    'x-sweepr-project': 'deepblock',
+    Origin: origin,
+    ...(CRM_API_KEY ? { 'x-crm-api-key': CRM_API_KEY, 'x-sweepr-api-key': CRM_API_KEY } : {}),
+    ...(CRM_PASS ? { Authorization: 'Basic ' + Buffer.from(`${CRM_USER}:${CRM_PASS}`).toString('base64') } : {})
+  };
+}
+
+async function postJsonSafe(url, headers, payload) {
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(payload),
+      signal: AbortSignal.timeout(10000)
+    });
+    const text = await res.text();
+    return { url, status: res.status, ok: res.ok, body: text.slice(0, 200) };
+  } catch (err) {
+    return { url, status: 0, ok: false, error: err.message };
+  }
+}
+
+async function syncDeepblockGscGa4ToCentralCrm({ report, gscResult, ga4Result }) {
+  const results = {
+    syncedAt: report.generatedAt,
+    cloudSync: null,
+    telemetry: null,
+    changelog: []
+  };
+
+  let rowsPayload = Array.isArray(gscResult?.gscIngestRows) ? gscResult.gscIngestRows : [];
+  if (rowsPayload.length === 0) {
+    const fallbackCandidates = Array.isArray(report.latestGscSnapshot?.strikeZoneCandidates)
+      ? report.latestGscSnapshot.strikeZoneCandidates
+      : [];
+    const todayIso = report.generatedAt.slice(0, 10);
+    rowsPayload = fallbackCandidates
+      .filter((c) => c && c.urlPath && Number(c.position || 0) > 0 && Array.isArray(c.topQueries) && c.topQueries[0]?.query)
+      .map((c) => ({
+        date: todayIso,
+        query: String(c.topQueries[0].query).trim().toLowerCase(),
+        page: `https://sweeprdeepblock.com${c.urlPath === '/' ? '/' : c.urlPath}`,
+        clicks: Number(c.clicks || 0),
+        impressions: Number(c.impressions || 0),
+        ctr: Number(c.ctrPct || 0) / 100,
+        position: Number(c.position || 0)
+      }));
+  }
+  rowsPayload = rowsPayload.slice(0, 500);
+
+  if (CRM_API_KEY || CRM_PASS) {
+    results.cloudSync = await postJsonSafe(
+      `${RAILWAY_CRM_BASE}/api/crm/seo/gsc/cloud-sync`,
+      buildCrmHeaders(RAILWAY_CRM_BASE),
+      {
+        project_id: 'deepblock',
+        site_url: GSC_SITE_URL,
+        rows: rowsPayload,
+        gsc_summary: report.latestGscSnapshot || null,
+        ga4_summary: report.latestGa4Snapshot || null
+      }
+    );
+    if (!results.cloudSync.ok) {
+      console.warn(`[GSC-GA4-CLOUD] Central CRM sync warning (${results.cloudSync.status}): ${results.cloudSync.error || results.cloudSync.body}`);
+    } else {
+      console.log(`[GSC-GA4-CLOUD] Synced ${rowsPayload.length} GSC rows to Central CRM (${RAILWAY_CRM_BASE}, HTTP ${results.cloudSync.status}).`);
+    }
+  } else {
+    console.log('[GSC-GA4-CLOUD] Skipped protected /api/crm/seo/gsc/cloud-sync (CRM_ADMIN_PASSWORD / SWEEPR_CRM_API_KEY not configured).');
+  }
+
+  results.telemetry = await postJsonSafe(
+    `${RAILWAY_CRM_BASE}/v1/telemetry/event`,
+    {
+      'Content-Type': 'application/json',
+      'x-sweepr-project': 'deepblock',
+      ...(CRM_API_KEY ? { 'x-crm-api-key': CRM_API_KEY, 'x-sweepr-api-key': CRM_API_KEY } : {})
+    },
+    {
+      project_id: 'deepblock',
+      event_name: 'gsc_ga4_cloud_sync_completed',
+      category: 'seo_audit',
+      os: 'server',
+      properties: {
+        mode: report.mode,
+        trackedDiscoveredGscPathsCount: report.trackedDiscoveredGscPathsCount,
+        gscSnapshot: report.latestGscSnapshot || null,
+        ga4Snapshot: report.latestGa4Snapshot || null
+      }
+    }
+  );
+
+  const newlyDiscoveredPaths = Array.isArray(gscResult?.newlyDiscoveredPaths) ? gscResult.newlyDiscoveredPaths : [];
+  const shouldLogChangelog =
+    (newlyDiscoveredPaths.length > 0 || process.argv.includes('--log-changelog')) &&
+    Boolean(CRM_API_KEY || CRM_PASS);
+
+  if (shouldLogChangelog) {
+    const impr = gscResult?.totalImpressions ?? report.latestGscSnapshot?.totalImpressions ?? 0;
+    const clk = gscResult?.totalClicks ?? report.latestGscSnapshot?.totalClicks ?? 0;
+    const ga4Users = ga4Result?.activeUsers28d ?? report.latestGa4Snapshot?.activeUsers28d ?? 0;
+    const changelogPayload = {
+      project_id: 'deepblock',
+      date: report.generatedAt.slice(0, 10),
+      category: 'gsc_indexing',
+      title: newlyDiscoveredPaths.length > 0
+        ? `[DeepBlock] Cloud GSC Sync Promoted ${newlyDiscoveredPaths.length} Impression-Earning Pillar(s)`
+        : `[DeepBlock] Cloud GSC & GA4 Telemetry Sync (${report.generatedAt.slice(0, 10)})`,
+      description: newlyDiscoveredPaths.length > 0
+        ? `Live GSC API promoted ${newlyDiscoveredPaths.join(', ')} into indexable pillars. 28d GSC: ${impr} impressions, ${clk} clicks; GA4 28d activeUsers: ${ga4Users}.`
+        : `Automated GSC & GA4 cloud sync (${rowsPayload.length} rows). 28d GSC: ${impr} impressions, ${clk} clicks; GA4 28d activeUsers: ${ga4Users}.`,
+      impact: `GSC 28d: ${impr} impr / ${clk} clicks; promoted paths: ${newlyDiscoveredPaths.length}`,
+      impact_area: 'sweeprdeepblock.com GSC pillars & GA4 funnel telemetry',
+      author: 'sweepr-cloud-bot',
+      status: 'deployed',
+      target_urls: newlyDiscoveredPaths.map((p) => `https://sweeprdeepblock.com${p === '/' ? '/' : p}`),
+      metadata: {
+        mode: report.mode,
+        newlyDiscoveredPaths,
+        gscSnapshot: report.latestGscSnapshot || null,
+        ga4Snapshot: report.latestGa4Snapshot || null
+      }
+    };
+
+    const crmTargets = [RAILWAY_CRM_BASE].filter(Boolean);
+    for (const base of crmTargets) {
+      const cRes = await postJsonSafe(`${base}/api/crm/seo/changelog`, buildCrmHeaders(base), changelogPayload);
+      results.changelog.push(cRes);
+      if (!cRes.ok) {
+        console.warn(`[GSC-GA4-CLOUD] Changelog sync notice for ${base} (${cRes.status}): ${cRes.error || cRes.body}`);
+      }
+    }
+  }
+
+  return results;
+}
+
 export async function runGscGa4CloudSync() {
   const startMs = Date.now();
   fs.mkdirSync(DATA_DIR, { recursive: true });
@@ -552,7 +648,32 @@ export async function runGscGa4CloudSync() {
     );
   }
 
+  const compactGscResult = gscResult
+    ? {
+        totalImpressions: gscResult.totalImpressions,
+        totalClicks: gscResult.totalClicks,
+        activePagesWithImpressions: gscResult.activePagesWithImpressions,
+        newlyDiscoveredPaths: gscResult.newlyDiscoveredPaths,
+        strikeZoneCandidates: gscResult.strikeZoneCandidates,
+        sitemapStatuses: gscResult.sitemapStatuses,
+        inspectedUrls: gscResult.inspectedUrls
+      }
+    : null;
+
+  const existingReport = (() => {
+    try {
+      return fs.existsSync(REPORT_OUT_PATH) ? JSON.parse(fs.readFileSync(REPORT_OUT_PATH, 'utf8')) : null;
+    } catch {
+      return null;
+    }
+  })();
+
   const durationMs = Date.now() - startMs;
+  const fallbackGscSnapshot =
+    existingReport?.latestGscSnapshot ||
+    (enrichmentState.gscRecoveryHistory || [])[enrichmentState.gscRecoveryHistory.length - 1] ||
+    null;
+
   const report = {
     generatedAt: new Date().toISOString(),
     durationMs,
@@ -562,20 +683,28 @@ export async function runGscGa4CloudSync() {
     gscSiteUrl: GSC_SITE_URL,
     ga4PropertyId: GA4_PROPERTY_ID,
     trackedDiscoveredGscPathsCount: (enrichmentState.discoveredGscPaths || []).length,
-    latestGscSnapshot:
-      gscResult ||
-      (enrichmentState.gscRecoveryHistory || [])[enrichmentState.gscRecoveryHistory.length - 1] ||
-      null,
+    latestGscSnapshot: compactGscResult || fallbackGscSnapshot,
     latestGa4Snapshot:
       ga4Result ||
+      existingReport?.latestGa4Snapshot ||
       (enrichmentState.ga4FunnelHistory || [])[enrichmentState.ga4FunnelHistory.length - 1] ||
       null,
     warnings
   };
 
-  fs.writeFileSync(REPORT_OUT_PATH, JSON.stringify(report, null, 2), 'utf8');
+  const dryRun = process.argv.includes('--dry-run');
+  const skipCrm = process.argv.includes('--skip-crm');
+  if (!dryRun && !skipCrm) {
+    report.crmSync = await syncDeepblockGscGa4ToCentralCrm({ report, gscResult, ga4Result });
+  } else {
+    report.crmSync = { skipped: true, reason: dryRun ? '--dry-run' : '--skip-crm' };
+  }
 
-  if (fs.existsSync(SCHEDULER_STATE_PATH)) {
+  if (!dryRun) {
+    fs.writeFileSync(REPORT_OUT_PATH, JSON.stringify(report, null, 2), 'utf8');
+  }
+
+  if (!dryRun && fs.existsSync(SCHEDULER_STATE_PATH)) {
     try {
       const st = JSON.parse(fs.readFileSync(SCHEDULER_STATE_PATH, 'utf8'));
       st['gsc_ga4_cloud_sync'] = {

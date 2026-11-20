@@ -5,12 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Usercentrics & Sourcepoint Cookie-Banner automatisch ablehnen | SWEEPR</title>
   <meta name="description" content="Technischer Leitfaden 2026: Wie Sie Usercentrics Shadow-DOM und Sourcepoint TCF v2.2 Cookie-Walls auf deutschen Websites automatisch in <50ms ablehnen." />
-  <meta name="robots" content="index, follow" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
   <meta name="theme-color" content="#0F172A" />
   <link rel="canonical" href="https://sweeprdeepblock.com/de/usercentrics-cookie-banner-blockieren" />
-  <link rel="alternate" hreflang="en" href="https://sweeprdeepblock.com/solutions/auto-reject-cookie-popups" />
-  <link rel="alternate" hreflang="de" href="https://sweeprdeepblock.com/de" />
-  <link rel="alternate" hreflang="fr" href="https://sweeprdeepblock.com/fr" />
+  <link rel="alternate" hreflang="de-DE" href="https://sweeprdeepblock.com/de/usercentrics-cookie-banner-blockieren" />
   <link rel="manifest" href="/site.webmanifest" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -24,8 +22,8 @@
   <meta name="twitter:description" content="Technischer Leitfaden 2026: Wie Sie Usercentrics Shadow-DOM und Sourcepoint TCF v2.2 Cookie-Walls auf deutschen Websites automatisch in <50ms ablehnen." />
   <meta name="twitter:image" content="https://sweeprdeepblock.com/og-image.png" />
   <link rel="icon" type="image/svg+xml" href="/logo.svg" />
-  <script src="https://cdn.tailwindcss.com/3.4.5"></script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","name":"Usercentrics & Sourcepoint Cookie-Banner automatisch ablehnen | SWEEPR","description":"Technischer Leitfaden 2026: Wie Sie Usercentrics Shadow-DOM und Sourcepoint TCF v2.2 Cookie-Walls auf deutschen Websites automatisch in <50ms ablehnen.","inLanguage":"de-DE","url":"https://sweeprdeepblock.com/de/usercentrics-cookie-banner-blockieren","publisher":{"@type":"Organization","name":"SWEEPR Global Limited","url":"https://sweeprdeepblock.com"}},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Warum friert das Scrollen ein, wenn normale Adblocker Usercentrics verstecken?","acceptedAnswer":{"@type":"Answer","text":"Weil Usercentrics und Sourcepoint die Eigenschaft overflow:hidden auf dem <html>- und <body>-Element setzen, bis eine Entscheidung getroffen wurde. SWEEPR DeepBlock lehnt die Cookies programmatisch ab und entfernt die Scroll-Sperre automatisch."}},{"@type":"Question","name":"Werden meine besuchten Websites gespeichert?","acceptedAnswer":{"@type":"Answer","text":"Nein. SWEEPR DeepBlock arbeitet zu 100% lokal in Ihrem Browser (Zero Browsing History Logged)."}}]}]}</script>
+  <link rel="stylesheet" href="/sweepr-tailwind.min.css?v=20261117" />
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","name":"Usercentrics & Sourcepoint Cookie-Banner automatisch ablehnen | SWEEPR","description":"Technischer Leitfaden 2026: Wie Sie Usercentrics Shadow-DOM und Sourcepoint TCF v2.2 Cookie-Walls auf deutschen Websites automatisch in <50ms ablehnen.","inLanguage":"de-DE","url":"https://sweeprdeepblock.com/de/usercentrics-cookie-banner-blockieren","datePublished":"2026-10-15","dateModified":"2026-11-17","publisher":{"@type":"Organization","@id":"https://sweeprdeepblock.com/#organization","name":"SWEEPR Deepblock","legalName":"SWEEPR Global Limited","url":"https://sweeprdeepblock.com/"}},{"@type":"SoftwareApplication","name":"SWEEPR Deepblock","softwareVersion":"1.2.9","applicationCategory":"SecurityApplication","operatingSystem":"Chrome, Safari, Microsoft Edge, Firefox, Brave, Opera, Windows, macOS, iOS, Android","url":"https://sweeprdeepblock.com/de/usercentrics-cookie-banner-blockieren","installUrl":"https://chromewebstore.google.com/detail/sweepr-deepblock-ad-cooki/bkdfhdgmglfancgpkcbdceinfdlccmpc","offers":{"@type":"AggregateOffer","lowPrice":"1.99","highPrice":"89.99","priceCurrency":"GBP","offerCount":"4","priceValidUntil":"2027-12-31","validFrom":"2026-01-01","url":"https://sweeprdeepblock.com/pricing"}}]}</script>
   <script async src="/metrics/js?id=G-01MNBQSL9K"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -37,16 +35,17 @@
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans antialiased">
   <header class="border-b border-slate-800/80 bg-slate-950/90 backdrop-blur sticky top-0 z-40">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-      <a href="/" class="flex items-center gap-2.5 text-white font-black text-lg tracking-tight no-underline">
-        <img src="/logo.svg" alt="SWEEPR DeepBlock logo" width="32" height="32" class="w-8 h-8" />
-        <span>SWEEPR <span class="text-emerald-400">DeepBlock</span></span>
+      <a href="/" hreflang="en" class="flex items-center gap-2.5 text-white font-black text-lg tracking-tight no-underline">
+        <img src="/logo.svg" alt="SWEEPR Deepblock logo" width="32" height="32" class="w-8 h-8" />
+        <span>SWEEPR <span class="text-emerald-400">Deepblock</span></span>
       </a>
       <nav class="hidden md:flex items-center gap-5 text-sm font-semibold text-slate-300">
-        <a href="/de" class="hover:text-white">🇩🇪 Deutsch</a>
-        <a href="/fr" class="hover:text-white">🇫🇷 Français</a>
+        <a href="/de" hreflang="de" class="hover:text-white">🇩🇪 Deutsch</a>
+        <a href="/fr" hreflang="fr" class="hover:text-white">🇫🇷 Français</a>
+        <a href="/es" hreflang="es" class="hover:text-white">🇪🇸 Español</a>
         <a href="/site" class="hover:text-white">150 Site Audits</a>
         <a href="/tools" class="hover:text-white">Diagnostic Tools</a>
-        <a href="/stories" class="hover:text-white">Case Studies</a>
+        <a href="/test-lab" class="hover:text-white">8/8 Test Lab</a>
       </nav>
       <a href="/download" class="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs sm:text-sm no-underline">Erweiterung installieren →</a>
     </div>
@@ -56,7 +55,7 @@
     <div class="space-y-4">
       <span class="inline-block px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-extrabold uppercase">🇩🇪 Technischer Leitfaden • Usercentrics Shadow-DOM & Sourcepoint CMP</span>
       <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight">Usercentrics & Sourcepoint Cookie-Banner ohne Scroll-Sperre blockieren</h1>
-      <p class="text-slate-300 text-base sm:text-lg leading-relaxed">Usercentrics nutzt ein geschütztes Web-Component Shadow-DOM (#usercentrics-root), an dem herkömmliche CSS-Blocker scheitern. Erfahren Sie, wie SWEEPR DeepBlock das TCF v2.2 Ablehnungssignal in unter 50 Millisekunden ausführt.</p>
+      <p class="text-slate-300 text-base sm:text-lg leading-relaxed">Usercentrics nutzt ein geschütztes Web-Component Shadow-DOM (#usercentrics-root), an dem herkömmliche CSS-Blocker scheitern. Erfahren Sie, wie SWEEPR Deepblock v1.2.9 das TCF v2.2 Ablehnungssignal in unter 50 Millisekunden ausführt.</p>
       <div class="flex flex-wrap gap-3 pt-2">
         <a href="/download" class="px-5 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-sm no-underline">Erweiterung installieren →</a>
         <a href="/order?plan=annual" class="px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm border border-slate-700 no-underline">Pro-Schutz aktivieren (£29.99/yr)</a>
@@ -105,26 +104,28 @@
       <h2 class="text-2xl font-black text-white">FAQ</h2>
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-2">
         <h3 class="text-base font-bold text-white">Warum friert das Scrollen ein, wenn normale Adblocker Usercentrics verstecken?</h3>
-        <p class="text-sm text-slate-300 leading-relaxed">Weil Usercentrics und Sourcepoint die Eigenschaft overflow:hidden auf dem <html>- und <body>-Element setzen, bis eine Entscheidung getroffen wurde. SWEEPR DeepBlock lehnt die Cookies programmatisch ab und entfernt die Scroll-Sperre automatisch.</p>
+        <p class="text-sm text-slate-300 leading-relaxed">Weil Usercentrics und Sourcepoint die Eigenschaft overflow:hidden auf dem <html>- und <body>-Element setzen, bis eine Entscheidung getroffen wurde. SWEEPR Deepblock lehnt die Cookies programmatisch ab und entfernt die Scroll-Sperre automatisch.</p>
       </div>
 <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-2">
         <h3 class="text-base font-bold text-white">Werden meine besuchten Websites gespeichert?</h3>
-        <p class="text-sm text-slate-300 leading-relaxed">Nein. SWEEPR DeepBlock arbeitet zu 100% lokal in Ihrem Browser (Zero Browsing History Logged).</p>
+        <p class="text-sm text-slate-300 leading-relaxed">Nein. SWEEPR Deepblock arbeitet zu 100% lokal in Ihrem Browser (Zero Browsing History Logged).</p>
       </div>
     </section>
   </main>
 
   <footer class="border-t border-slate-800/80 bg-slate-950 py-8 px-4 sm:px-6 text-xs text-slate-400">
     <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-4">
-      <div>© 2026 SWEEPR Global Limited. Local-first Manifest V3 engine.</div>
+      <div>© 2026 SWEEPR Global Limited. Local-first Manifest V3 engine (v1.2.9).</div>
       <div class="flex flex-wrap gap-4">
-        <a href="/" class="hover:text-white">English Home</a>
-        <a href="/de" class="hover:text-white">Deutsch (/de)</a>
-        <a href="/fr" class="hover:text-white">Français (/fr)</a>
+        <a href="/" hreflang="en" class="hover:text-white">English (EN)</a>
+        <a href="/de" hreflang="de" class="hover:text-white">Deutsch (/de)</a>
+        <a href="/fr" hreflang="fr" class="hover:text-white">Français (/fr)</a>
+        <a href="/es" hreflang="es" class="hover:text-white">Español (/es)</a>
         <a href="/site" class="hover:text-white">150 Site Audits</a>
         <a href="/stories" class="hover:text-white">Customer Stories</a>
         <a href="/glossary" class="hover:text-white">Glossary</a>
         <a href="/tools" class="hover:text-white">Diagnostic Tools</a>
+        <a href="/test-lab" class="hover:text-white">8/8 Test Lab</a>
         <a href="/order?plan=suite_annual" class="text-emerald-400 font-bold hover:underline">Complete Suite (£89.99/yr)</a>
       </div>
     </div>

@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta name="color-scheme" content="light">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SWEEPR DeepBlock v1.3.1 Benchmarks &amp; MV3 Architecture (2026)</title>
+  <meta name="description" content="Verified SWEEPR DeepBlock v1.3.1 MV3 benchmarks: 271 static C++ DNR rules, 100 OTA rules, 8/8 Test Lab score, under 50ms cookie reject, and transparent pricing.">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+  <meta name="author" content="SWEEPR Global Limited">
+  <meta name="theme-color" content="#0F172A">
+  <link rel="canonical" href="https://sweeprdeepblock.com/benchmarks" />
+  <link rel="icon" type="image/svg+xml" href="/logo.svg">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- Open Graph / Social Preview -->
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SWEEPR Deepblock">
+  <meta property="og:locale" content="en_GB">
+  <meta property="og:url" content="https://sweeprdeepblock.com/benchmarks">
+  <meta property="og:title" content="SWEEPR DeepBlock v1.3.1 Benchmarks &amp; MV3 Architecture (2026)">
+  <meta property="og:description" content="Verified SWEEPR DeepBlock v1.3.1 MV3 benchmarks: 271 static C++ DNR rules, 100 OTA rules, 8/8 Test Lab score, under 50ms cookie reject, and transparent pricing.">
+  <meta property="og:image" content="https://sweeprdeepblock.com/og-image.png">
+  <meta property="og:image:alt" content="SWEEPR DeepBlock v1.3.1 Manifest V3 Engineering Benchmarks">
+
+  <!-- Twitter / X Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://sweeprdeepblock.com/benchmarks">
+  <meta name="twitter:title" content="SWEEPR DeepBlock v1.3.1 Benchmarks &amp; MV3 Architecture (2026)">
+  <meta name="twitter:description" content="Verified SWEEPR DeepBlock v1.3.1 MV3 benchmarks: 271 static C++ DNR rules, 100 OTA rules, 8/8 Test Lab score, under 50ms cookie reject, and transparent pricing.">
+  <meta name="twitter:image" content="https://sweeprdeepblock.com/og-image.png">
+
+  <!-- Structured Data (JSON-LD) -->
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://sweeprdeepblock.com/"},{"@type":"ListItem","position":2,"name":"Benchmarks","item":"https://sweeprdeepblock.com/benchmarks"}]},{"@type":"SoftwareApplication","@id":"https://sweeprdeepblock.com/#software-benchmarks","name":"SWEEPR DeepBlock","softwareVersion":"1.3.1","image":"https://sweeprdeepblock.com/og-image.png","url":"https://sweeprdeepblock.com/benchmarks","downloadUrl":"https://sweeprdeepblock.com/download","operatingSystem":"Chrome, Microsoft Edge, Firefox, Brave, Opera, Safari, Windows, macOS, iOS, Android","applicationCategory":"SecurityApplication","publisher":{"@type":"Organization","name":"SWEEPR Global Limited","legalName":"SWEEPR Global Limited","url":"https://sweeprdeepblock.com/"},"offers":{"@type":"AggregateOffer","lowPrice":"1.99","highPrice":"89.99","priceCurrency":"GBP","offerCount":"4","validFrom":"2026-01-01","priceValidUntil":"2027-12-31","availability":"https://schema.org/InStock","url":"https://sweeprdeepblock.com/pricing"}},{"@type":"Dataset","name":"SWEEPR DeepBlock v1.3.1 Manifest V3 Performance & Telemetry Dataset","description":"Reproducible engineering metrics for Manifest V3 declarativeNetRequest rule execution, <50ms GDPR cookie consent auto-rejection across 150+ CMP frameworks, anti-adblock evasion, browser RAM hibernation, and transparent subscription pricing.","url":"https://sweeprdeepblock.com/benchmarks","version":"1.3.1","creator":{"@type":"Organization","name":"SWEEPR Global Limited","url":"https://sweeprdeepblock.com/"},"license":"https://sweeprdeepblock.com/terms","distribution":{"@type":"DataDownload","encodingFormat":"application/json","contentUrl":"https://sweeprdeepblock.com/geo-benchmark-feed.json"}}]}</script>
+
+  <link rel="stylesheet" href="/sweepr-tailwind.min.css?v=20261117">
+  <link rel="stylesheet" href="/style.css?v=20261114">
+  <script src="/nav.js?v=20261108" defer></script>
+  <script async src="/metrics/js?id=G-01MNBQSL9K"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-01MNBQSL9K', {
+      transport_url: window.location.origin + '/metrics',
+      first_party_collection: true
+    });
+  </script>
+</head>
+<body class="text-gray-800 bg-slate-50 min-h-screen flex flex-col">
+
+  <nav class="glass-nav px-4 md:px-6 py-3.5 md:py-4 flex items-center justify-between">
+    <div class="flex items-center gap-3 md:gap-6">
+      <a href="/" class="flex items-center gap-2.5 text-inherit no-underline">
+        <div class="logo-box !w-9 !h-9" aria-hidden="true"></div>
+        <span class="font-extrabold text-base sm:text-xl tracking-tight text-gray-900">SWEEPR <span class="text-emerald-600">Deepblock</span></span>
+      </a>
+      <div class="hidden md:flex items-center gap-2 text-sm font-medium">
+        <a href="/test-lab" class="btn btn-ghost text-sm">8/8 Test Lab</a>
+        <a href="/pricing" class="btn btn-ghost text-sm">Pricing</a>
+        <a href="/vs/ublock-origin-lite" class="btn btn-ghost text-sm">vs uBlock Lite</a>
+        <a href="/benchmarks" class="btn text-sm font-semibold text-emerald-700 bg-emerald-50/60 border border-emerald-200/50">Benchmarks</a>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <a href="/download?install=1" class="btn btn-go text-xs sm:text-sm">Install Free Extension</a>
+    </div>
+  </nav>
+
+  <main class="max-w-5xl mx-auto w-full px-4 sm:px-6 pt-28 pb-16 flex-1 space-y-10">
+    <header class="space-y-4">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold text-emerald-900 bg-emerald-100 border border-emerald-200">
+        <span>Release Audit &bull; Version 1.3.1 &bull; Updated 2026-11-20</span>
+      </div>
+      <h1 class="text-3xl sm:text-4xl font-black tracking-tight text-gray-900 leading-tight">
+        SWEEPR DeepBlock v1.3.1 Benchmarks &amp; Manifest V3 Architecture
+      </h1>
+      <p class="text-base sm:text-lg text-gray-700 leading-relaxed max-w-3xl">
+        Objective, verifiable telemetry for <strong>SWEEPR DeepBlock v1.3.1</strong> across Chromium Manifest V3 (Chrome, Edge, Brave, Opera) and Gecko (Firefox). Every figure below maps directly to bundled extension rulesets and repeatable checks on the public <a href="/test-lab" class="text-emerald-700 font-semibold underline">8/8 Live Test Lab</a>.
+      </p>
+    </header>
+
+    <section aria-labelledby="engine-telemetry" class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-4">
+      <h2 id="engine-telemetry" class="text-xl font-extrabold text-gray-900">1. Manifest V3 Filter Engine &amp; Resource Telemetry (v1.3.1)</h2>
+      <p class="text-sm text-gray-600">Rule counts verified directly from the v1.3.1 extension rules directory (<code class="font-mono text-xs bg-gray-100 px-1.5 py-0.5 rounded">static_ads_and_trackers.json</code>, <code class="font-mono text-xs bg-gray-100 px-1.5 py-0.5 rounded">cryptominers.json</code>, <code class="font-mono text-xs bg-gray-100 px-1.5 py-0.5 rounded">tracker_params.json</code>, <code class="font-mono text-xs bg-gray-100 px-1.5 py-0.5 rounded">dynamic_delta.json</code>, and <code class="font-mono text-xs bg-gray-100 px-1.5 py-0.5 rounded">abp_filter_list.txt</code>).</p>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse text-sm">
+          <thead>
+            <tr class="border-b border-gray-200 bg-slate-50 text-gray-900">
+              <th class="py-3 px-4 font-bold">Component / Metric</th>
+              <th class="py-3 px-4 font-bold">Verified Value (v1.3.1)</th>
+              <th class="py-3 px-4 font-bold">Verification Scope</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200 text-gray-700">
+            <tr>
+              <td class="py-3 px-4 font-semibold text-gray-900">Bundled C++ Static DNR Rules</td>
+              <td class="py-3 px-4 font-bold text-emerald-700">271 native rules</td>
+              <td class="py-3 px-4">252 ad/tracker rules + 18 cryptominer rules + 1 URL query-parameter transform rule</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4 font-semibold text-gray-900">OTA Dynamic Delta Rules</td>
+              <td class="py-3 px-4 font-bold text-emerald-700">100 active rules + 101 cosmetic selectors</td>
+              <td class="py-3 px-4">Synced via <code class="font-mono text-xs">/api/filters/delta</code> without requiring a full browser store re-review</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4 font-semibold text-gray-900">DeepStealth Cosmetic &amp; ABP Filters</td>
+              <td class="py-3 px-4 font-bold text-emerald-700">391 selector &amp; scriptlet rules</td>
+              <td class="py-3 px-4">Video player ad-insertion neutralization + sticky banner cleanup</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4 font-semibold text-gray-900">Native DNR Lookup Latency</td>
+              <td class="py-3 px-4 font-bold text-emerald-700">~15 microseconds</td>
+              <td class="py-3 px-4">Evaluated in Chromium/Gecko C++ network stack prior to DOM parsing</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4 font-semibold text-gray-900">GDPR/CCPA Cookie Auto-Reject Latency</td>
+              <td class="py-3 px-4 font-bold text-emerald-700">&lt;50 ms (150+ CMPs)</td>
+              <td class="py-3 px-4">Triggers genuine "Reject All / Necessary Only" API paths &amp; unlocks page scroll</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4 font-semibold text-gray-900">Anti-Detection Test Lab Score</td>
+              <td class="py-3 px-4 font-bold text-emerald-700">8 / 8 Checks Passed</td>
+              <td class="py-3 px-4">Public live browser test at <a href="/test-lab" class="text-emerald-700 underline">sweeprdeepblock.com/test-lab</a></td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4 font-semibold text-gray-900">Privacy &amp; Telemetry Pledge</td>
+              <td class="py-3 px-4 font-bold text-emerald-700">Zero Browsing History Collected</td>
+              <td class="py-3 px-4">All filtering, scam heuristics &amp; tab hibernation run 100% locally in-browser</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section aria-labelledby="competitor-matrix" class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-4">
+      <h2 id="competitor-matrix" class="text-xl font-extrabold text-gray-900">2. Side-by-Side Architecture &amp; Pricing Matrix (2026)</h2>
+      <p class="text-sm text-gray-600">Comparing SWEEPR DeepBlock v1.3.1 against popular Manifest V3 and consumer adblockers with transparent UK/global pricing (zero surprise Year-2 renewal price hikes).</p>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse text-sm">
+          <thead>
+            <tr class="border-b border-gray-200 bg-slate-50 text-gray-900">
+              <th class="py-3 px-4 font-bold">Capability</th>
+              <th class="py-3 px-4 font-bold text-emerald-800">SWEEPR DeepBlock v1.3.1</th>
+              <th class="py-3 px-4 font-bold">uBlock Origin Lite</th>
+              <th class="py-3 px-4 font-bold">AdGuard Extension</th>
+              <th class="py-3 px-4 font-bold">Total Adblock</th>
+              <th class="py-3 px-4 font-bold">Ghostery</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200 text-gray-700">
+            <tr>
+              <td class="py-3 px-4 font-semibold text-gray-900">Native MV3 + MAIN Surrogates</td>
+              <td class="py-3 px-4 font-bold text-emerald-700">Yes (271 static + 100 OTA)</td>
+              <td class="py-3 px-4">Static MV3 Only</td>
+              <td class="py-3 px-4">Yes (MV3 Beta)</td>
+              <td class="py-3 px-4">Partial</td>
+              <td class="py-3 px-4">Yes</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4 font-semibold text-gray-900">Strict &lt;50ms Cookie Rejector</td>
+              <td class="py-3 px-4 font-bold text-emerald-700">Yes (150+ CMPs, scroll unlock)</td>
+              <td class="py-3 px-4">Optional list toggle</td>
+              <td class="py-3 px-4">Annoyances filter</td>
+              <td class="py-3 px-4">No</td>
+              <td class="py-3 px-4">Never-Consent</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4 font-semibold text-gray-900">AI Search Slop Cleanser</td>
+              <td class="py-3 px-4 font-bold text-emerald-700">Yes (Google, Bing, DDG)</td>
+              <td class="py-3 px-4">No</td>
+              <td class="py-3 px-4">No</td>
+              <td class="py-3 px-4">No</td>
+              <td class="py-3 px-4">No</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4 font-semibold text-gray-900">14-Point Fake Shop Detector</td>
+              <td class="py-3 px-4 font-bold text-emerald-700">Included Free</td>
+              <td class="py-3 px-4">No</td>
+              <td class="py-3 px-4">Phishing list only</td>
+              <td class="py-3 px-4">No</td>
+              <td class="py-3 px-4">No</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4 font-semibold text-gray-900">Background Tab RAM Tamer</td>
+              <td class="py-3 px-4 font-bold text-emerald-700">Yes (auto-discard idle tabs)</td>
+              <td class="py-3 px-4">No</td>
+              <td class="py-3 px-4">No</td>
+              <td class="py-3 px-4">No</td>
+              <td class="py-3 px-4">No</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4 font-semibold text-gray-900">Transparent Annual Price</td>
+              <td class="py-3 px-4 font-bold text-emerald-700">&pound;29.99/yr (5 devices; £1.99 1st mo)</td>
+              <td class="py-3 px-4">Free (OSS)</td>
+              <td class="py-3 px-4">~£2.49–£4.58/mo</td>
+              <td class="py-3 px-4">£19 intro, spikes ~£99/yr</td>
+              <td class="py-3 px-4">Free (donations)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="flex flex-wrap gap-3 pt-2 text-sm">
+        <a href="/vs/ublock-origin-lite" class="text-emerald-700 font-semibold hover:underline">DeepBlock vs uBlock Origin Lite &rarr;</a>
+        <a href="/vs/adguard-extension" class="text-emerald-700 font-semibold hover:underline">DeepBlock vs AdGuard &rarr;</a>
+        <a href="/vs/total-adblock" class="text-emerald-700 font-semibold hover:underline">DeepBlock vs Total Adblock &rarr;</a>
+        <a href="/site" class="text-emerald-700 font-semibold hover:underline">150 Audited Publisher Reports &rarr;</a>
+      </div>
+    </section>
+
+    <section aria-labelledby="machine-feeds" class="bg-slate-900 text-white rounded-2xl p-6 space-y-4">
+      <h2 id="machine-feeds" class="text-xl font-extrabold">3. Machine-Readable Audit Feeds &amp; Live Verification</h2>
+      <p class="text-sm text-slate-300 leading-relaxed">
+        Independent researchers, security auditors, and AI answer engines can verify SWEEPR DeepBlock capabilities against our public client-side test suite and machine-readable benchmark files:
+      </p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+        <a href="/test-lab" class="block bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl p-3.5 text-white no-underline">
+          <div class="font-bold text-emerald-400">Live 8/8 Test Lab</div>
+          <div class="text-slate-300 mt-1">Interactive ad, beacon, scroll-lock &amp; fingerprint verification.</div>
+        </a>
+        <a href="/geo-benchmark-feed.json" class="block bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl p-3.5 text-white no-underline">
+          <div class="font-bold text-emerald-400">geo-benchmark-feed.json</div>
+          <div class="text-slate-300 mt-1">Structured Schema.org Dataset JSON feed (v1.3.1).</div>
+        </a>
+        <a href="/llms.txt" class="block bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl p-3.5 text-white no-underline">
+          <div class="font-bold text-emerald-400">llms.txt &amp; llms-full.txt</div>
+          <div class="text-slate-300 mt-1">Plaintext technical summary for AI assistants &amp; crawlers.</div>
+        </a>
+        <a href="/download?install=1" class="block bg-emerald-600 hover:bg-emerald-500 rounded-xl p-3.5 text-white no-underline">
+          <div class="font-bold">Install v1.3.1 Extension</div>
+          <div class="text-emerald-50 mt-1">Chrome, Edge, Firefox, Brave, Opera &amp; Safari DNS.</div>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="mt-auto py-8 text-center text-gray-600 text-xs sm:text-sm border-t border-gray-200 bg-white">
+    <div class="max-w-5xl mx-auto px-4 space-y-3">
+      <div class="flex flex-wrap justify-center gap-x-5 gap-y-2 font-medium">
+        <a href="/" class="hover:text-emerald-700">Home</a>
+        <a href="/download" class="hover:text-emerald-700">Download</a>
+        <a href="/pricing" class="hover:text-emerald-700">Pricing</a>
+        <a href="/test-lab" class="hover:text-emerald-700">8/8 Test Lab</a>
+        <a href="/tools" class="hover:text-emerald-700">Free Privacy Tools</a>
+        <a href="/site" class="hover:text-emerald-700">150 Site Audits</a>
+        <a href="/glossary" class="hover:text-emerald-700">Glossary</a>
+        <a href="/support" class="hover:text-emerald-700">Support</a>
+        <a href="/privacy" class="hover:text-emerald-700">Privacy Policy</a>
+        <a href="/terms" class="hover:text-emerald-700">Terms</a>
+        <a href="/refund" class="hover:text-emerald-700">Refund Policy</a>
+      </div>
+      <div class="text-xs text-gray-500">&copy; 2026 SWEEPR Global Limited. All rights reserved. SWEEPR DeepBlock v1.3.1.</div>
+    </div>
+  </footer>
+</body>
+</html>
