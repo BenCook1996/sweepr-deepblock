@@ -1,49 +1,51 @@
 {
-  "generatedAt": "2026-11-19T15:58:15.587Z",
+  "generatedAt": "2026-11-20T14:17:58.685Z",
   "status": "PASS",
   "keywordEngineSummary": {
-    "totalIndexablePagesChecked": 455,
+    "totalIndexablePagesChecked": 437,
     "seedQueriesExpanded": 339,
-    "rawAutocompleteHarvested": 524,
+    "rawAutocompleteHarvested": 525,
     "junkDisqualifiedCount": 3,
-    "lowIntentRejectedCount": 459,
-    "intraBatchSynonymsMerged": 3,
-    "alreadyCoveredOrEnrichedCount": 30,
-    "approvedLowKdOpportunitiesCount": 0,
-    "ctrEnrichmentQueueCount": 9
+    "lowIntentRejectedCount": 460,
+    "intraBatchSynonymsMerged": 7,
+    "alreadyCoveredOrEnrichedCount": 7,
+    "approvedLowKdOpportunitiesCount": 20,
+    "ctrEnrichmentQueueCount": 6
   },
   "pageGenerationSummary": {
     "reRendered": 0,
     "newGenerated": 0,
     "donorLinksPatched": 0,
     "newUrls": [],
-    "totalPseoPages": 283,
-    "totalSitemapUrls": 304
+    "totalPseoPages": 150,
+    "totalSitemapUrls": 437,
+    "consolidatedPermutationsNoindexed": 115
   },
   "geoSyncSummary": {
     "@context": "https://schema.org",
     "@type": "Dataset",
-    "name": "SWEEPR DeepBlock v1.3.0 — 2026 Manifest V3 Adblocker, Cookie CMP & RAM Telemetry Dataset",
+    "name": "SWEEPR DeepBlock v1.3.1 — 2026 Manifest V3 Adblocker, Cookie CMP & RAM Telemetry Dataset",
     "description": "Live first-party telemetry benchmark of Manifest V3 declarativeNetRequest rule performance, <50ms GDPR CMP auto-rejection, browser RAM savings, and transparent switcher pricing across 150 audited UK/US publishers.",
     "url": "https://sweeprdeepblock.com/geo-benchmark-feed.json",
-    "version": "1.3.0",
-    "dateModified": "2026-11-19T15:58:15.007Z",
+    "version": "1.3.1",
+    "dateModified": "2026-11-20T14:17:54.495Z",
     "creator": {
       "@type": "Organization",
-      "name": "SWEEPR Technologies",
+      "name": "SWEEPR Global Limited",
       "url": "https://sweeprdeepblock.com"
     },
     "license": "https://sweeprdeepblock.com/terms",
     "telemetrySummary": {
-      "extensionVersion": "1.3.0",
-      "staticDnrRules": 253,
+      "extensionVersion": "1.3.1",
+      "staticDnrRules": 271,
       "otaDeltaRules": 100,
-      "cosmeticSelectors": 392,
+      "cosmeticSelectors": 391,
+      "otaCosmeticSelectors": 101,
       "avgDnrLookupLatencyMicroseconds": 15,
       "cookieRejectLatencyMs": "<50ms",
       "testLabScore": "8/8 (100%)",
       "auditedPublishersCount": 150,
-      "totalIndexablePages": 455
+      "totalIndexablePages": 437
     },
     "pricingPlansGbp": {
       "introMonthlyFirst30Days": 1.99,
@@ -52,7 +54,7 @@
       "annualPro": {
         "priceGbp": 29.99,
         "monthlyEquivalentGbp": 2.5,
-        "devicesIncluded": 4,
+        "devicesIncluded": 5,
         "checkoutUrl": "https://sweeprdeepblock.com/order?plan=annual"
       },
       "completeSecuritySuiteAnnual": {
@@ -69,13 +71,110 @@
         "checkoutUrl": "https://sweeprdeepblock.com/order?plan=suite_annual"
       }
     },
-    "topComparisonBenchmarks": []
+    "topComparisonBenchmarks": [
+      {
+        "query": "switch from adblock plus to manifest v3",
+        "canonicalUrl": "https://sweeprdeepblock.com/vs/switch-from-adblock-plus-to-manifest-v3",
+        "estimatedKD": 10,
+        "opportunityScore": 93.7
+      },
+      {
+        "query": "pie adblock safe or scam alternative",
+        "canonicalUrl": "https://sweeprdeepblock.com/vs/pie-adblock-safe-or-scam-alternative",
+        "estimatedKD": 10,
+        "opportunityScore": 90.9
+      },
+      {
+        "query": "is pie adblock legit reddit",
+        "canonicalUrl": "https://sweeprdeepblock.com/vs/is-pie-adblock-legit-reddit",
+        "estimatedKD": 10,
+        "opportunityScore": 90.6
+      },
+      {
+        "query": "adguard vs ublock origin lite chrome 2026",
+        "canonicalUrl": "https://sweeprdeepblock.com/vs/adguard-vs-ublock-origin-lite-chrome-2026",
+        "estimatedKD": 30,
+        "opportunityScore": 86.7
+      },
+      {
+        "query": "is pie adblock safe",
+        "canonicalUrl": "https://sweeprdeepblock.com/vs/is-pie-adblock-safe",
+        "estimatedKD": 10,
+        "opportunityScore": 86.7
+      },
+      {
+        "query": "pie adblock is a scam",
+        "canonicalUrl": "https://sweeprdeepblock.com/vs/pie-adblock-is-a-scam",
+        "estimatedKD": 10,
+        "opportunityScore": 86.7
+      },
+      {
+        "query": "is pie adblock safe reddit",
+        "canonicalUrl": "https://sweeprdeepblock.com/vs/is-pie-adblock-safe-reddit",
+        "estimatedKD": 5,
+        "opportunityScore": 86.3
+      },
+      {
+        "query": "total adblock renewal charge alternative",
+        "canonicalUrl": "https://sweeprdeepblock.com/vs/total-adblock-renewal-charge-alternative",
+        "estimatedKD": 30,
+        "opportunityScore": 83.9
+      },
+      {
+        "query": "lightweight alternative to ghostery chrome",
+        "canonicalUrl": "https://sweeprdeepblock.com/vs/lightweight-alternative-to-ghostery-chrome",
+        "estimatedKD": 30,
+        "opportunityScore": 83.9
+      },
+      {
+        "query": "chrome manifest v3 adblock plus",
+        "canonicalUrl": "https://sweeprdeepblock.com/vs/chrome-manifest-v3-adblock-plus",
+        "estimatedKD": 10,
+        "opportunityScore": 80.4
+      },
+      {
+        "query": "is pie adblock legit",
+        "canonicalUrl": "https://sweeprdeepblock.com/vs/is-pie-adblock-legit",
+        "estimatedKD": 21,
+        "opportunityScore": 80.2
+      },
+      {
+        "query": "total adblock cost per month",
+        "canonicalUrl": "https://sweeprdeepblock.com/vs/total-adblock-cost-per-month",
+        "estimatedKD": 10,
+        "opportunityScore": 80
+      }
+    ]
   },
   "pageSpeedCwvAudit": {
-    "pillarFilesChecked": 255,
-    "avgBrotliBytes": 5291,
-    "maxRawBytes": 29832,
-    "maxBrotliBytes": 6241,
+    "pillarFilesChecked": 235,
+    "avgBrotliBytes": 5289,
+    "maxRawBytes": 36990,
+    "maxBrotliBytes": 6903,
     "budgetViolations": []
+  },
+  "version": "1.3.1",
+  "crmLogged": true,
+  "technicalSeoRemediation": {
+    "auditDate": "2026-11-20",
+    "htmlFilesAudited": 1809,
+    "canonicalUrlsTotal": 437,
+    "coreSitemapUrls": 286,
+    "siteSitemapUrls": 151,
+    "publisherSiteUrls": 150,
+    "consolidatedPermutationsNoindexed": 115,
+    "totalNoindexHtmlFiles": 1372,
+    "deprecatedFaqHowToSchemas": 0,
+    "adultDomainRulesLeaked": 0,
+    "cdnTailwindScriptsRemaining": 0,
+    "legacyCompanyStringsOnIndexable": 0,
+    "staticTailwindCssBytes": 46391,
+    "siteReportBoilerplatePct": 30.8,
+    "localizedHubs": [
+      "en",
+      "de",
+      "fr",
+      "es"
+    ]
   }
 }
