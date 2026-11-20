@@ -1,18 +1,18 @@
-# SWEEPR DeepBlock v1.2.7 — Organic Community Seeding & Launch Kit
-Generated: 2026-11-19T15:58:15.802Z | Zero Automated Emails (`zeroEmail: true`)
+# SWEEPR DeepBlock v1.3.1 — Organic Community Seeding & Launch Kit
+Updated: 2026-11-20 | Zero Automated Emails (`zeroEmail: true`)
 
 ## Reddit — r/browsers & r/privacy
-**Title:** We benchmarked 5 Manifest V3 ad blockers across 150 UK/EU publishers (C++ DNR latency, TCF v2.2 cookie scroll locks, and RAM overhead)
+**Title:** We benchmarked Manifest V3 ad blockers across 150 UK/EU publishers (C++ DNR latency, TCF v2.2 cookie scroll locks, and RAM overhead)
 **Target URL:** https://sweeprdeepblock.com/test-lab?utm_source=reddit_organic&utm_medium=community&utm_campaign=mv3_benchmark
 
 ```markdown
-After Chrome deprecated Manifest V2 `webRequestBlocking`, we wanted to measure how modern Manifest V3 extensions actually perform across 3 vectors that frustrate daily browsing:
+Full disclosure: I'm the founder of SWEEPR DeepBlock. After Chrome deprecated Manifest V2 `webRequestBlocking`, we measured how modern Manifest V3 extensions perform across 3 vectors that frustrate daily browsing:
 
-1. **Network Lookup Latency & Bait Evasion**: Using 242 C++ `declarativeNetRequest` rules + 14 OTA delta rules (avg **15µs** evaluation latency) paired with local `/rules/empty.js` surrogates so `adsbox` and Funding Choices bait checks don't trip.
+1. **Network Lookup Latency & Bait Evasion**: Using 271 static C++ `declarativeNetRequest` rules + 100 OTA delta rules (avg **15µs** evaluation latency) paired with local `/rules/empty.js` surrogates so `adsbox` and Funding Choices bait checks don't trip.
 2. **GDPR / UK-GDPR Cookie Scroll Locks**: Why CSS-only banner hiding leaves `overflow: hidden` on `<html>`/`<body>` across OneTrust, Sourcepoint, Usercentrics, and Didomi — and how executing the native Reject-All signal in **<50ms** restores scrolling cleanly.
 3. **Browser Heap Memory Bloat**: Across 150 audited publishers (https://sweeprdeepblock.com/site), unblocked Prebid/OpenRTB ad auctions consume 180–430 MB of RAM per background tab.
 
-You can test your current browser setup (any extension) in 5 seconds on our client-side 8-point benchmark lab: https://sweeprdeepblock.com/test-lab or check the RAM calculator at https://sweeprdeepblock.com/tools/browser-ram-calculator.
+You can test your current browser setup (any extension) on our free 0–100 client-side benchmark lab: https://sweeprdeepblock.com/test-lab or check the RAM calculator at https://sweeprdeepblock.com/tools/browser-ram-calculator.
 ```
 
 ## Reddit — r/CasualUK & Consumer Finance
@@ -26,33 +26,33 @@ We built two free tools to help:
 - **3-Year Adblocker Renewal Cost Calculator**: https://sweeprdeepblock.com/campaigns/renewal-shock-switcher
 - **Instant Online Shop Scam Heuristic Scanner**: https://sweeprdeepblock.com/tools/is-this-shop-a-scam
 
-Our core **SWEEPR DeepBlock v1.2.7** extension includes fake shop alerts and URL tracker stripping free, with transparent flat-rate **£29.99/yr Pro** (£2.50/mo eq., 4 devices) or **£89.99/yr Sweepr Complete Security Suite** (DeepBlock Pro + Tab RAM Tamer + VPN + Cleaner across 5 devices) and 1-click cancellation.
+Full disclosure: I built SWEEPR DeepBlock. Our **SWEEPR DeepBlock v1.3.1** extension covers up to **5 devices** with flat-rate **£29.99/yr Pro** (£2.50/mo eq.) or **£89.99/yr Sweepr Complete Security Suite** (DeepBlock Pro + Total Tab & RAM Tamer + VPN + Cleaner across 5 devices) and 1-click cancellation.
 ```
 
 ## Hacker News — Show HN
-**Title:** Show HN: SWEEPR DeepBlock – Sub-15µs Manifest V3 Ad, <50ms TCF Cookie & Scam Store Shield
-**Target URL:** https://sweeprdeepblock.com/test-lab?utm_source=hackernews&utm_medium=show_hn&utm_campaign=v127_launch
+**Title:** Show HN: SWEEPR DeepBlock v1.3.1 – 271 C++ MV3 DNR Rules, <50ms TCF Cookie & Scam Store Shield
+**Target URL:** https://sweeprdeepblock.com/test-lab?utm_source=hackernews&utm_medium=show_hn&utm_campaign=v131_launch
 
 ```markdown
-Hi HN — we built SWEEPR DeepBlock (https://sweeprdeepblock.com) to solve three problems we kept hitting in post-MV2 Chromium and Gecko browsers:
+Hi HN — I built SWEEPR DeepBlock (https://sweeprdeepblock.com) to solve three problems I kept hitting in post-MV2 Chromium and Gecko browsers:
 
-- **C++ DeclarativeNetRequest + DeepStealth Surrogates**: 242 static DNR rules + 14 OTA delta rules executing in ~15µs in browser C++ memory, paired with a `document_start` isolated/main-world bridge that neutralizes anti-adblock bait checks.
+- **C++ DeclarativeNetRequest + DeepStealth Surrogates**: 271 static C++ DNR rules + 100 OTA delta rules + 391 ABP cosmetic selectors executing in ~15µs in browser C++ memory, paired with a `document_start` isolated/main-world bridge that neutralizes anti-adblock bait checks.
 - **Programmatic <50ms CMP Opt-Out**: Instead of hiding cookie modals with CSS (which breaks page scroll on Sourcepoint, Usercentrics, Didomi, and OneTrust), our content script triggers the genuine Reject-All path and unlocks body overflow.
 - **14-Point Client-Side Scam Store Heuristics**: Evaluates RDAP domain age, bargain-hyphenated hostnames, and cloned checkout timers locally with zero browsing history logged.
 
-You can run the 8-point client-side verification suite here: https://sweeprdeepblock.com/test-lab (or inspect our machine-readable benchmark dataset at https://sweeprdeepblock.com/geo-benchmark-feed.json). Would love your technical feedback!
+You can run the free 0–100 client-side verification suite here: https://sweeprdeepblock.com/test-lab (or inspect our machine-readable benchmark dataset at https://sweeprdeepblock.com/benchmarks and https://sweeprdeepblock.com/geo-benchmark-feed.json). Would love your technical feedback!
 ```
 
 ## Product Hunt — Launch Listing
-**Title:** SWEEPR DeepBlock v1.2.7 — Zero Ads, <50ms Cookie Auto-Reject & Scam Store Shield
-**Target URL:** https://sweeprdeepblock.com/?utm_source=producthunt&utm_medium=launch&utm_campaign=v127_suite
+**Title:** SWEEPR DeepBlock v1.3.1 — Zero Ads, <50ms Cookie Auto-Reject & Scam Store Shield
+**Target URL:** https://sweeprdeepblock.com/?utm_source=producthunt&utm_medium=launch&utm_campaign=v131_suite
 
 ```markdown
 **Tagline:** Pass 8/8 Manifest V3 adblock checks, auto-reject cookie popups in <50ms, and tame tab RAM.
 
-**What's New in v1.2.7:**
-- **8/8 MV3 Anti-Detection Engine**: 242 C++ network rules + OTA delta updates.
+**What's New in v1.3.1:**
+- **8/8 MV3 Anti-Detection Engine**: 271 static C++ network rules + 100 OTA delta rules + 391 ABP cosmetic selectors.
 - **<50ms Automatic Cookie Rejector**: Works across 150+ GDPR/UK-GDPR CMPs without breaking page scroll.
-- **5 Free Interactive Browser Diagnostic Tools**: Live Adblock Benchmark, DNS & Tracker Sanitizer, Canvas Fingerprint Audit, Fake Shop Scanner, and Browser RAM Calculator (https://sweeprdeepblock.com/tools).
-- **Transparent Pricing**: £1.99 1st-Month Intro, £29.99/yr Pro (4 devices), or the 4-in-1 **£89.99/yr Sweepr Complete Security Suite** (DeepBlock Pro + Total Tab & RAM Tamer + Sweepr VPN + Sweepr Desktop Cleaner for 5 devices).
+- **5 Free Interactive Browser Diagnostic Tools**: Live 0–100 Adblock Test Lab, DNS & Tracker Sanitizer, Canvas Fingerprint Audit, Fake Shop Scanner, and Browser RAM Calculator (https://sweeprdeepblock.com/tools).
+- **Transparent Pricing**: £1.99 1st-Month Intro, £29.99/yr Pro (5 devices), or the 4-in-1 **£89.99/yr Sweepr Complete Security Suite** (DeepBlock Pro + Total Tab & RAM Tamer + Sweepr VPN + Sweepr Desktop Cleaner for 5 devices).
 ```

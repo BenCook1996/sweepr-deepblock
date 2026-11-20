@@ -34,7 +34,7 @@
   <!-- Structured Data (JSON-LD) -->
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://sweeprdeepblock.com/"},{"@type":"ListItem","position":2,"name":"Guides","item":"https://sweeprdeepblock.com/guides/how-to-block-youtube-ads-chrome-manifest-v3-2026"},{"@type":"ListItem","position":3,"name":"Block YouTube Ads Chrome MV3 (2026) | SWEEPR DeepBlock","item":"https://sweeprdeepblock.com/guides/how-to-block-youtube-ads-chrome-manifest-v3-2026"}]}</script>
   
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"SWEEPR DeepBlock","operatingSystem":"Windows, macOS, iOS, Android, Chrome, Edge, Firefox, Safari, Brave, Opera","applicationCategory":"BrowserApplication","offers":{"@type":"AggregateOffer","priceCurrency":"GBP","lowPrice":"1.99","highPrice":"89.99","offerCount":"4","validFrom":"2026-01-01","priceValidUntil":"2027-12-31","availability":"https://schema.org/InStock","url":"https://sweeprdeepblock.com/pricing"},"softwareVersion":"1.2.9"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"SWEEPR DeepBlock","operatingSystem":"Windows, macOS, iOS, Android, Chrome, Edge, Firefox, Safari, Brave, Opera","applicationCategory":"BrowserApplication","offers":{"@type":"AggregateOffer","priceCurrency":"GBP","lowPrice":"1.99","highPrice":"89.99","offerCount":"4","validFrom":"2026-01-01","priceValidUntil":"2027-12-31","availability":"https://schema.org/InStock","url":"https://sweeprdeepblock.com/pricing"},"softwareVersion":"1.3.1"}</script>
   <link rel="stylesheet" href="/style.css" />
   <!-- Google tag (gtag.js) - Sweepr Deepblock -->
   <script async src="/metrics/js?id=G-01MNBQSL9K"></script>
@@ -52,33 +52,35 @@
   <header style="border-bottom:1px solid #1e293b;padding:16px 24px;display:flex;justify-content:space-between;align-items:center;max-width:1080px;margin:0 auto;">
     <a href="/" style="color:#f8fafc;font-weight:800;font-size:1.15rem;text-decoration:none;">SWEEPR <span style="color:#10b981;">DeepBlock</span></a>
     <nav style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;">
-      <a href="/test-lab" style="color:#94a3b8;text-decoration:none;">8/8 Test Lab</a>
-      <a href="/pricing" style="color:#94a3b8;text-decoration:none;">Pricing</a>
+      <a href="/test-lab" style="color:#cbd5e1;text-decoration:none;">8/8 Test Lab</a>
+        <a href="/benchmarks" style="color:#34d399;text-decoration:none;font-weight:600;">Benchmarks</a>
+      <a href="/pricing" style="color:#cbd5e1;text-decoration:none;">Pricing</a>
       <a href="/download" style="color:#cbd5e1;text-decoration:none;font-weight:600;">Free Extension</a>
       <a href="/order?plan=annual" style="background:#10b981;color:#042f2e;font-weight:700;padding:8px 16px;border-radius:8px;text-decoration:none;">Get SWEEPR DeepBlock Pro &rarr;</a>
     </nav>
   </header>
   <main style="max-width:960px;margin:0 auto;padding:42px 24px;">
-    <span style="display:inline-block;background:rgba(16,185,129,0.15);color:#10b981;padding:4px 12px;border-radius:999px;font-size:0.8rem;font-weight:700;margin-bottom:12px;">SWEEPR DeepBlock v1.2.9 • 2026 Verified Guide</span>
+    <span style="display:inline-block;background:rgba(16,185,129,0.15);color:#34d399;padding:4px 12px;border-radius:999px;font-size:0.8rem;font-weight:700;margin-bottom:12px;">SWEEPR DeepBlock v1.3.1 • 2026 Verified Guide</span>
     <h1 style="font-size:2.1rem;line-height:1.22;margin:0 0 16px;">How to Block YouTube Ads on Chrome Manifest V3 Without Detection in 2026</h1>
-    <p style="font-size:1.1rem;color:#94a3b8;margin-bottom:28px;">Learn how SWEEPR DeepStealth bypasses YouTube anti-adblock detection scripts on Chrome Manifest V3 using declarativeNetRequest and cosmetic scriptlets.</p>
+    <p style="font-size:1.1rem;color:#cbd5e1;margin-bottom:28px;">Learn how SWEEPR DeepBlock v1.3.1 DeepStealth bypasses YouTube anti-adblock detection scripts on Chrome Manifest V3 using 271 static C++ <code>declarativeNetRequest</code> rules, 100 OTA rules, Google IMA surrogate redirects, and isolated-world cosmetic scriptlets.</p>
     <section aria-label="Direct Answer Summary" style="margin:20px 0;padding:18px 20px;background:#0f172a;border:1px solid #1e293b;border-left:4px solid #10b981;border-radius:10px;">
-      <p style="margin:0;color:#e2e8f0;font-size:0.96rem;line-height:1.6;"><strong>Summary Answer:</strong> Learn how SWEEPR DeepStealth bypasses YouTube anti-adblock detection scripts on Chrome Manifest V3 using declarativeNetRequest and cosmetic scriptlets.</p>
+      <p style="margin:0;color:#e2e8f0;font-size:0.96rem;line-height:1.6;"><strong>Summary Answer:</strong> SWEEPR DeepBlock v1.3.1 intercepts YouTube ad telemetry and Google IMA pre-roll bids at the C++ network stack while serving clean local surrogate responses, eliminating "Ad blockers are not allowed on YouTube" modals with zero playback delay.</p>
       <div style="margin-top:10px;display:flex;gap:14px;flex-wrap:wrap;font-size:0.84rem;font-weight:700;">
-        <a href="/test-lab" style="color:#10b981;text-decoration:underline;">Run 8/8 Live Anti-Detection Test →</a>
-        <a href="/tools/is-my-adblocker-working" style="color:#38bdf8;text-decoration:underline;">Check Adblocker Protection →</a>
+        <a href="/test-lab" style="color:#34d399;text-decoration:underline;">Run 8/8 Live Anti-Detection Test →</a>
+        <a href="/benchmarks" style="color:#38bdf8;text-decoration:underline;">View v1.3.1 MV3 Benchmarks →</a>
+        <a href="/setup/google-chrome-manifest-v3" style="color:#cbd5e1;text-decoration:underline;">Chrome MV3 Setup Guide →</a>
       </div>
     </section>
     
-    <h2>How SWEEPR DeepBlock Solves This Automatically</h2>
+    <h2>How SWEEPR DeepBlock v1.3.1 Stops YouTube Anti-Adblock Without Playback Delay</h2>
     
-    <p>With Chrome, Edge, Brave, and Chromium browsers enforcing Manifest V3 rules in 2026, legacy script blockers frequently fail or cause page layout freezes. <strong>SWEEPR DeepBlock v1.2.9</strong> resolves this at both the network layer (<code>declarativeNetRequest</code>) and the DOM scriptlet layer in under 50 milliseconds.</p>
+    <p>With Chrome, Edge, Brave, and Chromium browsers enforcing Manifest V3 rules in 2026, legacy script blockers frequently fail or trigger artificial 5-second black-screen delays. <strong>SWEEPR DeepBlock v1.3.1</strong> pairs Google IMA / <code>pagead</code> surrogate redirects with C++ <code>declarativeNetRequest</code> filtering (271 static + 100 OTA delta rules) and DOM observer cleanup in under 50 milliseconds.</p>
 
     <h2>Step-by-Step Implementation Guide</h2>
     <ol>
-      <li><strong>Add SWEEPR DeepBlock v1.2.9:</strong> Install the extension in 30 seconds from <a href="/download">sweeprdeepblock.com/download</a> for Chrome, Firefox, Edge, Safari, Brave, Opera, Arc, or Orion.</li>
+      <li><strong>Add SWEEPR DeepBlock v1.3.1:</strong> Install the extension in 30 seconds from <a href="/download" style="color:#34d399;">sweeprdeepblock.com/download</a> or follow our <a href="/setup/google-chrome-manifest-v3" style="color:#34d399;">Chrome MV3 Setup Guide</a>.</li>
       <li><strong>Enable All 6 Protection Engines:</strong> Open the toolbar popup to confirm Video &amp; Page Ad Blocking, Auto-Decline Cookie Pop-Ups, Hide Search Engine Spam, Scam Online Shop Alerts, and Tracker-Free Links are active.</li>
-      <li><strong>Verify in the 8-Point Test Lab:</strong> Run our live <a href="/test-lab">8-Point Adblock &amp; Anti-Detection Test Lab</a> to benchmark your browser in real time.</li>
+      <li><strong>Verify in the 8-Point Test Lab:</strong> Run our live <a href="/test-lab" style="color:#34d399;">8-Point Adblock Test Lab</a> to benchmark YouTube IMA &amp; anti-detection checks in real time.</li>
     </ol>
 
     <h2>Key Performance &amp; Privacy Metrics</h2>
@@ -88,9 +90,9 @@
       <li><strong>Local-First Privacy Architecture:</strong> 100% local rule execution — your browsing history never leaves your device.</li>
     </ul>
     <h2 style="margin-top:36px;">Frequently Asked Questions</h2>
-    <div style="background:#111827;border:1px solid #1e293b;border-radius:10px;padding:18px;margin:14px 0;"><h3 style="margin:0 0 8px;">Does SWEEPR DeepBlock handle block youtube ads chrome mv3 automatically?</h3><p style="margin:0;color:#cbd5e1;">Yes. Once installed, SWEEPR DeepBlock v1.2.9 applies these rules automatically in under 50ms across all supported desktop and mobile browsers without manual filter maintenance.</p></div>
+    <div style="background:#111827;border:1px solid #1e293b;border-radius:10px;padding:18px;margin:14px 0;"><h3 style="margin:0 0 8px;">Does SWEEPR DeepBlock handle block youtube ads chrome mv3 automatically?</h3><p style="margin:0;color:#cbd5e1;">Yes. Once installed, SWEEPR DeepBlock v1.3.1 applies 271 static C++ DNR + 100 OTA rules automatically in under 50ms across all supported desktop and mobile browsers without manual filter maintenance.</p></div>
 <div style="background:#111827;border:1px solid #1e293b;border-radius:10px;padding:18px;margin:14px 0;"><h3 style="margin:0 0 8px;">Which browsers support this SWEEPR DeepBlock protection module?</h3><p style="margin:0;color:#cbd5e1;">All 6 protection modules are supported across Google Chrome (MV3), Mozilla Firefox, Microsoft Edge, Apple Safari (macOS & iOS), Brave, Opera GX, Vivaldi, Arc, Orion, Floorp, Zen, and Thorium.</p></div>
-<div style="background:#111827;border:1px solid #1e293b;border-radius:10px;padding:18px;margin:14px 0;"><h3 style="margin:0 0 8px;">How can I verify that protection is active on my browser?</h3><p style="margin:0;color:#cbd5e1;">Open https://sweeprdeepblock.com/test-lab to run all 8 live anti-detection, tracker-blocking, and fingerprint verification checks.</p></div>
+<div style="background:#111827;border:1px solid #1e293b;border-radius:10px;padding:18px;margin:14px 0;"><h3 style="margin:0 0 8px;">How can I verify that protection is active on my browser?</h3><p style="margin:0;color:#cbd5e1;">Open <a href="/test-lab" style="color:#34d399;">sweeprdeepblock.com/test-lab</a> to run all 8 live anti-detection, tracker-blocking, and fingerprint verification checks, or view <a href="/benchmarks" style="color:#38bdf8;">/benchmarks</a>.</p></div>
     <div style="margin-top:36px;padding:24px;background:#111827;border:1px solid #10b981;border-radius:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;">
       <div style="max-width:540px;">
         <strong style="font-size:1.1rem;">Zero Ads. Zero Cookie Pop-Ups. Cut Browser RAM by 62%.</strong>
@@ -112,7 +114,7 @@
             <span style="font-size:0.72rem;background:rgba(56,189,248,0.14);color:#38bdf8;padding:2px 8px;border-radius:999px;font-weight:700;">KD 10 &bull; Score 60.3</span>
           </div>
           <p style="margin:0;font-size:0.86rem;color:#cbd5e1;line-height:1.55;">
-            SWEEPR DeepBlock v1.2.9 resolves <strong>chrome extension to block youtube ads</strong> natively via 242 C++ <code>declarativeNetRequest</code> rules (15&micro;s latency), &lt;50ms GDPR cookie auto-rejection, and transparent <strong>&pound;29.99/yr Pro</strong> pricing (or <strong>&pound;89.99/yr Complete Security Suite</strong> with VPN, Cleaner &amp; RAM Tamer).
+            SWEEPR DeepBlock v1.3.1 resolves <strong>chrome extension to block youtube ads</strong> natively via 271 static + 100 OTA C++ <code>declarativeNetRequest</code> rules (15&micro;s latency), &lt;50ms GDPR cookie auto-rejection, and transparent <strong>&pound;29.99/yr Pro</strong> pricing (or <strong>&pound;89.99/yr Complete Security Suite</strong> with VPN, Cleaner &amp; RAM Tamer).
           </p>
         </div>
       </div>
@@ -121,11 +123,11 @@
       <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;">
         <h2 style="font-size:1.22rem;margin:0;color:#f8fafc;">Live MV3 DeclarativeNetRequest &amp; DeepStealth Rule Telemetry (how-to-block-youtube-ads-chrome-manifest-v3-2026)</h2>
         <span style="font-size:0.75rem;background:rgba(16,185,129,0.14);color:#34d399;border:1px solid rgba(16,185,129,0.3);padding:4px 10px;border-radius:999px;font-weight:700;">
-          Verified Against 242 Static + 0 OTA Delta Rules
+          Verified Against 271 Static + 100 OTA Delta Rules
         </span>
       </div>
       <p style="color:#94a3b8;font-size:0.9rem;line-height:1.55;margin:0 0 14px;">
-        Below is a live sample of active Chromium &amp; Gecko rules executed by SWEEPR DeepBlock v1.2.9 for <code>/guides/how-to-block-youtube-ads-chrome-manifest-v3-2026</code>. Network rules execute in C++ browser memory (avg <strong>21&micro;s</strong> lookup latency, <strong>1.1ms</strong> DOM observer pass, saving <strong>~217 MB RAM</strong> per active session):
+        Below is a live sample of active Chromium &amp; Gecko rules executed by SWEEPR DeepBlock v1.3.1 for <code>/guides/how-to-block-youtube-ads-chrome-manifest-v3-2026</code>. Network rules execute in C++ browser memory (avg <strong>21&micro;s</strong> lookup latency, <strong>1.1ms</strong> DOM observer pass, saving <strong>~217 MB RAM</strong> per active session):
       </p>
       <div style="overflow-x:auto;">
         <table style="width:100%;border-collapse:collapse;font-size:0.82rem;color:#e2e8f0;">
@@ -216,25 +218,25 @@
         </a>
       </div>
     </section>
-    <footer style="margin-top:36px;padding-top:20px;border-top:1px solid #1e293b;color:#64748b;font-size:0.8rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;">
-      <div>Publisher: <strong>SWEEPR</strong> (UK) • Requirements: Windows 10/11, macOS, iOS, Android (Chrome, Edge, Firefox, Safari, Brave, Opera) • Version 1.2.9</div>
+    <footer style="margin-top:36px;padding-top:20px;border-top:1px solid #1e293b;color:#94a3b8;font-size:0.8rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+      <div>Publisher: <strong>SWEEPR Global Limited</strong> (UK) • Requirements: Windows 10/11, macOS, iOS, Android (Chrome, Edge, Firefox, Safari, Brave, Opera) • Version 1.3.1</div>
       <div style="display:flex;gap:14px;flex-wrap:wrap;">
-        <a href="/" style="color:#94a3b8;text-decoration:none;">Home</a>
-        <a href="/test-lab" style="color:#94a3b8;text-decoration:none;">8/8 Test Lab</a>
-        <a href="/tools" style="color:#94a3b8;text-decoration:none;">Free Privacy Tools</a>
-        <a href="/site" style="color:#94a3b8;text-decoration:none;">Site Ad Audits</a>
-        <a href="/stories" style="color:#94a3b8;text-decoration:none;">Customer Stories</a>
-        <a href="/glossary" style="color:#94a3b8;text-decoration:none;">Privacy Glossary</a>
-        <a href="/de" style="color:#94a3b8;text-decoration:none;">Deutsch (/de)</a>
-        <a href="/fr" style="color:#94a3b8;text-decoration:none;">Français (/fr)</a>
-        <a href="/es" hreflang="es" style="color:#94a3b8;text-decoration:none;">Español (/es)</a>
-        <a href="/vs/total-adblock" style="color:#94a3b8;text-decoration:none;">vs Total Adblock</a>
-        <a href="https://sweeprcleaner.com?utm_source=sweeprdeepblock&amp;utm_medium=footer" rel="noopener" style="color:#10b981;text-decoration:none;font-weight:600;">Sweepr Cleaner</a>
-        <a href="https://sweeprvpn.com?utm_source=sweeprdeepblock&amp;utm_medium=footer" rel="noopener" style="color:#10b981;text-decoration:none;font-weight:600;">Sweepr VPN</a>
-        <a href="/support" style="color:#94a3b8;text-decoration:none;">How to Uninstall / Cancel</a>
-        <a href="/refund" style="color:#94a3b8;text-decoration:none;">Refund Policy</a>
-        <a href="/privacy" style="color:#94a3b8;text-decoration:none;">Privacy Policy</a>
-        <a href="/terms" style="color:#94a3b8;text-decoration:none;">Terms</a>
+        <a href="/" style="color:#cbd5e1;text-decoration:none;">Home</a>
+        <a href="/test-lab" style="color:#cbd5e1;text-decoration:none;">8/8 Test Lab</a>
+        <a href="/tools" style="color:#cbd5e1;text-decoration:none;">Free Privacy Tools</a>
+        <a href="/site" style="color:#cbd5e1;text-decoration:none;">Site Ad Audits</a>
+        <a href="/stories" style="color:#cbd5e1;text-decoration:none;">Customer Stories</a>
+        <a href="/glossary" style="color:#cbd5e1;text-decoration:none;">Privacy Glossary</a>
+        <a href="/de" style="color:#cbd5e1;text-decoration:none;">Deutsch (/de)</a>
+        <a href="/fr" style="color:#cbd5e1;text-decoration:none;">Français (/fr)</a>
+        <a href="/es" hreflang="es" style="color:#cbd5e1;text-decoration:none;">Español (/es)</a>
+        <a href="/vs/total-adblock" style="color:#cbd5e1;text-decoration:none;">vs Total Adblock</a>
+        <a href="https://sweeprcleaner.com?utm_source=sweeprdeepblock&amp;utm_medium=footer" rel="noopener" style="color:#34d399;text-decoration:none;font-weight:600;">Sweepr Cleaner</a>
+        <a href="https://sweeprvpn.com?utm_source=sweeprdeepblock&amp;utm_medium=footer" rel="noopener" style="color:#34d399;text-decoration:none;font-weight:600;">Sweepr VPN</a>
+        <a href="/support" style="color:#cbd5e1;text-decoration:none;">How to Uninstall / Cancel</a>
+        <a href="/refund" style="color:#cbd5e1;text-decoration:none;">Refund Policy</a>
+        <a href="/privacy" style="color:#cbd5e1;text-decoration:none;">Privacy Policy</a>
+        <a href="/terms" style="color:#cbd5e1;text-decoration:none;">Terms</a>
       </div>
     </footer>
   </main>

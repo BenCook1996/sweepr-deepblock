@@ -61,11 +61,31 @@
       first_party_collection: true
     });
     const hasFirstPartyTag = document.querySelector('script[src*="/metrics/js"]');
-    if (!hasFirstPartyTag) {
-      const s = document.createElement('script');
-      s.async = true;
-      s.src = '/metrics/js?id=G-01MNBQSL9K';
-      document.head.appendChild(s);
+    if (!hasFirstPartyTag && !window.__sweeprMetricsScheduled) {
+      window.__sweeprMetricsScheduled = true;
+      let loadedMetrics = false;
+      const loadMetrics = () => {
+        if (loadedMetrics || document.querySelector('script[src*="/metrics/js"]')) return;
+        loadedMetrics = true;
+        const s = document.createElement('script');
+        s.async = true;
+        s.src = '/metrics/js?id=G-01MNBQSL9K';
+        document.head.appendChild(s);
+      };
+      ['pointerdown', 'keydown', 'scroll', 'touchstart'].forEach((ev) => {
+        window.addEventListener(ev, loadMetrics, { once: true, passive: true });
+      });
+      window.addEventListener(
+        'load',
+        () => {
+          if (typeof window.requestIdleCallback === 'function') {
+            window.requestIdleCallback(loadMetrics, { timeout: 3500 });
+          } else {
+            setTimeout(loadMetrics, 3500);
+          }
+        },
+        { once: true }
+      );
     }
   } catch (e) {}
 
@@ -141,7 +161,7 @@
           window.__sweeprLiveProof = data;
           const tickers = document.querySelectorAll('[data-live-proof-ticker]');
           tickers.forEach((el) => {
-            el.textContent = `Verified Live: ${Number(data.verifiedBlockedDomainsCount || 10218).toLocaleString()}+ Ad/Scam Domains • ${data.activeMv3StaticRules || 242} C++ DNR Rules (${data.dnrLookupLatencyUs || 15}µs) • ${data.auditedPublishersCount || 150} Audited Publishers`;
+            el.textContent = `Verified Live: ${Number(data.verifiedBlockedDomainsCount || 10218).toLocaleString()}+ Ad/Scam Domains • ${data.activeMv3StaticRules || 271} C++ DNR Rules (${data.dnrLookupLatencyUs || 15}µs) • ${data.auditedPublishersCount || 150} Audited Publishers`;
           });
         })
         .catch(() => {});

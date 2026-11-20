@@ -36,10 +36,9 @@
   <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://sweeprdeepblock.com/"},{"@type":"ListItem","position":2,"name":"Pricing","item":"https://sweeprdeepblock.com/pricing"}]},{"@type":"SoftwareApplication","name":"SWEEPR Deepblock Pro","softwareVersion":"1.3.1","url":"https://sweeprdeepblock.com/pricing","image":"https://sweeprdeepblock.com/og-image.png","operatingSystem":"Chrome, Safari, Microsoft Edge, Firefox, Brave, Opera, Windows, macOS, iOS, Android","applicationCategory":"SecurityApplication","publisher":{"@type":"Organization","name":"SWEEPR Deepblock","legalName":"SWEEPR Global Limited","url":"https://sweeprdeepblock.com/"},"description":"All-in-one ad and cookie pop-up blocker that stops YouTube and banner ads, closes cookie pop-ups automatically, hides junk search results, cleans up cluttered articles, and warns about fake online shops.","offers":{"@type":"AggregateOffer","lowPrice":"1.99","highPrice":"89.99","priceCurrency":"GBP","offerCount":"4","validFrom":"2026-01-01","offers":[{"@type":"Offer","name":"Annual Plan (Save 50%)","price":"29.99","priceCurrency":"GBP","validFrom":"2026-01-01","priceValidUntil":"2027-12-31","availability":"https://schema.org/InStock","url":"https://sweeprdeepblock.com/order?plan=annual"},{"@type":"Offer","name":"6-Month Plan (Save 33%)","price":"19.99","priceCurrency":"GBP","validFrom":"2026-01-01","priceValidUntil":"2027-12-31","availability":"https://schema.org/InStock","url":"https://sweeprdeepblock.com/order?plan=six_month"},{"@type":"Offer","name":"Monthly Plan (£1.99 1st Month Intro)","price":"1.99","priceCurrency":"GBP","validFrom":"2026-01-01","priceValidUntil":"2027-12-31","availability":"https://schema.org/InStock","url":"https://sweeprdeepblock.com/order?plan=monthly"},{"@type":"Offer","name":"Sweepr Complete Security Suite (4-App Annual Bundle)","price":"89.99","priceCurrency":"GBP","validFrom":"2026-01-01","priceValidUntil":"2027-12-31","availability":"https://schema.org/InStock","url":"https://sweeprdeepblock.com/order?plan=suite_annual"}],"priceValidUntil":"2027-12-31","availability":"https://schema.org/InStock"}}]}</script>
   <link rel="stylesheet" href="/sweepr-tailwind.min.css?v=20261117">
   <link rel="stylesheet" href="/style.css?v=20261114">
-  <script src="/nav.js?v=20261108" defer></script>
+  <script src="/nav.js?v=20261120" defer></script>
   <script src="/i18n.js" defer></script>
-  <!-- Google tag (gtag.js) - Sweepr Deepblock -->
-  <script async src="/metrics/js?id=G-01MNBQSL9K"></script>
+  <!-- Google tag (gtag.js) - Sweepr Deepblock (deferred until interaction/idle) -->
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
@@ -48,6 +47,29 @@
       transport_url: window.location.origin + '/metrics',
       first_party_collection: true
     });
+    (function(){
+      if (window.__sweeprMetricsScheduled) return;
+      window.__sweeprMetricsScheduled = true;
+      var loaded = false;
+      function loadMetrics() {
+        if (loaded || document.querySelector('script[src*="/metrics/js"]')) return;
+        loaded = true;
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = '/metrics/js?id=G-01MNBQSL9K';
+        document.head.appendChild(s);
+      }
+      ['pointerdown','keydown','scroll','touchstart'].forEach(function(ev){
+        window.addEventListener(ev, loadMetrics, { once: true, passive: true });
+      });
+      window.addEventListener('load', function(){
+        if (typeof window.requestIdleCallback === 'function') {
+          window.requestIdleCallback(loadMetrics, { timeout: 3500 });
+        } else {
+          setTimeout(loadMetrics, 3500);
+        }
+      }, { once: true });
+    })();
     window.addEventListener('DOMContentLoaded', function() {
       if (typeof window.sweeprTrackEvent === 'function') {
         window.sweeprTrackEvent('view_item_list', {

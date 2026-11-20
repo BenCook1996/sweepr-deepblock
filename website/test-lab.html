@@ -4,12 +4,12 @@
   <meta name="color-scheme" content="light">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Live Adblock &amp; Anti-Detection Test Lab | SWEEPR Deepblock</title>
+  <title>Free Adblock Test &amp; Tracker Leak Check (0–100) | SWEEPR</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<meta name="description" content="Test your ad blocker live against 8 real checks: video ad scripts, anti-adblock detection walls, tracking beacons, and automatic cookie pop-up rejection.">
+<meta name="description" content="Run a free 0–100 adblock test in seconds. Check if your ad blocker stops YouTube video ads, tracking beacons, cookie banners, and anti-adblock walls.">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-  <meta name="author" content="SWEEPR">
+  <meta name="author" content="SWEEPR Global Limited">
   <meta name="theme-color" content="#0F172A">
   <link rel="canonical" href="https://sweeprdeepblock.com/test-lab" />
   <link rel="icon" type="image/svg+xml" href="/logo.svg">
@@ -20,25 +20,24 @@
   <meta property="og:site_name" content="SWEEPR Deepblock">
   <meta property="og:locale" content="en_GB">
   <meta property="og:url" content="https://sweeprdeepblock.com/test-lab">
-  <meta property="og:title" content="Live Adblock &amp; Anti-Detection Test Lab | SWEEPR Deepblock">
-  <meta property="og:description" content="Test your ad blocker live against 8 real checks: video ad scripts, anti-adblock detection walls, tracking beacons, and automatic cookie pop-up rejection.">
+  <meta property="og:title" content="Free Adblock Test &amp; Tracker Leak Check (0–100) | SWEEPR">
+  <meta property="og:description" content="Run a free 0–100 adblock test in seconds. Check if your ad blocker stops YouTube video ads, tracking beacons, cookie banners, and anti-adblock walls.">
   <meta property="og:image" content="https://sweeprdeepblock.com/og-image.png">
-  <meta property="og:image:alt" content="Live Adblock &amp; Anti-Detection Test Lab | SWEEPR Deepblock">
+  <meta property="og:image:alt" content="Free Adblock Test &amp; Tracker Leak Check (0–100) | SWEEPR">
 
   <!-- Twitter / X Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:url" content="https://sweeprdeepblock.com/test-lab">
-  <meta name="twitter:title" content="Live Adblock &amp; Anti-Detection Test Lab | SWEEPR Deepblock">
-  <meta name="twitter:description" content="Test your ad blocker live against 8 real checks: video ad scripts, anti-adblock detection walls, tracking beacons, and automatic cookie pop-up rejection.">
+  <meta name="twitter:title" content="Free Adblock Test &amp; Tracker Leak Check (0–100) | SWEEPR">
+  <meta name="twitter:description" content="Run a free 0–100 adblock test in seconds. Check if your ad blocker stops YouTube video ads, tracking beacons, cookie banners, and anti-adblock walls.">
   <meta name="twitter:image" content="https://sweeprdeepblock.com/og-image.png">
 
   <!-- Structured Data (JSON-LD) -->
-  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://sweeprdeepblock.com/"},{"@type":"ListItem","position":2,"name":"Adblock Test Lab","item":"https://sweeprdeepblock.com/test-lab"}]},{"@type":"WebApplication","name":"SWEEPR Adblock & Anti-Detection Test Lab","url":"https://sweeprdeepblock.com/test-lab","applicationCategory":"SecurityApplication","operatingSystem":"All Browsers","softwareVersion":"1.3.1","isAccessibleForFree":true,"publisher":{"@type":"Organization","@id":"https://sweeprdeepblock.com/#organization","name":"SWEEPR Global Limited","url":"https://sweeprdeepblock.com/"},"description":"Free interactive browser benchmark tool that tests ad blockers against 8 live ad, tracker, cookie pop-up, and anti-adblock detection checks.","offers":{"@type":"Offer","price":"0","priceCurrency":"GBP","availability":"https://schema.org/InStock","validFrom":"2026-01-01","priceValidUntil":"2027-12-31"}}]}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://sweeprdeepblock.com/"},{"@type":"ListItem","position":2,"name":"Free Adblock Test Lab","item":"https://sweeprdeepblock.com/test-lab"}]},{"@type":"WebApplication","name":"SWEEPR Adblock & Anti-Detection Test Lab","url":"https://sweeprdeepblock.com/test-lab","applicationCategory":"SecurityApplication","operatingSystem":"All Browsers","softwareVersion":"1.3.1","isAccessibleForFree":true,"publisher":{"@type":"Organization","@id":"https://sweeprdeepblock.com/#organization","name":"SWEEPR Global Limited","url":"https://sweeprdeepblock.com/"},"description":"Free interactive 0–100 adblock test that benchmarks extensions against 8 live ad, tracker, cookie pop-up, and anti-adblock detection checks.","offers":{"@type":"Offer","price":"0","priceCurrency":"GBP","availability":"https://schema.org/InStock","validFrom":"2026-01-01","priceValidUntil":"2027-12-31"}}]}</script>
   <link rel="stylesheet" href="/sweepr-tailwind.min.css?v=20261117">
   <link rel="stylesheet" href="/style.css?v=20261114">
-  <script src="/nav.js?v=20261108" defer></script>
-  <!-- Google tag (gtag.js) - Sweepr Deepblock -->
-  <script async src="/metrics/js?id=G-01MNBQSL9K"></script>
+  <script src="/nav.js?v=20261120" defer></script>
+  <!-- Google tag (gtag.js) - Sweepr Deepblock (deferred until interaction/idle) -->
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
@@ -47,6 +46,29 @@
       transport_url: window.location.origin + '/metrics',
       first_party_collection: true
     });
+    (function(){
+      if (window.__sweeprMetricsScheduled) return;
+      window.__sweeprMetricsScheduled = true;
+      var loaded = false;
+      function loadMetrics() {
+        if (loaded || document.querySelector('script[src*="/metrics/js"]')) return;
+        loaded = true;
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = '/metrics/js?id=G-01MNBQSL9K';
+        document.head.appendChild(s);
+      }
+      ['pointerdown','keydown','scroll','touchstart'].forEach(function(ev){
+        window.addEventListener(ev, loadMetrics, { once: true, passive: true });
+      });
+      window.addEventListener('load', function(){
+        if (typeof window.requestIdleCallback === 'function') {
+          window.requestIdleCallback(loadMetrics, { timeout: 3500 });
+        } else {
+          setTimeout(loadMetrics, 3500);
+        }
+      }, { once: true });
+    })();
   </script>
 </head>
 <body class="text-gray-800 min-h-screen flex flex-col">
@@ -70,24 +92,28 @@
   <main class="max-w-6xl mx-auto px-6 pt-28 pb-20 w-full flex-1">
     <div class="text-center max-w-3xl mx-auto mb-10">
       <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100 border border-emerald-200 mb-3">
-        🛡️ Live 8-Point Browser Protection Checkup
+        🛡️ Live 8-Point Adblock Test (0–100 Score)
       </div>
       <h1 class="text-3xl sm:text-5xl font-black text-gray-900 tracking-tight mb-3">
-        See SWEEPR Deepblock in Action
+        Free Adblock Test &amp; Tracker Leak Check (0–100 Score)
       </h1>
       <p class="text-gray-600 text-base">
-        We just tested your browser against <strong>8 real-world ad, pop-up, and tracker checks</strong> to make sure you can watch videos, read news sites, and browse without annoying interruptions.
+        Test your ad blocker live against <strong>8 real-world ad, pop-up, and tracker checks</strong> (works with Chrome, Firefox, Edge, Safari, Brave, or any extension) to verify video ads, tracking beacons, and anti-adblock walls stay blocked.
       </p>
     </div>
 
     <!-- Score Summary Banner -->
     <div class="glass-card p-6 mb-8 border border-emerald-200 shadow-lg flex flex-col sm:flex-row items-center justify-between gap-6">
       <div>
-        <div class="text-xs font-bold uppercase tracking-wider text-emerald-700">Your Protection Status</div>
+        <div class="text-xs font-bold uppercase tracking-wider text-emerald-700">Your Adblock Test Score</div>
         <div class="text-3xl sm:text-4xl font-black text-gray-900 mt-1" id="scoreHeadline">Checking Your Browser...</div>
         <p class="text-xs text-gray-500 mt-1" id="scoreSubtext">Testing video ad blocking, pop-up protection, and tracker blocking...</p>
       </div>
-      <div class="flex items-center gap-4">
+      <div class="flex items-center gap-3 sm:gap-4 flex-wrap justify-center">
+        <div class="text-center px-5 py-3 rounded-2xl bg-slate-900 text-white border border-emerald-500/40">
+          <div class="text-2xl font-black text-emerald-400" id="scorePercentBadge">0 / 100</div>
+          <div class="text-[11px] font-bold text-slate-300 uppercase">Test Score</div>
+        </div>
         <div class="text-center px-5 py-3 rounded-2xl bg-emerald-50 border border-emerald-200">
           <div class="text-2xl font-black text-emerald-700" id="passCount">0 / 8</div>
           <div class="text-[11px] font-bold text-emerald-800 uppercase">Checks Passed</div>
@@ -189,11 +215,14 @@
             <button type="button" id="copyReferralChallengeBtn" class="py-3 px-5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs sm:text-sm cursor-pointer shadow-lg transition-colors">
               Copy Challenge Link &amp; Earn +30 Days Pro →
             </button>
+            <button type="button" id="copyEmbedBadgeBtn" class="py-3 px-5 rounded-xl bg-white/10 hover:bg-white/15 text-emerald-200 font-bold text-xs sm:text-sm border border-emerald-400/30 cursor-pointer transition-colors">
+              Copy Markdown / HTML Score Badge
+            </button>
             <a href="/download?install=1" class="py-3 px-5 rounded-xl bg-white/10 hover:bg-white/15 text-white font-bold text-xs sm:text-sm border border-white/15 no-underline transition-colors">
               Install Free Extension
             </a>
-            <a href="/order?plan=suite_annual" class="py-3 px-5 rounded-xl bg-white/10 hover:bg-white/15 text-emerald-100 font-bold text-xs sm:text-sm border border-emerald-400/30 no-underline transition-colors">
-              Explore Complete Suite →
+            <a href="/benchmarks" class="py-3 px-5 rounded-xl bg-white/10 hover:bg-white/15 text-emerald-100 font-bold text-xs sm:text-sm border border-emerald-400/30 no-underline transition-colors">
+              v1.3.1 MV3 Benchmarks →
             </a>
           </div>
           <div id="referralStatusHint" class="text-xs font-mono text-emerald-300 pt-1">Generating your anonymous zero-email challenge link...</div>
@@ -473,7 +502,10 @@
 
       // Render Results
       const passedTotal = results.filter((r) => r.passed).length;
+      const pctScore = Math.round((passedTotal / Math.max(1, results.length)) * 100);
       document.getElementById('passCount').textContent = `${passedTotal} / ${results.length}`;
+      const scoreBadgeEl = document.getElementById('scorePercentBadge');
+      if (scoreBadgeEl) scoreBadgeEl.textContent = `${pctScore} / 100`;
       const badge = document.getElementById('overallStatusBadge');
       if (passedTotal === results.length) {
         badge.textContent = '✓ 100% PROTECTED (8/8 PASSED)';
@@ -517,7 +549,6 @@
 
       // Initialize Zero-Email Viral Scorecard & Referral Link
       try {
-        const pctScore = Math.round((passedTotal / Math.max(1, results.length)) * 100);
         const deviceSeed = localStorage.getItem('sweepr_ga4_cid') || 'anon_' + Date.now();
         const refRes = await fetch('/api/referral/create', {
           method: 'POST',
@@ -526,6 +557,7 @@
         }).then((r) => (r.ok ? r.json() : null)).catch(() => null);
         const refCode = (refRes && refRes.code) || 'verified';
         const challengeUrl = (refRes && refRes.shareUrls && refRes.shareUrls.testLabChallenge) || `${window.location.origin}/test-lab?ref=${refCode}`;
+        const badgeSvgUrl = `https://sweeprdeepblock.com/api/test-lab/share-card.svg?score=${pctScore}&blocked=${passedTotal}&ram=640&ref=${encodeURIComponent(refCode)}`;
         const badgeImg = document.getElementById('liveShareCardBadgeImg');
         if (badgeImg) {
           badgeImg.src = `/api/test-lab/share-card.svg?score=${pctScore}&blocked=${passedTotal}&ram=640&ref=${encodeURIComponent(refCode)}`;
@@ -541,6 +573,17 @@
             copyBtn.textContent = '✓ Copied Challenge Link (' + refCode + ')!';
             if (typeof window.sweeprTrackEvent === 'function') {
               window.sweeprTrackEvent('test_lab_referral_shared', { code: refCode, score: pctScore });
+            }
+          };
+        }
+        const copyEmbedBtn = document.getElementById('copyEmbedBadgeBtn');
+        if (copyEmbedBtn) {
+          copyEmbedBtn.onclick = () => {
+            const mdSnippet = `[![My Browser Adblock Test Score (${pctScore}/100)](${badgeSvgUrl})](https://sweeprdeepblock.com/test-lab)`;
+            navigator.clipboard.writeText(mdSnippet).catch(() => {});
+            copyEmbedBtn.textContent = `✓ Copied Markdown Badge (${pctScore}/100)!`;
+            if (typeof window.sweeprTrackEvent === 'function') {
+              window.sweeprTrackEvent('test_lab_embed_badge_copied', { code: refCode, score: pctScore });
             }
           };
         }

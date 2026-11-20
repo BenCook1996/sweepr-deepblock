@@ -36,8 +36,7 @@
   
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"SWEEPR DeepBlock","operatingSystem":"Windows, macOS, iOS, Android, Chrome, Edge, Firefox, Safari, Brave, Opera","applicationCategory":"BrowserApplication","offers":{"@type":"AggregateOffer","priceCurrency":"GBP","lowPrice":"1.99","highPrice":"89.99","offerCount":"4","validFrom":"2026-01-01","priceValidUntil":"2027-12-31","availability":"https://schema.org/InStock","url":"https://sweeprdeepblock.com/pricing"},"softwareVersion":"1.3.1"}</script>
   <link rel="stylesheet" href="/style.css" />
-  <!-- Google tag (gtag.js) - Sweepr Deepblock -->
-  <script async src="/metrics/js?id=G-01MNBQSL9K"></script>
+  <!-- Google tag (gtag.js) - Sweepr Deepblock (deferred until interaction/idle) -->
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
@@ -46,6 +45,29 @@
       transport_url: window.location.origin + '/metrics',
       first_party_collection: true
     });
+    (function(){
+      if (window.__sweeprMetricsScheduled) return;
+      window.__sweeprMetricsScheduled = true;
+      var loaded = false;
+      function loadMetrics() {
+        if (loaded || document.querySelector('script[src*="/metrics/js"]')) return;
+        loaded = true;
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = '/metrics/js?id=G-01MNBQSL9K';
+        document.head.appendChild(s);
+      }
+      ['pointerdown','keydown','scroll','touchstart'].forEach(function(ev){
+        window.addEventListener(ev, loadMetrics, { once: true, passive: true });
+      });
+      window.addEventListener('load', function(){
+        if (typeof window.requestIdleCallback === 'function') {
+          window.requestIdleCallback(loadMetrics, { timeout: 3500 });
+        } else {
+          setTimeout(loadMetrics, 3500);
+        }
+      }, { once: true });
+    })();
   </script>
 </head>
 <body style="font-family:system-ui,-apple-system,sans-serif;background:#090d16;color:#f8fafc;margin:0;line-height:1.65;">

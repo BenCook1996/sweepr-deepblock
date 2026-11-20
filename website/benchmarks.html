@@ -37,8 +37,8 @@
 
   <link rel="stylesheet" href="/sweepr-tailwind.min.css?v=20261117">
   <link rel="stylesheet" href="/style.css?v=20261114">
-  <script src="/nav.js?v=20261108" defer></script>
-  <script async src="/metrics/js?id=G-01MNBQSL9K"></script>
+  <script src="/nav.js?v=20261120" defer></script>
+  <!-- Google tag (gtag.js) - Sweepr Deepblock (deferred until interaction/idle) -->
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
@@ -47,6 +47,29 @@
       transport_url: window.location.origin + '/metrics',
       first_party_collection: true
     });
+    (function(){
+      if (window.__sweeprMetricsScheduled) return;
+      window.__sweeprMetricsScheduled = true;
+      var loaded = false;
+      function loadMetrics() {
+        if (loaded || document.querySelector('script[src*="/metrics/js"]')) return;
+        loaded = true;
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = '/metrics/js?id=G-01MNBQSL9K';
+        document.head.appendChild(s);
+      }
+      ['pointerdown','keydown','scroll','touchstart'].forEach(function(ev){
+        window.addEventListener(ev, loadMetrics, { once: true, passive: true });
+      });
+      window.addEventListener('load', function(){
+        if (typeof window.requestIdleCallback === 'function') {
+          window.requestIdleCallback(loadMetrics, { timeout: 3500 });
+        } else {
+          setTimeout(loadMetrics, 3500);
+        }
+      }, { once: true });
+    })();
   </script>
 </head>
 <body class="text-gray-800 bg-slate-50 min-h-screen flex flex-col">
