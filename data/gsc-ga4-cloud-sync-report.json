@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-20T14:17:49.468Z",
-  "durationMs": 82626,
+  "generatedAt": "2026-11-21T14:49:57.947Z",
+  "durationMs": 53936,
   "mode": "live_google_cloud_service_account_api",
   "serviceAccountConfigured": true,
   "serviceAccountEmail": "sweepr-seo-bot@sweepr-514223.iam.gserviceaccount.com",
@@ -268,9 +268,9 @@
     },
     "inspectedUrls": [
       {
-        "url": "https://sweeprdeepblock.com/pricing",
-        "verdict": "NEUTRAL",
-        "coverageState": "Crawled - currently not indexed"
+        "url": "https://sweeprdeepblock.com/",
+        "verdict": "PASS",
+        "coverageState": "Submitted and indexed"
       },
       {
         "url": "https://sweeprdeepblock.com/download",
@@ -278,43 +278,58 @@
         "coverageState": "Crawled - currently not indexed"
       },
       {
-        "url": "https://sweeprdeepblock.com/tools/is-my-adblocker-working",
+        "url": "https://sweeprdeepblock.com/pricing",
         "verdict": "NEUTRAL",
-        "coverageState": "URL is unknown to Google"
+        "coverageState": "Crawled - currently not indexed"
       },
       {
-        "url": "https://sweeprdeepblock.com/tools/is-this-shop-a-scam",
+        "url": "https://sweeprdeepblock.com/test-lab",
         "verdict": "NEUTRAL",
-        "coverageState": "URL is unknown to Google"
+        "coverageState": "Crawled - currently not indexed"
       },
       {
-        "url": "https://sweeprdeepblock.com/stories",
+        "url": "https://sweeprdeepblock.com/setup/arc-browser-windows-mac",
         "verdict": "NEUTRAL",
-        "coverageState": "URL is unknown to Google"
+        "coverageState": "Crawled - currently not indexed"
+      },
+      {
+        "url": "https://sweeprdeepblock.com/setup/brave-macos-apple-silicon",
+        "verdict": "PASS",
+        "coverageState": "Submitted and indexed"
+      },
+      {
+        "url": "https://sweeprdeepblock.com/setup/floorp-browser-firefox-fork",
+        "verdict": "PASS",
+        "coverageState": "Submitted and indexed"
+      },
+      {
+        "url": "https://sweeprdeepblock.com/setup/kiwi-browser-android",
+        "verdict": "PASS",
+        "coverageState": "Submitted and indexed"
       }
     ]
   },
   "latestGa4Snapshot": {
-    "date": "2026-11-20",
-    "activeUsers28d": 164,
-    "sessions28d": 188,
-    "engagementRatePct": 33,
-    "avgSessionDurationSec": 71.2,
+    "date": "2026-11-21",
+    "activeUsers28d": 179,
+    "sessions28d": 204,
+    "engagementRatePct": 36.8,
+    "avgSessionDurationSec": 66.7,
     "extensionInstallsStarted": 2,
-    "testLabRuns": 2,
-    "beginCheckout": 39,
+    "testLabRuns": 18,
+    "beginCheckout": 51,
     "orderPaymentErrors": 2,
     "purchases": 0,
     "source": "ga4_data_api_v1beta"
   },
   "warnings": [],
   "crmSync": {
-    "syncedAt": "2026-11-20T14:17:49.468Z",
+    "syncedAt": "2026-11-21T14:49:57.947Z",
     "cloudSync": {
       "url": "https://sweepr-crm-production.up.railway.app/api/crm/seo/gsc/cloud-sync",
       "status": 200,
       "ok": true,
-      "body": "{\"ok\":true,\"mode\":\"cloud_ingest\",\"project_id\":\"deepblock\",\"ingested\":54,\"keywords_added\":25,\"total_rows\":128,\"latest_date\":\"2026-11-18\"}"
+      "body": "{\"ok\":true,\"mode\":\"cloud_ingest\",\"project_id\":\"deepblock\",\"ingested\":54,\"keywords_added\":25,\"total_rows\":182,\"latest_date\":\"2026-11-19\"}"
     },
     "telemetry": {
       "url": "https://sweepr-crm-production.up.railway.app/v1/telemetry/event",
@@ -327,7 +342,7 @@
         "url": "https://sweepr-crm-production.up.railway.app/api/crm/seo/changelog",
         "status": 200,
         "ok": true,
-        "body": "{\"ok\":true,\"id\":166,\"entry\":{\"id\":166,\"project_id\":\"deepblock\",\"date\":\"2026-11-20\",\"category\":\"gsc_indexing\",\"title\":\"[DeepBlock] Cloud GSC Sync Promoted 67 Impression-Earning Pillar(s)\",\"description\""
+        "body": "{\"ok\":true,\"id\":180,\"entry\":{\"id\":180,\"project_id\":\"deepblock\",\"date\":\"2026-11-21\",\"category\":\"gsc_indexing\",\"title\":\"[DeepBlock] Cloud GSC Sync Promoted 67 Impression-Earning Pillar(s)\",\"description\""
       }
     ]
   }
