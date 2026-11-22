@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-11-22T09:04:24.245Z",
+  "generatedAt": "2026-11-22T14:46:33.134Z",
   "status": "PASS",
   "keywordEngineSummary": {
-    "totalIndexablePagesChecked": 437,
+    "totalIndexablePagesChecked": 441,
     "seedQueriesExpanded": 339,
     "rawAutocompleteHarvested": 523,
     "junkDisqualifiedCount": 3,
@@ -17,8 +17,9 @@
     "newGenerated": 0,
     "donorLinksPatched": 0,
     "newUrls": [],
-    "totalPseoPages": 263,
-    "totalSitemapUrls": 290
+    "totalPseoPages": 150,
+    "totalSitemapUrls": 441,
+    "consolidatedPermutationsNoindexed": 115
   },
   "geoSyncSummary": {
     "@context": "https://schema.org",
@@ -27,7 +28,7 @@
     "description": "Live first-party telemetry benchmark of Manifest V3 declarativeNetRequest rule performance, <50ms GDPR CMP auto-rejection, browser RAM savings, and transparent switcher pricing across 150 audited UK/US publishers.",
     "url": "https://sweeprdeepblock.com/geo-benchmark-feed.json",
     "version": "1.3.1",
-    "dateModified": "2026-11-22T09:03:52.278Z",
+    "dateModified": "2026-11-22T14:46:26.306Z",
     "creator": {
       "@type": "Organization",
       "name": "SWEEPR Global Limited",
@@ -74,9 +75,33 @@
   },
   "pageSpeedCwvAudit": {
     "pillarFilesChecked": 239,
-    "avgBrotliBytes": 5324,
+    "avgBrotliBytes": 5308,
     "maxRawBytes": 41073,
-    "maxBrotliBytes": 6947,
+    "maxBrotliBytes": 6926,
     "budgetViolations": []
+  },
+  "version": "1.3.1",
+  "crmLogged": true,
+  "technicalSeoRemediation": {
+    "auditDate": "2026-11-22",
+    "htmlFilesAudited": 1813,
+    "canonicalUrlsTotal": 441,
+    "coreSitemapUrls": 290,
+    "siteSitemapUrls": 151,
+    "publisherSiteUrls": 150,
+    "consolidatedPermutationsNoindexed": 115,
+    "totalNoindexHtmlFiles": 1372,
+    "deprecatedFaqHowToSchemas": 0,
+    "adultDomainRulesLeaked": 0,
+    "cdnTailwindScriptsRemaining": 0,
+    "legacyCompanyStringsOnIndexable": 0,
+    "staticTailwindCssBytes": 46391,
+    "siteReportBoilerplatePct": 30.8,
+    "localizedHubs": [
+      "en",
+      "de",
+      "fr",
+      "es"
+    ]
   }
 }

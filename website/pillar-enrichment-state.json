@@ -1,6 +1,4 @@
 {
-  "cooldownDays": 14,
-  "lastRunAt": "2026-11-22T09:02:26.694Z",
   "titleUpdatedAt": {
     "/setup/thorium-chromium-browser": "2026-11-03T20:45:00.000Z",
     "/setup/orion-browser-macos-ios": "2026-11-03T20:45:00.000Z",
@@ -315,8 +313,19 @@
       "activePagesWithImpressions": 166,
       "newlyDiscoveredPaths": 67,
       "source": "gsc_cloud_api_v3"
+    },
+    {
+      "date": "2026-11-22",
+      "window": "2026-10-23..2026-11-20",
+      "impressions": 556,
+      "clicks": 7,
+      "activePagesWithImpressions": 166,
+      "newlyDiscoveredPaths": 67,
+      "source": "gsc_cloud_api_v3"
     }
   ],
+  "cooldownDays": 14,
+  "lastRunAt": "2026-11-22T14:46:23.865Z",
   "proofUpdatedAt": {
     "/setup/arc-browser-windows-mac": "2026-11-05T00:24:02.868Z",
     "/setup/brave-browser-deepstealth": "2026-11-05T00:24:02.868Z",
@@ -1163,6 +1172,19 @@
       "extensionInstallsStarted": 2,
       "testLabRuns": 18,
       "beginCheckout": 51,
+      "orderPaymentErrors": 2,
+      "purchases": 0,
+      "source": "ga4_data_api_v1beta"
+    },
+    {
+      "date": "2026-11-22",
+      "activeUsers28d": 242,
+      "sessions28d": 263,
+      "engagementRatePct": 40.7,
+      "avgSessionDurationSec": 31.5,
+      "extensionInstallsStarted": 2,
+      "testLabRuns": 29,
+      "beginCheckout": 97,
       "orderPaymentErrors": 2,
       "purchases": 0,
       "source": "ga4_data_api_v1beta"

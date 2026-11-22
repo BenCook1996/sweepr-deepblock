@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-21T14:49:57.947Z",
-  "durationMs": 53936,
+  "generatedAt": "2026-11-22T14:46:23.219Z",
+  "durationMs": 52958,
   "mode": "live_google_cloud_service_account_api",
   "serviceAccountConfigured": true,
   "serviceAccountEmail": "sweepr-seo-bot@sweepr-514223.iam.gserviceaccount.com",
@@ -310,26 +310,26 @@
     ]
   },
   "latestGa4Snapshot": {
-    "date": "2026-11-21",
-    "activeUsers28d": 179,
-    "sessions28d": 204,
-    "engagementRatePct": 36.8,
-    "avgSessionDurationSec": 66.7,
+    "date": "2026-11-22",
+    "activeUsers28d": 242,
+    "sessions28d": 263,
+    "engagementRatePct": 40.7,
+    "avgSessionDurationSec": 31.5,
     "extensionInstallsStarted": 2,
-    "testLabRuns": 18,
-    "beginCheckout": 51,
+    "testLabRuns": 29,
+    "beginCheckout": 97,
     "orderPaymentErrors": 2,
     "purchases": 0,
     "source": "ga4_data_api_v1beta"
   },
   "warnings": [],
   "crmSync": {
-    "syncedAt": "2026-11-21T14:49:57.947Z",
+    "syncedAt": "2026-11-22T14:46:23.219Z",
     "cloudSync": {
       "url": "https://sweepr-crm-production.up.railway.app/api/crm/seo/gsc/cloud-sync",
       "status": 200,
       "ok": true,
-      "body": "{\"ok\":true,\"mode\":\"cloud_ingest\",\"project_id\":\"deepblock\",\"ingested\":54,\"keywords_added\":25,\"total_rows\":182,\"latest_date\":\"2026-11-19\"}"
+      "body": "{\"ok\":true,\"mode\":\"cloud_ingest\",\"project_id\":\"deepblock\",\"ingested\":54,\"keywords_added\":25,\"total_rows\":236,\"latest_date\":\"2026-11-20\"}"
     },
     "telemetry": {
       "url": "https://sweepr-crm-production.up.railway.app/v1/telemetry/event",
@@ -342,7 +342,7 @@
         "url": "https://sweepr-crm-production.up.railway.app/api/crm/seo/changelog",
         "status": 200,
         "ok": true,
-        "body": "{\"ok\":true,\"id\":180,\"entry\":{\"id\":180,\"project_id\":\"deepblock\",\"date\":\"2026-11-21\",\"category\":\"gsc_indexing\",\"title\":\"[DeepBlock] Cloud GSC Sync Promoted 67 Impression-Earning Pillar(s)\",\"description\""
+        "body": "{\"ok\":true,\"id\":193,\"entry\":{\"id\":193,\"project_id\":\"deepblock\",\"date\":\"2026-11-22\",\"category\":\"gsc_indexing\",\"title\":\"[DeepBlock] Cloud GSC Sync Promoted 67 Impression-Earning Pillar(s)\",\"description\""
       }
     ]
   }

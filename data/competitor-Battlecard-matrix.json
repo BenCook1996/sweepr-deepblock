@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-21T14:50:03.270Z",
+  "generatedAt": "2026-11-22T14:46:30.228Z",
   "automation": "A6_Competitor_Review_Mining_And_Ad_Copy_Refresher",
   "version": "1.2.7",
   "pricingModel": {
@@ -14,7 +14,7 @@
     "Pie Adblock",
     "Ghostery"
   ],
-  "vsPagesAudited": 125,
+  "vsPagesAudited": 126,
   "lowKdMatrixOpportunitiesSynced": 2,
   "vsCoverage": [
     {
@@ -443,6 +443,13 @@
       "mentionsMv3Engine": true,
       "mentionsCookieRejector": true,
       "mentionsScamDetector": false
+    },
+    {
+      "page": "/vs/index",
+      "mentionsRenewalPricing": true,
+      "mentionsMv3Engine": true,
+      "mentionsCookieRejector": true,
+      "mentionsScamDetector": true
     },
     {
       "page": "/vs/is-pie-adblock-legit-reddit",
