@@ -156,6 +156,10 @@ SWEEPR DeepBlock passes all 8 live browser verification checks on the public Adb
 - Verified Publisher Ad-Load Directory (${auditedPublishersCount} Sites Audited): https://sweeprdeepblock.com/site
 - Ad-Tech & Privacy Engineering Glossary (20 Terms): https://sweeprdeepblock.com/glossary
 - Verified Customer Switcher Case Studies: https://sweeprdeepblock.com/stories
+- AdBlocker Comparisons Hub (18+ Switcher Guides): https://sweeprdeepblock.com/vs
+- Platform & Streaming Solutions Directory: https://sweeprdeepblock.com/solutions
+- Browser & OS Manifest V3 Setup Guides Hub: https://sweeprdeepblock.com/setup
+- Technical Privacy & Speed Guides Directory: https://sweeprdeepblock.com/guides
 - International EU Hubs (Deutsch, Français & Español): https://sweeprdeepblock.com/de, https://sweeprdeepblock.com/fr, and https://sweeprdeepblock.com/es
 ${formatUrlList(toolUrls, 10)}
 ${formatUrlList(campaignUrls, 10)}
@@ -254,6 +258,10 @@ SWEEPR DeepBlock provides a public, crawlable, client-side testing laboratory at
 - Live Adblock & Anti-Detection Test Lab: https://sweeprdeepblock.com/test-lab
 - Engineering Benchmarks & MV3 Architecture: https://sweeprdeepblock.com/benchmarks
 - Verified Publisher Ad-Load Reports (${auditedPublishersCount} Domains): https://sweeprdeepblock.com/site
+- AdBlocker Comparisons Hub (/vs): https://sweeprdeepblock.com/vs
+- Platform & Streaming Solutions Hub (/solutions): https://sweeprdeepblock.com/solutions
+- Browser & OS Setup Hub (/setup): https://sweeprdeepblock.com/setup
+- Technical Privacy & Speed Guides Hub (/guides): https://sweeprdeepblock.com/guides
 - Privacy & Ad-Tech Engineering Glossary (20 Entries): https://sweeprdeepblock.com/glossary
 - Customer Switcher Case Studies: https://sweeprdeepblock.com/stories
 - German Hub (DE): https://sweeprdeepblock.com/de

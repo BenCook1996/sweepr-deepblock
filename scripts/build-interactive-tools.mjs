@@ -603,7 +603,6 @@ for (const tool of TOOLS) {
   <!-- Structured Data -->
   <script type="application/ld+json">${JSON.stringify(breadcrumbSchema)}</script>
   <script type="application/ld+json">${JSON.stringify(webAppSchema)}</script>
-  <script type="application/ld+json">${JSON.stringify(faqSchema)}</script>
   <link rel="stylesheet" href="/style.css" />
   <!-- Google tag (gtag.js) - Sweepr Deepblock -->
   <script async src="/metrics/js?id=G-01MNBQSL9K"></script>
@@ -627,8 +626,9 @@ for (const tool of TOOLS) {
       <a href="/glossary" style="color:#94a3b8;text-decoration:none;">Glossary</a>
       <a href="/test-lab" style="color:#94a3b8;text-decoration:none;">8/8 Test Lab</a>
       <a href="/pricing" style="color:#94a3b8;text-decoration:none;">Pricing</a>
+      <a href="/vs" style="color:#94a3b8;text-decoration:none;">Comparisons</a>
       <a href="/download" style="color:#cbd5e1;text-decoration:none;font-weight:600;">Free Extension</a>
-      <a href="/order?plan=annual" style="background:#10b981;color:#042f2e;font-weight:700;padding:8px 16px;border-radius:8px;text-decoration:none;">Get SWEEPR DeepBlock Pro &rarr;</a>
+      <a href="/order?plan=annual" rel="nofollow" style="background:#10b981;color:#042f2e;font-weight:700;padding:8px 16px;border-radius:8px;text-decoration:none;">Get SWEEPR DeepBlock Pro &rarr;</a>
     </nav>
   </header>
   <main style="max-width:960px;margin:0 auto;padding:42px 24px;">
@@ -645,8 +645,8 @@ for (const tool of TOOLS) {
       </div>
       <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
         <a href="/download" style="background:#10b981;color:#042f2e;font-weight:800;padding:11px 20px;border-radius:8px;text-decoration:none;">Install Free Extension &rarr;</a>
-        <a href="/order?plan=annual" style="background:#1e293b;color:#f8fafc;border:1px solid #334155;font-weight:700;padding:10px 18px;border-radius:8px;text-decoration:none;">Unlock Pro (£2.50/mo Annual)</a>
-        <a href="/order?plan=suite_annual" style="background:rgba(16,185,129,0.14);color:#34d399;border:1px solid rgba(16,185,129,0.4);font-weight:700;padding:10px 16px;border-radius:8px;text-decoration:none;">Complete Suite (£89.99/yr) &rarr;</a>
+        <a href="/order?plan=annual" rel="nofollow" style="background:#1e293b;color:#f8fafc;border:1px solid #334155;font-weight:700;padding:10px 18px;border-radius:8px;text-decoration:none;">Unlock Pro (£2.50/mo Annual)</a>
+        <a href="/order?plan=suite_annual" rel="nofollow" style="background:rgba(16,185,129,0.14);color:#34d399;border:1px solid rgba(16,185,129,0.4);font-weight:700;padding:10px 16px;border-radius:8px;text-decoration:none;">Complete Suite (£89.99/yr) &rarr;</a>
       </div>
     </div>
 
@@ -678,8 +678,8 @@ for (const tool of TOOLS) {
         <a href="/campaigns/uk-ad-load-index" style="color:#94a3b8;text-decoration:none;">UK Ad-Load Index</a>
         <a href="/campaigns/renewal-shock-switcher" style="color:#94a3b8;text-decoration:none;">Renewal Shock Switcher</a>
         <a href="/vs/total-adblock" style="color:#94a3b8;text-decoration:none;">vs Total Adblock</a>
-        <a href="https://sweeprcleaner.com?utm_source=sweeprdeepblock&amp;utm_medium=tools" rel="noopener" style="color:#10b981;text-decoration:none;font-weight:600;">Sweepr Cleaner</a>
-        <a href="https://sweeprvpn.com?utm_source=sweeprdeepblock&amp;utm_medium=tools" rel="noopener" style="color:#10b981;text-decoration:none;font-weight:600;">Sweepr VPN</a>
+        <a href="https://sweeprcleaner.com" rel="noopener" style="color:#10b981;text-decoration:none;font-weight:600;">Sweepr Cleaner</a>
+        <a href="https://sweeprvpn.com" rel="noopener" style="color:#10b981;text-decoration:none;font-weight:600;">Sweepr VPN</a>
         <a href="/support" style="color:#94a3b8;text-decoration:none;">How to Uninstall / Cancel</a>
         <a href="/refund" style="color:#94a3b8;text-decoration:none;">Refund Policy</a>
         <a href="/privacy" style="color:#94a3b8;text-decoration:none;">Privacy Policy</a>

@@ -1292,7 +1292,7 @@ function renderHtml(cand, existingPool = [], existingIdx = 0) {
       <a href="/test-lab" style="color:#94a3b8;text-decoration:none;">8/8 Test Lab</a>
       <a href="/pricing" style="color:#94a3b8;text-decoration:none;">Pricing</a>
       <a href="/download" style="color:#cbd5e1;text-decoration:none;font-weight:600;">Free Extension</a>
-      <a href="/order?plan=annual" style="background:#10b981;color:#042f2e;font-weight:700;padding:8px 16px;border-radius:8px;text-decoration:none;">Get SWEEPR DeepBlock Pro &rarr;</a>
+      <a href="/order?plan=annual" rel="nofollow" style="background:#10b981;color:#042f2e;font-weight:700;padding:8px 16px;border-radius:8px;text-decoration:none;">Get SWEEPR DeepBlock Pro &rarr;</a>
     </nav>
   </header>
   <main${targetKwAttr} style="max-width:960px;margin:0 auto;padding:42px 24px;">
@@ -1308,24 +1308,28 @@ function renderHtml(cand, existingPool = [], existingIdx = 0) {
         <div style="color:#94a3b8;font-size:0.92rem;margin-top:4px;">Unlock all 6 Pro protection modules across 4 devices with <strong>SWEEPR DeepBlock Pro</strong> (<strong>£29.99/yr Annual Plan</strong> — £2.50/mo eq.) or get the <strong>Sweepr Complete Security Suite</strong> (DeepBlock Pro + VPN + Cleaner + RAM Tamer for <strong>£89.99/yr</strong>). Backed by our 30-day money-back guarantee.</div>
       </div>
       <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
-        <a href="/order?plan=annual" style="background:#10b981;color:#042f2e;font-weight:800;padding:11px 20px;border-radius:8px;text-decoration:none;">Unlock Pro (£29.99/yr) &rarr;</a>
-        <a href="/order?plan=suite_annual" style="background:#f59e0b;color:#090d16;font-weight:800;padding:10px 18px;border-radius:8px;text-decoration:none;">Complete Suite (£89.99/yr) &rarr;</a>
+        <a href="/order?plan=annual" rel="nofollow" style="background:#10b981;color:#042f2e;font-weight:800;padding:11px 20px;border-radius:8px;text-decoration:none;">Unlock Pro (£29.99/yr) &rarr;</a>
+        <a href="/order?plan=suite_annual" rel="nofollow" style="background:#f59e0b;color:#090d16;font-weight:800;padding:10px 18px;border-radius:8px;text-decoration:none;">Complete Suite (£89.99/yr) &rarr;</a>
         <a href="/download" style="color:#94a3b8;font-size:0.85rem;text-decoration:underline;padding:4px 8px;">Install Browser Extension</a>
       </div>
     </div>
     ${liveProofSectionHtml}
     ${relatedSectionHtml}
     <footer style="margin-top:36px;padding-top:20px;border-top:1px solid #1e293b;color:#64748b;font-size:0.8rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;">
-      <div>Publisher: <strong>SWEEPR</strong> (UK) • Requirements: Windows 10/11, macOS, iOS, Android (Chrome, Edge, Firefox, Safari, Brave, Opera) • Version 1.2.7 • No Browsing History Logged</div>
+      <div>Publisher: <strong>SWEEPR</strong> (UK) • Requirements: Windows 10/11, macOS, iOS, Android (Chrome, Edge, Firefox, Safari, Brave, Opera) • Version 1.2.9 • No Browsing History Logged</div>
       <div style="display:flex;gap:14px;flex-wrap:wrap;">
         <a href="/" style="color:#94a3b8;text-decoration:none;">Home</a>
+        <a href="/vs" style="color:#94a3b8;text-decoration:none;">All Comparisons</a>
+        <a href="/solutions" style="color:#94a3b8;text-decoration:none;">All Solutions</a>
+        <a href="/setup" style="color:#94a3b8;text-decoration:none;">All Browser Setups</a>
+        <a href="/guides" style="color:#94a3b8;text-decoration:none;">All Guides</a>
         <a href="/test-lab" style="color:#94a3b8;text-decoration:none;">8/8 Test Lab</a>
         <a href="/tools" style="color:#94a3b8;text-decoration:none;">Free Privacy Tools</a>
         <a href="/vs/total-adblock" style="color:#94a3b8;text-decoration:none;">vs Total Adblock</a>
         <a href="/stories" style="color:#94a3b8;text-decoration:none;">Customer Stories</a>
-        <a href="/order?plan=suite_annual" style="color:#f59e0b;text-decoration:none;font-weight:700;">Complete Suite (£89.99/yr)</a>
-        <a href="https://sweeprcleaner.com?utm_source=sweeprdeepblock&amp;utm_medium=footer" rel="noopener" style="color:#10b981;text-decoration:none;font-weight:600;">Sweepr Cleaner</a>
-        <a href="https://sweeprvpn.com?utm_source=sweeprdeepblock&amp;utm_medium=footer" rel="noopener" style="color:#10b981;text-decoration:none;font-weight:600;">Sweepr VPN</a>
+        <a href="/order?plan=suite_annual" rel="nofollow" style="color:#f59e0b;text-decoration:none;font-weight:700;">Complete Suite (£89.99/yr)</a>
+        <a href="https://sweeprcleaner.com" rel="noopener" style="color:#10b981;text-decoration:none;font-weight:600;">Sweepr Cleaner</a>
+        <a href="https://sweeprvpn.com" rel="noopener" style="color:#10b981;text-decoration:none;font-weight:600;">Sweepr VPN</a>
         <a href="/support" style="color:#94a3b8;text-decoration:none;">How to Uninstall / Cancel</a>
         <a href="/refund" style="color:#94a3b8;text-decoration:none;">Refund Policy</a>
         <a href="/privacy" style="color:#94a3b8;text-decoration:none;">Privacy Policy</a>
@@ -1483,6 +1487,11 @@ export async function runDaily50DeepBlockPages(targetCount = 0, force = false) {
     { loc: 'https://sweeprdeepblock.com/pricing', changefreq: 'weekly', priority: '0.9' },
     { loc: 'https://sweeprdeepblock.com/download', changefreq: 'weekly', priority: '0.9' },
     { loc: 'https://sweeprdeepblock.com/test-lab', changefreq: 'weekly', priority: '0.9' },
+    { loc: 'https://sweeprdeepblock.com/benchmarks', changefreq: 'weekly', priority: '0.9' },
+    { loc: 'https://sweeprdeepblock.com/vs', changefreq: 'weekly', priority: '0.9' },
+    { loc: 'https://sweeprdeepblock.com/solutions', changefreq: 'weekly', priority: '0.9' },
+    { loc: 'https://sweeprdeepblock.com/setup', changefreq: 'weekly', priority: '0.9' },
+    { loc: 'https://sweeprdeepblock.com/guides', changefreq: 'weekly', priority: '0.9' },
     { loc: 'https://sweeprdeepblock.com/tools', changefreq: 'weekly', priority: '0.9' },
     { loc: 'https://sweeprdeepblock.com/tools/is-my-adblocker-working', changefreq: 'weekly', priority: '0.9' },
     { loc: 'https://sweeprdeepblock.com/tools/dns-leak-test', changefreq: 'weekly', priority: '0.9' },
@@ -1492,6 +1501,7 @@ export async function runDaily50DeepBlockPages(targetCount = 0, force = false) {
     { loc: 'https://sweeprdeepblock.com/glossary', changefreq: 'weekly', priority: '0.8' },
     { loc: 'https://sweeprdeepblock.com/de', changefreq: 'weekly', priority: '0.8' },
     { loc: 'https://sweeprdeepblock.com/fr', changefreq: 'weekly', priority: '0.8' },
+    { loc: 'https://sweeprdeepblock.com/es', changefreq: 'weekly', priority: '0.8' },
     { loc: 'https://sweeprdeepblock.com/stories', changefreq: 'weekly', priority: '0.8' },
     { loc: 'https://sweeprdeepblock.com/campaigns/uk-ad-load-index', changefreq: 'weekly', priority: '0.8' },
     { loc: 'https://sweeprdeepblock.com/campaigns/renewal-shock-switcher', changefreq: 'weekly', priority: '0.8' },

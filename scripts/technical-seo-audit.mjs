@@ -235,7 +235,7 @@ for (const filePath of htmlFiles) {
   }
 
   // Live MV3 Rule Proof, Version Freshness, Static CSS & Adult-Rule Checks on indexable PSEO Pillar pages
-  if (/^(solutions|setup|vs|guides)\//i.test(rel) && rel !== 'vs/total-adblock.html') {
+  if (/^(solutions|setup|vs|guides)\//i.test(rel) && rel !== 'vs/total-adblock.html' && !rel.endsWith('/index.html')) {
     if (/Version\s+1\.2\.[257]\b/i.test(content)) {
       results.htmlWarnings.push({
         file: rel,
@@ -474,6 +474,125 @@ if (fs.existsSync(sitemapPath)) {
       type: 'sitemap_count_mismatch',
       msg: `Sitemap URL count (${sitemapUrls.length}) does not match indexable HTML pages (${results.indexablePages})`
     });
+  }
+
+  // ---- Internal Link Equity, Click Depth & Nofollow Regression Gates ----
+  const canonicalPathSet = new Set(
+    sitemapUrls.map((u) => {
+      const p = u.replace(/^https?:\/\/sweeprdeepblock\.com/i, '') || '/';
+      return p.length > 1 && p.endsWith('/') ? p.slice(0, -1) : p;
+    })
+  );
+  const toDiskHtml = (urlPath) => {
+    if (urlPath === '/') return path.join(WEBSITE_DIR, 'index.html');
+    const clean = urlPath.replace(/^\/+/, '');
+    if (fs.existsSync(path.join(WEBSITE_DIR, `${clean}.html`))) return path.join(WEBSITE_DIR, `${clean}.html`);
+    if (fs.existsSync(path.join(WEBSITE_DIR, clean, 'index.html'))) return path.join(WEBSITE_DIR, clean, 'index.html');
+    return null;
+  };
+  const followedInlinks = new Map([...canonicalPathSet].map((p) => [p, new Set()]));
+  const followedAdj = new Map([...canonicalPathSet].map((p) => [p, []]));
+  const isDisallowedUtility = (p) =>
+    /^\/(order|login|checkout)(\/|$|\.html$)/i.test(p) ||
+    /^\/(?:download\/)?[^/]+\.(exe|apk|xpi|zip|command|mobileconfig|idsig)$/i.test(p);
+
+  for (const srcPath of canonicalPathSet) {
+    const abs = toDiskHtml(srcPath);
+    if (!abs) continue;
+    const html = fs.readFileSync(abs, 'utf8');
+    const relSrc = path.relative(WEBSITE_DIR, abs).replace(/\\/g, '/');
+    const outTargets = new Set();
+    for (const m of html.matchAll(/<a\b(?:"[^"]*"|'[^']*'|[^'">])*>/gi)) {
+      const tag = m[0];
+      const hm = tag.match(/\bhref\s*=\s*(?:"([^"]*)"|'([^']*)')/i);
+      if (!hm) continue;
+      const href = (hm[1] ?? hm[2] ?? '').trim();
+      if (!href || /^(mailto:|tel:|javascript:|#)/i.test(href)) continue;
+      let targetPath = null;
+      if (href.startsWith('/') && !href.startsWith('//')) {
+        targetPath = href.split('#')[0].split('?')[0];
+      } else if (/^https?:\/\/(?:www\.)?sweeprdeepblock\.com(?:\/|$|\?|#)/i.test(href)) {
+        try {
+          targetPath = new URL(href).pathname || '/';
+        } catch {
+          targetPath = null;
+        }
+      }
+      if (!targetPath) continue;
+      targetPath = targetPath.replace(/\/{2,}/g, '/');
+      if (targetPath.length > 1 && targetPath.endsWith('/')) targetPath = targetPath.slice(0, -1);
+
+      const relMatch = tag.match(/\brel\s*=\s*(?:"([^"]*)"|'([^']*)')/i);
+      const isNofollow = Boolean(relMatch && /\bnofollow\b/i.test(relMatch[1] ?? relMatch[2] ?? ''));
+
+      if (isDisallowedUtility(targetPath) && !isNofollow) {
+        results.htmlIssues.push({
+          file: relSrc,
+          type: 'followed_disallowed_utility_link',
+          msg: `Followed link without rel="nofollow" points to robots-disallowed target: ${targetPath}`
+        });
+      } else if (isNofollow && canonicalPathSet.has(targetPath) && !isDisallowedUtility(targetPath)) {
+        results.htmlIssues.push({
+          file: relSrc,
+          type: 'nofollow_on_sitemap_url',
+          msg: `Internal rel="nofollow" points to indexable sitemap URL: ${targetPath}`
+        });
+      }
+
+      if (!isNofollow && targetPath !== srcPath && canonicalPathSet.has(targetPath)) {
+        followedInlinks.get(targetPath)?.add(srcPath);
+        outTargets.add(targetPath);
+      }
+    }
+    followedAdj.set(srcPath, [...outTargets]);
+  }
+
+  for (const p of canonicalPathSet) {
+    if (p === '/') continue;
+    const count = followedInlinks.get(p)?.size ?? 0;
+    if (count < 4) {
+      results.htmlIssues.push({
+        file: p,
+        type: 'weak_sitemap_inlinks',
+        msg: `Canonical sitemap URL has only ${count} followed incoming sitemap link(s) (minimum 4 required)`
+      });
+    }
+  }
+
+  const bfsDepth = new Map([['/', 0]]);
+  const bfsQueue = ['/'];
+  while (bfsQueue.length > 0) {
+    const cur = bfsQueue.shift();
+    for (const nxt of followedAdj.get(cur) || []) {
+      if (!bfsDepth.has(nxt)) {
+        bfsDepth.set(nxt, bfsDepth.get(cur) + 1);
+        bfsQueue.push(nxt);
+      }
+    }
+  }
+  for (const p of canonicalPathSet) {
+    const d = bfsDepth.get(p);
+    if (d === undefined || d > 3) {
+      results.htmlIssues.push({
+        file: p,
+        type: 'excessive_click_depth',
+        msg: `Canonical sitemap URL click depth is ${d === undefined ? 'unreachable' : d} (maximum 3 allowed)`
+      });
+    }
+  }
+
+  const privacyInlinks = followedInlinks.get('/privacy')?.size ?? 0;
+  const glossaryInlinks = followedInlinks.get('/glossary')?.size ?? 0;
+  const maxUtilityInlinks = Math.max(privacyInlinks, glossaryInlinks);
+  for (const moneyRoute of ['/download', '/pricing', '/vs']) {
+    const mCount = followedInlinks.get(moneyRoute)?.size ?? 0;
+    if (mCount <= maxUtilityInlinks) {
+      results.htmlIssues.push({
+        file: moneyRoute,
+        type: 'inverted_commercial_link_equity',
+        msg: `Money page ${moneyRoute} (${mCount} inlinks) must strictly exceed /privacy (${privacyInlinks}) and /glossary (${glossaryInlinks})`
+      });
+    }
   }
 } else {
   results.htmlIssues.push({ file: 'sitemap.xml', type: 'missing_sitemap', msg: 'sitemap.xml not found!' });

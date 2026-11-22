@@ -44,15 +44,7 @@ function renderEuPage({
         description,
         inLanguage: lang,
         url: canonicalUrl,
-        publisher: { '@type': 'Organization', name: 'SWEEPR Global Limited', url: 'https://sweeprdeepblock.com' }
-      },
-      {
-        '@type': 'FAQPage',
-        mainEntity: faqs.map((f) => ({
-          '@type': 'Question',
-          name: f.q,
-          acceptedAnswer: { '@type': 'Answer', text: f.a }
-        }))
+        publisher: { '@type': 'Organization', name: 'SWEEPR Global Limited', url: 'https://sweeprdeepblock.com/' }
       }
     ]
   });
@@ -67,9 +59,11 @@ function renderEuPage({
   <meta name="robots" content="index, follow" />
   <meta name="theme-color" content="#0F172A" />
   <link rel="canonical" href="${canonicalUrl}" />
-  <link rel="alternate" hreflang="en" href="https://sweeprdeepblock.com/solutions/auto-reject-cookie-popups" />
+  <link rel="alternate" hreflang="en" href="https://sweeprdeepblock.com/" />
   <link rel="alternate" hreflang="de" href="https://sweeprdeepblock.com/de" />
   <link rel="alternate" hreflang="fr" href="https://sweeprdeepblock.com/fr" />
+  <link rel="alternate" hreflang="es" href="https://sweeprdeepblock.com/es" />
+  <link rel="alternate" hreflang="x-default" href="https://sweeprdeepblock.com/" />
   <link rel="manifest" href="/site.webmanifest" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -83,7 +77,7 @@ function renderEuPage({
   <meta name="twitter:description" content="${description}" />
   <meta name="twitter:image" content="https://sweeprdeepblock.com/og-image.png" />
   <link rel="icon" type="image/svg+xml" href="/logo.svg" />
-  <script src="https://cdn.tailwindcss.com/3.4.5"></script>
+  <link rel="stylesheet" href="/sweepr-tailwind.min.css?v=20261117" />
   <script type="application/ld+json">${schema}</script>
   <script async src="/metrics/js?id=G-01MNBQSL9K"></script>
   <script>
@@ -103,9 +97,11 @@ function renderEuPage({
       <nav class="hidden md:flex items-center gap-5 text-sm font-semibold text-slate-300">
         <a href="/de" class="hover:text-white">🇩🇪 Deutsch</a>
         <a href="/fr" class="hover:text-white">🇫🇷 Français</a>
+        <a href="/es" class="hover:text-white">🇪🇸 Español</a>
         <a href="/site" class="hover:text-white">150 Site Audits</a>
         <a href="/tools" class="hover:text-white">Diagnostic Tools</a>
-        <a href="/stories" class="hover:text-white">Case Studies</a>
+        <a href="/vs" class="hover:text-white">Comparisons</a>
+        <a href="/pricing" class="hover:text-white">Pricing</a>
       </nav>
       <a href="/download" class="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs sm:text-sm no-underline">${ctaInstall} →</a>
     </div>
@@ -118,8 +114,8 @@ function renderEuPage({
       <p class="text-slate-300 text-base sm:text-lg leading-relaxed">${lead}</p>
       <div class="flex flex-wrap gap-3 pt-2">
         <a href="/download" class="px-5 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-sm no-underline">${ctaInstall} →</a>
-        <a href="/order?plan=annual" class="px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm border border-slate-700 no-underline">${ctaPro} (£29.99/yr)</a>
-        <a href="/order?plan=suite_annual" class="px-5 py-3 rounded-xl bg-emerald-950/80 hover:bg-emerald-900 text-emerald-300 font-bold text-sm border border-emerald-500/40 no-underline">Complete Suite (£89.99/yr) →</a>
+        <a href="/order?plan=annual" rel="nofollow" class="px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm border border-slate-700 no-underline">${ctaPro} (£29.99/yr)</a>
+        <a href="/order?plan=suite_annual" rel="nofollow" class="px-5 py-3 rounded-xl bg-emerald-950/80 hover:bg-emerald-900 text-emerald-300 font-bold text-sm border border-emerald-500/40 no-underline">Complete Suite (£89.99/yr) →</a>
         <a href="${guideLink}" class="px-4 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-emerald-400 font-bold text-sm border border-emerald-500/30 no-underline">${guideLabel}</a>
       </div>
     </div>
@@ -157,13 +153,19 @@ function renderEuPage({
       <div>© 2026 SWEEPR Global Limited. Local-first Manifest V3 engine.</div>
       <div class="flex flex-wrap gap-4">
         <a href="/" class="hover:text-white">English Home</a>
+        <a href="/download" class="hover:text-white">Download</a>
+        <a href="/pricing" class="hover:text-white">Pricing</a>
+        <a href="/vs" class="hover:text-white">Comparisons</a>
         <a href="/de" class="hover:text-white">Deutsch (/de)</a>
+        <a href="/de/usercentrics-cookie-banner-blockieren" class="hover:text-white">Usercentrics (DE)</a>
         <a href="/fr" class="hover:text-white">Français (/fr)</a>
+        <a href="/fr/bloquer-bandeau-cookie-didomi" class="hover:text-white">Didomi (FR)</a>
+        <a href="/es" class="hover:text-white">Español (/es)</a>
         <a href="/site" class="hover:text-white">150 Site Audits</a>
         <a href="/stories" class="hover:text-white">Customer Stories</a>
         <a href="/glossary" class="hover:text-white">Glossary</a>
         <a href="/tools" class="hover:text-white">Diagnostic Tools</a>
-        <a href="/order?plan=suite_annual" class="text-emerald-400 font-bold hover:underline">Complete Suite (£89.99/yr)</a>
+        <a href="/order?plan=suite_annual" rel="nofollow" class="text-emerald-400 font-bold hover:underline">Complete Suite (£89.99/yr)</a>
       </div>
     </div>
   </footer>

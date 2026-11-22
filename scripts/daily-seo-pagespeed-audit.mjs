@@ -24,6 +24,9 @@ import { runDaily50DeepBlockPages } from './daily-50-seo-pages.mjs';
 import { runLiveProofEnrichment } from './enrich-pillars-with-live-proof.mjs';
 import { runGeoAndLlmsSync } from './sync-geo-and-llms.mjs';
 import { logSeoChangesToCrm } from './log-seo-changes-to-crm.mjs';
+import { buildCategoryHubs } from './build-category-hubs.mjs';
+import { sculptInternalLinks } from './sculpt-internal-links.mjs';
+import { runGscStrikeZoneOptimizer } from './gsc-strike-zone-optimizer.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = path.resolve(__dirname, '..');
@@ -149,8 +152,11 @@ export async function runDailySeoPageSpeedPipeline() {
   console.log(guardStdout.trim());
 
   console.log('\n============================================================================');
-  console.log('  STEP 5/6: SYNCING GEO LLMS.TXT & AI CITATION MANIFEST');
+  console.log('  STEP 5/6: REBUILDING CATEGORY HUBS, SCULPTING LINKS & SYNCING GEO MANIFEST');
   console.log('============================================================================');
+  buildCategoryHubs();
+  sculptInternalLinks();
+  runGscStrikeZoneOptimizer();
   const geoSummary = runGeoAndLlmsSync();
 
   console.log('\n============================================================================');

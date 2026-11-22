@@ -1807,6 +1807,10 @@ const CLEAN_ROUTES = {
   '/popup-mockups': 'popup-mockups.html',
   '/redesign-prototype': 'redesign-prototype.html',
   '/logos': 'logos.html',
+  '/vs': path.join('vs', 'index.html'),
+  '/solutions': path.join('solutions', 'index.html'),
+  '/setup': path.join('setup', 'index.html'),
+  '/guides': path.join('guides', 'index.html'),
   '/vs/total-adblock': path.join('vs', 'total-adblock.html')
 };
 

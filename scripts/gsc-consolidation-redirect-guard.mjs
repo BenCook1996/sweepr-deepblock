@@ -90,7 +90,7 @@ function checkNeedsConsolidationSync(allHtmlFiles) {
 
   for (const f of allHtmlFiles) {
     const rel = path.relative(WEBSITE_DIR, f).replace(/\\/g, '/');
-    if (!/^(solutions|setup|vs|guides)\//i.test(rel)) continue;
+    if (!/^(solutions|setup|vs|guides)\//i.test(rel) || rel.endsWith('/index.html')) continue;
     const raw = fs.readFileSync(f, 'utf8');
     const isNoIndex = /meta\s+name=["']robots["']\s+content=["'][^"']*noindex/i.test(raw);
     if (!isNoIndex) continue;
@@ -127,7 +127,7 @@ function main() {
   let missingProofCount = 0;
   for (const f of allHtmlFiles) {
     const rel = path.relative(WEBSITE_DIR, f).replace(/\\/g, '/');
-    if (!/^(solutions|setup|vs|guides)\//i.test(rel) || rel === 'vs/total-adblock.html') continue;
+    if (!/^(solutions|setup|vs|guides)\//i.test(rel) || rel === 'vs/total-adblock.html' || rel.endsWith('/index.html')) continue;
     const raw = fs.readFileSync(f, 'utf8');
     if (/meta\s+name=["']robots["']\s+content=["'][^"']*noindex/i.test(raw)) continue;
     if (!raw.includes('id="deepblock-live-rule-proof"')) {

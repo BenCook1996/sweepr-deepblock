@@ -58,8 +58,10 @@ jobs:
         run: |
           node scripts/daily-seo-pagespeed-audit.mjs ${{ inputs.batch_size || '0' }}
 
-      - name: 3. Run GSC Strike-Zone Optimizer, Funnel CRO, Stage-Gate & ASO/Ads Builders
+      - name: 3. Run Category Hubs, Link Sculpting, GSC Strike-Zone Optimizer, Funnel CRO & ASO/Ads Builders
         run: |
+          node scripts/build-category-hubs.mjs
+          node scripts/sculpt-internal-links.mjs
           node scripts/gsc-strike-zone-optimizer.mjs
           node scripts/competitor-review-miner.mjs
           node scripts/funnel-cro-analyzer.mjs

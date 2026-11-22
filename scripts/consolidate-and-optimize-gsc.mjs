@@ -767,6 +767,7 @@ for (const filePath of allHtmlFiles) {
   const rel = path.relative(WEBSITE_DIR, filePath).replace(/\\/g, '/');
   const cluster = rel.includes('/') ? rel.split('/')[0] : 'root';
   if (NON_CARTESIAN_CLUSTERS.has(cluster)) continue;
+  if (/^(solutions|setup|vs|guides)\/index\.html$/i.test(rel)) continue;
   const urlPath = rel === 'index.html' ? '/' : '/' + rel.replace(/\.html$/, '');
   const isPillar = PILLAR_SET.has(urlPath);
   pageRecords.push({ filePath, rel, urlPath, isPillar, cluster });
@@ -1112,7 +1113,7 @@ const seenSitemapLocs = new Set(sitemapEntries.map((e) => e.loc));
 for (const [existingLoc, existingLastMod] of existingLastModMap.entries()) {
   if (seenSitemapLocs.has(existingLoc)) continue;
   const relPath = existingLoc.replace(/^https?:\/\/sweeprdeepblock\.com/i, '');
-  if (/^\/(tools|glossary|stories|de|fr|es|campaigns)(\/|$)/i.test(relPath)) {
+  if (/^\/(tools|glossary|stories|de|fr|es|campaigns)(\/|$)|^\/(vs|solutions|setup|guides)$/i.test(relPath)) {
     seenSitemapLocs.add(existingLoc);
     sitemapEntries.push({
       loc: existingLoc,

@@ -315,7 +315,7 @@ function renderGlossaryPage(item, idx, allItems) {
   <meta name="twitter:description" content="${item.description}" />
   <meta name="twitter:image" content="https://sweeprdeepblock.com/og-image.png" />
   <link rel="icon" type="image/svg+xml" href="/logo.svg" />
-  <script src="https://cdn.tailwindcss.com/3.4.5"></script>
+  <link rel="stylesheet" href="/sweepr-tailwind.min.css?v=20261117" />
   <script type="application/ld+json">${schemaJson}</script>
   <script async src="/metrics/js?id=G-01MNBQSL9K"></script>
   <script>
@@ -334,9 +334,10 @@ function renderGlossaryPage(item, idx, allItems) {
       </a>
       <nav class="hidden md:flex items-center gap-5 text-sm font-semibold text-slate-300">
         <a href="/glossary" class="text-emerald-400">Glossary</a>
+        <a href="/vs" class="hover:text-white">Comparisons</a>
         <a href="/site" class="hover:text-white">Site Audits</a>
-        <a href="/campaigns/uk-ad-load-index" class="hover:text-white">UK Ad-Load Index</a>
         <a href="/tools" class="hover:text-white">Diagnostic Tools</a>
+        <a href="/pricing" class="hover:text-white">Pricing</a>
       </nav>
       <a href="${item.toolPath}" class="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs sm:text-sm no-underline">
         Run Live Test →
@@ -387,14 +388,18 @@ function renderGlossaryPage(item, idx, allItems) {
     <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-4">
       <div>© 2026 SWEEPR Global Limited. Local-first Manifest V3 engine.</div>
       <div class="flex flex-wrap gap-4">
-        <a href="https://sweeprcleaner.com/?utm_source=sweeprdeepblock.com&amp;utm_medium=glossary_footer" target="_blank" rel="noopener" class="text-emerald-400 hover:underline">Sweepr Cleaner</a>
-        <a href="https://sweeprvpn.com/?utm_source=sweeprdeepblock.com&amp;utm_medium=glossary_footer" target="_blank" rel="noopener" class="text-emerald-400 hover:underline">Sweepr VPN</a>
-        <a href="/order?plan=suite_annual" class="text-emerald-300 font-bold hover:underline">Complete Suite (£89.99/yr)</a>
+        <a href="https://sweeprcleaner.com" target="_blank" rel="noopener" class="text-emerald-400 hover:underline">Sweepr Cleaner</a>
+        <a href="https://sweeprvpn.com" target="_blank" rel="noopener" class="text-emerald-400 hover:underline">Sweepr VPN</a>
+        <a href="/download" class="hover:text-white">Download</a>
+        <a href="/pricing" class="hover:text-white">Pricing</a>
+        <a href="/vs" class="hover:text-white">Comparisons</a>
+        <a href="/order?plan=suite_annual" rel="nofollow" class="text-emerald-300 font-bold hover:underline">Complete Suite (£89.99/yr)</a>
         <a href="/glossary" class="hover:text-white">Glossary</a>
         <a href="/site" class="hover:text-white">Site Reports</a>
         <a href="/stories" class="hover:text-white">Customer Stories</a>
         <a href="/de" class="hover:text-white">Deutsch (/de)</a>
         <a href="/fr" class="hover:text-white">Français (/fr)</a>
+        <a href="/es" class="hover:text-white">Español (/es)</a>
         <a href="/tools" class="hover:text-white">Diagnostic Tools</a>
         <a href="/privacy" class="hover:text-white">Privacy Policy</a>
       </div>
@@ -432,7 +437,7 @@ const glossaryHubHtml = `<!DOCTYPE html>
   <meta name="twitter:description" content="Explore 20 technical guides on browser fingerprinting, Manifest V3 ad blocking, CNAME cloaking, and GDPR cookie consent CMPs." />
   <meta name="twitter:image" content="https://sweeprdeepblock.com/og-image.png" />
   <link rel="icon" type="image/svg+xml" href="/logo.svg" />
-  <script src="https://cdn.tailwindcss.com/3.4.5"></script>
+  <link rel="stylesheet" href="/sweepr-tailwind.min.css?v=20261117" />
   <script type="application/ld+json">${JSON.stringify({
     '@context': 'https://schema.org',
     '@type': 'DefinedTermSet',
@@ -485,13 +490,17 @@ const glossaryHubHtml = `<!DOCTYPE html>
     <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-4">
       <div>© 2026 SWEEPR Global Limited. Local-first Manifest V3 engine.</div>
       <div class="flex flex-wrap gap-4">
-        <a href="https://sweeprcleaner.com/?utm_source=sweeprdeepblock.com&amp;utm_medium=glossary_hub" target="_blank" rel="noopener" class="text-emerald-400 hover:underline">Sweepr Cleaner</a>
-        <a href="https://sweeprvpn.com/?utm_source=sweeprdeepblock.com&amp;utm_medium=glossary_hub" target="_blank" rel="noopener" class="text-emerald-400 hover:underline">Sweepr VPN</a>
-        <a href="/order?plan=suite_annual" class="text-emerald-300 font-bold hover:underline">Complete Suite (£89.99/yr)</a>
+        <a href="https://sweeprcleaner.com" target="_blank" rel="noopener" class="text-emerald-400 hover:underline">Sweepr Cleaner</a>
+        <a href="https://sweeprvpn.com" target="_blank" rel="noopener" class="text-emerald-400 hover:underline">Sweepr VPN</a>
+        <a href="/download" class="hover:text-white">Download</a>
+        <a href="/pricing" class="hover:text-white">Pricing</a>
+        <a href="/vs" class="hover:text-white">Comparisons</a>
+        <a href="/order?plan=suite_annual" rel="nofollow" class="text-emerald-300 font-bold hover:underline">Complete Suite (£89.99/yr)</a>
         <a href="/site" class="hover:text-white">Site Audits</a>
         <a href="/stories" class="hover:text-white">Customer Stories</a>
         <a href="/de" class="hover:text-white">Deutsch (/de)</a>
         <a href="/fr" class="hover:text-white">Français (/fr)</a>
+        <a href="/es" class="hover:text-white">Español (/es)</a>
         <a href="/campaigns/uk-ad-load-index" class="hover:text-white">UK Ad-Load Index</a>
         <a href="/tools" class="hover:text-white">Diagnostic Tools</a>
       </div>

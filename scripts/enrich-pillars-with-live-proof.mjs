@@ -326,7 +326,7 @@ export function runLiveProofEnrichment(customLimit = null, customForce = false) 
     const dirAbs = path.join(WEBSITE_DIR, cluster);
     if (!fs.existsSync(dirAbs)) continue;
     for (const file of fs.readdirSync(dirAbs).sort()) {
-      if (!file.endsWith('.html')) continue;
+      if (!file.endsWith('.html') || file === 'index.html') continue;
       if (enrichedCount >= limitArg) break;
 
       const absPath = path.join(dirAbs, file);

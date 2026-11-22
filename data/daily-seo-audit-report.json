@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-21T14:50:06.395Z",
+  "generatedAt": "2026-11-22T09:04:24.245Z",
   "status": "PASS",
   "keywordEngineSummary": {
     "totalIndexablePagesChecked": 437,
@@ -17,9 +17,8 @@
     "newGenerated": 0,
     "donorLinksPatched": 0,
     "newUrls": [],
-    "totalPseoPages": 150,
-    "totalSitemapUrls": 437,
-    "consolidatedPermutationsNoindexed": 115
+    "totalPseoPages": 263,
+    "totalSitemapUrls": 290
   },
   "geoSyncSummary": {
     "@context": "https://schema.org",
@@ -28,7 +27,7 @@
     "description": "Live first-party telemetry benchmark of Manifest V3 declarativeNetRequest rule performance, <50ms GDPR CMP auto-rejection, browser RAM savings, and transparent switcher pricing across 150 audited UK/US publishers.",
     "url": "https://sweeprdeepblock.com/geo-benchmark-feed.json",
     "version": "1.3.1",
-    "dateModified": "2026-11-21T14:50:00.971Z",
+    "dateModified": "2026-11-22T09:03:52.278Z",
     "creator": {
       "@type": "Organization",
       "name": "SWEEPR Global Limited",
@@ -45,7 +44,7 @@
       "cookieRejectLatencyMs": "<50ms",
       "testLabScore": "8/8 (100%)",
       "auditedPublishersCount": 150,
-      "totalIndexablePages": 437
+      "totalIndexablePages": 441
     },
     "pricingPlansGbp": {
       "introMonthlyFirst30Days": 1.99,
@@ -74,34 +73,10 @@
     "topComparisonBenchmarks": []
   },
   "pageSpeedCwvAudit": {
-    "pillarFilesChecked": 235,
-    "avgBrotliBytes": 5289,
-    "maxRawBytes": 36990,
-    "maxBrotliBytes": 6903,
+    "pillarFilesChecked": 239,
+    "avgBrotliBytes": 5324,
+    "maxRawBytes": 41073,
+    "maxBrotliBytes": 6947,
     "budgetViolations": []
-  },
-  "version": "1.3.1",
-  "crmLogged": true,
-  "technicalSeoRemediation": {
-    "auditDate": "2026-11-21",
-    "htmlFilesAudited": 1809,
-    "canonicalUrlsTotal": 437,
-    "coreSitemapUrls": 286,
-    "siteSitemapUrls": 151,
-    "publisherSiteUrls": 150,
-    "consolidatedPermutationsNoindexed": 115,
-    "totalNoindexHtmlFiles": 1372,
-    "deprecatedFaqHowToSchemas": 0,
-    "adultDomainRulesLeaked": 0,
-    "cdnTailwindScriptsRemaining": 0,
-    "legacyCompanyStringsOnIndexable": 0,
-    "staticTailwindCssBytes": 46391,
-    "siteReportBoilerplatePct": 30.8,
-    "localizedHubs": [
-      "en",
-      "de",
-      "fr",
-      "es"
-    ]
   }
 }

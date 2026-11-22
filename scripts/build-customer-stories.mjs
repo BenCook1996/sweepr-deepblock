@@ -185,10 +185,14 @@ function renderFooter() {
       <div>© 2026 SWEEPR Simple Storage Ltd. Zero-Telemetry Manifest V3 Privacy Suite.</div>
       <div style="display:flex;gap:1.25rem;flex-wrap:wrap;">
         <a href="/stories" style="color:#cbd5e1;">Customer Stories</a>
+        <a href="/vs" style="color:#cbd5e1;">Comparisons</a>
         <a href="/site" style="color:#cbd5e1;">150 Site Audits</a>
+        <a href="/tools" style="color:#cbd5e1;">Diagnostic Tools</a>
         <a href="/de" style="color:#cbd5e1;">Deutsch (/de)</a>
         <a href="/fr" style="color:#cbd5e1;">Français (/fr)</a>
-        <a href="/pricing" style="color:#cbd5e1;">Pricing & Suite Bundle</a>
+        <a href="/es" style="color:#cbd5e1;">Español (/es)</a>
+        <a href="/download" style="color:#cbd5e1;">Download</a>
+        <a href="/pricing" style="color:#cbd5e1;">Pricing &amp; Suite Bundle</a>
         <a href="/privacy" style="color:#cbd5e1;">Privacy Policy</a>
       </div>
     </div>
@@ -220,7 +224,7 @@ for (const s of STORIES) {
     ]
   };
 
-  const otherStories = STORIES.filter((item) => item.slug !== s.slug).slice(0, 3);
+  const otherStories = STORIES.filter((item) => item.slug !== s.slug);
 
   const html = `${renderHead({ title: s.title, metaDesc: s.metaDesc, canonicalPath, jsonLd })}
 <body style="background:#0B0F19;color:#F8FAFC;font-family:system-ui,-apple-system,sans-serif;line-height:1.6;">
