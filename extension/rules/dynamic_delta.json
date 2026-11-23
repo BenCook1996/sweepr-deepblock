@@ -1,7 +1,7 @@
 {
   "ok": true,
-  "version": "1.1.26705",
-  "updatedAt": "2026-11-22T05:51:45.248Z",
+  "version": "1.1.15933",
+  "updatedAt": "2026-11-23T06:38:53.354Z",
   "featureFlags": {
     "cookieAutoClose": true,
     "hideSearchSpam": true,
@@ -13,7 +13,6 @@
   "extraCmpSelectors": [],
   "extraAntiAdblockSelectors": [],
   "extraCosmeticSelectors": [
-    ".drt-spot-box",
     ".drt-spot-bottom-box",
     "#spot_video_underplayer_livecams",
     "#spot_video_livecams",
@@ -112,7 +111,8 @@
     "#alink_overlay_EPXdyaUf",
     ".ad-slot",
     ".dfp-ad",
-    "[data-cl-spot]"
+    "[data-cl-spot]",
+    ".anchor-ad-slot"
   ],
   "dynamicDnrRules": [
     {

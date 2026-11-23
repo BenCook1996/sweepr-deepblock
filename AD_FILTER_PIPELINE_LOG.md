@@ -531,3 +531,17 @@ Automated daily 24-hour pipeline (`00:00 UTC`) sampling 1,000 unique ad-heavy do
 - **Cross-Site Non-Regression Suite:** PASS (15/15 Golden Network & DeepStealth Surrogate Canaries | 10/10 Legitimate Site Canaries Unblocked | 24 Cross-Module Selectors Protected)
 - **Git Commit / Deployment Ref:** `5de9cd05`
 
+## Run `adpipe-2026-11-23-u23sn` — 2026-11-23T06:38:53.408Z
+- **Sites Sampled (30-Day Deduplicated):** 1000
+- **Sites Evaluated:** 1000
+- **Ad Leaks Detected:** 1
+- **Rules Auto-Patched (Verified Self-Healing):** 1
+- **Flagged for Manual Review:** 0
+- **Repository Ruleset Totals:** 252 MV3 Static DNR Rules | 391 ABP/uBO Rules | 100 OTA Delta Rules
+- **Cross-Site Non-Regression Suite:** PASS (15/15 Golden Network & DeepStealth Surrogate Canaries | 10/10 Legitimate Site Canaries Unblocked | 24 Cross-Module Selectors Protected)
+- **Git Commit / Deployment Ref:** `7e0d3dcd`
+
+| Target URL | Ad Type | Generated Rule | Fix Status | Verification Notes |
+| :--- | :--- | :--- | :--- | :--- |
+| `https://cinemaexpress.com` | DOM | `cinemaexpress.com##.anchor-ad-slot` | **Auto-Patched** | Verified: Cosmetic rule cinemaexpress.com##.anchor-ad-slot collapses ad container (.anchor-ad-slot) with main content wrappers and scroll state intact. |
+
