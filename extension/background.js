@@ -525,6 +525,72 @@ const ALLOWED_TELEMETRY_EVENTS = new Set([
   'heartbeat'
 ]);
 
+function detectExtensionEnvironment() {
+  let browser = 'Chrome';
+  let osPlatform = 'Windows';
+  let locale = '';
+  let countryHint = '';
+  try {
+    const nav = typeof navigator !== 'undefined' ? navigator : {};
+    const ua = String(nav.userAgent || '');
+    const uaLower = ua.toLowerCase();
+    const brands = Array.isArray(nav.userAgentData && nav.userAgentData.brands)
+      ? nav.userAgentData.brands.map((b) => String(b.brand || '').toLowerCase()).join(' ')
+      : '';
+    if (uaLower.includes('edg/') || brands.includes('edge')) browser = 'Edge';
+    else if (uaLower.includes('opr/') || uaLower.includes('opera') || brands.includes('opera')) browser = 'Opera';
+    else if (uaLower.includes('vivaldi')) browser = 'Vivaldi';
+    else if (uaLower.includes('firefox/')) browser = 'Firefox';
+    else if (Boolean(nav.brave) || brands.includes('brave')) browser = 'Brave';
+    else if (uaLower.includes('safari/') && !uaLower.includes('chrome/') && !uaLower.includes('chromium/')) browser = 'Safari';
+    else browser = 'Chrome';
+
+    const platRaw = String((nav.userAgentData && nav.userAgentData.platform) || ua || '').toLowerCase();
+    if (platRaw.includes('android')) osPlatform = 'Android';
+    else if (platRaw.includes('cros')) osPlatform = 'ChromeOS';
+    else if (platRaw.includes('iphone') || platRaw.includes('ipad') || platRaw.includes('ios')) osPlatform = 'iOS';
+    else if (platRaw.includes('mac') || platRaw.includes('darwin')) osPlatform = 'macOS';
+    else if (platRaw.includes('linux') || platRaw.includes('x11')) osPlatform = 'Linux';
+    else osPlatform = 'Windows';
+
+    locale = String(nav.language || '').trim().slice(0, 16);
+    let tz = '';
+    try {
+      tz = String(Intl.DateTimeFormat().resolvedOptions().timeZone || '').trim();
+    } catch {}
+    const TZ_TO_COUNTRY = {
+      'Europe/London': 'GB', 'Europe/Dublin': 'IE', 'Europe/Paris': 'FR', 'Europe/Berlin': 'DE',
+      'Europe/Bucharest': 'RO', 'Europe/Bratislava': 'SK', 'Europe/Prague': 'CZ', 'Europe/Warsaw': 'PL',
+      'Europe/Madrid': 'ES', 'Europe/Rome': 'IT', 'Europe/Amsterdam': 'NL', 'Europe/Brussels': 'BE',
+      'Europe/Zurich': 'CH', 'Europe/Vienna': 'AT', 'Europe/Stockholm': 'SE', 'Europe/Oslo': 'NO',
+      'Europe/Copenhagen': 'DK', 'Europe/Helsinki': 'FI', 'Europe/Lisbon': 'PT', 'Europe/Athens': 'GR',
+      'Europe/Istanbul': 'TR', 'Europe/Kiev': 'UA', 'Europe/Kyiv': 'UA',
+      'Asia/Tokyo': 'JP', 'Asia/Seoul': 'KR', 'Asia/Singapore': 'SG', 'Asia/Bangkok': 'TH',
+      'Asia/Ho_Chi_Minh': 'VN', 'Asia/Saigon': 'VN', 'Asia/Kolkata': 'IN', 'Asia/Calcutta': 'IN',
+      'Asia/Manila': 'PH', 'Asia/Jakarta': 'ID', 'Asia/Kuala_Lumpur': 'MY', 'Asia/Dubai': 'AE',
+      'America/Toronto': 'CA', 'America/Vancouver': 'CA', 'America/Montreal': 'CA', 'America/Edmonton': 'CA',
+      'America/New_York': 'US', 'America/Chicago': 'US', 'America/Denver': 'US', 'America/Los_Angeles': 'US',
+      'America/Phoenix': 'US', 'America/Detroit': 'US', 'America/Anchorage': 'US', 'Pacific/Honolulu': 'US',
+      'America/Sao_Paulo': 'BR', 'America/Mexico_City': 'MX', 'America/Argentina/Buenos_Aires': 'AR',
+      'Pacific/Auckland': 'NZ'
+    };
+    if (TZ_TO_COUNTRY[tz]) {
+      countryHint = TZ_TO_COUNTRY[tz];
+    } else if (tz.startsWith('Australia/')) {
+      countryHint = 'AU';
+    } else {
+      const m = locale.match(/^[a-z]{2,3}[-_]([A-Z]{2})$/i);
+      if (m && m[1]) countryHint = m[1].toUpperCase();
+    }
+  } catch {}
+  return {
+    browser,
+    os_platform: osPlatform,
+    ...(locale ? { locale } : {}),
+    ...(countryHint ? { country_hint: countryHint } : {})
+  };
+}
+
 async function sendAnonymousTelemetry(eventName, properties = {}, onceStorageKey = null) {
   try {
     if (!ALLOWED_TELEMETRY_EVENTS.has(eventName)) return { ok: false, error: 'unsupported_event' };
@@ -535,7 +601,8 @@ async function sendAnonymousTelemetry(eventName, properties = {}, onceStorageKey
     }
     const deviceId = await getOrCreateDeviceId();
     const manifest = chrome.runtime && chrome.runtime.getManifest ? chrome.runtime.getManifest() : { version: '1.2.7' };
-    const safeProps = {};
+    const env = detectExtensionEnvironment();
+    const safeProps = { ...env };
     if (properties && typeof properties === 'object') {
       for (const [k, v] of Object.entries(properties)) {
         if (!['url', 'domain', 'hostname', 'query', 'path', 'referrer', 'history', 'title'].includes(k.toLowerCase())) {
@@ -1052,12 +1119,17 @@ chrome.runtime.onInstalled.addListener(async (details) => {
   const hostPermOk = await checkHostPermissionsAndProtection();
   if (details.reason === 'install') {
     chrome.tabs.create({ url: chrome.runtime.getURL('welcome.html'), active: false });
+    chrome.alarms.create('activationRescueCheck', { delayInMinutes: 1440 });
+  }
+  if (details.reason === 'install' || details.reason === 'update') {
     await sendAnonymousTelemetry(
       'extension_installed',
-      { host_permissions: hostPermOk ? 'granted' : 'missing' },
+      {
+        host_permissions: hostPermOk ? 'granted' : 'missing',
+        install_reason: String(details.reason || 'install')
+      },
       'telemetrySent_extension_installed'
     );
-    chrome.alarms.create('activationRescueCheck', { delayInMinutes: 1440 });
   }
 
   chrome.alarms.create('ramTamerCheck', { periodInMinutes: 5 });

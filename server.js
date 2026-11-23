@@ -662,11 +662,11 @@ function reportToSweeprCrm(pathAndQuery, body) {
   } catch {}
 }
 
-async function requestSweeprCrm(pathAndQuery, { method = 'GET', body } = {}) {
+async function requestSweeprCrm(pathAndQuery, { method = 'GET', body, extraHeaders = {} } = {}) {
   try {
     const res = await fetch(`${SWEEPR_CRM_URL}${pathAndQuery}`, {
       method,
-      headers: crmHeaders(),
+      headers: { ...crmHeaders(), ...extraHeaders },
       body: body !== undefined ? JSON.stringify({ project_id: 'deepblock', ...body }) : undefined,
       signal: AbortSignal.timeout(4000)
     });
@@ -675,6 +675,65 @@ async function requestSweeprCrm(pathAndQuery, { method = 'GET', body } = {}) {
   } catch (err) {
     return { ok: false, status: 502, data: { error: err?.message || 'crm_unreachable' } };
   }
+}
+
+function extractClientTelemetryMeta(req, props = {}, osHint = '') {
+  const ua = String(req.headers['user-agent'] || '');
+  const uaLower = ua.toLowerCase();
+  const safeProps = props && typeof props === 'object' ? props : {};
+
+  let browser = typeof safeProps.browser === 'string' && safeProps.browser.trim() ? safeProps.browser.trim().slice(0, 32) : '';
+  if (!browser) {
+    const secChUa = String(req.headers['sec-ch-ua'] || '').toLowerCase();
+    if (uaLower.includes('edg/') || uaLower.includes('edgios/') || secChUa.includes('edge')) browser = 'Edge';
+    else if (uaLower.includes('opr/') || uaLower.includes('opera') || secChUa.includes('opera')) browser = 'Opera';
+    else if (uaLower.includes('vivaldi')) browser = 'Vivaldi';
+    else if (uaLower.includes('brave') || secChUa.includes('brave')) browser = 'Brave';
+    else if (uaLower.includes('firefox/') || uaLower.includes('fxios/')) browser = 'Firefox';
+    else if (uaLower.includes('safari/') && !uaLower.includes('chrome/') && !uaLower.includes('chromium/')) browser = 'Safari';
+    else if (uaLower.includes('chrome/') || uaLower.includes('chromium/') || uaLower.includes('crios/') || secChUa.includes('chromium')) browser = 'Chrome';
+  }
+
+  let osPlatform = typeof safeProps.os_platform === 'string' && safeProps.os_platform.trim() ? safeProps.os_platform.trim().slice(0, 32) : '';
+  if (!osPlatform) {
+    const hintLower = String(osHint || '').toLowerCase();
+    const chPlat = String(req.headers['sec-ch-ua-platform'] || '').toLowerCase();
+    if (hintLower === 'chrome_webstore') osPlatform = 'Chrome Web Store';
+    else if (hintLower === 'firefox_amo') osPlatform = 'Firefox AMO';
+    else if (hintLower === 'android' || uaLower.includes('android') || chPlat.includes('android')) osPlatform = 'Android';
+    else if (hintLower === 'ios' || /iphone|ipad|ipod/.test(uaLower) || chPlat.includes('ios')) osPlatform = 'iOS';
+    else if (uaLower.includes('cros') || chPlat.includes('chrome os')) osPlatform = 'ChromeOS';
+    else if (hintLower === 'mac' || hintLower === 'macos' || hintLower === 'darwin' || uaLower.includes('mac os') || chPlat.includes('mac')) osPlatform = 'macOS';
+    else if (hintLower === 'linux' || uaLower.includes('linux') || chPlat.includes('linux')) osPlatform = 'Linux';
+    else if (hintLower === 'windows' || hintLower.startsWith('win') || uaLower.includes('windows') || chPlat.includes('win')) osPlatform = 'Windows';
+  }
+
+  const headerCountry = String(
+    req.headers['cf-ipcountry'] ||
+    req.headers['x-vercel-ip-country'] ||
+    req.headers['x-country-code'] ||
+    req.headers['fly-client-country'] ||
+    req.headers['fastly-client-country'] ||
+    ''
+  ).trim().toUpperCase();
+  const propCountry = String(safeProps.country || safeProps.country_hint || '').trim().toUpperCase();
+  const country = /^[A-Z]{2}$/.test(headerCountry) && headerCountry !== 'XX' && headerCountry !== 'T1'
+    ? headerCountry
+    : /^[A-Z]{2}$/.test(propCountry) && propCountry !== 'XX' && propCountry !== 'T1'
+      ? propCountry
+      : '';
+
+  const rawLang = typeof safeProps.locale === 'string' && safeProps.locale.trim()
+    ? safeProps.locale.trim()
+    : String(req.headers['accept-language'] || '').split(',')[0].split(';')[0].trim();
+  const locale = rawLang.slice(0, 16);
+
+  return {
+    ...(browser ? { browser } : {}),
+    ...(osPlatform ? { os_platform: osPlatform } : {}),
+    ...(country ? { country } : {}),
+    ...(locale ? { locale } : {})
+  };
 }
 
 async function syncSubscriptionWithSweeprCrm(acc, { amountCents, currency = 'gbp', ref, notes, canceledAt, cancelReason, skipInvoice } = {}) {
@@ -5850,17 +5909,22 @@ function getCachedDynamicDelta() {
       } catch {}
     }
     const normalizedEventName = String(data.event_name || data.event).slice(0, 120);
+    const osValue = typeof data.os === 'string' ? data.os.slice(0, 64) : 'browser_extension';
+    const clientMeta = extractClientTelemetryMeta(req, safeProps, osValue);
+    const enrichedProps = { ...clientMeta, ...safeProps };
+    const fwdIp = getClientIp(req);
     const crmRes = await requestSweeprCrm('/v1/telemetry/event', {
       method: 'POST',
+      extraHeaders: fwdIp ? { 'x-sweepr-forwarded-ip': fwdIp } : {},
       body: {
         project_id: 'deepblock',
         event_name: normalizedEventName,
         category: typeof data.category === 'string' ? data.category.slice(0, 64) : 'funnel',
         account_id: typeof data.account_id === 'string' ? data.account_id.slice(0, 64) : undefined,
         device_id: typeof data.device_id === 'string' ? data.device_id.slice(0, 64) : undefined,
-        os: typeof data.os === 'string' ? data.os.slice(0, 64) : 'browser_extension',
+        os: osValue,
         app_version: typeof data.app_version === 'string' ? data.app_version.slice(0, 32) : LATEST_EXTENSION_VERSION,
-        properties: safeProps
+        properties: enrichedProps
       }
     });
     return sendJson(res, 200, {
@@ -6321,6 +6385,26 @@ function getCachedDynamicDelta() {
     return res.end();
   }
 
+  const forwardDownloadTelemetry = (osTag, pathWithQuery) => {
+    const meta = extractClientTelemetryMeta(req, {}, osTag);
+    const fwdIp = getClientIp(req);
+    requestSweeprCrm('/v1/telemetry/event', {
+      method: 'POST',
+      extraHeaders: fwdIp ? { 'x-sweepr-forwarded-ip': fwdIp } : {},
+      body: {
+        project_id: 'deepblock',
+        event_name: 'installer_downloaded',
+        category: 'funnel',
+        os: osTag,
+        properties: {
+          path: pathWithQuery,
+          referrer: String(req.headers.referer || '').slice(0, 200),
+          ...meta
+        }
+      }
+    }).catch(() => {});
+  };
+
   // Resolve target file for static assets and programmatic SEO landing pages
   if (req.method === 'GET' && pathname.startsWith('/download/') && !BOT_UA_RE.test(String(req.headers['user-agent'] || ''))) {
     const dlOs = pathname.endsWith('.exe')
@@ -6332,16 +6416,7 @@ function getCachedDynamicDelta() {
       : pathname.endsWith('.apk')
       ? 'android'
       : 'extension';
-    requestSweeprCrm('/v1/telemetry/event', {
-      method: 'POST',
-      body: {
-        project_id: 'deepblock',
-        event_name: 'installer_downloaded',
-        category: 'funnel',
-        os: dlOs,
-        properties: { path: pathname, referrer: String(req.headers.referer || '').slice(0, 200) }
-      }
-    }).catch(() => {});
+    forwardDownloadTelemetry(dlOs, pathname);
   }
   let candidateRel = CLEAN_ROUTES[pathname];
   const CHROME_WEBSTORE_URL =
@@ -6401,16 +6476,7 @@ function getCachedDynamicDelta() {
       candidateRel = 'sweepr-deepblock.mobileconfig';
     } else if (req.method === 'GET' && (reqStore === 'firefox' || (isAutoInstall && isFirefoxBrowser))) {
       if (!BOT_UA_RE.test(uaLower)) {
-        requestSweeprCrm('/v1/telemetry/event', {
-          method: 'POST',
-          body: {
-            project_id: 'deepblock',
-            event_name: 'installer_downloaded',
-            category: 'funnel',
-            os: 'firefox_amo',
-            properties: { path: pathname + parsedUrl.search, referrer: String(req.headers.referer || '').slice(0, 200) }
-          }
-        }).catch(() => {});
+        forwardDownloadTelemetry('firefox_amo', pathname + parsedUrl.search);
       }
       res.writeHead(302, {
         Location: FIREFOX_AMO_URL,
@@ -6421,16 +6487,7 @@ function getCachedDynamicDelta() {
       candidateRel = 'SWEEPRDeepblock.apk';
     } else if (req.method === 'GET' && (reqStore === 'chrome' || (isAutoInstall && isDesktopChromium))) {
       if (!BOT_UA_RE.test(uaLower)) {
-        requestSweeprCrm('/v1/telemetry/event', {
-          method: 'POST',
-          body: {
-            project_id: 'deepblock',
-            event_name: 'installer_downloaded',
-            category: 'funnel',
-            os: 'chrome_webstore',
-            properties: { path: pathname + parsedUrl.search, referrer: String(req.headers.referer || '').slice(0, 200) }
-          }
-        }).catch(() => {});
+        forwardDownloadTelemetry('chrome_webstore', pathname + parsedUrl.search);
       }
       res.writeHead(302, {
         Location: CHROME_WEBSTORE_URL,
