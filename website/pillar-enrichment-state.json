@@ -1,6 +1,6 @@
 {
   "cooldownDays": 14,
-  "lastRunAt": "2026-11-23T11:43:46.892Z",
+  "lastRunAt": "2026-11-24T18:00:38.555Z",
   "titleUpdatedAt": {
     "/setup/thorium-chromium-browser": "2026-11-03T20:45:00.000Z",
     "/setup/orion-browser-macos-ios": "2026-11-03T20:45:00.000Z",
@@ -88,7 +88,14 @@
     "/pricing",
     "/refund",
     "/support",
-    "/terms"
+    "/terms",
+    "/solutions/bilibili-anime-video-block-video-ads",
+    "/solutions/espn-sports-streaming-block-video-ads",
+    "/solutions/imdb-movie-database-block-video-ads",
+    "/solutions/lyrics-and-chords-tabs-block-video-ads",
+    "/solutions/online-chess-gaming-block-video-ads",
+    "/solutions/smart-tv-web-browsers-block-video-ads",
+    "/solutions/x-twitter-feed-ads-block-video-ads"
   ],
   "gscRecoveryHistory": [
     {
@@ -279,6 +286,15 @@
       "clicks": 7,
       "activePagesWithImpressions": 166,
       "newlyDiscoveredPaths": 67,
+      "source": "gsc_cloud_api_v3"
+    },
+    {
+      "date": "2026-11-24",
+      "window": "2026-10-25..2026-11-22",
+      "impressions": 516,
+      "clicks": 6,
+      "activePagesWithImpressions": 164,
+      "newlyDiscoveredPaths": 7,
       "source": "gsc_cloud_api_v3"
     }
   ],
@@ -887,6 +903,19 @@
       "extensionInstallsStarted": 2,
       "testLabRuns": 29,
       "beginCheckout": 97,
+      "orderPaymentErrors": 2,
+      "purchases": 0,
+      "source": "ga4_data_api_v1beta"
+    },
+    {
+      "date": "2026-11-24",
+      "activeUsers28d": 253,
+      "sessions28d": 284,
+      "engagementRatePct": 41.9,
+      "avgSessionDurationSec": 90.5,
+      "extensionInstallsStarted": 6,
+      "testLabRuns": 31,
+      "beginCheckout": 99,
       "orderPaymentErrors": 2,
       "purchases": 0,
       "source": "ga4_data_api_v1beta"

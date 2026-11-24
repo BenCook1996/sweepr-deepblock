@@ -1,24 +1,73 @@
 {
-  "generatedAt": "2026-11-22T14:46:30.195Z",
+  "generatedAt": "2026-11-24T18:00:49.072Z",
   "zeroEmail": true,
-  "totalCanonicalSitemapPages": 441,
+  "totalCanonicalSitemapPages": 99,
   "underLinkedBeforeCount": 0,
-  "lowContextualBeforeCount": 0,
+  "lowContextualBeforeCount": 12,
   "underLinkedAfterCount": 0,
-  "lowContextualAfterCount": 0,
-  "minIncomingLinksAcrossSitemap": 5,
-  "minContextualLinksAcrossContent": 2,
+  "lowContextualAfterCount": 12,
+  "minIncomingLinksAcrossSitemap": 9,
+  "minContextualLinksAcrossContent": 0,
   "contextualLinksInjected": 0,
   "modifiedDonorPagesCount": 0,
-  "cooldownSafeQueryEnrichmentsCount": 6,
+  "cooldownSafeQueryEnrichmentsCount": 4,
   "remainingUnderLinked": [],
-  "remainingLowContextual": [],
+  "remainingLowContextual": [
+    {
+      "urlPath": "/de",
+      "contextualInlinks": 0
+    },
+    {
+      "urlPath": "/es",
+      "contextualInlinks": 0
+    },
+    {
+      "urlPath": "/fr",
+      "contextualInlinks": 0
+    },
+    {
+      "urlPath": "/solutions/automotive-car-classifieds-block-video-ads",
+      "contextualInlinks": 1
+    },
+    {
+      "urlPath": "/solutions/imdb-movie-database-block-video-ads",
+      "contextualInlinks": 1
+    },
+    {
+      "urlPath": "/solutions/online-chess-gaming-block-video-ads",
+      "contextualInlinks": 1
+    },
+    {
+      "urlPath": "/solutions/roblox-web-community-filter-ai-slop-and-scams",
+      "contextualInlinks": 1
+    },
+    {
+      "urlPath": "/solutions/smart-tv-web-browsers-block-video-ads",
+      "contextualInlinks": 1
+    },
+    {
+      "urlPath": "/solutions/tumblr-blog-feeds-block-video-ads",
+      "contextualInlinks": 1
+    },
+    {
+      "urlPath": "/vs/ghostery-privacy-ad-blocker",
+      "contextualInlinks": 1
+    },
+    {
+      "urlPath": "/vs/pie-adblock",
+      "contextualInlinks": 1
+    },
+    {
+      "urlPath": "/vs/windscribe-robert-adblock",
+      "contextualInlinks": 1
+    }
+  ],
   "keyMoneyVsUtilityEquity": {
-    "/download": 440,
-    "/pricing": 440,
-    "/vs": 440,
-    "/vs/total-adblock": 401,
-    "/privacy": 258,
-    "/glossary": 259
+    "/download": 98,
+    "/pricing": 98,
+    "/vs": 98,
+    "/vs/total-adblock": 98,
+    "/privacy": 9,
+    "/glossary": 11
   }
 }

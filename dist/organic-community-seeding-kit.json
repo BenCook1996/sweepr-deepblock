@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-11-23T21:36:53.803Z",
+  "generatedAt": "2026-11-24T18:00:49.157Z",
   "zeroEmail": true,
-  "extensionVersion": "1.3.1",
+  "extensionVersion": "1.3.2",
   "staticDnrRules": 283,
   "pricing": {
     "introMonthlyGbp": 1.99,
@@ -19,19 +19,19 @@
       "channel": "Reddit — r/CasualUK & Consumer Finance",
       "title": "PSA: Check what your \"£1.99 intro\" adblocker actually renews at in Year 2 (£99–£119/yr) — transparent £29.99/yr MV3 breakdown",
       "targetUrl": "https://sweeprdeepblock.com/vs/total-adblock?utm_source=reddit_organic&utm_medium=community&utm_campaign=uk_renewal_psa",
-      "bodyMarkdown": "A huge number of UK users sign up for a \"£1.99\" or \"£2.99\" introductory ad-blocker deal only to get hit with a **£99 to £119 annual auto-renewal** in Year 2.\n\nWe published a transparent side-by-side breakdown and interactive tools:\n- **Total Adblock Renewal Cost Comparison**: https://sweeprdeepblock.com/vs/total-adblock\n- **Browser RAM & Tab Bloat Calculator**: https://sweeprdeepblock.com/tools/browser-ram-calculator\n\nOur core **SWEEPR Deepblock v1.3.1** extension includes URL tracker stripping, GDPR cookie auto-rejection, Element Zapper, and Total Tab & RAM Tamer, with transparent flat-rate **£29.99/yr Pro** (£2.50/mo eq., 5 devices) or **£89.99/yr Sweepr Complete Security Suite** (Deepblock Pro + Tab RAM Tamer + VPN + Cleaner across 5 devices) and 1-click cancellation."
+      "bodyMarkdown": "A huge number of UK users sign up for a \"£1.99\" or \"£2.99\" introductory ad-blocker deal only to get hit with a **£99 to £119 annual auto-renewal** in Year 2.\n\nWe published a transparent side-by-side breakdown and interactive tools:\n- **Total Adblock Renewal Cost Comparison**: https://sweeprdeepblock.com/vs/total-adblock\n- **Browser RAM & Tab Bloat Calculator**: https://sweeprdeepblock.com/tools/browser-ram-calculator\n\nOur core **SWEEPR Deepblock v1.3.2** extension includes URL tracker stripping, GDPR cookie auto-rejection, Element Zapper, and Total Tab & RAM Tamer, with transparent flat-rate **£29.99/yr Pro** (£2.50/mo eq., 5 devices) or **£89.99/yr Sweepr Complete Security Suite** (Deepblock Pro + Tab RAM Tamer + VPN + Cleaner across 5 devices) and 1-click cancellation."
     },
     {
       "channel": "Hacker News — Show HN",
-      "title": "Show HN: SWEEPR Deepblock v1.3.1 – Manifest V3 Ad, Cookie Auto-Reject & Tab RAM Extension",
+      "title": "Show HN: SWEEPR Deepblock v1.3.2 – Manifest V3 Ad, Cookie Auto-Reject & Tab RAM Extension",
       "targetUrl": "https://sweeprdeepblock.com/test-lab?utm_source=hackernews&utm_medium=show_hn&utm_campaign=v131_launch",
       "bodyMarkdown": "Hi HN — we built SWEEPR Deepblock (https://sweeprdeepblock.com) to solve three problems we kept hitting in post-MV2 Chromium and Gecko browsers:\n\n- **DeclarativeNetRequest + DeepStealth Surrogates**: 283 static DNR rules + 100 dynamic OTA rules executing natively in the browser network stack, paired with a `document_start` isolated/main-world bridge that neutralizes anti-adblock bait checks.\n- **Programmatic CMP Opt-Out**: Instead of hiding cookie modals with CSS (which breaks page scroll on Sourcepoint, Usercentrics, Didomi, and OneTrust), our content script triggers the genuine Reject-All path and unlocks body overflow.\n- **URL Tracker Stripping & Tab RAM Tamer**: Strips `utm_`, `fbclid`, `gclid` parameters cleanly and hibernates inactive background tabs.\n\nYou can run the 8-point client-side verification suite here: https://sweeprdeepblock.com/test-lab (or inspect our machine-readable benchmark dataset at https://sweeprdeepblock.com/geo-benchmark-feed.json). Would love your technical feedback!"
     },
     {
       "channel": "Product Hunt — Launch Listing",
-      "title": "SWEEPR Deepblock v1.3.1 — Zero Ads, Cookie Auto-Reject & Total Tab & RAM Tamer",
+      "title": "SWEEPR Deepblock v1.3.2 — Zero Ads, Cookie Auto-Reject & Total Tab & RAM Tamer",
       "targetUrl": "https://sweeprdeepblock.com/?utm_source=producthunt&utm_medium=launch&utm_campaign=v131_suite",
-      "bodyMarkdown": "**Tagline:** Pass all 8 Manifest V3 adblock checks, auto-reject cookie popups cleanly, and tame tab RAM.\n\n**What's New in v1.3.1:**\n- **Verified MV3 Anti-Detection Engine**: 283 static DNR rules + 100 dynamic OTA updates.\n- **Automatic Cookie Rejector + Scroll Unlock**: Works across major GDPR/UK-GDPR CMPs without breaking page scroll.\n- **Interactive Browser Diagnostics**: Live Adblock Test Lab (https://sweeprdeepblock.com/test-lab) and Browser RAM Calculator (https://sweeprdeepblock.com/tools/browser-ram-calculator).\n- **Transparent Pricing**: £1.99 1st-Month Intro, £29.99/yr Pro (5 devices), or the 4-in-1 **£89.99/yr Sweepr Complete Security Suite** (Deepblock Pro + Total Tab & RAM Tamer + Sweepr VPN + Sweepr Desktop Cleaner for 5 devices)."
+      "bodyMarkdown": "**Tagline:** Pass all 8 Manifest V3 adblock checks, auto-reject cookie popups cleanly, and tame tab RAM.\n\n**What's New in v1.3.2:**\n- **Verified MV3 Anti-Detection Engine**: 283 static DNR rules + 100 dynamic OTA updates.\n- **Automatic Cookie Rejector + Scroll Unlock**: Works across major GDPR/UK-GDPR CMPs without breaking page scroll.\n- **Interactive Browser Diagnostics**: Live Adblock Test Lab (https://sweeprdeepblock.com/test-lab) and Browser RAM Calculator (https://sweeprdeepblock.com/tools/browser-ram-calculator).\n- **Transparent Pricing**: £1.99 1st-Month Intro, £29.99/yr Pro (5 devices), or the 4-in-1 **£89.99/yr Sweepr Complete Security Suite** (Deepblock Pro + Total Tab & RAM Tamer + Sweepr VPN + Sweepr Desktop Cleaner for 5 devices)."
     }
   ]
 }

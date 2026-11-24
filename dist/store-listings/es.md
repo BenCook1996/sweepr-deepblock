@@ -1,4 +1,4 @@
-# SWEEPR DeepBlock v1.3.1 — Store ASO Listing Pack (Español (ES / LATAM) [es])
+# SWEEPR DeepBlock v1.3.2 — Store ASO Listing Pack (Español (ES / LATAM) [es])
 
 ## 1. Validated Manifest Metadata
 - **Locale Code**: `es`
@@ -18,7 +18,7 @@
 ## 3. Store Description Copy (Chrome Web Store / Edge Add-ons / Firefox AMO)
 SWEEPR DeepBlock bloquea anuncios de video, banners y rastreadores con motor nativo DeclarativeNetRequest, limpia parámetros de seguimiento URL, rechaza pop-ups de cookies y hiberna pestañas inactivas.
 
-### Core Protection Capabilities (v1.3.1)
+### Core Protection Capabilities (v1.3.2)
 - **Native Manifest V3 DeclarativeNetRequest Rulesets**: Blocks video/banner ads, cryptominers, and tracking parameters directly inside the browser engine with zero browsing history logged.
 - **Automated GDPR / CCPA Cookie Consent Responder**: Auto-clicks "Reject All" on OneTrust, Quantcast, TrustArc, Didomi, Sourcepoint, and Cookiebot while preserving page scroll locks.
 - **Total Tab & RAM Tamer (Included in Pro)**: Automatically hibernates inactive background tabs to reduce browser memory usage and saves restorable tab sessions.

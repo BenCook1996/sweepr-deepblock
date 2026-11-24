@@ -1,28 +1,132 @@
 {
-  "generatedAt": "2026-11-23T13:27:57.167Z",
+  "generatedAt": "2026-11-24T18:00:44.514Z",
   "engineVersion": "2.0.0",
   "summary": {
-    "totalIndexablePagesChecked": 441,
+    "totalIndexablePagesChecked": 99,
     "seedQueriesExpanded": 330,
-    "rawAutocompleteHarvested": 38,
-    "junkDisqualifiedCount": 0,
-    "lowIntentRejectedCount": 26,
-    "intraBatchSynonymsMerged": 0,
-    "alreadyCoveredOrEnrichedCount": 12,
-    "heuristicFallbackCount": 3,
-    "unverifiedHeuristicCandidatesCount": 0,
+    "rawAutocompleteHarvested": 420,
+    "junkDisqualifiedCount": 14,
+    "lowIntentRejectedCount": 354,
+    "intraBatchSynonymsMerged": 3,
+    "alreadyCoveredOrEnrichedCount": 4,
+    "heuristicFallbackCount": 27,
+    "unverifiedHeuristicCandidatesCount": 1,
     "approvedLowKdOpportunitiesCount": 0,
-    "ctrEnrichmentQueueCount": 3
+    "ctrEnrichmentQueueCount": 4
   },
   "opportunities": [],
-  "heuristicCandidatesUnverified": [],
+  "heuristicCandidatesUnverified": [
+    {
+      "id": "kw_vs_totaladblock_notwork",
+      "keyword": "total adblock not working",
+      "secondaryKeywords": [],
+      "tokenFingerprint": "notwork|totaladblock",
+      "pillar": "P1_COMMERCIAL_SWITCHER",
+      "intentTier": "commercial_switcher",
+      "cluster": "vs",
+      "recommendedFormat": "competitor_comparison",
+      "targetRoute": "/vs/total-adblock-not-working",
+      "relPath": "vs/total-adblock-not-working.html",
+      "isPublishedOnDisk": false,
+      "status": "unverified_heuristic_candidate",
+      "metrics": {
+        "opportunityScore": 72.5,
+        "volumeScore": 48,
+        "lowCompetitionScore": 79,
+        "transactionalScore": 87,
+        "estimatedKD": 21,
+        "wordCount": 4
+      },
+      "volumeBreakdown": {
+        "volumeScore": 48,
+        "slotAnchorScore": 29.9,
+        "engineConsensusScore": 9.1,
+        "modifierDepthScore": 9,
+        "volumeSource": "autocomplete",
+        "enginesMatched": [
+          "bing",
+          "ddg"
+        ],
+        "bestRankByEngine": {
+          "bing": 4,
+          "ddg": 4
+        }
+      },
+      "serpCompetition": {
+        "inspectionSource": "lexical_heuristic_fallback",
+        "isHeuristicFallback": true,
+        "serpVerificationStatus": "UNVERIFIED_HEURISTIC",
+        "lowCompetitionScore": 79,
+        "estimatedKD": 21,
+        "signals": {
+          "ugcPoints": 22,
+          "titleGapPoints": 0,
+          "freshnessGapPoints": 12,
+          "longTailPoints": 15,
+          "editorialWallPenalty": 0,
+          "ugcMatchedUrls": [],
+          "editorialDomainsFound": []
+        },
+        "top5Organic": []
+      },
+      "cannibalization": {
+        "status": "clean",
+        "closestExistingPage": "/vs/total-adblock",
+        "maxCannibScore": 0.365,
+        "tokenOverlapRatio": 0.46,
+        "jaccardSimilarity": 0.333
+      },
+      "pageBlueprint": {
+        "title": "Total AdBlock Not Working (2026) | SWEEPR Deepblock",
+        "h1": "Total AdBlock Not Working: Verified 2026 Manifest V3 Protection & Fix",
+        "metaDescription": "Total AdBlock Not Working compared in 2026: Manifest V3 ad & tracker defense, GDPR cookie auto-rejection, and transparent £29.99/yr Pro pricing without.",
+        "shortLinkTitle": "Total AdBlock Not Working",
+        "linkBadge": "VS • KD 21 • Score 72.5",
+        "painPointIssue": "Eliminating total adblock not working with 283 static declarativeNetRequest rules, GDPR CMP auto-rejection, and local-first privacy protection",
+        "beforeStat": "Unskippable Ads & Tracker Walls",
+        "afterStat": "0 Video Ads • Auto-Rejected Cookies",
+        "perfStat": "283 Static DNR Rules",
+        "recommendedToolWidget": {
+          "toolRoute": "/test-lab",
+          "ctaHeadline": "Test Your Current Browser Against Live MV3 Ad & Tracker Vectors",
+          "ctaButton": "Run Free Live MV3 Test Lab →"
+        },
+        "primaryCta": {
+          "href": "/order?plan=annual",
+          "label": "Unlock SWEEPR Deepblock Pro (£29.99/yr — Save 50%)"
+        },
+        "secondaryCta": {
+          "href": "/order?plan=suite_annual",
+          "label": "Bundle VPN + Cleaner + Deepblock + RAM Tamer (£89.99/yr)"
+        },
+        "customFaqs": [
+          {
+            "q": "How does SWEEPR Deepblock solve \"total adblock not working\" in 2026?",
+            "a": "SWEEPR Deepblock v1.3.2 combines 283 static declarativeNetRequest network rules + 100 dynamic OTA delta rules with local-first DOM & player sanitization, eliminating video ad interruptions, cookie walls, and tracker bloat without triggering anti-adblock modals."
+          },
+          {
+            "q": "Does this work on Chrome, Edge, Brave, Opera, and Firefox Manifest V3?",
+            "a": "Yes. Every SWEEPR Deepblock rule pack is compiled natively for Chromium Manifest V3 (Chrome, Edge, Brave, Opera, Thorium, Vivaldi, Arc) and Firefox (Desktop & Android) with zero cloud browsing telemetry."
+          },
+          {
+            "q": "Does SWEEPR Deepblock charge surprise Year-2 renewal price hikes like legacy ad blockers?",
+            "a": "Never. Unlike legacy ad blockers that lure users in with a £19 intro offer and auto-renew at £99–£120/yr, SWEEPR Deepblock Pro is locked at a transparent £29.99/yr (£2.50/mo eq.) across 5 devices, backed by a 1-click cancellation toggle and a 14-day money-back guarantee."
+          },
+          {
+            "q": "What is included in SWEEPR Deepblock Pro vs the Complete Security Suite?",
+            "a": "SWEEPR Deepblock Pro (£29.99/yr or £1.99 1st-Month Intro) unlocks video/banner blocking, GDPR cookie auto-reject, URL tracker stripping, Element Zapper, and Total Tab & RAM Tamer across 5 devices. The Sweepr Complete Security Suite (£89.99/yr, save 45%) bundles Deepblock Pro, Total Tab & RAM Tamer, Sweepr VPN Pro, and Sweepr Desktop Cleaner Pro across 5 devices."
+          }
+        ]
+      }
+    }
+  ],
   "ctrEnrichmentQueue": [
     {
       "keyword": "best manifest v3 adblocker vs ublock origin lite",
       "secondaryKeywords": [],
       "targetExistingPage": "/vs/ublock-origin-lite",
-      "targetExistingTitle": "SWEEPR DeepBlock vs uBlock Origin Lite (2026 Comparison)",
-      "cannibalizationScore": 0.604,
+      "targetExistingTitle": "SWEEPR Deepblock vs uBlock Origin Lite (Chrome MV3 2026)",
+      "cannibalizationScore": 0.6,
       "serpVerificationStatus": "UNVERIFIED_HEURISTIC",
       "metrics": {
         "opportunityScore": 67.1,
@@ -38,8 +142,8 @@
       "keyword": "stop twitch mid roll ads without purple screen",
       "secondaryKeywords": [],
       "targetExistingPage": "/guides/how-to-block-twitch-midroll-commercials-without-black-screen",
-      "targetExistingTitle": "Blocking Mid-Roll Ads on Twitch &amp; YouTube Without Black Screen",
-      "cannibalizationScore": 0.621,
+      "targetExistingTitle": "Twitch Mid-Roll Ads &amp; Purple Screen Fix (2026 Honest Guide)",
+      "cannibalizationScore": 0.675,
       "serpVerificationStatus": "UNVERIFIED_HEURISTIC",
       "metrics": {
         "opportunityScore": 62.3,
@@ -52,11 +156,28 @@
       "recommendedAction": "ENRICH_EXISTING_PILLAR_FAQ_AND_CTR"
     },
     {
+      "keyword": "chrome extension to block youtube ads",
+      "secondaryKeywords": [],
+      "targetExistingPage": "/guides/how-to-block-youtube-ads-chrome-manifest-v3-2026",
+      "targetExistingTitle": "How to Block YouTube Ads on Chrome Manifest V3 (2026)",
+      "cannibalizationScore": 0.596,
+      "serpVerificationStatus": "UNVERIFIED_HEURISTIC",
+      "metrics": {
+        "opportunityScore": 56.5,
+        "volumeScore": 52,
+        "lowCompetitionScore": 79,
+        "transactionalScore": 72,
+        "estimatedKD": 21,
+        "wordCount": 6
+      },
+      "recommendedAction": "ENRICH_EXISTING_PILLAR_FAQ_AND_CTR"
+    },
+    {
       "keyword": "vivaldi high ram usage fix extension",
       "secondaryKeywords": [],
       "targetExistingPage": "/guides/how-to-fix-high-ram-usage-on-vivaldi-browser",
-      "targetExistingTitle": "Fix Vivaldi High RAM Usage | SWEEPR DeepBlock",
-      "cannibalizationScore": 0.684,
+      "targetExistingTitle": "How to Fix High RAM Usage on Vivaldi Browser (2026 Guide)",
+      "cannibalizationScore": 0.701,
       "serpVerificationStatus": "UNVERIFIED_HEURISTIC",
       "metrics": {
         "opportunityScore": 0,

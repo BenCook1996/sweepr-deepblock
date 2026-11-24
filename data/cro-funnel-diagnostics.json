@@ -1,15 +1,15 @@
 {
-  "generatedAt": "2026-11-23T13:27:42.065Z",
+  "generatedAt": "2026-11-24T18:00:49.190Z",
   "dataMode": "real_telemetry_unfloored",
   "totalPaidCheckouts": 0,
   "hasMinimumConversionSample": false,
   "overallHealth": "INSUFFICIENT_TELEMETRY",
   "unitEconomics": {
-    "updatedAt": "2026-11-23T13:27:42.063Z",
+    "updatedAt": "2026-11-24T18:00:49.190Z",
     "dataMode": "real_telemetry_unfloored",
     "dailySpendGbp": 10,
     "storeAndDownloadViews": 0,
-    "extensionInstalls": 2,
+    "extensionInstalls": 6,
     "permissionsGranted": 0,
     "firstValueAhaMoment": 0,
     "paywallExposures": 0,
@@ -38,7 +38,7 @@
       "stageId": "1_store_or_download_to_install",
       "name": "Download / Store Listing -> Extension Installed",
       "visitorsIn": 0,
-      "conversionsOut": 2,
+      "conversionsOut": 6,
       "conversionRatePct": 0,
       "targetRatePct": 28,
       "status": "INSUFFICIENT_TELEMETRY",
@@ -47,7 +47,7 @@
     {
       "stageId": "2_install_to_permissions_granted",
       "name": "Extension Installed -> MV3 Permissions Activated",
-      "visitorsIn": 2,
+      "visitorsIn": 6,
       "conversionsOut": 0,
       "conversionRatePct": 0,
       "targetRatePct": 85,
@@ -67,7 +67,7 @@
     {
       "stageId": "4_active_free_to_pro_checkout",
       "name": "Active Free User -> Paid Pro / Suite Checkout",
-      "visitorsIn": 2,
+      "visitorsIn": 6,
       "conversionsOut": 0,
       "conversionRatePct": 0,
       "targetRatePct": 4.2,
@@ -88,31 +88,62 @@
   "paywallBanditSnapshot": {
     "experiment": "paywall_value_framing_v2",
     "epsilon": 0.2,
-    "updatedAt": "2026-11-20T00:00:00.000Z",
+    "updatedAt": "2026-11-23T17:40:25.891Z",
     "leaderVariantId": "control_value_stack",
     "mode": "exploration_uniform",
     "stats": {
       "control_value_stack": {
-        "visitors": 0,
+        "visitors": 11,
         "conversions": 0,
         "suiteAttachCount": 0,
         "totalRevenueGbp": 0
       },
       "renewal_transparency": {
-        "visitors": 0,
+        "visitors": 10,
         "conversions": 0,
         "suiteAttachCount": 0,
         "totalRevenueGbp": 0
       },
       "ram_speedometer_bundle": {
-        "visitors": 0,
+        "visitors": 11,
         "conversions": 0,
         "suiteAttachCount": 0,
         "totalRevenueGbp": 0
       }
     },
-    "computedMetrics": {}
+    "computedMetrics": {
+      "control_value_stack": {
+        "visitors": 11,
+        "conversions": 0,
+        "suiteAttachCount": 0,
+        "totalRevenueGbp": 0,
+        "conversionRatePct": 0,
+        "aovGbp": 0,
+        "rpvGbp": 0,
+        "zScoreVsControl": 0
+      },
+      "renewal_transparency": {
+        "visitors": 10,
+        "conversions": 0,
+        "suiteAttachCount": 0,
+        "totalRevenueGbp": 0,
+        "conversionRatePct": 0,
+        "aovGbp": 0,
+        "rpvGbp": 0,
+        "zScoreVsControl": 0
+      },
+      "ram_speedometer_bundle": {
+        "visitors": 11,
+        "conversions": 0,
+        "suiteAttachCount": 0,
+        "totalRevenueGbp": 0,
+        "conversionRatePct": 0,
+        "aovGbp": 0,
+        "rpvGbp": 0,
+        "zScoreVsControl": 0
+      }
+    }
   },
   "strikeZoneSeoPrescriptions": [],
-  "ctrEnrichmentTargetsQueued": 9
+  "ctrEnrichmentTargetsQueued": 4
 }

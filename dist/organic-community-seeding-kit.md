@@ -1,5 +1,5 @@
-# SWEEPR Deepblock v1.3.1 — Organic Community Seeding & Launch Kit
-Generated: 2026-11-23T21:36:53.803Z | Zero Automated Emails (`zeroEmail: true`)
+# SWEEPR Deepblock v1.3.2 — Organic Community Seeding & Launch Kit
+Generated: 2026-11-24T18:00:49.157Z | Zero Automated Emails (`zeroEmail: true`)
 
 ## Reddit — r/browsers & r/privacy
 **Title:** We benchmarked Manifest V3 ad blockers on YouTube, TCF v2.2 cookie scroll locks, and multi-tab RAM
@@ -26,11 +26,11 @@ We published a transparent side-by-side breakdown and interactive tools:
 - **Total Adblock Renewal Cost Comparison**: https://sweeprdeepblock.com/vs/total-adblock
 - **Browser RAM & Tab Bloat Calculator**: https://sweeprdeepblock.com/tools/browser-ram-calculator
 
-Our core **SWEEPR Deepblock v1.3.1** extension includes URL tracker stripping, GDPR cookie auto-rejection, Element Zapper, and Total Tab & RAM Tamer, with transparent flat-rate **£29.99/yr Pro** (£2.50/mo eq., 5 devices) or **£89.99/yr Sweepr Complete Security Suite** (Deepblock Pro + Tab RAM Tamer + VPN + Cleaner across 5 devices) and 1-click cancellation.
+Our core **SWEEPR Deepblock v1.3.2** extension includes URL tracker stripping, GDPR cookie auto-rejection, Element Zapper, and Total Tab & RAM Tamer, with transparent flat-rate **£29.99/yr Pro** (£2.50/mo eq., 5 devices) or **£89.99/yr Sweepr Complete Security Suite** (Deepblock Pro + Tab RAM Tamer + VPN + Cleaner across 5 devices) and 1-click cancellation.
 ```
 
 ## Hacker News — Show HN
-**Title:** Show HN: SWEEPR Deepblock v1.3.1 – Manifest V3 Ad, Cookie Auto-Reject & Tab RAM Extension
+**Title:** Show HN: SWEEPR Deepblock v1.3.2 – Manifest V3 Ad, Cookie Auto-Reject & Tab RAM Extension
 **Target URL:** https://sweeprdeepblock.com/test-lab?utm_source=hackernews&utm_medium=show_hn&utm_campaign=v131_launch
 
 ```markdown
@@ -44,13 +44,13 @@ You can run the 8-point client-side verification suite here: https://sweeprdeepb
 ```
 
 ## Product Hunt — Launch Listing
-**Title:** SWEEPR Deepblock v1.3.1 — Zero Ads, Cookie Auto-Reject & Total Tab & RAM Tamer
+**Title:** SWEEPR Deepblock v1.3.2 — Zero Ads, Cookie Auto-Reject & Total Tab & RAM Tamer
 **Target URL:** https://sweeprdeepblock.com/?utm_source=producthunt&utm_medium=launch&utm_campaign=v131_suite
 
 ```markdown
 **Tagline:** Pass all 8 Manifest V3 adblock checks, auto-reject cookie popups cleanly, and tame tab RAM.
 
-**What's New in v1.3.1:**
+**What's New in v1.3.2:**
 - **Verified MV3 Anti-Detection Engine**: 283 static DNR rules + 100 dynamic OTA updates.
 - **Automatic Cookie Rejector + Scroll Unlock**: Works across major GDPR/UK-GDPR CMPs without breaking page scroll.
 - **Interactive Browser Diagnostics**: Live Adblock Test Lab (https://sweeprdeepblock.com/test-lab) and Browser RAM Calculator (https://sweeprdeepblock.com/tools/browser-ram-calculator).

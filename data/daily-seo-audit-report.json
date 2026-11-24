@@ -1,16 +1,18 @@
 {
-  "generatedAt": "2026-11-22T14:46:33.134Z",
+  "generatedAt": "2026-11-24T18:00:52.710Z",
   "status": "PASS",
   "keywordEngineSummary": {
-    "totalIndexablePagesChecked": 441,
-    "seedQueriesExpanded": 339,
-    "rawAutocompleteHarvested": 523,
-    "junkDisqualifiedCount": 3,
-    "lowIntentRejectedCount": 458,
-    "intraBatchSynonymsMerged": 5,
-    "alreadyCoveredOrEnrichedCount": 26,
-    "approvedLowKdOpportunitiesCount": 2,
-    "ctrEnrichmentQueueCount": 9
+    "totalIndexablePagesChecked": 99,
+    "seedQueriesExpanded": 330,
+    "rawAutocompleteHarvested": 420,
+    "junkDisqualifiedCount": 14,
+    "lowIntentRejectedCount": 354,
+    "intraBatchSynonymsMerged": 3,
+    "alreadyCoveredOrEnrichedCount": 4,
+    "heuristicFallbackCount": 27,
+    "unverifiedHeuristicCandidatesCount": 1,
+    "approvedLowKdOpportunitiesCount": 0,
+    "ctrEnrichmentQueueCount": 4
   },
   "pageGenerationSummary": {
     "reRendered": 0,
@@ -18,17 +20,17 @@
     "donorLinksPatched": 0,
     "newUrls": [],
     "totalPseoPages": 150,
-    "totalSitemapUrls": 441,
-    "consolidatedPermutationsNoindexed": 115
+    "totalSitemapUrls": 99,
+    "consolidatedPermutationsNoindexed": 1344
   },
   "geoSyncSummary": {
     "@context": "https://schema.org",
     "@type": "Dataset",
-    "name": "SWEEPR DeepBlock v1.3.1 — 2026 Manifest V3 Adblocker, Cookie CMP & RAM Telemetry Dataset",
-    "description": "Live first-party telemetry benchmark of Manifest V3 declarativeNetRequest rule performance, <50ms GDPR CMP auto-rejection, browser RAM savings, and transparent switcher pricing across 150 audited UK/US publishers.",
+    "name": "SWEEPR Deepblock v1.3.2 — 2026 Manifest V3 Adblocker, Cookie CMP & RAM Telemetry Dataset",
+    "description": "Verified first-party Manifest V3 declarativeNetRequest rule breakdown, GDPR CMP auto-rejection architecture, Total Tab & RAM Tamer capabilities, and transparent switcher pricing across supported desktop and Android Firefox browsers.",
     "url": "https://sweeprdeepblock.com/geo-benchmark-feed.json",
-    "version": "1.3.1",
-    "dateModified": "2026-11-22T14:46:26.306Z",
+    "version": "1.3.2",
+    "dateModified": "2026-11-24T18:00:45.833Z",
     "creator": {
       "@type": "Organization",
       "name": "SWEEPR Global Limited",
@@ -36,16 +38,25 @@
     },
     "license": "https://sweeprdeepblock.com/terms",
     "telemetrySummary": {
-      "extensionVersion": "1.3.1",
-      "staticDnrRules": 271,
+      "extensionVersion": "1.3.2",
+      "staticDnrRules": 283,
+      "staticDnrBreakdown": {
+        "adsAndTrackers": 264,
+        "cryptominers": 18,
+        "trackerParams": 1
+      },
       "otaDeltaRules": 100,
       "cosmeticSelectors": 391,
       "otaCosmeticSelectors": 100,
-      "avgDnrLookupLatencyMicroseconds": 15,
-      "cookieRejectLatencyMs": "<50ms",
+      "supportedBrowsers": [
+        "Chrome",
+        "Microsoft Edge",
+        "Mozilla Firefox (Desktop & Android)",
+        "Brave",
+        "Opera"
+      ],
       "testLabScore": "8/8 (100%)",
-      "auditedPublishersCount": 150,
-      "totalIndexablePages": 441
+      "totalIndexablePages": 99
     },
     "pricingPlansGbp": {
       "introMonthlyFirst30Days": 1.99,
@@ -63,7 +74,7 @@
         "savingsPct": 45,
         "devicesIncluded": 5,
         "includedApps": [
-          "SWEEPR DeepBlock Pro (https://sweeprdeepblock.com)",
+          "SWEEPR Deepblock Pro (https://sweeprdeepblock.com)",
           "Total Tab & RAM Tamer Pro",
           "Sweepr VPN Pro (https://sweeprvpn.com)",
           "Sweepr Desktop Cleaner Pro (https://sweeprcleaner.com)"
@@ -74,28 +85,33 @@
     "topComparisonBenchmarks": []
   },
   "pageSpeedCwvAudit": {
-    "pillarFilesChecked": 239,
-    "avgBrotliBytes": 5308,
-    "maxRawBytes": 41073,
-    "maxBrotliBytes": 6926,
+    "pillarFilesChecked": 89,
+    "avgBrotliBytes": 9897,
+    "maxRawBytes": 78862,
+    "maxBrotliBytes": 15730,
+    "brotliWarnCount": 3,
+    "holographicShellPages": 89,
+    "legacyDarkThemePages": 0,
+    "v131Pages": 89,
+    "staleV12Pages": 0,
     "budgetViolations": []
   },
-  "version": "1.3.1",
+  "version": "1.3.2",
   "crmLogged": true,
   "technicalSeoRemediation": {
-    "auditDate": "2026-11-22",
+    "auditDate": "2026-11-24",
     "htmlFilesAudited": 1813,
-    "canonicalUrlsTotal": 441,
-    "coreSitemapUrls": 290,
-    "siteSitemapUrls": 151,
+    "canonicalUrlsTotal": 99,
+    "coreSitemapUrls": 99,
+    "siteSitemapUrls": 0,
     "publisherSiteUrls": 150,
-    "consolidatedPermutationsNoindexed": 115,
-    "totalNoindexHtmlFiles": 1372,
+    "consolidatedPermutationsNoindexed": 1344,
+    "totalNoindexHtmlFiles": 1714,
     "deprecatedFaqHowToSchemas": 0,
     "adultDomainRulesLeaked": 0,
     "cdnTailwindScriptsRemaining": 0,
     "legacyCompanyStringsOnIndexable": 0,
-    "staticTailwindCssBytes": 46391,
+    "staticTailwindCssBytes": 46528,
     "siteReportBoilerplatePct": 30.8,
     "localizedHubs": [
       "en",
