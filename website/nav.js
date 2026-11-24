@@ -122,7 +122,9 @@
       const cid = getClientId();
       const urlParams = new URLSearchParams(window.location.search || '');
       const forced = urlParams.get('ab_variant') || urlParams.get('force_variant') || '';
-      const q = `/api/ab/paywall?device_id=${encodeURIComponent(cid)}${forced ? '&force_variant=' + encodeURIComponent(forced) : ''}`;
+      const country = urlParams.get('country') || '';
+      const currency = urlParams.get('currency') || '';
+      const q = `/api/ab/paywall?device_id=${encodeURIComponent(cid)}${forced ? '&force_variant=' + encodeURIComponent(forced) : ''}${country ? '&country=' + encodeURIComponent(country) : ''}${currency ? '&currency=' + encodeURIComponent(currency) : ''}`;
       fetch(q)
         .then((r) => (r.ok ? r.json() : null))
         .then((data) => {
@@ -161,7 +163,7 @@
           window.__sweeprLiveProof = data;
           const tickers = document.querySelectorAll('[data-live-proof-ticker]');
           tickers.forEach((el) => {
-            el.textContent = `Verified Live: ${Number(data.verifiedBlockedDomainsCount || 10218).toLocaleString()}+ Ad/Scam Domains • ${data.activeMv3StaticRules || 271} C++ DNR Rules (${data.dnrLookupLatencyUs || 15}µs) • ${data.auditedPublishersCount || 150} Audited Publishers`;
+            el.textContent = `Verified Live: ${Number(data.verifiedBlockedDomainsCount || 10218).toLocaleString()}+ Ad & Tracker Rules • ${data.activeMv3StaticRules || 283} C++ DNR Rules • Automated Cookie Auto-Reject`;
           });
         })
         .catch(() => {});
@@ -181,20 +183,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const isPricing = currentPath === '/pricing' || currentPath === '/pricing.html';
     const isCompare = currentPath.startsWith('/vs/') || currentPath.startsWith('/guides/');
     const isLogin = currentPath === '/login' || currentPath === '/login.html';
-    const featuresHref = (currentPath === '/' || currentPath === '/index.html') ? '/#features' : '/?home=1#features';
+    const featuresHref = '/#features';
 
-    glassNav.className = 'glass-nav px-4 md:px-6 py-3.5 md:py-4 flex items-center justify-between';
+    glassNav.className = 'glass-nav px-3 sm:px-4 md:px-6 py-3 sm:py-3.5 md:py-4 flex items-center justify-between';
     glassNav.innerHTML = `
-      <div class="flex items-center gap-2.5 md:gap-8 min-w-0">
-        <a href="/?home=1" class="flex items-center gap-2.5 sm:gap-3 text-inherit no-underline min-w-0">
-          <div class="logo-box !w-9 !h-9 sm:!w-10 sm:!h-10" aria-hidden="true"></div>
-          <span class="font-extrabold text-base sm:text-xl tracking-tight text-gray-900 truncate">SWEEPR <span class="text-emerald-600">Deepblock</span></span>
+      <div class="flex items-center gap-2 md:gap-8 min-w-0">
+        <a href="/" class="flex items-center gap-2 sm:gap-3 text-inherit no-underline min-w-0">
+          <div class="logo-box !w-8 !h-8 sm:!w-10 sm:!h-10" aria-hidden="true"></div>
+          <span class="font-extrabold text-sm sm:text-xl tracking-tight text-gray-900 truncate">SWEEPR <span class="text-emerald-600">Deepblock</span></span>
         </a>
         <div class="hidden md:flex items-center gap-2">
           <a href="${featuresHref}" class="btn btn-ghost text-sm">Features</a>
-          <a href="/pricing" class="${isPricing ? 'btn text-sm font-semibold text-emerald-700 bg-emerald-50/60 border border-emerald-200/50' : 'btn btn-ghost text-sm'}">Pricing</a>
+          <a href="/pricing" class="${isPricing ? 'btn text-sm font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200' : 'btn btn-ghost text-sm'}">Pricing</a>
           <div class="relative inline-block text-left" id="navDropdownContainer">
-            <button type="button" id="navDropdownBtn" class="${isCompare ? 'btn text-sm font-semibold text-emerald-700 bg-emerald-50/60 border border-emerald-200/50' : 'btn btn-ghost text-sm font-medium'} flex items-center gap-1.5 cursor-pointer" aria-expanded="false" aria-haspopup="true">
+            <button type="button" id="navDropdownBtn" class="${isCompare ? 'btn text-sm font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200' : 'btn btn-ghost text-sm font-medium'} flex items-center gap-1.5 cursor-pointer" aria-expanded="false" aria-haspopup="true">
               <span>Compare &amp; Guides</span>
               <svg id="navDropdownChevron" class="w-3.5 h-3.5 text-gray-500 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
@@ -211,19 +213,19 @@ document.addEventListener('DOMContentLoaded', () => {
                       <span class="text-sm font-bold text-gray-900 group-hover:text-emerald-700 transition-colors">SWEEPR Deepblock vs Total Adblock</span>
                       <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full">Comparison</span>
                     </div>
-                    <p class="text-xs text-gray-500 leading-snug">See how SWEEPR Deepblock compares on YouTube ads, automatic cookie pop-up closing, fake shop alerts, and honest pricing.</p>
+                    <p class="text-xs text-gray-500 leading-snug">See how SWEEPR Deepblock compares on YouTube ads, automatic cookie pop-up closing, URL tracker stripping, and honest pricing.</p>
                   </div>
                 </a>
-                <a href="/vs/total-adblock#fakespot" class="flex items-start gap-3 p-3 rounded-xl hover:bg-emerald-50/70 border border-transparent hover:border-emerald-200/60 transition-all text-inherit no-underline group">
+                <a href="/pricing" class="flex items-start gap-3 p-3 rounded-xl hover:bg-emerald-50/70 border border-transparent hover:border-emerald-200/60 transition-all text-inherit no-underline group">
                   <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
                   </div>
                   <div class="flex-1 min-w-0">
                     <div class="flex items-center justify-between gap-1 mb-0.5">
-                      <span class="text-sm font-bold text-gray-900 group-hover:text-emerald-700 transition-colors">Fake Online Shop Detector</span>
-                      <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full">2026 Guide</span>
+                      <span class="text-sm font-bold text-gray-900 group-hover:text-emerald-700 transition-colors">Total Tab &amp; RAM Tamer</span>
+                      <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full">Included in Pro</span>
                     </div>
-                    <p class="text-xs text-gray-500 leading-snug">How SWEEPR warns you about suspicious scam shopping websites before you buy.</p>
+                    <p class="text-xs text-gray-500 leading-snug">Automatically hibernates inactive background tabs to reduce browser memory usage.</p>
                   </div>
                 </a>
               </div>
@@ -231,9 +233,9 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
         </div>
       </div>
-      <div class="flex gap-2 md:gap-3 items-center">
+      <div class="flex gap-1.5 sm:gap-2 md:gap-3 items-center shrink-0">
         <div class="relative inline-block text-left" id="langDropdownContainer">
-          <button type="button" id="langDropdownBtn" class="btn btn-ghost text-sm flex items-center gap-1.5 px-2.5 py-1.5 cursor-pointer font-medium text-gray-700 hover:text-emerald-600 transition-colors" aria-expanded="false" aria-label="Select Language">
+          <button type="button" id="langDropdownBtn" class="btn btn-ghost text-sm flex items-center gap-1 sm:gap-1.5 !px-2 sm:!px-2.5 !h-9 sm:!h-11 cursor-pointer font-medium text-gray-700 hover:text-emerald-600 transition-colors" aria-expanded="false" aria-label="Select Language">
             <span class="text-base" id="currentLangFlag">🇬🇧</span>
             <span class="text-xs font-bold tracking-wide" id="currentLangCode">EN</span>
             <svg id="langDropdownChevron" class="w-3 h-3 text-gray-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
@@ -247,7 +249,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
           </div>
         </div>
-        <a href="/login" class="${isLogin ? 'btn text-xs sm:text-sm font-semibold text-emerald-700 bg-emerald-50/60 border border-emerald-200/50 !px-2.5 sm:!px-4' : 'btn btn-ghost text-xs sm:text-sm !px-2.5 sm:!px-4'}">Login</a>
+        <a rel="nofollow" href="/login" class="${isLogin ? 'btn text-xs sm:text-sm font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 !px-2.5 sm:!px-4 !h-9 sm:!h-11' : 'btn btn-ghost text-xs sm:text-sm !px-2.5 sm:!px-4 !h-9 sm:!h-11'}">Login</a>
         <a href="/download?install=1" class="hidden md:inline-flex btn btn-go gap-2">
           <span>Add to Browser</span>
           <svg class="arrow-icon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
@@ -273,7 +275,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const mobileBtn = document.createElement('button');
       mobileBtn.type = 'button';
       mobileBtn.id = 'mobileMenuBtn';
-      mobileBtn.className = 'md:hidden inline-flex items-center justify-center w-10 h-10 rounded-xl border border-gray-200/80 bg-white/80 text-gray-700 hover:text-emerald-600 hover:border-emerald-300 transition-colors cursor-pointer shrink-0';
+      mobileBtn.className = 'md:hidden inline-flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl border border-gray-200/80 bg-white/80 text-gray-700 hover:text-emerald-600 hover:border-emerald-300 transition-colors cursor-pointer shrink-0';
       mobileBtn.setAttribute('aria-label', 'Toggle navigation menu');
       mobileBtn.setAttribute('aria-expanded', 'false');
       mobileBtn.innerHTML = `
@@ -290,12 +292,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!document.getElementById('mobileNavDrawer')) {
       const drawer = document.createElement('div');
       drawer.id = 'mobileNavDrawer';
-      drawer.className = 'hidden md:hidden fixed top-[72px] left-0 right-0 z-[9999] bg-white border-b border-gray-200 shadow-2xl p-4 space-y-2 max-h-[calc(100vh-72px)] overflow-y-auto';
+      drawer.className = 'hidden md:hidden fixed top-[72px] left-0 right-0 z-[9999] bg-white border-b border-gray-200 shadow-2xl p-4 space-y-2 max-h-[calc(100vh_-_72px)] overflow-y-auto';
       drawer.style.backgroundColor = '#ffffff';
       drawer.style.zIndex = '9999';
       drawer.innerHTML = `
         <div class="grid grid-cols-1 gap-1 text-sm font-semibold text-gray-800">
-          <a href="/?home=1#features" class="mobile-nav-link flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-emerald-50 hover:text-emerald-700 transition-colors no-underline text-gray-800">
+          <a href="/#features" class="mobile-nav-link flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-emerald-50 hover:text-emerald-700 transition-colors no-underline text-gray-800">
             <span>🛡️ Features &amp; Protection</span>
             <span class="text-xs text-gray-400">&rarr;</span>
           </a>
@@ -307,7 +309,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <span>⚖️ SWEEPR vs Total Adblock</span>
             <span class="text-xs text-gray-400">&rarr;</span>
           </a>
-          <a href="/login" class="mobile-nav-link flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-emerald-50 hover:text-emerald-700 transition-colors no-underline text-gray-800">
+          <a rel="nofollow" href="/login" class="mobile-nav-link flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-emerald-50 hover:text-emerald-700 transition-colors no-underline text-gray-800">
             <span>🔑 Customer Portal (1-Click Cancel)</span>
             <span class="text-xs text-gray-400">&rarr;</span>
           </a>
@@ -317,7 +319,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <span>Install Now</span>
             <svg class="arrow-icon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
           </a>
-          <a href="/order?plan=annual" class="btn w-full justify-center text-sm font-bold bg-white border border-gray-300 text-gray-800">
+          <a rel="nofollow" href="/order?plan=annual" class="btn w-full justify-center text-sm font-bold bg-white border border-gray-300 text-gray-800">
             Get Deepblock Pro Now
           </a>
         </div>
@@ -413,14 +415,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
   try {
     const ua = (navigator.userAgent || '').toLowerCase();
+    const isBot =
+      /googlebot|bingbot|gptbot|oai-searchbot|chatgpt-user|claudebot|claude-web|anthropic-ai|perplexitybot|applebot|applebot-extended|duckduckbot|yandexbot|baiduspider|cohere-ai|facebookexternalhit|twitterbot|linkedinbot|meta-externalagent|meta-externalfetch|bytespider|amazonbot|diffbot|google-inspectiontool|deepseek-ai|mistralai|qwenbot|semrushbot|ahrefsbot|google-extended|vertex-ai|youbot|brave-web-crawler|kagi-crawler|xai|grok|exabot|petalbot|dotbot|rogerbot|blexbot|turnitinbot|ccbot|timpibot|seekr|feedfetcher-google|archive\.org_bot|screaming frog|siteaudit|chrome-lighthouse|lighthouse|pagespeed/i.test(
+        ua
+      );
     const isIpadOs = navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1;
-    const isIos = /iphone|ipad|ipod/.test(ua) || isIpadOs;
-    const isAndroid = ua.includes('android') || (ua.includes('linux') && navigator.maxTouchPoints > 0);
-    const isMobile = isIos || isAndroid || /mobile|iemobile|opera mini/.test(ua);
-    const isFirefox = !isIos && /firefox\//.test(ua);
-    const detectedPlatform = isIos ? 'ios' : isAndroid ? 'android' : isFirefox ? 'firefox' : /edg\//.test(ua) ? 'edge' : /chrome\/|chromium\//.test(ua) ? 'chrome' : 'other';
+    const isIos = !isBot && (/iphone|ipad|ipod/.test(ua) || isIpadOs);
+    const isAndroid = !isBot && (ua.includes('android') || (ua.includes('linux') && navigator.maxTouchPoints > 0));
+    const isMobile = !isBot && (isIos || isAndroid || /mobile|iemobile|opera mini/.test(ua));
+    const isFirefox = !isBot && !isIos && /firefox\//.test(ua);
+    const detectedPlatform = isBot ? 'bot' : isIos ? 'ios' : isAndroid ? 'android' : isFirefox ? 'firefox' : /edg\//.test(ua) ? 'edge' : /chrome\/|chromium\//.test(ua) ? 'chrome' : 'other';
 
-    if (isFirefox && currentPath !== '/download' && currentPath !== '/download.html') {
+    if (!isBot && isFirefox && currentPath !== '/download' && currentPath !== '/download.html') {
       const amoUrl = 'https://addons.mozilla.org/firefox/addon/sweepr-deepblock/';
       document.querySelectorAll('a[href="/download?install=1"], a#downloadBtn').forEach((a) => {
         a.setAttribute('href', amoUrl);
@@ -429,21 +435,18 @@ document.addEventListener('DOMContentLoaded', () => {
       if (osBtnLbl) {
         osBtnLbl.textContent = 'Add to Firefox — Free';
       }
-    } else if (isMobile) {
-      const isNonSafariIos = isIos && /crios|fxios|edgios|opios|instagram|fban|fbav|tiktok|line\//.test(ua);
-      const targetHref = isIos
-        ? (isNonSafariIos ? '/download?install=1' : '/download?platform=ios&direct=1')
-        : '/download?platform=android&direct=1';
-      document.querySelectorAll('a[href^="/download"]').forEach((a) => {
+    } else if (!isBot && isMobile) {
+      const targetHref = isIos ? '/download?platform=ios' : '/download?platform=android&direct=1';
+      document.querySelectorAll('a[href="/download?install=1"], a#downloadBtn, a#mobileStickyDownloadBtn').forEach((a) => {
         if (!a.getAttribute('download')) {
           a.setAttribute('href', targetHref);
         }
       });
       const osBtnLbl = document.getElementById('osDownloadText') || document.getElementById('downloadBtnLabel');
       if (osBtnLbl) {
-        osBtnLbl.textContent = isIos ? 'Activate on iPhone & iPad — Free' : 'Activate on Android — Free';
+        osBtnLbl.textContent = isIos ? 'View Supported Browsers & Roadmap' : 'Activate on Android — Free';
       }
-    } else if (/chrome\/|chromium\//.test(ua) && !/edg\/|firefox\/|fxios\//.test(ua) && currentPath !== '/download' && currentPath !== '/download.html') {
+    } else if (!isBot && /chrome\/|chromium\//.test(ua) && !/edg\/|firefox\/|fxios\//.test(ua) && currentPath !== '/download' && currentPath !== '/download.html') {
       const cwsUrl = 'https://chromewebstore.google.com/detail/sweepr-deepblock-ad-cooki/bkdfhdgmglfancgpkcbdceinfdlccmpc';
       document.querySelectorAll('a[href="/download?install=1"], a#downloadBtn').forEach((a) => {
         a.setAttribute('href', cwsUrl);

@@ -1,11 +1,11 @@
 {
   "@context": "https://schema.org",
   "@type": "Dataset",
-  "name": "SWEEPR DeepBlock v1.3.1 — 2026 Manifest V3 Adblocker, Cookie CMP & RAM Telemetry Dataset",
-  "description": "Live first-party telemetry benchmark of Manifest V3 declarativeNetRequest rule performance, <50ms GDPR CMP auto-rejection, browser RAM savings, and transparent switcher pricing across 150 audited UK/US publishers.",
+  "name": "SWEEPR Deepblock v1.3.1 — 2026 Manifest V3 Adblocker, Cookie CMP & RAM Telemetry Dataset",
+  "description": "Verified first-party Manifest V3 declarativeNetRequest rule breakdown, GDPR CMP auto-rejection architecture, Total Tab & RAM Tamer capabilities, and transparent switcher pricing across supported desktop and Android Firefox browsers.",
   "url": "https://sweeprdeepblock.com/geo-benchmark-feed.json",
   "version": "1.3.1",
-  "dateModified": "2026-11-23T18:33:39.306Z",
+  "dateModified": "2026-11-23T21:36:55.082Z",
   "creator": {
     "@type": "Organization",
     "name": "SWEEPR Global Limited",
@@ -14,15 +14,24 @@
   "license": "https://sweeprdeepblock.com/terms",
   "telemetrySummary": {
     "extensionVersion": "1.3.1",
-    "staticDnrRules": 271,
+    "staticDnrRules": 283,
+    "staticDnrBreakdown": {
+      "adsAndTrackers": 264,
+      "cryptominers": 18,
+      "trackerParams": 1
+    },
     "otaDeltaRules": 100,
-    "cosmeticSelectors": 392,
+    "cosmeticSelectors": 390,
     "otaCosmeticSelectors": 100,
-    "avgDnrLookupLatencyMicroseconds": 15,
-    "cookieRejectLatencyMs": "<50ms",
+    "supportedBrowsers": [
+      "Chrome",
+      "Microsoft Edge",
+      "Mozilla Firefox (Desktop & Android)",
+      "Brave",
+      "Opera"
+    ],
     "testLabScore": "8/8 (100%)",
-    "auditedPublishersCount": 150,
-    "totalIndexablePages": 441
+    "totalIndexablePages": 99
   },
   "pricingPlansGbp": {
     "introMonthlyFirst30Days": 1.99,
@@ -40,7 +49,7 @@
       "savingsPct": 45,
       "devicesIncluded": 5,
       "includedApps": [
-        "SWEEPR DeepBlock Pro (https://sweeprdeepblock.com)",
+        "SWEEPR Deepblock Pro (https://sweeprdeepblock.com)",
         "Total Tab & RAM Tamer Pro",
         "Sweepr VPN Pro (https://sweeprvpn.com)",
         "Sweepr Desktop Cleaner Pro (https://sweeprcleaner.com)"

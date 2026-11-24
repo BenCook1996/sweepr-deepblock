@@ -128,6 +128,25 @@ function collectExtensionFiles(dir, baseDir = dir) {
 }
 
 /**
+ * Strips Chromium-only feature-guarded API blocks so Firefox XPI/AMO builds stay warning-free.
+ */
+function sanitizeFirefoxXpiJs(code) {
+  return code
+    .replace(
+      /\r?\n[ \t]*if \(updateAvailable && chrome\.runtime && typeof chrome\.runtime\.requestUpdateCheck === 'function'\) \{\r?\n[ \t]*try \{\r?\n[ \t]*chrome\.runtime\.requestUpdateCheck\(\(\) => \{\}\);\r?\n[ \t]*\} catch \(e\) \{\}\r?\n[ \t]*\}/g,
+      ''
+    )
+    .replace(
+      /\r?\nif \(\r?\n[ \t]*typeof chrome !== 'undefined' &&\r?\n[ \t]*chrome\.declarativeNetRequest &&\r?\n[ \t]*chrome\.declarativeNetRequest\.onRuleMatchedDebug\r?\n\) \{\r?\n[ \t]*try \{\r?\n[ \t]*chrome\.declarativeNetRequest\.onRuleMatchedDebug\.addListener\(\(info\) => \{\r?\n[ \t]*if \(info && info\.rule && info\.rule\.rulesetId === 'ads_and_trackers'\) \{\r?\n[ \t]*queueDiagnosticStatIncrement\('adsBlocked', 1, \(\) => \{\}\);\r?\n[ \t]*\}\r?\n[ \t]*\}\);\r?\n[ \t]*\} catch \(e\) \{\}\r?\n\}/g,
+      ''
+    )
+    .replace(
+      /\r?\n[ \t]*if \(chrome\.runtime && typeof chrome\.runtime\.requestUpdateCheck === 'function'\) \{\r?\n[ \t]*try \{\r?\n[ \t]*chrome\.runtime\.requestUpdateCheck\(\(status\) => \{\r?\n[ \t]*if \(status === 'update_available'\) \{\r?\n[ \t]*chrome\.runtime\.reload\(\);\r?\n[ \t]*\} else \{\r?\n[ \t]*chrome\.tabs\.create\(\{ url: targetUrl \}\);\r?\n[ \t]*\}\r?\n[ \t]*\}\);\r?\n[ \t]*return;\r?\n[ \t]*\} catch \(e\) \{\}\r?\n[ \t]*\}/g,
+      ''
+    );
+}
+
+/**
  * Rebuilds all cross-browser and cross-device packages (`sweepr-deepblock-extension.zip`,
  * `sweepr-deepblock-firefox.xpi`, `sweepr-deepblock.xpi`, `SWEEPRDeepblockSetup.exe`) and
  * syncs the local `%LOCALAPPDATA%\SWEEPR\Deepblock\Extension` directory when present.
@@ -176,25 +195,27 @@ export function rebuildAllBrowserAndDevicePackages() {
           const manifestObj = JSON.parse(data.toString('utf8'));
           delete manifestObj.minimum_chrome_version;
           manifestObj.background = {
-            service_worker: 'background.js',
             scripts: ['background.js']
           };
           manifestObj.browser_specific_settings = {
             gecko: {
               id: 'extension@sweeprdeepblock.com',
-              strict_min_version: '128.0',
+              strict_min_version: '140.0',
               data_collection_permissions: {
                 required: ['none']
               }
             },
             gecko_android: {
-              strict_min_version: '128.0'
+              strict_min_version: '142.0'
             }
           };
           return { name, data: Buffer.from(JSON.stringify(manifestObj, null, 2) + '\n', 'utf8') };
         } catch {
           return { name, data };
         }
+      }
+      if (name.endsWith('.js')) {
+        return { name, data: Buffer.from(sanitizeFirefoxXpiJs(data.toString('utf8')), 'utf8') };
       }
       return { name, data };
     });
@@ -205,6 +226,7 @@ export function rebuildAllBrowserAndDevicePackages() {
 
     // 3. Recompile Windows 1-Click Installer EXE (`SWEEPRDeepblockSetup.exe`) if `csc.exe` is available
     const cscPath = 'C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319\\csc.exe';
+    const manifestPath = path.join(ROOT_DIR, 'installer', 'app.manifest');
     if (process.platform === 'win32' && fs.existsSync(cscPath) && fs.existsSync(csPath)) {
       try {
         execFileSync(
@@ -214,52 +236,17 @@ export function rebuildAllBrowserAndDevicePackages() {
             '/target:winexe',
             `/out:${exePath}`,
             '/optimize+',
+            ...(fs.existsSync(manifestPath) ? [`/win32manifest:${manifestPath}`] : []),
             '/reference:System.IO.Compression.dll',
             '/reference:System.IO.Compression.FileSystem.dll',
             '/reference:System.Windows.Forms.dll',
             '/reference:System.Drawing.dll',
-            `/resource:${zipPath},SWEEPR.Extension.zip`,
             csPath
           ],
           { cwd: ROOT_DIR, stdio: 'pipe' }
         );
         result.windowsExeRebuilt = true;
       } catch {}
-    }
-
-    // 4. Sync local installed extension directory (`%LOCALAPPDATA%\SWEEPR\Deepblock\Extension`) only when ALLOW_LOCAL_OWNER_PREACTIVATION=1
-    const localAppData = process.env.ALLOW_LOCAL_OWNER_PREACTIVATION === '1' ? process.env.LOCALAPPDATA : '';
-    if (localAppData) {
-      const installedExtDir = path.join(localAppData, 'SWEEPR', 'Deepblock', 'Extension');
-      if (fs.existsSync(installedExtDir)) {
-        for (const { name, data } of rawFiles) {
-          const destFile = path.join(installedExtDir, name);
-          fs.mkdirSync(path.dirname(destFile), { recursive: true });
-          if (name === 'manifest.json') {
-            const mText = data.toString('utf8').replace(/"enabled":\s*false/g, '"enabled": true');
-            fs.writeFileSync(destFile, mText, 'utf8');
-          } else if (name === 'background.js') {
-            let bText = data
-              .toString('utf8')
-              .replace(
-                /let verifiedSession = \{\r?\n  proActive: false,\r?\n  ramTamerActive: false,\r?\n  licenseKey: '',/,
-                "let verifiedSession = {\n  proActive: true,\n  ramTamerActive: true,\n  licenseKey: 'SWEEPR-OWNER-PRO-2026',"
-              )
-              .replace(
-                /const DEFAULT_STATE = \{\r?\n  proActive: false,\r?\n  ramTamerActive: false,\r?\n  licenseKey: '',\r?\n  licenseToken: '',\r?\n  crmAccountId: '',\r?\n  subscriptionStatus: 'unactivated',\r?\n  licenseVerifiedAt: 0,\r?\n  entitlements: \[\],\r?\n  encryptedDnsEnabled: false,\r?\n  pausedSites: \[\],\r?\n  neverSnoozeSites: \[\],\r?\n  trustedShopSites: \[\],\r?\n  customHiddenSelectors: \{\},\r?\n  settings: \{\r?\n    cookieAutoClose: false,\r?\n    hideSearchSpam: false,\r?\n    fakeShopAlerts: false,\r?\n    trackerProtection: false,\r?\n    adBlocking: false,\r?\n    silentMode: false,\r?\n    autoRamTamer: false\r?\n  \},/,
-                `const DEFAULT_STATE = {\n  proActive: true,\n  ramTamerActive: true,\n  licenseKey: 'SWEEPR-OWNER-PRO-2026',\n  licenseToken: '',\n  crmAccountId: '',\n  subscriptionStatus: 'active',\n  licenseVerifiedAt: Date.now(),\n  entitlements: [\n    'pro_cookie_autoreject',\n    'pro_ai_slop_purifier',\n    'pro_clutter_stripper',\n    'bundle_fake_store_detector',\n    'bundle_encrypted_dns_proxy',\n    'addon_total_tab_and_ram_tamer'\n  ],\n  encryptedDnsEnabled: true,\n  pausedSites: [],\n  neverSnoozeSites: [],\n  trustedShopSites: [],\n  customHiddenSelectors: {},\n  settings: {\n    cookieAutoClose: true,\n    hideSearchSpam: true,\n    fakeShopAlerts: true,\n    trackerProtection: true,\n    adBlocking: true,\n    silentMode: true,\n    autoRamTamer: true\n  },`
-              )
-              .replace(
-                /if \(!key \|\| !store\.proActive\) \{\r?\n    verifiedSession\.coldChecked = true;\r?\n    await revokeProState\('unactivated'\);\r?\n    return \{ proActive: false, ramTamerActive: false \};\r?\n  \}/,
-                `if (!key || key === 'SWEEPR-OWNER-PRO-2026' || !store.proActive) {\n    verifiedSession.proActive = true;\n    verifiedSession.ramTamerActive = true;\n    verifiedSession.licenseKey = 'SWEEPR-OWNER-PRO-2026';\n    verifiedSession.coldChecked = true;\n    await syncExtensionProtectionRules(true);\n    return { proActive: true, ramTamerActive: true };\n  }`
-              );
-            fs.writeFileSync(destFile, bText, 'utf8');
-          } else {
-            fs.writeFileSync(destFile, data);
-          }
-        }
-        result.localAppDataSynced = true;
-      }
     }
   } catch {}
 

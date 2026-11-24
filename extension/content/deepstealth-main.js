@@ -1226,6 +1226,17 @@
   safeDefine(window, '__inpageSkins', noopFn);
   safeDefine(window, 'blockBanner', noopFn);
   safeDefine(window, 'runDownloadBanner', noopFn);
+  safeDefine(window, 'a3klsam', adManagerStub);
+  safeDefine(window, 'popLite', Object.freeze({ init: noopFn }));
+
+  if (/(^|\.)(txxx|hclips|upornia|voyeurhit|hotmovs|tubecup|vjav|shemalez|abxxx)\.(me|com|tube)$/i.test(location.hostname)) {
+    try {
+      sessionStorage.setItem('__slider', '99');
+      sessionStorage.setItem('__inpASG', '99');
+      sessionStorage.setItem('__inpageTaco', '99');
+      sessionStorage.setItem('__inpageTacoIM', '99');
+    } catch (e) {}
+  }
 
   try {
     const dealProxy = new Proxy(
@@ -1662,7 +1673,7 @@
 
   // Block popunders and ad-network URLs
   const POPUNDER_URL_REGEX =
-    /(\/zv3\/(b|url|cam)|\/link\/out\/|\/linkout\/livecams\/|\/player_right_ntv_|\/adx_iframe_|\/away\/(pop|tab)|\/ads\/prebid-ads|\/getape\/|\/prepop\.php|\/getadb\/|\/venor\.php|\/v1\/link\.php|\/splash\.php\?idzone=|\/api\/spots\/|\/api\/click\/|\/agent\.php\?spot=|\/loadeactrl\.go|\/vast\.go|\/click\.go|\/pop\.go|\/banner\.go|banner-iframe|advertiserName=|tsyndicate\.com|contentsserved\.com|exoclick\.com|exosrv\.com|realsrv\.com|magsrv\.com|pemsrv\.com|orbsrv\.com|trafficjunky\.(net|com)|juicyads\.com|jads\.co|clickadu\.com|clickaine\.com|\/lv\/esnk\/|hilltopads\.net|adspyglass\.com|plugrush\.com|adxpansion\.com|crakrevenue\.com|ero-advertising\.com|twinrdsyn\.com|twinrdengine\.com|adtng\.com|dreamserve\.dev|velvetloom\.net|creepy-frame\.com|smartfloralab\.com|realxxx\.com|traffichunt\.com|camsoda\.ai|livemediahost\.com|statserv\.net|etahub\.com|bngpt\.com|xlivrdr\.com|popads\.net|popcash\.net|propellerads\.com|cdn-fc\.com|meteorpomposity\.com|glutenmuttsensuous\.com|cupbearergrowllurch\.com|hollowgoal\.com|u5s5\.com|adplsr\.com|nomarax\.com|fh-wgt\.com|yomeno\.xyz|ahw2lok\.txxx\.com|zog\.link|iloptrex\.com|nereserv\.com|vidvas3\.com|tubecup\.net|fhgte\.com|faphouse4k\.com|tikbblove\.com|directsle\.com|g2fame\.com|rvmessage\.online|rvrpushserv\.com|yequka\.my|tophqcam\.com|doublepimp\.com|advnet\.xyz|hotadultcontent\.com|hotxxxcontent\.com|qoqh\.com|hqpornpro\.com|lxax\.com|koxk\.com|applzr\.com|goadserver\.com|gsrv\.dev|aaaconnect\.info|onclckmn\.com|onclicka\.com|adsmediabox\.com|awmdelivery\.com|acquaintjokinglyscoring\.com|rmzsglng\.com|aivanta76\.com|bongacams2?\.com|gotpd\.me|superwebhub\.cyou|fozekikikiminu\.com|janusaent\.com|growcdnssedge\.com|saawsedge\.com|doppiocdn\.com|landing\.brazzersnetwork\.com|sacdnssedge\.com|kol88\.freeporn8\.com|Y1l0oxvJ\.js|nvdst\.com\/adx_|_pnuvid\.js|p2p\.init\.js|jquery\.shows2\.min\.js|pagerrentablespotlight\.com|holaraphraus\.com|terschomonic\.com|enomotia\.com|janitorprecisiontrio\.com|earthspetti\.com|displayvertising\.com|jusgrmawfbaqu\.com|bspyoibtwrrc\.com|cemhlobja\.com|d3mzokty951c5w\.cloudfront\.net|magnific-popup\.min\.js|\/[a-z]url\.min\.css|adsco\.re|ey43\.com)/i;
+    /(\/zv3\/(b|url|cam)|\/link\/out\/|\/linkout\/livecams\/|\/player_right_ntv_|\/adx_iframe_|\/away\/(pop|tab)|\/ads\/prebid-ads|\/getape\/|\/prepop\.php|\/getadb\/|\/venor\.php|\/v1\/link\.php|\/splash\.php\?idzone=|\/api\/spots\/|\/api\/click\/|\/agent\.php\?spot=|\/loadeactrl\.go|\/vast\.go|\/click\.go|\/pop\.go|\/banner\.go|banner-iframe|advertiserName=|tsyndicate\.com|contentsserved\.com|exoclick\.com|exosrv\.com|realsrv\.com|magsrv\.com|pemsrv\.com|orbsrv\.com|trafficjunky\.(net|com)|juicyads\.com|jads\.co|clickadu\.com|clickaine\.com|\/lv\/esnk\/|hilltopads\.net|adspyglass\.com|plugrush\.com|adxpansion\.com|crakrevenue\.com|ero-advertising\.com|twinrdsyn\.com|twinrdengine\.com|adtng\.com|dreamserve\.dev|velvetloom\.net|creepy-frame\.com|smartfloralab\.com|realxxx\.com|traffichunt\.com|camsoda\.ai|livemediahost\.com|statserv\.net|etahub\.com|bngpt\.com|xlivrdr\.com|popads\.net|popcash\.net|propellerads\.com|cdn-fc\.com|meteorpomposity\.com|glutenmuttsensuous\.com|cupbearergrowllurch\.com|hollowgoal\.com|u5s5\.com|adplsr\.com|nomarax\.com|fh-wgt\.com|yomeno\.xyz|ahw2lok\.txxx\.com|zog\.link|iloptrex\.com|nereserv\.com|vidvas3\.com|tubecup\.net|fhgte\.com|faphouse4k\.com|tikbblove\.com|directsle\.com|g2fame\.com|rvmessage\.online|rvrpushserv\.com|yequka\.my|tophqcam\.com|doublepimp\.com|advnet\.xyz|hotadultcontent\.com|hotxxxcontent\.com|qoqh\.com|hqpornpro\.com|lxax\.com|koxk\.com|applzr\.com|goadserver\.com|gsrv\.dev|aaaconnect\.info|onclckmn\.com|onclicka\.com|adsmediabox\.com|awmdelivery\.com|acquaintjokinglyscoring\.com|rmzsglng\.com|aivanta76\.com|bongacams2?\.com|gotpd\.me|superwebhub\.cyou|fozekikikiminu\.com|janusaent\.com|growcdnssedge\.com|saawsedge\.com|doppiocdn\.com|landing\.brazzersnetwork\.com|sacdnssedge\.com|kol88\.freeporn8\.com|Y1l0oxvJ\.js|nvdst\.com\/adx_|_pnuvid\.js|p2p\.init\.js|jquery\.shows2\.min\.js|pagerrentablespotlight\.com|holaraphraus\.com|terschomonic\.com|enomotia\.com|janitorprecisiontrio\.com|earthspetti\.com|displayvertising\.com|jusgrmawfbaqu\.com|bspyoibtwrrc\.com|cemhlobja\.com|d3mzokty951c5w\.cloudfront\.net|magnific-popup\.min\.js|\/[a-z]url\.min\.css|adsco\.re|ey43\.com|ajscdn\.com|inppcdn\.com|tapioni\.com|boannre\.com|vstvstsa\.com|vstserv\.com|takedmca\.com|clladss\.com|enrtx\.com|nexttads\.com|innaxx\.com|cherrytv\.media|rtbsuperhub\.com|amazingcontent\.site|\/ipp\.js|\/ip-push\.js|\/vast-im\.js|\/asg_embed\.js|\/v2-banner\.js)/i;
 
   const isEmbeddedPlayerFrame = () =>
     window !== window.top &&
@@ -1757,7 +1768,9 @@
         id === 'banner_iframe' ||
         id === 'a_iframe_DwTGCjTm' ||
         /^spot_video_ntv_/i.test(id) ||
-        /(report\.error-report\.com|html-load\.com|adtng\.com|gsrv\.dev|aaaconnect\.info|awmdelivery\.com|onclckmn\.com|onclicka\.com|adsmediabox\.com|dreamserve\.dev|velvetloom\.net|smartfloralab\.com|realxxx\.com|traffichunt\.com|statserv\.net|\/ads\/prebid-ads|\/player_right_ntv_|\/adx_iframe_|superwebhub\.cyou|fozekikikiminu\.com|holaraphraus\.com|terschomonic\.com|janitorprecisiontrio\.com|pagerrentablespotlight\.com|cemhlobja\.com|displayvertising\.com)/i.test(
+        (node.classList && node.classList.contains('ipp')) ||
+        (node.style && node.style.position === 'fixed' && String(node.style.zIndex) === '3258594758') ||
+        /(report\.error-report\.com|html-load\.com|adtng\.com|gsrv\.dev|aaaconnect\.info|awmdelivery\.com|onclckmn\.com|onclicka\.com|adsmediabox\.com|dreamserve\.dev|velvetloom\.net|smartfloralab\.com|realxxx\.com|traffichunt\.com|statserv\.net|\/ads\/prebid-ads|\/player_right_ntv_|\/adx_iframe_|superwebhub\.cyou|fozekikikiminu\.com|holaraphraus\.com|terschomonic\.com|janitorprecisiontrio\.com|pagerrentablespotlight\.com|cemhlobja\.com|displayvertising\.com|ajscdn\.com|inppcdn\.com|tapioni\.com|boannre\.com)/i.test(
           iframeSrc
         )
       ) {
@@ -1781,6 +1794,8 @@
       node.hasAttribute('data-clpcid') ||
       node.hasAttribute('data-clscid') ||
       node.hasAttribute('data-spots') ||
+      node.hasAttribute('data-spot') ||
+      node.hasAttribute('data-admpid-popunder') ||
       node.getAttribute('data-tag') === 'asg' ||
       (node.settings && node.settings.misc && node.settings.misc.ignoreTo) ||
       POPUNDER_URL_REGEX.test(src) ||
@@ -1803,7 +1818,7 @@
       /\/(UtsK7A9|RaNIDAd|rtoj6Ac)\.js/i.test(src) ||
       /\/pxo\/www\/js-v[0-9.]+\/[a-z0-9]{8}\.min\.js/i.test(src) ||
       /\/pxo\/www\/js.*\.min\.js\?url=/i.test(src) ||
-      (/(^|\.)(txxx|hclips|upornia|voyeurhit|hotmovs|tubecup|vjav|shemalez)\.(me|com|tube)$/i.test(location.hostname) && /\/[0-9a-z]{8,12}\/[0-9a-z]{8,12}\.js(\?|$)/i.test(src)) ||
+      (/(^|\.)(txxx|hclips|upornia|voyeurhit|hotmovs|tubecup|vjav|shemalez|abxxx)\.(me|com|tube)$/i.test(location.hostname) && /\/[0-9a-z]{8,12}\/[0-9a-z]{8,12}\.js(\?|$)/i.test(src)) ||
       /\/on\.js(\?|$)/i.test(src) ||
       /\/bn\.js(\?|$)/i.test(src) ||
       /\/js\/epo\.js(\?|$)/i.test(src) ||
@@ -1858,6 +1873,72 @@
   };
   markNative(wrappedInsertBefore, 'insertBefore');
   Node.prototype.insertBefore = wrappedInsertBefore;
+
+  const origElementAppend = Element.prototype.append;
+  if (typeof origElementAppend === 'function') {
+    const wrappedElementAppend = function append() {
+      const kept = [];
+      for (let i = 0; i < arguments.length; i++) {
+        const arg = arguments[i];
+        if (isBlockedDynamicScript(arg)) {
+          try {
+            arg.onerror = null;
+            arg.onload = null;
+          } catch (e) {}
+          notifyStealthBypass('dynamic-popunder-script-blocked');
+        } else {
+          kept.push(arg);
+        }
+      }
+      if (kept.length === 0) return;
+      const res = origElementAppend.apply(this, kept);
+      if (typeof patchIframeWinRef === 'function') {
+        for (const item of kept) {
+          if (item && item.tagName === 'IFRAME') {
+            try {
+              patchIframeWinRef(item);
+            } catch (e) {}
+          }
+        }
+      }
+      return res;
+    };
+    markNative(wrappedElementAppend, 'append');
+    Element.prototype.append = wrappedElementAppend;
+  }
+
+  const origElementPrepend = Element.prototype.prepend;
+  if (typeof origElementPrepend === 'function') {
+    const wrappedElementPrepend = function prepend() {
+      const kept = [];
+      for (let i = 0; i < arguments.length; i++) {
+        const arg = arguments[i];
+        if (isBlockedDynamicScript(arg)) {
+          try {
+            arg.onerror = null;
+            arg.onload = null;
+          } catch (e) {}
+          notifyStealthBypass('dynamic-popunder-script-blocked');
+        } else {
+          kept.push(arg);
+        }
+      }
+      if (kept.length === 0) return;
+      const res = origElementPrepend.apply(this, kept);
+      if (typeof patchIframeWinRef === 'function') {
+        for (const item of kept) {
+          if (item && item.tagName === 'IFRAME') {
+            try {
+              patchIframeWinRef(item);
+            } catch (e) {}
+          }
+        }
+      }
+      return res;
+    };
+    markNative(wrappedElementPrepend, 'prepend');
+    Element.prototype.prepend = wrappedElementPrepend;
+  }
 
   // Block click-hijacking addEventListener & .onclick registrations from popunder scripts
   const POPUNDER_LISTENER_REGEX =

@@ -33,10 +33,8 @@
 
   <!-- Structured Data (JSON-LD) -->
   <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://sweeprdeepblock.com/"},{"@type":"ListItem","position":2,"name":"Order","item":"https://sweeprdeepblock.com/order"}]},{"@type":"CheckoutPage","name":"SWEEPR Deepblock Order Checkout","url":"https://sweeprdeepblock.com/order","description":"Secure checkout for SWEEPR Deepblock Pro licenses with instant activation."}]}</script>
-  <link rel="stylesheet" href="/sweepr-ui.css?v=20261116">
-  <link rel="stylesheet" href="/style.css?v=20261114">
-  <script src="https://js.stripe.com/v3/"></script>
-  <script src="https://pay.google.com/gp/p/js/pay.js" async></script>
+  <link rel="stylesheet" href="/sweepr-tailwind.min.css?v=20261122">
+  <link rel="stylesheet" href="/style.css?v=20261122">
   <style>
     #googlePayButtonContainer > div,
     #googlePayButtonContainer button,
@@ -262,7 +260,7 @@
       border-radius: 0 0 4px 4px;
     }
   </style>
-  <script src="/nav.js" defer></script>
+  <script src="/nav.js?v=20261122" defer></script>
   <script src="/i18n.js" defer></script>
   <script>
     try {
@@ -281,7 +279,6 @@
       }
     } catch (e) {}
   </script>
-  <script src="/nav.js" defer></script>
   <!-- Google tag (gtag.js) - Sweepr Deepblock -->
   <script async src="/metrics/js?id=G-01MNBQSL9K"></script>
   <script>
@@ -299,7 +296,7 @@
   <!-- TOP DARK BANNER (Matching sweeprcleaner.com/order & sweeprvpn.com/order Header Layout) -->
   <header class="bg-[#232931] text-white py-5 px-6 sm:px-8 border-b border-gray-800/80 shadow-md">
     <div class="max-w-6xl mx-auto flex items-center justify-between">
-      <a href="/?home=1" class="inline-flex items-center gap-2.5 text-inherit no-underline group">
+      <a href="/" class="inline-flex items-center gap-2.5 text-inherit no-underline group">
         <img src="/logo.svg" alt="SWEEPR Deepblock" width="32" height="32" class="w-8 h-8 rounded-lg drop-shadow transition-transform group-hover:scale-105" />
         <div class="flex items-baseline gap-1.5">
           <span class="font-black text-xl tracking-tight text-white">SWEEPR <span class="text-emerald-400">Deepblock</span></span>
@@ -316,16 +313,16 @@
     </div>
     <div class="max-w-4xl mx-auto text-center pt-5 pb-3">
       <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-400/30 text-emerald-300 text-[11px] font-bold mb-2" data-ab-paywall-badge>
-        ✓ 4-Device Pro (£29.99/yr) or 4-App Complete Security Suite (£89.99/yr)
+        ✓ 5-Device Pro (£29.99/yr) or 4-App Complete Security Suite (£89.99/yr)
       </div>
       <h1 id="bannerTitle" class="text-2xl sm:text-3xl md:text-4xl font-black text-white tracking-tight" data-ab-paywall-headline>
         Get Complete Ad &amp; Pop-Up Protection for 2026
       </h1>
       <p id="bannerSubtitle" class="text-gray-300 text-xs sm:text-sm md:text-base mt-1.5 font-normal max-w-2xl mx-auto" data-ab-paywall-subheadline>
-        Block Ads, Pop-Ups &amp; Scams — Locked-In £29.99/yr Rate with 14-Day Guarantee.
+        Block Ads, Cookie Pop-Ups &amp; Trackers — Locked-In £29.99/yr Rate with 14-Day Guarantee.
       </p>
       <div class="text-[11px] font-bold text-emerald-400 mt-1.5" data-live-proof-ticker>
-        Verified Live: 10,218+ Ad/Scam Domains • 242 C++ DNR Rules (15µs) • 150 Audited Publishers
+        Native Manifest V3 Rulesets • Auto Cookie Pop-Up Rejector • Total Tab &amp; RAM Tamer Included
       </div>
     </div>
   </header>
@@ -355,10 +352,10 @@
           <div class="text-[11px] font-extrabold uppercase tracking-wider text-emerald-700 flex items-center gap-1.5">
             <span>🛒 Order Summary (SWEEPR Deepblock Pro)</span>
           </div>
-          <div id="mobileAccordionHint" class="text-[11px] text-gray-500 mt-0.5">Tap to expand itemized summary &amp; 1-click add-on &darr;</div>
+          <div id="mobileAccordionHint" class="text-[11px] text-gray-500 mt-0.5">Tap to expand itemized summary &amp; plan breakdown &darr;</div>
         </div>
         <div class="text-right shrink-0">
-          <div id="mobileAccordionTotal" class="font-black text-base text-gray-900 tabular-nums">£44.98</div>
+          <div id="mobileAccordionTotal" class="font-black text-base text-gray-900 tabular-nums">£29.99</div>
           <div class="text-[10px] font-bold text-emerald-700">14-Day Refund</div>
         </div>
       </button>
@@ -396,7 +393,7 @@
               </div>
               <h2 class="text-lg sm:text-xl font-black text-gray-900 tracking-tight leading-snug">SWEEPR Deepblock Pro All-Access</h2>
               <p class="text-xs text-gray-500 mt-0.5 leading-relaxed">
-                Stops video &amp; banner ads, closes cookie pop-ups automatically &amp; warns about fake shops
+                Stops video &amp; banner ads, closes cookie pop-ups, strips URL trackers &amp; includes Total Tab &amp; RAM Tamer
               </p>
               <div class="flex flex-wrap items-center gap-x-2 gap-y-1 mt-1.5 text-xs text-gray-600">
                 <span class="inline-flex items-center gap-1 text-emerald-600 font-semibold">
@@ -423,8 +420,8 @@
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
               </span>
               <div>
-                <div class="font-bold text-gray-900 text-xs sm:text-sm">Fake Online Shop Detector</div>
-                <div class="text-[11px] text-gray-500">Warns you before buying from suspicious scam stores</div>
+                <div class="font-bold text-gray-900 text-xs sm:text-sm">URL Tracking Parameter Stripper</div>
+                <div class="text-[11px] text-gray-500">Strips fbclid, gclid, utm_* &amp; msclkid tracking codes automatically</div>
               </div>
             </div>
             <span class="text-[10px] font-extrabold text-emerald-700 uppercase tracking-wider shrink-0">Included Free</span>
@@ -444,29 +441,27 @@
           </div>
         </div>
 
-        <!-- 3. 1-CLICK PAID ORDER BUMP: Total Tab & RAM Tamer (Checked by default) -->
-        <div id="ramTamerBumpCard" class="bg-emerald-50/50 rounded-xl p-3.5 sm:p-4 border border-emerald-200/80 hover:border-emerald-300 transition-all">
-          <label class="flex items-start justify-between gap-3 cursor-pointer select-none">
-            <div class="flex items-start gap-3">
-              <input type="checkbox" id="ramTamerAddonCheckbox" checked onchange="toggleRamTamerAddon(this.checked)" class="mt-0.5 w-5 h-5 rounded border-emerald-300 text-emerald-600 accent-emerald-600 focus:ring-emerald-500 cursor-pointer shrink-0">
-              <div>
-                <div class="flex flex-wrap items-center gap-1.5 mb-1">
-                  <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-extrabold uppercase tracking-wider bg-white text-emerald-800 border border-emerald-200">
-                    ⚡ 1-CLICK SPEED ADD-ON
-                  </span>
-                  <span id="ramAddonPriceLabel" class="text-xs font-extrabold text-emerald-800 bg-emerald-100/80 px-2 py-0.5 rounded border border-emerald-200">
-                    + £14.99/yr (£1.24/mo eq.)
-                  </span>
-                </div>
-                <h3 class="font-extrabold text-gray-900 text-xs sm:text-sm leading-snug">
-                  Add “Total Tab &amp; RAM Tamer” — Browser Speed &amp; Memory Optimizer
-                </h3>
-                <p class="text-[11px] sm:text-xs text-gray-600 mt-0.5 leading-relaxed">
-                  Automatically pauses unused background tabs until you click them so your computer stays fast, quiet, and never loses open tabs.
-                </p>
+        <!-- 3. INCLUDED FREE IN PRO: Total Tab & RAM Tamer -->
+        <div id="ramTamerIncludedCard" class="bg-emerald-50/50 rounded-xl p-3.5 sm:p-4 border border-emerald-200/80">
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <div class="flex flex-wrap items-center gap-1.5 mb-1">
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-extrabold uppercase tracking-wider bg-white text-emerald-800 border border-emerald-200">
+                  ⚡ INCLUDED IN PRO
+                </span>
+                <span class="text-xs font-extrabold text-emerald-800 bg-emerald-100/80 px-2 py-0.5 rounded border border-emerald-200">
+                  Included Free
+                </span>
               </div>
+              <h3 class="font-extrabold text-gray-900 text-xs sm:text-sm leading-snug">
+                Total Tab &amp; RAM Tamer — Browser Speed &amp; Memory Optimizer
+              </h3>
+              <p class="text-[11px] sm:text-xs text-gray-600 mt-0.5 leading-relaxed">
+                Automatically pauses unused background tabs until you click them so your computer stays fast, quiet, and never loses open tabs.
+              </p>
             </div>
-          </label>
+            <span class="text-[10px] font-extrabold text-emerald-700 uppercase tracking-wider shrink-0">✓ Included</span>
+          </div>
         </div>
 
         <!-- 4. Itemized Breakdown & Total Today (Unified Keyline Receipt — Zero Nested Container Boxes) -->
@@ -479,9 +474,9 @@
           <div id="ramAddonSummaryRow" class="flex items-center justify-between text-emerald-800 py-1">
             <span class="flex items-center gap-1.5 font-semibold text-xs">
               <span>⚡</span>
-              <span>Total Tab &amp; RAM Tamer Add-On</span>
+              <span>Total Tab &amp; RAM Tamer</span>
             </span>
-            <span id="ramAddonSummaryAmount" class="font-bold text-gray-900 text-xs">+ £14.99/year</span>
+            <span id="ramAddonSummaryAmount" class="font-bold text-emerald-700 text-xs">Included Free</span>
           </div>
 
           <!-- Savings Line -->
@@ -508,7 +503,7 @@
 
           <div class="pt-3 border-t border-slate-200 flex items-center justify-between">
             <span id="totalTodayLabel" class="font-bold text-gray-900 text-sm sm:text-base">Total Today (GBP)</span>
-            <span id="totalTodayText" class="font-black text-xl sm:text-2xl text-gray-900 tabular-nums">£44.98</span>
+            <span id="totalTodayText" class="font-black text-xl sm:text-2xl text-gray-900 tabular-nums">£29.99</span>
           </div>
         </div>
 
@@ -711,7 +706,7 @@
             <label class="flex items-start gap-2.5 cursor-pointer select-none">
               <input type="checkbox" id="termsConsent" required checked class="mt-0.5 w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer">
               <span id="termsConsentLabel" class="leading-snug">
-                I agree to pay £59.99 today which will auto renew at £59.99 annually unless I cancel before my next renewal. I can cancel anytime via my online portal. Prices may change with notice.
+                I agree to pay £29.99 today which will auto renew at £29.99 annually unless I cancel before my next renewal. I can cancel anytime via my online portal. Prices may change with notice.
               </span>
             </label>
 
@@ -787,7 +782,7 @@
             <span>SPECIAL INTRODUCTORY OFFER</span>
           </div>
           <h2 class="text-2xl sm:text-3xl font-black text-white tracking-tight leading-tight">
-            Get 1st Month of <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">SWEEPR Deepblock</span> for Just <span>£1.99</span>
+            Get 1st Month of <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">SWEEPR Deepblock</span> for Just <span id="discountModalTitlePrice">£1.99</span>
           </h2>
           <ul class="space-y-2.5 text-xs sm:text-sm text-gray-300 font-medium">
             <li class="flex items-center gap-2.5">
@@ -800,7 +795,7 @@
               <div class="w-4 h-4 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
               </div>
-              <span>Includes Fake Online Shop Detector &amp; Private Browsing</span>
+              <span>Includes Total Tab &amp; RAM Tamer &amp; URL Tracker Stripper</span>
             </li>
             <li class="flex items-center gap-2.5">
               <div class="w-4 h-4 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
@@ -813,13 +808,13 @@
             <div>
               <span class="text-xs text-gray-400 block">1st Month Only</span>
               <div class="flex items-baseline gap-2">
-                <span class="text-2xl sm:text-3xl font-black text-emerald-400">£1.99</span>
-                <span class="text-xs text-gray-400 line-through">Regular £9.99</span>
+                <span id="discountModalIntroPrice" class="text-2xl sm:text-3xl font-black text-emerald-400">£1.99</span>
+                <span id="discountModalRegularPrice" class="text-xs text-gray-400 line-through">Regular £4.99</span>
               </div>
             </div>
             <div class="text-right">
               <span class="text-[11px] text-gray-400 block">Renews at</span>
-              <span class="text-xs font-bold text-gray-200">£9.99/month</span>
+              <span id="discountModalRenewalRate" class="text-xs font-bold text-gray-200">£4.99/month</span>
             </div>
           </div>
           <div>
@@ -831,8 +826,8 @@
             </button>
           </div>
           <div class="space-y-1.5 pt-0.5 text-center">
-            <p class="text-[11px] text-gray-400 leading-snug">
-              Introductory £8.00 savings applies strictly to month 1. Auto-renews at standard £9.99/month unless cancelled.
+            <p id="discountModalDisclaimer" class="text-[11px] text-gray-400 leading-snug">
+              Introductory £3.00 savings applies strictly to month 1. Auto-renews at standard £4.99/month unless cancelled.
             </p>
             <div class="flex flex-wrap items-center justify-center sm:justify-between gap-2 text-[10px] sm:text-[11px] text-emerald-400/90 font-medium pt-1 px-1">
               <span class="whitespace-nowrap flex items-center gap-1">🔒 256-Bit SSL</span>
@@ -1040,13 +1035,8 @@
       });
     }
 
-    function getRamAddonPence(plan = selectedPlan) {
-      if (plan === 'suite_annual') return 0;
-      if (plan === 'annual' && isD60FreeRamTamer) return 0;
-      const p = checkoutConfig && checkoutConfig.pricing;
-      if (plan === 'annual') return p?.ramTamerAnnualAmount ?? 1499;
-      if (plan === 'six_month') return p?.ramTamerSixMonthAmount ?? 999;
-      return p?.ramTamerMonthlyAmount ?? 199;
+    function getRamAddonPence() {
+      return 0;
     }
 
     function getBasePlanPence(plan = selectedPlan) {
@@ -1069,9 +1059,7 @@
     }
 
     function calculateTotalPence() {
-      const base = getBasePlanPence(selectedPlan);
-      const addon = isRamTamerAdded ? getRamAddonPence(selectedPlan) : 0;
-      return base + addon;
+      return getBasePlanPence(selectedPlan);
     }
 
     function updatePaymentRequestTotal() {
@@ -1104,33 +1092,8 @@
 
       const ramRow = document.getElementById('ramAddonSummaryRow');
       const ramAmount = document.getElementById('ramAddonSummaryAmount');
-      const ramPriceLabel = document.getElementById('ramAddonPriceLabel');
-      const ramTitle = document.getElementById('ramAddonSummaryTitle');
-      if (selectedPlan === 'monthly') {
-        const moFmt = p?.ramTamerMonthlyFormatted ?? '£1.99';
-        ramPriceLabel.textContent = `+ ${moFmt}/month`;
-        ramAmount.textContent = `+ ${moFmt}/month`;
-        if (ramTitle) ramTitle.textContent = 'Total Tab & RAM Tamer Add-On (Monthly)';
-      } else if (selectedPlan === 'six_month') {
-        const sixFmt = p?.ramTamerSixMonthFormatted ?? '£9.99';
-        ramPriceLabel.textContent = `+ ${sixFmt}/6mo (£1.66/mo eq.)`;
-        ramAmount.textContent = `+ ${sixFmt}/6 months`;
-        if (ramTitle) ramTitle.textContent = 'Total Tab & RAM Tamer Add-On (6-Month)';
-      } else if (selectedPlan === 'annual' && isD60FreeRamTamer) {
-        ramPriceLabel.textContent = 'FREE (D60 Win-Back — 12 Months Included)';
-        ramAmount.textContent = 'FREE (12 mo)';
-        if (ramTitle) ramTitle.textContent = 'Total Tab & RAM Tamer Add-On (Free 12-Month D60 Bonus)';
-      } else {
-        const yrFmt = p?.ramTamerAnnualFormatted ?? '£14.99';
-        ramPriceLabel.textContent = `+ ${yrFmt}/yr (£1.24/mo eq.)`;
-        ramAmount.textContent = `+ ${yrFmt}/year`;
-        if (ramTitle) ramTitle.textContent = 'Total Tab & RAM Tamer Add-On (Annual)';
-      }
-      if (isRamTamerAdded) {
-        ramRow.classList.remove('hidden');
-      } else {
-        ramRow.classList.add('hidden');
-      }
+      if (ramAmount) ramAmount.textContent = 'Included Free';
+      if (ramRow) ramRow.classList.remove('hidden');
 
       const annualFmt = p?.annualFormatted ?? '£29.99';
       const annualMoEq = p?.annualMonthlyEqFormatted ?? '£2.50';
@@ -1142,21 +1105,56 @@
       const introFmt = p?.introMonthlyFormatted ?? '£1.99';
       const introSave = p?.introSavingsFormatted ?? '£3.00';
 
+      const modalTitlePriceEl = document.getElementById('discountModalTitlePrice');
+      const modalIntroEl = document.getElementById('discountModalIntroPrice');
+      const modalRegEl = document.getElementById('discountModalRegularPrice');
+      const modalRenEl = document.getElementById('discountModalRenewalRate');
+      const modalDiscEl = document.getElementById('discountModalDisclaimer');
+      if (modalTitlePriceEl) modalTitlePriceEl.textContent = introFmt;
+      if (modalIntroEl) modalIntroEl.textContent = introFmt;
+      if (modalRegEl) modalRegEl.textContent = `Regular ${monthlyFmt}`;
+      if (modalRenEl) modalRenEl.textContent = `${monthlyFmt}/month`;
+      if (modalDiscEl) {
+        modalDiscEl.textContent = `Introductory ${introSave} savings applies strictly to month 1. Auto-renews at standard ${monthlyFmt}/month unless cancelled.`;
+      }
+      const discSaveEl = document.getElementById('discountSaveStrong');
+      const discAmtEl = document.getElementById('discountAmountMinus');
+      const discNoteEl = document.getElementById('discountNoteText');
+      if (discSaveEl) discSaveEl.textContent = `Save ${introSave}`;
+      if (discAmtEl) discAmtEl.textContent = `- ${introSave}`;
+      if (discNoteEl) {
+        discNoteEl.textContent = `Discount applies strictly to month 1. All future monthly renewals are billed at the standard rate of ${monthlyFmt}/month unless cancelled.`;
+      }
+
       const tagSvg = '<svg class="w-3.5 h-3.5 text-brand-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg> ';
       const savingsNoteEl = document.getElementById('savingsSummaryNote');
       const suiteFmt = p?.suiteAnnualFormatted ?? '£89.99';
       const suiteMoEq = p?.suiteAnnualMonthlyEqFormatted ?? '£7.49';
       const suiteAnchorFmt = p?.suiteStandaloneAnchorFormatted ?? '£164.97';
+      const suiteSavingsFmt =
+        p?.suiteSavingsFormatted ??
+        formatLocalAmount(Math.max(0, (p?.suiteStandaloneAnchorAmount ?? 16497) - (p?.suiteAnnualAmount ?? 8999)));
+
+      if (p?.currencyCode && p.currencyCode !== 'GBP') {
+        const abBadge = document.querySelector('[data-ab-paywall-badge]');
+        if (abBadge && abBadge.textContent.includes('£')) {
+          abBadge.textContent = `✓ 5-Device Pro (${annualFmt}/yr) or 4-App Complete Security Suite (${suiteFmt}/yr)`;
+        }
+        const abSub = document.querySelector('[data-ab-paywall-subheadline]');
+        if (abSub && abSub.textContent.includes('£')) {
+          abSub.textContent = `Block Ads, Cookie Pop-Ups & Trackers — Locked-In ${annualFmt}/yr Rate with 14-Day Guarantee.`;
+        }
+      }
 
       if (selectedPlan === 'suite_annual') {
         document.getElementById('productTagContent').innerHTML = `${tagSvg}All-in-One Suite Bundle (Save 45% vs ${suiteAnchorFmt})`;
         document.getElementById('productPriceTop').textContent = suiteFmt;
         document.getElementById('productPriceSub').textContent = `per year (${suiteMoEq}/mo for all 4 apps)`;
-        document.getElementById('summaryPlanTitle').textContent = 'Sweepr Complete Security Suite (DeepBlock + VPN + Cleaner + RAM Tamer)';
+        document.getElementById('summaryPlanTitle').textContent = 'Sweepr Complete Security Suite (Deepblock + VPN + Cleaner + RAM Tamer)';
         document.getElementById('summaryPlanPrice').textContent = `${suiteFmt}/year`;
         document.getElementById('savingsSummaryLabel').textContent = 'Complete Suite Bundle Savings (Save 45%)';
-        document.getElementById('savingsSummaryAmount').textContent = '- £74.98';
-        if (savingsNoteEl) savingsNoteEl.textContent = `(Includes DeepBlock Pro + Sweepr VPN + Sweepr Cleaner + RAM Tamer vs ${suiteAnchorFmt}/yr standalone)`;
+        document.getElementById('savingsSummaryAmount').textContent = `- ${suiteSavingsFmt}`;
+        if (savingsNoteEl) savingsNoteEl.textContent = `(Includes Deepblock Pro + Sweepr VPN + Sweepr Cleaner + RAM Tamer vs ${suiteAnchorFmt}/yr standalone)`;
         document.getElementById('savingsSummaryRow').classList.remove('hidden');
         document.getElementById('discountSummaryRow').classList.add('hidden');
         if (ramRow) ramRow.classList.add('hidden');
@@ -1176,12 +1174,12 @@
         document.getElementById('termsConsentLabel').textContent =
           `I agree to pay ${totalFormatted} today which will auto renew at ${totalFormatted} annually unless I cancel before my next renewal. I can cancel anytime in 1 click via my online Customer Portal.`;
       } else if (selectedPlan === 'six_month') {
-        document.getElementById('productTagContent').innerHTML = `${tagSvg}Save 25% vs monthly billing`;
+        document.getElementById('productTagContent').innerHTML = `${tagSvg}Save 33% vs monthly billing`;
         document.getElementById('productPriceTop').textContent = sixFmt;
         document.getElementById('productPriceSub').textContent = `every 6 months (${sixMoEq}/mo)`;
         document.getElementById('summaryPlanTitle').textContent = 'SWEEPR Deepblock Pro (6-Month Plan)';
         document.getElementById('summaryPlanPrice').textContent = `${sixFmt}/6 months`;
-        document.getElementById('savingsSummaryLabel').textContent = '6-Month Plan Savings (Save 25%)';
+        document.getElementById('savingsSummaryLabel').textContent = '6-Month Plan Savings (Save 33%)';
         document.getElementById('savingsSummaryAmount').textContent = `- ${sixSave}`;
         if (savingsNoteEl) savingsNoteEl.textContent = `(Included in ${sixFmt}/6mo rate vs 6 × ${monthlyFmt}/mo)`;
         document.getElementById('savingsSummaryRow').classList.remove('hidden');
@@ -1200,6 +1198,7 @@
           document.getElementById('termsConsentLabel').textContent =
             `I agree to pay ${totalFormatted} today for my 1st month. My subscription will automatically renew at the standard price of ${monthlyFmt} monthly thereafter unless cancelled. I can cancel anytime in 1 click via my online Customer Portal.`;
         } else {
+          document.getElementById('productTagContent').innerHTML = `${tagSvg}Flexible Monthly Billing`;
           document.getElementById('productPriceTop').textContent = monthlyFmt;
           document.getElementById('productPriceSub').textContent = 'per month';
           document.getElementById('discountSummaryRow').classList.add('hidden');
@@ -1250,22 +1249,9 @@
       }
     }
 
-    function toggleRamTamerAddon(checked) {
-      isRamTamerAdded = Boolean(checked);
-      const cb = document.getElementById('ramTamerAddonCheckbox');
-      if (cb) cb.checked = isRamTamerAdded;
+    function toggleRamTamerAddon() {
+      isRamTamerAdded = true;
       updateOrderUI();
-      if (orderDraftTouched) saveOrderDraft(true, false);
-      if (typeof window.sweeprTrackEvent === 'function') {
-        window.sweeprTrackEvent('add_to_cart', {
-          item_id: 'ram_tamer',
-          item_name: 'Total Tab & RAM Tamer Add-On',
-          added: isRamTamerAdded,
-          plan: selectedPlan,
-          value: Number((calculateTotalPence() / 100).toFixed(2)),
-          currency: String(checkoutConfig?.currencyCode || 'GBP').toUpperCase()
-        });
-      }
     }
 
     let selectedLogoMethod = 'card';
@@ -1437,14 +1423,14 @@
           typeof confirmData?.conversionValue === 'number' && confirmData.conversionValue > 0
             ? confirmData.conversionValue
             : Number((calculateTotalPence() / 100).toFixed(2));
-        const value = Number.isFinite(rawValue) && rawValue > 0 ? rawValue : 59.99;
+        const value = Number.isFinite(rawValue) && rawValue > 0 ? rawValue : 29.99;
         const currency = String(confirmData?.currency || checkoutConfig?.currencyCode || 'GBP').toUpperCase();
         const plan = String(confirmData?.plan || selectedPlan || 'annual');
-        const ramTamer = typeof confirmData?.ramTamerAddon === 'boolean' ? confirmData.ramTamerAddon : Boolean(isRamTamerAdded);
+        const ramTamer = true;
         const transactionId = String(confirmData?.subscriptionId || fallbackSubId || `ord_${Date.now()}`);
         const contentIds = Array.isArray(confirmData?.contentIds) && confirmData.contentIds.length > 0
           ? confirmData.contentIds
-          : [`deepblock_${plan}`, ...(ramTamer ? ['ram_tamer'] : [])];
+          : [`deepblock_${plan}`];
 
         // 1. Microsoft / Bing UET (uetq.push) — Tag ID: 343283087
         window.uetq = window.uetq || [];
@@ -1453,7 +1439,7 @@
           currency: currency,
           transaction_id: transactionId,
           event_category: plan,
-          event_label: ramTamer ? `${plan}_plus_ram_tamer` : plan
+          event_label: plan
         });
 
         // 2. Meta Pixel (fbq('track', 'Purchase', { value, currency })) — Dataset ID: 910118314453383
@@ -1464,10 +1450,10 @@
             {
               value: value,
               currency: currency,
-              content_name: `SWEEPR Deepblock Pro (${plan}${ramTamer ? ' + RAM Tamer' : ''})`,
+              content_name: `SWEEPR Deepblock Pro (${plan})`,
               content_ids: contentIds,
               content_type: 'product',
-              num_items: ramTamer ? 2 : 1
+              num_items: 1
             },
             { eventID: transactionId }
           );
@@ -1479,10 +1465,9 @@
             value: value,
             currency: currency,
             transactionId: transactionId,
-            itemCount: ramTamer ? 2 : 1,
+            itemCount: 1,
             products: [
-              { id: `deepblock_${plan}`, name: `SWEEPR Deepblock Pro (${plan})`, category: 'software' },
-              ...(ramTamer ? [{ id: 'ram_tamer', name: 'Total Tab & RAM Tamer', category: 'software_addon' }] : [])
+              { id: `deepblock_${plan}`, name: `SWEEPR Deepblock Pro (${plan})`, category: 'software' }
             ]
           });
         }
@@ -1572,20 +1557,46 @@
       }
     }
 
+    const __loadedExternalScripts = new Map();
+    function loadExternalScript(src) {
+      if (__loadedExternalScripts.has(src)) return __loadedExternalScripts.get(src);
+      const promise = new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = src;
+        s.async = true;
+        s.onload = () => resolve();
+        s.onerror = () => reject(new Error(`Failed to load ${src}`));
+        document.head.appendChild(s);
+      });
+      __loadedExternalScripts.set(src, promise);
+      return promise;
+    }
+
     // 1. Initialize Page & Live Stripe Elements Config
     async function initCheckout() {
       const restoredDraft = restoreOrderDraft();
       bindOrderDraftListeners();
 
       try {
-        const res = await fetch('/api/checkout-config');
+        const res = await fetch('/api/checkout-config' + (window.location.search || ''));
         if (res.ok) {
           checkoutConfig = await res.json();
           if (checkoutConfig.adPixels) {
             initAdPixels(checkoutConfig.adPixels);
           }
-          if (window.Stripe && checkoutConfig.publishableKey) {
-            setupStripeElements(checkoutConfig.publishableKey);
+          if (checkoutConfig.publishableKey) {
+            const pk = checkoutConfig.publishableKey;
+            const mount = () => {
+              if (window.Stripe && !stripe) setupStripeElements(pk);
+            };
+            if (window.Stripe) {
+              mount();
+            } else {
+              loadExternalScript('https://js.stripe.com/v3/').then(mount).catch(() => {});
+            }
+            if (!(window.google && window.google.payments && window.google.payments.api)) {
+              loadExternalScript('https://pay.google.com/gp/p/js/pay.js').catch(() => {});
+            }
           }
         }
       } catch (err) {
@@ -1615,17 +1626,8 @@
         }
       }
 
-      if (isD60FreeRamTamer) {
-        isRamTamerAdded = true;
-      } else if (params.get('addon') === 'none' || params.get('ram_tamer') === '0') {
-        isRamTamerAdded = false;
-      } else if (restoredDraft && typeof restoredDraft.isRamTamerAdded === 'boolean') {
-        isRamTamerAdded = restoredDraft.isRamTamerAdded;
-      } else {
-        isRamTamerAdded = true;
-      }
-      const cb = document.getElementById('ramTamerAddonCheckbox');
-      if (cb) cb.checked = isRamTamerAdded;
+      isRamTamerAdded = true;
+      isD60FreeRamTamer = false;
 
       if (errorParam === 'payment_cancelled' || errorParam === 'payment_incomplete') {
         showError('Your payment was cancelled or not completed. No charge was made — please try again below.');
@@ -1656,7 +1658,7 @@
       if (typeof window.sweeprTrackEvent === 'function') {
         window.sweeprTrackEvent('begin_checkout', {
           plan: selectedPlan,
-          ram_tamer: Boolean(isRamTamerAdded),
+          ram_tamer: true,
           value: Number((calculateTotalPence() / 100).toFixed(2)),
           currency: String(checkoutConfig?.currencyCode || 'GBP').toUpperCase()
         });
@@ -1667,11 +1669,7 @@
     function setupStripeElements(publishableKey) {
       try {
         stripe = Stripe(publishableKey);
-        elements = stripe.elements({
-          fonts: [
-            { cssSrc: 'https://cdn.jsdelivr.net/npm/text-security@3.2.1/text-security-disc.css' }
-          ]
-        });
+        elements = stripe.elements();
 
         const elementStyles = {
           base: {
@@ -1688,7 +1686,7 @@
         const cvcStyles = {
           base: {
             ...elementStyles.base,
-            fontFamily: '"text-security-disc", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+            fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
             letterSpacing: '2px',
             '::placeholder': {
               color: '#9ca3af',
@@ -1855,8 +1853,6 @@
             applyDiscount: isDiscountApplied && selectedPlan === 'monthly',
             plan: selectedPlan,
             winbackTier: activeWinbackTier,
-            ramTamerAddon: isRamTamerAdded,
-            addons: isRamTamerAdded ? ['ram_tamer'] : [],
             paymentMethod: 'google_pay'
           })
         });
@@ -1954,8 +1950,6 @@
                   applyDiscount: isDiscountApplied && selectedPlan === 'monthly',
                   plan: selectedPlan,
                   winbackTier: activeWinbackTier,
-                  ramTamerAddon: isRamTamerAdded,
-                  addons: isRamTamerAdded ? ['ram_tamer'] : [],
                   paymentMethod: 'wallet'
                 })
               });
@@ -2079,10 +2073,13 @@
       selectedPlan = 'monthly';
       isDiscountApplied = true;
 
+      const p = checkoutConfig && checkoutConfig.pricing;
+      const introFmt = p?.introMonthlyFormatted ?? '£1.99';
+      const monthlyFmt = p?.monthlyFormatted ?? '£4.99';
       const bannerTitle = document.getElementById('bannerTitle');
       const bannerSubtitle = document.getElementById('bannerSubtitle');
-      if (bannerTitle) bannerTitle.innerHTML = `Special Introductory Offer - <span class="text-emerald-400 font-black">1st Month for £1.99</span>`;
-      if (bannerSubtitle) bannerSubtitle.innerHTML = `⚡ Full Pro Protection across up to 5 Devices. Renews at standard £9.99/mo; cancel anytime in 1 click.`;
+      if (bannerTitle) bannerTitle.innerHTML = `Special Introductory Offer - <span class="text-emerald-400 font-black">1st Month for ${introFmt}</span>`;
+      if (bannerSubtitle) bannerSubtitle.innerHTML = `⚡ Full Pro Protection across up to 5 Devices. Renews at standard ${monthlyFmt}/mo; cancel anytime in 1 click.`;
 
       updateOrderUI();
       if (orderDraftTouched) saveOrderDraft(true, false);
@@ -2199,8 +2196,6 @@
               applyDiscount: isDiscountApplied && selectedPlan === 'monthly',
               plan: selectedPlan,
               winbackTier: activeWinbackTier,
-              ramTamerAddon: isRamTamerAdded,
-              addons: isRamTamerAdded ? ['ram_tamer'] : [],
               paymentMethod: 'card'
             })
           });
@@ -2261,8 +2256,6 @@
             applyDiscount: isDiscountApplied && selectedPlan === 'monthly',
             plan: selectedPlan,
             winbackTier: activeWinbackTier,
-            ramTamerAddon: isRamTamerAdded,
-            addons: isRamTamerAdded ? ['ram_tamer'] : [],
             paymentMethod: method,
             confirmOnServer: true
           })
@@ -2316,7 +2309,7 @@
         window.sweeprTrackEvent('add_payment_info', {
           step: 'email_entered',
           plan: selectedPlan,
-          ram_tamer: Boolean(isRamTamerAdded),
+          ram_tamer: true,
           value: Number((calculateTotalPence() / 100).toFixed(2)),
           currency: String(checkoutConfig?.currencyCode || 'GBP').toUpperCase()
         });

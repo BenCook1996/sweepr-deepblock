@@ -14,6 +14,7 @@ import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { DatabaseSync } from 'node:sqlite';
 import { fileURLToPath } from 'node:url';
+import { CONSOLIDATE_301_ENTRIES } from './lib/m1-decisions.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = path.resolve(__dirname, '..');
@@ -83,16 +84,22 @@ function extractXmlLocs(xmlPath) {
 }
 
 function collectLiveAuditMetrics() {
-  const manifest = readJsonSafe(path.join(ROOT_DIR, 'extension', 'manifest.json'), { version: '1.2.9' });
-  const version = manifest.version || '1.2.9';
+  const manifest = readJsonSafe(path.join(ROOT_DIR, 'extension', 'manifest.json'), { version: '1.3.1' });
+  const version = manifest.version || '1.3.1';
 
   const htmlFiles = walkHtmlFiles(WEBSITE_DIR);
   const coreUrls = extractXmlLocs(path.join(WEBSITE_DIR, 'sitemap.xml'));
-  const siteUrlsRaw = extractXmlLocs(path.join(WEBSITE_DIR, 'sitemap-sites.xml'));
-  const publisherSiteUrlsList = siteUrlsRaw.filter((u) => !u.endsWith('/site'));
-  const uniqueCanonicalUrls = new Set([...coreUrls, ...siteUrlsRaw]).size;
+  const publisherSiteUrlsList = fs.existsSync(SITE_DIR)
+    ? fs
+        .readdirSync(SITE_DIR)
+        .filter((f) => f.endsWith('.html') && f !== 'index.html')
+        .sort()
+        .map((f) => `${SITE_ORIGIN}/site/${f.replace(/\.html$/, '')}`)
+    : [];
+  const uniqueCanonicalUrls = new Set(coreUrls).size;
 
   let noindexCount = 0;
+  let noindexFollowCount = 0;
   let deprecatedSchemas = 0;
   let cdnTailwindCount = 0;
   let legacyCompanyCount = 0;
@@ -106,6 +113,9 @@ function collectLiveAuditMetrics() {
     const isNoindex = /<meta\s+name="robots"\s+content="[^"]*noindex/i.test(html);
     if (isNoindex) {
       noindexCount++;
+      if (/<meta\s+name="robots"\s+content="[^"]*noindex\s*,\s*follow/i.test(html)) {
+        noindexFollowCount++;
+      }
     } else {
       if (/"@type"\s*:\s*"(?:FAQPage|HowTo)"/i.test(html)) deprecatedSchemas++;
       if (/SWEEPR Technologies/i.test(html)) legacyCompanyCount++;
@@ -129,10 +139,10 @@ function collectLiveAuditMetrics() {
     version,
     htmlFilesAudited: htmlFiles.length,
     coreSitemapUrls: coreUrls.length,
-    siteSitemapUrls: siteUrlsRaw.length,
+    siteSitemapUrls: 0,
     publisherSiteUrls: publisherSiteUrlsList.length,
     canonicalUrlsTotal: uniqueCanonicalUrls,
-    consolidatedPermutationsNoindexed: 115,
+    consolidatedPermutationsNoindexed: Math.max(CONSOLIDATE_301_ENTRIES.length, noindexFollowCount),
     totalNoindexHtmlFiles: noindexCount,
     deprecatedFaqHowToSchemas: deprecatedSchemas,
     adultDomainRulesLeaked: adultRulesLeaked,
@@ -207,7 +217,7 @@ function buildOutreachEntries(metrics) {
   const summaryNote = [
     `Technical SEO & Google Search Quality remediation v${metrics.version} (${metrics.today}).`,
     `HTML files audited: ${metrics.htmlFilesAudited}.`,
-    `Canonical URLs: ${metrics.canonicalUrlsTotal} (${metrics.coreSitemapUrls} in sitemap.xml + ${metrics.siteSitemapUrls} in sitemap-sites.xml incl. ${metrics.publisherSiteUrls} publisher reports).`,
+    `Canonical URLs: ${metrics.canonicalUrlsTotal} (${metrics.coreSitemapUrls} in sitemap.xml; ${metrics.publisherSiteUrls} noindex publisher profiles on disk).`,
     `Consolidated permutations (noindex, follow): ${metrics.consolidatedPermutationsNoindexed} (${metrics.totalNoindexHtmlFiles} total noindex pages).`,
     `Localized hubs: ${metrics.localizedHubs.map((l) => `/${l === 'en' ? '' : l}`).join(', ')}.`,
     `Checks: ${metrics.deprecatedFaqHowToSchemas} FAQPage/HowTo, ${metrics.adultDomainRulesLeaked} adult rule leaks, ${metrics.cdnTailwindScriptsRemaining} cdn.tailwindcss.com scripts, ${metrics.legacyCompanyStringsOnIndexable} legacy company strings, static Tailwind CSS (${(metrics.staticTailwindCssBytes / 1024).toFixed(1)} KB), <31% site report boilerplate.`
@@ -419,7 +429,7 @@ function syncLocalSqliteCrm(metrics, outreachEntries, publisherRecords, tsSec) {
       'deepblock',
       'seo.remediation_completed',
       `Principal Technical SEO & Google Search Quality Audit Remediation (v${metrics.version})`,
-      `Audited ${metrics.htmlFilesAudited} HTML files; synced ${metrics.canonicalUrlsTotal} canonical URLs (${metrics.coreSitemapUrls} core + ${metrics.publisherSiteUrls} /site/* reports), launched /es hub, replaced cdn.tailwindcss.com with static CSS (${metrics.staticTailwindCssBytes}B), eliminated FAQPage/HowTo and adult rules, and consolidated ${metrics.consolidatedPermutationsNoindexed} thin permutations.`,
+      `Audited ${metrics.htmlFilesAudited} HTML files; synced ${metrics.canonicalUrlsTotal} canonical URLs (${metrics.coreSitemapUrls} core indexable + ${metrics.publisherSiteUrls} noindex /site/* reports), launched /es hub, replaced cdn.tailwindcss.com with static CSS (${metrics.staticTailwindCssBytes}B), eliminated FAQPage/HowTo and adult rules, and consolidated ${metrics.consolidatedPermutationsNoindexed} thin permutations.`,
       tsSec
     );
 
@@ -749,13 +759,13 @@ function prependAuditLogMarkdown(metrics, sqliteRes, remoteRes, nowIso) {
 
 - **Scope:** Full-site Technical SEO, Core Web Vitals, Internationalization, E-E-A-T & Spam Policy remediation across all **${metrics.htmlFilesAudited} HTML files**, 5 build generators, \`server.js\`, \`website/robots.txt\`, and partitioned XML sitemaps.
 - **Checks Verified:**
-  1. **Robots & Crawlers:** RFC 9309 hardened \`website/robots.txt\` with 25 \`Disallow:\` paths replicated across \`*\` and 17 AI crawlers, pointing to \`sitemap-index.xml\`, \`sitemap.xml\`, and \`sitemap-sites.xml\`.
+  1. **Robots & Crawlers:** RFC 9309 hardened \`website/robots.txt\` with 25 \`Disallow:\` paths replicated across \`*\` and 17 AI crawlers, pointing to \`sitemap-index.xml\` and \`sitemap.xml\`.
   2. **Static Tailwind CSS & CWV:** Removed \`cdn.tailwindcss.com\` across all templates (\`remaining=${metrics.cdnTailwindScriptsRemaining}\`), compiled \`website/sweepr-tailwind.min.css\` (${(metrics.staticTailwindCssBytes / 1024).toFixed(1)} KB), updated CSP and HTTP \`Link\` preload header in \`server.js\`.
   3. **Internationalization (/en, /de, /fr, /es):** Launched dedicated \`website/es/index.html\` + \`/es\` Express route, replaced JS \`<button>\` switchers with semantic \`<a href hreflang>\` links, and deployed 5-tag reciprocal \`hreflang\` (\`en\`, \`de\`, \`fr\`, \`es\`, \`x-default\`).
   4. **Homepage DOM & Anti-Pollution:** Shifted mock ad creative strings into CSS \`.mock-txt[data-mock-text]\` inside \`#heroBeforeClip\`, removed hero \`<h1>\` A/B mutation in \`nav.js\`, and static-rendered 8 cards inside \`#testGrid\` on \`test-lab.html\`.
   5. **Schema & Entity Consistency:** Eliminated all deprecated \`FAQPage\` / \`HowTo\` JSON-LD (\`remaining=${metrics.deprecatedFaqHowToSchemas}\`), fixed \`#anchor\` breadcrumb URLs, standardized \`SWEEPR Global Limited\` (\`legacyRemaining=${metrics.legacyCompanyStringsOnIndexable}\`), \`v${metrics.version}\`, and \`5 Devices\`.
-  6. **Content Consolidation & Boilerplate Floor:** Applied \`noindex, follow\` + canonical consolidation to **${metrics.consolidatedPermutationsNoindexed}** overlapping permutations (\`${metrics.totalNoindexHtmlFiles}\` total non-indexed HTML files), rebuilt indexable \`/setup/*\`, \`/guides/*\`, \`/solutions/*\`, \`/tools/*\`, \`/stories/*\`, \`/glossary/*\`, and \`/site/*\` reports (\`${metrics.siteReportBoilerplatePct}%\` boilerplate, **${metrics.adultDomainRulesLeaked}** adult DNR rules).
-  7. **XML Sitemaps & GEO/LLM Feeds:** Clean \`sitemap-index.xml\` referencing **${metrics.canonicalUrlsTotal} canonical URLs** (\`${metrics.coreSitemapUrls}\` in \`sitemap.xml\` + \`${metrics.siteSitemapUrls}\` in \`sitemap-sites.xml\` incl. \`${metrics.publisherSiteUrls}\` publisher reports); synchronized \`llms.txt\`, \`llms-full.txt\`, \`pad.xml\`, and \`geo-benchmark-feed.json\`.
+  6. **Content Consolidation & Boilerplate Floor:** Applied \`noindex, follow\` + canonical consolidation to **${metrics.consolidatedPermutationsNoindexed}** overlapping permutations (\`${metrics.totalNoindexHtmlFiles}\` total non-indexed HTML files), rebuilt \`/setup/*\`, \`/guides/*\`, \`/solutions/*\`, \`/tools/*\`, \`/stories/*\`, \`/glossary/*\`, and \`/site/*\` reports (\`${metrics.siteReportBoilerplatePct}%\` boilerplate, **${metrics.adultDomainRulesLeaked}** adult DNR rules).
+  7. **XML Sitemaps & GEO/LLM Feeds:** Clean \`sitemap-index.xml\` referencing **${metrics.canonicalUrlsTotal} canonical URLs** (\`${metrics.coreSitemapUrls}\` in \`sitemap.xml\`; ${metrics.publisherSiteUrls} noindex \`/site/*\` reports excluded from sitemap); synchronized \`llms.txt\`, \`llms-full.txt\`, \`pad.xml\`, and \`geo-benchmark-feed.json\`.
 - **CRM Synchronization Status:**
   - **Local SQLite CRM (\`data/sweepr-crm.db\`):** \`${sqliteRes.outreachUpserted}\` \`outreach_logs\` upserted, \`1\` \`analytics_events\` (\`technical_seo_remediation_completed\`), \`1\` \`activities\` (\`seo.remediation_completed\`), and \`${sqliteRes.blockedSitesUpserted}\` \`deepblock_blocked_sites\` synced (\`v${metrics.version}\`).
   - **Remote Railway & Cleaner CRM:** Railway \`outreach_logs\` \`${railOutreachOk}/${metrics.localizedHubs.length ? 8 : 8}\` synced, blocked-sites batches \`${railBlockedOk}\` HTTP 2xx, DLQ queued: \`${remoteRes.dlqQueued}\`.

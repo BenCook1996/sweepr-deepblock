@@ -355,24 +355,24 @@
   <div id="drawerBackdrop" class="drawer-backdrop" onclick="closeDrawer()"></div>
   <nav id="drawerMenu" class="drawer">
     <button class="drawer-item active" data-drawer="home" onclick="switchTab('home')"><span>Power Orb Shield</span><span style="font-size:11px;color:var(--muted)">Home</span></button>
-    <button class="drawer-item" data-drawer="filters" onclick="switchTab('filters')"><span>Protection Filters</span><span style="font-size:11px;color:var(--muted)">Active</span></button>
+    <button class="drawer-item" data-drawer="filters" onclick="switchTab('filters')"><span>Protection Overview</span><span style="font-size:11px;color:var(--muted)">Status</span></button>
     <button class="drawer-item" data-drawer="dns" onclick="switchTab('dns')"><span>System Private DNS</span><span style="font-size:11px;color:var(--muted)">Setup</span></button>
-    <button class="drawer-item" data-drawer="account" onclick="switchTab('account')"><span>Profile &amp; License</span><span style="font-size:11px;color:var(--muted)">3 Devices</span></button>
+    <button class="drawer-item" data-drawer="account" onclick="switchTab('account')"><span>Profile &amp; License</span><span style="font-size:11px;color:var(--muted)">5 Devices</span></button>
     <button class="drawer-item" onclick="toggleTheme(); closeDrawer();"><span>Appearance Mode</span><span id="drawerThemeText" style="font-size:11px;font-weight:800;color:var(--accent)">Light Mode</span></button>
   </nav>
 
-  <!-- TAB 1: CONCEPT 3 TACTILE POWER ORB HOME -->
+  <!-- TAB 1: MOBILE COMPANION STATUS HOME -->
   <main id="view-home" class="view active">
     <div class="c3-status-header">
-      <div id="statusPill" class="c3-status-pill">SHIELD ON &bull; AD &amp; TRACKER GUARD</div>
-      <div id="statusHeadline" class="c3-headline">System Ad Shield Ready</div>
-      <div id="statusSubline" class="c3-subline">Blocks video ads, cookie pop-ups &amp; app trackers</div>
+      <div id="statusPill" class="c3-status-pill">COMPANION APP &bull; MOBILE GUIDE</div>
+      <div id="statusHeadline" class="c3-headline">SWEEPR Deepblock Mobile</div>
+      <div id="statusSubline" class="c3-subline">Check Private DNS status or open Firefox for Android add-on</div>
     </div>
 
     <div class="c3-orb-stage">
-      <button class="c3-power-orb" onclick="enableAndroidDnsShield()" aria-label="Enable Deepblock Shield">
+      <button class="c3-power-orb" onclick="refreshMobileShieldStatus()" aria-label="Check Mobile Shield Status">
         <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
-        <span id="orbLabel" class="c3-orb-label mono">TAP TO ENABLE</span>
+        <span id="orbLabel" class="c3-orb-label mono">CHECK STATUS</span>
       </button>
       <div id="dnsMsg" style="font-size:12px;font-weight:700;text-align:center;margin-top:12px;max-width:320px"></div>
     </div>
@@ -380,20 +380,20 @@
     <div class="c3-bottom-deck">
       <button class="c3-location-card" onclick="switchTab('filters')">
         <div>
-          <div style="font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em">Mobile Companion Scope</div>
-          <div style="font-size:14.5px;font-weight:900;margin-top:2px">System-Wide Encrypted DNS Guard</div>
+          <div style="font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em">Mobile Browser Shield</div>
+          <div style="font-size:14.5px;font-weight:900;margin-top:2px">Firefox for Android Extension</div>
         </div>
-        <span class="c3-change-pill">Details</span>
+        <span class="c3-change-pill">Install</span>
       </button>
 
       <div class="c3-metrics-row">
         <div class="c3-metric-box">
-          <span style="color:var(--muted)">Protection</span>
-          <span class="mono">Encrypted DNS</span>
+          <span style="color:var(--muted)">Private DNS</span>
+          <span id="privateDnsStateText" class="mono">Checking...</span>
         </div>
         <div class="c3-metric-box">
-          <span style="color:var(--muted)">Protocol</span>
-          <span class="mono" style="color:var(--accent-fg)">DoH / DoT</span>
+          <span style="color:var(--muted)">iOS Safari</span>
+          <span class="mono" style="color:var(--accent-fg)">Coming Soon</span>
         </div>
       </div>
     </div>
@@ -401,33 +401,34 @@
 
   <section id="view-filters" class="view">
     <div class="card">
-      <div style="font-size:17px;font-weight:900;margin-bottom:8px">Mobile &amp; Browser Protection</div>
-      <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);font-size:13.5px;font-weight:700"><span>DNS Ad &amp; Tracker Domain Blocking</span><span style="color:var(--accent-fg)">DoH / DoT</span></div>
-      <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);font-size:13.5px;font-weight:700"><span>Malware &amp; Phishing Domain Filter</span><span style="color:var(--accent-fg)">DoH / DoT</span></div>
-      <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);font-size:13.5px;font-weight:700"><span>Cookie Pop-ups &amp; Search Cleanser</span><span style="color:var(--muted)">Browser Extension</span></div>
-      <div style="display:flex;justify-content:space-between;padding:12px 0;font-size:13.5px;font-weight:700"><span>YouTube Ad Shield &amp; Tab Hibernation</span><span style="color:var(--muted)">Desktop Extension</span></div>
+      <div style="font-size:17px;font-weight:900;margin-bottom:8px">Mobile &amp; Desktop Coverage</div>
+      <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);font-size:13.5px;font-weight:700"><span>Firefox for Android (MV3 Add-on)</span><a href="https://addons.mozilla.org/en-US/firefox/addon/sweepr-deepblock/" target="_blank" rel="noopener" style="color:var(--accent-fg);text-decoration:none">Install ↗</a></div>
+      <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);font-size:13.5px;font-weight:700"><span>Desktop Extension (Chrome / Edge / Firefox / Brave)</span><span style="color:var(--accent-fg)">Available Now</span></div>
+      <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);font-size:13.5px;font-weight:700"><span>SWEEPR DoH / Android VpnService</span><span style="color:var(--muted)">Planned</span></div>
+      <div style="display:flex;justify-content:space-between;padding:12px 0;font-size:13.5px;font-weight:700"><span>Native iOS Safari Content Blocker</span><span style="color:var(--muted)">Coming Soon</span></div>
     </div>
 
     <details class="card" style="padding:14px 16px">
       <summary style="cursor:pointer;font-size:13.5px;font-weight:800;display:flex;justify-content:space-between;align-items:center;list-style:none">
-        <span>How Mobile DNS Shield Differs From Desktop</span>
+        <span>How Mobile Protection Works Today</span>
         <span class="mono" style="font-size:11px;color:var(--accent-fg)">Info ▾</span>
       </summary>
       <div style="margin-top:10px;font-size:12px;color:var(--muted);display:flex;flex-direction:column;gap:6px;line-height:1.45">
-        <div>• <strong>System Encrypted DNS (iOS &amp; Android):</strong> Blocks ad networks, tracking domains, and phishing hosts across apps and browsers.</div>
-        <div>• <strong>Cosmetic &amp; Script Rules:</strong> Full page element hiding, cookie auto-reject, YouTube skipper, and tab hibernation require the Chrome, Edge, Opera, or Firefox extension (Firefox on Android supports MV3 add-ons directly).</div>
+        <div>• <strong>Firefox for Android:</strong> Runs the full SWEEPR Deepblock extension natively on Android phones &amp; tablets (ads, cookie banners, URL trackers).</div>
+        <div>• <strong>Android Companion App:</strong> Checks your device's system Private DNS status and stores your 5-device license activation.</div>
+        <div>• <strong>iOS Safari &amp; SWEEPR DoH DNS:</strong> Currently in development and will be unlocked automatically for 5-device Pro subscribers when launched.</div>
       </div>
     </details>
 
     <details class="card" style="padding:14px 16px">
       <summary style="cursor:pointer;font-size:13.5px;font-weight:800;display:flex;justify-content:space-between;align-items:center;list-style:none">
-        <span>Enthusiast &amp; Privacy Browser Support</span>
+        <span>Supported Mobile &amp; Desktop Browsers</span>
         <span id="detectedBrowserBadge" class="mono" style="font-size:11px;color:var(--accent-fg)">1-Click ▾</span>
       </summary>
       <div style="margin-top:10px;font-size:12px;color:var(--muted);line-height:1.45">
-        <p id="detectedBrowserNote" style="margin-bottom:8px">Native MV3 &amp; WebExtension builds verified for Chromium and Firefox forks:</p>
+        <p id="detectedBrowserNote" style="margin-bottom:8px">Install SWEEPR Deepblock on Android Firefox or desktop Chromium / Firefox browsers:</p>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-          <a rel="nofollow" href="/sweepr-deepblock-extension.zip" style="text-decoration:none;text-align:center;padding:9px;border-radius:11px;background:var(--accent-soft);color:var(--accent-fg);font-weight:800;font-size:11.5px">Thorium / Arc / Kiwi (.zip)</a>
+          <a rel="nofollow" href="/sweepr-deepblock-extension.zip" style="text-decoration:none;text-align:center;padding:9px;border-radius:11px;background:var(--accent-soft);color:var(--accent-fg);font-weight:800;font-size:11.5px">Desktop Package (.zip)</a>
           <a href="https://addons.mozilla.org/en-US/firefox/addon/sweepr-deepblock/" target="_blank" rel="noopener" style="text-decoration:none;text-align:center;padding:9px;border-radius:11px;background:var(--card-sub);color:var(--text);font-weight:800;font-size:11.5px">Firefox &amp; Android Add-on ↗</a>
         </div>
       </div>
@@ -436,16 +437,16 @@
 
   <section id="view-dns" class="view">
     <div class="card">
-      <div id="dnsSetupTitle" style="font-size:17px;font-weight:900;margin-bottom:6px">Private DNS Shield Setup</div>
-      <p id="dnsSetupDesc" style="font-size:12.5px;color:var(--muted);line-height:1.45">Tap below to copy the SWEEPR Deepblock Private DNS hostname and open system network settings.</p>
-      <button id="dnsSetupBtn" class="btn-primary" onclick="enableAndroidDnsShield()">1-Tap Copy DNS &amp; Open Settings</button>
+      <div id="dnsSetupTitle" style="font-size:17px;font-weight:900;margin-bottom:6px">Android Private DNS Inspector</div>
+      <p id="dnsSetupDesc" style="font-size:12.5px;color:var(--muted);line-height:1.45">Inspect your Android system Private DNS setting or open Android Network Settings. Native SWEEPR-hosted DoH/DoT DNS is planned for an upcoming release.</p>
+      <button id="dnsSetupBtn" class="btn-primary" onclick="refreshMobileShieldStatus(true)">Open Android Network Settings</button>
     </div>
   </section>
 
   <section id="view-account" class="view">
     <div class="card">
       <div style="font-size:16px;font-weight:900">Activate Pro Device</div>
-      <p style="font-size:12px;color:var(--muted);margin-top:4px;line-height:1.45">Sign in at <strong>sweeprdeepblock.com/login</strong> to scan your QR code or paste your <code>ptk_...</code> pairing code or license key below (up to 4 devices).</p>
+      <p style="font-size:12px;color:var(--muted);margin-top:4px;line-height:1.45">Sign in at <strong>sweeprdeepblock.com/login</strong> to scan your QR code or paste your <code>ptk_...</code> pairing code or license key below (up to 5 devices).</p>
       <input id="codeInput" class="input mono" placeholder="SWEEPR-DB-XXXX-XXXX-XXXX or ptk_..." autocomplete="off" />
       <input id="emailInput" class="input" type="email" placeholder="Account Email" autocomplete="email" />
       <button class="btn-primary" onclick="activateDeepblock()">Activate Pro on This Device</button>
@@ -530,38 +531,63 @@ const isIOSDevice =
   /iPhone|iPad|iPod/i.test(navigator.userAgent || '') ||
   (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
-function enableAndroidDnsShield() {
-  const key = localStorage.getItem('sweepr_db_key');
+function refreshMobileShieldStatus(openSettings) {
+  const orbLabel = document.getElementById('orbLabel');
+  const headline = document.getElementById('statusHeadline');
   const msg = document.getElementById('dnsMsg');
-  if (!key) {
-    msg.style.color = '#ef4444';
-    msg.textContent = 'Activate your Pro key in Profile first to unlock the DNS Shield.';
-    switchTab('account');
-    return;
-  }
+  const dnsText = document.getElementById('privateDnsStateText');
+
   if (isIOSDevice) {
-    const profileUrl = '/download/sweepr-deepblock.mobileconfig';
-    const link = document.createElement('a');
-    link.href = profileUrl;
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    document.getElementById('orbLabel').textContent = 'PROFILE READY';
-    document.getElementById('statusHeadline').textContent = 'Install Apple DNS Profile';
-    msg.style.color = 'var(--accent-fg)';
-    msg.textContent = 'Profile downloaded! Open Settings -> General -> VPN & Device Management -> Install.';
+    if (orbLabel) orbLabel.textContent = 'COMING SOON';
+    if (headline) headline.textContent = 'Native iOS Safari Coming Soon';
+    if (dnsText) dnsText.textContent = 'Planned';
+    if (msg) {
+      msg.style.color = 'var(--muted)';
+      msg.textContent = 'Native iOS Safari Content Blocker & SWEEPR DoH DNS are planned. Use Chrome/Edge/Firefox on desktop or Firefox for Android today.';
+    }
     return;
   }
-  if (window.SweeprAndroid) {
-    window.SweeprAndroid.copyText('dns.adguard-dns.com');
-    window.SweeprAndroid.openWirelessSettings();
-  } else if (navigator.clipboard) {
-    navigator.clipboard.writeText('dns.adguard-dns.com').catch(() => {});
+
+  let status = null;
+  if (window.SweeprAndroid && typeof window.SweeprAndroid.getPrivateDnsStatus === 'function') {
+    try {
+      status = JSON.parse(window.SweeprAndroid.getPrivateDnsStatus());
+    } catch (e) {}
   }
-  document.getElementById('orbLabel').textContent = 'PROTECTED';
-  document.getElementById('statusHeadline').textContent = 'Your Browsing is Ad-Free';
-  msg.style.color = 'var(--accent-fg)';
-  msg.textContent = 'Copied dns.adguard-dns.com! Paste in Network -> Private DNS and Save.';
+
+  if (openSettings && window.SweeprAndroid && typeof window.SweeprAndroid.openWirelessSettings === 'function') {
+    window.SweeprAndroid.openWirelessSettings();
+  }
+
+  if (status && status.supported) {
+    if (status.active) {
+      if (orbLabel) orbLabel.textContent = 'DNS ACTIVE';
+      if (headline) headline.textContent = 'Private DNS Configured';
+      if (dnsText) dnsText.textContent = status.host ? status.host : 'Automatic';
+      if (msg) {
+        msg.style.color = 'var(--accent-fg)';
+        msg.textContent = status.host
+          ? 'System Private DNS active: ' + status.host
+          : 'Android Private DNS is active (Automatic). Install Firefox for Android for full cosmetic & cookie blocking.';
+      }
+    } else {
+      if (orbLabel) orbLabel.textContent = 'DNS OFF';
+      if (headline) headline.textContent = 'Use Firefox for Android';
+      if (dnsText) dnsText.textContent = 'Off';
+      if (msg) {
+        msg.style.color = 'var(--muted)';
+        msg.textContent = 'System Private DNS is off. Install SWEEPR Deepblock on Firefox for Android for full MV3 ad, cookie & tracker blocking.';
+      }
+    }
+  } else {
+    if (orbLabel) orbLabel.textContent = 'MOBILE GUIDE';
+    if (headline) headline.textContent = 'Use Firefox for Android';
+    if (dnsText) dnsText.textContent = 'N/A (Web)';
+    if (msg) {
+      msg.style.color = 'var(--muted)';
+      msg.textContent = 'Install SWEEPR Deepblock inside Firefox for Android via Mozilla Add-ons for full extension blocking.';
+    }
+  }
 }
 
 const LICENSE_KEY_RE = /^SWEEPR-[A-Z0-9]{2,8}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/i;
@@ -607,14 +633,7 @@ async function activateDeepblock() {
 }
 
 (function init() {
-  if (isIOSDevice) {
-    const dnsTitle = document.getElementById('dnsSetupTitle');
-    const dnsDesc = document.getElementById('dnsSetupDesc');
-    const dnsBtn = document.getElementById('dnsSetupBtn');
-    if (dnsTitle) dnsTitle.textContent = 'Apple Encrypted DNS Shield Setup';
-    if (dnsDesc) dnsDesc.textContent = 'Tap below to install the signed Apple Encrypted DNS Profile (DoH), then confirm in Settings -> General -> VPN & Device Management.';
-    if (dnsBtn) dnsBtn.textContent = 'Install Apple DNS Shield Profile (.mobileconfig)';
-  }
+  refreshMobileShieldStatus(false);
   const ua = navigator.userAgent || '';
   const bBadge = document.getElementById('detectedBrowserBadge');
   const bNote = document.getElementById('detectedBrowserNote');

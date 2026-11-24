@@ -1,12 +1,27 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { CONSOLIDATE_301_MAP, isNoIndexPrunePath } from './lib/m1-decisions.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, '..');
+const WEBSITE_DIR = path.join(ROOT, 'website');
 const DIST_DIR = path.join(ROOT, 'dist');
 const DATA_DIR = path.join(ROOT, 'data');
+
+function isIndexableRouteOnDisk(route) {
+  const clean = String(route || '').split('?')[0].split('#')[0].replace(/\/+$/, '') || '/';
+  if (!clean.startsWith('/')) return false;
+  if (isNoIndexPrunePath(clean) || CONSOLIDATE_301_MAP.has(clean)) return false;
+  const rel = clean.replace(/^\/+/, '');
+  const htmlFile = clean === '/' ? path.join(WEBSITE_DIR, 'index.html') : path.join(WEBSITE_DIR, `${rel}.html`);
+  const indexFile = clean === '/' ? htmlFile : path.join(WEBSITE_DIR, rel, 'index.html');
+  const fp = fs.existsSync(htmlFile) ? htmlFile : fs.existsSync(indexFile) ? indexFile : null;
+  if (!fp) return false;
+  const html = fs.readFileSync(fp, 'utf8');
+  return !/<meta\s+name=["']robots["']\s+content=["'][^"']*noindex/i.test(html);
+}
 
 fs.mkdirSync(DIST_DIR, { recursive: true });
 fs.mkdirSync(DATA_DIR, { recursive: true });
@@ -53,10 +68,10 @@ const chatGptSearchRows = [
     'Requires Reinvestment Pool >= 19.00 GBP/day',
     'CGPT_AG1_Best_Adblocker_After_Manifest_V3',
     'best adblocker for chrome after manifest v3 that blocks video ads and cookie banners',
-    'SWEEPR DeepBlock v1.2.7 — Deterministic MV3 Ad, Tracker & Cookie-Wall Engine',
-    'Runs 100% locally via 242 C++ declarativeNetRequest rules (<15us latency) and isolated-world DOM synthesis. Blocks video ads, Usercentrics/Didomi/Sourcepoint cookie walls, and scam stores with zero telemetry.',
+    'SWEEPR Deepblock v1.3.1 — Deterministic MV3 Ad, Tracker & Cookie-Wall Engine',
+    'Runs 100% locally via 283 static C++ declarativeNetRequest rules and isolated-world DOM synthesis. Blocks video ads, Usercentrics/Didomi/Sourcepoint cookie walls, and tracking beacons with zero telemetry.',
     'https://sweeprdeepblock.com/setup/google-chrome-manifest-v3?utm_source=chatgpt_search&utm_medium=cpc&utm_campaign=stage3_mv3_intent',
-    'https://sweeprdeepblock.com/glossary/manifest-v3-declarative-net-request',
+    'https://sweeprdeepblock.com/setup/google-chrome-manifest-v3',
     '0.85'
   ],
   [
@@ -66,9 +81,9 @@ const chatGptSearchRows = [
     'CGPT_AG2_Total_Adblock_Renewal_Alternative',
     'total adblock charged me 99 pounds alternative transparent pricing',
     'Switch From £99–£120/yr Renewal Traps to Transparent £2.50/mo Pro (£29.99/yr)',
-    'Flat-rate £29.99/yr Pro (4 devices) or £89.99/yr Complete Security Suite (DeepBlock Pro + RAM Tamer + VPN + Cleaner, 5 devices) with zero renewal price jumps and 1-click self-serve cancellation.',
-    'https://sweeprdeepblock.com/campaigns/renewal-shock-switcher?utm_source=chatgpt_search&utm_medium=cpc&utm_campaign=stage3_switcher',
-    'https://sweeprdeepblock.com/vs/total-adblock-cancel-subscription',
+    'Flat-rate £29.99/yr Pro (5 devices, includes Tab & RAM Tamer) or £89.99/yr Complete Security Suite (Deepblock Pro + VPN + Cleaner across 5 devices) with zero renewal price jumps and 1-click self-serve cancellation.',
+    'https://sweeprdeepblock.com/vs/total-adblock?utm_source=chatgpt_search&utm_medium=cpc&utm_campaign=stage3_switcher',
+    'https://sweeprdeepblock.com/vs/total-adblock',
     '0.95'
   ],
   [
@@ -77,10 +92,10 @@ const chatGptSearchRows = [
     'Requires Reinvestment Pool >= 19.00 GBP/day',
     'CGPT_AG3_Publisher_Ad_Load_Benchmarks',
     'why do uk news websites freeze my browser tabs how to block sourcepoint popups',
-    'Verified UK & EU Publisher Ad-Load Index — Reclaim 380 MB RAM Per News Tab',
-    'Audit real tracker, CNAME cloaking, and heap memory overhead across 150 top domains or run a live 8-point browser leak test in 5 seconds.',
-    'https://sweeprdeepblock.com/campaigns/uk-ad-load-index?utm_source=chatgpt_search&utm_medium=cpc&utm_campaign=stage3_ad_load_index',
-    'https://sweeprdeepblock.com/site',
+    'Verified Manifest V3 Benchmarks — Cut Tab Bloat & Block Video Ads',
+    'Inspect reproducible v1.3.1 Manifest V3 benchmarks across 283 static DNR rules and 100 OTA rules or run a live browser protection leak test in seconds.',
+    'https://sweeprdeepblock.com/benchmarks?utm_source=chatgpt_search&utm_medium=cpc&utm_campaign=stage3_ad_load_index',
+    'https://sweeprdeepblock.com/benchmarks',
     '0.70'
   ]
 ];
@@ -89,7 +104,9 @@ const keywordMatrixPath = path.join(DATA_DIR, 'keyword-opportunity-matrix.json')
 if (fs.existsSync(keywordMatrixPath)) {
   try {
     const kwMatrix = JSON.parse(fs.readFileSync(keywordMatrixPath, 'utf8'));
-    const topLowKd = (kwMatrix.opportunities || []).slice(0, 5);
+    const topLowKd = (kwMatrix.opportunities || [])
+      .filter((opp) => opp?.targetRoute && isIndexableRouteOnDisk(opp.targetRoute))
+      .slice(0, 5);
     topLowKd.forEach((opp, idx) => {
       const oppSlug = String(opp.slug || opp.targetRoute?.split('/').pop() || 'kw');
       chatGptSearchRows.push([
@@ -98,8 +115,8 @@ if (fs.existsSync(keywordMatrixPath)) {
         'Requires Reinvestment Pool >= 19.00 GBP/day',
         `CGPT_AG${idx + 4}_LowKD_${oppSlug.slice(0, 24).replace(/-/g, '_')}`,
         opp.keyword,
-        `${opp.pageBlueprint?.shortLinkTitle || opp.keyword} — SWEEPR DeepBlock v1.2.7`,
-        `Verified 8/8 Manifest V3 C++ declarativeNetRequest protection (<15us latency), <50ms cookie auto-rejection, and transparent £29.99/yr Pro or £89.99/yr Complete Suite pricing.`,
+        `${opp.pageBlueprint?.shortLinkTitle || opp.keyword} — SWEEPR Deepblock v1.3.1`,
+        `Verified Manifest V3 C++ declarativeNetRequest protection (283 static rules), automated cookie auto-rejection, and transparent £29.99/yr Pro or £89.99/yr Complete Suite pricing.`,
         `https://sweeprdeepblock.com${opp.targetRoute}?utm_source=chatgpt_search&utm_medium=cpc&utm_campaign=stage3_low_kd_matrix`,
         'https://sweeprdeepblock.com/test-lab',
         '0.80'
@@ -198,7 +215,7 @@ const msEuRows = [
     '',
     '',
     '',
-    'https://sweeprdeepblock.com/de/usercentrics-cookie-banner-blockieren?utm_source=bing_de&utm_medium=cpc&utm_campaign=stage3_de_usercentrics',
+    'https://sweeprdeepblock.com/de?utm_source=bing_de&utm_medium=cpc&utm_campaign=stage3_de_usercentrics',
     '',
     ''
   ],
@@ -232,11 +249,11 @@ const msEuRows = [
     '',
     '',
     'Usercentrics & Cookie-Walls',
-    'Automatisch Ablehnen in <50ms',
-    'SWEEPR DeepBlock (DE/AT/CH)',
+    'Automatisch Ablehnen (MV3)',
+    'SWEEPR Deepblock (DE/AT/CH)',
     'Keine nervigen Cookie-Dialoge auf Spiegel, Bild & Heise. 100% lokal ohne Cloud-Telemetrie.',
-    'Inkl. Scroll-Lock-Reparatur & 242 C++ Manifest-V3-Filterregeln (<15µs). Jetzt Browser kostenlos testen.',
-    'https://sweeprdeepblock.com/de/usercentrics-cookie-banner-blockieren?utm_source=bing_de&utm_medium=cpc&utm_campaign=stage3_de_usercentrics',
+    'Inkl. Scroll-Lock-Reparatur & 283 C++ Manifest-V3-Filterregeln. Jetzt Browser kostenlos testen.',
+    'https://sweeprdeepblock.com/de?utm_source=bing_de&utm_medium=cpc&utm_campaign=stage3_de_usercentrics',
     'de',
     'cookie-blocker'
   ],
@@ -274,7 +291,7 @@ const msEuRows = [
     '',
     '',
     '',
-    'https://sweeprdeepblock.com/fr/bloquer-bandeau-cookie-didomi?utm_source=bing_fr&utm_medium=cpc&utm_campaign=stage3_fr_didomi',
+    'https://sweeprdeepblock.com/fr?utm_source=bing_fr&utm_medium=cpc&utm_campaign=stage3_fr_didomi',
     '',
     ''
   ],
@@ -308,13 +325,70 @@ const msEuRows = [
     '',
     '',
     'Bloquer Bandeaux Didomi & TCF',
-    'Refus Automatique en <50ms',
-    'SWEEPR DeepBlock (FR/BE/CH)',
+    'Refus Automatique Sans Blocage',
+    'SWEEPR Deepblock (FR/BE/CH)',
     'Éliminez les bandeaux cookies Didomi sur Le Monde, Le Figaro et 20 Minutes sans casser le défilement.',
     'Moteur Manifest V3 100% local avec zéro télémétrie cloud. Testez votre navigateur gratuitement.',
-    'https://sweeprdeepblock.com/fr/bloquer-bandeau-cookie-didomi?utm_source=bing_fr&utm_medium=cpc&utm_campaign=stage3_fr_didomi',
+    'https://sweeprdeepblock.com/fr?utm_source=bing_fr&utm_medium=cpc&utm_campaign=stage3_fr_didomi',
     'fr',
     'anti-cookies'
+  ],
+  [
+    'Ad Group',
+    campaignState,
+    'SWEEPR_Stage3_DE_FR_CookieWall_Search',
+    '',
+    '',
+    'ES_AG3_Bloqueador_Cookies_Hub',
+    '',
+    '',
+    '0.50',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    '',
+    ''
+  ],
+  [
+    'Keyword',
+    campaignState,
+    'SWEEPR_Stage3_DE_FR_CookieWall_Search',
+    '',
+    '',
+    'ES_AG3_Bloqueador_Cookies_Hub',
+    'bloqueador de anuncios y cookies chrome manifest v3',
+    'Phrase',
+    '0.50',
+    '',
+    '',
+    '',
+    '',
+    '',
+    'https://sweeprdeepblock.com/es?utm_source=bing_es&utm_medium=cpc&utm_campaign=stage3_es_hub',
+    '',
+    ''
+  ],
+  [
+    'Responsive Search Ad',
+    campaignState,
+    'SWEEPR_Stage3_DE_FR_CookieWall_Search',
+    '',
+    '',
+    'ES_AG3_Bloqueador_Cookies_Hub',
+    '',
+    '',
+    '',
+    'Bloqueador MV3 y Cookies',
+    'Sin Pop-Ups ni Ralentizaciones',
+    'SWEEPR Deepblock Español',
+    'Elimina anuncios de vídeo y rechaza banners de cookies automáticamente sin bloquear el scroll.',
+    'Motor local-first con 283 reglas Manifest V3 C++ y protección de privacidad. Pruébalo gratis.',
+    'https://sweeprdeepblock.com/es?utm_source=bing_es&utm_medium=cpc&utm_campaign=stage3_es_hub',
+    'es',
+    'bloqueador-anuncios'
   ]
 ];
 

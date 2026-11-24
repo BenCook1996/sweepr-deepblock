@@ -1,25 +1,24 @@
 #!/usr/bin/env node
 /**
- * SWEEPR DeepBlock (sweeprdeepblock.com) — Live Ad-Filter Rule Proof Injector & 14-Day Title Cooldown Guard
+ * SWEEPR Deepblock (sweeprdeepblock.com) — Pillar Version Normalizer, Dark Slop Cleaner & 14-Day Title Cooldown Guard
  *
- * Executes Phase 2 & Phase 3 of the GSC Impressions Reversal Plan:
  *  1. Enforces a strict 14-day cooldown per Pillar page (`website/pillar-enrichment-state.json`) before any
  *     `<title>` or `<meta name="description">` can be modified again, preventing SERP snippet evaluation resets.
- *  2. Extracts real, verified Manifest V3 `declarativeNetRequest` (DNR) rules from `extension/rules/static_ads_and_trackers.json`
- *     and `extension/rules/dynamic_delta.json` + cosmetic rules from `extension/rules/abp_filter_list.txt`.
- *  3. Injects a unique, verifiable "Live MV3 DNR & DeepStealth Rule Telemetry" proof table (`id="deepblock-live-rule-proof"`)
- *     into the indexable Pillar pages (`/solutions/*`, `/setup/*`, `/vs/*`, `/guides/*`) to eliminate template boilerplate
- *     similarity and permanently defeat Google's Scaled/Doorway classifier.
- *  4. Updates `<lastmod>` in `website/sitemap.xml` ONLY for URLs whose HTML content was actually modified (zero fake `<lastmod>` churn).
+ *  2. Extracts real, verified Manifest V3 `declarativeNetRequest` (DNR) rules from `extension/rules/*.json`
+ *     and `extension/rules/abp_filter_list.txt` for downstream scripts (`loadLiveRules`).
+ *  3. Strips legacy dark `#deepblock-live-rule-proof`, `#deepblock-ctr-intent-enrichment`, `#deepblock-ctr-enrichment`,
+ *     and dark `#gsc-exact-query-enrichment` blocks, and normalizes v1.2.x version strings to `v1.3.1`.
+ *  4. Updates `<lastmod>` in `website/sitemap.xml` ONLY for URLs whose HTML content was actually modified.
  *
  * Usage:
- *   node scripts/enrich-pillars-with-live-proof.mjs [limit=285] [--force-proof]
+ *   node scripts/enrich-pillars-with-live-proof.mjs [limit=500]
  */
 
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
+import { CONSOLIDATE_301_MAP, isNoIndexPrunePath, normalizeUrlPath } from './lib/m1-decisions.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = path.resolve(__dirname, '..');
@@ -27,6 +26,8 @@ const WEBSITE_DIR = path.join(ROOT_DIR, 'website');
 const SITEMAP_PATH = path.join(WEBSITE_DIR, 'sitemap.xml');
 const STATE_PATH = path.join(WEBSITE_DIR, 'pillar-enrichment-state.json');
 const STATIC_RULES_PATH = path.join(ROOT_DIR, 'extension', 'rules', 'static_ads_and_trackers.json');
+const CRYPTO_RULES_PATH = path.join(ROOT_DIR, 'extension', 'rules', 'cryptominers.json');
+const TRACKER_PARAMS_PATH = path.join(ROOT_DIR, 'extension', 'rules', 'tracker_params.json');
 const DELTA_RULES_PATH = path.join(ROOT_DIR, 'extension', 'rules', 'dynamic_delta.json');
 const ABP_LIST_PATH = path.join(ROOT_DIR, 'extension', 'rules', 'abp_filter_list.txt');
 const MANIFEST_PATH = path.join(ROOT_DIR, 'extension', 'manifest.json');
@@ -34,11 +35,13 @@ const KEYWORD_MATRIX_PATH = path.join(ROOT_DIR, 'data', 'keyword-opportunity-mat
 
 const MANIFEST_VERSION = (() => {
   try {
-    return JSON.parse(fs.readFileSync(MANIFEST_PATH, 'utf8')).version || '1.2.7';
+    return JSON.parse(fs.readFileSync(MANIFEST_PATH, 'utf8')).version || '1.3.1';
   } catch {
-    return '1.2.7';
+    return '1.3.1';
   }
 })();
+
+const ADULT_RULE_RE = /(eporner|pornoxo|pornoeggs|freeporn|hqporn|sxyprn|realxxx|hotxxx|hotadult|faphouse|tubecup|doublepimp|tophqcam|xlivrdr|doppiocdn|awmdelivery|camsoda|nuvid|nvdst|drtuber|txxx|rvmessage|rvrpush|fhgte|fh-wgt|qoqh|lxax|koxk|u5s5|ey43|ero-advertising|trafficjunky|traffichunt|adspyglass|juicyads|plugrush|exoclick|exosrv|magsrv|pemsrv|realsrv|adxpansion|adtng|tsyndicate|crakrevenue|jads\.co|xvideos|xnxx|xhamster|redtube|youporn|spankbang|chaturbate|stripchat|bongacams|livejasmin|onlyfans)/i;
 
 const FOURTEEN_DAYS_MS = 14 * 24 * 60 * 60 * 1000;
 const todayStr = new Date().toISOString().slice(0, 10);
@@ -50,11 +53,6 @@ function escapeHtml(str) {
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
-}
-
-function hashSlug(str) {
-  const buf = crypto.createHash('sha256').update(str).digest();
-  return buf.readUInt32BE(0);
 }
 
 // Top 28 GSC pages that received Exact-Query CTR Surgery on 2026-11-03 (protected by 14-day title cooldown)
@@ -111,6 +109,8 @@ export function loadEnrichmentState() {
     } catch {}
   }
   for (const p of INITIAL_GSC_TITLE_SURGERY_PATHS) {
+    const normP = normalizeUrlPath(p).toLowerCase();
+    if (isNoIndexPrunePath(normP) || CONSOLIDATE_301_MAP.has(normP)) continue;
     if (!state.titleUpdatedAt[p]) {
       state.titleUpdatedAt[p] = '2026-11-03T20:45:00.000Z';
     }
@@ -125,11 +125,18 @@ export function canUpdatePillarTitle(urlPath, state = loadEnrichmentState()) {
   return elapsed >= FOURTEEN_DAYS_MS;
 }
 
+function readRuleArray(filePath) {
+  if (!fs.existsSync(filePath)) return [];
+  const raw = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+  return Array.isArray(raw) ? raw : (raw.rules || []);
+}
+
 export function loadLiveRules() {
-  const staticRaw = fs.existsSync(STATIC_RULES_PATH)
-    ? JSON.parse(fs.readFileSync(STATIC_RULES_PATH, 'utf8'))
-    : [];
-  const staticRules = Array.isArray(staticRaw) ? staticRaw : (staticRaw.rules || []);
+  const staticRules = [
+    ...readRuleArray(STATIC_RULES_PATH),
+    ...readRuleArray(CRYPTO_RULES_PATH),
+    ...readRuleArray(TRACKER_PARAMS_PATH)
+  ];
   const deltaRaw = fs.existsSync(DELTA_RULES_PATH)
     ? JSON.parse(fs.readFileSync(DELTA_RULES_PATH, 'utf8'))
     : [];
@@ -138,11 +145,16 @@ export function loadLiveRules() {
     ? fs.readFileSync(ABP_LIST_PATH, 'utf8')
         .split(/\r?\n/)
         .map((l) => l.trim())
-        .filter((l) => l && !l.startsWith('!'))
+        .filter((l) => l && !l.startsWith('!') && !l.startsWith('['))
     : [];
 
   const combinedDnr = [...staticRules, ...deltaRules].filter(
-    (r) => r && r.id && r.condition && (r.condition.urlFilter || r.condition.regexFilter)
+    (r) =>
+      r &&
+      r.id &&
+      r.condition &&
+      (r.condition.urlFilter || r.condition.regexFilter) &&
+      !ADULT_RULE_RE.test(JSON.stringify(r))
   );
   return {
     staticCount: staticRules.length,
@@ -153,166 +165,19 @@ export function loadLiveRules() {
   };
 }
 
-function selectRulesForPillar(urlPath, slug, cluster, rulesData) {
-  const { combinedDnr } = rulesData;
-  const tokens = slug
-    .split('-')
-    .filter((w) => w.length >= 4 && !['block', 'video', 'stop', 'with', 'from', 'setup', 'guide', 'browser'].includes(w));
-
-  const matched = [];
-  const seenIds = new Set();
-
-  // 1. Match rules whose urlFilter, initiatorDomains, or requestDomains match slug tokens
-  for (const r of combinedDnr) {
-    const hay = JSON.stringify(r.condition).toLowerCase();
-    if (tokens.some((t) => hay.includes(t))) {
-      matched.push(r);
-      seenIds.add(r.id);
-      if (matched.length >= 3) break;
-    }
-  }
-
-  // 2. Match high-priority surrogate redirects (priority >= 10) for anti-detection proof
-  const surrogates = combinedDnr.filter((r) => r.action?.type === 'redirect');
-  const h = hashSlug(urlPath);
-  if (surrogates.length > 0 && matched.length < 4) {
-    const sRule = surrogates[h % surrogates.length];
-    if (sRule && !seenIds.has(sRule.id)) {
-      matched.push(sRule);
-      seenIds.add(sRule.id);
-    }
-  }
-
-  // 3. Fill up to 5 rules deterministically from combinedDnr using hash offsets so every page has a unique 5-rule fingerprint
-  const offsets = [0, 7, 19, 43, 89, 137, 211];
-  for (const off of offsets) {
-    if (matched.length >= 5) break;
-    const candidate = combinedDnr[(h + off) % combinedDnr.length];
-    if (candidate && !seenIds.has(candidate.id)) {
-      matched.push(candidate);
-      seenIds.add(candidate.id);
-    }
-  }
-
-  return matched.map((r) => {
-    const filterPattern = r.condition.urlFilter || r.condition.regexFilter || '*';
-    const actionType =
-      r.action?.type === 'redirect'
-        ? `redirect -> ${r.action?.redirect?.extensionPath || 'noop surrogate'}`
-        : `${r.action?.type || 'block'} (priority ${r.priority || 1})`;
-    const resTypes = (r.condition.resourceTypes || ['script', 'xmlhttprequest']).slice(0, 3).join(', ');
-    const scope = r.condition.initiatorDomains
-      ? `Initiator: ${r.condition.initiatorDomains.slice(0, 2).join(', ')}`
-      : r.condition.domainType
-      ? `${r.condition.domainType} network request`
-      : 'Cross-origin tracker/ad request';
-    return {
-      id: r.id,
-      filterPattern,
-      actionType,
-      resTypes,
-      scope
-    };
-  });
+// Deprecated no-op stub preserved for backward-compatible imports across pipeline scripts
+export function buildProofSectionHtml() {
+  return '';
 }
 
-export function buildProofSectionHtml(urlPath, slug, cluster, rulesData) {
-  const pickedRules = selectRulesForPillar(urlPath, slug, cluster, rulesData);
-  const h = hashSlug(urlPath);
-  const avgEvalUs = 14 + (h % 19); // 14-32 microseconds DNR evaluation
-  const domMutationMs = (1.1 + ((h % 18) / 10)).toFixed(1);
-  const ramSavedMb = 145 + (h % 210);
-
-  return `<section id="deepblock-live-rule-proof" style="margin-top:32px;background:#0f172a;border:1px solid #1e293b;border-radius:14px;padding:22px 24px;">
-      <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;">
-        <h2 style="font-size:1.22rem;margin:0;color:#f8fafc;">Live MV3 DeclarativeNetRequest &amp; DeepStealth Rule Telemetry (${escapeHtml(slug)})</h2>
-        <span style="font-size:0.75rem;background:rgba(16,185,129,0.14);color:#34d399;border:1px solid rgba(16,185,129,0.3);padding:4px 10px;border-radius:999px;font-weight:700;">
-          Verified Against ${rulesData.staticCount} Static + ${rulesData.deltaCount} OTA Delta Rules
-        </span>
-      </div>
-      <p style="color:#94a3b8;font-size:0.9rem;line-height:1.55;margin:0 0 14px;">
-        Below is a live sample of active Chromium &amp; Gecko rules executed by SWEEPR DeepBlock v${escapeHtml(MANIFEST_VERSION)} for <code>${escapeHtml(urlPath)}</code>. Network rules execute in C++ browser memory (avg <strong>${avgEvalUs}&micro;s</strong> lookup latency, <strong>${domMutationMs}ms</strong> DOM observer pass, saving <strong>~${ramSavedMb} MB RAM</strong> per active session):
-      </p>
-      <div style="overflow-x:auto;">
-        <table style="width:100%;border-collapse:collapse;font-size:0.82rem;color:#e2e8f0;">
-          <thead>
-            <tr style="border-bottom:1px solid #1e293b;text-align:left;color:#94a3b8;">
-              <th style="padding:8px 10px;">Rule ID</th>
-              <th style="padding:8px 10px;">MV3 Filter / Pattern</th>
-              <th style="padding:8px 10px;">Engine Action &amp; Priority</th>
-              <th style="padding:8px 10px;">Resource Types</th>
-              <th style="padding:8px 10px;">Execution Scope</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${pickedRules
-              .map(
-                (r) => `<tr style="border-bottom:1px solid rgba(30,41,59,0.7);">
-              <td style="padding:8px 10px;font-family:monospace;color:#34d399;font-weight:700;">#${r.id}</td>
-              <td style="padding:8px 10px;font-family:monospace;word-break:break-all;">${escapeHtml(r.filterPattern)}</td>
-              <td style="padding:8px 10px;color:#cbd5e1;">${escapeHtml(r.actionType)}</td>
-              <td style="padding:8px 10px;font-family:monospace;color:#94a3b8;">${escapeHtml(r.resTypes)}</td>
-              <td style="padding:8px 10px;color:#94a3b8;">${escapeHtml(r.scope)}</td>
-            </tr>`
-              )
-              .join('\n            ')}
-          </tbody>
-        </table>
-      </div>
-    </section>`;
-}
-
-function buildCtrEnrichmentSectionHtml(urlPath, queueItems) {
-  if (!Array.isArray(queueItems) || queueItems.length === 0) return '';
-  const items = queueItems.slice(0, 4);
-  const cardsHtml = items
-    .map((item) => {
-      const kw = String(item.keyword || '').trim();
-      const kd = item.metrics?.estimatedKD ?? 15;
-      const score = item.metrics?.opportunityScore ?? 78;
-      return `<div style="background:#1e293b;border:1px solid #334155;border-radius:10px;padding:14px 16px;">
-          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;">
-            <h3 style="font-size:0.98rem;margin:0;color:#f8fafc;text-transform:capitalize;">${escapeHtml(kw)} (2026 MV3 Benchmark)</h3>
-            <span style="font-size:0.72rem;background:rgba(56,189,248,0.14);color:#38bdf8;padding:2px 8px;border-radius:999px;font-weight:700;">KD ${kd} &bull; Score ${score}</span>
-          </div>
-          <p style="margin:0;font-size:0.86rem;color:#cbd5e1;line-height:1.55;">
-            SWEEPR DeepBlock v${escapeHtml(MANIFEST_VERSION)} resolves <strong>${escapeHtml(kw)}</strong> natively via 242 C++ <code>declarativeNetRequest</code> rules (15&micro;s latency), &lt;50ms GDPR cookie auto-rejection, and transparent <strong>&pound;29.99/yr Pro</strong> pricing (or <strong>&pound;89.99/yr Complete Security Suite</strong> with VPN, Cleaner &amp; RAM Tamer).
-          </p>
-        </div>`;
-    })
-    .join('\n        ');
-
-  return `<section id="deepblock-ctr-intent-enrichment" style="margin-top:28px;background:#0f172a;border:1px solid #1e293b;border-radius:14px;padding:20px 24px;">
-      <h2 style="font-size:1.18rem;margin:0 0 12px;color:#f8fafc;">Related Head-to-Head Comparisons &amp; Verified 2026 Switcher Answers</h2>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;">
-        ${cardsHtml}
-      </div>
-    </section>`;
-}
-
-export function runLiveProofEnrichment(customLimit = null, customForce = false) {
+export function runLiveProofEnrichment(customLimit = null, _customForce = false) {
   const limitArg = customLimit !== null ? customLimit : (process.argv[2] && !process.argv[2].startsWith('--') ? Number(process.argv[2]) : 500);
-  const forceProof = customForce || process.argv.includes('--force-proof');
 
   const state = loadEnrichmentState();
-  const rulesData = loadLiveRules();
-
-  // Load ctrEnrichmentQueue from data/keyword-opportunity-matrix.json if available
-  const ctrQueueByPath = new Map();
-  if (fs.existsSync(KEYWORD_MATRIX_PATH)) {
-    try {
-      const matrix = JSON.parse(fs.readFileSync(KEYWORD_MATRIX_PATH, 'utf8'));
-      for (const item of matrix.ctrEnrichmentQueue || []) {
-        const targetUrl = String(item.targetExistingPage || '').trim();
-        if (!targetUrl) continue;
-        if (!ctrQueueByPath.has(targetUrl)) ctrQueueByPath.set(targetUrl, []);
-        ctrQueueByPath.get(targetUrl).push(item);
-      }
-    } catch {}
-  }
+  loadLiveRules();
 
   // Read existing sitemap.xml to get the authoritative Pillar URLs and their current <lastmod> dates
-  const sitemapXml = fs.readFileSync(SITEMAP_PATH, 'utf8');
+  const sitemapXml = fs.existsSync(SITEMAP_PATH) ? fs.readFileSync(SITEMAP_PATH, 'utf8') : '';
   const existingLastModMap = new Map();
   for (const m of sitemapXml.matchAll(/<url>\s*<loc>([^<]+)<\/loc>\s*<lastmod>([^<]+)<\/lastmod>/g)) {
     existingLastModMap.set(m[1].trim(), m[2].trim());
@@ -320,7 +185,6 @@ export function runLiveProofEnrichment(customLimit = null, customForce = false) 
 
   const modifiedLocs = new Set();
   let enrichedCount = 0;
-  let ctrEnrichedCount = 0;
 
   for (const cluster of ['setup', 'solutions', 'vs', 'guides']) {
     const dirAbs = path.join(WEBSITE_DIR, cluster);
@@ -332,7 +196,7 @@ export function runLiveProofEnrichment(customLimit = null, customForce = false) 
       const absPath = path.join(dirAbs, file);
       const html = fs.readFileSync(absPath, 'utf8');
 
-      // Only enrich indexable Pillar pages (never touch consolidated noindex sub-variants)
+      // Only normalize indexable Pillar pages
       if (/<meta\s+name=["']robots["']\s+content=["'][^"']*noindex/i.test(html)) {
         continue;
       }
@@ -342,8 +206,8 @@ export function runLiveProofEnrichment(customLimit = null, customForce = false) 
       const loc = `https://sweeprdeepblock.com${urlPath}`;
 
       let updatedHtml = html
-        .replace(/SWEEPR DeepBlock v1\.2\.[25]/g, `SWEEPR DeepBlock v${MANIFEST_VERSION}`)
-        .replace(/•\s*Version\s+1\.2\.[25]/g, `• Version ${MANIFEST_VERSION}`)
+        .replace(/SWEEPR DeepBlock v1\.2\.[2579]/gi, `SWEEPR Deepblock v${MANIFEST_VERSION}`)
+        .replace(/•\s*Version\s+1\.2\.[2579]/gi, `• Version ${MANIFEST_VERSION}`)
         .replace(/"highPrice"\s*:\s*"59\.99"\s*,\s*"offerCount"\s*:\s*"3"/g, '"highPrice":"89.99","offerCount":"4"')
         .replace(/src="https:\/\/www\.googletagmanager\.com\/gtag\/js\?id=G-01MNBQSL9K"/g, 'src="/metrics/js?id=G-01MNBQSL9K"')
         .replace(
@@ -353,60 +217,16 @@ export function runLiveProofEnrichment(customLimit = null, customForce = false) 
         .replace(
           /£9\.99\/mo or save 50% on the <strong>£59\.99\/yr Annual Plan — £4\.99\/mo<\/strong>/g,
           '£1.99 1st mo or save 50% on the <strong>£29.99/yr Annual Plan — £2.50/mo</strong>, or bundle all 4 apps in the <strong>£89.99/yr Complete Security Suite</strong>'
-        )
-        .replace(
-          /<a href="\/order\?plan=annual"([^>]*)>Unlock Pro \(£4\.99\/mo Annual\)<\/a>/g,
-          '<a href="/order?plan=annual"$1>Unlock Pro (£2.50/mo Annual)</a>\n        <a href="/order?plan=suite_annual" style="background:rgba(16,185,129,0.14);color:#34d399;border:1px solid rgba(16,185,129,0.4);font-weight:700;padding:10px 16px;border-radius:8px;text-decoration:none;">Complete Suite (£89.99/yr) &rarr;</a>'
         );
 
-      // Ensure footer links include /site, /stories, /glossary, /de, /fr if missing
-      if (
-        updatedHtml.includes('<a href="/tools" style="color:#94a3b8;text-decoration:none;">Free Privacy Tools</a>') &&
-        !updatedHtml.includes('href="/stories"')
-      ) {
-        updatedHtml = updatedHtml.replace(
-          '<a href="/tools" style="color:#94a3b8;text-decoration:none;">Free Privacy Tools</a>',
-          '<a href="/tools" style="color:#94a3b8;text-decoration:none;">Free Privacy Tools</a>\n        <a href="/site" style="color:#94a3b8;text-decoration:none;">Site Ad Audits</a>\n        <a href="/stories" style="color:#94a3b8;text-decoration:none;">Customer Stories</a>\n        <a href="/glossary" style="color:#94a3b8;text-decoration:none;">Privacy Glossary</a>\n        <a href="/de" style="color:#94a3b8;text-decoration:none;">Deutsch (/de)</a>\n        <a href="/fr" style="color:#94a3b8;text-decoration:none;">Français (/fr)</a>'
+      // Strip legacy dark slop sections (#deepblock-live-rule-proof, #deepblock-ctr-intent-enrichment, #deepblock-ctr-enrichment, dark #gsc-exact-query-enrichment)
+      updatedHtml = updatedHtml
+        .replace(/\s*<section\b[^>]*\bid=["']deepblock-live-rule-proof["'][^>]*>[\s\S]*?<\/section>/gi, '')
+        .replace(/\s*<section\b[^>]*\bid=["']deepblock-ctr-intent-enrichment["'][^>]*>[\s\S]*?<\/section>/gi, '')
+        .replace(/\s*<section\b[^>]*\bid=["']deepblock-ctr-enrichment["'][^>]*>[\s\S]*?<\/section>/gi, '')
+        .replace(/\s*<section\b[^>]*\bid=["']gsc-exact-query-enrichment["'][^>]*>[\s\S]*?<\/section>/gi, (block) =>
+          /(?:#0f172a|#1e293b|bg-slate-900)/i.test(block) ? '' : block
         );
-      }
-
-      const needsProof = !updatedHtml.includes('id="deepblock-live-rule-proof"') || forceProof;
-      if (needsProof) {
-        const proofHtml = buildProofSectionHtml(urlPath, slug, cluster, rulesData);
-        if (updatedHtml.includes('id="deepblock-live-rule-proof"')) {
-          updatedHtml = updatedHtml.replace(
-            /<section id="deepblock-live-rule-proof"[\s\S]*?<\/section>/i,
-            proofHtml
-          );
-        } else if (updatedHtml.includes('<section style="margin-top:36px;padding-top:24px;border-top:1px solid #1e293b;">')) {
-          updatedHtml = updatedHtml.replace(
-            '<section style="margin-top:36px;padding-top:24px;border-top:1px solid #1e293b;">',
-            `${proofHtml}\n    <section style="margin-top:36px;padding-top:24px;border-top:1px solid #1e293b;">`
-          );
-        } else if (updatedHtml.includes('</main>')) {
-          updatedHtml = updatedHtml.replace('</main>', `    ${proofHtml}\n  </main>`);
-        }
-      }
-
-      // Inject CTR Intent Enrichment Section if this page is a target in ctrEnrichmentQueue
-      const ctrItems = ctrQueueByPath.get(urlPath);
-      if (ctrItems && ctrItems.length > 0) {
-        const ctrHtml = buildCtrEnrichmentSectionHtml(urlPath, ctrItems);
-        if (updatedHtml.includes('id="deepblock-ctr-intent-enrichment"')) {
-          updatedHtml = updatedHtml.replace(
-            /<section id="deepblock-ctr-intent-enrichment"[\s\S]*?<\/section>/i,
-            ctrHtml
-          );
-        } else if (updatedHtml.includes('id="deepblock-live-rule-proof"')) {
-          updatedHtml = updatedHtml.replace(
-            /<section id="deepblock-live-rule-proof"/i,
-            `${ctrHtml}\n    <section id="deepblock-live-rule-proof"`
-          );
-        } else if (updatedHtml.includes('</main>')) {
-          updatedHtml = updatedHtml.replace('</main>', `    ${ctrHtml}\n  </main>`);
-        }
-        ctrEnrichedCount++;
-      }
 
       if (updatedHtml !== html) {
         fs.writeFileSync(absPath, updatedHtml, 'utf8');
@@ -419,7 +239,7 @@ export function runLiveProofEnrichment(customLimit = null, customForce = false) 
   }
 
   // Update <lastmod> in website/sitemap.xml ONLY on modified URLs
-  if (modifiedLocs.size > 0) {
+  if (modifiedLocs.size > 0 && sitemapXml) {
     const updatedSitemap = sitemapXml.replace(
       /<url>\s*<loc>([^<]+)<\/loc>\s*<lastmod>([^<]+)<\/lastmod>/g,
       (fullMatch, locUrl, oldLastMod) => {
@@ -435,7 +255,7 @@ export function runLiveProofEnrichment(customLimit = null, customForce = false) 
   fs.writeFileSync(STATE_PATH, JSON.stringify(state, null, 2), 'utf8');
 
   console.log(
-    `[Live Proof Injector] Enriched ${enrichedCount} indexable Pillar pages (v${MANIFEST_VERSION}) | CTR Queue Applied: ${ctrEnrichedCount} pages | Updated <lastmod> on ${modifiedLocs.size} sitemap URLs.`
+    `[Slop Cleanup] Cleaned ${enrichedCount} indexable Pillar pages (v${MANIFEST_VERSION}) | Updated <lastmod> on ${modifiedLocs.size} sitemap URLs.`
   );
 }
 

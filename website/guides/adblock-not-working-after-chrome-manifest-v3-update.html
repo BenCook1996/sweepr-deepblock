@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, follow" />
+  <link rel="canonical" href="https://sweeprdeepblock.com/guides/how-to-block-youtube-ads-chrome-manifest-v3-2026" />
   <title>AdBlock Not Working After Chrome Manifest V3 Update | DeepBlock</title>
   <meta name="description" content="AdBlock Not Working After Chrome Manifest V3 Update: pass all 8/8 Manifest V3 anti-detection checks in 2026 with C++ declarativeNetRequest filtering, zero." />
-  <link rel="canonical" href="https://sweeprdeepblock.com/guides/adblock-not-working-after-chrome-manifest-v3-update" />
-  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
   <meta name="theme-color" content="#0F172A" />
   <link rel="icon" type="image/svg+xml" href="/logo.svg" />
   <link rel="manifest" href="/site.webmanifest" />
@@ -134,111 +134,43 @@
         <a href="/download" style="color:#94a3b8;font-size:0.85rem;text-decoration:underline;padding:4px 8px;">Install Browser Extension</a>
       </div>
     </div>
-    <section id="deepblock-live-rule-proof" style="margin-top:32px;background:#0f172a;border:1px solid #1e293b;border-radius:14px;padding:22px 24px;">
-      <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;">
-        <h2 style="font-size:1.22rem;margin:0;color:#f8fafc;">Live MV3 DeclarativeNetRequest &amp; DeepStealth Rule Telemetry (adblock-not-working-after-chrome-manifest-v3-update)</h2>
-        <span style="font-size:0.75rem;background:rgba(16,185,129,0.14);color:#34d399;border:1px solid rgba(16,185,129,0.3);padding:4px 10px;border-radius:999px;font-weight:700;">
-          Verified Against 232 Static + 0 OTA Delta Rules
-        </span>
-      </div>
-      <p style="color:#94a3b8;font-size:0.9rem;line-height:1.55;margin:0 0 14px;">
-        Below is a live sample of active Chromium &amp; Gecko rules executed by SWEEPR DeepBlock v1.2.9 for <code>/guides/adblock-not-working-after-chrome-manifest-v3-update</code>. Network rules execute in C++ browser memory (avg <strong>28&micro;s</strong> lookup latency, <strong>1.9ms</strong> DOM observer pass, saving <strong>~153 MB RAM</strong> per active session):
-      </p>
-      <div style="overflow-x:auto;">
-        <table style="width:100%;border-collapse:collapse;font-size:0.82rem;color:#e2e8f0;">
-          <thead>
-            <tr style="border-bottom:1px solid #1e293b;text-align:left;color:#94a3b8;">
-              <th style="padding:8px 10px;">Rule ID</th>
-              <th style="padding:8px 10px;">MV3 Filter / Pattern</th>
-              <th style="padding:8px 10px;">Engine Action &amp; Priority</th>
-              <th style="padding:8px 10px;">Resource Types</th>
-              <th style="padding:8px 10px;">Execution Scope</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr style="border-bottom:1px solid rgba(30,41,59,0.7);">
-              <td style="padding:8px 10px;font-family:monospace;color:#34d399;font-weight:700;">#9</td>
-              <td style="padding:8px 10px;font-family:monospace;word-break:break-all;">||static.doubleclick.net/instream/ad_status.js</td>
-              <td style="padding:8px 10px;color:#cbd5e1;">redirect -&gt; noop surrogate</td>
-              <td style="padding:8px 10px;font-family:monospace;color:#94a3b8;">script</td>
-              <td style="padding:8px 10px;color:#94a3b8;">Cross-origin tracker/ad request</td>
-            </tr>
-            <tr style="border-bottom:1px solid rgba(30,41,59,0.7);">
-              <td style="padding:8px 10px;font-family:monospace;color:#34d399;font-weight:700;">#52</td>
-              <td style="padding:8px 10px;font-family:monospace;word-break:break-all;">||mediavine.com^</td>
-              <td style="padding:8px 10px;color:#cbd5e1;">block (priority 1)</td>
-              <td style="padding:8px 10px;font-family:monospace;color:#94a3b8;">script, sub_frame, image</td>
-              <td style="padding:8px 10px;color:#94a3b8;">Cross-origin tracker/ad request</td>
-            </tr>
-            <tr style="border-bottom:1px solid rgba(30,41,59,0.7);">
-              <td style="padding:8px 10px;font-family:monospace;color:#34d399;font-weight:700;">#59</td>
-              <td style="padding:8px 10px;font-family:monospace;word-break:break-all;">||connatix.com^</td>
-              <td style="padding:8px 10px;color:#cbd5e1;">block (priority 1)</td>
-              <td style="padding:8px 10px;font-family:monospace;color:#94a3b8;">script, sub_frame, image</td>
-              <td style="padding:8px 10px;color:#94a3b8;">Cross-origin tracker/ad request</td>
-            </tr>
-            <tr style="border-bottom:1px solid rgba(30,41,59,0.7);">
-              <td style="padding:8px 10px;font-family:monospace;color:#34d399;font-weight:700;">#1</td>
-              <td style="padding:8px 10px;font-family:monospace;word-break:break-all;">||doubleclick.net^</td>
-              <td style="padding:8px 10px;color:#cbd5e1;">block (priority 2)</td>
-              <td style="padding:8px 10px;font-family:monospace;color:#94a3b8;">script, sub_frame, xmlhttprequest</td>
-              <td style="padding:8px 10px;color:#94a3b8;">Ad-exchange wrapper</td>
-            </tr>
-            <tr style="border-bottom:1px solid rgba(30,41,59,0.7);">
-              <td style="padding:8px 10px;font-family:monospace;color:#34d399;font-weight:700;">#112</td>
-              <td style="padding:8px 10px;font-family:monospace;word-break:break-all;">||glutenmuttsensuous.com^</td>
-              <td style="padding:8px 10px;color:#cbd5e1;">block (priority 2)</td>
-              <td style="padding:8px 10px;font-family:monospace;color:#94a3b8;">script, sub_frame, xmlhttprequest</td>
-              <td style="padding:8px 10px;color:#94a3b8;">Cross-origin tracker/ad request</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
+    
     
     <section style="margin-top:36px;padding-top:24px;border-top:1px solid #1e293b;">
       <h2 style="font-size:1.3rem;margin:0 0 8px;">Related Browser Setups, Platform Solutions &amp; Guides</h2>
-      <p style="color:#94a3b8;font-size:0.92rem;margin:0 0 16px;">Explore verified 2026 SWEEPR DeepBlock configurations across popular platforms, browsers, and privacy benchmarks:</p>
+      <p style="color:#94a3b8;font-size:0.92rem;margin:0 0 16px;">Explore verified 2026 SWEEPR Deepblock configurations across popular platforms, browsers, and privacy benchmarks:</p>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;">
-        <a href="/de" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:12px 14px;text-decoration:none;color:#f8fafc;">
-          <div style="font-size:0.75rem;color:#10b981;font-weight:700;margin-bottom:4px;">Related Guide</div>
-          <div style="font-size:0.92rem;font-weight:600;line-height:1.35;">Werbung &amp; Usercentrics Cookie-Banner automatisch in &lt;50ms ablehnen</div>
-        </a>
-        <a href="/guides/how-to-block-twitch-embedded-stream-ads-external" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:12px 14px;text-decoration:none;color:#f8fafc;">
-          <div style="font-size:0.75rem;color:#10b981;font-weight:700;margin-bottom:4px;">Related Guide</div>
-          <div style="font-size:0.92rem;font-weight:600;line-height:1.35;">How SWEEPR DeepBlock Strips Embedded Twitch Video Ads on External Wikis</div>
-        </a>
-        <a href="/guides/adblock-not-working-on-twitch-2026" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:12px 14px;text-decoration:none;color:#f8fafc;">
+        <a href="/guides/how-to-block-youtube-ads-chrome-manifest-v3-2026" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:12px 14px;text-decoration:none;color:#f8fafc;">
           <div style="font-size:0.75rem;color:#10b981;font-weight:700;margin-bottom:4px;">Step-by-Step Privacy Guide</div>
-          <div style="font-size:0.92rem;font-weight:600;line-height:1.35;">AdBlock Not Working On Twitch 2026</div>
+          <div style="font-size:0.92rem;font-weight:600;line-height:1.35;">Block YouTube Ads on Chrome MV3</div>
         </a>
-        <a href="/guides/best-manifest-v3-adblockers-for-google-chrome-2026" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:12px 14px;text-decoration:none;color:#f8fafc;">
+        <a href="/guides/how-to-block-reddit-sponsored-promoted-posts-in-feed" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:12px 14px;text-decoration:none;color:#f8fafc;">
           <div style="font-size:0.75rem;color:#10b981;font-weight:700;margin-bottom:4px;">Step-by-Step Privacy Guide</div>
-          <div style="font-size:0.92rem;font-weight:600;line-height:1.35;">Best Manifest V3 Adblockers 2026</div>
+          <div style="font-size:0.92rem;font-weight:600;line-height:1.35;">Block Reddit Promoted Posts</div>
         </a>
-        <a href="/guides/how-to-auto-mute-and-block-autoplay-video-ads" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:12px 14px;text-decoration:none;color:#f8fafc;">
+        <a href="/guides/how-to-block-sponsored-ads-on-yahoo-finance" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:12px 14px;text-decoration:none;color:#f8fafc;">
           <div style="font-size:0.75rem;color:#10b981;font-weight:700;margin-bottom:4px;">Step-by-Step Privacy Guide</div>
-          <div style="font-size:0.92rem;font-weight:600;line-height:1.35;">Block Autoplay Floating Videos</div>
+          <div style="font-size:0.92rem;font-weight:600;line-height:1.35;">Block Yahoo Finance Video Ads</div>
         </a>
-        <a href="/guides/how-to-auto-reject-civic-uk-cookie-banners" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:12px 14px;text-decoration:none;color:#f8fafc;">
+        <a href="/guides/how-to-stop-fake-robot-captcha-verification-popups" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:12px 14px;text-decoration:none;color:#f8fafc;">
           <div style="font-size:0.75rem;color:#10b981;font-weight:700;margin-bottom:4px;">Step-by-Step Privacy Guide</div>
-          <div style="font-size:0.92rem;font-weight:600;line-height:1.35;">Auto-Reject Civic UK Cookies</div>
+          <div style="font-size:0.92rem;font-weight:600;line-height:1.35;">Stop Fake Robot Captcha Popups</div>
         </a>
-        <a href="/guides/how-to-automatically-reject-cookie-banners-uk" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:12px 14px;text-decoration:none;color:#f8fafc;">
-          <div style="font-size:0.75rem;color:#10b981;font-weight:700;margin-bottom:4px;">Step-by-Step Privacy Guide</div>
-          <div style="font-size:0.92rem;font-weight:600;line-height:1.35;">Automatically Reject Cookies (2026): Auto-Decline Popups &lt;50ms</div>
+        <a href="/solutions/bing-copilot-search-reduce-browser-ram-usage" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:12px 14px;text-decoration:none;color:#f8fafc;">
+          <div style="font-size:0.75rem;color:#10b981;font-weight:700;margin-bottom:4px;">Platform Solution • MV3 Protection</div>
+          <div style="font-size:0.92rem;font-weight:600;line-height:1.35;">Bing Search Ad &amp; RAM Optimization</div>
         </a>
-        <a href="/guides/how-to-block-deceptive-back-button-hijacking-traps" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:12px 14px;text-decoration:none;color:#f8fafc;">
-          <div style="font-size:0.75rem;color:#10b981;font-weight:700;margin-bottom:4px;">Step-by-Step Privacy Guide</div>
-          <div style="font-size:0.92rem;font-weight:600;line-height:1.35;">Block Back-Button Traps (2026)</div>
+        <a href="/solutions/linkedin-feed-ads-block-video-ads" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:12px 14px;text-decoration:none;color:#f8fafc;">
+          <div style="font-size:0.75rem;color:#10b981;font-weight:700;margin-bottom:4px;">Platform Solution • MV3 Protection</div>
+          <div style="font-size:0.92rem;font-weight:600;line-height:1.35;">LinkedIn Promoted Feed Ad Blocker</div>
         </a>
-        <a href="/guides/how-to-block-unskippable-audio-ads-on-spotify-web" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:12px 14px;text-decoration:none;color:#f8fafc;">
-          <div style="font-size:0.75rem;color:#10b981;font-weight:700;margin-bottom:4px;">Step-by-Step Privacy Guide</div>
-          <div style="font-size:0.92rem;font-weight:600;line-height:1.35;">Block Spotify Web Audio Ads (2026)</div>
+        <a href="/setup/arc-browser-windows-mac" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:12px 14px;text-decoration:none;color:#f8fafc;">
+          <div style="font-size:0.75rem;color:#10b981;font-weight:700;margin-bottom:4px;">Browser Setup • MV3 &amp; WebExtensions</div>
+          <div style="font-size:0.92rem;font-weight:600;line-height:1.35;">Arc Browser Ad Blocker (Win &amp; Mac)</div>
         </a>
-        <a href="/guides/how-to-stop-location-geolocation-popups" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:12px 14px;text-decoration:none;color:#f8fafc;">
-          <div style="font-size:0.75rem;color:#10b981;font-weight:700;margin-bottom:4px;">Step-by-Step Privacy Guide</div>
-          <div style="font-size:0.92rem;font-weight:600;line-height:1.35;">Stop Geolocation Permission Nags</div>
+        <a href="/setup/zen-browser-privacy-tabs" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:12px 14px;text-decoration:none;color:#f8fafc;">
+          <div style="font-size:0.75rem;color:#10b981;font-weight:700;margin-bottom:4px;">Browser Setup • MV3 &amp; WebExtensions</div>
+          <div style="font-size:0.92rem;font-weight:600;line-height:1.35;">Zen Browser Privacy &amp; RAM Setup</div>
         </a>
       </div>
     </section>

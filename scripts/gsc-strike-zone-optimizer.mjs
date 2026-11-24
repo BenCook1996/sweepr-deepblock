@@ -20,6 +20,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { sculptInternalLinks } from './sculpt-internal-links.mjs';
+import { isNoIndexPrunePath, CONSOLIDATE_301_MAP } from './lib/m1-decisions.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = path.resolve(__dirname, '..');
@@ -33,53 +34,31 @@ const EXEMPT_BODY_INJECTION = new Set(['/', '/privacy', '/terms', '/refund', '/s
 
 const COOLDOWN_SAFE_QUERY_ENRICHMENTS = {
   '/solutions/crunchyroll-anime-streams-block-video-ads': {
-    heading: 'How to Block Ads on Funimation & Get No Ads on Crunchyroll PC (Chrome MV3)',
+    heading: 'How to Block Ads on Crunchyroll PC (Chrome & Firefox MV3)',
     bodyHtml:
-      'Since Funimation’s library merged into Crunchyroll, legacy Funimation and Crunchyroll streams serve multi-pod VAST/VMAP video commercials that trigger black screens on basic adblockers. <strong>SWEEPR DeepBlock</strong> intercepts Crunchyroll and Funimation HLS ad manifest segments in the MAIN world while spoofing telemetry beacons, letting you watch 1080p anime on PC with zero pre-roll or mid-roll interruptions.',
-    faqQ: 'How do I block ads on Funimation and Crunchyroll PC streams without black screens?',
-    faqA: 'Install SWEEPR DeepBlock on Chrome, Firefox, Edge, Brave, or Floorp. It neutralizes both Crunchyroll and legacy Funimation VAST/VMAP ad pods at the Manifest V3 network and player layer without triggering playback freezes.'
-  },
-  '/solutions/1337x-torrent-indexer-block-video-ads': {
-    heading: 'How to Block 1337x Ads, Pop-Under Redirects & Fake Download Overlays',
-    bodyHtml:
-      'Searching for a permanent fix for <strong>1337x ads</strong>? 1337x and its mirror domains layer invisible <code>window.open</code> click-jacking overlays and fake "Direct High-Speed Download" VPN banners over magnet links. SWEEPR DeepBlock strips these transparent overlay divs and blocks pop-under script domains in under 50ms.',
-    faqQ: 'Why do 1337x ads still open new tabs on standard adblockers?',
-    faqA: '1337x mirrors rotate first-party inline click-listeners that fire when you click anywhere on the page. SWEEPR DeepBlock neutralizes inline window.open hijackers in the MAIN world before they can spawn redirect tabs.'
-  },
-  '/solutions/nyaa-si-anime-torrents-strip-tracking-parameters': {
-    heading: 'Nyaa.si Red Highlight Meaning vs. Unofficial Mirror Redirect Ads',
-    bodyHtml:
-      'Users searching for <strong>nyaa.si red highlight</strong> often want to know whether a red/pink torrent row is dangerous: on official Nyaa.si, a <strong>red/pink row highlight</strong> simply indicates a <em>Remake / re-encode</em> or an unverified upload (whereas <strong>green</strong> is a Trusted uploader and <strong>blue</strong> is an A+ batch). However, lookalike Nyaa proxy clones inject malicious pop-under ads and tracking parameters—which SWEEPR DeepBlock blocks automatically.',
-    faqQ: 'Is a Nyaa.si red highlight torrent safe to click?',
-    faqA: 'On official Nyaa.si, a red highlight means the release is a Remake (re-encode) rather than a trusted original encode. Always keep SWEEPR DeepBlock active to block fake Nyaa clone domains, pop-under redirects, and outbound tracking tokens.'
+      'Crunchyroll streams serve multi-pod VAST/VMAP video commercials that trigger playback errors on basic adblockers. <strong>SWEEPR Deepblock v1.3.1</strong> uses 283 static Manifest V3 declarativeNetRequest rules and MAIN-world player sanitization so you can watch anime on PC cleanly.'
   },
   '/setup/kiwi-browser-android': {
-    heading: 'Kiwi Unblocker & Installing Desktop MV3 AdBlock Extensions on Android',
+    heading: 'Kiwi Browser Archived (Jan 2025): Recommended Android Migration Setup',
     bodyHtml:
-      'Looking for a reliable <strong>Kiwi unblocker</strong> and ad-free mobile browsing setup? By installing SWEEPR DeepBlock inside Kiwi Browser on Android, you combine encrypted DNS-over-HTTPS (DoH) hostname resolution with desktop-grade Manifest V3 video ad blocking, pop-under interception, and sub-50ms cookie consent rejection.',
-    faqQ: 'How does SWEEPR DeepBlock work as a Kiwi unblocker and mobile ad blocker?',
-    faqA: 'Inside Kiwi Browser on Android, SWEEPR DeepBlock provides encrypted DNS-over-HTTPS (DoH) protection alongside full Manifest V3 declarativeNetRequest and MAIN-world scriptlet filtering.'
+      'Kiwi Browser was archived in January 2025 and no longer receives Chromium security updates. For ongoing mobile ad, tracker, and cookie consent protection with <strong>SWEEPR Deepblock v1.3.1</strong> (283 static DNR rules), migrate to <a href="/setup/mozilla-firefox-desktop-android" class="text-emerald-700 hover:underline font-semibold">Mozilla Firefox for Android</a> (signed <code>.xpi</code> GeckoView add-on) or Microsoft Edge Android.'
   },
   '/solutions/linkedin-feed-ads-block-video-ads': {
-    heading: 'Chrome Extension That Stops LinkedIn Promoted Video & InMail Feed Ads',
+    heading: 'Chrome Extension That Stops LinkedIn Promoted Feed Ads',
     bodyHtml:
-      'Looking for a <strong>Chrome extension that stops video ads on LinkedIn</strong> without breaking job applications or recruiter messages? SWEEPR DeepBlock removes "Promoted" feed posts, auto-playing video carousel commercials, and right-rail Sponsored Spotlight cards at under 50ms latency.',
-    faqQ: 'Which Chrome extension stops video ads on LinkedIn without slowing down tabs?',
-    faqA: 'SWEEPR DeepBlock uses lightweight Manifest V3 rules and zero-CLS cosmetic rules to collapse LinkedIn Promoted video posts while lowering memory consumption.'
+      'Looking for an extension that hides LinkedIn Promoted feed posts without breaking job applications or recruiter messages? <strong>SWEEPR Deepblock v1.3.1</strong> collapses Promoted feed cards and strips outbound tracking parameters locally.'
   },
   '/solutions/fandom-game-wikis-reduce-browser-ram-usage': {
-    heading: 'Why Does Fandom Use So Much Memory? Live Wiki RAM Benchmark & Calculator',
+    heading: 'Why Does Fandom Use So Much Memory? Wiki Ad-Load & Tab RAM Calculator',
     bodyHtml:
-      'Wondering <strong>why does Fandom use so much memory</strong>? An unblocked Fandom wiki tab loads 60+ Prebid ad auction scripts and sticky video players, consuming <strong>840MB–1.2GB of RAM per tab</strong>. SWEEPR DeepBlock cuts Fandom tab memory by <strong>62%</strong>—test your exact tab savings in our <a href="/tools/browser-ram-calculator" style="color:#10b981;text-decoration:underline;font-weight:600;">Interactive Browser RAM Calculator</a> or inspect our <a href="/site/fandom-com" style="color:#10b981;text-decoration:underline;font-weight:600;">Verified Fandom.com Ad-Load Audit Report</a>.',
-    faqQ: 'How can I verify how much memory SWEEPR DeepBlock saves on Fandom wikis?',
-    faqA: 'Use the SWEEPR DeepBlock popup speedometer or our online Browser RAM Calculator (/tools/browser-ram-calculator) to compare unblocked Fandom tabs (~920MB/tab) against DeepBlock-protected tabs (~310MB/tab).'
+      'Wondering <strong>why does Fandom use so much memory</strong>? An unblocked Fandom wiki tab loads dozens of third-party ad auction scripts and sticky video players. <strong>SWEEPR Deepblock v1.3.1</strong> blocks those ad requests via 283 static DNR rules and pairs with Total Tab &amp; RAM Tamer to hibernate idle wiki tabs — estimate your savings in our <a href="/tools/browser-ram-calculator" class="text-emerald-700 hover:underline font-semibold">Interactive Browser RAM Calculator</a>.'
   }
 };
 
 function loadSitemapPaths() {
   const paths = [];
   const seen = new Set();
-  for (const smFile of ['sitemap.xml', 'sitemap-sites.xml']) {
+  for (const smFile of ['sitemap.xml']) {
     const smAbs = path.join(WEBSITE_DIR, smFile);
     if (!fs.existsSync(smAbs)) continue;
     const xml = fs.readFileSync(smAbs, 'utf8');
@@ -186,7 +165,7 @@ function extractFollowedOutgoingLinks(html, selfPath, canonicalSet) {
 
 function escapeHtmlAttr(str) {
   return String(str ?? '')
-    .replace(/&/g, '&amp;')
+    .replace(/&(?!(?:[a-zA-Z][a-zA-Z0-9]+|#\d+|#x[0-9a-fA-F]+);)/g, '&amp;')
     .replace(/"/g, '&quot;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;');
@@ -196,44 +175,49 @@ function injectContextualLinkIntoDonor(donor, targetPage) {
   const targetPath = targetPage.urlPath;
   const safeTitle = escapeHtmlAttr(targetPage.title);
 
-  // 1. Pillar Grid (`grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;">`)
+  // 1. Holographic Pearl Related Grid (`<section data-sweepr-related="1" ...><div class="grid ...">`)
+  const lightRelatedGridRe = /(<section\b[^>]*data-sweepr-related=["']1["'][\s\S]*?<div\s+class=["']grid[^"']*["'][^>]*>)/i;
+  if (lightRelatedGridRe.test(donor.html)) {
+    const badge = targetPath.startsWith('/vs/')
+      ? 'Comparison Benchmark'
+      : targetPath.startsWith('/setup/')
+      ? 'Browser Setup'
+      : targetPath.startsWith('/solutions/')
+      ? 'Platform Solution'
+      : 'Related Guide';
+    const card = `\n        <a href="${targetPath}" class="glass-card p-4 bg-white border border-slate-200/90 hover:border-emerald-400 rounded-2xl no-underline transition-all block">\n          <div class="text-[11px] font-bold uppercase tracking-wider text-emerald-700 mb-1">${badge}</div>\n          <div class="text-sm font-bold text-slate-900 leading-snug">${safeTitle}</div>\n        </a>`;
+    donor.html = donor.html.replace(lightRelatedGridRe, `$1${card}`);
+    return true;
+  }
+
+  // 2. Legacy Pillar Grid (emit light Holographic Pearl card)
   const pillarGrid = '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;">';
   if (donor.html.includes(pillarGrid)) {
-    const badge = targetPath.startsWith('/site/')
-      ? 'Verified Publisher Telemetry'
-      : targetPath.startsWith('/vs/')
+    const badge = targetPath.startsWith('/vs/')
       ? 'Comparison Benchmark'
-      : targetPath.startsWith('/stories/')
-      ? 'Case Study'
+      : targetPath.startsWith('/setup/')
+      ? 'Browser Setup'
       : 'Related Guide';
-    const card = `\n        <a href="${targetPath}" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:12px 14px;text-decoration:none;color:#f8fafc;">\n          <div style="font-size:0.75rem;color:#10b981;font-weight:700;margin-bottom:4px;">${badge}</div>\n          <div style="font-size:0.92rem;font-weight:600;line-height:1.35;">${safeTitle}</div>\n        </a>`;
+    const card = `\n        <a href="${targetPath}" class="glass-card bg-white border border-slate-200 rounded-xl p-3.5 text-slate-900 hover:border-emerald-400 no-underline block transition-all">\n          <div class="text-xs font-bold text-emerald-700 mb-1">${badge}</div>\n          <div class="text-sm font-semibold text-slate-900 leading-snug">${safeTitle}</div>\n        </a>`;
     donor.html = donor.html.replace(pillarGrid, `${pillarGrid}${card}`);
     return true;
   }
 
-  // 2. Customer Story Grid (`repeat(auto-fit,minmax(250px,1fr));gap:1rem;">`)
-  const storyGrid = '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem;">';
-  if (donor.html.includes(storyGrid)) {
-    const card = `\n        <a href="${targetPath}" style="background:#111827;border:1px solid rgba(148,163,184,0.16);border-radius:12px;padding:1.2rem;text-decoration:none;color:#f8fafc;display:block;">\n          <div style="font-size:0.75rem;color:#34d399;font-weight:700;margin-bottom:0.35rem;">Related Benchmark</div>\n          <div style="font-weight:700;margin-bottom:0.4rem;">${safeTitle}</div>\n        </a>`;
-    donor.html = donor.html.replace(storyGrid, `${storyGrid}${card}`);
-    return true;
-  }
-
-  // 3. Tailwind /site/* or /glossary/* Related Audits list (`<ul class="space-y-2 text-sm">` inside <main>)
+  // 3. Tailwind Related Audits list (`<ul class="space-y-2 text-sm">` inside <main>)
   const mainMatch = donor.html.match(/<main\b[\s\S]*?<\/main>/i);
   if (mainMatch && mainMatch[0].includes('<ul class="space-y-2 text-sm">')) {
     const mainBody = mainMatch[0];
     const nextMain = mainBody.replace(
       '<ul class="space-y-2 text-sm">',
-      `<ul class="space-y-2 text-sm">\n          <li><a href="${targetPath}" class="text-emerald-400 hover:underline font-semibold">${safeTitle}</a></li>`
+      `<ul class="space-y-2 text-sm">\n          <li><a href="${targetPath}" class="text-emerald-700 hover:underline font-semibold">${safeTitle}</a></li>`
     );
     donor.html = donor.html.replace(mainBody, nextMain);
     return true;
   }
 
-  // 4. Existing `#sweepr-contextual-links` container or clean Tailwind/dark card before `</main>`
+  // 4. Existing `#sweepr-contextual-links` container or Holographic Pearl light card before `</main>`
   if (donor.html.includes('id="sweepr-contextual-links"')) {
-    const item = `<li><a href="${targetPath}" class="text-emerald-400 hover:underline font-semibold" style="color:#34d399;text-decoration:underline;font-weight:600;">${safeTitle}</a></li>`;
+    const item = `<li><a href="${targetPath}" class="text-emerald-700 hover:underline font-semibold">${safeTitle}</a></li>`;
     donor.html = donor.html.replace(
       /(<section[^>]*id=["']sweepr-contextual-links["'][\s\S]*?<ul[^>]*>)/i,
       `$1\n        ${item}`
@@ -242,10 +226,10 @@ function injectContextualLinkIntoDonor(donor, targetPage) {
   }
 
   if (/<\/main>/i.test(donor.html)) {
-    const block = `<section id="sweepr-contextual-links" class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-2" style="margin-top:24px;padding:18px 20px;background:#0f172a;border:1px solid #1e293b;border-radius:12px;">
-      <h2 class="text-sm font-black uppercase tracking-wider text-slate-300" style="font-size:0.85rem;text-transform:uppercase;color:#cbd5e1;margin:0 0 8px;">Related Privacy Resources &amp; Audits</h2>
-      <ul class="space-y-1.5 text-sm" style="margin:0;padding-left:1.1rem;color:#cbd5e1;">
-        <li><a href="${targetPath}" class="text-emerald-400 hover:underline font-semibold" style="color:#34d399;text-decoration:underline;font-weight:600;">${safeTitle}</a></li>
+    const block = `<section id="sweepr-contextual-links" class="bg-white/90 border border-slate-200 rounded-2xl p-5 space-y-2 shadow-sm">
+      <h2 class="text-sm font-bold uppercase tracking-wider text-slate-700">Related Privacy Resources &amp; Guides</h2>
+      <ul class="space-y-1.5 text-sm text-slate-800 list-disc pl-5">
+        <li><a href="${targetPath}" class="text-emerald-700 hover:underline font-semibold">${safeTitle}</a></li>
       </ul>
     </section>
   </main>`;
@@ -270,6 +254,7 @@ export function runGscStrikeZoneOptimizer() {
   const pages = new Map();
 
   for (const urlPath of sitemapPaths) {
+    if (isNoIndexPrunePath(urlPath) || CONSOLIDATE_301_MAP.has(urlPath)) continue;
     const abs = resolveFilePathForRoute(urlPath);
     if (!abs) continue;
     const html = fs.readFileSync(abs, 'utf8');
@@ -378,7 +363,17 @@ export function runGscStrikeZoneOptimizer() {
     if (donor) fs.writeFileSync(donor.abs, donor.html, 'utf8');
   }
 
-  // Cooldown-safe on-page query enrichment (without injecting deprecated FAQPage schema)
+  // Strip legacy dark #gsc-exact-query-enrichment from pages no longer in COOLDOWN_SAFE_QUERY_ENRICHMENTS
+  for (const removedSlug of ['/solutions/1337x-torrent-indexer-block-video-ads', '/solutions/nyaa-si-anime-torrents-strip-tracking-parameters']) {
+    const absRemoved = resolveFilePathForRoute(removedSlug);
+    if (absRemoved && fs.existsSync(absRemoved)) {
+      const prev = fs.readFileSync(absRemoved, 'utf8');
+      const cleaned = prev.replace(/\s*<section\b[^>]*\bid=["']gsc-exact-query-enrichment["'][^>]*>[\s\S]*?<\/section>/gi, '');
+      if (cleaned !== prev) fs.writeFileSync(absRemoved, cleaned, 'utf8');
+    }
+  }
+
+  // Cooldown-safe on-page query enrichment (Holographic Pearl light callout, zero FAQPage schema)
   let queryEnrichedPagesCount = 0;
   for (const [targetPath, qSpec] of Object.entries(COOLDOWN_SAFE_QUERY_ENRICHMENTS)) {
     const page = pages.get(targetPath);
@@ -386,9 +381,9 @@ export function runGscStrikeZoneOptimizer() {
     let html = page.html;
     let changed = false;
 
-    const sectionBlock = `<section id="gsc-exact-query-enrichment" style="margin:24px 0;padding:18px 20px;background:#0f172a;border:1px solid #1e293b;border-left:4px solid #10b981;border-radius:10px;">
-      <h2 style="font-size:1.25rem;margin:0 0 8px;color:#f8fafc;">${qSpec.heading}</h2>
-      <p style="margin:0;color:#cbd5e1;font-size:0.96rem;line-height:1.6;">${qSpec.bodyHtml}</p>
+    const sectionBlock = `<section id="gsc-exact-query-enrichment" class="bg-emerald-50/70 border border-emerald-200 border-l-4 rounded-2xl p-5 text-slate-800 space-y-2" style="border-left-color:#059669;">
+      <h2 class="text-lg font-extrabold text-slate-900">${qSpec.heading}</h2>
+      <p class="text-sm text-slate-800 leading-relaxed">${qSpec.bodyHtml}</p>
     </section>`;
 
     if (html.includes('id="gsc-exact-query-enrichment"')) {
@@ -397,7 +392,7 @@ export function runGscStrikeZoneOptimizer() {
         html = nextHtml;
         changed = true;
       }
-    } else if (html.includes('<h2')) {
+    } else if (!html.includes('data-sweepr-related="1"') && html.includes('<h2')) {
       html = html.replace(/(<h2\b)/i, `${sectionBlock}\n    $1`);
       changed = true;
     }

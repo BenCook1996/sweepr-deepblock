@@ -301,17 +301,19 @@ function buildLocalizedPricing(countryCode = 'GB', overrideCurrency) {
     suiteAnnualAmount,
     suiteStandaloneAnchorAmount,
     suiteAnnualMonthlyEqAmount: suiteAnnualMonthlyEq,
+    suiteSavingsAmount: Math.max(0, suiteStandaloneAnchorAmount - suiteAnnualAmount),
     suiteSavingsPercent: 45,
     suiteAnnualFormatted: formatAmount(suiteAnnualAmount, cfg),
     suiteStandaloneAnchorFormatted: formatAmount(suiteStandaloneAnchorAmount, cfg),
     suiteAnnualMonthlyEqFormatted: formatAmount(suiteAnnualMonthlyEq, cfg),
+    suiteSavingsFormatted: formatAmount(Math.max(0, suiteStandaloneAnchorAmount - suiteAnnualAmount), cfg),
     annualMonthlyEqAmount: annualMonthlyEq,
     sixMonthMonthlyEqAmount: sixMonthMonthlyEq,
     annualSavingsAmount,
     sixMonthSavingsAmount,
     introSavingsAmount,
     annualSavingsPercent: 50,
-    sixMonthSavingsPercent: 25,
+    sixMonthSavingsPercent: 33,
     annualFormatted: formatAmount(cfg.annualAmount, cfg),
     sixMonthFormatted: formatAmount(cfg.sixMonthAmount, cfg),
     monthlyFormatted: formatAmount(cfg.monthlyAmount, cfg),
@@ -447,7 +449,7 @@ async function getStripeProductId() {
   }
   const created = await stripeRequest('POST', 'products', {
     name: 'SWEEPR Deepblock Pro',
-    description: 'SWEEPR Deepblock Pro — Zero Ads, Zero Pop-Ups, Fake Online Shop Detector & Private Browsing Protection'
+    description: 'SWEEPR Deepblock Pro — Ad & Video Shield, Cookie Auto-Closer, URL Tracker Stripper & Total Tab & RAM Tamer'
   });
   cachedMainProductId = created.id;
   return created.id;
@@ -677,65 +679,6 @@ async function requestSweeprCrm(pathAndQuery, { method = 'GET', body, extraHeade
   }
 }
 
-function extractClientTelemetryMeta(req, props = {}, osHint = '') {
-  const ua = String(req.headers['user-agent'] || '');
-  const uaLower = ua.toLowerCase();
-  const safeProps = props && typeof props === 'object' ? props : {};
-
-  let browser = typeof safeProps.browser === 'string' && safeProps.browser.trim() ? safeProps.browser.trim().slice(0, 32) : '';
-  if (!browser) {
-    const secChUa = String(req.headers['sec-ch-ua'] || '').toLowerCase();
-    if (uaLower.includes('edg/') || uaLower.includes('edgios/') || secChUa.includes('edge')) browser = 'Edge';
-    else if (uaLower.includes('opr/') || uaLower.includes('opera') || secChUa.includes('opera')) browser = 'Opera';
-    else if (uaLower.includes('vivaldi')) browser = 'Vivaldi';
-    else if (uaLower.includes('brave') || secChUa.includes('brave')) browser = 'Brave';
-    else if (uaLower.includes('firefox/') || uaLower.includes('fxios/')) browser = 'Firefox';
-    else if (uaLower.includes('safari/') && !uaLower.includes('chrome/') && !uaLower.includes('chromium/')) browser = 'Safari';
-    else if (uaLower.includes('chrome/') || uaLower.includes('chromium/') || uaLower.includes('crios/') || secChUa.includes('chromium')) browser = 'Chrome';
-  }
-
-  let osPlatform = typeof safeProps.os_platform === 'string' && safeProps.os_platform.trim() ? safeProps.os_platform.trim().slice(0, 32) : '';
-  if (!osPlatform) {
-    const hintLower = String(osHint || '').toLowerCase();
-    const chPlat = String(req.headers['sec-ch-ua-platform'] || '').toLowerCase();
-    if (hintLower === 'chrome_webstore') osPlatform = 'Chrome Web Store';
-    else if (hintLower === 'firefox_amo') osPlatform = 'Firefox AMO';
-    else if (hintLower === 'android' || uaLower.includes('android') || chPlat.includes('android')) osPlatform = 'Android';
-    else if (hintLower === 'ios' || /iphone|ipad|ipod/.test(uaLower) || chPlat.includes('ios')) osPlatform = 'iOS';
-    else if (uaLower.includes('cros') || chPlat.includes('chrome os')) osPlatform = 'ChromeOS';
-    else if (hintLower === 'mac' || hintLower === 'macos' || hintLower === 'darwin' || uaLower.includes('mac os') || chPlat.includes('mac')) osPlatform = 'macOS';
-    else if (hintLower === 'linux' || uaLower.includes('linux') || chPlat.includes('linux')) osPlatform = 'Linux';
-    else if (hintLower === 'windows' || hintLower.startsWith('win') || uaLower.includes('windows') || chPlat.includes('win')) osPlatform = 'Windows';
-  }
-
-  const headerCountry = String(
-    req.headers['cf-ipcountry'] ||
-    req.headers['x-vercel-ip-country'] ||
-    req.headers['x-country-code'] ||
-    req.headers['fly-client-country'] ||
-    req.headers['fastly-client-country'] ||
-    ''
-  ).trim().toUpperCase();
-  const propCountry = String(safeProps.country || safeProps.country_hint || '').trim().toUpperCase();
-  const country = /^[A-Z]{2}$/.test(headerCountry) && headerCountry !== 'XX' && headerCountry !== 'T1'
-    ? headerCountry
-    : /^[A-Z]{2}$/.test(propCountry) && propCountry !== 'XX' && propCountry !== 'T1'
-      ? propCountry
-      : '';
-
-  const rawLang = typeof safeProps.locale === 'string' && safeProps.locale.trim()
-    ? safeProps.locale.trim()
-    : String(req.headers['accept-language'] || '').split(',')[0].split(';')[0].trim();
-  const locale = rawLang.slice(0, 16);
-
-  return {
-    ...(browser ? { browser } : {}),
-    ...(osPlatform ? { os_platform: osPlatform } : {}),
-    ...(country ? { country } : {}),
-    ...(locale ? { locale } : {})
-  };
-}
-
 async function syncSubscriptionWithSweeprCrm(acc, { amountCents, currency = 'gbp', ref, notes, canceledAt, cancelReason, skipInvoice } = {}) {
   if (!acc || !acc.email) return acc;
   const syncPayload = {
@@ -835,8 +778,63 @@ function markWebhookEventProcessed(eventId) {
   } catch {}
 }
 
-const MAX_DEVICES_PER_LICENSE = 4; // 1 primary device + 3 additional devices per paid subscription
+const MAX_DEVICES_PER_LICENSE = 5; // 1 primary device + 4 additional devices per paid subscription
 const HIGH_ENTROPY_LICENSE_KEY_RE = /^SWEEPR-[A-Z0-9]{2,8}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/i;
+const REFERRALS_FILE = path.join(DATA_DIR, 'referrals.json');
+const SUPPORT_DLQ_FILE = path.join(DATA_DIR, 'support-dlq.json');
+const AB_STATE_FILE = path.join(DATA_DIR, 'ab-experiments-state.json');
+
+let BUNDLED_MANIFEST_VERSION = '1.3.1';
+try {
+  const parsedMf = JSON.parse(fs.readFileSync(path.join(__dirname, 'extension', 'manifest.json'), 'utf8'));
+  if (parsedMf && parsedMf.version) BUNDLED_MANIFEST_VERSION = String(parsedMf.version).trim();
+} catch {}
+
+function loadReferralsStore() {
+  let store = { codes: {}, redemptions: [], trials: {}, licenseBonuses: {} };
+  if (fs.existsSync(REFERRALS_FILE)) {
+    try {
+      const parsed = JSON.parse(fs.readFileSync(REFERRALS_FILE, 'utf8'));
+      if (parsed && typeof parsed === 'object') {
+        store = {
+          codes: parsed.codes && typeof parsed.codes === 'object' ? parsed.codes : {},
+          redemptions: Array.isArray(parsed.redemptions) ? parsed.redemptions : [],
+          trials: parsed.trials && typeof parsed.trials === 'object' ? parsed.trials : {},
+          licenseBonuses: parsed.licenseBonuses && typeof parsed.licenseBonuses === 'object' ? parsed.licenseBonuses : {}
+        };
+      }
+    } catch {}
+  }
+  return store;
+}
+
+function saveReferralsStore(store) {
+  try {
+    fs.mkdirSync(path.dirname(REFERRALS_FILE), { recursive: true });
+    const tmpPath = `${REFERRALS_FILE}.tmp`;
+    fs.writeFileSync(tmpPath, JSON.stringify(store, null, 2), 'utf8');
+    fs.renameSync(tmpPath, REFERRALS_FILE);
+  } catch {}
+}
+
+function applyReferralBonusToVerifyPayload(licenseKey, payload, alreadyAppliedDays = 0) {
+  const upperKey = String(licenseKey || '').trim().toUpperCase();
+  if (!upperKey || !payload || typeof payload !== 'object') return payload;
+  const store = loadReferralsStore();
+  const bonus = store.licenseBonuses && store.licenseBonuses[upperKey];
+  const bonusDays = Math.max(0, Number(bonus?.bonusDays || 0));
+  if (bonusDays <= 0) return payload;
+  const unappliedDays = Math.max(0, bonusDays - Math.max(0, Number(alreadyAppliedDays || 0)));
+  const baseMs =
+    payload.expiresAt && !Number.isNaN(Date.parse(payload.expiresAt))
+      ? Date.parse(payload.expiresAt)
+      : Date.now();
+  return {
+    ...payload,
+    bonusProDaysEarned: bonusDays,
+    expiresAt: new Date(baseMs + unappliedDays * 86400000).toISOString()
+  };
+}
 
 // Seed permanent Owner Pro License Key only when explicitly configured via env vars
 const ownerEmailEnv = (process.env.OWNER_EMAIL || '').trim().toLowerCase();
@@ -1243,17 +1241,15 @@ function removeLocalDeviceForAccount(acc, deviceId) {
   return removed;
 }
 
-function buildDeepblockEntitlements(ramTamerAddon, isSuiteBundle = false) {
+function buildDeepblockEntitlements(_ramTamerAddon = true, isSuiteBundle = false) {
   const list = [
+    'pro_ad_and_video_shield',
     'pro_cookie_autoreject',
-    'pro_ai_slop_purifier',
-    'pro_clutter_stripper',
-    'bundle_fake_store_detector',
-    'bundle_encrypted_dns_proxy'
+    'pro_tracker_param_stripping',
+    'pro_element_zapper',
+    'pro_tab_and_ram_tamer',
+    'addon_total_tab_and_ram_tamer'
   ];
-  if (ramTamerAddon || isSuiteBundle) {
-    list.push('addon_total_tab_and_ram_tamer');
-  }
   if (isSuiteBundle) {
     list.push('suite_sweepr_vpn_pro', 'suite_sweepr_cleaner_pro');
   }
@@ -1280,8 +1276,9 @@ function evictStaleLeadAccountsIfNeeded() {
   }
 }
 
-function upsertLocalAccount({ email, name, country, stripeCustomerId, plan, ramTamerAddon, subscriptionId, status = 'active', licenseKey: customKey }) {
+function upsertLocalAccount({ email, name, country, currency, stripeCustomerId, plan, ramTamerAddon, subscriptionId, status = 'active', licenseKey: customKey }) {
   const normEmail = (email || '').trim().toLowerCase();
+  const normCurrency = currency ? String(currency).trim().toLowerCase() : '';
   const normalizedCustomKey =
     customKey && HIGH_ENTROPY_LICENSE_KEY_RE.test(String(customKey).trim())
       ? String(customKey).trim().toUpperCase()
@@ -1297,13 +1294,14 @@ function upsertLocalAccount({ email, name, country, stripeCustomerId, plan, ramT
       email: normEmail,
       name: name || '',
       country: country || 'GB',
+      ...(normCurrency ? { currency: normCurrency } : {}),
       stripe_customer_id: stripeCustomerId || null,
       stripe_subscription_id: subscriptionId || null,
       activation_code: null,
       licenseKey,
       plan: plan || 'annual',
-      ramTamerAddon: Boolean(ramTamerAddon || plan === 'suite_annual'),
-      entitlements: buildDeepblockEntitlements(Boolean(ramTamerAddon), plan === 'suite_annual'),
+      ramTamerAddon: true,
+      entitlements: buildDeepblockEntitlements(true, plan === 'suite_annual'),
       status,
       devices: new Set(),
       deviceMeta: new Map(),
@@ -1315,11 +1313,10 @@ function upsertLocalAccount({ email, name, country, stripeCustomerId, plan, ramT
     if (!isAlreadyActive || !isUnpaidTransition) {
       if (name) acc.name = name;
       if (country) acc.country = country;
+      if (normCurrency) acc.currency = normCurrency;
       if (plan) acc.plan = plan;
-      if (ramTamerAddon !== undefined || plan === 'suite_annual') {
-        acc.ramTamerAddon = Boolean(ramTamerAddon || acc.plan === 'suite_annual');
-        acc.entitlements = buildDeepblockEntitlements(acc.ramTamerAddon, acc.plan === 'suite_annual');
-      }
+      acc.ramTamerAddon = true;
+      acc.entitlements = buildDeepblockEntitlements(true, acc.plan === 'suite_annual');
       if (status) acc.status = status;
     }
     acc.activation_code = null;
@@ -1837,8 +1834,6 @@ const CLEAN_ROUTES = {
   '/SWEEPR-Deepblock-Installer.command': 'SWEEPR-Deepblock-Installer.command',
   '/SWEEPRDeepblockSetup.command': 'SWEEPR-Deepblock-Installer.command',
   '/SWEEPRDeepblockSetup.exe': 'SWEEPRDeepblockSetup.exe',
-  '/download/sweepr-deepblock.mobileconfig': 'sweepr-deepblock.mobileconfig',
-  '/sweepr-deepblock.mobileconfig': 'sweepr-deepblock.mobileconfig',
   '/download/sweepr-deepblock-firefox.xpi': 'sweepr-deepblock-firefox.xpi',
   '/sweepr-deepblock-firefox.xpi': 'sweepr-deepblock-firefox.xpi',
   '/sweepr-deepblock-extension.zip': 'sweepr-deepblock-extension.zip',
@@ -1850,7 +1845,6 @@ const CLEAN_ROUTES = {
   '/SWEEPRDeepblock.apk.idsig': 'SWEEPRDeepblock.apk.idsig',
   '/test-lab': 'test-lab.html',
   '/tools': path.join('tools', 'index.html'),
-  '/tools/is-my-adblocker-working': path.join('tools', 'is-my-adblocker-working.html'),
   '/tools/dns-leak-test': path.join('tools', 'dns-leak-test.html'),
   '/tools/browser-fingerprint-test': path.join('tools', 'browser-fingerprint-test.html'),
   '/tools/is-this-shop-a-scam': path.join('tools', 'is-this-shop-a-scam.html'),
@@ -1861,7 +1855,6 @@ const CLEAN_ROUTES = {
   '/es': path.join('es', 'index.html'),
   '/stories': path.join('stories', 'index.html'),
   '/campaigns/uk-ad-load-index': path.join('campaigns', 'uk-ad-load-index.html'),
-  '/campaigns/renewal-shock-switcher': path.join('campaigns', 'renewal-shock-switcher.html'),
   '/mockups': 'mockups.html',
   '/popup-mockups': 'popup-mockups.html',
   '/redesign-prototype': 'redesign-prototype.html',
@@ -1872,6 +1865,321 @@ const CLEAN_ROUTES = {
   '/guides': path.join('guides', 'index.html'),
   '/vs/total-adblock': path.join('vs', 'total-adblock.html')
 };
+
+const EXPLICIT_CONSOLIDATION_REDIRECTS = new Map([
+  ['/campaigns/renewal-shock-switcher', '/vs/total-adblock'],
+  ['/de/usercentrics-cookie-banner-blockieren', '/de'],
+  ['/fr/bloquer-bandeau-cookie-didomi', '/fr'],
+  ['/glossary/anti-adblock-bait-detection', '/test-lab'],
+  ['/glossary/url-tracking-parameters-utm-fbclid-gclid', '/guides/strip-utm-fbclid-gclid-tracking-links'],
+  ['/stories/switching-from-total-adblock-renewal-shock', '/vs/total-adblock'],
+  ['/stories/youtube-mv3-zero-warning-playback', '/guides/how-to-fix-high-cpu-usage-from-youtube-anti-adblock'],
+  ['/tools/is-my-adblocker-working', '/test-lab']
+]);
+
+const PILLAR_CONSOLIDATION_TARGETS = new Map([
+  ['/guides/how-to-auto-reject-axeptio-and-cookiebot-banners', '/guides/how-to-automatically-reject-cookie-banners-uk'],
+  ['/guides/how-to-auto-reject-civic-uk-cookie-banners', '/guides/how-to-automatically-reject-cookie-banners-uk'],
+  ['/guides/how-to-auto-reject-consentmanager-cookie-walls', '/guides/how-to-automatically-reject-cookie-banners-uk'],
+  ['/guides/how-to-auto-reject-inmobi-and-ogury-mobile-banners', '/guides/how-to-automatically-reject-cookie-banners-uk'],
+  ['/guides/how-to-auto-reject-usercentrics-cookie-banners', '/guides/how-to-automatically-reject-cookie-banners-uk'],
+  ['/guides/how-to-auto-reject-webmd-healthline-cookie-walls', '/guides/how-to-automatically-reject-cookie-banners-uk'],
+  ['/guides/how-to-block-ai-search-summaries-brave-google', '/guides/how-to-block-sponsored-ads-on-google-search-2026'],
+  ['/guides/how-to-block-anime-streaming-popunders-2026', '/guides/how-to-stop-malvertising-popunders-and-redirects'],
+  ['/guides/how-to-block-deceptive-click-allow-notification-traps', '/guides/how-to-stop-fake-robot-captcha-verification-popups'],
+  ['/guides/how-to-block-fake-software-update-malvertising', '/guides/how-to-stop-malvertising-popunders-and-redirects'],
+  ['/guides/how-to-block-sponsored-ai-citations-in-search-answers', '/guides/how-to-block-sponsored-ads-on-google-search-2026'],
+  ['/guides/how-to-block-sponsored-ai-overviews-google', '/guides/how-to-block-sponsored-ads-on-google-search-2026'],
+  ['/guides/how-to-block-sponsored-shopping-carousels-google', '/guides/how-to-block-sponsored-ads-on-google-search-2026'],
+  ['/guides/how-to-fix-high-battery-drain-on-macbook-chrome-mv3', '/guides/how-to-reduce-browser-ram-speed-up-slow-tabs'],
+  ['/guides/how-to-fix-high-chrome-tab-sleeping-crashes', '/guides/how-to-reduce-browser-ram-speed-up-slow-tabs'],
+  ['/guides/how-to-fix-high-fan-noise-from-browser-ad-auctions', '/guides/how-to-reduce-browser-ram-speed-up-slow-tabs'],
+  ['/guides/how-to-fix-high-gpu-memory-drain-from-web-ads', '/guides/how-to-reduce-browser-ram-speed-up-slow-tabs'],
+  ['/guides/how-to-fix-high-ram-usage-on-arc-browser', '/guides/how-to-reduce-browser-ram-speed-up-slow-tabs'],
+  ['/guides/how-to-fix-high-ram-usage-on-brave-browser', '/guides/how-to-reduce-browser-ram-speed-up-slow-tabs'],
+  ['/guides/how-to-fix-high-ram-usage-on-edge-windows-11', '/guides/how-to-reduce-browser-ram-speed-up-slow-tabs'],
+  ['/guides/how-to-fix-high-ram-usage-on-firefox-esr', '/guides/how-to-reduce-browser-ram-speed-up-slow-tabs'],
+  ['/guides/how-to-fix-high-ram-usage-on-snapdragon-x-copilot-pcs', '/guides/how-to-reduce-browser-ram-speed-up-slow-tabs'],
+  ['/guides/how-to-fix-high-ram-usage-on-steam-deck-desktop', '/guides/how-to-reduce-browser-ram-speed-up-slow-tabs'],
+  ['/guides/how-to-fix-twitch-purple-screen-adblock-2026', '/guides/how-to-block-twitch-midroll-commercials-without-black-screen'],
+  ['/guides/how-to-fix-video-stuttering-caused-by-anti-adblock-scripts', '/guides/how-to-fix-high-cpu-usage-from-youtube-anti-adblock'],
+  ['/guides/how-to-prevent-laptop-battery-drain-from-heavy-ad-trackers', '/guides/how-to-reduce-browser-ram-speed-up-slow-tabs'],
+  ['/guides/how-to-stop-browser-tab-crashing-oom-mac-windows', '/guides/how-to-reduce-browser-ram-speed-up-slow-tabs'],
+  ['/guides/how-to-stop-crypto-drainer-scam-ads-2026', '/guides/how-to-stop-malvertising-popunders-and-redirects'],
+  ['/guides/how-to-stop-silent-web-push-notification-spam', '/guides/how-to-stop-fake-robot-captcha-verification-popups'],
+  ['/guides/how-to-stop-streaming-site-click-jacking-redirects', '/guides/how-to-stop-malvertising-popunders-and-redirects'],
+  ['/guides/how-to-test-if-manifest-v3-adblocker-is-working', '/test-lab'],
+  ['/setup/cachyos-arch-chromium', '/setup/chromium-linux-ubuntu'],
+  ['/setup/chromeos-chromebook-mv3', '/setup/google-chrome-manifest-v3'],
+  ['/setup/edge-macos-apple-silicon', '/setup/microsoft-edge-windows-11'],
+  ['/setup/firefox-android-mobile', '/setup/mozilla-firefox-desktop-android'],
+  ['/setup/raspberry-pi-chromium', '/setup/chromium-linux-ubuntu'],
+  ['/solutions/chesscom-blitz-gaming-block-video-ads', '/solutions/online-chess-gaming-block-video-ads'],
+  ['/solutions/coursera-edx-learning-reduce-browser-ram-usage', '/guides/how-to-reduce-browser-ram-speed-up-slow-tabs'],
+  ['/solutions/crypto-exchange-news-sites-auto-reject-cookie-popups', '/guides/how-to-automatically-reject-cookie-banners-uk'],
+  ['/solutions/facebook-marketplace-shops-filter-ai-slop-and-scams', '/guides/how-to-stop-facebook-meta-pixel-tracking'],
+  ['/solutions/flight-tracker-radars-auto-reject-cookie-popups', '/guides/how-to-automatically-reject-cookie-banners-uk'],
+  ['/solutions/free-file-host-downloads-auto-reject-cookie-popups', '/guides/how-to-automatically-reject-cookie-banners-uk'],
+  ['/solutions/google-search-results-filter-ai-slop-and-scams', '/guides/how-to-block-sponsored-ads-on-google-search-2026'],
+  ['/solutions/medium-tech-blogs-auto-reject-cookie-popups', '/guides/how-to-automatically-reject-cookie-banners-uk'],
+  ['/solutions/rapidgator-file-downloads-block-video-ads', '/guides/how-to-stop-malvertising-popunders-and-redirects'],
+  ['/solutions/recipe-food-blogs-auto-reject-cookie-popups', '/guides/how-to-automatically-reject-cookie-banners-uk'],
+  ['/solutions/reddit-promoted-posts-block-video-ads', '/guides/how-to-block-reddit-sponsored-promoted-posts-in-feed'],
+  ['/solutions/sports-live-score-sites-stop-malvertising-popunders', '/guides/how-to-stop-malvertising-popunders-and-redirects'],
+  ['/solutions/temu-aliexpress-shopping-filter-ai-slop-and-scams', '/guides/how-to-stop-temu-shein-scam-popups-and-tracking'],
+  ['/solutions/twitch-live-streams-block-video-ads', '/guides/how-to-block-twitch-midroll-commercials-without-black-screen'],
+  ['/solutions/ultimate-guitar-tabs-block-video-ads', '/solutions/lyrics-and-chords-tabs-block-video-ads'],
+  ['/solutions/weather-radar-portals-auto-reject-cookie-popups', '/guides/how-to-automatically-reject-cookie-banners-uk'],
+  ['/solutions/youtube-chrome-mv3-block-video-ads', '/guides/how-to-fix-high-cpu-usage-from-youtube-anti-adblock'],
+  ['/vs/avast-secure-browser-guard', '/vs/adguard-extension'],
+  ['/vs/total-adblock-cancel-subscription', '/vs/total-adblock']
+]);
+
+const NOINDEX_PRUNE_PATHS = new Set([
+  '/campaigns/uk-ad-load-index',
+  '/glossary/acceptable-ads-program',
+  '/glossary/ai-slop-search-spam',
+  '/glossary/audio-context-fingerprinting',
+  '/glossary/browser-tab-discarding-hibernation',
+  '/glossary/canvas-fingerprinting',
+  '/glossary/cname-cloaking-trackers',
+  '/glossary/cryptojacking-webassembly-miners',
+  '/glossary/dns-over-https-doh',
+  '/glossary/fake-shopify-dropshipping-scam-indicators',
+  '/glossary/first-party-tracker-proxies',
+  '/glossary/header-bidding-openrtb-latency',
+  '/glossary/malvertising-popunders',
+  '/glossary/manifest-v3-declarative-net-request',
+  '/glossary/shadow-dom-ad-injection',
+  '/glossary/tcf-v2-cookie-consent-cmp',
+  '/glossary/webgl-hardware-fingerprinting',
+  '/glossary/webrtc-ip-leak',
+  '/glossary/youtube-server-side-ad-injection',
+  '/guides/how-to-auto-mute-and-block-autoplay-video-ads',
+  '/guides/how-to-auto-skip-recipe-blog-life-stories',
+  '/guides/how-to-block-ai-deepfake-celebrity-investment-scams',
+  '/guides/how-to-block-ai-generated-fake-podcast-ads',
+  '/guides/how-to-block-ai-sponsored-product-ads-amazon',
+  '/guides/how-to-block-ai-synthetic-image-ads-google',
+  '/guides/how-to-block-ai-synthetic-voice-ads-on-streaming',
+  '/guides/how-to-block-ai-training-scrapers-in-browser',
+  '/guides/how-to-block-anti-adblock-paywalls-news',
+  '/guides/how-to-block-browser-extension-hijacking-malware',
+  '/guides/how-to-block-deceptive-ai-e-commerce-product-clones',
+  '/guides/how-to-block-deceptive-back-button-hijacking-traps',
+  '/guides/how-to-block-disguised-affiliate-links-reddit-comments',
+  '/guides/how-to-block-fake-ai-shopping-influencer-ads',
+  '/guides/how-to-block-gambling-and-crypto-ads-on-kick',
+  '/guides/how-to-block-malicious-telegram-bot-redirects',
+  '/guides/how-to-block-peacock-paramount-plus-ads-2026',
+  '/guides/how-to-block-prime-video-ads-2026',
+  '/guides/how-to-block-sponsored-ai-influencer-video-ads',
+  '/guides/how-to-block-sponsored-ai-product-recommendations',
+  '/guides/how-to-block-sponsored-job-scams-linkedin-indeed',
+  '/guides/how-to-block-torrent-site-fake-download-buttons',
+  '/guides/how-to-block-tubi-and-pluto-tv-commercials-2026',
+  '/guides/how-to-block-unskippable-audio-ads-on-spotify-web',
+  '/guides/how-to-detect-ai-generated-scam-reviews-amazon',
+  '/guides/how-to-hide-ai-slop-from-google-search',
+  '/guides/how-to-prevent-accelerometer-sensor-fingerprinting',
+  '/guides/how-to-prevent-dns-rebinding-ad-tracker-exploits',
+  '/guides/how-to-prevent-fingerprinting-with-deepstealth',
+  '/guides/how-to-prevent-network-connection-api-fingerprinting',
+  '/guides/how-to-prevent-service-worker-cache-fingerprinting',
+  '/guides/how-to-prevent-tls-client-hello-fingerprinting',
+  '/guides/how-to-prevent-webrtc-ip-leak-ad-trackers',
+  '/guides/how-to-spot-fake-scam-online-shops-uk',
+  '/guides/how-to-stop-audio-context-oscillator-fingerprinting',
+  '/guides/how-to-stop-bluetooth-and-usb-device-fingerprinting',
+  '/guides/how-to-stop-browser-canvas-fingerprinting-trackers',
+  '/guides/how-to-stop-covert-ambient-light-sensor-fingerprinting',
+  '/guides/how-to-stop-covert-device-battery-fingerprinting',
+  '/guides/how-to-stop-cross-device-ultrasonic-fingerprinting',
+  '/guides/how-to-stop-device-motion-sensor-fingerprinting',
+  '/guides/how-to-stop-facebook-instagram-dropshipping-scams',
+  '/guides/how-to-stop-font-enumeration-fingerprinting',
+  '/guides/how-to-stop-location-geolocation-popups',
+  '/guides/how-to-stop-screen-resolution-fingerprinting',
+  '/guides/how-to-stop-video-ad-audio-blasts',
+  '/setup/ladybird-browser-privacy',
+  '/setup/mullvad-browser-privacy',
+  '/setup/safari-macos-ios-ipad',
+  '/site',
+  '/site/20minutes-fr',
+  '/site/allrecipes-com',
+  '/site/autoexpress-co-uk',
+  '/site/chip-de',
+  '/site/edinburghlive-co-uk',
+  '/site/epicurious-com',
+  '/site/forbes-com',
+  '/site/frandroid-com',
+  '/site/gimmesomeoven-com',
+  '/site/hull-daily-mail-co-uk',
+  '/site/macrumors-com',
+  '/site/mobalytics-gg',
+  '/site/n-tv-de',
+  '/site/polygon-com',
+  '/site/rawstory-com',
+  '/site/speedtest-net',
+  '/site/standard-co-uk',
+  '/site/time-com',
+  '/site/variety-com',
+  '/site/walesonline-co-uk',
+  '/site/zdnet-com',
+  '/solutions/1337x-torrent-indexer-block-video-ads',
+  '/solutions/etsy-marketplace-shops-filter-ai-slop-and-scams',
+  '/solutions/hulu-disney-plus-web-block-video-ads',
+  '/solutions/kick-streaming-portals-block-video-ads',
+  '/solutions/max-hbo-streaming-block-video-ads',
+  '/solutions/nyaa-si-anime-torrents-strip-tracking-parameters',
+  '/solutions/paramount-plus-streaming-block-video-ads',
+  '/solutions/peacock-tv-streaming-block-video-ads',
+  '/solutions/pinterest-promoted-pins-filter-ai-slop-and-scams',
+  '/solutions/pluto-tv-stream-channels-block-video-ads',
+  '/solutions/spotify-web-player-block-video-ads',
+  '/solutions/strava-fitness-activity-stop-malvertising-popunders',
+  '/solutions/tubi-tv-free-movies-block-video-ads',
+  '/solutions/viki-asian-streaming-block-video-ads',
+  '/solutions/wattpad-web-novels-stop-malvertising-popunders',
+  '/stories',
+  '/stories/40-tab-research-workflow-ram-tamer',
+  '/stories/blocking-fake-clearance-shops-scam-detector',
+  '/stories/de-fr-usercentrics-didomi-cmp-automation',
+  '/stories/uk-news-sourcepoint-cookie-wall-elimination',
+  '/tools/browser-fingerprint-test',
+  '/tools/dns-leak-test',
+  '/tools/is-this-shop-a-scam',
+  '/vs/1blocker-safari',
+  '/vs/adblock-luna-vpn',
+  '/vs/duckduckgo-privacy-essentials',
+  '/vs/malwarebytes-browser-guard',
+  '/vs/nordvpn-threat-protection',
+  '/vs/privacy-badger-eff',
+  '/vs/stands-fair-adblocker',
+  '/vs/surfshark-cleanweb'
+]);
+
+function isNoIndexPruneRoute(routePath) {
+  const p = String(routePath || '').toLowerCase();
+  return p === '/site' || p.startsWith('/site/') || NOINDEX_PRUNE_PATHS.has(p);
+}
+
+const NON_INDEXABLE_PAGES = new Set([
+  'order.html',
+  'login.html',
+  'logos.html',
+  'mockups.html',
+  'popup-mockups.html',
+  'redesign-prototype.html',
+  'extension-ux-prototype.html',
+  'store-creatives.html',
+  'welcome-concepts.html',
+  'ios-app.html',
+  'sweepr-vpn-concepts.html',
+  'sweepr-vpn-mobile-redesign.html',
+  'icon-animations-mockup.html',
+  'ergonomic-mockup-1.html',
+  'ergonomic-mockup-2.html',
+  'ergonomic-mockup-3.html',
+  'ergonomic-mockup-4.html',
+  'ergonomic-mockup-5.html',
+  'memorisely-ui-audit.html'
+]);
+
+function getCachedSeoHead(fullPath, knownMtimeMs = null) {
+  let mtimeMs = knownMtimeMs;
+  if (mtimeMs === null || mtimeMs === undefined) {
+    try {
+      const st = fs.statSync(fullPath);
+      if (!st.isFile()) return null;
+      mtimeMs = st.mtimeMs;
+    } catch {
+      return null;
+    }
+  }
+  if (!global.__deepblockHtmlSeoCache) global.__deepblockHtmlSeoCache = new Map();
+  let cachedSeo = global.__deepblockHtmlSeoCache.get(fullPath);
+  if (!cachedSeo || cachedSeo.mtimeMs !== mtimeMs) {
+    let robotsMeta = null;
+    let canonicalHref = null;
+    try {
+      const headChunk = fs.readFileSync(fullPath, 'utf8').slice(0, 6144);
+      const rm =
+        headChunk.match(/<meta\s+name=["']robots["']\s+content=["']([^"']+)["']/i) ||
+        headChunk.match(/<meta\s+content=["']([^"']+)["']\s+name=["']robots["']/i);
+      if (rm && rm[1]) robotsMeta = rm[1].trim();
+      const cm =
+        headChunk.match(/<link\s+rel=["']canonical["']\s+href=["']([^"']+)["']/i) ||
+        headChunk.match(/<link\s+href=["']([^"']+)["']\s+rel=["']canonical["']/i);
+      if (cm && cm[1]) canonicalHref = cm[1].trim();
+    } catch {}
+    cachedSeo = { mtimeMs, robotsMeta, canonicalHref };
+    global.__deepblockHtmlSeoCache.set(fullPath, cachedSeo);
+  }
+  return cachedSeo;
+}
+
+function resolveConsolidationRedirect(routePath, fullPath = null, preloadedSeo = null) {
+  const cleanKey = String(routePath || '/').toLowerCase().replace(/\.html$/i, '') || '/';
+  const resolvedRoot = path.resolve(WEBSITE_DIR);
+
+  const followHopChain = (initialTarget) => {
+    let targetPath = initialTarget;
+    for (let hop = 0; hop < 3; hop += 1) {
+      let nextTarget = EXPLICIT_CONSOLIDATION_REDIRECTS.get(targetPath);
+      if (!nextTarget && PILLAR_CONSOLIDATION_TARGETS.has(targetPath)) {
+        const hopFullPath = path.resolve(resolvedRoot, targetPath.slice(1) + '.html');
+        const hopSeo = hopFullPath.startsWith(resolvedRoot + path.sep) ? getCachedSeoHead(hopFullPath) : null;
+        if (hopSeo && hopSeo.robotsMeta && /\bnoindex\b/i.test(hopSeo.robotsMeta)) {
+          nextTarget = PILLAR_CONSOLIDATION_TARGETS.get(targetPath);
+        }
+      }
+      if (!nextTarget || nextTarget === targetPath) break;
+      targetPath = nextTarget;
+    }
+    if (!isNoIndexPruneRoute(targetPath) && targetPath && targetPath !== cleanKey) {
+      return targetPath;
+    }
+    return null;
+  };
+
+  const explicitTarget = EXPLICIT_CONSOLIDATION_REDIRECTS.get(cleanKey);
+  if (explicitTarget) {
+    return followHopChain(explicitTarget);
+  }
+
+  if (isNoIndexPruneRoute(cleanKey) || !/^\/(solutions|setup|vs|guides|glossary)\/[a-z0-9-]+$/i.test(cleanKey)) {
+    return null;
+  }
+
+  const candidateFullPath = fullPath || path.resolve(resolvedRoot, cleanKey.slice(1) + '.html');
+  if (!candidateFullPath.startsWith(resolvedRoot + path.sep)) return null;
+  const fileNameLower = path.basename(candidateFullPath).toLowerCase();
+  if (NON_INDEXABLE_PAGES.has(fileNameLower)) return null;
+
+  const cachedSeo = preloadedSeo || getCachedSeoHead(candidateFullPath);
+  if (!cachedSeo || !cachedSeo.robotsMeta || !/\bnoindex\b/i.test(cachedSeo.robotsMeta)) {
+    return null;
+  }
+  if (!PILLAR_CONSOLIDATION_TARGETS.has(cleanKey) && !cachedSeo.canonicalHref) {
+    return null;
+  }
+
+  const initialTarget =
+    PILLAR_CONSOLIDATION_TARGETS.get(cleanKey) ||
+    cachedSeo.canonicalHref.replace(/^https?:\/\/(?:www\.)?sweeprdeepblock\.com/i, '') ||
+    '/';
+  return followHopChain(initialTarget);
+}
+
+function isCmoSchedulerDisabled() {
+  return (
+    process.env.DISABLE_CMO_SCHEDULER === 'true' ||
+    process.env.DISABLE_CMO_SCHEDULER === '1' ||
+    process.env.DISABLE_CMO_AUTOPILOT === '1' ||
+    process.env.NODE_ENV === 'test'
+  );
+}
 
 function isSameOriginWriteRequest(req, { allowExtension = false } = {}) {
   const origin = String(req.headers.origin || '').trim().replace(/\/+$/, '');
@@ -1911,6 +2219,62 @@ function sendErrorResponse(res, statusCode, message = 'Error') {
   res.end(message);
 }
 
+function sendNotFoundPage(req, res) {
+  if (String(req?.url || '').startsWith('/api/')) {
+    return sendJson(res, 404, { ok: false, error: 'not_found' }, {}, req);
+  }
+  const html = `<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta name="color-scheme" content="light">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page Not Found (404) — SWEEPR Deepblock</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/svg+xml" href="/logo.svg">
+  <link rel="stylesheet" href="/sweepr-tailwind.min.css?v=20261122">
+  <link rel="stylesheet" href="/style.css?v=20261122">
+</head>
+<body class="text-gray-800 min-h-screen flex flex-col">
+  <nav class="glass-nav px-3 sm:px-4 md:px-6 py-3 sm:py-3.5 md:py-4 flex items-center justify-between">
+    <div class="flex items-center gap-2 md:gap-8 min-w-0">
+      <a href="/" class="flex items-center gap-2 sm:gap-3 text-inherit no-underline min-w-0">
+        <div class="logo-box !w-8 !h-8 sm:!w-10 sm:!h-10" aria-hidden="true"></div>
+        <span class="font-extrabold text-sm sm:text-xl tracking-tight text-gray-900 truncate">SWEEPR <span class="text-emerald-600">Deepblock</span></span>
+      </a>
+    </div>
+    <div class="flex gap-1.5 sm:gap-2 items-center shrink-0">
+      <a href="/pricing" class="btn btn-ghost text-xs sm:text-sm !px-2.5 sm:!px-4 !h-9 sm:!h-11">Pricing</a>
+      <a href="/download?install=1" class="hidden md:inline-flex btn btn-go text-xs sm:text-sm">Add to Browser</a>
+    </div>
+  </nav>
+  <main class="flex-1 w-full min-w-0 pt-24 sm:pt-32 pb-16 px-4 sm:px-6 max-w-2xl mx-auto flex items-center justify-center">
+    <div class="glass-card bg-white border border-gray-200 rounded-2xl p-8 sm:p-10 text-center space-y-5 shadow-lg w-full">
+      <div class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200">HTTP 404 • Page Not Found</div>
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight">We couldn't find that page</h1>
+      <p class="text-sm sm:text-base text-gray-600 leading-relaxed">The route you requested does not exist or has moved. Return to the SWEEPR Deepblock homepage or run our live browser adblock test.</p>
+      <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+        <a href="/" class="btn btn-go px-5 py-2.5 rounded-xl font-bold text-sm no-underline">Back to Homepage →</a>
+        <a href="/test-lab" class="btn px-4 py-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-sm border border-emerald-200 no-underline">Open Live Test Lab</a>
+      </div>
+    </div>
+  </main>
+</body>
+</html>`;
+  res.writeHead(404, {
+    'Content-Type': 'text/html; charset=utf-8',
+    'X-Content-Type-Options': 'nosniff',
+    'X-Frame-Options': 'SAMEORIGIN',
+    'X-Robots-Tag': 'noindex, nofollow',
+    'Cache-Control': 'no-store, no-cache, must-revalidate, private',
+    'Pragma': 'no-cache',
+    'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
+    'Content-Security-Policy':
+      "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; frame-ancestors 'self'; base-uri 'self'; object-src 'none'"
+  });
+  return res.end(req?.method === 'HEAD' ? undefined : html);
+}
+
 function sendJson(res, statusCode, payload, extraHeaders = {}, req = null) {
   let corsOrigin = PUBLIC_URL;
   const incomingReq = req || res.req;
@@ -1937,6 +2301,7 @@ function sendJson(res, statusCode, payload, extraHeaders = {}, req = null) {
 }
 
 function sendHtml(res, statusCode, html, extraHeaders = {}) {
+  const isNoIndexDoc = /<meta\s+name=["']robots["']\s+content=["'][^"']*noindex/i.test(String(html || ''));
   res.writeHead(statusCode, {
     'Content-Type': 'text/html; charset=utf-8',
     'X-Content-Type-Options': 'nosniff',
@@ -1945,9 +2310,10 @@ function sendHtml(res, statusCode, html, extraHeaders = {}) {
     'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
     'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',
     'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
-    'Link': '<https://fonts.googleapis.com>; rel=preconnect, <https://fonts.gstatic.com>; rel=preconnect; crossorigin, <https://fonts.googleapis.com>; rel=dns-prefetch, <https://fonts.gstatic.com>; rel=dns-prefetch, </sweepr-ui.css>; rel=preload; as=style, </logo.svg>; rel=preload; as=image',
+    'Link': '<https://fonts.googleapis.com>; rel=preconnect, <https://fonts.gstatic.com>; rel=preconnect; crossorigin, <https://fonts.googleapis.com>; rel=dns-prefetch, <https://fonts.gstatic.com>; rel=dns-prefetch, </sweepr-tailwind.min.css?v=20261122>; rel=preload; as=style, </logo.svg>; rel=preload; as=image',
     'Content-Security-Policy':
-      "default-src 'self'; script-src 'self' 'unsafe-inline' https://js.stripe.com https://pay.google.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https://api.stripe.com https://www.google-analytics.com https://api.country.is https://get.geojs.io; frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://pay.google.com; frame-ancestors 'none'; base-uri 'self'; object-src 'none'",
+      "default-src 'self'; script-src 'self' 'unsafe-inline' https://js.stripe.com https://pay.google.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https://api.stripe.com https://pay.google.com https://google.com/pay https://www.google.com/pay https://www.google-analytics.com https://api.country.is https://get.geojs.io; frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://pay.google.com; frame-ancestors 'none'; base-uri 'self'; object-src 'none'",
+    ...(isNoIndexDoc ? { 'X-Robots-Tag': 'noindex, nofollow' } : {}),
     ...extraHeaders
   });
   res.end(html);
@@ -1966,9 +2332,11 @@ const COMPRESSIBLE_EXTS = new Set([
 ]);
 
 function serveStaticOptimized(req, res, fullPath) {
+  const reqPathClean = String(req.url || '/').split('?')[0].replace(/\/+$/, '') || '/';
+  const isDownloadRoute = reqPathClean === '/download';
   fs.stat(fullPath, (err, stats) => {
     if (err || !stats.isFile()) {
-      return sendErrorResponse(res, 404, '404 Not Found');
+      return sendNotFoundPage(req, res);
     }
 
     const ext = path.extname(fullPath).toLowerCase();
@@ -1977,65 +2345,33 @@ function serveStaticOptimized(req, res, fullPath) {
     const isStaticAsset = ['.svg', '.png', '.webp', '.jpg', '.jpeg', '.ico', '.css', '.js', '.woff2', '.woff', '.ttf', '.webmanifest'].includes(ext);
     const isSeoMetaFile = ['.xml', '.txt'].includes(ext);
 
-    const NON_INDEXABLE_PAGES = new Set([
-      'order.html',
-      'login.html',
-      'logos.html',
-      'mockups.html',
-      'popup-mockups.html',
-      'redesign-prototype.html',
-      'extension-ux-prototype.html',
-      'store-creatives.html',
-      'welcome-concepts.html',
-      'ios-app.html',
-      'sweepr-vpn-concepts.html',
-      'sweepr-vpn-mobile-redesign.html',
-      'icon-animations-mockup.html',
-      'ergonomic-mockup-1.html',
-      'ergonomic-mockup-2.html',
-      'ergonomic-mockup-3.html',
-      'ergonomic-mockup-4.html',
-      'ergonomic-mockup-5.html',
-      'memorisely-ui-audit.html'
-    ]);
-
     let cachedSeo = null;
     let isConsolidatedNoIndex = false;
+    let selfPath = '/';
+    let isNoIndexPrune = false;
     if (isHtml) {
-      const fileNameLower = path.basename(fullPath).toLowerCase();
-      if (!global.__deepblockHtmlSeoCache) global.__deepblockHtmlSeoCache = new Map();
-      cachedSeo = global.__deepblockHtmlSeoCache.get(fullPath);
-      if (!cachedSeo || cachedSeo.mtimeMs !== stats.mtimeMs) {
-        let robotsMeta = null;
-        let canonicalHref = null;
-        try {
-          const headChunk = fs.readFileSync(fullPath, 'utf8').slice(0, 6144);
-          const rm = headChunk.match(/<meta\s+name=["']robots["']\s+content=["']([^"']+)["']/i) ||
-                     headChunk.match(/<meta\s+content=["']([^"']+)["']\s+name=["']robots["']/i);
-          if (rm && rm[1]) robotsMeta = rm[1].trim();
-          const cm = headChunk.match(/<link\s+rel=["']canonical["']\s+href=["']([^"']+)["']/i) ||
-                     headChunk.match(/<link\s+href=["']([^"']+)["']\s+rel=["']canonical["']/i);
-          if (cm && cm[1]) canonicalHref = cm[1].trim();
-        } catch {}
-        cachedSeo = { mtimeMs: stats.mtimeMs, robotsMeta, canonicalHref };
-        global.__deepblockHtmlSeoCache.set(fullPath, cachedSeo);
-      }
-      isConsolidatedNoIndex = Boolean(cachedSeo.robotsMeta && /\bnoindex\b/i.test(cachedSeo.robotsMeta));
-      if (isConsolidatedNoIndex && !NON_INDEXABLE_PAGES.has(fileNameLower) && cachedSeo.canonicalHref) {
-        const relFromWebsite = path.relative(path.resolve(WEBSITE_DIR), fullPath).replace(/\\/g, '/');
-        const selfSlug = relFromWebsite === 'index.html' ? '' : relFromWebsite.replace(/\.html$/, '');
-        const selfPath = '/' + selfSlug;
-        const targetPath = cachedSeo.canonicalHref.replace(/^https?:\/\/sweeprdeepblock\.com/i, '') || '/';
-        if (targetPath && targetPath !== selfPath && /^\/(solutions|setup|vs|guides)\//i.test(selfPath)) {
-          res.writeHead(301, {
-            'Location': targetPath,
-            'Link': `<https://sweeprdeepblock.com${targetPath}>; rel="canonical"`,
-            'Cache-Control': 'public, max-age=3600, stale-while-revalidate=86400',
-            'X-Content-Type-Options': 'nosniff',
-            'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload'
-          });
-          return res.end();
-        }
+      const relFromWebsite = path.relative(path.resolve(WEBSITE_DIR), fullPath).replace(/\\/g, '/');
+      const selfSlug =
+        relFromWebsite === 'index.html'
+          ? ''
+          : relFromWebsite.endsWith('/index.html')
+          ? relFromWebsite.replace(/\/index\.html$/, '')
+          : relFromWebsite.replace(/\.html$/, '');
+      selfPath = '/' + selfSlug;
+      isNoIndexPrune = isNoIndexPruneRoute(selfPath);
+
+      cachedSeo = getCachedSeoHead(fullPath, stats.mtimeMs);
+      isConsolidatedNoIndex = Boolean(cachedSeo && cachedSeo.robotsMeta && /\bnoindex\b/i.test(cachedSeo.robotsMeta));
+      const targetPath = resolveConsolidationRedirect(selfPath, fullPath, cachedSeo);
+      if (targetPath) {
+        res.writeHead(301, {
+          'Location': targetPath,
+          'Link': `<https://sweeprdeepblock.com${targetPath}>; rel="canonical"`,
+          'Cache-Control': 'public, max-age=3600, stale-while-revalidate=86400',
+          'X-Content-Type-Options': 'nosniff',
+          'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload'
+        });
+        return res.end();
       }
     }
 
@@ -2054,6 +2390,11 @@ function serveStaticOptimized(req, res, fullPath) {
       res.writeHead(304, {
         'ETag': etag,
         'Last-Modified': lastModified,
+        'Vary': isDownloadRoute
+          ? 'Accept-Encoding, Sec-CH-UA-Platform, User-Agent'
+          : isHtml
+          ? 'Accept-Encoding, Sec-CH-UA-Platform'
+          : 'Accept-Encoding',
         'Cache-Control': isHtml
           ? 'public, max-age=300, stale-while-revalidate=86400'
           : isSeoMetaFile
@@ -2111,12 +2452,17 @@ function serveStaticOptimized(req, res, fullPath) {
       if (isSensitiveAuthOrCheckout) {
         headers['X-Frame-Options'] = 'DENY';
         headers['Content-Security-Policy'] =
-          "default-src 'self'; script-src 'self' 'unsafe-inline' https://js.stripe.com https://pay.google.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https://api.stripe.com https://www.google-analytics.com https://region1.google-analytics.com https://analytics.google.com https://stats.g.doubleclick.net; frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://pay.google.com; frame-ancestors 'none'; base-uri 'self'; object-src 'none'";
+          "default-src 'self'; script-src 'self' 'unsafe-inline' https://js.stripe.com https://pay.google.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https://api.stripe.com https://pay.google.com https://google.com/pay https://www.google.com/pay https://www.google-analytics.com https://region1.google-analytics.com https://analytics.google.com https://stats.g.doubleclick.net; frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://pay.google.com; frame-ancestors 'none'; base-uri 'self'; object-src 'none'";
       }
       headers['Accept-CH'] = 'Sec-CH-UA-Platform, Sec-CH-UA-Mobile, Sec-CH-UA-Model, Sec-CH-UA-Arch';
       headers['Vary'] = headers['Vary'] ? `${headers['Vary']}, Sec-CH-UA-Platform` : 'Accept-Encoding, Sec-CH-UA-Platform';
+      if (isDownloadRoute || fileNameLower === 'download.html') {
+        if (!headers['Vary'].includes('User-Agent')) {
+          headers['Vary'] = `${headers['Vary']}, User-Agent`;
+        }
+      }
 
-      if (NON_INDEXABLE_PAGES.has(fileNameLower)) {
+      if (NON_INDEXABLE_PAGES.has(fileNameLower) || isNoIndexPrune) {
         headers['X-Robots-Tag'] = 'noindex, nofollow';
       } else if (isConsolidatedNoIndex) {
         headers['X-Robots-Tag'] = cachedSeo.robotsMeta;
@@ -2125,23 +2471,28 @@ function serveStaticOptimized(req, res, fullPath) {
       }
       const baseResourceHints =
         '<https://fonts.googleapis.com>; rel=preconnect, <https://fonts.gstatic.com>; rel=preconnect; crossorigin, <https://fonts.googleapis.com>; rel=dns-prefetch, <https://fonts.gstatic.com>; rel=dns-prefetch, </logo.svg>; rel=preload; as=image';
-      if (!NON_INDEXABLE_PAGES.has(fileNameLower)) {
-        const relFromWebsite = path.relative(path.resolve(WEBSITE_DIR), fullPath).replace(/\\/g, '/');
-        const canonicalSlug = relFromWebsite === 'index.html' ? '' : relFromWebsite.replace(/\.html$/, '');
-        const canonicalUrl = cachedSeo.canonicalHref || `https://sweeprdeepblock.com/${canonicalSlug}`;
-        headers['Link'] = `<${canonicalUrl}>; rel="canonical", ` + baseResourceHints;
-      } else {
+      if (NON_INDEXABLE_PAGES.has(fileNameLower)) {
         headers['Link'] = baseResourceHints;
+      } else if (isNoIndexPrune) {
+        headers['Link'] = `<https://sweeprdeepblock.com${selfPath}>; rel="canonical", ` + baseResourceHints;
+      } else {
+        const canonicalUrl = cachedSeo.canonicalHref || `https://sweeprdeepblock.com${selfPath}`;
+        headers['Link'] = `<${canonicalUrl}>; rel="canonical", ` + baseResourceHints;
       }
     }
 
     if (path.basename(fullPath).toLowerCase() === 'pad.xml') {
       headers['X-Robots-Tag'] = 'noindex, follow';
     }
-    if (ext === '.zip' || ext === '.exe' || ext === '.command' || ext === '.apk' || ext === '.mobileconfig' || ext === '.xpi') {
+    if (ext === '.zip' || ext === '.exe' || ext === '.command' || ext === '.apk' || ext === '.mobileconfig' || ext === '.xpi' || ext === '.idsig') {
       headers['X-Robots-Tag'] = 'noindex, nofollow';
       headers['Content-Disposition'] = `attachment; filename="${path.basename(fullPath)}"`;
       headers['Content-Length'] = String(stats.size);
+      if (isDownloadRoute) {
+        headers['Vary'] = headers['Vary']
+          ? (headers['Vary'].includes('User-Agent') ? headers['Vary'] : `${headers['Vary']}, User-Agent`)
+          : 'User-Agent';
+      }
     }
 
     if (req.method === 'HEAD') {
@@ -2251,7 +2602,7 @@ function renderCheckoutSuccessPage(acc, isCancelled = false) {
   <meta name="robots" content="noindex, nofollow">
   <title>Checkout Cancelled — SWEEPR Deepblock</title>
   <link rel="icon" type="image/svg+xml" href="/logo.svg">
-  <link rel="stylesheet" href="/sweepr-ui.css">
+  <link rel="stylesheet" href="/sweepr-tailwind.min.css?v=20261122">
 </head>
 <body class="bg-slate-950 text-white min-h-screen flex items-center justify-center p-6 font-sans">
   <div class="max-w-md w-full bg-slate-900 border border-slate-800 rounded-2xl p-8 text-center space-y-4 shadow-2xl">
@@ -2267,10 +2618,28 @@ function renderCheckoutSuccessPage(acc, isCancelled = false) {
   const licenseKey = escapeHtml(rawKey || 'Check your confirmation email for your SWEEPR-DB key');
   const email = escapeHtml(acc?.email || '');
   const planLabel = escapeHtml(
-    acc?.plan === 'annual' ? 'Annual Plan' : acc?.plan === 'six_month' ? '6-Month Plan' : 'Monthly Plan'
+    acc?.plan === 'suite_annual'
+      ? 'Complete Security Suite'
+      : acc?.plan === 'annual'
+      ? 'Annual Plan'
+      : acc?.plan === 'six_month'
+      ? '6-Month Plan'
+      : 'Monthly Plan'
   );
-  const hasRamTamer = Boolean(acc?.ramTamerAddon);
-  const purchaseValue = acc?.plan === 'suite_annual' ? 89.99 : acc?.plan === 'annual' ? (hasRamTamer ? 44.98 : 29.99) : acc?.plan === 'six_month' ? (hasRamTamer ? 29.98 : 19.99) : (hasRamTamer ? 3.98 : 1.99);
+  const purchaseCurrency = String(acc?.currency || 'GBP').trim().toUpperCase() || 'GBP';
+  const hasRamTamer = true;
+  const localizedPurchasePricing = buildLocalizedPricing(null, purchaseCurrency);
+  const purchaseMinorAmount =
+    acc?.plan === 'suite_annual'
+      ? localizedPurchasePricing.suiteAnnualAmount
+      : acc?.plan === 'annual'
+      ? localizedPurchasePricing.annualAmount
+      : acc?.plan === 'six_month'
+      ? localizedPurchasePricing.sixMonthAmount
+      : localizedPurchasePricing.introMonthlyAmount;
+  const purchaseValue = Number(
+    (purchaseMinorAmount / localizedPurchasePricing.divisor).toFixed(localizedPurchasePricing.zeroDecimal ? 0 : 2)
+  );
   const txId = escapeHtml(acc?.stripe_subscription_id || acc?.id || `ord_${Date.now()}`);
 
   return `<!DOCTYPE html>
@@ -2281,7 +2650,7 @@ function renderCheckoutSuccessPage(acc, isCancelled = false) {
   <meta name="robots" content="noindex, nofollow">
   <title>You're Activated 🎉 — SWEEPR Deepblock Pro</title>
   <link rel="icon" type="image/svg+xml" href="/logo.svg">
-  <link rel="stylesheet" href="/sweepr-ui.css">
+  <link rel="stylesheet" href="/sweepr-tailwind.min.css?v=20261122">
   <script async src="/metrics/js?id=G-01MNBQSL9K"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -2298,7 +2667,7 @@ function renderCheckoutSuccessPage(acc, isCancelled = false) {
         gtag('event', 'purchase', {
           transaction_id: ${JSON.stringify(txId)},
           value: ${Number(purchaseValue)},
-          currency: 'GBP',
+          currency: ${JSON.stringify(purchaseCurrency)},
           items: [
             {
               item_id: ${JSON.stringify('deepblock_' + (acc?.plan || 'annual'))},
@@ -2351,10 +2720,10 @@ function renderCheckoutSuccessPage(acc, isCancelled = false) {
         </button>
       </div>
       <div class="text-xs text-slate-400 space-y-1 pt-2 border-t border-slate-800/80">
-        <div class="font-bold text-slate-200 mb-1">Unlocked on your account (Up to 4 Devices — Desktop or Mobile):</div>
-        <div>✓ YouTube &amp; Banner Ad Blocker + Auto Cookie Pop-Up Closer</div>
-        <div>✓ Fake Online Shop &amp; Review Detector + Private Browsing Protection</div>
-        ${hasRamTamer ? '<div class="text-emerald-400 font-semibold">✓ Total Tab &amp; RAM Tamer Speed Add-On Active</div>' : ''}
+        <div class="font-bold text-slate-200 mb-1">Unlocked on your account (Up to 5 Devices — Desktop or Mobile):</div>
+        <div>✓ YouTube &amp; Banner Ad Blocker + Element Zapper</div>
+        <div>✓ Auto Cookie Pop-Up Closer &amp; URL Tracker Stripper</div>
+        ${hasRamTamer ? '<div class="text-emerald-400 font-semibold">✓ Total Tab &amp; RAM Tamer Included</div>' : ''}
       </div>
     </div>
 
@@ -2385,6 +2754,9 @@ const server = http.createServer(async (req, res) => {
   try {
     let parsedUrl;
     try {
+      if (typeof req.url === 'string' && req.url.startsWith('//')) {
+        return sendErrorResponse(res, 400, '400 Bad Request');
+      }
       parsedUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
     } catch {
       return sendErrorResponse(res, 400, '400 Bad Request');
@@ -2465,21 +2837,21 @@ const server = http.createServer(async (req, res) => {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Browser Protection Score: ${score}/100 (Grade ${grade}) — SWEEPR Deepblock Test Lab</title>
-  <meta name="description" content="Verified browser protection diagnostic score: ${score}/100 (Grade ${grade}). Test your own browser against ad scripts, DNS leaks, fingerprinting, and scam shops in 10 seconds.">
-  <meta name="robots" content="noindex, follow">
-  <link rel="canonical" href="${PUBLIC_URL}/tools/is-my-adblocker-working">
+  <meta name="description" content="Verified browser protection diagnostic score: ${score}/100 (Grade ${grade}). Test your own browser against ad scripts, cookie walls, and tracking beacons in 10 seconds.">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="canonical" href="${PUBLIC_URL}/test-lab">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Browser Protection Score: ${score}/100 (Grade ${grade}) — SWEEPR Deepblock">
-  <meta property="og:description" content="Can your browser pass the 8-vector MV3 ad, tracker, DNS leak, and fingerprint diagnostic? Run the free 10-second test.">
+  <meta property="og:description" content="Can your browser pass the 8-vector MV3 ad, tracker, cookie wall, and fingerprint diagnostic? Run the free 10-second test.">
   <meta property="og:url" content="${PUBLIC_URL}${pathname}">
   <meta property="og:image" content="${PUBLIC_URL}/og-image.png">
   <link rel="icon" type="image/svg+xml" href="/logo.svg">
-  <link rel="stylesheet" href="/sweepr-ui.css">
+  <link rel="stylesheet" href="/sweepr-tailwind.min.css?v=20261122">
 </head>
 <body class="bg-slate-950 text-white min-h-screen flex items-center justify-center p-6 font-sans antialiased">
   <main class="max-w-xl w-full bg-slate-900 border border-slate-800 rounded-3xl p-8 text-center shadow-2xl space-y-6">
     <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-extrabold uppercase tracking-wider">
-      SWEEPR DeepBlock 2026 MV3 Scorecard
+      SWEEPR Deepblock 2026 MV3 Scorecard
     </div>
     <div class="w-28 h-28 mx-auto rounded-3xl flex flex-col items-center justify-center border-2" style="border-color:${badgeColor};background:rgba(15,23,42,0.8)">
       <span class="text-4xl font-black" style="color:${badgeColor}">${grade}</span>
@@ -2487,7 +2859,7 @@ const server = http.createServer(async (req, res) => {
     </div>
     <h1 class="text-2xl sm:text-3xl font-black">Browser Protection Score: ${score}/100</h1>
     <p class="text-slate-300 text-sm leading-relaxed">
-      This browser was audited against live MV3 ad-injection vectors, GDPR cookie consent locks, URL/DNS tracker beacons, and hardware Canvas fingerprinting.
+      This browser was audited against live MV3 ad-injection vectors, GDPR cookie consent locks, and URL tracker beacons.
     </p>
     <div class="bg-slate-950/80 border border-slate-800 rounded-2xl p-4 text-left space-y-3 text-xs">
       <div>
@@ -2495,20 +2867,20 @@ const server = http.createServer(async (req, res) => {
         <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden"><div class="h-full bg-emerald-500" style="width:${adsVec}%"></div></div>
       </div>
       <div>
-        <div class="flex justify-between font-bold text-slate-300 mb-1"><span>Encrypted DNS &amp; URL Tracker Sanitizer</span><span class="text-sky-400">${dnsVec}%</span></div>
+        <div class="flex justify-between font-bold text-slate-300 mb-1"><span>Cookie Banner Auto-Rejector</span><span class="text-sky-400">${dnsVec}%</span></div>
         <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden"><div class="h-full bg-sky-400" style="width:${dnsVec}%"></div></div>
       </div>
       <div>
-        <div class="flex justify-between font-bold text-slate-300 mb-1"><span>Canvas &amp; Hardware Entropy Shield</span><span class="text-purple-400">${fpVec}%</span></div>
+        <div class="flex justify-between font-bold text-slate-300 mb-1"><span>URL Tracker Parameter Stripper</span><span class="text-purple-400">${fpVec}%</span></div>
         <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden"><div class="h-full bg-purple-400" style="width:${fpVec}%"></div></div>
       </div>
     </div>
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-      <a href="/tools/is-my-adblocker-working" class="py-3.5 px-5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-sm no-underline">
+      <a href="/test-lab" class="py-3.5 px-5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-sm no-underline">
         Run Your Own Free Test →
       </a>
       <a href="/download" class="py-3.5 px-5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm border border-slate-700 no-underline">
-        Get SWEEPR DeepBlock
+        Get SWEEPR Deepblock
       </a>
     </div>
   </main>
@@ -2736,11 +3108,10 @@ function getCachedDynamicDelta() {
       ...versionMeta,
       featureFlags: {
         cookieAutoClose: true,
-        hideSearchSpam: true,
-        fakeShopAlerts: true,
         youtubeAdShield: true,
         antiAdblockStealth: true,
-        autoRamTamer: true
+        autoRamTamer: true,
+        trackerProtection: true
       },
       extraCmpSelectors: [],
       extraAntiAdblockSelectors: [],
@@ -2751,42 +3122,43 @@ function getCachedDynamicDelta() {
   // ============================================================================
   // API -0a: Paywall Multi-Armed Bandit & RPV Auto-Promoter (/api/ab/paywall, /api/ab/convert, /api/ab-config)
   // ============================================================================
-  const AB_STATE_FILE = path.join(__dirname, 'data', 'ab-experiments-state.json');
-  const PAYWALL_BANDIT_VARIANTS = {
-    control_value_stack: {
-      id: 'control_value_stack',
-      legacyAlias: 'variant_a_breadth',
-      experiment: 'paywall_value_framing_v2',
-      badge: '4-DEVICE PRO + ECOSYSTEM SUITE',
-      headline: '4-in-1 Privacy & Memory Protection — Save 58% (£2.50/mo eq.)',
-      subheadline:
-        'Protect 4 browsers with DeepBlock Pro (£29.99/yr) — or unlock all 4 Sweepr Pro apps (DeepBlock + RAM Tamer + VPN + Cleaner across 5 devices) for £89.99/yr.',
-      ctaLabel: 'Unlock 4-Device Pro (£29.99/yr) →',
-      defaultPlan: 'annual'
-    },
-    renewal_transparency: {
-      id: 'renewal_transparency',
-      legacyAlias: 'variant_b_risk_free_14d',
-      experiment: 'paywall_value_framing_v2',
-      badge: 'ZERO RENEWAL TRAPS • 14-DAY GUARANTEE',
-      headline: 'No £99/yr Renewal Shock. Locked-In £29.99/yr Rate + 1-Click Cancel',
-      subheadline:
-        'Escape surprise Year-2 price hikes. Transparent £29.99/yr Pro rate, zero Acceptable Ads whitelists, and instant 1-click self-serve refund guarantee.',
-      ctaLabel: 'Start Risk-Free Pro (£2.50/mo eq.) →',
-      defaultPlan: 'annual'
-    },
-    ram_speedometer_bundle: {
-      id: 'ram_speedometer_bundle',
-      legacyAlias: 'variant_c_suite_bundle',
-      experiment: 'paywall_value_framing_v2',
-      badge: 'SAVE 45% • COMPLETE 4-APP SUITE',
-      headline: 'Reclaim 62% Browser RAM + Block 100% of Video Ads & Trackers',
-      subheadline:
-        'Bundle SWEEPR DeepBlock Pro + Total Tab & RAM Tamer + Sweepr VPN Pro + Sweepr Desktop Cleaner Pro across 5 devices for £89.99/yr (vs £164.96/yr).',
-      ctaLabel: 'Get Complete Security Suite (£89.99/yr) →',
-      defaultPlan: 'suite_annual'
-    }
-  };
+  function buildLocalizedPaywallVariants(pricing) {
+    const p = pricing || buildLocalizedPricing('GB');
+    const renewalAnchor = p.country === 'GB' ? '£99/yr' : 'Year-2';
+    return {
+      control_value_stack: {
+        id: 'control_value_stack',
+        legacyAlias: 'variant_a_breadth',
+        experiment: 'paywall_value_framing_v2',
+        badge: '5-DEVICE PRO + ECOSYSTEM SUITE',
+        headline: `Ad, Cookie & RAM Protection — Save 50% (${p.annualMonthlyEqFormatted}/mo eq.)`,
+        subheadline: `Protect 5 devices with Deepblock Pro (${p.annualFormatted}/yr, Tab & RAM Tamer included) — or unlock the full Sweepr Pro Ecosystem Suite (Deepblock + VPN + Cleaner across 5 devices) for ${p.suiteAnnualFormatted}/yr.`,
+        ctaLabel: `Unlock 5-Device Pro (${p.annualFormatted}/yr) →`,
+        defaultPlan: 'annual'
+      },
+      renewal_transparency: {
+        id: 'renewal_transparency',
+        legacyAlias: 'variant_b_risk_free_14d',
+        experiment: 'paywall_value_framing_v2',
+        badge: 'ZERO RENEWAL TRAPS • 14-DAY GUARANTEE',
+        headline: `No ${renewalAnchor} Renewal Shock. Locked-In ${p.annualFormatted}/yr Rate + 1-Click Cancel`,
+        subheadline: `Escape surprise Year-2 price hikes. Transparent ${p.annualFormatted}/yr Pro rate, zero Acceptable Ads whitelists, and instant 1-click self-serve refund guarantee.`,
+        ctaLabel: `Start Risk-Free Pro (${p.annualMonthlyEqFormatted}/mo eq.) →`,
+        defaultPlan: 'annual'
+      },
+      ram_speedometer_bundle: {
+        id: 'ram_speedometer_bundle',
+        legacyAlias: 'variant_c_suite_bundle',
+        experiment: 'paywall_value_framing_v2',
+        badge: 'SAVE 45% • COMPLETE ECOSYSTEM SUITE',
+        headline: 'Tame Heavy Tabs + Block Video Ads & Trackers Across 5 Devices',
+        subheadline: `Deepblock Pro includes Total Tab & RAM Tamer across 5 devices (${p.annualFormatted}/yr), or bundle Sweepr VPN Pro + Desktop Cleaner Pro across 5 devices for ${p.suiteAnnualFormatted}/yr.`,
+        ctaLabel: `Get Complete Security Suite (${p.suiteAnnualFormatted}/yr) →`,
+        defaultPlan: 'suite_annual'
+      }
+    };
+  }
+  const PAYWALL_BANDIT_VARIANTS = buildLocalizedPaywallVariants(buildLocalizedPricing('GB'));
 
   function loadAbBanditState() {
     if (global.__abBanditState) return global.__abBanditState;
@@ -2797,9 +3169,9 @@ function getCachedDynamicDelta() {
       leaderVariantId: 'control_value_stack',
       mode: 'exploration_uniform',
       stats: {
-        control_value_stack: { visitors: 42, conversions: 2, suiteAttachCount: 0, totalRevenueGbp: 59.98 },
-        renewal_transparency: { visitors: 44, conversions: 3, suiteAttachCount: 1, totalRevenueGbp: 149.97 },
-        ram_speedometer_bundle: { visitors: 41, conversions: 2, suiteAttachCount: 2, totalRevenueGbp: 179.98 }
+        control_value_stack: { visitors: 0, conversions: 0, suiteAttachCount: 0, totalRevenueGbp: 0 },
+        renewal_transparency: { visitors: 0, conversions: 0, suiteAttachCount: 0, totalRevenueGbp: 0 },
+        ram_speedometer_bundle: { visitors: 0, conversions: 0, suiteAttachCount: 0, totalRevenueGbp: 0 }
       }
     };
     if (fs.existsSync(AB_STATE_FILE)) {
@@ -2902,6 +3274,7 @@ function getCachedDynamicDelta() {
 
     const legacyVariant =
       chosenKey === 'renewal_transparency' ? 'variant_b_risk_free_14d' : 'variant_a_breadth';
+    const localizedVariants = buildLocalizedPaywallVariants(resolvePricingForRequest(req, parsedUrl));
 
     return sendJson(
       res,
@@ -2913,9 +3286,9 @@ function getCachedDynamicDelta() {
         leaderVariantId: state.leaderVariantId,
         variant: pathname === '/api/ab-config' ? legacyVariant : chosenKey,
         banditVariant: chosenKey,
-        config: PAYWALL_BANDIT_VARIANTS[chosenKey],
+        config: localizedVariants[chosenKey],
         metrics: state.computedMetrics,
-        allVariants: PAYWALL_BANDIT_VARIANTS
+        allVariants: localizedVariants
       },
       {},
       req
@@ -2961,57 +3334,95 @@ function getCachedDynamicDelta() {
   }
 
   // ============================================================================
-  // API -0b: Live Social Proof & Threat Telemetry Feed (/api/telemetry/live-proof)
+  // API -0b: Live Social Proof & Rule Telemetry Feed (/api/telemetry/live-proof)
   // ============================================================================
   if (req.method === 'GET' && pathname === '/api/telemetry/live-proof') {
     const now = Date.now();
     if (!global.__liveProofCache || now - global.__liveProofCache.ts > 30000) {
-      let staticRulesCount = 242;
-      let otaDeltaCount = 14;
+      let staticAdsCount = 0;
+      let cryptominerRulesCount = 0;
+      let trackerParamRulesCount = 0;
+      let otaDeltaCount = 0;
+      let blockedSitesTotal = 0;
+      let blockedSitesUpdatedAt = null;
+      let sampleBlockedDomains = [];
+
       try {
         const s = JSON.parse(
           fs.readFileSync(path.join(__dirname, 'extension', 'rules', 'static_ads_and_trackers.json'), 'utf8')
         );
-        if (Array.isArray(s)) staticRulesCount = s.length;
+        if (Array.isArray(s)) staticAdsCount = s.length;
+      } catch {}
+      try {
+        const c = JSON.parse(
+          fs.readFileSync(path.join(__dirname, 'extension', 'rules', 'cryptominers.json'), 'utf8')
+        );
+        if (Array.isArray(c)) cryptominerRulesCount = c.length;
+      } catch {}
+      try {
+        const t = JSON.parse(
+          fs.readFileSync(path.join(__dirname, 'extension', 'rules', 'tracker_params.json'), 'utf8')
+        );
+        if (Array.isArray(t)) trackerParamRulesCount = t.length;
       } catch {}
       try {
         const d = JSON.parse(
           fs.readFileSync(path.join(__dirname, 'extension', 'rules', 'dynamic_delta.json'), 'utf8')
         );
-        const arr = Array.isArray(d) ? d : d.rules || [];
-        otaDeltaCount = arr.length;
+        const arr = Array.isArray(d) ? d : d.dynamicDnrRules || d.rules || [];
+        otaDeltaCount = Array.isArray(arr) ? arr.length : 0;
       } catch {}
+      try {
+        const b = JSON.parse(
+          fs.readFileSync(path.join(__dirname, 'data', 'deepblock-blocked-sites.json'), 'utf8')
+        );
+        const sitesArr = Array.isArray(b?.sites) ? b.sites : Array.isArray(b) ? b : [];
+        blockedSitesTotal = Number(b?.total) || sitesArr.length;
+        blockedSitesUpdatedAt = b?.updatedAt || null;
+        sampleBlockedDomains = sitesArr.slice(0, 5);
+      } catch {}
+
+      const staticRulesCount = staticAdsCount + cryptominerRulesCount + trackerParamRulesCount;
       global.__liveProofCache = {
         ts: now,
         payload: {
           ok: true,
-          version: '1.2.7',
+          version: BUNDLED_MANIFEST_VERSION,
           generatedAt: new Date().toISOString(),
-          verifiedBlockedDomainsCount: 10218,
+          verifiedBlockedDomainsCount: blockedSitesTotal,
+          blockedDomainsListUpdatedAt: blockedSitesUpdatedAt,
           activeMv3StaticRules: staticRulesCount,
+          staticRulesByRuleset: {
+            ads_and_trackers: staticAdsCount,
+            cryptominers_and_heavy_scripts: cryptominerRulesCount,
+            tracker_param_stripping: trackerParamRulesCount
+          },
           activeOtaDeltaRules: otaDeltaCount,
-          dnrLookupLatencyUs: 15,
-          cookieRejectLatencyMs: '<50ms',
-          cmpFrameworksCovered: 150,
-          testLabScore: '8/8 (100%)',
-          auditedPublishersCount: 150,
-          avgRamReclaimedPct: 62,
+          rulesetsActive: 3,
+          testLabChecksCount: 8,
+          maxDevicesPerLicense: MAX_DEVICES_PER_LICENSE,
+          sampleBlockedDomains,
           pricingSummary: {
             introMonthlyGbp: 1.99,
             proAnnualGbp: 29.99,
             completeSuiteAnnualGbp: 89.99
-          },
-          recentVerifiedReceipts: [
-            { domain: 'youtube.com', vectorsBlocked: 14, cmp: 'Google Funding Choices', ramSavedMb: 380 },
-            { domain: 'dailymail.co.uk', vectorsBlocked: 94, cmp: 'Sourcepoint CMP', ramSavedMb: 420 },
-            { domain: 'fandom.com', vectorsBlocked: 78, cmp: 'OneTrust CMP', ramSavedMb: 390 },
-            { domain: 'theguardian.com', vectorsBlocked: 41, cmp: 'Sourcepoint CMP', ramSavedMb: 210 },
-            { domain: 'twitch.tv', vectorsBlocked: 19, cmp: 'OneTrust CMP', ramSavedMb: 340 }
-          ]
+          }
         }
       };
     }
     return sendJson(res, 200, global.__liveProofCache.payload, {}, req);
+  }
+
+  // Same-origin Test Lab synthetic probe endpoints (zero CSP/CORS violations without extension; intercepted by DeepStealth Layer 4 when active)
+  if ((req.method === 'GET' || req.method === 'HEAD') && (pathname === '/api/test-lab/probe/adsbygoogle.js' || pathname === '/api/test-lab/probe/adblock-detect')) {
+    const probeBody = '/* unblocked_live_probe */\nwindow.__testLabUnblockedProbe = true;\n';
+    res.writeHead(200, {
+      'Content-Type': 'application/javascript; charset=utf-8',
+      'Cache-Control': 'no-store, no-cache, must-revalidate, private',
+      'X-Robots-Tag': 'noindex, nofollow',
+      'X-Content-Type-Options': 'nosniff'
+    });
+    return res.end(req.method === 'HEAD' ? undefined : probeBody);
   }
 
   // ============================================================================
@@ -3031,37 +3442,27 @@ function getCachedDynamicDelta() {
   // ============================================================================
   // API -0d: Zero-Email Viral Test Lab Share-Card & Give-1-Get-1 Referral Loop
   // ============================================================================
-  const REFERRALS_FILE = path.join(__dirname, 'data', 'referrals.json');
-  function loadReferralsStore() {
-    if (fs.existsSync(REFERRALS_FILE)) {
-      try {
-        return JSON.parse(fs.readFileSync(REFERRALS_FILE, 'utf8'));
-      } catch {}
-    }
-    return { codes: {}, redemptions: [] };
-  }
-  function saveReferralsStore(store) {
-    try {
-      fs.mkdirSync(path.dirname(REFERRALS_FILE), { recursive: true });
-      fs.writeFileSync(REFERRALS_FILE, JSON.stringify(store, null, 2), 'utf8');
-    } catch {}
-  }
-
   if (req.method === 'POST' && pathname === '/api/referral/create') {
     const body = (await readBody(req)) || {};
-    const ownerKey = String(body.licenseKey || body.deviceId || body.accountId || getClientIp(req)).trim();
+    const rawLicenseKey = String(body.licenseKey || body.license_key || '').trim().toUpperCase();
+    const validOwnerLicense = HIGH_ENTROPY_LICENSE_KEY_RE.test(rawLicenseKey) ? rawLicenseKey : '';
+    const ownerKey = String(validOwnerLicense || body.deviceId || body.accountId || getClientIp(req)).trim();
     const hmac = crypto.createHash('sha256').update(`sweepr_ref:${ownerKey}`).digest('hex').slice(0, 8);
     const code = `u_${hmac}`;
+    const ownerHash = crypto.createHash('sha256').update(ownerKey).digest('hex').slice(0, 16);
     const store = loadReferralsStore();
     if (!store.codes[code]) {
       store.codes[code] = {
         code,
-        ownerHash: crypto.createHash('sha256').update(ownerKey).digest('hex').slice(0, 16),
+        ownerHash,
+        ownerLicenseKey: validOwnerLicense,
         createdAt: new Date().toISOString(),
         referralsCompleted: 0,
-        bonusProDaysEarned: 0,
-        ramTamerUnlocked: false
+        bonusProDaysEarned: 0
       };
+      saveReferralsStore(store);
+    } else if (validOwnerLicense && !store.codes[code].ownerLicenseKey) {
+      store.codes[code].ownerLicenseKey = validOwnerLicense;
       saveReferralsStore(store);
     }
     return sendJson(
@@ -3071,13 +3472,19 @@ function getCachedDynamicDelta() {
         ok: true,
         zeroEmailMode: true,
         code,
-        rewardRule: 'Give 14 Days Pro + RAM Tamer, Get +30 Days DeepBlock Pro + RAM Tamer (credited automatically via extension heartbeat — 0 emails sent)',
+        rewardRule: 'Give a 14-Day Deepblock Pro Trial (includes Tab & RAM Tamer across 5 devices), Get +30 Days added to your Pro license when redeemed.',
         shareUrls: {
           downloadInvite: `https://sweeprdeepblock.com/download?ref=${code}`,
           testLabChallenge: `https://sweeprdeepblock.com/test-lab?ref=${code}`,
-          svgBadgeUrl: `https://sweeprdeepblock.com/api/test-lab/share-card.svg?score=100&blocked=8&ram=640&ref=${code}`
+          svgBadgeUrl: `https://sweeprdeepblock.com/api/test-lab/share-card.svg?score=100&blocked=8&ref=${code}`
         },
-        stats: store.codes[code]
+        stats: {
+          code: store.codes[code].code,
+          createdAt: store.codes[code].createdAt,
+          referralsCompleted: store.codes[code].referralsCompleted || 0,
+          bonusProDaysEarned: store.codes[code].bonusProDaysEarned || 0,
+          hasLinkedLicense: Boolean(store.codes[code].ownerLicenseKey)
+        }
       },
       {},
       req
@@ -3091,12 +3498,29 @@ function getCachedDynamicDelta() {
     if (!rec) {
       return sendJson(res, 404, { ok: false, error: 'referral_code_not_found' }, {}, req);
     }
-    return sendJson(res, 200, { ok: true, zeroEmailMode: true, referral: rec }, {}, req);
+    return sendJson(
+      res,
+      200,
+      {
+        ok: true,
+        zeroEmailMode: true,
+        referral: {
+          code: rec.code,
+          createdAt: rec.createdAt,
+          referralsCompleted: rec.referralsCompleted || 0,
+          bonusProDaysEarned: rec.bonusProDaysEarned || 0,
+          hasLinkedLicense: Boolean(rec.ownerLicenseKey)
+        }
+      },
+      {},
+      req
+    );
   }
 
   if (req.method === 'POST' && pathname === '/api/referral/redeem') {
     const body = (await readBody(req)) || {};
     const code = String(body.code || body.ref || '').trim();
+    const friendLicenseKey = String(body.licenseKey || body.license_key || '').trim().toUpperCase();
     const friendDeviceId = String(body.deviceId || getClientIp(req)).trim();
     const store = loadReferralsStore();
     const rec = store.codes[code];
@@ -3104,18 +3528,95 @@ function getCachedDynamicDelta() {
       return sendJson(res, 404, { ok: false, error: 'invalid_referral_code' }, {}, req);
     }
     const friendHash = crypto.createHash('sha256').update(friendDeviceId).digest('hex').slice(0, 16);
-    const alreadyRedeemed = store.redemptions.some((r) => r.code === code && r.friendHash === friendHash);
-    if (!alreadyRedeemed && friendHash !== rec.ownerHash) {
-      store.redemptions.push({
-        code,
-        friendHash,
-        redeemedAt: new Date().toISOString()
-      });
-      rec.referralsCompleted = (rec.referralsCompleted || 0) + 1;
-      rec.bonusProDaysEarned = (rec.bonusProDaysEarned || 0) + 30;
-      rec.ramTamerUnlocked = true;
-      saveReferralsStore(store);
+    const isSelfByLicense = Boolean(friendLicenseKey && rec.ownerLicenseKey && friendLicenseKey === rec.ownerLicenseKey);
+    const friendLicenseAsOwnerHash = friendLicenseKey
+      ? crypto.createHash('sha256').update(friendLicenseKey).digest('hex').slice(0, 16)
+      : '';
+    if (friendHash === rec.ownerHash || (friendLicenseAsOwnerHash && friendLicenseAsOwnerHash === rec.ownerHash) || isSelfByLicense) {
+      return sendJson(
+        res,
+        400,
+        {
+          ok: false,
+          error: 'self_referral_not_allowed',
+          message: 'You cannot redeem your own referral code.'
+        },
+        {},
+        req
+      );
     }
+    const alreadyRedeemed = store.redemptions.some((r) => r.code === code && r.friendHash === friendHash);
+    if (alreadyRedeemed) {
+      return sendJson(
+        res,
+        409,
+        {
+          ok: false,
+          alreadyRedeemed: true,
+          error: 'already_redeemed',
+          message: 'This referral reward has already been claimed on this browser.'
+        },
+        {},
+        req
+      );
+    }
+
+    const genSeg = () => crypto.randomBytes(2).toString('hex').toUpperCase();
+    let trialKey = `SWEEPR-DB-${genSeg()}-${genSeg()}-${genSeg()}`;
+    while (store.trials[trialKey]) {
+      trialKey = `SWEEPR-DB-${genSeg()}-${genSeg()}-${genSeg()}`;
+    }
+    const nowMs = Date.now();
+    const nowIso = new Date(nowMs).toISOString();
+    const trialExpiresAt = new Date(nowMs + 14 * 86400000).toISOString();
+
+    store.trials[trialKey] = {
+      trialKey,
+      referralCode: code,
+      friendHash,
+      status: 'trialing',
+      plan: 'referral_trial_14d',
+      isReferralTrial: true,
+      ramTamerAddon: true,
+      maxDevices: MAX_DEVICES_PER_LICENSE,
+      devices: [],
+      createdAt: nowIso,
+      expiresAt: trialExpiresAt
+    };
+
+    store.redemptions.push({
+      code,
+      friendHash,
+      trialKey,
+      redeemedAt: nowIso
+    });
+    rec.referralsCompleted = (rec.referralsCompleted || 0) + 1;
+    rec.bonusProDaysEarned = (rec.bonusProDaysEarned || 0) + 30;
+
+    if (rec.ownerLicenseKey) {
+      const existingBonus = store.licenseBonuses[rec.ownerLicenseKey] || { bonusDays: 0 };
+      store.licenseBonuses[rec.ownerLicenseKey] = {
+        bonusDays: Number(existingBonus.bonusDays || 0) + 30,
+        updatedAt: nowIso
+      };
+      try {
+        const ownerAccount =
+          licenses.get(rec.ownerLicenseKey) ||
+          licenses.get(String(rec.ownerLicenseKey).toUpperCase());
+        if (ownerAccount) {
+          const baseExp =
+            ownerAccount.expiresAt && !Number.isNaN(Date.parse(ownerAccount.expiresAt))
+              ? Date.parse(ownerAccount.expiresAt)
+              : nowMs;
+          ownerAccount.expiresAt = new Date(baseExp + 30 * 86400000).toISOString();
+          ownerAccount.bonusProDaysEarned = store.licenseBonuses[rec.ownerLicenseKey].bonusDays;
+          ownerAccount.referralBonusDaysApplied = Number(ownerAccount.referralBonusDaysApplied || 0) + 30;
+        }
+      } catch {}
+    }
+
+    saveReferralsStore(store);
+
     return sendJson(
       res,
       200,
@@ -3123,10 +3624,15 @@ function getCachedDynamicDelta() {
         ok: true,
         zeroEmailMode: true,
         code,
+        trialKey,
+        trialExpiresAt,
         referrerBonusDaysTotal: rec.bonusProDaysEarned,
         refereeReward: {
+          trialKey,
+          expiresAt: trialExpiresAt,
           trialDaysGranted: 14,
           includesRamTamer: true,
+          maxDevices: MAX_DEVICES_PER_LICENSE,
           suiteDiscountUrl: `/order?plan=suite_annual&ref=${encodeURIComponent(code)}`
         }
       },
@@ -3138,7 +3644,8 @@ function getCachedDynamicDelta() {
   if (req.method === 'GET' && pathname === '/api/test-lab/share-card.svg') {
     const score = Math.max(0, Math.min(100, Number(parsedUrl.searchParams.get('score') || 100)));
     const blocked = Math.max(0, Math.min(8, Number(parsedUrl.searchParams.get('blocked') || 8)));
-    const ram = Math.max(50, Math.min(4000, Number(parsedUrl.searchParams.get('ram') || 640)));
+    const hasRamParam = parsedUrl.searchParams.has('ram');
+    const ram = hasRamParam ? Math.max(10, Math.min(4000, Number(parsedUrl.searchParams.get('ram') || 0))) : 0;
     const ref = String(parsedUrl.searchParams.get('ref') || 'verified').replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 18);
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
   <defs>
@@ -3150,9 +3657,9 @@ function getCachedDynamicDelta() {
   </defs>
   <rect width="1200" height="630" fill="url(#bg)"/>
   <rect x="44" y="44" width="1112" height="542" rx="28" fill="#0f172a" stroke="#10b981" stroke-width="2" stroke-opacity="0.45"/>
-  <text x="88" y="115" fill="#10b981" font-family="system-ui, -apple-system, sans-serif" font-size="22" font-weight="800" letter-spacing="2">SWEEPR DEEPBLOCK v1.2.7 • VERIFIED MV3 TEST LAB</text>
+  <text x="88" y="115" fill="#10b981" font-family="system-ui, -apple-system, sans-serif" font-size="22" font-weight="800" letter-spacing="2">SWEEPR DEEPBLOCK v${BUNDLED_MANIFEST_VERSION} • VERIFIED MV3 TEST LAB</text>
   <text x="88" y="195" fill="#f8fafc" font-family="system-ui, -apple-system, sans-serif" font-size="54" font-weight="900">Browser Protection Score: ${score}/100</text>
-  <text x="88" y="250" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="26" font-weight="500">${blocked}/8 Ad &amp; Tracker Vectors Blocked • 15µs C++ DNR Latency • &lt;50ms Cookie Auto-Reject</text>
+  <text x="88" y="250" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" font-size="26" font-weight="500">${blocked}/8 Ad &amp; Tracker Vectors Blocked • MV3 DNR Engine • Cookie &amp; URL Stripper</text>
   <g transform="translate(88, 305)">
     <rect width="310" height="140" rx="18" fill="#1e293b" stroke="#334155"/>
     <text x="28" y="52" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="18" font-weight="700">MV3 EVASION CHECKS</text>
@@ -3160,13 +3667,13 @@ function getCachedDynamicDelta() {
   </g>
   <g transform="translate(428, 305)">
     <rect width="310" height="140" rx="18" fill="#1e293b" stroke="#334155"/>
-    <text x="28" y="52" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="18" font-weight="700">RAM RECLAIMED</text>
-    <text x="28" y="108" fill="#38bdf8" font-family="monospace" font-size="44" font-weight="900">${ram} MB</text>
+    <text x="28" y="52" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="18" font-weight="700">${hasRamParam ? 'RAM RECLAIMED' : 'DNR RULESETS'}</text>
+    <text x="28" y="108" fill="#38bdf8" font-family="monospace" font-size="44" font-weight="900">${hasRamParam ? `${ram} MB` : '3 ACTIVE'}</text>
   </g>
   <g transform="translate(768, 305)">
     <rect width="344" height="140" rx="18" fill="#1e293b" stroke="#334155"/>
-    <text x="28" y="52" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="18" font-weight="700">ENGINE LATENCY</text>
-    <text x="28" y="108" fill="#a78bfa" font-family="monospace" font-size="44" font-weight="900">15µs DNR</text>
+    <text x="28" y="52" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="18" font-weight="700">DEVICE COVERAGE</text>
+    <text x="28" y="108" fill="#a78bfa" font-family="monospace" font-size="44" font-weight="900">${MAX_DEVICES_PER_LICENSE} DEVICES</text>
   </g>
   <text x="88" y="525" fill="#e2e8f0" font-family="system-ui, sans-serif" font-size="24" font-weight="700">Test your browser in 5 seconds: sweeprdeepblock.com/test-lab?ref=${ref}</text>
 </svg>`;
@@ -3208,7 +3715,7 @@ function getCachedDynamicDelta() {
       200,
       {
         ok: true,
-        schedulerActive: true,
+        schedulerActive: !isCmoSchedulerDisabled(),
         zeroEmailPolicyEnforced: true,
         queueLength: (global.__cmoAutomationQueue || []).length,
         currentlyRunningJob: global.__cmoRunningJob || null,
@@ -3263,6 +3770,7 @@ function getCachedDynamicDelta() {
           monthlyEqFormatted: localizedPricing.annualMonthlyEqFormatted,
           savingsPercent: localizedPricing.annualSavingsPercent,
           interval: 'year',
+          includesRamTamer: true,
           name: 'SWEEPR Deepblock Pro (Annual)',
           label: `Annual Plan (${localizedPricing.annualFormatted}/yr — ${localizedPricing.annualMonthlyEqFormatted}/mo, Save 50%)`
         },
@@ -3272,8 +3780,9 @@ function getCachedDynamicDelta() {
           monthlyEqFormatted: localizedPricing.sixMonthMonthlyEqFormatted,
           savingsPercent: localizedPricing.sixMonthSavingsPercent,
           interval: '6 months',
+          includesRamTamer: true,
           name: 'SWEEPR Deepblock Pro (6-Month)',
-          label: `6-Month Plan (${localizedPricing.sixMonthFormatted}/6mo — ${localizedPricing.sixMonthMonthlyEqFormatted}/mo, Save 25%)`
+          label: `6-Month Plan (${localizedPricing.sixMonthFormatted}/6mo — ${localizedPricing.sixMonthMonthlyEqFormatted}/mo, Save 33%)`
         },
         monthly: {
           amountPence: localizedPricing.monthlyAmount,
@@ -3283,6 +3792,7 @@ function getCachedDynamicDelta() {
           introFormatted: localizedPricing.introMonthlyFormatted,
           introSavingsFormatted: localizedPricing.introSavingsFormatted,
           interval: 'month',
+          includesRamTamer: true,
           name: 'SWEEPR Deepblock Pro (Monthly)',
           label: `Monthly Plan (${localizedPricing.monthlyFormatted}/mo)`
         },
@@ -3302,18 +3812,19 @@ function getCachedDynamicDelta() {
       addons: {
         ram_tamer: {
           id: 'ram_tamer',
-          name: 'Total Tab & RAM Tamer — Browser Speed & Memory Optimizer',
-          label: 'Total Tab & RAM Tamer',
-          annualPence: localizedPricing.ramTamerAnnualAmount,
-          annualAmountPence: localizedPricing.ramTamerAnnualAmount,
-          annualFormatted: localizedPricing.ramTamerAnnualFormatted,
-          annualMonthlyEqFormatted: localizedPricing.ramTamerAnnualMonthlyEqFormatted,
-          sixMonthAmountPence: localizedPricing.ramTamerSixMonthAmount,
-          sixMonthFormatted: localizedPricing.ramTamerSixMonthFormatted,
-          sixMonthMonthlyEqFormatted: localizedPricing.ramTamerSixMonthMonthlyEqFormatted,
-          monthlyPence: localizedPricing.ramTamerMonthlyAmount,
-          monthlyAmountPence: localizedPricing.ramTamerMonthlyAmount,
-          monthlyFormatted: localizedPricing.ramTamerMonthlyFormatted
+          includedInPro: true,
+          name: 'Total Tab & RAM Tamer — Included Free in Pro',
+          label: 'Total Tab & RAM Tamer (Included)',
+          annualPence: 0,
+          annualAmountPence: 0,
+          annualFormatted: formatAmount(0, localizedPricing),
+          annualMonthlyEqFormatted: formatAmount(0, localizedPricing),
+          sixMonthAmountPence: 0,
+          sixMonthFormatted: formatAmount(0, localizedPricing),
+          sixMonthMonthlyEqFormatted: formatAmount(0, localizedPricing),
+          monthlyPence: 0,
+          monthlyAmountPence: 0,
+          monthlyFormatted: formatAmount(0, localizedPricing)
         }
       },
       adPixels: {
@@ -3427,8 +3938,7 @@ function getCachedDynamicDelta() {
         : 'monthly';
     const applyDiscount = Boolean(body.applyDiscount || body.discountApplied) && plan === 'monthly';
     const winbackTier = String(body.winbackTier || body.winback || '').trim().toLowerCase();
-    const freeRamTamerPromo = plan === 'annual' && winbackTier === 'tier_d60';
-    const includeRamTamer = plan === 'suite_annual' || freeRamTamerPromo || hasRamTamerInBody(body);
+    const includeRamTamer = true;
 
     const localizedPricing = resolvePricingForRequest(req, parsedUrl, body);
     const existingAcc = accountsByEmail.get(email);
@@ -3444,8 +3954,9 @@ function getCachedDynamicDelta() {
       email,
       name,
       country: localizedPricing.country,
+      currency: localizedPricing.currency,
       plan,
-      ramTamerAddon: includeRamTamer,
+      ramTamerAddon: true,
       status: 'pending'
     });
     const rawCookieHeader = String(req.headers.cookie || '');
@@ -3555,23 +4066,6 @@ function getCachedDynamicDelta() {
         }
       ];
 
-      if (includeRamTamer && !isSuiteAnnual && !freeRamTamerPromo) {
-        const ramProductId = await getStripeRamTamerProductId();
-        const addonUnitAmount = isAnnual
-          ? localizedPricing.ramTamerAnnualAmount
-          : isSixMonth
-          ? localizedPricing.ramTamerSixMonthAmount
-          : localizedPricing.ramTamerMonthlyAmount;
-        subItems.push({
-          price_data: {
-            currency: localizedPricing.currency,
-            product: ramProductId,
-            unit_amount: addonUnitAmount,
-            recurring: recurringConfig
-          }
-        });
-      }
-
       const introCouponId =
         !isAnnual && !isSixMonth && eligibleForIntroDiscount
           ? await getOrCreateIntroCoupon(localizedPricing.currency, localizedPricing.introSavingsAmount)
@@ -3625,7 +4119,7 @@ function getCachedDynamicDelta() {
 
       let subscription = null;
       const subIdempotencyBucket = Math.floor(Date.now() / 15000);
-      const subIdempotencyKey = `sub_${acc.id}_${plan}_${includeRamTamer ? 'ram' : 'std'}_${paymentMethod}_${subIdempotencyBucket}`;
+      const subIdempotencyKey = `sub_${acc.id}_${plan}_pro_${paymentMethod}_${subIdempotencyBucket}`;
       try {
         subscription = await stripeRequest('POST', 'subscriptions', subParams, { idempotencyKey: subIdempotencyKey });
       } catch (subErr) {
@@ -3803,7 +4297,7 @@ function getCachedDynamicDelta() {
       }
       const metaEmail = sub.metadata?.email || '';
       const metaPlan = sub.metadata?.plan || 'annual';
-      const hasRamTamer = sub.metadata?.ram_tamer === 'true' || (sub.metadata?.addons || '').includes('ram_tamer');
+      const hasRamTamer = true;
 
       let acc =
         accountsById.get(metaAccountId) ||
@@ -3815,10 +4309,11 @@ function getCachedDynamicDelta() {
         email: acc?.email || metaEmail || 'customer@sweeprdeepblock.com',
         name: acc?.name,
         country: sub.metadata?.country || acc?.country || 'GB',
+        currency: sub.currency || acc?.currency,
         stripeCustomerId: typeof sub.customer === 'string' ? sub.customer : sub.customer?.id,
         subscriptionId: sub.id,
         plan: metaPlan,
-        ramTamerAddon: hasRamTamer,
+        ramTamerAddon: true,
         status: 'active'
       });
       await syncPayPalCustomerEmail(sub, acc);
@@ -3838,7 +4333,7 @@ function getCachedDynamicDelta() {
 
       const conversionValue = Number(((totalAmount || 5999) / 100).toFixed(2));
       const conversionCurrency = String(sub.currency || 'gbp').toUpperCase();
-      const contentIds = [`deepblock_${acc.plan || 'annual'}`, ...(acc.ramTamerAddon ? ['ram_tamer'] : [])];
+      const contentIds = [`deepblock_${acc.plan || 'annual'}`];
 
       if (!checkOnly) {
         reportToSweeprCrm('/v1/telemetry/event', {
@@ -4056,12 +4551,14 @@ function getCachedDynamicDelta() {
       return sendJson(res, 400, { ok: false, error: 'invalid_email' });
     }
     const plan = data.plan || 'annual';
-    const ramTamerAddon = hasRamTamerInBody(data);
+    const localizedPricing = resolvePricingForRequest(req, parsedUrl, data);
 
     const acc = upsertLocalAccount({
       email,
+      country: localizedPricing.country,
+      currency: localizedPricing.currency,
       plan,
-      ramTamerAddon,
+      ramTamerAddon: true,
       status: 'active'
     });
 
@@ -4069,7 +4566,7 @@ function getCachedDynamicDelta() {
       ok: true,
       licenseKey: acc.licenseKey,
       plan: acc.plan,
-      ramTamerAddon: acc.ramTamerAddon,
+      ramTamerAddon: true,
       entitlements: acc.entitlements,
       status: acc.status
     });
@@ -4126,7 +4623,6 @@ function getCachedDynamicDelta() {
           const subStatus = obj.status === 'active' || obj.status === 'trialing' ? 'active' : obj.status || 'canceled';
           const metaEmail = obj.metadata?.email || '';
           const metaPlan = obj.metadata?.plan || 'annual';
-          const hasRamTamer = obj.metadata?.ram_tamer === 'true' || (obj.metadata?.addons || '').includes('ram_tamer');
           if (metaEmail || obj.id) {
             const custId = typeof obj.customer === 'string' ? obj.customer : obj.customer?.id;
             const cancelAtPeriodEnd = Boolean(obj.cancel_at_period_end);
@@ -4142,7 +4638,7 @@ function getCachedDynamicDelta() {
               stripeCustomerId: custId,
               subscriptionId: obj.id,
               plan: metaPlan,
-              ramTamerAddon: hasRamTamer,
+              ramTamerAddon: true,
               status: subStatus
             });
             syncedAcc.cancelAtPeriodEnd = cancelAtPeriodEnd;
@@ -4224,7 +4720,7 @@ function getCachedDynamicDelta() {
               stripeCustomerId: typeof sub.customer === 'string' ? sub.customer : sub.customer?.id,
               subscriptionId: sub.id,
               plan: sub.metadata?.plan || obj.metadata?.plan || 'annual',
-              ramTamerAddon: sub.metadata?.ram_tamer === 'true' || obj.metadata?.ram_tamer === 'true',
+              ramTamerAddon: true,
               status: 'active'
             });
             await syncPayPalCustomerEmail(sub, syncedAcc);
@@ -4363,15 +4859,17 @@ function getCachedDynamicDelta() {
         }
         acc = upsertLocalAccount({
           email: acc?.email || sub.metadata?.email || 'customer@sweeprdeepblock.com',
+          country: sub.metadata?.country || acc?.country || 'GB',
+          currency: sub.currency || acc?.currency,
           plan: sub.metadata?.plan || acc?.plan || 'annual',
-          ramTamerAddon: sub.metadata?.ram_tamer === 'true' || acc?.ramTamerAddon,
+          ramTamerAddon: true,
           subscriptionId: sub.id,
           status: 'active'
         });
         await syncPayPalCustomerEmail(sub, acc);
         if (sub.metadata?.ref) acc.ref = sub.metadata.ref;
         await syncSubscriptionWithSweeprCrm(acc, {
-          currency: sub.currency || 'gbp',
+          currency: sub.currency || acc?.currency || 'gbp',
           ref: sub.metadata?.ref || acc.ref,
           notes: `Checkout Success Verified ${sub.id} (${acc.licenseKey})`
         });
@@ -4464,7 +4962,7 @@ function getCachedDynamicDelta() {
     }
     const body = req.method === 'POST' ? await readBody(req) : {};
     if (body && body.__tooLarge) return sendJson(res, 413, { valid: false, error: 'payload_too_large' });
-    const rawKey = String(body?.key || parsedUrl.searchParams.get('key') || '').trim();
+    const rawKey = String(body?.key || body?.license_key || body?.licenseKey || parsedUrl.searchParams.get('key') || parsedUrl.searchParams.get('license_key') || '').trim();
     const deviceId = String(body?.device_id || parsedUrl.searchParams.get('device_id') || '').trim().slice(0, 128);
     const deviceName = String(body?.device_name || parsedUrl.searchParams.get('device_name') || '').trim().slice(0, 80);
     const platform = String(body?.platform || parsedUrl.searchParams.get('platform') || 'browser_extension').trim().slice(0, 32);
@@ -4484,18 +4982,20 @@ function getCachedDynamicDelta() {
     if (isJwsToken && crm.publicKeySpki) {
       const offline = crm.verifyLicenseTokenOffline(key, deviceId || undefined);
       if (offline.valid && offline.claims) {
-        const hasRamTamer =
-          Array.isArray(offline.claims.addons) &&
-          (offline.claims.addons.includes('ram_tamer') || offline.claims.addons.includes('sweepr_secure_bundle'));
-        return sendJson(res, 200, {
-          valid: true,
-          project_id: 'deepblock',
-          licenseKey: key,
-          plan: offline.claims.plan || 'annual',
-          ramTamerAddon: hasRamTamer,
-          entitlements: buildDeepblockEntitlements(hasRamTamer),
-          status: offline.claims.status || 'active'
-        });
+        const planName = offline.claims.plan || 'annual';
+        return sendJson(
+          res,
+          200,
+          applyReferralBonusToVerifyPayload(key, {
+            valid: true,
+            project_id: 'deepblock',
+            licenseKey: key,
+            plan: planName,
+            ramTamerAddon: true,
+            entitlements: buildDeepblockEntitlements(true, planName === 'suite_annual'),
+            status: offline.claims.status || 'active'
+          })
+        );
       }
     }
 
@@ -4512,10 +5012,6 @@ function getCachedDynamicDelta() {
       const crmStatus = String(crmVerify.data.status || 'active').toLowerCase();
       if (crmVerify.data.valid && (crmStatus === 'active' || crmStatus === 'trialing')) {
         const addonsList = Array.isArray(crmVerify.data.addons) ? crmVerify.data.addons : [];
-        const hasRamTamer =
-          Boolean(crmVerify.data.ramTamerAddon) ||
-          addonsList.includes('ram_tamer') ||
-          addonsList.includes('sweepr_secure_bundle');
         const localRec = licenses.get(key) || licenses.get(key.toUpperCase()) || null;
         if (localRec) {
           const seatCheck = registerLocalDeviceForAccount(localRec, deviceId, { deviceName, platform });
@@ -4530,23 +5026,29 @@ function getCachedDynamicDelta() {
             });
           }
         }
-        return sendJson(res, 200, {
-          valid: true,
-          project_id: 'deepblock',
-          account_id: crmVerify.data.account_id || localRec?.id,
-          licenseKey: crmVerify.data.licenseKey || crmVerify.data.license_key || localRec?.licenseKey || key,
-          plan: crmVerify.data.plan || localRec?.plan,
-          ramTamerAddon: hasRamTamer,
-          addons: addonsList,
-          entitlements: buildDeepblockEntitlements(hasRamTamer),
-          status: crmStatus,
-          cancelAtPeriodEnd: Boolean(crmVerify.data.cancelAtPeriodEnd || crmVerify.data.cancel_at_period_end),
-          expiresAt: crmVerify.data.expiresAt,
-          token: crmVerify.data.token,
-          devices_used: localRec ? localRec.devices.size : 1,
-          devices_max: MAX_DEVICES_PER_LICENSE,
-          devices: localRec ? listAccountDevices(localRec) : []
-        });
+        const resolvedKey = crmVerify.data.licenseKey || crmVerify.data.license_key || localRec?.licenseKey || key;
+        const resolvedPlan = crmVerify.data.plan || localRec?.plan || 'annual';
+        return sendJson(
+          res,
+          200,
+          applyReferralBonusToVerifyPayload(resolvedKey, {
+            valid: true,
+            project_id: 'deepblock',
+            account_id: crmVerify.data.account_id || localRec?.id,
+            licenseKey: resolvedKey,
+            plan: resolvedPlan,
+            ramTamerAddon: true,
+            addons: addonsList.includes('ram_tamer') ? addonsList : [...addonsList, 'ram_tamer'],
+            entitlements: buildDeepblockEntitlements(true, resolvedPlan === 'suite_annual'),
+            status: crmStatus,
+            cancelAtPeriodEnd: Boolean(crmVerify.data.cancelAtPeriodEnd || crmVerify.data.cancel_at_period_end),
+            expiresAt: crmVerify.data.expiresAt || localRec?.expiresAt,
+            token: crmVerify.data.token,
+            devices_used: localRec ? localRec.devices.size : 1,
+            devices_max: MAX_DEVICES_PER_LICENSE,
+            devices: localRec ? listAccountDevices(localRec) : []
+          }, crmVerify.data.expiresAt ? 0 : (localRec?.referralBonusDaysApplied || 0))
+        );
       }
       if (crmStatus === 'canceled' || crmStatus === 'expired' || crmStatus === 'unpaid' || crmStatus === 'past_due') {
         return sendJson(res, 403, { valid: false, status: crmStatus, error: 'subscription_inactive' });
@@ -4554,13 +5056,16 @@ function getCachedDynamicDelta() {
     }
 
     let record = licenses.get(key) || licenses.get(key.toUpperCase());
+    const refStoreForVerify = isHighEntropyKey ? loadReferralsStore() : { trials: {} };
+    const referralTrialRec = isHighEntropyKey ? refStoreForVerify.trials?.[key.toUpperCase()] : null;
+
     const negExpiresAt = negativeLicenseCache.get(key.toUpperCase());
-    if (!record && negExpiresAt && Date.now() < negExpiresAt) {
+    if (!record && !referralTrialRec && negExpiresAt && Date.now() < negExpiresAt) {
       return sendJson(res, 404, { valid: false, error: 'license_not_found' });
     }
 
     // 3. Stateless live Stripe fallback if server restarted and CRM was unreachable during checkout (60s rate-guarded cache)
-    if (!record && STRIPE_SECRET_KEY && isHighEntropyKey) {
+    if (!record && !referralTrialRec && STRIPE_SECRET_KEY && isHighEntropyKey) {
       try {
         const activeSubs = await getCachedActiveStripeSubs();
         const matchedSub = activeSubs.find(
@@ -4572,7 +5077,7 @@ function getCachedDynamicDelta() {
             stripeCustomerId: typeof matchedSub.customer === 'string' ? matchedSub.customer : matchedSub.customer?.id,
             subscriptionId: matchedSub.id,
             plan: matchedSub.metadata?.plan || 'annual',
-            ramTamerAddon: matchedSub.metadata?.ram_tamer === 'true',
+            ramTamerAddon: true,
             status: 'active',
             licenseKey: matchedSub.metadata?.license_key
           });
@@ -4612,6 +5117,15 @@ function getCachedDynamicDelta() {
         } catch {}
       }
 
+      if (record.isReferralTrial && record.expiresAt && Date.now() > Date.parse(record.expiresAt)) {
+        return sendJson(res, 403, {
+          valid: false,
+          status: 'expired',
+          error: 'trial_expired',
+          message: 'Your 14-day referral Pro trial has expired.'
+        });
+      }
+
       if (record.status === 'active' || record.status === 'trialing') {
         const seatCheck = registerLocalDeviceForAccount(record, deviceId, { deviceName, platform });
         if (!seatCheck.ok) {
@@ -4624,22 +5138,73 @@ function getCachedDynamicDelta() {
             devices: seatCheck.devices
           });
         }
-        return sendJson(res, 200, {
-          valid: true,
-          project_id: 'deepblock',
-          account_id: record.id,
-          licenseKey: record.licenseKey,
-          plan: record.plan,
-          ramTamerAddon: Boolean(record.ramTamerAddon),
-          entitlements: record.entitlements,
-          status: record.status,
-          devices_used: record.devices.size,
-          devices_max: MAX_DEVICES_PER_LICENSE,
-          devices: listAccountDevices(record)
-        });
+        return sendJson(
+          res,
+          200,
+          applyReferralBonusToVerifyPayload(record.licenseKey, {
+            valid: true,
+            project_id: 'deepblock',
+            account_id: record.id,
+            licenseKey: record.licenseKey,
+            plan: record.plan,
+            ramTamerAddon: true,
+            entitlements: buildDeepblockEntitlements(true, record.plan === 'suite_annual'),
+            status: record.status,
+            ...(record.expiresAt ? { expiresAt: record.expiresAt } : {}),
+            devices_used: record.devices.size,
+            devices_max: MAX_DEVICES_PER_LICENSE,
+            devices: listAccountDevices(record)
+          }, record.referralBonusDaysApplied || 0)
+        );
       }
       return sendJson(res, 403, { valid: false, status: record.status, error: 'subscription_inactive' });
     }
+
+    if (referralTrialRec) {
+      if (referralTrialRec.expiresAt && Date.now() > Date.parse(referralTrialRec.expiresAt)) {
+        return sendJson(res, 403, {
+          valid: false,
+          status: 'expired',
+          error: 'trial_expired',
+          message: 'Your 14-day referral Pro trial has expired.'
+        });
+      }
+      if (!Array.isArray(referralTrialRec.devices)) referralTrialRec.devices = [];
+      if (deviceId) {
+        const alreadyRegistered = referralTrialRec.devices.some((d) => (typeof d === 'string' ? d : d?.id) === deviceId);
+        if (!alreadyRegistered) {
+          if (referralTrialRec.devices.length >= MAX_DEVICES_PER_LICENSE) {
+            return sendJson(res, 403, {
+              valid: false,
+              error: 'device_limit_reached',
+              message: `Device limit reached (${MAX_DEVICES_PER_LICENSE} devices max).`,
+              devices_used: referralTrialRec.devices.length,
+              devices_max: MAX_DEVICES_PER_LICENSE
+            });
+          }
+          referralTrialRec.devices.push(deviceId);
+          saveReferralsStore(refStoreForVerify);
+        }
+      }
+      return sendJson(
+        res,
+        200,
+        applyReferralBonusToVerifyPayload(referralTrialRec.trialKey, {
+          valid: true,
+          project_id: 'deepblock',
+          licenseKey: referralTrialRec.trialKey,
+          plan: referralTrialRec.plan || 'referral_trial_14d',
+          isReferralTrial: true,
+          ramTamerAddon: true,
+          entitlements: buildDeepblockEntitlements(true, false),
+          status: 'trialing',
+          expiresAt: referralTrialRec.expiresAt,
+          devices_used: referralTrialRec.devices.length,
+          devices_max: MAX_DEVICES_PER_LICENSE
+        })
+      );
+    }
+
     return sendJson(res, 404, { valid: false, error: 'license_not_found' });
   }
 
@@ -4802,15 +5367,10 @@ function getCachedDynamicDelta() {
         crmReachable = true;
         if (otpVerify.ok && otpVerify.data?.ok) {
           const d = otpVerify.data;
-          const addonsList = Array.isArray(d.addons) ? d.addons : [];
-          const hasRamTamer =
-            Boolean(d.ramTamerAddon) ||
-            addonsList.includes('ram_tamer') ||
-            addonsList.includes('sweepr_secure_bundle');
           localAcc = upsertLocalAccount({
             email,
             plan: d.plan || localAcc?.plan || 'annual',
-            ramTamerAddon: hasRamTamer,
+            ramTamerAddon: true,
             status: d.active || d.status === 'active' || d.status === 'trialing' ? 'active' : d.status || 'active',
             ...(d.licenseKey || d.license_key ? { licenseKey: String(d.licenseKey || d.license_key) } : {})
           });
@@ -4822,8 +5382,8 @@ function getCachedDynamicDelta() {
             status: localAcc.status,
             plan: localAcc.plan,
             licenseKey: localAcc.licenseKey,
-            ramTamerAddon: Boolean(localAcc.ramTamerAddon),
-            entitlements: localAcc.entitlements,
+            ramTamerAddon: true,
+            entitlements: buildDeepblockEntitlements(true, localAcc.plan === 'suite_annual'),
             cancelAtPeriodEnd: Boolean(localAcc.cancelAtPeriodEnd)
           };
         }
@@ -4835,11 +5395,10 @@ function getCachedDynamicDelta() {
           crmReachable = true;
           if (crmLookup.ok && crmLookup.data?.ok) {
             const d = crmLookup.data;
-            const hasRamTamer = Boolean(d.ramTamerAddon);
             localAcc = upsertLocalAccount({
               email,
               plan: d.plan || localAcc?.plan || 'annual',
-              ramTamerAddon: hasRamTamer,
+              ramTamerAddon: true,
               status: d.status || 'active',
               ...(d.licenseKey || d.license_key ? { licenseKey: String(d.licenseKey || d.license_key) } : {})
             });
@@ -4851,8 +5410,8 @@ function getCachedDynamicDelta() {
               status: localAcc.status,
               plan: localAcc.plan,
               licenseKey: localAcc.licenseKey,
-              ramTamerAddon: hasRamTamer,
-              entitlements: buildDeepblockEntitlements(hasRamTamer),
+              ramTamerAddon: true,
+              entitlements: buildDeepblockEntitlements(true, localAcc.plan === 'suite_annual'),
               cancelAtPeriodEnd: localAcc.cancelAtPeriodEnd,
               expiresAt: d.expiresAt
             };
@@ -4876,8 +5435,8 @@ function getCachedDynamicDelta() {
         status: localAcc.status,
         plan: localAcc.plan,
         licenseKey: localAcc.licenseKey,
-        ramTamerAddon: Boolean(localAcc.ramTamerAddon),
-        entitlements: localAcc.entitlements,
+        ramTamerAddon: true,
+        entitlements: buildDeepblockEntitlements(true, localAcc.plan === 'suite_annual'),
         cancelAtPeriodEnd: Boolean(localAcc.cancelAtPeriodEnd)
       };
     }
@@ -4965,25 +5524,29 @@ function getCachedDynamicDelta() {
     const crmLookup = await crm.portalLookup(effectiveLookup, lookupKey, clientIp);
     if (crmLookup.ok && crmLookup.data && crmLookup.data.ok) {
       const d = crmLookup.data;
-      const hasRamTamer = Boolean(d.ramTamerAddon);
       const localRec = isEmail
         ? accountsByEmail.get(effectiveLookup.toLowerCase())
         : licenses.get(lookupKey) || licenses.get(lookupKey.toUpperCase());
-      return sendJson(res, 200, {
-        ok: true,
-        project_id: 'deepblock',
-        account_id: d.account_id || localRec?.id,
-        status: d.status,
-        plan: d.plan,
-        licenseKey: d.licenseKey || d.license_key,
-        ramTamerAddon: hasRamTamer,
-        entitlements: buildDeepblockEntitlements(hasRamTamer),
-        cancelAtPeriodEnd: Boolean(d.cancelAtPeriodEnd || d.cancel_at_period_end),
-        expiresAt: d.expiresAt,
-        devices_used: localRec && localRec.devices instanceof Set ? localRec.devices.size : 0,
-        devices_max: MAX_DEVICES_PER_LICENSE,
-        devices: localRec ? listAccountDevices(localRec) : []
-      });
+      const planName = d.plan || localRec?.plan || 'annual';
+      return sendJson(
+        res,
+        200,
+        applyReferralBonusToVerifyPayload(d.licenseKey || d.license_key || localRec?.licenseKey || '', {
+          ok: true,
+          project_id: 'deepblock',
+          account_id: d.account_id || localRec?.id,
+          status: d.status,
+          plan: planName,
+          licenseKey: d.licenseKey || d.license_key,
+          ramTamerAddon: true,
+          entitlements: buildDeepblockEntitlements(true, planName === 'suite_annual'),
+          cancelAtPeriodEnd: Boolean(d.cancelAtPeriodEnd || d.cancel_at_period_end),
+          expiresAt: d.expiresAt,
+          devices_used: localRec && localRec.devices instanceof Set ? localRec.devices.size : 0,
+          devices_max: MAX_DEVICES_PER_LICENSE,
+          devices: localRec ? listAccountDevices(localRec) : []
+        })
+      );
     }
 
     let record = isEmail
@@ -5011,7 +5574,7 @@ function getCachedDynamicDelta() {
             stripeCustomerId: typeof matchedSub.customer === 'string' ? matchedSub.customer : matchedSub.customer?.id,
             subscriptionId: matchedSub.id,
             plan: matchedSub.metadata?.plan || 'annual',
-            ramTamerAddon: matchedSub.metadata?.ram_tamer === 'true',
+            ramTamerAddon: true,
             status: 'active',
             ...(matchedSub.metadata?.license_key ? { licenseKey: matchedSub.metadata.license_key } : {})
           });
@@ -5032,20 +5595,21 @@ function getCachedDynamicDelta() {
     return sendJson(
       res,
       200,
-      {
+      applyReferralBonusToVerifyPayload(record.licenseKey, {
         ok: true,
         account_id: record.id,
         email: isEmail ? record.email : maskEmail(record.email),
         status: record.status,
         plan: record.plan,
         licenseKey: record.licenseKey,
-        ramTamerAddon: Boolean(record.ramTamerAddon),
-        entitlements: record.entitlements,
+        ramTamerAddon: true,
+        entitlements: buildDeepblockEntitlements(true, record.plan === 'suite_annual'),
         cancelAtPeriodEnd: Boolean(record.cancelAtPeriodEnd),
+        ...(record.expiresAt ? { expiresAt: record.expiresAt } : {}),
         devices_used: record.devices instanceof Set ? record.devices.size : 0,
         devices_max: MAX_DEVICES_PER_LICENSE,
         devices: listAccountDevices(record)
-      },
+      }),
       {
         'Set-Cookie': `sweepr_session=${sessionToken}; Path=/; HttpOnly; SameSite=Lax${isHttps ? '; Secure' : ''}; Max-Age=${86400 * 30}`
       }
@@ -5148,26 +5712,20 @@ function getCachedDynamicDelta() {
     acc.status = 'active';
     acc.cancelAtPeriodEnd = false;
     acc.stepUpSaveEligible = false;
-    if (winbackTier === 'tier_d60' || targetPlan === 'suite_annual' || Boolean(body?.ramTamerAddon)) {
-      acc.ramTamerAddon = true;
-    }
-    acc.entitlements = buildDeepblockEntitlements(Boolean(acc.ramTamerAddon), targetPlan === 'suite_annual');
+    acc.ramTamerAddon = true;
+    acc.entitlements = buildDeepblockEntitlements(true, targetPlan === 'suite_annual');
     syncSubscriptionWithSweeprCrm(acc, {
       notes: `Switched plan via A4/Phase3 winback (${winbackTier || 'direct'}) to ${targetPlan}`
     }).catch(() => {});
     const confirmMsg =
       targetPlan === 'suite_annual'
-        ? 'Upgraded to Sweepr Complete Security Suite (£89.99/yr — DeepBlock Pro + Sweepr VPN + Sweepr Cleaner + RAM Tamer)'
-        : winbackTier === 'tier_d60'
-        ? 'Switched to Annual Plan (£59.99/yr) + Free 12-Month Total Tab & RAM Tamer Unlocked!'
-        : targetPlan === 'annual'
-        ? 'Switched to Annual Plan (£59.99/yr — £4.99/mo equivalent)'
-        : 'Switched to 6-Month Plan (£44.99 — Save 25%)';
+        ? 'Upgraded to Sweepr Complete Security Suite (£89.99/yr — Deepblock Pro + Sweepr VPN + Sweepr Cleaner)'
+        : 'Switched to Annual Plan (£29.99/yr — Total Tab & RAM Tamer Included)';
     return sendJson(res, 200, {
       ok: true,
       plan: acc.plan,
       winbackTier: winbackTier || null,
-      ramTamerAddon: Boolean(acc.ramTamerAddon),
+      ramTamerAddon: true,
       entitlements: acc.entitlements,
       status: acc.status,
       licenseKey: acc.licenseKey,
@@ -5176,7 +5734,7 @@ function getCachedDynamicDelta() {
   }
 
   // ==========================================================================
-  // API 3c: Unified 4-Device Management & QR Code Device Linking (Flow A & B)
+  // API 3c: Unified 5-Device Management & QR Code Device Linking (Flow A & B)
   // ==========================================================================
   async function resolveAccountFromSessionOrCredentials(reqObj, bodyObj = {}) {
     const reqOrigin = String(reqObj?.headers?.origin || '').trim().toLowerCase();
@@ -5193,7 +5751,7 @@ function getCachedDynamicDelta() {
             bySub = upsertLocalAccount({
               email: String(sess.email).toLowerCase(),
               plan: d.plan || 'annual',
-              ramTamerAddon: Boolean(d.ramTamerAddon),
+              ramTamerAddon: true,
               status: d.status || 'active',
               ...(d.licenseKey || d.license_key ? { licenseKey: String(d.licenseKey || d.license_key) } : {})
             });
@@ -5226,7 +5784,7 @@ function getCachedDynamicDelta() {
           acc = upsertLocalAccount({
             email: rawLookup,
             plan: d.plan || 'annual',
-            ramTamerAddon: Boolean(d.ramTamerAddon),
+            ramTamerAddon: true,
             status: d.status || 'active',
             ...(d.licenseKey || d.license_key ? { licenseKey: String(d.licenseKey || d.license_key) } : {})
           });
@@ -5260,7 +5818,7 @@ function getCachedDynamicDelta() {
     return null;
   }
 
-  // Self-Service Device Slot Removal (frees a slot when at 4/4 devices)
+  // Self-Service Device Slot Removal (frees a slot when at 5/5 devices)
   if (req.method === 'POST' && pathname === '/api/portal/devices/remove') {
     if (!isSameOriginWriteRequest(req, { allowExtension: true })) {
       return sendJson(res, 403, { ok: false, error: 'cross_origin_forbidden' }, {}, req);
@@ -5634,7 +6192,7 @@ function getCachedDynamicDelta() {
   <meta name="robots" content="noindex, nofollow">
   <title>Link Device via QR — SWEEPR Deepblock Pro</title>
   <link rel="icon" type="image/svg+xml" href="/logo.svg">
-  <link rel="stylesheet" href="/sweepr-ui.css">
+  <link rel="stylesheet" href="/sweepr-tailwind.min.css?v=20261122">
 </head>
 <body class="bg-[#0b1120] text-white min-h-screen flex items-center justify-center p-5 font-sans antialiased">
   <div class="max-w-md w-full bg-[#131c31] border border-emerald-500/30 rounded-3xl p-7 shadow-2xl space-y-5">
@@ -5653,7 +6211,7 @@ function getCachedDynamicDelta() {
       <div class="bg-slate-900/90 border border-slate-700/80 rounded-2xl p-4 space-y-2 text-sm">
         <div class="text-xs font-bold uppercase tracking-wider text-slate-400">Waiting Device</div>
         <div class="font-extrabold text-white text-base">${escapeHtml(ch.deviceName)}</div>
-        <div class="text-xs text-slate-400">Up to 3 devices (any combination of desktop or mobile) are included in your subscription.</div>
+        <div class="text-xs text-slate-400">Up to 5 devices (any combination of desktop or mobile) are included in your subscription.</div>
       </div>
 
       <div id="approveAuthFields" class="${loggedInAcc ? 'hidden' : 'space-y-3'}">
@@ -5679,7 +6237,7 @@ function getCachedDynamicDelta() {
         ? `
       <div id="redeemContainer" class="space-y-4">
         <div class="bg-slate-900/90 border border-slate-700/80 rounded-2xl p-4 text-sm text-slate-300">
-          Tap below to link this device to your <strong>SWEEPR Deepblock Pro</strong> subscription (up to 4 devices total).
+          Tap below to link this device to your <strong>SWEEPR Deepblock Pro</strong> subscription (up to 5 devices total).
         </div>
         <div id="redeemStatus" class="hidden text-xs font-bold rounded-xl p-3"></div>
         <button id="redeemBtn" type="button" class="w-full py-3.5 px-5 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-sm shadow-lg cursor-pointer">
@@ -5689,8 +6247,7 @@ function getCachedDynamicDelta() {
           <div class="text-xs font-bold uppercase tracking-wider text-emerald-400">✓ Device Linked (Pro Active)</div>
           <div class="text-xs text-slate-300">License Key: <span id="redeemedKeyText" class="font-mono font-bold text-white"></span></div>
           <div class="grid grid-cols-1 gap-2 pt-1">
-            <a href="/download/sweepr-deepblock.mobileconfig" class="text-center py-2.5 px-4 rounded-xl bg-emerald-500 text-slate-950 font-black text-xs no-underline">Install iOS / Mobile Protection Profile</a>
-            <a href="/download" class="text-center py-2.5 px-4 rounded-xl bg-slate-800 text-white font-bold text-xs border border-slate-700 no-underline">Open Extension &amp; App Downloads</a>
+            <a href="/download" class="text-center py-2.5 px-4 rounded-xl bg-emerald-500 text-slate-950 font-black text-xs no-underline">Open Extension &amp; Desktop Downloads</a>
           </div>
         </div>
       </div>
@@ -5751,7 +6308,7 @@ function getCachedDynamicDelta() {
               }
               if (data.error === 'device_limit_reached' && Array.isArray(data.devices) && slotsEl) {
                 slotsEl.classList.remove('hidden');
-                slotsEl.innerHTML = '<div class="text-xs font-bold text-amber-300">Active Devices (3/3) — Remove one to continue:</div>';
+                slotsEl.innerHTML = '<div class="text-xs font-bold text-amber-300">Active Devices (${MAX_DEVICES_PER_LICENSE}/${MAX_DEVICES_PER_LICENSE}) — Remove one to continue:</div>';
                 data.devices.forEach((d) => {
                   const row = document.createElement('div');
                   row.className = 'flex items-center justify-between bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs';
@@ -5872,11 +6429,132 @@ function getCachedDynamicDelta() {
       body: ticketPayload
     });
     const fallbackTicketNo = 'DB-' + crypto.randomInt(100000, 999999);
-    return sendJson(res, 200, {
-      ok: true,
-      ticket_number: crmRes.data?.ticket_number || crmRes.data?.id || fallbackTicketNo,
-      ...(crmRes.ok && crmRes.data ? crmRes.data : {})
-    }, {}, req);
+    if (crmRes.ok) {
+      return sendJson(
+        res,
+        200,
+        {
+          ok: true,
+          ticket_number: crmRes.data?.ticket_number || crmRes.data?.id || fallbackTicketNo,
+          ...(crmRes.data && typeof crmRes.data === 'object' ? crmRes.data : {})
+        },
+        {},
+        req
+      );
+    }
+
+    try {
+      let existingQueue = [];
+      if (fs.existsSync(SUPPORT_DLQ_FILE)) {
+        try {
+          const parsed = JSON.parse(fs.readFileSync(SUPPORT_DLQ_FILE, 'utf8'));
+          if (Array.isArray(parsed)) existingQueue = parsed;
+        } catch {}
+      }
+      existingQueue.push({
+        ticket_number: fallbackTicketNo,
+        queuedAt: new Date().toISOString(),
+        crmStatus: crmRes.status || 0,
+        payload: ticketPayload
+      });
+      fs.mkdirSync(path.dirname(SUPPORT_DLQ_FILE), { recursive: true });
+      const tmpDlq = `${SUPPORT_DLQ_FILE}.tmp`;
+      fs.writeFileSync(tmpDlq, JSON.stringify(existingQueue, null, 2), 'utf8');
+      fs.renameSync(tmpDlq, SUPPORT_DLQ_FILE);
+      return sendJson(
+        res,
+        202,
+        {
+          ok: true,
+          queued: true,
+          ticket_number: fallbackTicketNo,
+          message: 'Support request queued for delivery.'
+        },
+        {},
+        req
+      );
+    } catch {
+      return sendJson(
+        res,
+        503,
+        {
+          ok: false,
+          error: 'support_unavailable',
+          message: 'Support ticketing is temporarily unavailable. Please try again shortly.'
+        },
+        {},
+        req
+      );
+    }
+  }
+
+  function extractClientTelemetryMeta(req, props = {}, osFallback = '') {
+    const ua = String(req?.headers?.['user-agent'] || '');
+    const uaLower = ua.toLowerCase();
+    const chUa = String(req?.headers?.['sec-ch-ua'] || '').toLowerCase();
+    const chPlat = String(req?.headers?.['sec-ch-ua-platform'] || '').replace(/["']/g, '').toLowerCase();
+    const acceptLang = String(req?.headers?.['accept-language'] || '');
+    const locale = String(props?.locale || acceptLang.split(',')[0]?.split(';')[0] || '').trim().slice(0, 16);
+
+    let browser = typeof props?.browser === 'string' ? props.browser.trim().slice(0, 40) : '';
+    if (!browser) {
+      if (chUa.includes('microsoft edge') || uaLower.includes('edg/') || uaLower.includes('edga/') || uaLower.includes('edgios/')) {
+        browser = 'Edge';
+      } else if (chUa.includes('brave') || uaLower.includes('brave')) {
+        browser = 'Brave';
+      } else if (chUa.includes('opera') || uaLower.includes('opr/') || uaLower.includes('opera')) {
+        browser = 'Opera';
+      } else if (uaLower.includes('vivaldi')) {
+        browser = 'Vivaldi';
+      } else if (uaLower.includes('firefox/') || uaLower.includes('fxios/') || osFallback === 'firefox_amo') {
+        browser = 'Firefox';
+      } else if (uaLower.includes('samsungbrowser')) {
+        browser = 'Samsung Internet';
+      } else if (chUa.includes('google chrome') || chUa.includes('chromium') || uaLower.includes('chrome/') || uaLower.includes('chromium/') || uaLower.includes('crios/')) {
+        browser = 'Chrome';
+      } else if (uaLower.includes('safari/') && !uaLower.includes('chrome')) {
+        browser = 'Safari';
+      } else if (osFallback === 'chrome_webstore') {
+        browser = 'Chrome';
+      }
+    }
+
+    let osPlatform = typeof props?.os_platform === 'string' ? props.os_platform.trim().slice(0, 32) : '';
+    if (!osPlatform) {
+      const platSource = `${chPlat} ${uaLower} ${String(osFallback || '').toLowerCase()}`;
+      if (platSource.includes('android')) osPlatform = 'Android';
+      else if (platSource.includes('iphone') || platSource.includes('ipad') || platSource.includes('ipod') || platSource.includes('ios')) osPlatform = 'iOS';
+      else if (platSource.includes('cros')) osPlatform = 'ChromeOS';
+      else if (platSource.includes('mac') || platSource.includes('darwin')) osPlatform = 'macOS';
+      else if (platSource.includes('windows') || platSource.includes('win64') || platSource.includes('win32')) osPlatform = 'Windows';
+      else if (platSource.includes('linux') || platSource.includes('x11')) osPlatform = 'Linux';
+    }
+
+    const headerCountry = String(
+      req?.headers?.['cf-ipcountry'] ||
+      req?.headers?.['x-vercel-ip-country'] ||
+      req?.headers?.['x-country-code'] ||
+      req?.headers?.['cloudfront-viewer-country'] ||
+      req?.headers?.['x-appengine-country'] ||
+      ''
+    ).trim().toUpperCase();
+    const propCountry = String(props?.country || props?.country_hint || '').trim().toUpperCase();
+    const langRegionMatch = acceptLang.match(/\b[a-z]{2,3}[-_]([A-Z]{2})\b/i);
+    const langCountry = langRegionMatch && langRegionMatch[1] ? langRegionMatch[1].toUpperCase() : '';
+    const candidateCountry = /^[A-Z]{2}$/.test(headerCountry) && headerCountry !== 'XX'
+      ? headerCountry
+      : /^[A-Z]{2}$/.test(propCountry) && propCountry !== 'XX'
+      ? propCountry
+      : /^[A-Z]{2}$/.test(langCountry) && langCountry !== 'XX'
+      ? langCountry
+      : '';
+
+    return {
+      ...(browser ? { browser } : {}),
+      ...(osPlatform ? { os_platform: osPlatform } : {}),
+      ...(candidateCountry ? { country: candidateCountry } : {}),
+      ...(locale ? { locale } : {})
+    };
   }
 
   // API 5: Extension Telemetry & Funnel Events -> Central CRM (Strict Local-First Privacy Filter: No URLs, Domains, Queries, or Browsing History)
@@ -5909,10 +6587,28 @@ function getCachedDynamicDelta() {
       } catch {}
     }
     const normalizedEventName = String(data.event_name || data.event).slice(0, 120);
-    const osValue = typeof data.os === 'string' ? data.os.slice(0, 64) : 'browser_extension';
-    const clientMeta = extractClientTelemetryMeta(req, safeProps, osValue);
-    const enrichedProps = { ...clientMeta, ...safeProps };
+    const clientMeta = extractClientTelemetryMeta(req, {
+      ...safeProps,
+      ...(typeof data.browser === 'string' ? { browser: data.browser } : {})
+    });
+    safeProps = { ...clientMeta, ...safeProps, ...(clientMeta.country ? { country: clientMeta.country } : {}) };
     const fwdIp = getClientIp(req);
+    let referralBonusDays = 0;
+    try {
+      const refStore = loadReferralsStore();
+      const rawLicKey = String(data.license_key || data.licenseKey || safeProps.licenseKey || '').trim().toUpperCase();
+      if (rawLicKey && refStore.licenseBonuses && refStore.licenseBonuses[rawLicKey]) {
+        referralBonusDays = Math.max(0, Number(refStore.licenseBonuses[rawLicKey].bonusDays || 0));
+      } else if (typeof data.device_id === 'string' && data.device_id.trim()) {
+        const devHmac = crypto.createHash('sha256').update(`sweepr_ref:${data.device_id.trim()}`).digest('hex').slice(0, 8);
+        const rec = refStore.codes && refStore.codes[`u_${devHmac}`];
+        if (rec) referralBonusDays = Math.max(0, Number(rec.bonusProDaysEarned || 0));
+      }
+    } catch {}
+    const resolvedOs =
+      typeof data.os === 'string' && data.os.trim() && data.os !== 'browser_extension'
+        ? data.os.slice(0, 64)
+        : (clientMeta.os_platform ? clientMeta.os_platform.toLowerCase() : 'browser_extension');
     const crmRes = await requestSweeprCrm('/v1/telemetry/event', {
       method: 'POST',
       extraHeaders: fwdIp ? { 'x-sweepr-forwarded-ip': fwdIp } : {},
@@ -5922,15 +6618,16 @@ function getCachedDynamicDelta() {
         category: typeof data.category === 'string' ? data.category.slice(0, 64) : 'funnel',
         account_id: typeof data.account_id === 'string' ? data.account_id.slice(0, 64) : undefined,
         device_id: typeof data.device_id === 'string' ? data.device_id.slice(0, 64) : undefined,
-        os: osValue,
+        os: resolvedOs,
         app_version: typeof data.app_version === 'string' ? data.app_version.slice(0, 32) : LATEST_EXTENSION_VERSION,
-        properties: enrichedProps
+        properties: safeProps
       }
     });
     return sendJson(res, 200, {
       ok: true,
       event_name: normalizedEventName,
       privacy_filtered: true,
+      referralBonusDays,
       ...(crmRes.data && typeof crmRes.data === 'object' ? crmRes.data : {})
     });
   }
@@ -6175,35 +6872,82 @@ function getCachedDynamicDelta() {
     }
   }
 
+  if (req.url.includes('%00') || parsedUrl.pathname.includes('\0')) {
+    return sendErrorResponse(res, 400, '400 Bad Request');
+  }
+  try {
+    decodeURIComponent(parsedUrl.pathname);
+  } catch {
+    return sendErrorResponse(res, 400, '400 Bad Request');
+  }
+
   if ((req.method === 'GET' || req.method === 'HEAD') && (parsedUrl.pathname === '/apple-app-site-association' || parsedUrl.pathname === '/.well-known/apple-app-site-association')) {
     const aasaBody = JSON.stringify({ applinks: { apps: [], details: [] }, webcredentials: { apps: ['SWEEPR.sweeprdeepblock.com'] } });
     res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'public, max-age=86400', 'X-Robots-Tag': 'noindex, nofollow', 'X-Content-Type-Options': 'nosniff' });
     return res.end(req.method === 'HEAD' ? undefined : aasaBody);
   }
-  if ((req.method === 'GET' || req.method === 'HEAD') && parsedUrl.pathname.startsWith('/cdn-cgi/l/email-protection')) {
+  if ((req.method === 'GET' || req.method === 'HEAD') && parsedUrl.pathname.toLowerCase().startsWith('/cdn-cgi/l/email-protection')) {
     res.writeHead(301, { Location: '/support', 'X-Robots-Tag': 'noindex, nofollow', 'X-Content-Type-Options': 'nosniff' });
     return res.end();
   }
-  if ((req.method === 'GET' || req.method === 'HEAD') && pathname === '/guides/block-youtube-ads') {
-    res.writeHead(301, {
-      Location: '/guides/how-to-block-youtube-ads-chrome-manifest-v3-2026',
-      'Cache-Control': 'public, max-age=604800',
-      'X-Content-Type-Options': 'nosniff'
-    });
+  if ((req.method === 'GET' || req.method === 'HEAD') && parsedUrl.pathname === '/' && parsedUrl.searchParams.get('home') === '1') {
+    res.writeHead(301, { Location: '/', 'Cache-Control': 'public, max-age=3600', 'X-Content-Type-Options': 'nosniff' });
     return res.end();
   }
-  if ((req.method === 'GET' || req.method === 'HEAD') && pathname === '/features/cookie-consent-blocker') {
-    res.writeHead(301, {
-      Location: '/guides/how-to-automatically-reject-cookie-banners-uk',
-      'Cache-Control': 'public, max-age=604800',
-      'X-Content-Type-Options': 'nosniff'
-    });
-    return res.end();
-  }
-  if ((req.method === 'GET' || req.method === 'HEAD') && parsedUrl.pathname.length > 1 && /[).,\]]+$/.test(parsedUrl.pathname)) {
-    const cleanTarget = ((parsedUrl.pathname.replace(/[).,\]]+$/, '') || '/').replace(/^\/+/, '/')) + (parsedUrl.search || '');
-    res.writeHead(301, { Location: cleanTarget, 'Cache-Control': 'public, max-age=604800', 'X-Content-Type-Options': 'nosniff' });
-    return res.end();
+
+  // Single-pass canonical URL & consolidation normalizer (prevents 2-hop/3-hop chains, /<dir>/index duplicates, and SWEEPR case bypasses)
+  const STATIC_ASSET_EXT_RE = /\.(?:css|js|svg|png|jpe?g|webp|ico|woff2?|ttf|eot|xml|txt|json|webmanifest|exe|apk|command|zip|xpi|mobileconfig|idsig|nupkg)$/i;
+  if (
+    (req.method === 'GET' || req.method === 'HEAD') &&
+    !parsedUrl.pathname.startsWith('/api/') &&
+    !parsedUrl.pathname.startsWith('/checkout') &&
+    !parsedUrl.pathname.startsWith('/metrics/') &&
+    !parsedUrl.pathname.startsWith('/webhooks/') &&
+    !parsedUrl.pathname.startsWith('/.well-known/') &&
+    !parsedUrl.pathname.startsWith('/download/') &&
+    !STATIC_ASSET_EXT_RE.test(parsedUrl.pathname)
+  ) {
+    const rawPath = parsedUrl.pathname;
+    let canon = rawPath.replace(/^\/+/, '/') || '/';
+    if (canon.length > 1) {
+      canon = canon.replace(/[).,\]]+$/, '') || '/';
+    }
+    if (canon.length > 1) {
+      canon = canon.replace(/\/+$/, '') || '/';
+    }
+    canon = canon.toLowerCase();
+    if (canon.endsWith('.html')) {
+      canon = canon === '/index.html' ? '/' : canon.slice(0, -5) || '/';
+    }
+    if (canon === '/index') {
+      canon = '/';
+    } else if (canon.length > 1 && canon.endsWith('/index')) {
+      canon = canon.slice(0, -6) || '/';
+    }
+    if (canon === '/guides/block-youtube-ads') {
+      canon = '/guides/how-to-block-youtube-ads-chrome-manifest-v3-2026';
+    } else if (canon === '/features/cookie-consent-blocker') {
+      canon = '/guides/how-to-automatically-reject-cookie-banners-uk';
+    } else {
+      const consolidated = resolveConsolidationRedirect(canon);
+      if (consolidated) {
+        canon = consolidated;
+      }
+    }
+    canon = ('/' + canon).replace(/^\/+/, '/');
+    if (canon !== rawPath) {
+      const redirectHeaders = {
+        Location: canon + (parsedUrl.search || ''),
+        'Cache-Control': 'public, max-age=604800, stale-while-revalidate=2592000',
+        'X-Content-Type-Options': 'nosniff',
+        'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload'
+      };
+      if (resolveConsolidationRedirect(canon) === null && canon !== rawPath.toLowerCase().replace(/\.html$/, '').replace(/\/+$/, '')) {
+        redirectHeaders.Link = `<https://sweeprdeepblock.com${canon}>; rel="canonical"`;
+      }
+      res.writeHead(301, redirectHeaders);
+      return res.end();
+    }
   }
   // First-Party GA4 Script & Measurement Proxy (/metrics/js, /metrics/g/collect, /metrics/collect, /metrics/_/, /api/analytics/event)
   if ((req.method === 'GET' || req.method === 'HEAD') && pathname === '/metrics/js') {
@@ -6339,51 +7083,7 @@ function getCachedDynamicDelta() {
     return sendJson(res, 200, { ok: true });
   }
 
-  if ((req.method === 'GET' || req.method === 'HEAD') && parsedUrl.pathname === '/' && parsedUrl.searchParams.get('home') === '1') {
-    res.writeHead(301, { Location: '/', 'Cache-Control': 'public, max-age=3600', 'X-Content-Type-Options': 'nosniff' });
-    return res.end();
-  }
-  // 301 Canonical Redirect 1: Trailing slash normalization (e.g. /pricing/ -> /pricing)
-  if ((req.method === 'GET' || req.method === 'HEAD') && parsedUrl.pathname.length > 1 && parsedUrl.pathname.endsWith('/')) {
-    const cleanPath = (parsedUrl.pathname.replace(/\/+$/, '') || '/').replace(/^\/+/, '/') + (parsedUrl.search || '');
-    res.writeHead(301, {
-      Location: cleanPath,
-      'Cache-Control': 'public, max-age=604800, stale-while-revalidate=2592000',
-      'X-Content-Type-Options': 'nosniff',
-      'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload'
-    });
-    return res.end();
-  }
-
-  // 301 Canonical Redirect 2: .html extension stripping to canonical clean URLs
-  if ((req.method === 'GET' || req.method === 'HEAD') && parsedUrl.pathname.endsWith('.html')) {
-    const cleanPath = (parsedUrl.pathname === '/index.html' ? '/' : parsedUrl.pathname.slice(0, -5)).replace(/^\/+/, '/') + (parsedUrl.search || '');
-    res.writeHead(301, {
-      Location: cleanPath,
-      'Cache-Control': 'public, max-age=604800, stale-while-revalidate=2592000',
-      'X-Content-Type-Options': 'nosniff',
-      'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload'
-    });
-    return res.end();
-  }
-
-  // 301 Canonical Redirect 3: Lowercase normalization for HTML and SEO routes (prevents case duplicate content & Linux 404s)
-  if (
-    (req.method === 'GET' || req.method === 'HEAD') &&
-    /[A-Z]/.test(parsedUrl.pathname) &&
-    !parsedUrl.pathname.includes('SWEEPR') &&
-    !parsedUrl.pathname.startsWith('/api/') &&
-    !parsedUrl.pathname.startsWith('/checkout')
-  ) {
-    const lowerPath = parsedUrl.pathname.toLowerCase() + (parsedUrl.search || '');
-    res.writeHead(301, {
-      Location: lowerPath,
-      'Cache-Control': 'public, max-age=604800, stale-while-revalidate=2592000',
-      'X-Content-Type-Options': 'nosniff',
-      'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload'
-    });
-    return res.end();
-  }
+  // Canonicalization & trailing-slash/lowercase/.html 301s are handled in single-pass normalizer above.
 
   const forwardDownloadTelemetry = (osTag, pathWithQuery) => {
     const meta = extractClientTelemetryMeta(req, {}, osTag);
@@ -6426,6 +7126,14 @@ function getCachedDynamicDelta() {
     process.env.FIREFOX_AMO_URL ||
     'https://addons.mozilla.org/firefox/addon/sweepr-deepblock/';
 
+  if ((req.method === 'GET' || req.method === 'HEAD') && (pathname === '/download/sweepr-deepblock.mobileconfig' || pathname === '/sweepr-deepblock.mobileconfig')) {
+    res.writeHead(302, {
+      Location: '/download?ios=coming-soon',
+      'Cache-Control': 'no-store, no-cache, must-revalidate'
+    });
+    return res.end();
+  }
+
   if (req.method === 'GET' && (pathname === '/chrome' || pathname === '/cws')) {
     res.writeHead(302, {
       Location: CHROME_WEBSTORE_URL,
@@ -6445,53 +7153,60 @@ function getCachedDynamicDelta() {
   if (pathname === '/download') {
     const reqPlat = (parsedUrl.searchParams.get('platform') || '').toLowerCase();
     const reqStore = (parsedUrl.searchParams.get('store') || '').toLowerCase();
+    const isDirect = parsedUrl.searchParams.get('direct') === '1';
     const isAutoInstall =
       parsedUrl.searchParams.get('install') === '1' ||
-      parsedUrl.searchParams.get('direct') === '1' ||
+      isDirect ||
       reqStore === 'chrome' ||
       reqStore === 'firefox';
     const uaLower = String(req.headers['user-agent'] || '').toLowerCase();
+    const isBot = BOT_UA_RE.test(uaLower);
     const chPlat = String(req.headers['sec-ch-ua-platform'] || '').toLowerCase();
     const chMob = String(req.headers['sec-ch-ua-mobile'] || '').toLowerCase();
-    const isIosReq = reqPlat === 'ios' || /iphone|ipad|ipod/.test(uaLower) || chPlat.includes('ios');
-    const isNonSafariIos = isIosReq && /crios|fxios|edgios|opios|instagram|fban|fbav|tiktok|line\//i.test(uaLower);
-    const isFirefoxBrowser = !isIosReq && !reqPlat && /firefox\//i.test(uaLower);
+    const isIosReq = !isBot && (reqPlat === 'ios' || /iphone|ipad|ipod/.test(uaLower) || chPlat.includes('ios'));
+    const isFirefoxBrowser = !isBot && !isIosReq && !reqPlat && /firefox\//i.test(uaLower);
     const isAndroidReq =
-      reqPlat === 'android' ||
-      reqPlat === 'apk' ||
-      (!isFirefoxBrowser &&
-        (uaLower.includes('android') ||
-          chPlat.includes('android') ||
-          (chMob === '?1' && uaLower.includes('linux')) ||
-          /mobile|iemobile|opera mini/.test(uaLower)));
+      !isBot &&
+      !isIosReq &&
+      (reqPlat === 'android' ||
+        reqPlat === 'apk' ||
+        (!isFirefoxBrowser &&
+          (uaLower.includes('android') ||
+            chPlat.includes('android') ||
+            (chMob === '?1' && uaLower.includes('linux')) ||
+            /mobile|iemobile|opera mini/.test(uaLower))));
     const isDesktopChromium =
+      !isBot &&
       !isIosReq &&
       !isAndroidReq &&
       !isFirefoxBrowser &&
       !reqPlat &&
       /chrome\/|chromium\//i.test(uaLower) &&
       !/edg\/|firefox\/|fxios\//i.test(uaLower);
+    const wantsAndroidBinary =
+      !isBot && (reqPlat === 'android' || reqPlat === 'apk' || (isDirect && isAndroidReq));
+    const isGetOrHead = req.method === 'GET' || req.method === 'HEAD';
 
-    if (isIosReq && (!isNonSafariIos || reqPlat === 'ios')) {
-      candidateRel = 'sweepr-deepblock.mobileconfig';
-    } else if (req.method === 'GET' && (reqStore === 'firefox' || (isAutoInstall && isFirefoxBrowser))) {
-      if (!BOT_UA_RE.test(uaLower)) {
+    if (isGetOrHead && !isBot && (reqStore === 'firefox' || (isAutoInstall && isFirefoxBrowser))) {
+      if (req.method === 'GET') {
         forwardDownloadTelemetry('firefox_amo', pathname + parsedUrl.search);
       }
       res.writeHead(302, {
         Location: FIREFOX_AMO_URL,
-        'Cache-Control': 'no-store, no-cache, must-revalidate'
+        'Cache-Control': 'no-store, no-cache, must-revalidate',
+        Vary: 'User-Agent'
       });
       return res.end();
-    } else if (isAndroidReq) {
+    } else if (wantsAndroidBinary) {
       candidateRel = 'SWEEPRDeepblock.apk';
-    } else if (req.method === 'GET' && (reqStore === 'chrome' || (isAutoInstall && isDesktopChromium))) {
-      if (!BOT_UA_RE.test(uaLower)) {
+    } else if (isGetOrHead && !isBot && (reqStore === 'chrome' || (isAutoInstall && isDesktopChromium))) {
+      if (req.method === 'GET') {
         forwardDownloadTelemetry('chrome_webstore', pathname + parsedUrl.search);
       }
       res.writeHead(302, {
         Location: CHROME_WEBSTORE_URL,
-        'Cache-Control': 'no-store, no-cache, must-revalidate'
+        'Cache-Control': 'no-store, no-cache, must-revalidate',
+        Vary: 'User-Agent'
       });
       return res.end();
     }
@@ -6585,7 +7300,7 @@ function getCachedDynamicDelta() {
     }
   } catch (fsErr) {
     if (fsErr && (fsErr.code === 'ENOENT' || fsErr.code === 'ENOTDIR')) {
-      return sendErrorResponse(res, 404, '404 Not Found');
+      return sendNotFoundPage(req, res);
     }
     return sendErrorResponse(res, 403, '403 Forbidden');
   }
@@ -6743,6 +7458,10 @@ global.__cmoAutomationQueue = [];
 global.__cmoRunningJob = null;
 
 function drainCmoAutomationQueue() {
+  if (isCmoSchedulerDisabled()) {
+    global.__cmoAutomationQueue = [];
+    return;
+  }
   if (global.__cmoRunningJob || global.__cmoAutomationQueue.length === 0) return;
   const nextJob = global.__cmoAutomationQueue.shift();
   if (!nextJob) return;
@@ -6791,6 +7510,7 @@ function drainCmoAutomationQueue() {
 }
 
 global.__enqueueCmoAutomation = function (targetId = 'all') {
+  if (isCmoSchedulerDisabled()) return [];
   const jobs = global.__cmoAutomationJobs || [];
   const matched = targetId === 'all' ? jobs : jobs.filter((j) => j.id === targetId);
   const queuedIds = [];
@@ -6824,6 +7544,7 @@ if (require.main === module) {
   // Check for stale CMO automation artifacts 15s after boot and every 30 minutes
   // (HTML-mutating builders run via GitHub Actions unless ENABLE_IN_PROCESS_SEO_BUILDERS=true)
   const checkStaleCmoJobs = () => {
+    if (isCmoSchedulerDisabled()) return;
     try {
       const now = Date.now();
       const allowHtmlMutations = process.env.ENABLE_IN_PROCESS_SEO_BUILDERS === 'true';
@@ -6837,8 +7558,10 @@ if (require.main === module) {
       }
     } catch {}
   };
-  setTimeout(checkStaleCmoJobs, 15 * 1000).unref();
-  setInterval(checkStaleCmoJobs, 30 * 60 * 1000).unref();
+  if (!isCmoSchedulerDisabled()) {
+    setTimeout(checkStaleCmoJobs, 15 * 1000).unref();
+    setInterval(checkStaleCmoJobs, 30 * 60 * 1000).unref();
+  }
 }
 
 module.exports = server;

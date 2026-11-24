@@ -91,10 +91,15 @@ before(async () => {
       NODE_ENV: 'production',
       DATA_DIR: tempDataDir,
       SESSION_SECRET: 'test_ext_fixes_' + crypto.randomBytes(16).toString('hex'),
+      SWEEPR_CRM_URL: 'http://127.0.0.1:1',
       SWEEPR_CRM_API_KEY: 'test_crm_key',
       STRIPE_WEBHOOK_SECRET: 'whsec_test',
       CRM_ADMIN_PASSWORD: 'test_admin_password',
+      OWNER_EMAIL: 'owner@sweeprdeepblock.test',
+      OWNER_LICENSE_KEY: 'SWEEPR-DB-OWNR-2026-9999',
       LATEST_EXTENSION_VERSION: '1.3.1',
+      STRIPE_SECRET_KEY: '',
+      DISABLE_CMO_AUTOPILOT: '1',
       TRUST_PROXY: '',
       TRUST_CLOUDFLARE: ''
     },
@@ -192,7 +197,13 @@ test('E3: removed fake metrics and flags from all extension JS files', () => {
     /ramSavedGb/,
     /slowdownPct/,
     /estimatedGb/,
-    /secondsSaved\s*:\s*42/
+    /secondsSaved\s*:\s*42/,
+    /processRecipeAndNewsClutter/,
+    /processSearchResults/,
+    /processEcommerceStore/,
+    /fakeShopAlerts/,
+    /hideSearchSpam/,
+    /dns\.adguard-dns\.com/
   ];
   for (const rel of jsFiles) {
     const src = fs.readFileSync(path.join(ROOT, rel), 'utf8');
@@ -268,12 +279,11 @@ test('E6: background.js sanitizeRemoteSelector permits CSS > and rejects dangero
   assert.equal(fn('body;background:url(x)'), false);
 });
 
-test('E7: deepblock-content.js isolates settings.adBlocking === false so cookie/search/scam stay active', () => {
+test('E7: deepblock-content.js isolates settings.adBlocking === false so cookieAutoClose stays active without cosmetic ad hiding', () => {
   const src = fs.readFileSync(path.join(ROOT, 'extension/content/deepblock-content.js'), 'utf8');
   let calledCookie = false;
-  let calledSearch = false;
-  let calledScam = false;
   let calledAdHide = false;
+  let removedCosmetic = false;
 
   const docEl = {
     dataset: {},
@@ -288,12 +298,9 @@ test('E7: deepblock-content.js isolates settings.adBlocking === false so cookie/
               proActive: true,
               licenseKey: 'SWEEPR-DB-TEST-2026-ABCD',
               pausedSites: [],
-              trustedShopSites: [],
               settings: {
                 adBlocking: false,
                 cookieAutoClose: true,
-                hideSearchSpam: true,
-                fakeShopAlerts: true,
                 silentMode: true
               },
               remoteFeatureFlags: {}
@@ -312,12 +319,9 @@ test('E7: deepblock-content.js isolates settings.adBlocking === false so cookie/
             proActive: true,
             licenseKey: 'SWEEPR-DB-TEST-2026-ABCD',
             pausedSites: [],
-            trustedShopSites: [],
             settings: {
               adBlocking: false,
               cookieAutoClose: true,
-              hideSearchSpam: true,
-              fakeShopAlerts: true,
               silentMode: true
             },
             remoteFeatureFlags: {}
@@ -327,9 +331,8 @@ test('E7: deepblock-content.js isolates settings.adBlocking === false so cookie/
     }
   };
 
-  // Run initProtection-equivalent check on real GET_PAGE_SETTINGS branch using extracted logic
   assert.ok(src.includes('const adBlockingEnabled = settings.adBlocking !== false;'));
-  assert.ok(src.includes('if (adBlockingEnabled) {\n          injectUniversalAdCosmeticStyle();') || src.includes('if (adBlockingEnabled) {\r\n          injectUniversalAdCosmeticStyle();'));
+  assert.ok(/if \(adBlockingEnabled\) \{\s*injectUniversalAdCosmeticStyle\(\);/.test(src));
 
   const sandbox = {
     location: { hostname: 'example.com', href: 'https://example.com/' },
@@ -365,31 +368,29 @@ test('E7: deepblock-content.js isolates settings.adBlocking === false so cookie/
   sandbox.window.top = sandbox.window;
   sandbox.window.self = sandbox.window;
 
-  const instrumented = src.replace(
-    /processCookieBanners\(true, extraCmpSelectors\);/,
-    'processCookieBanners(true, extraCmpSelectors); __hooks.cookie();'
-  ).replace(
-    /processSearchResults\(true, extraSlopDomains\);/,
-    'processSearchResults(true, extraSlopDomains); __hooks.search();'
-  ).replace(
-    /processEcommerceStore\(true, trustedShopSites\);/,
-    'processEcommerceStore(true, trustedShopSites); __hooks.scam();'
-  ).replace(
-    /processRecipeAndNewsClutter\(true\);/,
-    'processRecipeAndNewsClutter(true); __hooks.adHide();'
-  );
+  const instrumented = src
+    .replace(
+      /processCookieBanners\(true, extraCmpSelectors\);/g,
+      'processCookieBanners(true, extraCmpSelectors); __hooks.cookie();'
+    )
+    .replace(
+      /countAndReportPageAds\('adsBlocked'\);/g,
+      "countAndReportPageAds('adsBlocked'); __hooks.adHide();"
+    )
+    .replace(
+      /\} else \{\r?\n\s*removeUniversalAdCosmeticStyle\(\);/,
+      '} else {\n          removeUniversalAdCosmeticStyle(); __hooks.adRemoved();'
+    );
   sandbox.__hooks = {
     cookie: () => { calledCookie = true; },
-    search: () => { calledSearch = true; },
-    scam: () => { calledScam = true; },
-    adHide: () => { calledAdHide = true; }
+    adHide: () => { calledAdHide = true; },
+    adRemoved: () => { removedCosmetic = true; }
   };
 
   vm.runInNewContext(instrumented, sandbox, { filename: 'deepblock-content.js' });
   assert.equal(calledCookie, true, 'cookieAutoClose must still run when adBlocking === false');
-  assert.equal(calledSearch, true, 'hideSearchSpam must still run when adBlocking === false');
-  assert.equal(calledScam, true, 'fakeShopAlerts must still run when adBlocking === false');
-  assert.equal(calledAdHide, false, 'ad cleanup must not run when adBlocking === false');
+  assert.equal(calledAdHide, false, 'ad-blocking DOM pass must not run when adBlocking === false');
+  assert.equal(removedCosmetic, true, 'removeUniversalAdCosmeticStyle must run when adBlocking === false');
 });
 
 test('E8: live server.js in production allows Chrome/Edge/Opera/Firefox/Safari origins, blocks unknown extension IDs with 403, and serves v1.3.1 delta', async () => {
@@ -451,4 +452,540 @@ test('E9: website test-lab.html, order.html, download.html, and ios-app.html fix
 
   const orderHtml = fs.readFileSync(path.join(ROOT, 'website/order.html'), 'utf8');
   assert.ok(orderHtml.includes("params.get('winback')") && orderHtml.includes('tier_d60'));
+});
+
+test('E10: /api/license-verify enforces 5-device cap, includes RAM Tamer in base Pro, and accepts license_key body field', async () => {
+  const OWNER_KEY = 'SWEEPR-DB-OWNR-2026-9999';
+  for (let i = 1; i <= 5; i += 1) {
+    const res = await fetch(`${baseUrl}/api/license-verify`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ key: OWNER_KEY, device_id: `ext_owner_dev_${i}` })
+    });
+    assert.equal(res.status, 200, `Device ${i} should succeed`);
+    const body = await res.json();
+    assert.equal(body.valid, true);
+    assert.equal(body.ramTamerAddon, true);
+    assert.equal(body.devices_max, 5);
+    assert.ok(Array.isArray(body.entitlements) && body.entitlements.includes('pro_tab_and_ram_tamer'));
+    assert.ok(!body.entitlements.some((e) => /search_spam|fake_shop|ai_slop/i.test(e)));
+  }
+
+  const res6 = await fetch(`${baseUrl}/api/license-verify`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ key: OWNER_KEY, device_id: 'ext_owner_dev_6' })
+  });
+  assert.equal(res6.status, 403);
+  const body6 = await res6.json();
+  assert.equal(body6.error, 'device_limit_reached');
+
+  const lkRes = await fetch(`${baseUrl}/api/license-verify`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ license_key: OWNER_KEY, device_id: 'ext_owner_dev_1' })
+  });
+  assert.equal(lkRes.status, 200);
+  const lkBody = await lkRes.json();
+  assert.equal(lkBody.valid, true);
+});
+
+test('E11: /api/telemetry/live-proof serves real rule counts and v1.3.1 without fabricated receipts', async () => {
+  const blockedSitesRaw = JSON.parse(
+    fs.readFileSync(path.join(ROOT, 'data', 'deepblock-blocked-sites.json'), 'utf8')
+  );
+  const expectedBlockedCount =
+    Number(blockedSitesRaw?.total) ||
+    (Array.isArray(blockedSitesRaw?.sites)
+      ? blockedSitesRaw.sites.length
+      : Array.isArray(blockedSitesRaw)
+      ? blockedSitesRaw.length
+      : 0);
+  assert.ok(expectedBlockedCount >= 16100, `Expected >= 16100 blocked domains, got ${expectedBlockedCount}`);
+
+  const res = await fetch(`${baseUrl}/api/telemetry/live-proof`);
+  assert.equal(res.status, 200);
+  const body = await res.json();
+  assert.equal(body.ok, true);
+  assert.equal(body.version, '1.3.1');
+  assert.equal(body.activeMv3StaticRules, 283);
+  assert.equal(body.activeOtaDeltaRules, 100);
+  assert.equal(body.verifiedBlockedDomainsCount, expectedBlockedCount);
+  assert.equal(body.maxDevicesPerLicense, 5);
+  assert.equal(body.recentVerifiedReceipts, undefined);
+  assert.ok(!JSON.stringify(body).includes('10218'));
+});
+
+test('E12: /api/ab/paywall initializes in exploration_uniform mode with zero conversions and revenue', async () => {
+  const res = await fetch(`${baseUrl}/api/ab/paywall?device_id=ab_seed_probe_1`);
+  assert.equal(res.status, 200);
+  const body = await res.json();
+  assert.equal(body.ok, true);
+  assert.equal(body.banditMode, 'exploration_uniform');
+  const metricsList = Object.values(body.metrics || {});
+  assert.ok(metricsList.length >= 3);
+  for (const m of metricsList) {
+    assert.equal(m.conversions, 0);
+    assert.equal(m.totalRevenueGbp, 0);
+  }
+});
+
+test('E13: /api/support queues failed CRM deliveries to tempDataDir support-dlq.json and returns 202', async () => {
+  const res = await fetch(`${baseUrl}/api/support`, {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      origin: 'https://sweeprdeepblock.com'
+    },
+    body: JSON.stringify({
+      email: 'support-dlq-test@example.com',
+      subject: 'DLQ persistence test',
+      message: 'Verify support queue fallback'
+    })
+  });
+  assert.equal(res.status, 202);
+  const body = await res.json();
+  assert.equal(body.ok, true);
+  assert.equal(body.queued, true);
+  assert.match(String(body.ticket_number || ''), /^DB-\d{6}$/);
+
+  const dlqPath = path.join(tempDataDir, 'support-dlq.json');
+  assert.ok(fs.existsSync(dlqPath), 'support-dlq.json must be written to DATA_DIR');
+  const dlq = JSON.parse(fs.readFileSync(dlqPath, 'utf8'));
+  assert.ok(Array.isArray(dlq) && dlq.some((entry) => entry.ticket_number === body.ticket_number));
+});
+
+test('E14: referral create/redeem blocks self-referrals (400) & duplicates (409), mints 14d trial, and credits +30d once without double-counting', async () => {
+  const OWNER_KEY = 'SWEEPR-DB-OWNR-2026-9999';
+  const beforeVerify = await fetch(`${baseUrl}/api/license-verify`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ license_key: OWNER_KEY, device_id: 'ext_owner_dev_1' })
+  });
+  assert.equal(beforeVerify.status, 200);
+  const beforeJson = await beforeVerify.json();
+  const baseMs = beforeJson.expiresAt ? Date.parse(beforeJson.expiresAt) : Date.now();
+
+  const createRes = await fetch(`${baseUrl}/api/referral/create`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ licenseKey: OWNER_KEY })
+  });
+  assert.equal(createRes.status, 200);
+  const createJson = await createRes.json();
+  assert.equal(createJson.ok, true);
+  assert.ok(createJson.code);
+
+  const selfRes = await fetch(`${baseUrl}/api/referral/redeem`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ code: createJson.code, licenseKey: OWNER_KEY, deviceId: 'owner_self_dev' })
+  });
+  assert.equal(selfRes.status, 400);
+  const selfJson = await selfRes.json();
+  assert.equal(selfJson.error, 'self_referral_not_allowed');
+
+  const redeemRes = await fetch(`${baseUrl}/api/referral/redeem`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ code: createJson.code, deviceId: 'friend_browser_uuid_1' })
+  });
+  assert.equal(redeemRes.status, 200);
+  const redeemJson = await redeemRes.json();
+  assert.equal(redeemJson.ok, true);
+  assert.match(String(redeemJson.trialKey || ''), /^SWEEPR-DB-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}$/);
+  assert.equal(redeemJson.referrerBonusDaysTotal, 30);
+
+  const dupRes = await fetch(`${baseUrl}/api/referral/redeem`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ code: createJson.code, deviceId: 'friend_browser_uuid_1' })
+  });
+  assert.equal(dupRes.status, 409);
+  const dupJson = await dupRes.json();
+  assert.equal(dupJson.error, 'already_redeemed');
+
+  const trialVerifyRes = await fetch(`${baseUrl}/api/license-verify`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ license_key: redeemJson.trialKey, device_id: 'friend_dev_1' })
+  });
+  assert.equal(trialVerifyRes.status, 200);
+  const trialVerifyJson = await trialVerifyRes.json();
+  assert.equal(trialVerifyJson.valid, true);
+  assert.equal(trialVerifyJson.status, 'trialing');
+  assert.equal(trialVerifyJson.isReferralTrial, true);
+  assert.equal(trialVerifyJson.ramTamerAddon, true);
+  assert.equal(trialVerifyJson.devices_max, 5);
+
+  const afterVerify1 = await fetch(`${baseUrl}/api/license-verify`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ license_key: OWNER_KEY, device_id: 'ext_owner_dev_1' })
+  });
+  assert.equal(afterVerify1.status, 200);
+  const afterJson1 = await afterVerify1.json();
+  assert.equal(afterJson1.bonusProDaysEarned, 30);
+  const afterMs1 = Date.parse(afterJson1.expiresAt);
+  const deltaDays = (afterMs1 - baseMs) / 86400000;
+  assert.ok(deltaDays > 25 && deltaDays < 35, `Expected ~30 bonus days once, got ${deltaDays}`);
+
+  const afterVerify2 = await fetch(`${baseUrl}/api/license-verify`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ license_key: OWNER_KEY, device_id: 'ext_owner_dev_1' })
+  });
+  const afterJson2 = await afterVerify2.json();
+  assert.equal(afterJson2.expiresAt, afterJson1.expiresAt, 'Repeated license-verify must not re-add +30 days');
+});
+
+test('E15: .mobileconfig routes redirect cleanly and mobile UI contains no fake AdGuard shield claims', async () => {
+  for (const mcPath of ['/download/sweepr-deepblock.mobileconfig', '/sweepr-deepblock.mobileconfig']) {
+    const res = await fetch(`${baseUrl}${mcPath}`, { redirect: 'manual' });
+    assert.equal(res.status, 302, `${mcPath} should redirect 302`);
+    assert.equal(res.headers.get('location'), '/download?ios=coming-soon');
+  }
+  const mobileUi = fs.readFileSync(path.join(ROOT, 'scripts/deepblock-mobile-ui.mjs'), 'utf8');
+  const iosHtml = fs.readFileSync(path.join(ROOT, 'website/ios-app.html'), 'utf8');
+  for (const text of [mobileUi, iosHtml]) {
+    assert.ok(!text.includes('dns.adguard-dns.com'), 'Must not contain third-party dns.adguard-dns.com');
+    assert.ok(!text.includes('enableAndroidDnsShield'), 'Must not contain removed enableAndroidDnsShield');
+  }
+});
+
+test('E16: /download serves 200 text/html with Vary: User-Agent to bots and unparameterized mobile browsers (GET and HEAD)', async () => {
+  const SMARTPHONE_GOOGLEBOT =
+    'Mozilla/5.0 (Linux; Android 6.0.1; Nexus 5X Build/MMB29P) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.6778.69 Mobile Safari/537.36 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)';
+  const DESKTOP_GOOGLEBOT =
+    'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; Googlebot/2.1; +http://www.google.com/bot.html) Chrome/131.0.6778.69 Safari/537.36';
+  const ANDROID_CHROME =
+    'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Mobile Safari/537.36';
+  const IOS_SAFARI =
+    'Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1';
+
+  const htmlCases = [
+    ['/download', SMARTPHONE_GOOGLEBOT],
+    ['/download?install=1', SMARTPHONE_GOOGLEBOT],
+    ['/download?platform=android&direct=1', SMARTPHONE_GOOGLEBOT],
+    ['/download', DESKTOP_GOOGLEBOT],
+    ['/download?install=1', DESKTOP_GOOGLEBOT],
+    ['/download', ANDROID_CHROME],
+    ['/download?install=1', ANDROID_CHROME],
+    ['/download?platform=ios', IOS_SAFARI]
+  ];
+
+  for (const [reqPath, ua] of htmlCases) {
+    for (const method of ['GET', 'HEAD']) {
+      const res = await fetch(`${baseUrl}${reqPath}`, {
+        method,
+        headers: { 'user-agent': ua },
+        redirect: 'manual'
+      });
+      assert.equal(res.status, 200, `${method} ${reqPath} for ${ua.slice(0, 32)} expected 200, got ${res.status}`);
+      assert.match(String(res.headers.get('content-type') || ''), /text\/html/i, `${method} ${reqPath} must be text/html`);
+      assert.match(String(res.headers.get('vary') || ''), /user-agent/i, `${method} ${reqPath} Vary must contain User-Agent`);
+      assert.equal(res.headers.get('content-disposition'), null, `${method} ${reqPath} must not set attachment disposition`);
+      if (method === 'GET') {
+        const body = await res.text();
+        assert.ok(!body.startsWith('PK'), `${reqPath} body must not be binary APK/ZIP`);
+        assert.ok(/<html/i.test(body) && body.includes('SWEEPR Deepblock'), `${reqPath} body must be download.html`);
+      }
+    }
+  }
+});
+
+test('E17: /download explicit binary and desktop ?install=1 redirects work for non-bot UAs with Vary: User-Agent and GET/HEAD parity', async () => {
+  const DESKTOP_CHROME =
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36';
+  const DESKTOP_FIREFOX =
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:132.0) Gecko/20100101 Firefox/132.0';
+  const ANDROID_CHROME =
+    'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Mobile Safari/537.36';
+
+  for (const [reqPath, method] of [
+    ['/download?platform=android&direct=1', 'GET'],
+    ['/download?platform=android&direct=1', 'HEAD'],
+    ['/download?platform=apk', 'GET'],
+    ['/download?platform=android', 'GET']
+  ]) {
+    const res = await fetch(`${baseUrl}${reqPath}`, {
+      method,
+      headers: { 'user-agent': ANDROID_CHROME },
+      redirect: 'manual'
+    });
+    assert.equal(res.status, 200, `${method} ${reqPath} should return 200`);
+    assert.match(String(res.headers.get('content-type') || ''), /application\/vnd\.android\.package-archive/i);
+    assert.match(String(res.headers.get('content-disposition') || ''), /SWEEPRDeepblock\.apk/);
+    assert.match(String(res.headers.get('vary') || ''), /user-agent/i);
+    if (method === 'GET') {
+      const buf = Buffer.from(await res.arrayBuffer());
+      assert.equal(buf[0], 0x50);
+      assert.equal(buf[1], 0x4b);
+    }
+  }
+
+  for (const method of ['GET', 'HEAD']) {
+    const chromeRes = await fetch(`${baseUrl}/download?install=1`, {
+      method,
+      headers: { 'user-agent': DESKTOP_CHROME },
+      redirect: 'manual'
+    });
+    assert.equal(chromeRes.status, 302, `${method} Desktop Chrome /download?install=1 should 302`);
+    assert.ok(String(chromeRes.headers.get('location') || '').startsWith('https://chromewebstore.google.com/'));
+    assert.match(String(chromeRes.headers.get('vary') || ''), /user-agent/i);
+
+    const ffRes = await fetch(`${baseUrl}/download?install=1`, {
+      method,
+      headers: { 'user-agent': DESKTOP_FIREFOX },
+      redirect: 'manual'
+    });
+    assert.equal(ffRes.status, 302, `${method} Desktop Firefox /download?install=1 should 302`);
+    assert.ok(String(ffRes.headers.get('location') || '').startsWith('https://addons.mozilla.org/'));
+    assert.match(String(ffRes.headers.get('vary') || ''), /user-agent/i);
+  }
+});
+
+test('E18: index.html inline scripts + nav.js preserve /download?install=1 and footer links for bots while rewriting human CTAs', () => {
+  const indexHtml = fs.readFileSync(path.join(ROOT, 'website', 'index.html'), 'utf8');
+  const navJs = fs.readFileSync(path.join(ROOT, 'website', 'nav.js'), 'utf8');
+  const downloadHtml = fs.readFileSync(path.join(ROOT, 'website', 'download.html'), 'utf8');
+
+  function extractInlineScripts(html) {
+    const scripts = [];
+    const re = /<script(?![^>]*\bsrc=)(?![^>]*type=["']application\/ld\+json["'])[^>]*>([\s\S]*?)<\/script>/gi;
+    let m;
+    while ((m = re.exec(html)) !== null) {
+      if (m[1] && m[1].trim()) scripts.push(m[1]);
+    }
+    return scripts;
+  }
+
+  function makeEl(tagName, attrs = {}, textContent = '') {
+    const attrMap = new Map(Object.entries(attrs));
+    const el = {
+      tagName: tagName.toUpperCase(),
+      id: attrs.id || '',
+      textContent,
+      innerHTML: textContent,
+      value: attrs.value || '',
+      style: {},
+      dataset: {},
+      classList: {
+        add() {},
+        remove() {},
+        toggle() {},
+        contains() { return false; }
+      },
+      getAttribute(k) {
+        if (k === 'href' && attrMap.has('href')) return attrMap.get('href');
+        return attrMap.has(k) ? attrMap.get(k) : null;
+      },
+      setAttribute(k, v) {
+        attrMap.set(k, String(v));
+        if (k === 'href') el.href = String(v);
+        if (k === 'id') el.id = String(v);
+      },
+      removeAttribute(k) {
+        attrMap.delete(k);
+      },
+      addEventListener() {},
+      contains() { return false; },
+      querySelectorAll() { return []; },
+      focus() {}
+    };
+    if (attrMap.has('href')) el.href = attrMap.get('href');
+    Object.defineProperty(el, 'href', {
+      get() { return attrMap.get('href') || ''; },
+      set(v) { attrMap.set('href', String(v)); },
+      configurable: true
+    });
+    return el;
+  }
+
+  function decodeBasicEntities(s) {
+    return s.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"');
+  }
+
+  function parseAnchors(html) {
+    const anchors = [];
+    const re = /<a\b([^>]*)>([\s\S]*?)<\/a>/gi;
+    let m;
+    while ((m = re.exec(html)) !== null) {
+      const rawAttrs = m[1];
+      const innerText = decodeBasicEntities(m[2].replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim());
+      const attrs = {};
+      const attrRe = /([a-zA-Z0-9_-]+)(?:=(?:"([^"]*)"|'([^']*)'|([^\s>]+)))?/g;
+      let am;
+      while ((am = attrRe.exec(rawAttrs)) !== null) {
+        attrs[am[1]] = am[2] ?? am[3] ?? am[4] ?? '';
+      }
+      anchors.push(makeEl('a', attrs, innerText));
+    }
+    return anchors;
+  }
+
+  function runPageScripts(html, { userAgent, pathname = '/', search = '', extraScripts = [] }) {
+    const anchors = parseAnchors(html);
+    const byId = new Map();
+    for (const a of anchors) {
+      if (a.id) byId.set(a.id, a);
+    }
+    const idOpenRe = /<([a-z0-9]+)\b([^>]*\bid=["']([^"']+)["'][^>]*)>/gi;
+    let im;
+    while ((im = idOpenRe.exec(html)) !== null) {
+      const tag = im[1].toLowerCase();
+      const id = im[3];
+      if (!byId.has(id)) {
+        const afterStart = im.index + im[0].length;
+        const closeIdx = html.indexOf(`</${tag}>`, afterStart);
+        const rawInner = closeIdx !== -1 ? html.slice(afterStart, closeIdx) : '';
+        const inner = decodeBasicEntities(rawInner.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim());
+        const el = makeEl(tag, { id }, inner);
+        el.innerHTML = rawInner;
+        byId.set(id, el);
+      }
+    }
+
+    const windowListeners = new Map();
+    const docListeners = new Map();
+    const documentElement = makeEl('html');
+    const head = { appendChild() {} };
+
+    function matchesSingleSelector(el, sel) {
+      const s = sel.trim();
+      if (s === 'a[href="/download?install=1"]') return el.tagName === 'A' && el.getAttribute('href') === '/download?install=1';
+      if (s === 'a#downloadBtn') return el.tagName === 'A' && el.id === 'downloadBtn';
+      if (s === 'a#mobileStickyDownloadBtn') return el.tagName === 'A' && el.id === 'mobileStickyDownloadBtn';
+      if (s === 'a[href^="/download"]') return el.tagName === 'A' && String(el.getAttribute('href') || '').startsWith('/download');
+      return false;
+    }
+
+    const document = {
+      cookie: '',
+      title: 'SWEEPR Deepblock',
+      referrer: '',
+      documentElement,
+      head,
+      getElementById(id) {
+        return byId.get(id) || null;
+      },
+      querySelector(sel) {
+        if (sel === 'nav.glass-nav') return null;
+        return this.querySelectorAll(sel)[0] || null;
+      },
+      querySelectorAll(selectorList) {
+        const parts = selectorList.split(',').map((s) => s.trim()).filter(Boolean);
+        return anchors.filter((el) => parts.some((p) => matchesSingleSelector(el, p)));
+      },
+      createElement(tag) {
+        return makeEl(tag);
+      },
+      addEventListener(type, fn) {
+        if (!docListeners.has(type)) docListeners.set(type, []);
+        docListeners.get(type).push(fn);
+      }
+    };
+
+    const location = {
+      origin: 'https://sweeprdeepblock.com',
+      pathname,
+      search,
+      href: `https://sweeprdeepblock.com${pathname}${search}`
+    };
+    const context = {
+      document,
+      navigator: {
+        userAgent,
+        platform: userAgent.includes('iPhone') || userAgent.includes('iPad') ? 'iPhone' : 'Linux armv8l',
+        maxTouchPoints: userAgent.includes('Mobile') || userAgent.includes('Android') ? 5 : 0
+      },
+      location,
+      localStorage: { getItem: () => null, setItem() {}, removeItem() {} },
+      sessionStorage: { getItem: () => null, setItem() {} },
+      URLSearchParams,
+      URL,
+      Blob: class { constructor(parts) { this.parts = parts; } },
+      fetch: () => Promise.resolve({ ok: false, json: async () => null }),
+      performance: { now: () => 0 },
+      requestAnimationFrame: () => 0,
+      setTimeout: () => 0,
+      clearTimeout() {},
+      crypto: { getRandomValues: (arr) => arr.fill(123456789) },
+      addEventListener(type, fn) {
+        if (!windowListeners.has(type)) windowListeners.set(type, []);
+        windowListeners.get(type).push(fn);
+      },
+      matchMedia: () => ({ matches: true })
+    };
+    context.window = context;
+    context.self = context;
+    context.globalThis = context;
+    vm.createContext(context);
+
+    for (const src of [...extraScripts, ...extractInlineScripts(html)]) {
+      vm.runInContext(src, context);
+    }
+    for (const fn of windowListeners.get('DOMContentLoaded') || []) fn();
+    for (const fn of docListeners.get('DOMContentLoaded') || []) fn();
+
+    return { anchors, byId };
+  }
+
+  const SMARTPHONE_GOOGLEBOT =
+    'Mozilla/5.0 (Linux; Android 6.0.1; Nexus 5X Build/MMB29P) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.6778.108 Mobile Safari/537.36 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)';
+  const DESKTOP_GOOGLEBOT =
+    'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; Googlebot/2.1; +http://www.google.com/bot.html) Chrome/131.0.6778.108 Safari/537.36';
+  const ANDROID_CHROME =
+    'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Mobile Safari/537.36';
+  const DESKTOP_CHROME =
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36';
+  const DESKTOP_FIREFOX =
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:132.0) Gecko/20100101 Firefox/132.0';
+
+  for (const botUa of [SMARTPHONE_GOOGLEBOT, DESKTOP_GOOGLEBOT]) {
+    const { anchors, byId } = runPageScripts(indexHtml, { userAgent: botUa, extraScripts: [navJs] });
+    assert.equal(byId.get('downloadBtn').getAttribute('href'), '/download?install=1', `Bot UA must keep #downloadBtn href`);
+    assert.equal(byId.get('osDownloadText').textContent, 'Install Free Extension', `Bot UA must keep #osDownloadText`);
+    assert.match(byId.get('heroDeviceBadgeText').textContent, /Works on Chrome, Edge, Firefox, Brave & Opera/);
+    assert.equal(byId.get('mobileStickyDownloadBtn').getAttribute('href'), '/download?install=1');
+    const footerDownload = anchors.find((a) => !a.id && a.textContent === 'Browser Extension');
+    assert.ok(footerDownload, 'Footer Browser Extension link must exist');
+    assert.equal(footerDownload.getAttribute('href'), '/download', 'Footer /download link must remain unmutated for bots');
+  }
+
+  {
+    const { anchors, byId } = runPageScripts(indexHtml, { userAgent: ANDROID_CHROME, extraScripts: [navJs] });
+    assert.equal(byId.get('downloadBtn').getAttribute('href'), '/download?platform=android&direct=1');
+    assert.equal(byId.get('mobileStickyDownloadBtn').getAttribute('href'), '/download?platform=android&direct=1');
+    const footerDownload = anchors.find((a) => !a.id && a.textContent === 'Browser Extension');
+    assert.equal(footerDownload.getAttribute('href'), '/download', 'Footer /download link must remain unmutated on mobile');
+  }
+
+  {
+    const { anchors, byId } = runPageScripts(indexHtml, { userAgent: DESKTOP_CHROME, extraScripts: [navJs] });
+    assert.ok(byId.get('downloadBtn').getAttribute('href').startsWith('https://chromewebstore.google.com/'));
+    assert.equal(byId.get('osDownloadText').textContent, 'Add to Chrome — Free');
+    const footerDownload = anchors.find((a) => !a.id && a.textContent === 'Browser Extension');
+    assert.equal(footerDownload.getAttribute('href'), '/download');
+  }
+
+  {
+    const { anchors, byId } = runPageScripts(indexHtml, { userAgent: DESKTOP_FIREFOX, extraScripts: [navJs] });
+    assert.equal(byId.get('downloadBtn').getAttribute('href'), 'https://addons.mozilla.org/firefox/addon/sweepr-deepblock/');
+    assert.equal(byId.get('osDownloadText').textContent, 'Add to Firefox — Free');
+    const footerDownload = anchors.find((a) => !a.id && a.textContent === 'Browser Extension');
+    assert.equal(footerDownload.getAttribute('href'), '/download');
+  }
+
+  {
+    const botDl = runPageScripts(downloadHtml, { userAgent: SMARTPHONE_GOOGLEBOT, pathname: '/download' });
+    assert.ok(botDl.byId.get('addToBrowserBtn').getAttribute('href').startsWith('https://chromewebstore.google.com/'));
+    assert.ok(!botDl.byId.get('downloadSubtitle').innerHTML.includes('.apk'), 'Bot /download must not render Android .apk copy');
+
+    const botIosDl = runPageScripts(downloadHtml, { userAgent: SMARTPHONE_GOOGLEBOT, pathname: '/download', search: '?platform=ios' });
+    assert.equal(botIosDl.byId.get('addToBrowserBtn').getAttribute('href'), '/pricing');
+
+    const androidDl = runPageScripts(downloadHtml, { userAgent: ANDROID_CHROME, pathname: '/download' });
+    assert.equal(androidDl.byId.get('addToBrowserBtn').getAttribute('href'), 'https://addons.mozilla.org/firefox/addon/sweepr-deepblock/');
+  }
 });

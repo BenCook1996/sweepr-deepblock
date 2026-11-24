@@ -1,49 +1,54 @@
 {
-  "generatedAt": "2026-11-23T18:33:44.239Z",
+  "generatedAt": "2026-11-23T13:28:14.837Z",
   "currentStage": "Stage 1 (£10.00/day)",
-  "recommendedDailyBudgetGbp": 25,
+  "recommendedDailyBudgetGbp": 10,
   "stageGate": {
-    "currentStage": "STAGE_2_UNLOCKED_25GBP",
-    "recommendedDailyBudgetGbp": 25,
+    "currentStage": "STAGE_1_MICRO_10GBP",
+    "recommendedDailyBudgetGbp": 10,
     "unlockStage2AtDailyGbp": 19,
     "unlockStage3AtDailyGbp": 42
   },
-  "recommendedAction": "UNLOCK_STAGE_2_REINVESTMENT (£25.00/day — Top CPAU Winner: MS_AG1_Competitor_Switchers at £14.96 CPAU)",
+  "recommendedAction": "HOLD_AT_STAGE_1 (£10.00/day — optimize failing gate before scaling)",
   "metrics": {
     "dailySpendGbp": 10,
-    "blendedCacGbp": 15.6,
-    "blendedCpauGbp": 17.97,
-    "blendedNetLtvGbp": 49.37,
+    "blendedCacGbp": null,
+    "blendedCpauGbp": null,
+    "blendedNetLtvGbp": 0,
     "proAnnualPriceGbp": 29.99,
     "suiteAnnualPriceGbp": 89.99,
-    "suiteAttachRatePct": 22.2,
-    "ltvToCacRatio": 3.16,
-    "permissionActivationRatePct": 86.8,
-    "refundRate14dPct": 2.2
+    "suiteAttachRatePct": 0,
+    "ltvToCacRatio": null,
+    "permissionActivationRatePct": 0,
+    "refundRate14dPct": 0
   },
   "stageGates": {
+    "minimumConversionSample": {
+      "target": ">= 10 paid checkouts",
+      "actual": "0 checkouts",
+      "passed": false
+    },
     "blendedCacUnder18Gbp": {
       "target": "<= £18.00",
-      "actual": "£15.60",
-      "passed": true
+      "actual": "insufficient_telemetry",
+      "passed": false
     },
     "ltvToCacOver2_2x": {
       "target": ">= 2.20x",
-      "actual": "3.16x",
-      "passed": true
+      "actual": "insufficient_telemetry",
+      "passed": false
     },
     "permissionActivationOver82Pct": {
       "target": ">= 82.0%",
-      "actual": "86.8%",
-      "passed": true
+      "actual": "0.0%",
+      "passed": false
     },
     "refundRateUnder4_5Pct": {
       "target": "<= 4.5%",
-      "actual": "2.2%",
-      "passed": true
+      "actual": "0.0%",
+      "passed": false
     }
   },
-  "allGatesPassed": true,
+  "allGatesPassed": false,
   "cpauAdGroupRanking": [
     {
       "rank": 1,
@@ -52,7 +57,7 @@
       "currentDailySpendGbp": 1.5,
       "cacGbp": 13.4,
       "permissionActivationRatePct": 89.6,
-      "targetLandingPage": "/vs/total-adblock-cancel-subscription",
+      "targetLandingPage": "/vs/total-adblock",
       "cpauGbp": 14.96,
       "efficiencyScore": 6.6845,
       "recommendedBudgetSharePct": 23,
@@ -65,7 +70,7 @@
       "currentDailySpendGbp": 2,
       "cacGbp": 14.2,
       "permissionActivationRatePct": 88.4,
-      "targetLandingPage": "/campaigns/renewal-shock-switcher",
+      "targetLandingPage": "/vs/total-adblock",
       "cpauGbp": 16.06,
       "efficiencyScore": 6.2267,
       "recommendedBudgetSharePct": 21.4,
@@ -78,7 +83,7 @@
       "currentDailySpendGbp": 1,
       "cacGbp": 14.8,
       "permissionActivationRatePct": 87.2,
-      "targetLandingPage": "/vs/ublock-origin-alternative-for-chrome",
+      "targetLandingPage": "/vs/ublock-origin-lite",
       "cpauGbp": 16.97,
       "efficiencyScore": 5.8928,
       "recommendedBudgetSharePct": 20.3,
@@ -91,7 +96,7 @@
       "currentDailySpendGbp": 3,
       "cacGbp": 15.9,
       "permissionActivationRatePct": 85.4,
-      "targetLandingPage": "/tools/is-my-adblocker-working",
+      "targetLandingPage": "/test-lab",
       "cpauGbp": 18.62,
       "efficiencyScore": 5.3706,
       "recommendedBudgetSharePct": 18.5,
@@ -104,7 +109,7 @@
       "currentDailySpendGbp": 2.5,
       "cacGbp": 16.9,
       "permissionActivationRatePct": 83.1,
-      "targetLandingPage": "/campaigns/uk-ad-load-index",
+      "targetLandingPage": "/guides/how-to-automatically-reject-cookie-banners-uk",
       "cpauGbp": 20.34,
       "efficiencyScore": 4.9164,
       "recommendedBudgetSharePct": 16.9,
@@ -133,7 +138,7 @@
       "stage": "Stage 2 (40% Net Revenue Reinvestment Gate)",
       "dailyBudgetGbp": 25,
       "monthlyBudgetGbp": 750,
-      "unlocked": true,
+      "unlocked": false,
       "chatgptAdsUnlocked": true,
       "channelSplit": {
         "redditAdsProspectingGbp": 11.5,
@@ -147,7 +152,7 @@
       "stage": "Stage 3 (Scale & Ecosystem Bundle Gate)",
       "dailyBudgetGbp": 50,
       "monthlyBudgetGbp": 1500,
-      "unlocked": true,
+      "unlocked": false,
       "chatgptAdsUnlocked": true,
       "channelSplit": {
         "redditAdsProspectingGbp": 21,

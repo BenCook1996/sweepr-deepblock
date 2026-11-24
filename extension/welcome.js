@@ -56,8 +56,6 @@ async function directVerifyAndPersistLicense(rawKey) {
           if (!canonicalKey || canonicalKey.startsWith('ptk_')) continue;
           const settings = {
             cookieAutoClose: true,
-            hideSearchSpam: true,
-            fakeShopAlerts: true,
             trackerProtection: true,
             adBlocking: true,
             silentMode: true,
@@ -68,11 +66,14 @@ async function directVerifyAndPersistLicense(rawKey) {
             await chrome.storage.local.set({
               deviceId,
               proActive: true,
-              ramTamerActive: Boolean(d.ramTamerAddon),
+              ramTamerActive: true,
               licenseKey: canonicalKey,
               draftLicenseKey: '',
               licenseDrawerOpen: false,
               subscriptionStatus: 'active',
+              plan: d.plan || 'annual',
+              licenseExpiresAt: d.expiresAt || '',
+              bonusProDaysEarned: Number(d.bonusProDaysEarned || 0),
               licenseVerifiedAt: Date.now(),
               settings
             });
@@ -82,7 +83,7 @@ async function directVerifyAndPersistLicense(rawKey) {
               chrome.runtime.sendMessage({ type: 'VERIFY_LICENSE', key: canonicalKey }).catch(() => {});
             } catch (e) {}
           }
-          return { ok: true, valid: true, licenseKey: canonicalKey, settings };
+          return { ok: true, valid: true, licenseKey: canonicalKey, ramTamerActive: true, settings };
         }
       } catch (e) {}
     }
@@ -102,17 +103,10 @@ async function directVerifyAndPersistLicense(rawKey) {
       if (res.ok && data && data.valid === true) {
         const subStatus = String(data.status || 'active').toLowerCase();
         if (subStatus === 'active' || subStatus === 'trialing') {
-          const addonsList = Array.isArray(data.addons) ? data.addons : [];
-          const ramTamerActive = Boolean(
-            data.ramTamerAddon === true ||
-              addonsList.includes('ram_tamer') ||
-              addonsList.includes('sweepr_secure_bundle')
-          );
+          const ramTamerActive = true;
           const canonicalKey = data.licenseKey || data.license_key || key;
           const settings = {
             cookieAutoClose: true,
-            hideSearchSpam: true,
-            fakeShopAlerts: true,
             trackerProtection: true,
             adBlocking: true,
             silentMode: true,
@@ -123,13 +117,16 @@ async function directVerifyAndPersistLicense(rawKey) {
             await chrome.storage.local.set({
               deviceId,
               proActive: true,
-              ramTamerActive,
+              ramTamerActive: true,
               licenseKey: canonicalKey,
               draftLicenseKey: '',
               licenseDrawerOpen: false,
               licenseToken: data.token || data.license_token || '',
               crmAccountId: data.account_id || '',
               subscriptionStatus: subStatus,
+              plan: data.plan || 'annual',
+              licenseExpiresAt: data.expiresAt || '',
+              bonusProDaysEarned: Number(data.bonusProDaysEarned || 0),
               licenseVerifiedAt: Date.now(),
               settings
             });
@@ -146,7 +143,16 @@ async function directVerifyAndPersistLicense(rawKey) {
               });
             }
           } catch (e) {}
-          return { ok: true, valid: true, licenseKey: canonicalKey, ramTamerActive, settings };
+          return {
+            ok: true,
+            valid: true,
+            licenseKey: canonicalKey,
+            ramTamerActive: true,
+            plan: data.plan || 'annual',
+            expiresAt: data.expiresAt || '',
+            bonusProDaysEarned: Number(data.bonusProDaysEarned || 0),
+            settings
+          };
         }
       }
       if (res.status === 400 || res.status === 403 || res.status === 404 || data?.valid === false) {
@@ -330,11 +336,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (finalRes && finalRes.ok && finalRes.valid) {
       markProActivated(finalRes.licenseKey || key, finalRes.settings || {
         cookieAutoClose: true,
-        hideSearchSpam: true,
-        fakeShopAlerts: true,
         trackerProtection: true,
         adBlocking: true,
-        silentMode: true
+        silentMode: true,
+        autoRamTamer: true,
+        cloudTabSyncEnabled: true
       });
     } else {
       btn.textContent = 'Activate Pro Protection';

@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, follow" />
+  <link rel="canonical" href="https://sweeprdeepblock.com/solutions/imdb-movie-database-block-video-ads" />
   <title>Prime &amp; Freevee: Block Video Ads (2026) | SWEEPR DeepBlock</title>
   <meta name="description" content="Block pre-roll &amp; mid-roll video ads on Prime &amp; Freevee. Passes 8/8 MV3 anti-detection checks and auto-rejects cookie banners in under 50ms." />
-  <link rel="canonical" href="https://sweeprdeepblock.com/solutions/imdb-tv-freevee-streaming-block-video-ads" />
-  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
   <meta name="theme-color" content="#0F172A" />
   <link rel="icon" type="image/svg+xml" href="/logo.svg" />
   <link rel="manifest" href="/site.webmanifest" />
@@ -133,102 +133,42 @@
       </div>
     </div>
     
-    <section id="deepblock-live-rule-proof" style="margin-top:32px;background:#0f172a;border:1px solid #1e293b;border-radius:14px;padding:22px 24px;">
-      <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;">
-        <h2 style="font-size:1.22rem;margin:0;color:#f8fafc;">Live MV3 DeclarativeNetRequest &amp; DeepStealth Rule Telemetry (imdb-tv-freevee-streaming-block-video-ads)</h2>
-        <span style="font-size:0.75rem;background:rgba(16,185,129,0.14);color:#34d399;border:1px solid rgba(16,185,129,0.3);padding:4px 10px;border-radius:999px;font-weight:700;">
-          Verified Against 242 Static + 0 OTA Delta Rules
-        </span>
-      </div>
-      <p style="color:#94a3b8;font-size:0.9rem;line-height:1.55;margin:0 0 14px;">
-        Below is a live sample of active Chromium &amp; Gecko rules executed by SWEEPR DeepBlock v1.2.9 for <code>/solutions/imdb-tv-freevee-streaming-block-video-ads</code>. Network rules execute in C++ browser memory (avg <strong>27&micro;s</strong> lookup latency, <strong>1.9ms</strong> DOM observer pass, saving <strong>~165 MB RAM</strong> per active session):
-      </p>
-      <div style="overflow-x:auto;">
-        <table style="width:100%;border-collapse:collapse;font-size:0.82rem;color:#e2e8f0;">
-          <thead>
-            <tr style="border-bottom:1px solid #1e293b;text-align:left;color:#94a3b8;">
-              <th style="padding:8px 10px;">Rule ID</th>
-              <th style="padding:8px 10px;">MV3 Filter / Pattern</th>
-              <th style="padding:8px 10px;">Engine Action &amp; Priority</th>
-              <th style="padding:8px 10px;">Resource Types</th>
-              <th style="padding:8px 10px;">Execution Scope</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr style="border-bottom:1px solid rgba(30,41,59,0.7);">
-              <td style="padding:8px 10px;font-family:monospace;color:#34d399;font-weight:700;">#9</td>
-              <td style="padding:8px 10px;font-family:monospace;word-break:break-all;">||static.doubleclick.net/instream/ad_status.js</td>
-              <td style="padding:8px 10px;color:#cbd5e1;">redirect -&gt; noop surrogate</td>
-              <td style="padding:8px 10px;font-family:monospace;color:#94a3b8;">script</td>
-              <td style="padding:8px 10px;color:#94a3b8;">Cross-origin tracker/ad request</td>
-            </tr>
-            <tr style="border-bottom:1px solid rgba(30,41,59,0.7);">
-              <td style="padding:8px 10px;font-family:monospace;color:#34d399;font-weight:700;">#32</td>
-              <td style="padding:8px 10px;font-family:monospace;word-break:break-all;">||advertising.com^</td>
-              <td style="padding:8px 10px;color:#cbd5e1;">block (priority 1)</td>
-              <td style="padding:8px 10px;font-family:monospace;color:#94a3b8;">script, sub_frame, image</td>
-              <td style="padding:8px 10px;color:#94a3b8;">Cross-origin tracker/ad request</td>
-            </tr>
-            <tr style="border-bottom:1px solid rgba(30,41,59,0.7);">
-              <td style="padding:8px 10px;font-family:monospace;color:#34d399;font-weight:700;">#39</td>
-              <td style="padding:8px 10px;font-family:monospace;word-break:break-all;">||2mdn.net^</td>
-              <td style="padding:8px 10px;color:#cbd5e1;">block (priority 1)</td>
-              <td style="padding:8px 10px;font-family:monospace;color:#94a3b8;">script, sub_frame, image</td>
-              <td style="padding:8px 10px;color:#94a3b8;">Cross-origin tracker/ad request</td>
-            </tr>
-            <tr style="border-bottom:1px solid rgba(30,41,59,0.7);">
-              <td style="padding:8px 10px;font-family:monospace;color:#34d399;font-weight:700;">#51</td>
-              <td style="padding:8px 10px;font-family:monospace;word-break:break-all;">||youtube.com/get_midroll_</td>
-              <td style="padding:8px 10px;color:#cbd5e1;">block (priority 2)</td>
-              <td style="padding:8px 10px;font-family:monospace;color:#94a3b8;">xmlhttprequest, script, ping</td>
-              <td style="padding:8px 10px;color:#94a3b8;">Cross-origin tracker/ad request</td>
-            </tr>
-            <tr style="border-bottom:1px solid rgba(30,41,59,0.7);">
-              <td style="padding:8px 10px;font-family:monospace;color:#34d399;font-weight:700;">#1</td>
-              <td style="padding:8px 10px;font-family:monospace;word-break:break-all;">||doubleclick.net^</td>
-              <td style="padding:8px 10px;color:#cbd5e1;">block (priority 2)</td>
-              <td style="padding:8px 10px;font-family:monospace;color:#94a3b8;">script, sub_frame, xmlhttprequest</td>
-              <td style="padding:8px 10px;color:#94a3b8;">Ad-exchange wrapper</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
+    
     <section style="margin-top:36px;padding-top:24px;border-top:1px solid #1e293b;">
       <h2 style="font-size:1.3rem;margin:0 0 8px;">Related Browser Setups, Platform Solutions &amp; Guides</h2>
-      <p style="color:#94a3b8;font-size:0.92rem;margin:0 0 16px;">Explore verified 2026 SWEEPR DeepBlock configurations across popular platforms, browsers, and privacy benchmarks:</p>
+      <p style="color:#94a3b8;font-size:0.92rem;margin:0 0 16px;">Explore verified 2026 SWEEPR Deepblock configurations across popular platforms, browsers, and privacy benchmarks:</p>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;">
-        <a href="/guides/how-to-auto-reject-inmobi-and-ogury-mobile-banners" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:12px 14px;text-decoration:none;color:#f8fafc;">
-          <div style="font-size:0.75rem;color:#10b981;font-weight:700;margin-bottom:4px;">Step-by-Step Privacy Guide</div>
-          <div style="font-size:0.92rem;font-weight:600;line-height:1.35;">Auto-Reject InMobi &amp; Ogury Popups</div>
+        <a href="/solutions/imdb-movie-database-block-video-ads" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:12px 14px;text-decoration:none;color:#f8fafc;">
+          <div style="font-size:0.75rem;color:#10b981;font-weight:700;margin-bottom:4px;">Platform Solution • MV3 Protection</div>
+          <div style="font-size:0.92rem;font-weight:600;line-height:1.35;">IMDb Video &amp; Banner Ad Blocker</div>
         </a>
-        <a href="/guides/how-to-auto-reject-usercentrics-cookie-banners" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:12px 14px;text-decoration:none;color:#f8fafc;">
-          <div style="font-size:0.75rem;color:#10b981;font-weight:700;margin-bottom:4px;">Step-by-Step Privacy Guide</div>
-          <div style="font-size:0.92rem;font-weight:600;line-height:1.35;">Auto-Reject Usercentrics Cookies</div>
+        <a href="/solutions/smart-tv-web-browsers-block-video-ads" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:12px 14px;text-decoration:none;color:#f8fafc;">
+          <div style="font-size:0.75rem;color:#10b981;font-weight:700;margin-bottom:4px;">Platform Solution • MV3 Protection</div>
+          <div style="font-size:0.92rem;font-weight:600;line-height:1.35;">Streaming Web Browsers Ad Blocker</div>
         </a>
-        <a href="/guides/how-to-auto-reject-webmd-healthline-cookie-walls" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:12px 14px;text-decoration:none;color:#f8fafc;">
-          <div style="font-size:0.75rem;color:#10b981;font-weight:700;margin-bottom:4px;">Step-by-Step Privacy Guide</div>
-          <div style="font-size:0.92rem;font-weight:600;line-height:1.35;">Auto-Reject Health Site Cookies</div>
+        <a href="/solutions/student-study-hubs-block-video-ads" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:12px 14px;text-decoration:none;color:#f8fafc;">
+          <div style="font-size:0.75rem;color:#10b981;font-weight:700;margin-bottom:4px;">Platform Solution • MV3 Protection</div>
+          <div style="font-size:0.92rem;font-weight:600;line-height:1.35;">Student Study Hubs Ad Blocker</div>
         </a>
-        <a href="/guides/how-to-automatically-reject-cookie-banners-uk" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:12px 14px;text-decoration:none;color:#f8fafc;">
-          <div style="font-size:0.75rem;color:#10b981;font-weight:700;margin-bottom:4px;">Step-by-Step Privacy Guide</div>
-          <div style="font-size:0.92rem;font-weight:600;line-height:1.35;">Automatically Reject Cookies (2026): Auto-Decline Popups &lt;50ms</div>
+        <a href="/solutions/tiktok-web-reels-reduce-browser-ram-usage" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:12px 14px;text-decoration:none;color:#f8fafc;">
+          <div style="font-size:0.75rem;color:#10b981;font-weight:700;margin-bottom:4px;">Platform Solution • MV3 Protection</div>
+          <div style="font-size:0.92rem;font-weight:600;line-height:1.35;">TikTok Web Ad &amp; RAM Optimization</div>
         </a>
-        <a href="/guides/how-to-block-ai-synthetic-voice-ads-on-streaming" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:12px 14px;text-decoration:none;color:#f8fafc;">
-          <div style="font-size:0.75rem;color:#10b981;font-weight:700;margin-bottom:4px;">Step-by-Step Privacy Guide</div>
-          <div style="font-size:0.92rem;font-weight:600;line-height:1.35;">Block AI Voice Ads on Streams (2026)</div>
+        <a href="/setup/arc-browser-windows-mac" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:12px 14px;text-decoration:none;color:#f8fafc;">
+          <div style="font-size:0.75rem;color:#10b981;font-weight:700;margin-bottom:4px;">Browser Setup • MV3 &amp; WebExtensions</div>
+          <div style="font-size:0.92rem;font-weight:600;line-height:1.35;">Arc Browser Ad Blocker (Win &amp; Mac)</div>
         </a>
-        <a href="/guides/how-to-block-malicious-telegram-bot-redirects" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:12px 14px;text-decoration:none;color:#f8fafc;">
-          <div style="font-size:0.75rem;color:#10b981;font-weight:700;margin-bottom:4px;">Step-by-Step Privacy Guide</div>
-          <div style="font-size:0.92rem;font-weight:600;line-height:1.35;">Block Telegram Scam Redirects</div>
+        <a href="/setup/microsoft-edge-windows-11" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:12px 14px;text-decoration:none;color:#f8fafc;">
+          <div style="font-size:0.75rem;color:#10b981;font-weight:700;margin-bottom:4px;">Browser Setup • MV3 &amp; WebExtensions</div>
+          <div style="font-size:0.92rem;font-weight:600;line-height:1.35;">Microsoft Edge Windows 11 Setup</div>
         </a>
-        <a href="/guides/how-to-fix-high-cpu-usage-from-youtube-anti-adblock" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:12px 14px;text-decoration:none;color:#f8fafc;">
-          <div style="font-size:0.75rem;color:#10b981;font-weight:700;margin-bottom:4px;">Step-by-Step Privacy Guide</div>
-          <div style="font-size:0.92rem;font-weight:600;line-height:1.35;">Fix YouTube Anti-Adblock CPU Lag</div>
+        <a href="/vs/ghostery-privacy-ad-blocker" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:12px 14px;text-decoration:none;color:#f8fafc;">
+          <div style="font-size:0.75rem;color:#10b981;font-weight:700;margin-bottom:4px;">2026 Head-to-Head Benchmark</div>
+          <div style="font-size:0.92rem;font-weight:600;line-height:1.35;">vs Ghostery Tracker Blocker</div>
         </a>
-        <a href="/guides/how-to-stop-video-ad-audio-blasts" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:12px 14px;text-decoration:none;color:#f8fafc;">
-          <div style="font-size:0.75rem;color:#10b981;font-weight:700;margin-bottom:4px;">Step-by-Step Privacy Guide</div>
-          <div style="font-size:0.92rem;font-weight:600;line-height:1.35;">Stop Video Ad Audio Blasts</div>
+        <a href="/solutions/anilist-myanimelist-tracker-block-video-ads" style="display:block;background:#111827;border:1px solid #1e293b;border-radius:10px;padding:12px 14px;text-decoration:none;color:#f8fafc;">
+          <div style="font-size:0.75rem;color:#10b981;font-weight:700;margin-bottom:4px;">Platform Solution • MV3 Protection</div>
+          <div style="font-size:0.92rem;font-weight:600;line-height:1.35;">AniList &amp; MyAnimeList Ad Blocker</div>
         </a>
       </div>
     </section>

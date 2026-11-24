@@ -12,8 +12,8 @@
  *     - Stage 1 Hard Junk Gatekeeper: Rejects closed TV/console OS hardware (Roku, Firestick, Apple TV),
  *       piracy/warez, NSFW, APK mods, coding syntax, third-party navigational domains, and dictionary lookups.
  *     - Stage 2 Weighted Lexical & Synergy Scoring + 5-Tier Intent Routing (/vs/*, /solutions/*, /setup/*, /guides/*).
- *  3. Unified 485-URL Corpus IDF Semantic Anti-Cannibalization & Intra-Batch Clustering:
- *     - Reads BOTH website/sitemap.xml and website/sitemap-sites.xml + HTML <title>/<h1> tokens.
+ *  3. Unified Corpus IDF Semantic Anti-Cannibalization & Intra-Batch Clustering:
+ *     - Reads website/sitemap.xml (excluding M1 pruned/consolidated/noindex URLs) + HTML <title>/<h1> tokens.
  *     - Computes IDF-weighted Cosine, Slug Containment, and Jaccard similarity.
  *     - Routes net-new intents (<0.55 overlap) to APPROVED_NEW_PILLAR and near-matches (0.55–0.72) to
  *       APPROVED_CTR_SURGERY_EXISTING_PILLAR. Clusters intra-batch synonyms into secondaryKeywords[].
@@ -29,6 +29,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
+import { CONSOLIDATE_301_MAP, isNoIndexPrunePath, normalizeUrlPath } from './lib/m1-decisions.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = path.resolve(__dirname, '..');
@@ -37,15 +38,55 @@ const DATA_DIR = path.join(ROOT_DIR, 'data');
 const CACHE_DIR = path.join(DATA_DIR, '.cache');
 
 const SITEMAP_MAIN_PATH = path.join(WEBSITE_DIR, 'sitemap.xml');
-const SITEMAP_SITES_PATH = path.join(WEBSITE_DIR, 'sitemap-sites.xml');
 const AUTOCOMPLETE_CACHE_PATH = path.join(CACHE_DIR, 'autocomplete-cache.json');
 const SERP_CACHE_PATH = path.join(DATA_DIR, 'serp-weakspot-cache.json');
 const MATRIX_OUTPUT_PATH = path.join(DATA_DIR, 'keyword-opportunity-matrix.json');
 const LEGACY_GAPS_OUTPUT_PATH = path.join(DATA_DIR, 'seo-intent-gaps.json');
 const ENRICHMENT_STATE_PATH = path.join(WEBSITE_DIR, 'pillar-enrichment-state.json');
 
+const MANIFEST_VERSION = (() => {
+  try {
+    return JSON.parse(fs.readFileSync(path.join(ROOT_DIR, 'extension/manifest.json'), 'utf8')).version || '1.3.1';
+  } catch {
+    return '1.3.1';
+  }
+})();
+
+const STATIC_RULE_COUNT = (() => {
+  let total = 0;
+  for (const rel of [
+    'extension/rules/static_ads_and_trackers.json',
+    'extension/rules/cryptominers.json',
+    'extension/rules/tracker_params.json'
+  ]) {
+    try {
+      const parsed = JSON.parse(fs.readFileSync(path.join(ROOT_DIR, rel), 'utf8'));
+      const arr = Array.isArray(parsed) ? parsed : (parsed.rules || []);
+      total += arr.length;
+    } catch {}
+  }
+  return total || 283;
+})();
+
+const DELTA_RULE_COUNT = (() => {
+  try {
+    const d = JSON.parse(fs.readFileSync(path.join(ROOT_DIR, 'extension/rules/dynamic_delta.json'), 'utf8'));
+    const rules = Array.isArray(d) ? d : (d.dynamicDnrRules || d.rules || []);
+    return rules.length || 100;
+  } catch {
+    return 100;
+  }
+})();
+
 const AUTOCOMPLETE_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
 const SERP_CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
+
+function getAutocompleteCacheKey(engine, seed) {
+  return crypto
+    .createHash('sha1')
+    .update(`${engine}:gb:${String(seed || '').toLowerCase().trim()}`)
+    .digest('hex');
+}
 
 // ============================================================================
 // 1. 6-PILLAR HIERARCHICAL SEED MATRIX
@@ -107,7 +148,7 @@ export const PILLAR_SEED_MATRIX = [
       'wattpad ad blocker',
       'soundgasm popunder blocker'
     ],
-    modifiers: ['2026', 'chrome', 'edge', 'firefox', 'safari', 'fix', 'extension'],
+    modifiers: ['2026', 'chrome', 'edge', 'firefox', 'brave', 'fix', 'extension'],
     directSeeds: [
       'manifest v3 adblocker that blocks youtube ads',
       'block youtube pre roll ads chrome 2026',
@@ -139,13 +180,13 @@ export const PILLAR_SEED_MATRIX = [
     modifiers: [
       'youtube chrome',
       'twitch 2026',
-      'safari mac',
+      'firefox desktop',
       'microsoft edge',
       'crunchyroll',
       'fandom',
       'forbes',
       'dailymail',
-      'hulu web'
+      'brave'
     ],
     directSeeds: [
       'adblock not working after chrome manifest v3 update',
@@ -179,25 +220,24 @@ export const PILLAR_SEED_MATRIX = [
     ]
   },
   {
-    pillarId: 'P5_SCAM_STORE_REVIEW_SHIELD',
-    name: 'Scam Store & Fake Review Protection',
+    pillarId: 'P5_TRACKER_AND_MALVERTISING_SHIELD',
+    name: 'URL Tracker & Malvertising Shield',
     funnelStage: 'TOFU_MOFU',
     defaultCpcGbp: 0.45,
     engines: ['google', 'bing', 'ddg'],
     entities: [
-      'fake shopify store detector',
-      'scam website checker extension',
-      'check if online shop is legit',
-      'fake clearance store detector',
-      'facebook ad scam store checker',
-      'hide ai slop google search'
+      'strip utm fbclid tracking links',
+      'block malvertising popunder redirects',
+      'stop fake robot captcha popups',
+      'block crypto miner browser scripts',
+      'block meta pixel tracking chrome'
     ],
-    modifiers: ['uk', 'chrome extension', 'free tool', '2026'],
+    modifiers: ['chrome extension', 'firefox', '2026'],
     directSeeds: [
-      'chrome extension to detect fake online stores',
-      'how to spot a fake dropshipping website uk',
-      'remove sponsored links and ai slop from google search',
-      'check domain age and scam score online shop'
+      'chrome extension to strip utm fbclid gclid',
+      'stop malvertising popunder redirects chrome',
+      'block fake cloudflare robot captcha popups',
+      'block in-browser cryptominer scripts mv3'
     ]
   },
   {
@@ -212,7 +252,7 @@ export const PILLAR_SEED_MATRIX = [
       'adblocker high cpu usage fix',
       'browser tabs crashing out of memory',
       'reduce microsoft edge memory usage',
-      'macbook safari chrome battery drain ads'
+      'macbook chrome battery drain ads'
     ],
     modifiers: ['fix', 'extension', 'windows 11', 'macbook'],
     directSeeds: [
@@ -245,7 +285,11 @@ const JUNK_FILTERS = [
     reason: 'unsupported_closed_hardware_tv_console',
     test: (q) =>
       /\b(roku|firestick|fire\s+tv|apple\s+tv|chromecast|ps4|ps5|playstation|xbox|nintendo\s+switch|lg\s+tv|samsung\s+tv|vizio\s+tv|hisense\s+tv|kodi)\b/i.test(q) &&
-      !/\b(browser|web|chrome|firefox|edge|safari|pc|laptop)\b/i.test(q)
+      !/\b(browser|web|chrome|firefox|edge|pc|laptop)\b/i.test(q)
+  },
+  {
+    reason: 'unshipped_platform_or_removed_feature',
+    regex: /\b(safari|ios|iphone|ipad|ipados|fake\s*(?:online\s*)?(?:shop|store|review)s?|scam\s*(?:shop|store|detector)|ai\s*slop|recipe\s*(?:blog|life\s*stor(?:y|ies)|clutter|stripper)|dns[\s-]*over[\s-]*https|doh\s*proxy)\b/i
   },
   {
     reason: 'unrelated_gaming_or_software',
@@ -373,11 +417,28 @@ export function canonicalizeIntentTokens(rawText) {
   };
 }
 
+function isIndexableKeptDiskPath(rawUrlOrPath) {
+  if (!rawUrlOrPath) return false;
+  const norm = normalizeUrlPath(rawUrlOrPath).toLowerCase();
+  if (isNoIndexPrunePath(norm) || CONSOLIDATE_301_MAP.has(norm)) return false;
+  const candidates = norm === '/'
+    ? [path.join(WEBSITE_DIR, 'index.html')]
+    : [path.join(WEBSITE_DIR, `${norm.slice(1)}.html`), path.join(WEBSITE_DIR, norm.slice(1), 'index.html')];
+  const diskPath = candidates.find((p) => fs.existsSync(p));
+  if (!diskPath) return false;
+  try {
+    const html = fs.readFileSync(diskPath, 'utf8');
+    if (/<meta\s+name=["']robots["']\s+content=["'][^"']*noindex/i.test(html)) return false;
+  } catch {
+    return false;
+  }
+  return true;
+}
+
 export function loadUnifiedIndexableCorpus() {
   const urls = new Set();
-  for (const sitemapFile of [SITEMAP_MAIN_PATH, SITEMAP_SITES_PATH]) {
-    if (!fs.existsSync(sitemapFile)) continue;
-    const xml = fs.readFileSync(sitemapFile, 'utf8');
+  if (fs.existsSync(SITEMAP_MAIN_PATH)) {
+    const xml = fs.readFileSync(SITEMAP_MAIN_PATH, 'utf8');
     for (const m of xml.matchAll(/<loc>([^<]+)<\/loc>/g)) {
       urls.add(m[1].trim());
     }
@@ -393,7 +454,8 @@ export function loadUnifiedIndexableCorpus() {
     } catch {
       continue;
     }
-    const cleanPath = pathname === '/' ? '/' : pathname.replace(/\/+$/, '');
+    const cleanPath = normalizeUrlPath(pathname).toLowerCase();
+    if (isNoIndexPrunePath(cleanPath) || CONSOLIDATE_301_MAP.has(cleanPath)) continue;
     const relHtml = cleanPath === '/' ? 'index.html' : `${cleanPath.replace(/^\//, '')}.html`;
     const fullHtmlPath = path.join(WEBSITE_DIR, relHtml);
 
@@ -402,6 +464,7 @@ export function loadUnifiedIndexableCorpus() {
     if (fs.existsSync(fullHtmlPath)) {
       try {
         const html = fs.readFileSync(fullHtmlPath, 'utf8');
+        if (/<meta\s+name=["']robots["']\s+content=["'][^"']*noindex/i.test(html)) continue;
         const tMatch = html.match(/<title>([\s\S]*?)<\/title>/i);
         const h1Match = html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i);
         titleText = tMatch ? tMatch[1].replace(/<[^>]+>/g, ' ').trim() : '';
@@ -545,7 +608,7 @@ const INTENT_SIGNALS = [
   {
     id: 'POS_DIAGNOSTIC_TOOL',
     weight: 28,
-    regex: /\b(test|tester|check|checker|benchmark|verify|is\s+my\s+ad\s*blocker\s+working|adblock\s+test|dns\s+leak|fingerprint|webrtc\s+leak|canvas|is\s+.*?\s+(legit|scam|safe|trustworthy)|scam\s+detector|fake\s+(shop|store|website|review))\b/i
+    regex: /\b(test|tester|check|checker|benchmark|verify|is\s+my\s+ad\s*blocker\s+working|adblock\s+test|fingerprint|webrtc\s+leak|canvas|is\s+.*?\s+(legit|scam|safe|trustworthy))\b/i
   },
   {
     id: 'POS_URGENT_PAIN_FIX',
@@ -560,12 +623,12 @@ const INTENT_SIGNALS = [
   {
     id: 'POS_ACTION_INSTALL',
     weight: 18,
-    regex: /\b(extension|add\s*on|plugin|for\s+(chrome|firefox|edge|safari|brave|opera|vivaldi|arc|orion|thorium|floorp|zen|kiwi|librewolf|ungoogled\s+chromium|windows\s*11|mac|macos|ios|iphone|ipad|android)|best\s+ad\s*blocker|best\s+manifest\s*v3)\b/i
+    regex: /\b(extension|add\s*on|plugin|for\s+(chrome|firefox|edge|brave|opera|vivaldi|arc|orion|thorium|floorp|zen|kiwi|librewolf|ungoogled\s+chromium|windows\s*11|mac|macos|android)|best\s+ad\s*blocker|best\s+manifest\s*v3)\b/i
   },
   {
     id: 'POS_CORE_MODULE_MATCH',
     weight: 16,
-    regex: /\b(manifest\s*v3|mv3|youtube\s+ads|pre\s*roll|mid\s*roll|twitch\s+ads|crunchyroll\s+ads|spotify\s+web\s+ads|itvx\s+ads|channel\s*4od\s+ads|fandom\s+ads|reject\s+(all\s+)?cookies|cookie\s+(banner|popup|wall|consent)|onetrust|didomi|sourcepoint|usercentrics|quantcast|trustarc|ai\s+slop|sponsored\s+(posts|results|links)|tab\s+(suspender|hibernat)|ram\s+tamer)\b/i
+    regex: /\b(manifest\s*v3|mv3|youtube\s+ads|pre\s*roll|mid\s*roll|twitch\s+ads|crunchyroll\s+ads|spotify\s+web\s+ads|itvx\s+ads|channel\s*4od\s+ads|fandom\s+ads|reject\s+(all\s+)?cookies|cookie\s+(banner|popup|wall|consent)|onetrust|didomi|sourcepoint|usercentrics|quantcast|trustarc|sponsored\s+(posts|results|links)|tab\s+(suspender|hibernat)|ram\s+tamer)\b/i
   },
   {
     id: 'POS_YEAR_FRESHNESS',
@@ -645,7 +708,7 @@ export function scoreAndClassifyBuyerIntent(query, pillarId) {
   const hasTool = matchedIds.has('POS_DIAGNOSTIC_TOOL');
   const hasPain = matchedIds.has('POS_URGENT_PAIN_FIX');
   const isBrowserSetupQuery =
-    /\b(for\s+(chrome|firefox|edge|safari|brave|opera|vivaldi|arc|orion|thorium|floorp|zen|kiwi|librewolf|ungoogled\s+chromium|windows\s*11|mac|macos|ios|iphone)|thorium\s+browser|floorp\s+browser|zen\s+browser|arc\s+browser|orion\s+browser)\b/i.test(q) &&
+    /\b(for\s+(chrome|firefox|edge|brave|opera|vivaldi|arc|orion|thorium|floorp|zen|kiwi|librewolf|ungoogled\s+chromium|windows\s*11|mac|macos)|thorium\s+browser|floorp\s+browser|zen\s+browser|arc\s+browser|orion\s+browser)\b/i.test(q) &&
     !hasCompetitor;
 
   if ((hasBuy || (hasCompetitor && /\b(renewal|cancel|price|cost|charge|refund|worth)\b/i.test(q))) && transactionalScore >= 72) {
@@ -666,8 +729,8 @@ export function scoreAndClassifyBuyerIntent(query, pillarId) {
     recommendedFormat = 'competitor_comparison';
   } else if (hasTool && transactionalScore >= 66) {
     intentTier = 'diagnostic_tool_intent';
-    // Route indexable programmatic guides/solutions around diagnostics to /guides or /solutions so they integrate with Pillar templates
-    cluster = /\b(scam|shop|store|legit|shopify|clearance)\b/i.test(q) ? 'solutions' : 'guides';
+    // Route indexable programmatic guides/solutions around diagnostics to /guides so they integrate with Pillar templates
+    cluster = 'guides';
     recommendedFormat = 'interactive_tool';
   } else if (transactionalScore >= 65 && (hasPain || matchedIds.has('POS_CORE_MODULE_MATCH') || matchedIds.has('POS_ACTION_INSTALL'))) {
     intentTier = 'high_urgency_fix';
@@ -724,7 +787,7 @@ function saveJsonFileSafe(filePath, data) {
 }
 
 async function fetchAutocompleteFromEngine(engine, seed, cacheObj, forceFresh = false) {
-  const cacheKey = crypto.createHash('sha1').update(`${engine}:gb:${seed.toLowerCase()}`).digest('hex');
+  const cacheKey = getAutocompleteCacheKey(engine, seed);
   const now = Date.now();
   const cached = cacheObj[cacheKey];
   if (!forceFresh && cached && now - cached.ts < AUTOCOMPLETE_TTL_MS && Array.isArray(cached.items)) {
@@ -874,27 +937,30 @@ const HIGH_DR_EDITORIAL_DOMAINS = new Set([
 
 const STALE_SERP_RE = /\b(2019|2020|2021|2022|2023|2024|manifest\s*v2|mv2)\b/i;
 const DECOY_SERP_DOMAIN_RE = /(powerthesaurus\.org|wordhippo\.com|merriam-webster\.com\/thesaurus\/hate)/i;
+const OFF_TOPIC_SERP_RE =
+  /\b(autotrader|gumtree|nintendo|acmilan|swfc\.co\.uk|trapstar|midterm\s+election|toyota\s+camry|sheffield\s+wednesday)\b/i;
 const DOMAIN_TOPIC_VOCAB_RE =
-  /\b(adblock|ad\s*blocker|blocker|ublock|adguard|ghostery|pie|stands|wipr|1blocker|browser|chrome|firefox|safari|edge|brave|vivaldi|opera|thorium|floorp|zen|arc|orion|cookie|consent|gdpr|onetrust|didomi|sourcepoint|usercentrics|quantcast|trustarc|privacy|tracker|ram|memory|cpu|tab|extension|addon|manifest|mv3|youtube|twitch|crunchyroll|spotify|itvx|fandom|scam|shop|store|shopify|trustpilot)\b/i;
+  /\b(ad[\s-]?block(?:er|ing|s)?|ublock|adguard|ghostery|adblock\s*plus|total\s*adblock|pie\s*adblock|1blocker|wipr|manifest\s*v3|mv3|declarativeNetRequest|cookie\s*(?:banner|consent|popup|wall)|onetrust|didomi|usercentrics|sourcepoint|consent-o-matic|anti[\s-]?adblock|tracker\s*blocker|privacy\s*extension)\b/i;
 
 function isRelevantSerpResponse(results, query) {
   if (!Array.isArray(results) || results.length < 3) return false;
-  // Reject immediately if any decoy thesaurus/anti-bot fallback URL is present
   if (results.some((r) => DECOY_SERP_DOMAIN_RE.test(`${r.domain} ${r.url}`))) {
     return false;
   }
   const qCanon = canonicalizeIntentTokens(query);
+  const minTokensRequired = qCanon.tokens.length <= 2 ? 1 : 2;
   let relevantItems = 0;
   for (const item of results) {
     const combined = `${item.title} ${item.snippet} ${item.url}`.toLowerCase();
+    if (OFF_TOPIC_SERP_RE.test(combined)) continue;
     const itemCanon = canonicalizeIntentTokens(`${item.title} ${item.snippet}`);
-    const hasQueryToken = qCanon.tokens.some((t) => t.length >= 3 && itemCanon.tokenSet.has(t));
+    const matchedQueryTokens = qCanon.tokens.filter((t) => t.length >= 3 && itemCanon.tokenSet.has(t)).length;
     const hasDomainTopic = DOMAIN_TOPIC_VOCAB_RE.test(combined);
-    if (hasQueryToken || hasDomainTopic) {
+    if (hasDomainTopic && matchedQueryTokens >= minTokensRequired) {
       relevantItems++;
     }
   }
-  return relevantItems >= 2;
+  return relevantItems >= 3;
 }
 
 async function fetchLiveBingRssSerp(query) {
@@ -1104,9 +1170,12 @@ export async function evaluateSerpWeakSpotScore(query, queryCanon, serpCache, al
   );
   const estimatedKD = Math.max(1, Math.min(95, 100 - lowCompetitionScore));
 
+  const isHeuristicFallback = source === 'lexical_heuristic_fallback';
   const result = {
     ts: now,
     inspectionSource: source,
+    isHeuristicFallback,
+    serpVerificationStatus: source.endsWith('_live') ? 'LIVE_VERIFIED' : 'UNVERIFIED_HEURISTIC',
     lowCompetitionScore,
     estimatedKD,
     editorialWallCount: editorialDomainsFound.length,
@@ -1166,9 +1235,9 @@ function toTitleCase(str) {
 
 function clampSeoTitle(rawBase) {
   let clean = rawBase.replace(/\s+/g, ' ').trim();
-  const suffixFull = ' (2026) | SWEEPR DeepBlock';
-  const suffixMid = ' | SWEEPR DeepBlock';
-  const suffixShort = ' | DeepBlock';
+  const suffixFull = ' (2026) | SWEEPR Deepblock';
+  const suffixMid = ' | SWEEPR Deepblock';
+  const suffixShort = ' | Deepblock';
 
   if (!/\b2026\b/.test(clean) && (clean + suffixFull).length <= 65) {
     return clean + suffixFull;
@@ -1196,7 +1265,7 @@ function clampMetaDescription(rawDesc) {
     clean = (lastSpace > 100 ? cut.slice(0, lastSpace) : cut).replace(/[.,;:-]+$/, '') + '.';
   }
   if (clean.length < 70) {
-    clean += ' Built natively on Chrome & Firefox Manifest V3 with <50ms cookie rejection.';
+    clean += ' Built natively on Chrome & Firefox Manifest V3 with automated cookie rejection.';
   }
   return clean.slice(0, 160);
 }
@@ -1216,58 +1285,58 @@ export function synthesizePageBlueprint(keyword, secondaryKeywords, intentInfo, 
   const h1 = `${titlePhrase}: Verified 2026 Manifest V3 Protection & Fix`;
 
   const isRamOrSuite = /\b(ram|cpu|memory|hibernat|suspender|battery|suite|bundle)\b/i.test(keyword);
-  const isScamOrShop = /\b(scam|shop|store|legit|shopify|clearance|review|ai\s+slop)\b/i.test(keyword);
+  const isTrackerOrPopunder = /\b(utm|fbclid|gclid|track|popunder|redirect|captcha|miner)\b/i.test(keyword);
   const isCookie = /\b(cookie|onetrust|didomi|sourcepoint|usercentrics|quantcast|trustarc|gdpr|scroll)\b/i.test(keyword);
   const isCompetitor = intentInfo.cluster === 'vs';
 
   let metaDescription = '';
   if (isCompetitor) {
     metaDescription = clampMetaDescription(
-      `${titlePhrase} compared in 2026: 8/8 Manifest V3 ad & tracker defense, <50ms cookie auto-rejection, and transparent £29.99/yr Pro pricing without renewal traps.`
+      `${titlePhrase} compared in 2026: Manifest V3 ad & tracker defense, GDPR cookie auto-rejection, and transparent £29.99/yr Pro pricing without renewal traps.`
     );
-  } else if (isScamOrShop) {
+  } else if (isTrackerOrPopunder) {
     metaDescription = clampMetaDescription(
-      `${titlePhrase}: inspect domain age, fake checkout timers, and phishing patterns in real time while blocking sponsored AI search slop with SWEEPR DeepBlock.`
+      `${titlePhrase}: strip URL tracking parameters, block in-browser cryptominers, and neutralize malvertising pop-unders with SWEEPR Deepblock v${MANIFEST_VERSION}.`
     );
   } else if (isCookie) {
     metaDescription = clampMetaDescription(
-      `${titlePhrase}: automatically click Reject All on GDPR cookie popups in under 50ms and unlock frozen page scrollbars across Chrome, Edge, and Firefox.`
+      `${titlePhrase}: automatically click Reject All on GDPR cookie popups and unlock frozen page scrollbars across Chrome, Edge, Firefox, Brave, and Opera.`
     );
   } else if (isRamOrSuite) {
     metaDescription = clampMetaDescription(
-      `${titlePhrase}: cut browser RAM usage by up to 62% with sub-millisecond C++ declarativeNetRequest ad filtering and automatic background tab hibernation.`
+      `${titlePhrase}: lower browser memory usage by blocking heavy ad auctions and hibernating inactive background tabs with Total Tab & RAM Tamer.`
     );
   } else {
     metaDescription = clampMetaDescription(
-      `${titlePhrase}: pass all 8/8 Manifest V3 anti-detection checks in 2026 with C++ declarativeNetRequest filtering, zero video ads, and <50ms cookie rejection.`
+      `${titlePhrase}: pass Manifest V3 anti-detection checks in 2026 with ${STATIC_RULE_COUNT} static declarativeNetRequest rules, zero video ads, and cookie auto-rejection.`
     );
   }
 
-  const recommendedToolWidget = isScamOrShop
+  const recommendedToolWidget = isRamOrSuite
     ? {
-        toolRoute: '/tools/is-this-shop-a-scam',
-        ctaHeadline: 'Verify Any Online Store in 5 Seconds (14-Point Scam Audit)',
-        ctaButton: 'Open Free Scam Shop Detector →'
+        toolRoute: '/tools/browser-ram-calculator',
+        ctaHeadline: 'Estimate Multi-Tab Browser Memory Savings with Total Tab & RAM Tamer',
+        ctaButton: 'Open Browser RAM Calculator →'
       }
     : {
-        toolRoute: '/tools/is-my-adblocker-working',
-        ctaHeadline: 'Test Your Current Browser Against 8 Live MV3 Ad & Tracker Vectors',
-        ctaButton: 'Run Free 8/8 MV3 Adblock Diagnostic →'
+        toolRoute: '/test-lab',
+        ctaHeadline: 'Test Your Current Browser Against Live MV3 Ad & Tracker Vectors',
+        ctaButton: 'Run Free Live MV3 Test Lab →'
       };
 
   const primaryCta = isRamOrSuite
     ? {
         href: '/order?plan=suite_annual',
-        label: 'Get Complete Security Suite (£89.99/yr — All 3 Pro Apps)'
+        label: 'Get Complete Security Suite (£89.99/yr — All 4 Pro Apps)'
       }
     : {
         href: '/order?plan=annual',
-        label: 'Unlock SWEEPR DeepBlock Pro (£29.99/yr — Save 58%)'
+        label: 'Unlock SWEEPR Deepblock Pro (£29.99/yr — Save 50%)'
       };
 
   const secondaryCta = {
     href: '/order?plan=suite_annual',
-    label: 'Bundle VPN + Cleaner + DeepBlock + RAM Tamer (£89.99/yr)'
+    label: 'Bundle VPN + Cleaner + Deepblock + RAM Tamer (£89.99/yr)'
   };
 
   const secList = secondaryKeywords.slice(0, 3);
@@ -1275,46 +1344,46 @@ export function synthesizePageBlueprint(keyword, secondaryKeywords, intentInfo, 
     q: secList[1]
       ? `How do I fix ${secList[1]} without breaking page scrolling?`
       : `Why do standard ad blockers fail or break page scrolling on modern sites?`,
-    a: `Legacy CSS-hiding extensions delete the visual overlay while leaving body{overflow:hidden} locked and consented tracker scripts active. SWEEPR DeepBlock executes the genuine "Reject All" CMP signal in under 50ms and restores clean scrolling automatically.`
+    a: `Legacy CSS-hiding extensions delete the visual overlay while leaving body{overflow:hidden} locked and consented tracker scripts active. SWEEPR Deepblock executes the genuine "Reject All" CMP signal and restores clean scrolling automatically.`
   };
   if (isCompetitor) {
     faq3 = {
       q: secList[1]
-        ? `How does SWEEPR DeepBlock compare on ${secList[1]} and renewal pricing?`
-        : `Does SWEEPR DeepBlock charge surprise Year-2 renewal price hikes like legacy ad blockers?`,
-      a: `Never. Unlike legacy ad blockers that lure users in with a £19 intro offer and auto-renew at £99–£120/yr, SWEEPR DeepBlock Pro is locked at a transparent £29.99/yr (£2.50/mo eq.) across 4 devices, backed by a 1-click cancellation toggle and a 14-day money-back guarantee.`
+        ? `How does SWEEPR Deepblock compare on ${secList[1]} and renewal pricing?`
+        : `Does SWEEPR Deepblock charge surprise Year-2 renewal price hikes like legacy ad blockers?`,
+      a: `Never. Unlike legacy ad blockers that lure users in with a £19 intro offer and auto-renew at £99–£120/yr, SWEEPR Deepblock Pro is locked at a transparent £29.99/yr (£2.50/mo eq.) across 5 devices, backed by a 1-click cancellation toggle and a 14-day money-back guarantee.`
     };
-  } else if (isScamOrShop) {
+  } else if (isTrackerOrPopunder) {
     faq3 = {
       q: secList[1]
-        ? `How does SWEEPR DeepBlock detect ${secList[1]} before checkout?`
-        : `How does the Fake E-Commerce & AI Slop Detector protect shoppers in real time?`,
-      a: `SWEEPR DeepBlock's 14-point heuristic scanner inspects RDAP domain registration age, cloned Shopify checkout templates, fake countdown timers, and synthetic review clusters locally in your browser before you enter payment details.`
+        ? `How does SWEEPR Deepblock handle ${secList[1]}?`
+        : `How does URL tracking parameter stripping and cryptominer blocking work?`,
+      a: `SWEEPR Deepblock v${MANIFEST_VERSION} enforces ${STATIC_RULE_COUNT} static declarativeNetRequest rules (including 18 cryptominer rules and URL tracker parameter rules) natively in the browser network stack before third-party scripts run.`
     };
   } else if (isRamOrSuite) {
     faq3 = {
       q: secList[1]
         ? `How much memory does SWEEPR save for ${secList[1]}?`
-        : `How does Total Tab & RAM Tamer reduce browser memory by up to 62%?`,
-      a: `By blocking heavy third-party video ad iframes at the C++ network layer before they allocate heap memory, and automatically hibernating idle background tabs while protecting pinned, audio, and active form tabs.`
+        : `How does Total Tab & RAM Tamer reduce browser memory overhead?`,
+      a: `By blocking heavy third-party video ad iframes at the network layer before they allocate heap memory, and automatically hibernating idle background tabs while protecting pinned, audio, and active form tabs.`
     };
   }
 
   const customFaqs = [
     {
-      q: `How does SWEEPR DeepBlock solve "${keyword}" in 2026?`,
-      a: `SWEEPR DeepBlock v1.2.7 combines 242 C++ declarativeNetRequest network rules (15µs match latency) with local-first DOM & player sanitization, eliminating video ad interruptions, cookie walls, and tracker bloat without triggering anti-adblock modals.`
+      q: `How does SWEEPR Deepblock solve "${keyword}" in 2026?`,
+      a: `SWEEPR Deepblock v${MANIFEST_VERSION} combines ${STATIC_RULE_COUNT} static declarativeNetRequest network rules + ${DELTA_RULE_COUNT} dynamic OTA delta rules with local-first DOM & player sanitization, eliminating video ad interruptions, cookie walls, and tracker bloat without triggering anti-adblock modals.`
     },
     {
       q: secList[0]
         ? `What about ${secList[0]}?`
-        : `Does this work on Chrome, Edge, Brave, and Firefox Manifest V3?`,
-      a: `Yes. Every SWEEPR DeepBlock rule pack is compiled natively for Chromium Manifest V3 (Chrome, Edge, Brave, Thorium, Vivaldi, Opera, Arc) and Firefox WebExtensions with zero cloud browsing telemetry.`
+        : `Does this work on Chrome, Edge, Brave, Opera, and Firefox Manifest V3?`,
+      a: `Yes. Every SWEEPR Deepblock rule pack is compiled natively for Chromium Manifest V3 (Chrome, Edge, Brave, Opera, Thorium, Vivaldi, Arc) and Firefox (Desktop & Android) with zero cloud browsing telemetry.`
     },
     faq3,
     {
-      q: `What is included in SWEEPR DeepBlock Pro vs the Complete Security Suite?`,
-      a: `SWEEPR DeepBlock Pro (£29.99/yr or £1.99 1st-Month Intro) unlocks all 6 browser protection modules across 4 devices. The Sweepr Complete Security Suite (£89.99/yr, save 45%) bundles DeepBlock Pro, Total Tab & RAM Tamer, Sweepr VPN Pro, and Sweepr Desktop Cleaner Pro across 5 devices.`
+      q: `What is included in SWEEPR Deepblock Pro vs the Complete Security Suite?`,
+      a: `SWEEPR Deepblock Pro (£29.99/yr or £1.99 1st-Month Intro) unlocks video/banner blocking, GDPR cookie auto-reject, URL tracker stripping, Element Zapper, and Total Tab & RAM Tamer across 5 devices. The Sweepr Complete Security Suite (£89.99/yr, save 45%) bundles Deepblock Pro, Total Tab & RAM Tamer, Sweepr VPN Pro, and Sweepr Desktop Cleaner Pro across 5 devices.`
     }
   ];
 
@@ -1324,10 +1393,10 @@ export function synthesizePageBlueprint(keyword, secondaryKeywords, intentInfo, 
     metaDescription,
     shortLinkTitle: truncateAtWordBoundary(titlePhrase, 48),
     linkBadge: `${intentInfo.cluster.toUpperCase()} • KD ${metrics.estimatedKD} • Score ${metrics.opportunityScore}`,
-    painPointIssue: `Eliminating ${keyword} with verified C++ declarativeNetRequest filtering, <50ms CMP auto-rejection, and local-first privacy protection`,
-    beforeStat: isRamOrSuite ? '1.8 GB+ Browser Tab RAM Bloat' : 'Unskippable Ads & Tracker Walls',
-    afterStat: isRamOrSuite ? 'Up to 62% Lower Memory Overhead' : '0 Video Ads • <50ms Auto-Reject',
-    perfStat: '15µs C++ DNR Match',
+    painPointIssue: `Eliminating ${keyword} with ${STATIC_RULE_COUNT} static declarativeNetRequest rules, GDPR CMP auto-rejection, and local-first privacy protection`,
+    beforeStat: isRamOrSuite ? 'High Multi-Tab Browser RAM Bloat' : 'Unskippable Ads & Tracker Walls',
+    afterStat: isRamOrSuite ? 'Hibernated Background Tab Memory' : '0 Video Ads • Auto-Rejected Cookies',
+    perfStat: `${STATIC_RULE_COUNT} Static DNR Rules`,
     recommendedToolWidget,
     primaryCta,
     secondaryCta,
@@ -1409,8 +1478,9 @@ export async function runKeywordResearchEngine(options = {}) {
           seed: job.seed,
           minDepth: 0,
           seedCount: 1,
-          bestRankByEngine: { google: 2, bing: 3 },
-          bestRelevanceByEngine: { google: 950 }
+          volumeSource: 'seed_unmeasured',
+          bestRankByEngine: {},
+          bestRelevanceByEngine: {}
         });
       }
     }
@@ -1420,9 +1490,9 @@ export async function runKeywordResearchEngine(options = {}) {
   const nowTs = Date.now();
   for (const job of seedJobs) {
     for (const eng of job.pillar.engines) {
-      const ck = `${eng}:${job.seed.toLowerCase().trim()}`;
+      const ck = getAutocompleteCacheKey(eng, job.seed);
       const cached = autocompleteCache[ck];
-      if (cached && nowTs - cached.ts < AUTOCOMPLETE_CACHE_TTL_MS && Array.isArray(cached.items)) {
+      if (cached && nowTs - cached.ts < AUTOCOMPLETE_TTL_MS && Array.isArray(cached.items)) {
         for (const item of cached.items) {
           const q = item.text;
           if (!rawHarvestMap.has(q)) {
@@ -1432,9 +1502,19 @@ export async function runKeywordResearchEngine(options = {}) {
               seed: job.seed,
               minDepth: job.depth,
               seedCount: 1,
+              volumeSource: 'autocomplete_cache',
               bestRankByEngine: { [eng]: item.rank },
               bestRelevanceByEngine: item.relevance ? { [eng]: item.relevance } : {}
             });
+          } else {
+            const rec = rawHarvestMap.get(q);
+            rec.volumeSource = 'autocomplete_cache';
+            if (!rec.bestRankByEngine[eng] || item.rank < rec.bestRankByEngine[eng]) {
+              rec.bestRankByEngine[eng] = item.rank;
+            }
+            if (item.relevance && (!rec.bestRelevanceByEngine[eng] || item.relevance > rec.bestRelevanceByEngine[eng])) {
+              rec.bestRelevanceByEngine[eng] = item.relevance;
+            }
           }
         }
       }
@@ -1449,8 +1529,8 @@ export async function runKeywordResearchEngine(options = {}) {
     for (const [, pJobs] of jobsByPillar.entries()) {
       // Prioritize uncached seeds first so sequential runs expand coverage across the full matrix
       const sortedPJobs = [...pJobs].sort((a, b) => {
-        const aCached = a.pillar.engines.every((eng) => Boolean(autocompleteCache[`${eng}:${a.seed.toLowerCase().trim()}`]));
-        const bCached = b.pillar.engines.every((eng) => Boolean(autocompleteCache[`${eng}:${b.seed.toLowerCase().trim()}`]));
+        const aCached = a.pillar.engines.every((eng) => Boolean(autocompleteCache[getAutocompleteCacheKey(eng, a.seed)]));
+        const bCached = b.pillar.engines.every((eng) => Boolean(autocompleteCache[getAutocompleteCacheKey(eng, b.seed)]));
         if (aCached !== bCached) return aCached ? 1 : -1;
         return a.depth - b.depth;
       });
@@ -1516,6 +1596,11 @@ export async function runKeywordResearchEngine(options = {}) {
 
     const volInfo = calculateVolumeScore(rec);
     if (volInfo.volumeScore < 45) continue;
+
+    const normTargetRoute = normalizeUrlPath(intentInfo.targetRoute).toLowerCase();
+    if (isNoIndexPrunePath(normTargetRoute) || CONSOLIDATE_301_MAP.has(normTargetRoute)) {
+      continue;
+    }
 
     const queryCanon = canonicalizeIntentTokens(rec.query);
     const cannib = evaluateCorpusCannibalization(queryCanon, intentInfo.targetRoute, corpus);
@@ -1593,15 +1678,21 @@ export async function runKeywordResearchEngine(options = {}) {
 
   // Stage C: Live SERP Weak-Spot Inspection & 5-Gate Admission
   const approvedOpportunities = [];
+  const heuristicCandidatesUnverified = [];
   const ctrEnrichmentQueue = [];
   let liveSerpChecksPerformed = 0;
+  let heuristicFallbackCount = 0;
 
   for (const item of clusters) {
     const allowLive = !offlineMode && liveSerpChecksPerformed < maxLiveSerpChecks;
     const wasCached = Boolean(serpCache[item.query] && Date.now() - serpCache[item.query].ts < SERP_CACHE_TTL_MS);
     const serpInfo = await evaluateSerpWeakSpotScore(item.query, item.queryCanon, serpCache, allowLive);
-    if (allowLive && !wasCached && serpInfo.inspectionSource.endsWith('_live')) {
+    const isLiveVerified = Boolean(serpInfo.inspectionSource && serpInfo.inspectionSource.endsWith('_live'));
+    if (allowLive && !wasCached && isLiveVerified) {
       liveSerpChecksPerformed++;
+    }
+    if (!isLiveVerified) {
+      heuristicFallbackCount++;
     }
 
     const volumeScore = item.volInfo.volumeScore;
@@ -1629,7 +1720,9 @@ export async function runKeywordResearchEngine(options = {}) {
     };
 
     if (item.cannib.maxCannibScore >= 0.55) {
-      // Near-match -> Route to CTR / FAQ Surgery on existing Pillar page instead of minting duplicate URL
+      if (!isIndexableKeptDiskPath(item.cannib.closestExistingUrl)) {
+        continue;
+      }
       alreadyCoveredCount++;
       ctrEnrichmentQueue.push({
         keyword: item.query,
@@ -1637,6 +1730,7 @@ export async function runKeywordResearchEngine(options = {}) {
         targetExistingPage: item.cannib.closestExistingUrl,
         targetExistingTitle: item.cannib.closestExistingTitle,
         cannibalizationScore: item.cannib.maxCannibScore,
+        serpVerificationStatus: isLiveVerified ? 'LIVE_VERIFIED' : 'UNVERIFIED_HEURISTIC',
         metrics,
         recommendedAction: 'ENRICH_EXISTING_PILLAR_FAQ_AND_CTR'
       });
@@ -1646,6 +1740,11 @@ export async function runKeywordResearchEngine(options = {}) {
     // Gate 5: OpportunityScore >= 72 for Net-New Pillar Page
     if (opportunityScore < 72) continue;
 
+    const normItemRoute = normalizeUrlPath(item.intentInfo.targetRoute).toLowerCase();
+    if (isNoIndexPrunePath(normItemRoute) || CONSOLIDATE_301_MAP.has(normItemRoute)) {
+      continue;
+    }
+
     const pageBlueprint = synthesizePageBlueprint(
       item.query,
       item.secondaryKeywords,
@@ -1653,9 +1752,17 @@ export async function runKeywordResearchEngine(options = {}) {
       metrics
     );
 
-    const isPublishedOnDisk = fs.existsSync(path.join(WEBSITE_DIR, item.intentInfo.relPath));
+    const absDiskPath = path.join(WEBSITE_DIR, item.intentInfo.relPath);
+    let isPublishedOnDisk = false;
+    let isNoIndexOnDisk = false;
+    if (fs.existsSync(absDiskPath)) {
+      const diskHtml = fs.readFileSync(absDiskPath, 'utf8');
+      isNoIndexOnDisk = /<meta\s+name=["']robots["']\s+content=["'][^"']*noindex/i.test(diskHtml);
+      isPublishedOnDisk = !isNoIndexOnDisk;
+    }
+    if (isNoIndexOnDisk) continue;
 
-    approvedOpportunities.push({
+    const entry = {
       id: `kw_${item.intentInfo.cluster}_${item.queryCanon.tokens.slice(0, 4).join('_')}`,
       keyword: item.query,
       secondaryKeywords: item.secondaryKeywords,
@@ -1667,15 +1774,18 @@ export async function runKeywordResearchEngine(options = {}) {
       targetRoute: item.intentInfo.targetRoute,
       relPath: item.intentInfo.relPath,
       isPublishedOnDisk,
-      status: isPublishedOnDisk ? 'published' : 'approved_for_generation',
+      status: isPublishedOnDisk ? 'published' : isLiveVerified ? 'approved_for_generation' : 'unverified_heuristic_candidate',
       metrics,
       volumeBreakdown: {
         ...item.volInfo,
+        volumeSource: item.volumeSource || 'autocomplete',
         enginesMatched: Object.keys(item.bestRankByEngine),
         bestRankByEngine: item.bestRankByEngine
       },
       serpCompetition: {
         inspectionSource: serpInfo.inspectionSource,
+        isHeuristicFallback: !isLiveVerified,
+        serpVerificationStatus: isLiveVerified ? 'LIVE_VERIFIED' : 'UNVERIFIED_HEURISTIC',
         lowCompetitionScore: serpInfo.lowCompetitionScore,
         estimatedKD: serpInfo.estimatedKD,
         signals: serpInfo.signals,
@@ -1689,12 +1799,19 @@ export async function runKeywordResearchEngine(options = {}) {
         jaccardSimilarity: item.cannib.jaccardSimilarity
       },
       pageBlueprint
-    });
+    };
+
+    if (isLiveVerified) {
+      approvedOpportunities.push(entry);
+    } else {
+      heuristicCandidatesUnverified.push(entry);
+    }
   }
 
   saveJsonFileSafe(SERP_CACHE_PATH, serpCache);
 
   approvedOpportunities.sort((a, b) => b.metrics.opportunityScore - a.metrics.opportunityScore);
+  heuristicCandidatesUnverified.sort((a, b) => b.metrics.opportunityScore - a.metrics.opportunityScore);
   ctrEnrichmentQueue.sort((a, b) => b.metrics.opportunityScore - a.metrics.opportunityScore);
 
   const matrixReport = {
@@ -1708,10 +1825,13 @@ export async function runKeywordResearchEngine(options = {}) {
       lowIntentRejectedCount,
       intraBatchSynonymsMerged: intraBatchMergedCount,
       alreadyCoveredOrEnrichedCount: alreadyCoveredCount,
+      heuristicFallbackCount,
+      unverifiedHeuristicCandidatesCount: heuristicCandidatesUnverified.length,
       approvedLowKdOpportunitiesCount: approvedOpportunities.length,
       ctrEnrichmentQueueCount: ctrEnrichmentQueue.length
     },
     opportunities: approvedOpportunities,
+    heuristicCandidatesUnverified: heuristicCandidatesUnverified.slice(0, 50),
     ctrEnrichmentQueue: ctrEnrichmentQueue.slice(0, 50)
   };
 
@@ -1748,7 +1868,7 @@ export async function runKeywordResearchEngine(options = {}) {
   console.log('============================================================================');
   console.log('  SWEEPR DEEPBLOCK — TRANSACTIONAL KEYWORD & LOW-KD OPPORTUNITY ENGINE v2.0');
   console.log('============================================================================');
-  console.log(`  Indexable Corpus Audited (Both Sitemaps) : ${corpus.totalIndexableCount} URLs`);
+  console.log(`  Indexable Corpus Audited (sitemap.xml)   : ${corpus.totalIndexableCount} URLs`);
   console.log(`  Hierarchical Seed Queries Expanded       : ${seedJobs.length}`);
   console.log(`  Raw Multi-Engine Queries Harvested       : ${rawHarvestMap.size}`);
   console.log(`  Hard Junk / Non-Browser Disqualified     : ${junkRejectedCount}`);

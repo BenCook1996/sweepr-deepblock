@@ -1,43 +1,12 @@
 {
-  "generatedAt": "2026-11-23T18:33:37.224Z",
+  "generatedAt": "2026-11-23T13:27:57.167Z",
   "engineVersion": "2.0.0",
-  "seedsQueried": 339,
+  "seedsQueried": 330,
   "indexablePagesChecked": 441,
-  "totalAutocompleteQueriesDiscovered": 526,
-  "alreadyCoveredCount": 26,
-  "uncoveredIntentGapsCount": 2,
-  "topPriorityGaps": [
-    {
-      "query": "auto reject cookies extension edge",
-      "secondaryKeywords": [
-        "auto reject all cookies extension"
-      ],
-      "seed": "P4_COOKIE_CONSENT_GDPR",
-      "intentScore": 72,
-      "volumeScore": 70,
-      "lowCompetitionScore": 75,
-      "estimatedKD": 25,
-      "opportunityScore": 77.5,
-      "recommendedFormat": "platform_solution",
-      "suggestedRoute": "/solutions/auto-reject-cookies-extension-edge",
-      "closestExistingPage": "/guides/how-to-auto-reject-usercentrics-cookie-banners",
-      "overlapRatio": 0.344
-    },
-    {
-      "query": "adblock pro for safari not working",
-      "secondaryKeywords": [],
-      "seed": "P3_URGENT_TROUBLESHOOTING",
-      "intentScore": 100,
-      "volumeScore": 49,
-      "lowCompetitionScore": 75,
-      "estimatedKD": 25,
-      "opportunityScore": 76,
-      "recommendedFormat": "browser_setup_guide",
-      "suggestedRoute": "/setup/adblock-pro-for-safari-not-working",
-      "closestExistingPage": "/guides/adblock-not-working-on-twitch-2026",
-      "overlapRatio": 0.405
-    }
-  ],
+  "totalAutocompleteQueriesDiscovered": 38,
+  "alreadyCoveredCount": 12,
+  "uncoveredIntentGapsCount": 0,
+  "topPriorityGaps": [],
   "sampleCoveredQueries": [
     {
       "query": "total adblock renewal charge alternative",
@@ -82,46 +51,6 @@
     {
       "query": "how to test if manifest v3 adblocker is working",
       "matchedPage": "/guides/how-to-test-if-manifest-v3-adblocker-is-working",
-      "overlapRatio": 1
-    },
-    {
-      "query": "is pie adblock safe",
-      "matchedPage": "/vs/is-pie-adblock-safe",
-      "overlapRatio": 1
-    },
-    {
-      "query": "how much does total adblock cost",
-      "matchedPage": "/vs/how-much-does-total-adblock-cost",
-      "overlapRatio": 1
-    },
-    {
-      "query": "total adblock cost per month",
-      "matchedPage": "/vs/total-adblock-cost-per-month",
-      "overlapRatio": 1
-    },
-    {
-      "query": "pie adblock is a scam",
-      "matchedPage": "/vs/pie-adblock-is-a-scam",
-      "overlapRatio": 1
-    },
-    {
-      "query": "youtube ads blocker chrome extension",
-      "matchedPage": "/solutions/youtube-ads-blocker-chrome-extension",
-      "overlapRatio": 1
-    },
-    {
-      "query": "adblock not working on twitch 2026",
-      "matchedPage": "/guides/adblock-not-working-on-twitch-2026",
-      "overlapRatio": 1
-    },
-    {
-      "query": "adblock plus not working on youtube chrome",
-      "matchedPage": "/vs/adblock-plus-not-working-on-youtube-chrome",
-      "overlapRatio": 1
-    },
-    {
-      "query": "chrome manifest v3 adblock plus",
-      "matchedPage": "/vs/chrome-manifest-v3-adblock-plus",
       "overlapRatio": 1
     }
   ]

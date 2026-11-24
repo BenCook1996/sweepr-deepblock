@@ -1,44 +1,57 @@
 #!/bin/bash
-# SWEEPR Deepblock — 1-Click macOS Browser Extension Auto-Installer
-set -e
+set -euo pipefail
 
-echo "============================================================"
-echo "  SWEEPR Deepblock — 1-Click macOS Browser Setup"
-echo "============================================================"
+CHROME_STORE_URL="https://chromewebstore.google.com/detail/bkdfhdgmglfancgpkcbdceinfdlccmpc"
+FIREFOX_AMO_URL="https://addons.mozilla.org/en-US/firefox/addon/sweepr-deepblock/"
 
-INSTALL_DIR="$HOME/Library/Application Support/SWEEPR/Deepblock/Extension"
-ZIP_PATH="$HOME/Library/Application Support/SWEEPR/Deepblock/sweepr-deepblock-extension.zip"
-mkdir -p "$INSTALL_DIR"
+clear
+echo "================================================================"
+echo "  SWEEPR Deepblock — Official Store Installer (macOS)"
+echo "================================================================"
+echo ""
+echo "Extension packages on macOS are installed through your browser's"
+echo "official signed store listing for automatic updates & security."
+echo ""
+echo -n "Optional: Paste your SWEEPR-DB-XXXX-XXXX-XXXX license key (or press Enter for Free): "
+read -r RAW_KEY
 
-echo "-> Downloading latest SWEEPR Deepblock extension package..."
-curl -fsSL "https://sweeprdeepblock.com/download/sweepr-deepblock-extension.zip" -o "$ZIP_PATH"
-
-echo "-> Unpacking extension to $INSTALL_DIR..."
-unzip -oq "$ZIP_PATH" -d "$INSTALL_DIR"
-
-read -r -p "Enter your 6-Digit Activation Code or Pro License Key (or press Enter to skip): " USER_KEY
-if [ -n "$USER_KEY" ]; then
-  printf '{"licenseKey":"%s","activation_code":"%s"}\n' "$USER_KEY" "$USER_KEY" > "$INSTALL_DIR/preactivated-license.json"
-  echo "-> Pre-activated Pro key saved!"
+KEY="$(printf '%s' "$RAW_KEY" | tr '[:lower:]' '[:upper:]' | xargs)"
+if [ -n "$KEY" ]; then
+  if ! printf '%s' "$KEY" | grep -Eq '^SWEEPR-[A-Z0-9]{2,8}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$'; then
+    echo "[ERROR] Invalid key format. Enter a full SWEEPR-DB-XXXX-XXXX-XXXX license key."
+    exit 1
+  fi
+  echo "Verifying license key with sweeprdeepblock.com..."
+  VERIFY_RESP="$(curl -fsS --max-time 8 -X POST -H "Content-Type: application/json" -d "{\"key\":\"$KEY\",\"license_key\":\"$KEY\"}" https://sweeprdeepblock.com/api/license-verify 2>/dev/null || true)"
+  if ! printf '%s' "$VERIFY_RESP" | grep -Eq '"valid"[[:space:]]*:[[:space:]]*true'; then
+    echo "[ERROR] License key verification failed (key is invalid, expired, or server unreachable)."
+    exit 1
+  fi
+  printf '%s' "$KEY" | pbcopy
+  echo "[OK] License key verified live and copied to clipboard."
 fi
 
-if [ -d "/Applications/Google Chrome.app" ]; then
-  echo "-> Launching Google Chrome with SWEEPR Deepblock enabled..."
-  killall "Google Chrome" >/dev/null 2>&1 || true
-  sleep 1
-  open -a "Google Chrome" --args --restore-last-session --load-extension="$INSTALL_DIR" "https://sweeprdeepblock.com/download?installed=1"
+if [ -d "/Applications/Firefox.app" ] && [ ! -d "/Applications/Google Chrome.app" ] && [ ! -d "/Applications/Brave Browser.app" ] && [ ! -d "/Applications/Microsoft Edge.app" ]; then
+  echo "Opening Firefox Add-ons (AMO)..."
+  open -a "Firefox" "$FIREFOX_AMO_URL"
+elif [ -d "/Applications/Google Chrome.app" ]; then
+  echo "Opening Chrome Web Store in Google Chrome..."
+  open -a "Google Chrome" "$CHROME_STORE_URL"
 elif [ -d "/Applications/Brave Browser.app" ]; then
-  echo "-> Launching Brave Browser with SWEEPR Deepblock enabled..."
-  killall "Brave Browser" >/dev/null 2>&1 || true
-  sleep 1
-  open -a "Brave Browser" --args --restore-last-session --load-extension="$INSTALL_DIR" "https://sweeprdeepblock.com/download?installed=1"
+  echo "Opening Chrome Web Store in Brave Browser..."
+  open -a "Brave Browser" "$CHROME_STORE_URL"
 elif [ -d "/Applications/Microsoft Edge.app" ]; then
-  echo "-> Launching Microsoft Edge with SWEEPR Deepblock enabled..."
-  killall "Microsoft Edge" >/dev/null 2>&1 || true
-  sleep 1
-  open -a "Microsoft Edge" --args --restore-last-session --load-extension="$INSTALL_DIR" "https://sweeprdeepblock.com/download?installed=1"
+  echo "Opening Chrome Web Store in Microsoft Edge..."
+  open -a "Microsoft Edge" "$CHROME_STORE_URL"
 else
-  echo "-> Extension unpacked to: $INSTALL_DIR"
+  echo "Opening official Chrome Web Store listing in default browser..."
+  open "$CHROME_STORE_URL"
 fi
 
-echo "✓ SWEEPR Deepblock setup complete!"
+if [ -d "/Applications/Firefox.app" ] && [ -d "/Applications/Google Chrome.app" ]; then
+  echo "Firefox detected too -> $FIREFOX_AMO_URL"
+fi
+
+echo ""
+echo "Click 'Add to Chrome' / 'Add to Firefox', then paste your Pro key"
+echo "from the clipboard (Cmd+V) in the SWEEPR Deepblock popup."

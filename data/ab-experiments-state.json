@@ -1,59 +1,59 @@
 {
   "experiment": "paywall_value_framing_v2",
   "epsilon": 0.2,
-  "updatedAt": "2026-11-08T20:57:49.077Z",
-  "leaderVariantId": "ram_speedometer_bundle",
-  "mode": "bandit_exploitation_80_20",
+  "updatedAt": "2026-11-23T17:40:25.891Z",
+  "leaderVariantId": "control_value_stack",
+  "mode": "exploration_uniform",
   "stats": {
     "control_value_stack": {
-      "visitors": 42,
-      "conversions": 2,
+      "visitors": 11,
+      "conversions": 0,
       "suiteAttachCount": 0,
-      "totalRevenueGbp": 59.98
+      "totalRevenueGbp": 0
     },
     "renewal_transparency": {
-      "visitors": 44,
-      "conversions": 3,
-      "suiteAttachCount": 1,
-      "totalRevenueGbp": 149.97
+      "visitors": 10,
+      "conversions": 0,
+      "suiteAttachCount": 0,
+      "totalRevenueGbp": 0
     },
     "ram_speedometer_bundle": {
-      "visitors": 43,
-      "conversions": 3,
-      "suiteAttachCount": 2,
-      "totalRevenueGbp": 209.97
+      "visitors": 11,
+      "conversions": 0,
+      "suiteAttachCount": 0,
+      "totalRevenueGbp": 0
     }
   },
   "computedMetrics": {
     "control_value_stack": {
-      "visitors": 42,
-      "conversions": 2,
+      "visitors": 11,
+      "conversions": 0,
       "suiteAttachCount": 0,
-      "totalRevenueGbp": 59.98,
-      "conversionRatePct": 4.76,
-      "aovGbp": 29.99,
-      "rpvGbp": 1.43,
+      "totalRevenueGbp": 0,
+      "conversionRatePct": 0,
+      "aovGbp": 0,
+      "rpvGbp": 0,
       "zScoreVsControl": 0
     },
     "renewal_transparency": {
-      "visitors": 44,
-      "conversions": 3,
-      "suiteAttachCount": 1,
-      "totalRevenueGbp": 149.97,
-      "conversionRatePct": 6.82,
-      "aovGbp": 49.99,
-      "rpvGbp": 3.41,
-      "zScoreVsControl": 0.41
+      "visitors": 10,
+      "conversions": 0,
+      "suiteAttachCount": 0,
+      "totalRevenueGbp": 0,
+      "conversionRatePct": 0,
+      "aovGbp": 0,
+      "rpvGbp": 0,
+      "zScoreVsControl": 0
     },
     "ram_speedometer_bundle": {
-      "visitors": 43,
-      "conversions": 3,
-      "suiteAttachCount": 2,
-      "totalRevenueGbp": 209.97,
-      "conversionRatePct": 6.98,
-      "aovGbp": 69.99,
-      "rpvGbp": 4.88,
-      "zScoreVsControl": 0.43
+      "visitors": 11,
+      "conversions": 0,
+      "suiteAttachCount": 0,
+      "totalRevenueGbp": 0,
+      "conversionRatePct": 0,
+      "aovGbp": 0,
+      "rpvGbp": 0,
+      "zScoreVsControl": 0
     }
   }
 }

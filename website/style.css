@@ -46,6 +46,16 @@
 html {
   overflow-x: hidden;
   -webkit-text-size-adjust: 100%;
+  scroll-padding-top: 84px;
+}
+
+[id] {
+  scroll-margin-top: 84px;
+}
+
+pre {
+  overflow-x: auto;
+  max-width: 100%;
 }
 
 body {
@@ -94,6 +104,17 @@ body {
 
 .glass-nav.mobile-menu-open {
   background: #ffffff !important;
+}
+
+@media (max-width: 639px) {
+  .glass-nav #langDropdownBtn {
+    padding: 0 8px;
+    height: 36px;
+  }
+  .glass-nav a[href="/login"] {
+    padding: 0 10px;
+    height: 36px;
+  }
 }
 
 #mobileNavDrawer {

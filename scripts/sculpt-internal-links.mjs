@@ -16,6 +16,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { CONSOLIDATE_301_MAP, isNoIndexPrunePath, normalizeUrlPath } from './lib/m1-decisions.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = path.resolve(__dirname, '..');
@@ -34,15 +35,13 @@ function walkHtml(dir) {
 
 function loadCanonicalSitemapSet() {
   const set = new Set();
-  for (const sm of ['sitemap.xml', 'sitemap-sites.xml']) {
-    const fp = path.join(WEBSITE_DIR, sm);
-    if (!fs.existsSync(fp)) continue;
-    const xml = fs.readFileSync(fp, 'utf8');
-    for (const m of xml.matchAll(/<loc>([^<]+)<\/loc>/gi)) {
-      let p = m[1].trim().replace(/^https?:\/\/sweeprdeepblock\.com/i, '') || '/';
-      if (p.length > 1 && p.endsWith('/')) p = p.slice(0, -1);
-      set.add(p);
-    }
+  const fp = path.join(WEBSITE_DIR, 'sitemap.xml');
+  if (!fs.existsSync(fp)) return set;
+  const xml = fs.readFileSync(fp, 'utf8');
+  for (const m of xml.matchAll(/<loc>([^<]+)<\/loc>/gi)) {
+    const p = normalizeUrlPath(m[1].trim().replace(/^https?:\/\/sweeprdeepblock\.com/i, '') || '/');
+    if (isNoIndexPrunePath(p) || CONSOLIDATE_301_MAP.has(p)) continue;
+    set.add(p);
   }
   return set;
 }
@@ -127,103 +126,66 @@ function injectLinksIntoFooter(html, linksToEnsure) {
 function rebalanceHtmlByRoute(rel, html) {
   const isNoIndex = /<meta\s+name=["']robots["']\s+content=["'][^"']*noindex/i.test(html);
   if (isNoIndex) return html;
+  const routePath = normalizeUrlPath(
+    rel === 'index.html'
+      ? '/'
+      : rel.endsWith('/index.html')
+        ? '/' + rel.replace(/\/index\.html$/, '')
+        : '/' + rel.replace(/\.html$/, '')
+  );
+  if (isNoIndexPrunePath(routePath) || CONSOLIDATE_301_MAP.has(routePath)) return html;
+  // Preserve Holographic Pearl shell footers (they already render the exact 95 kept URLs cleanly)
+  if (html.includes('All 95 Setup Guides, Comparisons &amp; Tools') || html.includes('All 95 Setup Guides, Comparisons & Tools')) {
+    return html;
+  }
   let out = html;
 
-  // 1. 150 programmatic /site/{slug}.html report sub-pages: shift footer equity from privacy/glossary/eu-lang bloat -> /download, /pricing, /vs
-  if (/^site\/[^/]+\.html$/i.test(rel) && rel !== 'site/index.html') {
-    const newFooterLinks = `<div class="flex flex-wrap gap-4">
-        <a href="/download" class="hover:text-white">Free Install</a>
-        <a href="/pricing" class="hover:text-white">Pricing</a>
-        <a href="/vs" class="hover:text-white">Comparisons</a>
-        <a href="/vs/total-adblock" class="hover:text-white">vs Total Adblock</a>
-        <a href="/site" class="hover:text-white">Site Reports</a>
-        <a href="/tools" class="hover:text-white">Diagnostic Tools</a>
-        <a href="/test-lab" class="hover:text-white">8/8 Test Lab</a>
-      </div>`;
-    out = out.replace(
-      /(<footer\b[\s\S]*?)(<div class="flex flex-wrap gap-4">[\s\S]*?<\/div>)([\s\S]*?<\/footer>)/i,
-      `$1${newFooterLinks}$3`
-    );
-  }
-
-  // 2. Glossary sub-pages (`website/glossary/{term}.html`): add /download, /pricing, /vs; omit /privacy from glossary term sub-pages
+  // 1. Glossary sub-pages (`website/glossary/{term}.html`): add /download, /pricing, /vs; omit /privacy from glossary term sub-pages
   if (/^glossary\/[^/]+\.html$/i.test(rel) && rel !== 'glossary/index.html') {
     out = out.replace(/<a\s+href="\/privacy"[^>]*>Privacy Policy<\/a>\s*/gi, '');
     out = injectLinksIntoFooter(out, [
-      { href: '/download', tag: '<a href="/download" class="hover:text-white">Download</a>' },
-      { href: '/pricing', tag: '<a href="/pricing" class="hover:text-white">Pricing</a>' },
-      { href: '/vs', tag: '<a href="/vs" class="hover:text-white">Comparisons</a>' }
+      { href: '/download', tag: '<a href="/download" class="hover:text-emerald-600 transition-colors">Download</a>' },
+      { href: '/pricing', tag: '<a href="/pricing" class="hover:text-emerald-600 transition-colors">Pricing</a>' },
+      { href: '/vs', tag: '<a href="/vs" class="hover:text-emerald-600 transition-colors">Comparisons</a>' }
     ]);
   }
   if (rel === 'glossary/index.html') {
     out = injectLinksIntoFooter(out, [
-      { href: '/download', tag: '<a href="/download" class="hover:text-white">Download</a>' },
-      { href: '/pricing', tag: '<a href="/pricing" class="hover:text-white">Pricing</a>' },
-      { href: '/vs', tag: '<a href="/vs" class="hover:text-white">Comparisons</a>' }
+      { href: '/download', tag: '<a href="/download" class="hover:text-emerald-600 transition-colors">Download</a>' },
+      { href: '/pricing', tag: '<a href="/pricing" class="hover:text-emerald-600 transition-colors">Pricing</a>' },
+      { href: '/vs', tag: '<a href="/vs" class="hover:text-emerald-600 transition-colors">Comparisons</a>' }
     ]);
   }
 
-  // 3. Site hub (`website/site/index.html`) and Campaign pages: add /vs (plus /download and /pricing on renewal switcher)
-  if (rel === 'site/index.html' || /^campaigns\/[^/]+\.html$/i.test(rel)) {
+  // 2. Localized EU hubs (`/de`, `/fr`, `/es`): add /download, /pricing, /vs
+  if (/^(de|fr|es)(?:\.html|\/)/i.test(rel)) {
     out = injectLinksIntoFooter(out, [
-      { href: '/download', tag: '<a href="/download" class="hover:text-white">Download</a>' },
-      { href: '/pricing', tag: '<a href="/pricing" class="hover:text-white">Pricing</a>' },
-      { href: '/vs', tag: '<a href="/vs" class="hover:text-white">Comparisons</a>' }
+      { href: '/download', tag: '<a href="/download" class="hover:text-emerald-600 transition-colors">Download</a>' },
+      { href: '/pricing', tag: '<a href="/pricing" class="hover:text-emerald-600 transition-colors">Pricing</a>' },
+      { href: '/vs', tag: '<a href="/vs" class="hover:text-emerald-600 transition-colors">Comparisons</a>' }
     ]);
   }
 
-  // 4. Customer Stories (`/stories/*`): add /download, /vs to footer
-  if (/^stories\/[^/]+\.html$/i.test(rel)) {
-    out = injectLinksIntoFooter(out, [
-      { href: '/download', tag: '<a href="/download" style="color:#cbd5e1;">Download</a>' },
-      { href: '/pricing', tag: '<a href="/pricing" style="color:#cbd5e1;">Pricing</a>' },
-      { href: '/vs', tag: '<a href="/vs" style="color:#cbd5e1;">Comparisons</a>' }
-    ]);
-  }
-
-  // 5. Localized EU hubs (`/de/*`, `/fr/*`, `/es`): add /download, /pricing, /vs & cross-link sibling EU guides
-  if (/^(de|fr|es)\//i.test(rel)) {
-    out = injectLinksIntoFooter(out, [
-      { href: '/download', tag: '<a href="/download" class="hover:text-white">Download</a>' },
-      { href: '/pricing', tag: '<a href="/pricing" class="hover:text-white">Pricing</a>' },
-      { href: '/vs', tag: '<a href="/vs" class="hover:text-white">Comparisons</a>' },
-      { href: '/de/usercentrics-cookie-banner-blockieren', tag: '<a href="/de/usercentrics-cookie-banner-blockieren" class="hover:text-white">Usercentrics (DE)</a>' },
-      { href: '/fr/bloquer-bandeau-cookie-didomi', tag: '<a href="/fr/bloquer-bandeau-cookie-didomi" class="hover:text-white">Didomi (FR)</a>' }
-    ]);
-  }
-
-  // 6. Diagnostic Tools (`website/tools/*.html`): ensure /download, /pricing, /vs
+  // 3. Diagnostic Tools (`website/tools/*.html`): ensure /download, /pricing, /vs
   if (/^tools\/[^/]+\.html$/i.test(rel)) {
     out = injectLinksIntoFooter(out, [
-      { href: '/download', tag: '<a href="/download" style="color:#94a3b8;text-decoration:none;">Download</a>' },
-      { href: '/pricing', tag: '<a href="/pricing" style="color:#94a3b8;text-decoration:none;">Pricing</a>' },
-      { href: '/vs', tag: '<a href="/vs" style="color:#94a3b8;text-decoration:none;">Comparisons</a>' }
+      { href: '/download', tag: '<a href="/download" class="hover:text-emerald-600 transition-colors">Download</a>' },
+      { href: '/pricing', tag: '<a href="/pricing" class="hover:text-emerald-600 transition-colors">Pricing</a>' },
+      { href: '/vs', tag: '<a href="/vs" class="hover:text-emerald-600 transition-colors">Comparisons</a>' }
     ]);
   }
 
-  // 7. Indexable Pillar pages (`/solutions/*`, `/setup/*`, `/vs/*`, `/guides/*`, excluding `index.html`):
-  //    Link to the 4 Category Directory Hubs + /download + /pricing (using Tailwind class if Tailwind page, or inline dark style if Pillar page)
+  // 4. Legacy Indexable Pillar pages (`/solutions/*`, `/setup/*`, `/vs/*`, `/guides/*`, excluding `index.html`):
+  //    Link to the 4 Category Directory Hubs + /download + /pricing using light Holographic Pearl classes
   if (/^(solutions|setup|vs|guides)\/[^/]+\.html$/i.test(rel) && !rel.endsWith('/index.html')) {
-    const usesTailwind = /sweepr-tailwind\.min\.css/i.test(out);
-    if (usesTailwind) {
-      out = injectLinksIntoFooter(out, [
-        { href: '/download', tag: '<a href="/download" class="hover:text-white">Download</a>' },
-        { href: '/pricing', tag: '<a href="/pricing" class="hover:text-white">Pricing</a>' },
-        { href: '/vs', tag: '<a href="/vs" class="hover:text-white">Comparisons</a>' },
-        { href: '/solutions', tag: '<a href="/solutions" class="hover:text-white">Solutions</a>' },
-        { href: '/setup', tag: '<a href="/setup" class="hover:text-white">Browser Setups</a>' },
-        { href: '/guides', tag: '<a href="/guides" class="hover:text-white">Guides</a>' }
-      ]);
-    } else {
-      out = injectLinksIntoFooter(out, [
-        { href: '/download', tag: '<a href="/download" style="color:#94a3b8;text-decoration:none;">Download</a>' },
-        { href: '/pricing', tag: '<a href="/pricing" style="color:#94a3b8;text-decoration:none;">Pricing</a>' },
-        { href: '/vs', tag: '<a href="/vs" style="color:#94a3b8;text-decoration:none;">Comparisons</a>' },
-        { href: '/solutions', tag: '<a href="/solutions" style="color:#94a3b8;text-decoration:none;">Solutions</a>' },
-        { href: '/setup', tag: '<a href="/setup" style="color:#94a3b8;text-decoration:none;">Browser Setups</a>' },
-        { href: '/guides', tag: '<a href="/guides" style="color:#94a3b8;text-decoration:none;">Guides</a>' }
-      ]);
-    }
+    out = injectLinksIntoFooter(out, [
+      { href: '/download', tag: '<a href="/download" class="hover:text-emerald-600 transition-colors">Download</a>' },
+      { href: '/pricing', tag: '<a href="/pricing" class="hover:text-emerald-600 transition-colors">Pricing</a>' },
+      { href: '/vs', tag: '<a href="/vs" class="hover:text-emerald-600 transition-colors">Comparisons</a>' },
+      { href: '/solutions', tag: '<a href="/solutions" class="hover:text-emerald-600 transition-colors">Solutions</a>' },
+      { href: '/setup', tag: '<a href="/setup" class="hover:text-emerald-600 transition-colors">Browser Setups</a>' },
+      { href: '/guides', tag: '<a href="/guides" class="hover:text-emerald-600 transition-colors">Guides</a>' }
+    ]);
   }
 
   return out;

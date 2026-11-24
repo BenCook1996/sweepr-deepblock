@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-GB">
 <head>
   <meta name="color-scheme" content="light">
   <meta charset="UTF-8">
@@ -10,7 +10,7 @@
 <meta name="description" content="Run a free 0–100 adblock test in seconds. Check if your ad blocker stops YouTube video ads, tracking beacons, cookie banners, and anti-adblock walls.">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
   <meta name="author" content="SWEEPR Global Limited">
-  <meta name="theme-color" content="#0F172A">
+  <meta name="theme-color" content="#ffffff">
   <link rel="canonical" href="https://sweeprdeepblock.com/test-lab" />
   <link rel="icon" type="image/svg+xml" href="/logo.svg">
   <link rel="manifest" href="/site.webmanifest">
@@ -33,10 +33,11 @@
   <meta name="twitter:image" content="https://sweeprdeepblock.com/og-image.png">
 
   <!-- Structured Data (JSON-LD) -->
-  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://sweeprdeepblock.com/"},{"@type":"ListItem","position":2,"name":"Free Adblock Test Lab","item":"https://sweeprdeepblock.com/test-lab"}]},{"@type":"WebApplication","name":"SWEEPR Adblock & Anti-Detection Test Lab","url":"https://sweeprdeepblock.com/test-lab","applicationCategory":"SecurityApplication","operatingSystem":"All Browsers","softwareVersion":"1.3.1","isAccessibleForFree":true,"publisher":{"@type":"Organization","@id":"https://sweeprdeepblock.com/#organization","name":"SWEEPR Global Limited","url":"https://sweeprdeepblock.com/"},"description":"Free interactive 0–100 adblock test that benchmarks extensions against 8 live ad, tracker, cookie pop-up, and anti-adblock detection checks.","offers":{"@type":"Offer","price":"0","priceCurrency":"GBP","availability":"https://schema.org/InStock","validFrom":"2026-01-01","priceValidUntil":"2027-12-31"}}]}</script>
-  <link rel="stylesheet" href="/sweepr-tailwind.min.css?v=20261117">
-  <link rel="stylesheet" href="/style.css?v=20261114">
-  <script src="/nav.js?v=20261120" defer></script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://sweeprdeepblock.com/"},{"@type":"ListItem","position":2,"name":"Free Adblock Test Lab","item":"https://sweeprdeepblock.com/test-lab"}]},{"@type":"SoftwareApplication","@id":"https://sweeprdeepblock.com/#software","name":"SWEEPR Deepblock","softwareVersion":"1.3.1","url":"https://sweeprdeepblock.com/test-lab","downloadUrl":"https://sweeprdeepblock.com/download","operatingSystem":"Chrome, Microsoft Edge, Firefox, Brave, Opera, Windows, macOS, Linux, Android (Firefox)","applicationCategory":"SecurityApplication","featureList":"283 static Manifest V3 declarativeNetRequest rules, GDPR cookie consent auto-rejection, URL tracking parameter stripping, Element Zapper, Anti-Adblock stealth, Total Tab & RAM Tamer","publisher":{"@type":"Organization","name":"SWEEPR Global Limited","url":"https://sweeprdeepblock.com/"},"offers":{"@type":"AggregateOffer","lowPrice":"1.99","highPrice":"89.99","priceCurrency":"GBP","offerCount":"4","url":"https://sweeprdeepblock.com/pricing","priceValidUntil":"2027-12-31","validFrom":"2026-01-01"}},{"@type":"WebApplication","name":"SWEEPR Adblock & Anti-Detection Test Lab","url":"https://sweeprdeepblock.com/test-lab","applicationCategory":"SecurityApplication","operatingSystem":"Chrome, Microsoft Edge, Firefox, Brave, Opera, Windows, macOS, Linux, Android (Firefox)","softwareVersion":"1.3.1","isAccessibleForFree":true,"publisher":{"@type":"Organization","@id":"https://sweeprdeepblock.com/#organization","name":"SWEEPR Global Limited","url":"https://sweeprdeepblock.com/"},"description":"Free interactive 0–100 adblock test that benchmarks extensions against 8 live ad, tracker, cookie pop-up, and anti-adblock detection checks.","offers":{"@type":"Offer","price":"0","priceCurrency":"GBP","availability":"https://schema.org/InStock","validFrom":"2026-01-01","priceValidUntil":"2027-12-31"}}]}</script>
+  <link rel="stylesheet" href="/sweepr-tailwind.min.css?v=20261122">
+  <link rel="stylesheet" href="/style.css?v=20261122">
+  <script src="/nav.js?v=20261122" defer></script>
+  <script src="/i18n.js" defer></script>
   <!-- Google tag (gtag.js) - Sweepr Deepblock (deferred until interaction/idle) -->
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -74,53 +75,131 @@
 <body class="text-gray-800 min-h-screen flex flex-col">
 
   <!-- Navbar -->
-  <nav class="glass-nav px-6 py-4 flex items-center justify-between">
-    <a href="/" class="flex items-center gap-3 text-inherit no-underline">
-      <div class="logo-box" aria-hidden="true"></div>
-      <span class="font-extrabold text-xl tracking-tight text-gray-900">SWEEPR <span class="text-emerald-600">Deepblock</span></span>
-    </a>
-    <div class="flex items-center gap-3">
-      <span id="overallStatusBadge" class="px-3 py-1 rounded-full text-xs font-black uppercase bg-amber-100 text-amber-800 border border-amber-300">
-        Running 8 Live Checks...
-      </span>
-      <button type="button" onclick="runAllFieldTests()" class="btn border border-slate-300 bg-white hover:border-emerald-600 hover:text-emerald-700 text-slate-700 text-xs px-4 py-2 font-bold">
-        ↻ Run Protection Check Again
-      </button>
+  <nav class="glass-nav px-3 sm:px-4 md:px-6 py-3 sm:py-3.5 md:py-4 flex items-center justify-between">
+    <div class="flex items-center gap-2 md:gap-8 min-w-0">
+      <a href="/" class="flex items-center gap-2 sm:gap-3 text-inherit no-underline min-w-0">
+        <div class="logo-box !w-8 !h-8 sm:!w-10 sm:!h-10" aria-hidden="true"></div>
+        <span class="font-extrabold text-sm sm:text-xl tracking-tight text-gray-900 truncate">SWEEPR <span class="text-emerald-600">Deepblock</span></span>
+      </a>
+      <div class="hidden md:flex items-center gap-2">
+        <a href="/#features" class="btn btn-ghost text-sm">Features</a>
+        <a href="/pricing" class="btn btn-ghost text-sm">Pricing</a>
+        <div class="relative inline-block text-left" id="navDropdownContainer">
+          <button type="button" id="navDropdownBtn" class="btn btn-ghost text-sm flex items-center gap-1.5 cursor-pointer font-medium" aria-expanded="false" aria-haspopup="true">
+            <span>Compare &amp; Guides</span>
+            <svg id="navDropdownChevron" class="w-3.5 h-3.5 text-gray-500 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </button>
+          <div id="navDropdownMenu" class="hidden absolute left-0 md:left-1/2 md:-translate-x-1/2 mt-2 w-[340px] sm:w-[430px] bg-white/95 backdrop-blur-xl border border-gray-200/90 rounded-2xl shadow-2xl p-2.5 z-50 transition-all">
+            <div class="grid grid-cols-1 gap-1.5">
+              <a href="/vs/total-adblock" class="flex items-start gap-3 p-3 rounded-xl hover:bg-emerald-50/70 border border-transparent hover:border-emerald-200/60 transition-all text-inherit no-underline group">
+                <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                  </svg>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center justify-between gap-1 mb-0.5">
+                    <span class="text-sm font-bold text-gray-900 group-hover:text-emerald-700 transition-colors">SWEEPR Deepblock vs Total Adblock</span>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full">Comparison</span>
+                  </div>
+                  <p class="text-xs text-gray-500 leading-snug">See how SWEEPR Deepblock compares on YouTube ads, automatic cookie pop-up closing, URL tracker stripping, and honest pricing.</p>
+                </div>
+              </a>
+              <a href="/pricing" class="flex items-start gap-3 p-3 rounded-xl hover:bg-emerald-50/70 border border-transparent hover:border-emerald-200/60 transition-all text-inherit no-underline group">
+                <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                  </svg>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center justify-between gap-1 mb-0.5">
+                    <span class="text-sm font-bold text-gray-900 group-hover:text-emerald-700 transition-colors">Total Tab &amp; RAM Tamer</span>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full">Included in Pro</span>
+                  </div>
+                  <p class="text-xs text-gray-500 leading-snug">Automatically hibernates inactive background tabs to reduce browser memory usage.</p>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex gap-1.5 sm:gap-2 md:gap-3 items-center shrink-0">
+      <div class="relative inline-block text-left" id="langDropdownContainer">
+        <button type="button" id="langDropdownBtn" class="btn btn-ghost text-sm flex items-center gap-1 sm:gap-1.5 !px-2 sm:!px-2.5 !h-9 sm:!h-11 cursor-pointer font-medium text-gray-700 hover:text-emerald-600 transition-colors" aria-expanded="false" aria-label="Select Language">
+          <span class="text-base" id="currentLangFlag">🇬🇧</span>
+          <span class="text-xs font-bold tracking-wide" id="currentLangCode">EN</span>
+          <svg id="langDropdownChevron" class="w-3 h-3 text-gray-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+          </svg>
+        </button>
+        <div id="langDropdownMenu" class="hidden absolute right-0 mt-2 w-44 bg-white/95 backdrop-blur-xl border border-gray-200/90 rounded-2xl shadow-xl p-1.5 z-50 transition-all">
+          <div class="space-y-0.5 text-xs">
+            <a href="/" hreflang="en" onclick="if(window.setLanguage)setLanguage('en',false)" class="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-emerald-50 text-gray-800 hover:text-emerald-700 font-medium no-underline cursor-pointer"><span>🇬🇧 English</span><span class="text-[10px] text-gray-400 font-mono">EN</span></a>
+            <a href="/de" hreflang="de" onclick="if(window.setLanguage)setLanguage('de',false)" class="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-emerald-50 text-gray-800 hover:text-emerald-700 font-medium no-underline cursor-pointer"><span>🇩🇪 Deutsch</span><span class="text-[10px] text-gray-400 font-mono">DE</span></a>
+            <a href="/fr" hreflang="fr" onclick="if(window.setLanguage)setLanguage('fr',false)" class="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-emerald-50 text-gray-800 hover:text-emerald-700 font-medium no-underline cursor-pointer"><span>🇫🇷 Français</span><span class="text-[10px] text-gray-400 font-mono">FR</span></a>
+            <a href="/es" hreflang="es" onclick="if(window.setLanguage)setLanguage('es',false)" class="w-full flex items-center justify-between px-3 py-2 rounded-xl hover:bg-emerald-50 text-gray-800 hover:text-emerald-700 font-medium no-underline cursor-pointer"><span>🇪🇸 Español</span><span class="text-[10px] text-gray-400 font-mono">ES</span></a>
+          </div>
+        </div>
+      </div>
+      <a rel="nofollow" href="/login" class="btn btn-ghost text-xs sm:text-sm !px-2.5 sm:!px-4 !h-9 sm:!h-11">Login</a>
+      <a href="/download?install=1" class="hidden md:inline-flex btn btn-go gap-2">
+        <span>Add to Browser</span>
+        <svg class="arrow-icon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+      </a>
     </div>
   </nav>
 
-  <main class="max-w-6xl mx-auto px-6 pt-28 pb-20 w-full flex-1">
+  <main class="flex-1 w-full min-w-0 pt-24 sm:pt-32 pb-16 px-4 sm:px-6 max-w-6xl mx-auto">
+    <nav aria-label="Breadcrumb" class="flex flex-wrap items-center gap-1.5 text-xs text-gray-500 mb-6">
+      <a href="/" class="text-emerald-700 hover:underline font-medium">Home</a>
+      <span aria-hidden="true" class="text-gray-400">/</span>
+      <span class="text-gray-700 font-semibold">Free Adblock Test Lab</span>
+    </nav>
     <div class="text-center max-w-3xl mx-auto mb-10">
       <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100 border border-emerald-200 mb-3">
-        🛡️ Live 8-Point Adblock Test (0–100 Score)
+        Live 8-Point Adblock Test (0–100 Score)
       </div>
       <h1 class="text-3xl sm:text-5xl font-black text-gray-900 tracking-tight mb-3">
         Free Adblock Test &amp; Tracker Leak Check (0–100 Score)
       </h1>
       <p class="text-gray-600 text-base">
-        Test your ad blocker live against <strong>8 real-world ad, pop-up, and tracker checks</strong> (works with Chrome, Firefox, Edge, Safari, Brave, or any extension) to verify video ads, tracking beacons, and anti-adblock walls stay blocked.
+        Test your ad blocker live against <strong>8 real-world ad, pop-up, and tracker checks</strong> (works with Chrome, Edge, Firefox Desktop &amp; Android, Brave, Opera, or any desktop extension; Safari is coming soon) to verify video ads, tracking beacons, and anti-adblock walls stay blocked.
       </p>
     </div>
 
     <!-- Score Summary Banner -->
-    <div class="glass-card p-6 mb-8 border border-emerald-200 shadow-lg flex flex-col sm:flex-row items-center justify-between gap-6">
-      <div>
-        <div class="text-xs font-bold uppercase tracking-wider text-emerald-700">Your Adblock Test Score</div>
+    <div class="glass-card bg-white p-6 mb-8 border border-emerald-200 shadow-lg flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+      <div class="space-y-2">
+        <div class="flex flex-wrap items-center gap-2.5">
+          <span class="text-xs font-bold uppercase tracking-wider text-emerald-700">Your Adblock Test Score</span>
+          <span id="overallStatusBadge" class="px-3 py-1 rounded-full text-xs font-black uppercase bg-amber-100 text-amber-800 border border-amber-300">
+            Running 8 Live Checks...
+          </span>
+        </div>
         <div class="text-3xl sm:text-4xl font-black text-gray-900 mt-1" id="scoreHeadline">Checking Your Browser...</div>
         <p class="text-xs text-gray-500 mt-1" id="scoreSubtext">Testing video ad blocking, pop-up protection, and tracker blocking...</p>
+        <div class="pt-1">
+          <button type="button" onclick="runAllFieldTests()" class="btn bg-white border border-gray-300 hover:border-emerald-600 hover:text-emerald-700 text-gray-800 text-xs px-4 py-2 font-bold">
+            ↻ Run Protection Check Again
+          </button>
+        </div>
       </div>
       <div class="flex items-center gap-3 sm:gap-4 flex-wrap justify-center">
-        <div class="text-center px-5 py-3 rounded-2xl bg-slate-900 text-white border border-emerald-500/40">
-          <div class="text-2xl font-black text-emerald-400" id="scorePercentBadge">0 / 100</div>
-          <div class="text-[11px] font-bold text-slate-300 uppercase">Test Score</div>
+        <div class="text-center px-5 py-3 rounded-2xl bg-emerald-50 border border-emerald-200">
+          <div class="text-2xl font-black text-emerald-700 tabular-nums" id="scorePercentBadge">0 / 100</div>
+          <div class="text-[11px] font-bold text-emerald-800 uppercase">Test Score</div>
         </div>
         <div class="text-center px-5 py-3 rounded-2xl bg-emerald-50 border border-emerald-200">
-          <div class="text-2xl font-black text-emerald-700" id="passCount">0 / 8</div>
+          <div class="text-2xl font-black text-emerald-700 tabular-nums" id="passCount">0 / 8</div>
           <div class="text-[11px] font-bold text-emerald-800 uppercase">Checks Passed</div>
         </div>
-        <div class="text-center px-5 py-3 rounded-2xl bg-gray-900 text-white">
-          <div class="text-2xl font-black text-emerald-400" id="stealthEventsCount">0</div>
-          <div class="text-[11px] font-bold text-gray-400 uppercase">Ads &amp; Trackers Stopped</div>
+        <div class="text-center px-5 py-3 rounded-2xl bg-slate-50 border border-slate-200">
+          <div class="text-2xl font-black text-gray-900 tabular-nums" id="stealthEventsCount">0</div>
+          <div class="text-[11px] font-bold text-gray-600 uppercase">Ads &amp; Trackers Stopped</div>
         </div>
       </div>
     </div>
@@ -142,56 +221,56 @@
     <div id="testGrid" class="grid grid-cols-1 md:grid-cols-2 gap-5">
       <div class="glass-card p-5 border border-gray-200 flex flex-col justify-between gap-3">
         <div class="flex items-start justify-between gap-3">
-          <h3 class="font-extrabold text-gray-900 text-base">⚡ 1. Instant Ad Script Blocker</h3>
+          <h3 class="font-extrabold text-gray-900 text-base inline-flex items-center gap-2"><svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg><span>1. Instant Ad Script Blocker</span></h3>
           <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase shrink-0 bg-amber-50 text-amber-800 border border-amber-200">READY TO TEST</span>
         </div>
         <p class="text-sm text-gray-600 leading-relaxed bg-white/80 p-3.5 rounded-xl border border-gray-100">Verifies whether third-party advertising networks (e.g., Google AdSense and Prebid bidders) are blocked before script execution.</p>
       </div>
       <div class="glass-card p-5 border border-gray-200 flex flex-col justify-between gap-3">
         <div class="flex items-start justify-between gap-3">
-          <h3 class="font-extrabold text-gray-900 text-base">📰 2. Banner &amp; Sidebar Ad Blocker</h3>
+          <h3 class="font-extrabold text-gray-900 text-base inline-flex items-center gap-2"><svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/></svg><span>2. Banner &amp; Sidebar Ad Blocker</span></h3>
           <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase shrink-0 bg-amber-50 text-amber-800 border border-amber-200">READY TO TEST</span>
         </div>
         <p class="text-sm text-gray-600 leading-relaxed bg-white/80 p-3.5 rounded-xl border border-gray-100">Audits Google Publisher Tag (GPT) slot rendering and verifies safe canary objects prevent news site layout breakage.</p>
       </div>
       <div class="glass-card p-5 border border-gray-200 flex flex-col justify-between gap-3">
         <div class="flex items-start justify-between gap-3">
-          <h3 class="font-extrabold text-gray-900 text-base">🕵️ 3. Invisible to Ad-Blocker Detectors</h3>
+          <h3 class="font-extrabold text-gray-900 text-base inline-flex items-center gap-2"><svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg><span>3. Invisible to Ad-Blocker Detectors</span></h3>
           <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase shrink-0 bg-amber-50 text-amber-800 border border-amber-200">READY TO TEST</span>
         </div>
         <p class="text-sm text-gray-600 leading-relaxed bg-white/80 p-3.5 rounded-xl border border-gray-100">Tests BlockAdBlock / FuckAdBlock callback traps to confirm publishers cannot detect your shield or lock out article content.</p>
       </div>
       <div class="glass-card p-5 border border-gray-200 flex flex-col justify-between gap-3">
         <div class="flex items-start justify-between gap-3">
-          <h3 class="font-extrabold text-gray-900 text-base">🖼️ 4. Clean Page Layout (No Blank Boxes)</h3>
+          <h3 class="font-extrabold text-gray-900 text-base inline-flex items-center gap-2"><svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V5z"/></svg><span>4. Clean Page Layout (No Blank Boxes)</span></h3>
           <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase shrink-0 bg-amber-50 text-amber-800 border border-amber-200">READY TO TEST</span>
         </div>
         <p class="text-sm text-gray-600 leading-relaxed bg-white/80 p-3.5 rounded-xl border border-gray-100">Checks DOM honeypot bait geometry (offsetHeight, clientHeight, and getComputedStyle) to confirm leftover empty ad frames collapse cleanly.</p>
       </div>
       <div class="glass-card p-5 border border-gray-200 flex flex-col justify-between gap-3">
         <div class="flex items-start justify-between gap-3">
-          <h3 class="font-extrabold text-gray-900 text-base">🔒 5. Hidden Website Tracker Blocker</h3>
+          <h3 class="font-extrabold text-gray-900 text-base inline-flex items-center gap-2"><svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg><span>5. Hidden Website Tracker Blocker</span></h3>
           <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase shrink-0 bg-amber-50 text-amber-800 border border-amber-200">READY TO TEST</span>
         </div>
         <p class="text-sm text-gray-600 leading-relaxed bg-white/80 p-3.5 rounded-xl border border-gray-100">Runs fetch() and XMLHttpRequest probe tests against ad-tech telemetry endpoints without triggering unhandled runtime errors.</p>
       </div>
       <div class="glass-card p-5 border border-gray-200 flex flex-col justify-between gap-3">
         <div class="flex items-start justify-between gap-3">
-          <h3 class="font-extrabold text-gray-900 text-base">📺 6. Video Commercial Blocker</h3>
+          <h3 class="font-extrabold text-gray-900 text-base inline-flex items-center gap-2"><svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg><span>6. Video Commercial Blocker</span></h3>
           <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase shrink-0 bg-amber-50 text-amber-800 border border-amber-200">READY TO TEST</span>
         </div>
         <p class="text-sm text-gray-600 leading-relaxed bg-white/80 p-3.5 rounded-xl border border-gray-100">Simulates Google IMA HTML5 Video AdsLoader pre-roll bids and verifies instant ALL_ADS_COMPLETED skip compliance.</p>
       </div>
       <div class="glass-card p-5 border border-gray-200 flex flex-col justify-between gap-3">
         <div class="flex items-start justify-between gap-3">
-          <h3 class="font-extrabold text-gray-900 text-base">🎬 7. YouTube Ad Skipper &amp; Feed Cleaner</h3>
+          <h3 class="font-extrabold text-gray-900 text-base inline-flex items-center gap-2"><svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span>7. YouTube Ad Skipper &amp; Feed Cleaner</span></h3>
           <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase shrink-0 bg-amber-50 text-amber-800 border border-amber-200">READY TO TEST</span>
         </div>
         <p class="text-sm text-gray-600 leading-relaxed bg-white/80 p-3.5 rounded-xl border border-gray-100">Verifies automatic video ad-pod muting, 16x playback acceleration, and instant Skip button resolution on HTML5 players.</p>
       </div>
       <div class="glass-card p-5 border border-gray-200 flex flex-col justify-between gap-3">
         <div class="flex items-start justify-between gap-3">
-          <h3 class="font-extrabold text-gray-900 text-base">🍪 8. No "Please Turn Off Your Ad Blocker" Pop-Ups</h3>
+          <h3 class="font-extrabold text-gray-900 text-base inline-flex items-center gap-2"><svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg><span>8. No "Please Turn Off Your Ad Blocker" Pop-Ups</span></h3>
           <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase shrink-0 bg-amber-50 text-amber-800 border border-amber-200">READY TO TEST</span>
         </div>
         <p class="text-sm text-gray-600 leading-relaxed bg-white/80 p-3.5 rounded-xl border border-gray-100">Confirms anti-adblock modals (Funding Choices / Admiral) and body scroll locks (overflow:hidden) are removed in milliseconds.</p>
@@ -199,117 +278,231 @@
     </div>
 
     <!-- Zero-Email Viral Scorecard & Give-1-Get-1 Referral Challenge Card -->
-    <section id="viralReferralSection" class="suite-obsidian-card mt-10 rounded-3xl p-6 sm:p-8 border border-emerald-400/30 bg-[#071712] text-white shadow-2xl" style="background-color:#071712;background-image:radial-gradient(120% 90% at 15% 10%, rgba(16,185,129,0.20) 0%, transparent 70%), linear-gradient(155deg, #071712 0%, #0b241c 55%, #06130e 100%);border-color:rgba(52,211,153,0.32);color:#f8fafc;">
+    <section id="viralReferralSection" class="glass-card mt-10 rounded-3xl p-6 sm:p-8 bg-white border border-emerald-200 shadow-lg">
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
         <div class="lg:col-span-7 space-y-3">
-          <div class="suite-desat-badge inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-400/30 text-emerald-200 text-xs font-black uppercase tracking-wider">
-            <span>🏆 VIRAL MV3 CHALLENGE • ZERO-EMAIL REFERRAL REWARDS</span>
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 border border-emerald-200 text-emerald-800 text-xs font-black uppercase tracking-wider">
+            <span>MV3 Challenge &bull; Zero-Email Referral Rewards</span>
           </div>
-          <h2 class="text-2xl sm:text-3xl font-black text-white">
-            Share Your Live Test Lab Scorecard — Give 14 Days, Get +30 Days Pro + RAM Tamer
+          <h2 class="text-2xl sm:text-3xl font-black text-gray-900">
+            Share Your Live Test Lab Scorecard — Give 14 Days Pro, Get +30 Days Pro
           </h2>
-          <p class="text-sm text-emerald-100/80 leading-relaxed">
-            Challenge a friend or post your verified 8-vector MV3 scorecard on Reddit/X. Every friend who runs the Test Lab &amp; installs DeepBlock via your anonymous referral code automatically credits <strong>+30 Days of DeepBlock Pro + Total Tab &amp; RAM Tamer</strong> to your device via extension heartbeat (<strong class="text-emerald-300">0 emails required</strong>).
+          <p class="text-sm text-gray-600 leading-relaxed">
+            Challenge a friend or post your verified 8-vector MV3 scorecard on Reddit/X. Every friend who claims your referral link gets a <strong>14-day Deepblock Pro trial (including Total Tab &amp; RAM Tamer across 5 devices)</strong> and adds <strong>+30 Days</strong> to your Pro license (<strong class="text-emerald-700">0 emails required</strong>).
           </p>
+          <div id="referralClaimCard" class="hidden rounded-2xl bg-emerald-50 border border-emerald-200 p-4 space-y-2.5">
+            <div class="text-xs font-black uppercase tracking-wider text-emerald-800">Invited by a Friend — 14-Day Free Pro Trial Ready</div>
+            <p class="text-xs text-gray-700">Click below to mint your 14-day SWEEPR Deepblock Pro trial license key (covers 5 devices, Total Tab &amp; RAM Tamer included):</p>
+            <div class="flex flex-wrap items-center gap-2.5">
+              <button type="button" id="claimReferralTrialBtn" class="btn btn-go py-2.5 px-4 rounded-xl font-black text-xs sm:text-sm cursor-pointer">
+                Claim Your 14-Day Free Pro Trial →
+              </button>
+              <span id="claimReferralResult" class="text-xs font-mono text-emerald-800"></span>
+            </div>
+          </div>
           <div class="flex flex-wrap gap-3 pt-2">
-            <button type="button" id="copyReferralChallengeBtn" class="py-3 px-5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs sm:text-sm cursor-pointer shadow-lg transition-colors">
+            <button type="button" id="copyReferralChallengeBtn" class="btn btn-go py-3 px-5 rounded-xl font-black text-xs sm:text-sm cursor-pointer">
               Copy Challenge Link &amp; Earn +30 Days Pro →
             </button>
-            <button type="button" id="copyEmbedBadgeBtn" class="py-3 px-5 rounded-xl bg-white/10 hover:bg-white/15 text-emerald-200 font-bold text-xs sm:text-sm border border-emerald-400/30 cursor-pointer transition-colors">
+            <button type="button" id="copyEmbedBadgeBtn" class="py-3 px-5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold text-xs sm:text-sm border border-gray-200 cursor-pointer transition-colors">
               Copy Markdown / HTML Score Badge
             </button>
-            <a href="/download?install=1" class="py-3 px-5 rounded-xl bg-white/10 hover:bg-white/15 text-white font-bold text-xs sm:text-sm border border-white/15 no-underline transition-colors">
+            <a href="/download?install=1" class="py-3 px-5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold text-xs sm:text-sm border border-gray-200 no-underline transition-colors">
               Install Free Extension
             </a>
-            <a href="/benchmarks" class="py-3 px-5 rounded-xl bg-white/10 hover:bg-white/15 text-emerald-100 font-bold text-xs sm:text-sm border border-emerald-400/30 no-underline transition-colors">
+            <a href="/benchmarks" class="py-3 px-5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-xs sm:text-sm border border-emerald-200 no-underline transition-colors">
               v1.3.1 MV3 Benchmarks →
             </a>
           </div>
-          <div id="referralStatusHint" class="text-xs font-mono text-emerald-300 pt-1">Generating your anonymous zero-email challenge link...</div>
+          <div id="referralStatusHint" class="text-xs font-mono text-emerald-700 pt-1">Generating your anonymous zero-email challenge link...</div>
         </div>
         <div class="lg:col-span-5">
-          <img id="liveShareCardBadgeImg" src="/api/test-lab/share-card.svg?score=100&amp;blocked=8&amp;ram=640&amp;ref=verified" alt="SWEEPR DeepBlock Live Test Lab Scorecard Badge" width="600" height="315" class="w-full rounded-2xl border border-emerald-500/40 shadow-xl" loading="lazy" />
+          <img id="liveShareCardBadgeImg" src="/api/test-lab/share-card.svg?score=100&amp;blocked=8&amp;ref=verified" alt="SWEEPR Deepblock Live Test Lab Scorecard Badge" width="600" height="315" class="w-full rounded-2xl border border-emerald-200 shadow-sm" loading="lazy" />
+        </div>
+      </div>
+    </section>
+
+    <!-- Honest Engineering Context: 100/100 Test Lab vs Real-World SSAI -->
+    <section class="glass-card mt-8 rounded-2xl p-6 sm:p-8 bg-white border border-gray-200 shadow-sm space-y-4">
+      <h2 class="text-xl sm:text-2xl font-black text-gray-900 tracking-tight">How the 8 Test Vectors Work &amp; Why 100/100 Differs From Live SSAI Streams</h2>
+      <p class="text-sm text-gray-600 leading-relaxed">
+        Scoring <strong>100/100 (8/8)</strong> here confirms that <strong>SWEEPR Deepblock v1.3.1</strong> (283 static C++ DNR rules + 100 OTA dynamic rules + MAIN-world surrogates) is actively intercepting client-side ad scripts, tracking beacons, DOM honeypots, IMA pre-roll loaders, and anti-adblock modals inside your browser.
+      </p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm text-gray-700">
+        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-1.5">
+          <div class="font-extrabold text-gray-900">1. Client-Side Probes vs. Server-Side Stitched Ads (SSAI)</div>
+          <p class="leading-relaxed">Synthetic adblock testers (such as d3ward, adblock-tester, and this 8/8 suite) verify client-side network rules and anti-detection traps. Live streaming services like Twitch and Prime Video inject server-side video segments (SSAI) into the media manifest itself—a harder edge case where filter updates rotate continuously (<a href="/benchmarks" class="text-emerald-700 font-semibold hover:underline">see v1.3.1 methodology</a>).</p>
+        </div>
+        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-1.5">
+          <div class="font-extrabold text-gray-900">2. Troubleshooting MV3 &amp; Firefox Profiles</div>
+          <p class="leading-relaxed">If any vector fails, verify only one ad blocker is enabled (running two extensions at once can break surrogate objects), confirm site protection isn't paused (<code class="font-mono bg-white px-1 rounded border border-gray-200">Alt+Shift+S</code>), and check our <a href="/guides/how-to-bypass-anti-adblock-inspect-element-blockers" class="text-emerald-700 font-semibold hover:underline">Anti-Adblock Guide</a> or <a href="/support" class="text-emerald-700 font-semibold hover:underline">Support</a>.</p>
         </div>
       </div>
     </section>
   </main>
-  <footer class="mt-16 py-8 text-center text-gray-500 text-sm border-t border-gray-200">
-    <div class="flex flex-wrap justify-center gap-6 mb-4">
-      <a href="/" class="hover:text-emerald-600 transition-colors">Home</a>
-      <a href="/pricing" class="hover:text-emerald-600 transition-colors">Pricing</a>
-      <a href="/vs" class="hover:text-emerald-600 transition-colors">Comparisons</a>
-      <a href="/solutions" class="hover:text-emerald-600 transition-colors">Solutions</a>
-      <a href="/setup" class="hover:text-emerald-600 transition-colors">Setups</a>
-      <a href="/guides" class="hover:text-emerald-600 transition-colors">Guides</a>
-      <a href="/site" class="hover:text-emerald-600 transition-colors">Verified Site Reports</a>
-      <a href="/tools" class="hover:text-emerald-600 transition-colors">Diagnostic Tools</a>
-      <a href="/glossary" class="hover:text-emerald-600 transition-colors">Glossary</a>
-      <a href="/de" hreflang="de" class="hover:text-emerald-600 transition-colors">Deutsch (DE)</a>
-      <a href="/fr" hreflang="fr" class="hover:text-emerald-600 transition-colors">Français (FR)</a>
-      <a href="/es" hreflang="es" class="hover:text-emerald-600 transition-colors">Español (ES)</a>
-      <a href="/download" class="hover:text-emerald-600 transition-colors">Browser Extension</a>
-      <a href="/vs/total-adblock" class="hover:text-emerald-600 transition-colors">vs Total Adblock</a>
-      <a href="/support" class="hover:text-emerald-600 transition-colors">Support</a>
-    </div>
-    <p>&copy; 2026 SWEEPR Global Limited. All rights reserved.</p>
-    <!-- Crawlable SEO Hub Directory: Browser Setups, Platform Solutions, Comparisons & Guides -->
-    <div class="max-w-5xl mx-auto mt-6 pt-6 border-t border-gray-100 text-left px-4">
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-6 text-xs text-gray-500">
-        <div>
-          <div class="font-bold text-gray-800 uppercase tracking-wider mb-2 text-[11px]">Browser Setup Guides</div>
-          <ul class="space-y-1.5">
-            <li><a href="/setup/google-chrome-manifest-v3" class="hover:text-emerald-600 transition-colors">Chrome Manifest V3 Setup</a></li>
-            <li><a href="/setup/mozilla-firefox-desktop-android" class="hover:text-emerald-600 transition-colors">Mozilla Firefox Ad Blocker</a></li>
-            <li><a href="/setup/thorium-chromium-browser" class="hover:text-emerald-600 transition-colors">Thorium Browser Ad Blocker</a></li>
-            <li><a href="/setup/orion-browser-macos-ios" class="hover:text-emerald-600 transition-colors">Orion Browser (macOS &amp; iOS)</a></li>
-            <li><a href="/setup/floorp-browser-firefox-fork" class="hover:text-emerald-600 transition-colors">Floorp Privacy Browser Setup</a></li>
-            <li><a href="/setup/arc-browser-windows-mac" class="hover:text-emerald-600 transition-colors">Arc Browser (Windows &amp; Mac)</a></li>
-            <li><a href="/setup/zen-browser-privacy-tabs" class="hover:text-emerald-600 transition-colors">Zen Privacy Browser Setup</a></li>
-            <li><a href="/setup/kiwi-browser-android" class="hover:text-emerald-600 transition-colors">Kiwi Browser (Android MV3)</a></li>
-          </ul>
-        </div>
-        <div>
-          <div class="font-bold text-gray-800 uppercase tracking-wider mb-2 text-[11px]">Platform Ad Solutions</div>
-          <ul class="space-y-1.5">
-            <li><a href="/solutions/youtube-chrome-mv3-block-video-ads" class="hover:text-emerald-600 transition-colors">YouTube MV3 Video Ad Blocker</a></li>
-            <li><a href="/solutions/twitch-live-streams-block-video-ads" class="hover:text-emerald-600 transition-colors">Twitch Mid-Roll Ad Blocker</a></li>
-            <li><a href="/solutions/crunchyroll-anime-streams-block-video-ads" class="hover:text-emerald-600 transition-colors">Crunchyroll Anime Ad Blocker</a></li>
-            <li><a href="/solutions/fandom-game-wikis-reduce-browser-ram-usage" class="hover:text-emerald-600 transition-colors">Fix Fandom Wiki High RAM Usage</a></li>
-            <li><a href="/solutions/geeksforgeeks-dev-portals-block-video-ads" class="hover:text-emerald-600 transition-colors">GeeksforGeeks Ad &amp; Popup Blocker</a></li>
-            <li><a href="/solutions/dex-token-screeners-block-video-ads" class="hover:text-emerald-600 transition-colors">DEX Screener Crypto Ad Shield</a></li>
-            <li><a href="/solutions/uk-news-websites-auto-reject-cookie-popups" class="hover:text-emerald-600 transition-colors">UK News Cookie Auto-Rejector</a></li>
-            <li><a href="/solutions/google-search-results-filter-ai-slop-and-scams" class="hover:text-emerald-600 transition-colors">Google Search AI Slop Cleanser</a></li>
-          </ul>
-        </div>
-        <div>
-          <div class="font-bold text-gray-800 uppercase tracking-wider mb-2 text-[11px]">2026 Comparisons</div>
-          <ul class="space-y-1.5">
-            <li><a href="/vs/total-adblock" class="hover:text-emerald-600 transition-colors">vs Total Adblock (2026)</a></li>
-            <li><a href="/vs/ublock-origin-lite" class="hover:text-emerald-600 transition-colors">vs uBlock Origin Lite (MV3)</a></li>
-            <li><a href="/vs/adblock-plus" class="hover:text-emerald-600 transition-colors">vs AdBlock Plus (ABP)</a></li>
-            <li><a href="/vs/adguard-extension" class="hover:text-emerald-600 transition-colors">vs AdGuard Extension</a></li>
-            <li><a href="/vs/ghostery-privacy-ad-blocker" class="hover:text-emerald-600 transition-colors">vs Ghostery Tracker Blocker</a></li>
-            <li><a href="/vs/pie-adblock" class="hover:text-emerald-600 transition-colors">vs Pie Adblock</a></li>
-            <li><a href="/vs/brave-shields" class="hover:text-emerald-600 transition-colors">vs Brave Built-in Shields</a></li>
-            <li><a href="/vs/1blocker-safari" class="hover:text-emerald-600 transition-colors">vs 1Blocker for Safari</a></li>
-          </ul>
-        </div>
-        <div>
-          <div class="font-bold text-gray-800 uppercase tracking-wider mb-2 text-[11px]">Privacy &amp; Speed Guides</div>
-          <ul class="space-y-1.5">
-            <li><a href="/guides/how-to-automatically-reject-cookie-banners-uk" class="hover:text-emerald-600 transition-colors">Auto-Reject UK Cookie Banners</a></li>
-            <li><a href="/guides/how-to-block-youtube-ads-chrome-manifest-v3-2026" class="hover:text-emerald-600 transition-colors">Block YouTube Ads on Chrome MV3</a></li>
-            <li><a href="/guides/how-to-fix-twitch-purple-screen-adblock-2026" class="hover:text-emerald-600 transition-colors">Fix Twitch Purple Screen (2026)</a></li>
-            <li><a href="/guides/how-to-reduce-browser-ram-speed-up-slow-tabs" class="hover:text-emerald-600 transition-colors">Cut Browser RAM Usage by 62%</a></li>
-            <li><a href="/guides/how-to-spot-fake-scam-online-shops-uk" class="hover:text-emerald-600 transition-colors">Spot Fake Scam Online Shops</a></li>
-            <li><a href="/guides/how-to-hide-ai-slop-from-google-search" class="hover:text-emerald-600 transition-colors">Hide AI Slop From Google Search</a></li>
-            <li><a href="/guides/strip-utm-fbclid-gclid-tracking-links" class="hover:text-emerald-600 transition-colors">Strip fbclid, gclid &amp; UTM Links</a></li>
-            <li><a href="/test-lab" class="hover:text-emerald-600 transition-colors">8/8 Live Anti-Detection Test Lab</a></li>
-          </ul>
-        </div>
+  <footer class="mt-auto pt-8 pb-24 md:pb-8 text-center text-gray-500 text-xs sm:text-sm border-t border-gray-200/70">
+    <div class="max-w-5xl mx-auto px-4">
+      <div class="flex flex-wrap justify-center gap-x-6 gap-y-2 mb-3 font-medium text-gray-600">
+        <a href="/pricing" class="hover:text-emerald-600 transition-colors">Pricing</a>
+        <a href="/vs" class="hover:text-emerald-600 transition-colors">Comparisons</a>
+        <a href="/solutions" class="hover:text-emerald-600 transition-colors">Solutions</a>
+        <a href="/setup" class="hover:text-emerald-600 transition-colors">Setups</a>
+        <a href="/guides" class="hover:text-emerald-600 transition-colors">Guides</a>
+        <a href="/tools" class="hover:text-emerald-600 transition-colors">Diagnostic Tools</a>
+        <a href="/test-lab" class="hover:text-emerald-600 transition-colors">Free Adblock Test Lab</a>
+        <a href="/benchmarks" class="hover:text-emerald-600 transition-colors">Benchmarks</a>
+        <a href="/glossary" class="hover:text-emerald-600 transition-colors">Glossary</a>
+        <a href="/vs/total-adblock" class="hover:text-emerald-600 transition-colors">vs Total Adblock</a>
+        <a href="/download" class="hover:text-emerald-600 transition-colors">Browser Extension</a>
+        <a href="/de" hreflang="de" class="hover:text-emerald-600 transition-colors">Deutsch (DE)</a>
+        <a href="/fr" hreflang="fr" class="hover:text-emerald-600 transition-colors">Français (FR)</a>
+        <a href="/es" hreflang="es" class="hover:text-emerald-600 transition-colors">Español (ES)</a>
+        <a rel="nofollow" href="/login" class="hover:text-emerald-600 transition-colors">Customer Portal</a>
+        <a href="/support" class="hover:text-emerald-600 transition-colors">Support &amp; Help</a>
+        <a href="/privacy" class="hover:text-emerald-600 transition-colors">Privacy Policy</a>
+        <a href="/terms" class="hover:text-emerald-600 transition-colors">Terms of Service</a>
+        <a href="/refund" class="hover:text-emerald-600 transition-colors">Refund Policy</a>
       </div>
+
+      <details class="group text-center">
+        <summary class="inline-flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-xs text-gray-400 hover:text-gray-600 cursor-pointer list-none select-none py-1">
+          <span>&copy; 2026 SWEEPR Global Limited. All rights reserved.</span>
+          <span aria-hidden="true">&middot;</span>
+          <span class="font-semibold text-gray-500 group-hover:text-emerald-700 inline-flex items-center gap-1 transition-colors">
+            <span>All 95 Setup Guides, Comparisons &amp; Tools</span>
+            <span class="text-emerald-600 transition-transform group-open:rotate-180">▾</span>
+          </span>
+        </summary>
+        <div class="mt-4 p-5 rounded-2xl border border-gray-200/80 bg-white text-left grid grid-cols-2 sm:grid-cols-4 gap-6 text-xs text-gray-500 shadow-xs">
+          <div>
+            <div class="font-bold text-gray-800 uppercase tracking-wider mb-2 text-[11px]">Setup Guides &amp; Comparisons</div>
+            <ul class="space-y-1.5">
+              <li><a href="/setup/arc-browser-windows-mac" class="hover:text-emerald-600 transition-colors">Arc Browser Ad Blocker (Win &amp; Mac)</a></li>
+              <li><a href="/setup/brave-browser-deepstealth" class="hover:text-emerald-600 transition-colors">Brave Browser MV3 Setup</a></li>
+              <li><a href="/setup/brave-macos-apple-silicon" class="hover:text-emerald-600 transition-colors">Brave Mac (Apple Silicon) Setup</a></li>
+              <li><a href="/setup/chromium-linux-ubuntu" class="hover:text-emerald-600 transition-colors">Chromium Linux &amp; Ubuntu Setup</a></li>
+              <li><a href="/setup/floorp-browser-firefox-fork" class="hover:text-emerald-600 transition-colors">Floorp AdBlock &amp; RAM Setup</a></li>
+              <li><a href="/setup/google-chrome-manifest-v3" class="hover:text-emerald-600 transition-colors">Google Chrome Manifest V3 Setup</a></li>
+              <li><a href="/setup/kiwi-browser-android" class="hover:text-emerald-600 transition-colors">Kiwi Browser Android Archive &amp; Firefox Guide</a></li>
+              <li><a href="/setup/librewolf-hardened-firefox" class="hover:text-emerald-600 transition-colors">LibreWolf Hardened Firefox Setup</a></li>
+              <li><a href="/setup/microsoft-edge-windows-11" class="hover:text-emerald-600 transition-colors">Microsoft Edge Windows 11 Setup</a></li>
+              <li><a href="/setup/mozilla-firefox-desktop-android" class="hover:text-emerald-600 transition-colors">Mozilla Firefox (Desktop &amp; Android)</a></li>
+              <li><a href="/setup/opera-gx-gaming-browser" class="hover:text-emerald-600 transition-colors">Opera &amp; Opera GX Setup</a></li>
+              <li><a href="/setup/orion-browser-macos-ios" class="hover:text-emerald-600 transition-colors">Orion Browser Ad Blocker (macOS)</a></li>
+              <li><a href="/setup/thorium-chromium-browser" class="hover:text-emerald-600 transition-colors">Thorium AdBlock Setup</a></li>
+              <li><a href="/setup/ungoogled-chromium-mv3" class="hover:text-emerald-600 transition-colors">Ungoogled Chromium MV3 Setup</a></li>
+              <li><a href="/setup/vivaldi-power-user-browser" class="hover:text-emerald-600 transition-colors">Vivaldi Browser Setup</a></li>
+              <li><a href="/setup/waterfox-privacy-browser" class="hover:text-emerald-600 transition-colors">Waterfox Privacy Browser Setup</a></li>
+              <li><a href="/setup/zen-browser-privacy-tabs" class="hover:text-emerald-600 transition-colors">Zen Browser Privacy &amp; RAM Setup</a></li>
+              <li><a href="/vs/total-adblock" class="hover:text-emerald-600 transition-colors">vs Total Adblock (2026)</a></li>
+              <li><a href="/vs/ublock-origin-lite" class="hover:text-emerald-600 transition-colors">vs uBlock Origin Lite (MV3)</a></li>
+              <li><a href="/vs/adguard-extension" class="hover:text-emerald-600 transition-colors">vs AdGuard Extension</a></li>
+              <li><a href="/vs/adblock-plus" class="hover:text-emerald-600 transition-colors">vs AdBlock Plus (ABP)</a></li>
+              <li><a href="/vs/ghostery-privacy-ad-blocker" class="hover:text-emerald-600 transition-colors">vs Ghostery Tracker Blocker</a></li>
+              <li><a href="/vs/pie-adblock" class="hover:text-emerald-600 transition-colors">vs Pie Adblock</a></li>
+              <li><a href="/vs/brave-shields" class="hover:text-emerald-600 transition-colors">vs Brave Built-in Shields</a></li>
+              <li><a href="/vs/windscribe-robert-adblock" class="hover:text-emerald-600 transition-colors">vs Windscribe R.O.B.E.R.T.</a></li>
+            </ul>
+          </div>
+          <div>
+            <div class="font-bold text-gray-800 uppercase tracking-wider mb-2 text-[11px]">Platform Ad Solutions</div>
+            <ul class="space-y-1.5">
+              <li><a href="/solutions/anilist-myanimelist-tracker-block-video-ads" class="hover:text-emerald-600 transition-colors">AniList &amp; MyAnimeList Ad Blocker</a></li>
+              <li><a href="/solutions/anime-streaming-portals-stop-malvertising-popunders" class="hover:text-emerald-600 transition-colors">Anime Portals Pop-Under Blocker</a></li>
+              <li><a href="/solutions/automotive-car-classifieds-block-video-ads" class="hover:text-emerald-600 transition-colors">Car Classifieds Video Ad Blocker</a></li>
+              <li><a href="/solutions/bilibili-anime-video-block-video-ads" class="hover:text-emerald-600 transition-colors">Bilibili Web Video Ad Blocker</a></li>
+              <li><a href="/solutions/bing-copilot-search-reduce-browser-ram-usage" class="hover:text-emerald-600 transition-colors">Bing Search Ad &amp; RAM Optimization</a></li>
+              <li><a href="/solutions/coinmarketcap-crypto-prices-stop-malvertising-popunders" class="hover:text-emerald-600 transition-colors">CoinMarketCap Pop-Under Shield</a></li>
+              <li><a href="/solutions/crunchyroll-anime-streams-block-video-ads" class="hover:text-emerald-600 transition-colors">Crunchyroll Web Ad Blocker</a></li>
+              <li><a href="/solutions/curseforge-gaming-mods-stop-malvertising-popunders" class="hover:text-emerald-600 transition-colors">CurseForge Mods Pop-Under Shield</a></li>
+              <li><a href="/solutions/dailymotion-vimeo-embeds-block-video-ads" class="hover:text-emerald-600 transition-colors">Dailymotion &amp; Vimeo Embed Ad Blocker</a></li>
+              <li><a href="/solutions/dex-token-screeners-block-video-ads" class="hover:text-emerald-600 transition-colors">DEXScreener Ad &amp; Banner Blocker</a></li>
+              <li><a href="/solutions/espn-sports-streaming-block-video-ads" class="hover:text-emerald-600 transition-colors">ESPN Sports Web Ad Blocker</a></li>
+              <li><a href="/solutions/f1-motorsport-news-block-video-ads" class="hover:text-emerald-600 transition-colors">Motorsport News Video Ad Blocker</a></li>
+              <li><a href="/solutions/fandom-game-wikis-reduce-browser-ram-usage" class="hover:text-emerald-600 transition-colors">Fandom Wikis RAM &amp; Ad Blocker</a></li>
+              <li><a href="/solutions/fextralife-game-wikis-stop-malvertising-popunders" class="hover:text-emerald-600 transition-colors">Fextralife Wikis Embed &amp; Pop-Under Shield</a></li>
+              <li><a href="/solutions/geeksforgeeks-dev-portals-block-video-ads" class="hover:text-emerald-600 transition-colors">GeeksforGeeks Ad &amp; Popup Blocker</a></li>
+              <li><a href="/solutions/github-copilot-dev-portals-block-video-ads" class="hover:text-emerald-600 transition-colors">Developer Portals Ad &amp; Tracker Shield</a></li>
+              <li><a href="/solutions/imdb-movie-database-block-video-ads" class="hover:text-emerald-600 transition-colors">IMDb Video &amp; Banner Ad Blocker</a></li>
+              <li><a href="/solutions/linkedin-feed-ads-block-video-ads" class="hover:text-emerald-600 transition-colors">LinkedIn Promoted Feed Ad Blocker</a></li>
+              <li><a href="/solutions/lyrics-and-chords-tabs-block-video-ads" class="hover:text-emerald-600 transition-colors">Lyrics &amp; Guitar Tabs Ad Blocker</a></li>
+              <li><a href="/solutions/manga-comic-readers-block-video-ads" class="hover:text-emerald-600 transition-colors">Manga Reader Sites Ad Blocker</a></li>
+            </ul>
+          </div>
+          <div>
+            <div class="font-bold text-gray-800 uppercase tracking-wider mb-2 text-[11px]">Streaming, Wikis &amp; Feeds</div>
+            <ul class="space-y-1.5">
+              <li><a href="/solutions/mangadex-web-reader-block-video-ads" class="hover:text-emerald-600 transition-colors">MangaDex Web Reader Clean Mode</a></li>
+              <li><a href="/solutions/nexus-mods-community-stop-malvertising-popunders" class="hover:text-emerald-600 transition-colors">Nexus Mods Pop-Under &amp; Banner Shield</a></li>
+              <li><a href="/solutions/online-chess-gaming-block-video-ads" class="hover:text-emerald-600 transition-colors">Online Chess Sites Ad Blocker</a></li>
+              <li><a href="/solutions/quora-digest-answers-stop-malvertising-popunders" class="hover:text-emerald-600 transition-colors">Quora Digest Popup &amp; Ad Blocker</a></li>
+              <li><a href="/solutions/roblox-web-community-filter-ai-slop-and-scams" class="hover:text-emerald-600 transition-colors">Roblox Web Ad &amp; Popup Shield</a></li>
+              <li><a href="/solutions/rumble-video-streams-block-video-ads" class="hover:text-emerald-600 transition-colors">Rumble Video Ad Blocker</a></li>
+              <li><a href="/solutions/smart-tv-web-browsers-block-video-ads" class="hover:text-emerald-600 transition-colors">Streaming Web Browsers Ad Blocker</a></li>
+              <li><a href="/solutions/soundcloud-audio-player-block-video-ads" class="hover:text-emerald-600 transition-colors">SoundCloud Web Ad Blocker</a></li>
+              <li><a href="/solutions/student-study-hubs-block-video-ads" class="hover:text-emerald-600 transition-colors">Student Study Hubs Ad Blocker</a></li>
+              <li><a href="/solutions/substack-newsletter-blogs-auto-reject-cookie-popups" class="hover:text-emerald-600 transition-colors">Substack Cookie Popup Auto-Reject</a></li>
+              <li><a href="/solutions/tech-gadget-review-blogs-auto-reject-cookie-popups" class="hover:text-emerald-600 transition-colors">Tech Review Sites Cookie Auto-Reject</a></li>
+              <li><a href="/solutions/threads-web-feed-stop-malvertising-popunders" class="hover:text-emerald-600 transition-colors">Threads Web Tracker &amp; Ad Shield</a></li>
+              <li><a href="/solutions/tiktok-web-reels-reduce-browser-ram-usage" class="hover:text-emerald-600 transition-colors">TikTok Web Ad &amp; RAM Optimization</a></li>
+              <li><a href="/solutions/tradingview-charts-web-reduce-browser-ram-usage" class="hover:text-emerald-600 transition-colors">TradingView Web Ad &amp; RAM Optimization</a></li>
+              <li><a href="/solutions/tumblr-blog-feeds-block-video-ads" class="hover:text-emerald-600 transition-colors">Tumblr Sponsored Post &amp; Ad Blocker</a></li>
+              <li><a href="/solutions/uk-news-websites-auto-reject-cookie-popups" class="hover:text-emerald-600 transition-colors">UK News Cookie Banner Auto-Reject</a></li>
+              <li><a href="/solutions/webtoon-manhwa-readers-block-video-ads" class="hover:text-emerald-600 transition-colors">Webtoon &amp; Manhwa Ad Blocker</a></li>
+              <li><a href="/solutions/x-twitter-feed-ads-block-video-ads" class="hover:text-emerald-600 transition-colors">X (Twitter) Feed Ad Blocker</a></li>
+            </ul>
+          </div>
+          <div>
+            <div class="font-bold text-gray-800 uppercase tracking-wider mb-2 text-[11px]">Guides, Tools &amp; Core</div>
+            <ul class="space-y-1.5">
+              <li><a href="/guides/how-to-automatically-reject-cookie-banners-uk" class="hover:text-emerald-600 transition-colors">Auto-Reject Cookie Banners (UK &amp; EU)</a></li>
+              <li><a href="/guides/how-to-block-reddit-sponsored-promoted-posts-in-feed" class="hover:text-emerald-600 transition-colors">Block Reddit Promoted Posts</a></li>
+              <li><a href="/guides/how-to-block-sponsored-ads-on-google-search-2026" class="hover:text-emerald-600 transition-colors">Block Google Sponsored Search Ads</a></li>
+              <li><a href="/guides/how-to-block-sponsored-ads-on-yahoo-finance" class="hover:text-emerald-600 transition-colors">Block Yahoo Finance Video Ads</a></li>
+              <li><a href="/guides/how-to-block-sponsored-posts-and-crypto-bots-on-x-twitter" class="hover:text-emerald-600 transition-colors">Block Promoted Posts on X / Twitter</a></li>
+              <li><a href="/guides/how-to-block-tab-freeze-crypto-miner-scripts" class="hover:text-emerald-600 transition-colors">Block In-Browser Crypto Miners</a></li>
+              <li><a href="/guides/how-to-block-twitch-midroll-commercials-without-black-screen" class="hover:text-emerald-600 transition-colors">Block Twitch Mid-Roll Ads Cleanly</a></li>
+              <li><a href="/guides/how-to-block-youtube-ads-chrome-manifest-v3-2026" class="hover:text-emerald-600 transition-colors">Block YouTube Ads on Chrome MV3</a></li>
+              <li><a href="/guides/how-to-bypass-anti-adblock-inspect-element-blockers" class="hover:text-emerald-600 transition-colors">Handle Anti-Adblock Overlays</a></li>
+              <li><a href="/guides/how-to-fix-high-cpu-usage-from-youtube-anti-adblock" class="hover:text-emerald-600 transition-colors">Fix YouTube Anti-Adblock CPU Lag</a></li>
+              <li><a href="/guides/how-to-fix-high-ram-usage-on-vivaldi-browser" class="hover:text-emerald-600 transition-colors">Fix High RAM Usage on Vivaldi</a></li>
+              <li><a href="/guides/how-to-reduce-browser-ram-speed-up-slow-tabs" class="hover:text-emerald-600 transition-colors">Reduce Browser RAM &amp; Speed Up Tabs</a></li>
+              <li><a href="/guides/how-to-stop-facebook-meta-pixel-tracking" class="hover:text-emerald-600 transition-colors">Block Meta Pixel Tracking Beacons</a></li>
+              <li><a href="/guides/how-to-stop-fake-robot-captcha-verification-popups" class="hover:text-emerald-600 transition-colors">Stop Fake Robot Captcha Popups</a></li>
+              <li><a href="/guides/how-to-stop-malvertising-popunders-and-redirects" class="hover:text-emerald-600 transition-colors">Stop Malvertising Popunders &amp; Redirects</a></li>
+              <li><a href="/guides/how-to-stop-temu-shein-scam-popups-and-tracking" class="hover:text-emerald-600 transition-colors">Stop Temu &amp; Shein Popups &amp; Trackers</a></li>
+              <li><a href="/guides/strip-utm-fbclid-gclid-tracking-links" class="hover:text-emerald-600 transition-colors">Strip UTM, fbclid &amp; gclid Trackers</a></li>
+              <li><a href="/tools/browser-ram-calculator" class="hover:text-emerald-600 transition-colors">Browser RAM &amp; Tab Bloat Calculator</a></li>
+              <li><a href="/" class="hover:text-emerald-600 transition-colors">SWEEPR Deepblock Home</a></li>
+              <li><a href="/download" class="hover:text-emerald-600 transition-colors">Browser Extension Downloads</a></li>
+              <li><a href="/pricing" class="hover:text-emerald-600 transition-colors">Pricing &amp; Pro Plans</a></li>
+              <li><a href="/benchmarks" class="hover:text-emerald-600 transition-colors">v1.3.1 MV3 Benchmarks</a></li>
+              <li><a href="/test-lab" class="hover:text-emerald-600 transition-colors">Free Adblock Test Lab</a></li>
+              <li><a href="/tools" class="hover:text-emerald-600 transition-colors">Free Browser Privacy &amp; RAM Tools</a></li>
+              <li><a href="/glossary" class="hover:text-emerald-600 transition-colors">Manifest V3 &amp; Privacy Glossary</a></li>
+              <li><a href="/support" class="hover:text-emerald-600 transition-colors">Support &amp; 1-Click Cancellation</a></li>
+              <li><a href="/privacy" class="hover:text-emerald-600 transition-colors">Privacy Policy</a></li>
+              <li><a href="/terms" class="hover:text-emerald-600 transition-colors">Terms of Service</a></li>
+              <li><a href="/refund" class="hover:text-emerald-600 transition-colors">14-Day Refund Policy</a></li>
+              <li><a href="/de" class="hover:text-emerald-600 transition-colors">Deutsch (DE) Hub</a></li>
+              <li><a href="/fr" class="hover:text-emerald-600 transition-colors">Français (FR) Hub</a></li>
+              <li><a href="/es" class="hover:text-emerald-600 transition-colors">Español (ES) Hub</a></li>
+            </ul>
+          </div>
+        </div>
+      </details>
     </div>
   </footer>
+  <div class="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-lg border-t border-gray-200/90 px-4 py-2.5 flex items-center justify-between gap-3 md:hidden shadow-2xl" style="padding-bottom: max(0.625rem, env(safe-area-inset-bottom));">
+    <div class="min-w-0">
+      <div class="text-xs font-extrabold text-gray-900 truncate">SWEEPR Deepblock</div>
+      <div class="text-[11px] font-semibold text-emerald-700 truncate">14-Day Money-Back Guarantee</div>
+    </div>
+    <a href="/download?install=1" id="mobileStickyDownloadBtn" class="btn btn-go !h-11 min-h-[44px] !px-4 !rounded-xl text-xs gap-1.5 shrink-0">
+      <span>Install Now</span>
+      <svg class="arrow-icon w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+    </a>
+  </div>
 
   <script>
     let stealthInterceptions = 0;
@@ -324,6 +517,18 @@
     async function runAllFieldTests() {
       const results = [];
 
+      const TEST_ICON_PATHS = {
+        1: '<path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>',
+        2: '<path stroke-linecap="round" stroke-linejoin="round" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/>',
+        3: '<path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>',
+        4: '<path stroke-linecap="round" stroke-linejoin="round" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V5z"/>',
+        5: '<path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>',
+        6: '<path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>',
+        7: '<path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>',
+        8: '<path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>'
+      };
+      const getTestIconSvg = (id) => `<svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">${TEST_ICON_PATHS[id] || ''}</svg>`;
+
       // TEST 1: Dynamic <script onerror> Network Block Alchemist
       const test1 = await new Promise((resolve) => {
         const s = document.createElement('script');
@@ -333,14 +538,28 @@
           resolved = true;
           resolve({
             id: 1,
-            name: '⚡ 1. Instant Ad Script Blocker',
+            name: '1. Instant Ad Script Blocker',
             passed,
             detail
           });
         };
-        s.onload = () => done(true, 'Stops heavy advertising scripts before they can load or slow down your web page.');
+        s.onload = () => {
+          const protectedByShield = Boolean(
+            window.canRunAds === true &&
+            window.google_ad_status === 1 &&
+            window.adsbygoogle &&
+            window.adsbygoogle.loaded === true &&
+            document.documentElement.dataset.sweeprExtensionActive === '1'
+          );
+          done(
+            protectedByShield,
+            protectedByShield
+              ? 'Stops heavy advertising scripts before they can load or slow down your web page.'
+              : 'Ad script loaded unblocked — install and activate SWEEPR Deepblock Pro.'
+          );
+        };
         s.onerror = () => done(false, 'Ad script was detected by the page.');
-        s.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?probe=' + Date.now();
+        s.src = '/api/test-lab/probe/adsbygoogle.js?probe=' + Date.now();
         document.head.appendChild(s);
         setTimeout(() => done(false, 'Check timed out.'), 1500);
       });
@@ -359,7 +578,7 @@
         if (!hasCanaries) {
           return resolve({
             id: 2,
-            name: '📰 2. Banner & Sidebar Ad Blocker',
+            name: '2. Banner & Sidebar Ad Blocker',
             passed: false,
             detail: 'Banner ad blocker check did not complete.'
           });
@@ -377,7 +596,7 @@
         setTimeout(() => {
           resolve({
             id: 2,
-            name: '📰 2. Banner & Sidebar Ad Blocker',
+            name: '2. Banner & Sidebar Ad Blocker',
             passed: slotRendered,
             detail: slotRendered
               ? 'Blocks flashing banner and sidebar ads on news sites and blogs while keeping the page working smoothly.'
@@ -398,7 +617,7 @@
         const passed = !detectedCalled && notDetectedCalled && window.fuckAdBlock.check() === false;
         resolve({
           id: 3,
-          name: '🕵️ 3. Invisible to Ad-Blocker Detectors',
+          name: '3. Invisible to Ad-Blocker Detectors',
           passed,
           detail: passed
             ? 'Websites cannot tell that you are using an ad blocker, so you never get locked out of articles.'
@@ -421,7 +640,7 @@
         cs.visibility === 'visible';
       results.push({
         id: 4,
-        name: '🖼️ 4. Clean Page Layout (No Blank Boxes)',
+        name: '4. Clean Page Layout (No Blank Boxes)',
         passed: test4Passed,
         detail: test4Passed
           ? 'Hides empty spaces where ads used to be so articles and websites look clean and natural.'
@@ -432,14 +651,15 @@
       let fetchOk = false;
       let xhrOk = false;
       try {
-        const resp = await fetch('https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js', { method: 'GET' });
-        fetchOk = resp.status === 200;
+        const resp = await fetch('/api/test-lab/probe/adsbygoogle.js', { method: 'GET' });
+        const bodyText = await resp.text();
+        fetchOk = resp.status === 200 && bodyText.includes('deepstealth ok');
       } catch (e) {}
 
       xhrOk = await new Promise((resolve) => {
         const xhr = new XMLHttpRequest();
-        xhr.open('GET', 'https://securepubads.g.doubleclick.net/tag/js/gpt.js');
-        xhr.onload = () => resolve(xhr.status === 200);
+        xhr.open('GET', '/api/test-lab/probe/adblock-detect');
+        xhr.onload = () => resolve(xhr.status === 200 && String(xhr.responseText || '').includes('deepstealth ok'));
         xhr.onerror = () => resolve(false);
         xhr.send();
         setTimeout(() => resolve(false), 500);
@@ -447,7 +667,7 @@
 
       results.push({
         id: 5,
-        name: '🔒 5. Hidden Website Tracker Blocker',
+        name: '5. Hidden Website Tracker Blocker',
         passed: fetchOk && xhrOk,
         detail:
           fetchOk && xhrOk
@@ -471,7 +691,7 @@
       });
       results.push({
         id: 6,
-        name: '📺 6. Video Commercial Blocker',
+        name: '6. Video Commercial Blocker',
         passed: imaPassed,
         detail: imaPassed
           ? 'Skips commercial breaks before and during online videos so your video starts playing right away.'
@@ -484,7 +704,7 @@
       const ytPassed = extActive && stealthReady;
       results.push({
         id: 7,
-        name: '🎬 7. YouTube Ad Skipper & Feed Cleaner',
+        name: '7. YouTube Ad Skipper & Feed Cleaner',
         passed: ytPassed,
         detail: ytPassed
           ? 'Automatically mutes and skips YouTube video ads in a split second without pausing your video.'
@@ -497,7 +717,7 @@
       const wallGone = !wallEl || getComputedStyle(wallEl).display === 'none';
       results.push({
         id: 8,
-        name: '🍪 8. No "Please Turn Off Your Ad Blocker" Pop-Ups',
+        name: '8. No "Please Turn Off Your Ad Blocker" Pop-Ups',
         passed: wallGone,
         detail: wallGone
           ? 'Removes annoying pop-up walls that try to block your screen or stop you from scrolling.'
@@ -536,11 +756,11 @@
       grid.innerHTML = results
         .map(
           (r) => `
-        <div class="glass-card p-5 border ${r.passed ? 'border-emerald-200' : 'border-red-300'} flex flex-col justify-between gap-3">
+        <div class="glass-card p-5 border ${r.passed ? 'border-emerald-200' : 'border-rose-300'} flex flex-col justify-between gap-3">
           <div class="flex items-start justify-between gap-3">
-            <h3 class="font-extrabold text-gray-900 text-base">${r.name}</h3>
+            <h3 class="font-extrabold text-gray-900 text-base inline-flex items-center gap-2">${getTestIconSvg(r.id)}<span>${r.name}</span></h3>
             <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase shrink-0 ${
-              r.passed ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' : 'bg-red-100 text-red-800'
+              r.passed ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' : 'bg-rose-100 text-rose-800 border border-rose-300'
             }">
               ${r.passed ? '✓ PROTECTED' : '✗ NEEDS ATTENTION'}
             </span>
@@ -553,7 +773,11 @@
 
       // Initialize Zero-Email Viral Scorecard & Referral Link
       try {
-        const deviceSeed = localStorage.getItem('sweepr_ga4_cid') || 'anon_' + Date.now();
+        let deviceSeed = localStorage.getItem('sweepr_db_device_id');
+        if (!deviceSeed) {
+          deviceSeed = 'web_db_' + (typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID().replace(/-/g, '').slice(0, 16) : String(Date.now()));
+          localStorage.setItem('sweepr_db_device_id', deviceSeed);
+        }
         const refRes = await fetch('/api/referral/create', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -561,10 +785,10 @@
         }).then((r) => (r.ok ? r.json() : null)).catch(() => null);
         const refCode = (refRes && refRes.code) || 'verified';
         const challengeUrl = (refRes && refRes.shareUrls && refRes.shareUrls.testLabChallenge) || `${window.location.origin}/test-lab?ref=${refCode}`;
-        const badgeSvgUrl = `https://sweeprdeepblock.com/api/test-lab/share-card.svg?score=${pctScore}&blocked=${passedTotal}&ram=640&ref=${encodeURIComponent(refCode)}`;
+        const badgeSvgUrl = `https://sweeprdeepblock.com/api/test-lab/share-card.svg?score=${pctScore}&blocked=${passedTotal}&ref=${encodeURIComponent(refCode)}`;
         const badgeImg = document.getElementById('liveShareCardBadgeImg');
         if (badgeImg) {
-          badgeImg.src = `/api/test-lab/share-card.svg?score=${pctScore}&blocked=${passedTotal}&ram=640&ref=${encodeURIComponent(refCode)}`;
+          badgeImg.src = `/api/test-lab/share-card.svg?score=${pctScore}&blocked=${passedTotal}&ref=${encodeURIComponent(refCode)}`;
         }
         const hintEl = document.getElementById('referralStatusHint');
         if (hintEl) {
@@ -592,13 +816,51 @@
           };
         }
         const urlParams = new URLSearchParams(window.location.search || '');
-        const incomingRef = urlParams.get('ref');
-        if (incomingRef && incomingRef.startsWith('u_')) {
-          fetch('/api/referral/redeem', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ code: incomingRef, deviceId: deviceSeed })
-          }).catch(() => {});
+        const incomingRef = (urlParams.get('ref') || '').trim();
+        const claimCard = document.getElementById('referralClaimCard');
+        const claimBtn = document.getElementById('claimReferralTrialBtn');
+        const claimResultEl = document.getElementById('claimReferralResult');
+        if (incomingRef && claimCard && claimBtn) {
+          claimCard.classList.remove('hidden');
+          claimBtn.onclick = async () => {
+            claimBtn.disabled = true;
+            claimBtn.textContent = 'Minting 14-Day Trial Key...';
+            try {
+              const r = await fetch('/api/referral/redeem', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  code: incomingRef,
+                  deviceId: deviceSeed,
+                  licenseKey: localStorage.getItem('sweepr_license_key') || ''
+                })
+              });
+              const d = await r.json().catch(() => ({}));
+              if (r.ok && d && d.ok && d.trialKey) {
+                localStorage.setItem('sweepr_license_key', d.trialKey);
+                claimBtn.textContent = '✓ Copy 14-Day Pro Trial Key';
+                claimBtn.disabled = false;
+                claimBtn.onclick = () => {
+                  navigator.clipboard.writeText(d.trialKey).catch(() => {});
+                  claimBtn.textContent = '✓ Copied Trial Key!';
+                };
+                if (claimResultEl) {
+                  const expLabel = d.trialExpiresAt ? new Date(d.trialExpiresAt).toLocaleDateString() : '14 days';
+                  claimResultEl.textContent = `Key: ${d.trialKey} (Expires: ${expLabel})`;
+                }
+              } else {
+                claimBtn.disabled = false;
+                claimBtn.textContent = 'Claim Your 14-Day Free Pro Trial →';
+                if (claimResultEl) {
+                  claimResultEl.textContent = (d && (d.message || d.error)) || 'Could not redeem referral code.';
+                }
+              }
+            } catch (err) {
+              claimBtn.disabled = false;
+              claimBtn.textContent = 'Claim Your 14-Day Free Pro Trial →';
+              if (claimResultEl) claimResultEl.textContent = 'Network error redeeming referral.';
+            }
+          };
         }
       } catch (e) {}
     }

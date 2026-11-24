@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-23T18:33:34.211Z",
-  "durationMs": 53088,
+  "generatedAt": "2026-11-22T14:46:23.219Z",
+  "durationMs": 52958,
   "mode": "live_google_cloud_service_account_api",
   "serviceAccountConfigured": true,
   "serviceAccountEmail": "sweepr-seo-bot@sweepr-514223.iam.gserviceaccount.com",
@@ -8,16 +8,15 @@
   "ga4PropertyId": "559863555",
   "trackedDiscoveredGscPathsCount": 167,
   "latestGscSnapshot": {
-    "totalImpressions": 549,
+    "totalImpressions": 556,
     "totalClicks": 7,
-    "activePagesWithImpressions": 165,
+    "activePagesWithImpressions": 166,
     "newlyDiscoveredPaths": [
       "/solutions/anime-streaming-portals-auto-reject-cookie-popups",
       "/solutions/anime-streaming-portals-reduce-browser-ram-usage",
       "/solutions/automotive-car-classifieds-reduce-browser-ram-usage",
       "/solutions/automotive-car-classifieds-strip-tracking-parameters",
       "/solutions/bilibili-anime-video-block-video-ads",
-      "/solutions/cnn-news-network-block-video-ads",
       "/solutions/cnn-news-network-reduce-browser-ram-usage",
       "/solutions/cnn-news-network-strip-tracking-parameters",
       "/solutions/crunchyroll-anime-streams-auto-reject-cookie-popups",
@@ -73,6 +72,7 @@
       "/solutions/tumblr-blog-feeds-stop-malvertising-popunders",
       "/solutions/twitch-live-streams-auto-reject-cookie-popups",
       "/solutions/twitch-live-streams-encrypted-dns-doh-protection",
+      "/solutions/twitch-live-streams-stop-malvertising-popunders",
       "/solutions/twitch-live-streams-stop-notification-permission-spam",
       "/solutions/webtoon-manhwa-readers-auto-reject-cookie-popups",
       "/solutions/webtoon-manhwa-readers-filter-ai-slop-and-scams",
@@ -83,10 +83,10 @@
     "strikeZoneCandidates": [
       {
         "urlPath": "/",
-        "impressions": 3,
+        "impressions": 7,
         "clicks": 0,
         "ctrPct": 0,
-        "position": 21,
+        "position": 10.1,
         "topQueries": [
           {
             "query": "snoopblocker",
@@ -310,26 +310,26 @@
     ]
   },
   "latestGa4Snapshot": {
-    "date": "2026-11-23",
-    "activeUsers28d": 249,
-    "sessions28d": 275,
-    "engagementRatePct": 41.1,
-    "avgSessionDurationSec": 52.3,
-    "extensionInstallsStarted": 6,
-    "testLabRuns": 31,
-    "beginCheckout": 99,
+    "date": "2026-11-22",
+    "activeUsers28d": 242,
+    "sessions28d": 263,
+    "engagementRatePct": 40.7,
+    "avgSessionDurationSec": 31.5,
+    "extensionInstallsStarted": 2,
+    "testLabRuns": 29,
+    "beginCheckout": 97,
     "orderPaymentErrors": 2,
     "purchases": 0,
     "source": "ga4_data_api_v1beta"
   },
   "warnings": [],
   "crmSync": {
-    "syncedAt": "2026-11-23T18:33:34.211Z",
+    "syncedAt": "2026-11-22T14:46:23.219Z",
     "cloudSync": {
       "url": "https://sweepr-crm-production.up.railway.app/api/crm/seo/gsc/cloud-sync",
       "status": 200,
       "ok": true,
-      "body": "{\"ok\":true,\"mode\":\"cloud_ingest\",\"project_id\":\"deepblock\",\"ingested\":54,\"keywords_added\":25,\"total_rows\":290,\"latest_date\":\"2026-11-21\"}"
+      "body": "{\"ok\":true,\"mode\":\"cloud_ingest\",\"project_id\":\"deepblock\",\"ingested\":54,\"keywords_added\":25,\"total_rows\":236,\"latest_date\":\"2026-11-20\"}"
     },
     "telemetry": {
       "url": "https://sweepr-crm-production.up.railway.app/v1/telemetry/event",
@@ -342,7 +342,7 @@
         "url": "https://sweepr-crm-production.up.railway.app/api/crm/seo/changelog",
         "status": 200,
         "ok": true,
-        "body": "{\"ok\":true,\"id\":200,\"entry\":{\"id\":200,\"project_id\":\"deepblock\",\"date\":\"2026-11-23\",\"category\":\"gsc_indexing\",\"title\":\"[DeepBlock] Cloud GSC Sync Promoted 67 Impression-Earning Pillar(s)\",\"description\""
+        "body": "{\"ok\":true,\"id\":193,\"entry\":{\"id\":193,\"project_id\":\"deepblock\",\"date\":\"2026-11-22\",\"category\":\"gsc_indexing\",\"title\":\"[DeepBlock] Cloud GSC Sync Promoted 67 Impression-Earning Pillar(s)\",\"description\""
       }
     ]
   }

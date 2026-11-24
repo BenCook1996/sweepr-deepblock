@@ -7,6 +7,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.IO.Compression;
+using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -64,6 +65,7 @@ namespace SWEEPRDeepblockSetup
         internal const string FirefoxAmoUrl = "https://addons.mozilla.org/en-US/firefox/addon/sweepr-deepblock/";
         internal const string TestLabUrl = "https://sweeprdeepblock.com/test-lab";
         internal const string BrandHomeUrl = "https://sweeprdeepblock.com";
+        internal const string LicenseVerifyUrl = "https://sweeprdeepblock.com/api/license-verify";
 
         internal static readonly Regex FullLicenseKeyRegex = new Regex(
             @"^SWEEPR-[A-Z0-9]{2,8}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$",
@@ -184,6 +186,92 @@ namespace SWEEPRDeepblockSetup
         internal static bool IsValidFullLicenseKey(string normalized)
         {
             return !string.IsNullOrEmpty(normalized) && FullLicenseKeyRegex.IsMatch(normalized);
+        }
+
+        internal static bool VerifyLicenseKeyLive(string normalizedKey, out string message)
+        {
+            message = string.Empty;
+            if (!IsValidFullLicenseKey(normalizedKey))
+            {
+                message = "Invalid key format. Full SWEEPR-DB-XXXX-XXXX-XXXX license key required.";
+                return false;
+            }
+            try
+            {
+                ServicePointManager.SecurityProtocol |= (SecurityProtocolType)3072;
+                var serializer = new JavaScriptSerializer();
+                var payload = new Dictionary<string, object>();
+                payload["key"] = normalizedKey;
+                payload["license_key"] = normalizedKey;
+                payload["platform"] = "windows_installer";
+                byte[] bodyBytes = Encoding.UTF8.GetBytes(serializer.Serialize(payload));
+
+                var req = (HttpWebRequest)WebRequest.Create(LicenseVerifyUrl);
+                req.Method = "POST";
+                req.ContentType = "application/json";
+                req.Accept = "application/json";
+                req.UserAgent = "SWEEPRDeepblockSetup/1.3.1";
+                req.Timeout = 8000;
+                req.ReadWriteTimeout = 8000;
+                req.ContentLength = bodyBytes.Length;
+
+                using (var reqStream = req.GetRequestStream())
+                {
+                    reqStream.Write(bodyBytes, 0, bodyBytes.Length);
+                }
+
+                using (var resp = (HttpWebResponse)req.GetResponse())
+                using (var reader = new StreamReader(resp.GetResponseStream(), Encoding.UTF8))
+                {
+                    string respText = reader.ReadToEnd();
+                    var dict = serializer.DeserializeObject(respText) as Dictionary<string, object>;
+                    bool valid = dict != null && dict.ContainsKey("valid") && dict["valid"] is bool && (bool)dict["valid"];
+                    if (valid)
+                    {
+                        message = "Pro key verified live with sweeprdeepblock.com.";
+                        return true;
+                    }
+                    object msgObj = null;
+                    if (dict != null && (dict.TryGetValue("message", out msgObj) || dict.TryGetValue("error", out msgObj)) && msgObj != null)
+                    {
+                        message = Convert.ToString(msgObj);
+                    }
+                    else
+                    {
+                        message = "License key could not be verified (inactive or not found).";
+                    }
+                    return false;
+                }
+            }
+            catch (WebException ex)
+            {
+                try
+                {
+                    if (ex.Response != null)
+                    {
+                        using (var errReader = new StreamReader(ex.Response.GetResponseStream(), Encoding.UTF8))
+                        {
+                            string errText = errReader.ReadToEnd();
+                            var serializer = new JavaScriptSerializer();
+                            var errDict = serializer.DeserializeObject(errText) as Dictionary<string, object>;
+                            object errMsg = null;
+                            if (errDict != null && (errDict.TryGetValue("message", out errMsg) || errDict.TryGetValue("error", out errMsg)) && errMsg != null)
+                            {
+                                message = "Verification rejected: " + Convert.ToString(errMsg);
+                                return false;
+                            }
+                        }
+                    }
+                }
+                catch { }
+                message = "License verification failed (server rejected key or network unavailable).";
+                return false;
+            }
+            catch
+            {
+                message = "Unable to contact sweeprdeepblock.com to verify your license key.";
+                return false;
+            }
         }
 
         internal static List<DnrRuleSummary> WriteInstallAndExtractExtension()
@@ -422,7 +510,7 @@ namespace SWEEPRDeepblockSetup
                     StrippedParamCount = 0,
                     RiskScore = 0,
                     Verdict = "EMPTY INPUT",
-                    ReportText = "Enter an HTTP or HTTPS URL above to strip tracking codes and run a local 14-point scam/tracker check."
+                    ReportText = "Enter an HTTP or HTTPS URL above to strip tracking codes and run a local 8-point domain/tracker check."
                 };
             }
 
@@ -652,7 +740,7 @@ namespace SWEEPRDeepblockSetup
             string pf86 = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
             string local = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
 
-            AddIfPresent(found, "chrome", "Google Chrome", ChromeWebStoreUrl, "Chromium MV3 (--load-extension)", true, new[]
+            AddIfPresent(found, "chrome", "Google Chrome", ChromeWebStoreUrl, "Chrome Web Store (Official MV3)", true, new[]
             {
                 Path.Combine(pf, "Google", "Chrome", "Application", "chrome.exe"),
                 Path.Combine(pf86, "Google", "Chrome", "Application", "chrome.exe"),
@@ -660,14 +748,14 @@ namespace SWEEPRDeepblockSetup
                 ReadAppPath("chrome.exe")
             });
 
-            AddIfPresent(found, "edge", "Microsoft Edge", ChromeWebStoreUrl, "Chromium MV3 (--load-extension)", true, new[]
+            AddIfPresent(found, "edge", "Microsoft Edge", ChromeWebStoreUrl, "Chrome Web Store (Official MV3)", true, new[]
             {
                 Path.Combine(pf86, "Microsoft", "Edge", "Application", "msedge.exe"),
                 Path.Combine(pf, "Microsoft", "Edge", "Application", "msedge.exe"),
                 ReadAppPath("msedge.exe")
             });
 
-            AddIfPresent(found, "brave", "Brave Browser", ChromeWebStoreUrl, "Chromium MV3 (--load-extension)", true, new[]
+            AddIfPresent(found, "brave", "Brave Browser", ChromeWebStoreUrl, "Chrome Web Store (Official MV3)", true, new[]
             {
                 Path.Combine(pf, "BraveSoftware", "Brave-Browser", "Application", "brave.exe"),
                 Path.Combine(pf86, "BraveSoftware", "Brave-Browser", "Application", "brave.exe"),
@@ -730,36 +818,6 @@ namespace SWEEPRDeepblockSetup
             catch { }
 
             return null;
-        }
-
-        internal static bool LaunchBrowserWithLocalExtension(DetectedBrowser browser, string extensionDir)
-        {
-            if (browser == null || string.IsNullOrEmpty(browser.ExecutablePath) || !File.Exists(browser.ExecutablePath))
-            {
-                return false;
-            }
-            if (!browser.IsChromium || string.IsNullOrEmpty(extensionDir) || !Directory.Exists(extensionDir))
-            {
-                return false;
-            }
-            try
-            {
-                string profileDir = Path.Combine(GetInstallDir(), "BrowserProfile_" + browser.Id);
-                Directory.CreateDirectory(profileDir);
-                string args = "--load-extension=\"" + extensionDir + "\" --user-data-dir=\"" + profileDir + "\" --no-first-run \"" + TestLabUrl + "\"";
-                var psi = new ProcessStartInfo
-                {
-                    FileName = browser.ExecutablePath,
-                    Arguments = args,
-                    UseShellExecute = false
-                };
-                Process.Start(psi);
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
         }
 
         internal static bool OpenFolderInExplorer(string dirPath)
@@ -826,7 +884,7 @@ namespace SWEEPRDeepblockSetup
                 var exports = new[]
                 {
                     new { TabIdx = 0, File = "uptodown-win-1-shield.png", Caption = "SWEEPR Deepblock v1.3.0 — Offline MV3 Extension & Local Browser Deployer" },
-                    new { TabIdx = 1, File = "uptodown-win-2-scanner.png", Caption = "Standalone URL Tracker Stripper & 14-Point Scam Domain Scanner" },
+                    new { TabIdx = 1, File = "uptodown-win-2-scanner.png", Caption = "Standalone URL Tracker Stripper & 8-Point Domain Scanner" },
                     new { TabIdx = 2, File = "uptodown-win-3-rules.png", Caption = "Searchable 253-Rule MV3 Inspector & 8/8 Local Engine Self-Test" }
                 };
 
@@ -979,7 +1037,7 @@ namespace SWEEPRDeepblockSetup
 
             headerPanel.Controls.Add(new Label
             {
-                Text = "Offline MV3 Extension (" + _rules.Count + " Static Rules) • Standalone URL Cleaner • Scam Domain Audit",
+                Text = "Offline MV3 Extension (" + _rules.Count + " Static Rules) • Standalone URL Cleaner • Domain Audit",
                 UseMnemonic = false,
                 Font = new Font("Segoe UI", 9.25f, FontStyle.Regular),
                 ForeColor = Color.FromArgb(236, 253, 245),
@@ -998,7 +1056,7 @@ namespace SWEEPRDeepblockSetup
             string[] labels = new[]
             {
                 "Shield & Installer",
-                "URL & Scam Audit",
+                "URL & Domain Audit",
                 _rules.Count + " MV3 Rules",
                 "Account & Key"
             };
@@ -1114,7 +1172,7 @@ namespace SWEEPRDeepblockSetup
 
             var launchBtn = new Button
             {
-                Text = "Launch Browser with Deepblock Active",
+                Text = "Install Official Extension in Selected Browser",
                 UseMnemonic = false,
                 Location = new Point(22, 168),
                 Size = new Size(368, 46),
@@ -1129,10 +1187,13 @@ namespace SWEEPRDeepblockSetup
             {
                 DetectedBrowser chosen = (_browsers.Count > 0 && _browserCombo.SelectedIndex >= 0 && _browserCombo.SelectedIndex < _browsers.Count)
                     ? _browsers[_browserCombo.SelectedIndex] : null;
-                if (chosen != null && chosen.IsChromium && Program.LaunchBrowserWithLocalExtension(chosen, _extensionDir))
+                string storeUrl = chosen != null ? chosen.StoreUrl : Program.ChromeWebStoreUrl;
+                if (Program.OpenOfficialUrl(storeUrl, chosen))
                 {
                     _tab1StatusLabel.ForeColor = Color.FromArgb(110, 231, 183);
-                    _tab1StatusLabel.Text = "Launched " + chosen.Name + " with unpacked MV3 extension loaded from " + _extensionDir + " and opened the 8/8 Test Lab.";
+                    _tab1StatusLabel.Text = chosen != null
+                        ? "Opened official store listing in " + chosen.Name + ". Click Add Extension to install automatic-updating SWEEPR Deepblock."
+                        : "Opened Chrome Web Store listing in your default browser.";
                 }
                 else
                 {
@@ -1166,7 +1227,7 @@ namespace SWEEPRDeepblockSetup
 
             p.Controls.Add(new Label
             {
-                Text = "Offline desktop tools ('URL & Scam Audit' and '253 MV3 Rules') work anytime without a browser.",
+                Text = "Offline desktop tools ('URL & Domain Audit' and 'MV3 Rules') work anytime without a browser.",
                 UseMnemonic = false,
                 Font = new Font("Segoe UI", 8.75f),
                 ForeColor = Color.FromArgb(148, 163, 184),
@@ -1215,7 +1276,7 @@ namespace SWEEPRDeepblockSetup
 
             _tab1StatusLabel = new Label
             {
-                Text = "Ready. All 253 static MV3 rules and standalone URL/Scam auditing work 100% locally on your device.",
+                Text = "Ready. All " + _rules.Count + " static MV3 rules and standalone URL auditing work 100% locally on your device.",
                 Font = new Font("Segoe UI", 8.75f),
                 ForeColor = Color.FromArgb(110, 231, 183),
                 Location = new Point(22, 354),
@@ -1231,7 +1292,7 @@ namespace SWEEPRDeepblockSetup
 
             p.Controls.Add(new Label
             {
-                Text = "Standalone URL Tracking Parameter Cleaner & 14-Point Scam Audit",
+                Text = "Standalone URL Tracking Parameter Cleaner & 8-Point Domain Audit",
                 UseMnemonic = false,
                 Font = new Font("Segoe UI", 10.5f, FontStyle.Bold),
                 ForeColor = Color.White,
@@ -1253,7 +1314,7 @@ namespace SWEEPRDeepblockSetup
 
             var cleanBtn = new Button
             {
-                Text = "Clean URL & Run Scam / Tracker Audit",
+                Text = "Clean URL & Run Domain / Tracker Audit",
                 UseMnemonic = false,
                 Location = new Point(22, 86),
                 Size = new Size(368, 40),
@@ -1465,7 +1526,7 @@ namespace SWEEPRDeepblockSetup
             if (scamCheck.RiskScore >= 55)
             {
                 passed++;
-                sb.AppendLine("[PASS] Scam Heuristic Flagged .top risk (" + scamCheck.RiskScore + "/100)");
+                sb.AppendLine("[PASS] Domain Risk Heuristic Flagged .top risk (" + scamCheck.RiskScore + "/100)");
             }
             sb.Insert(0, "LOCAL ENGINE SELF-TEST: " + passed + "/8 PASSED (" + _rules.Count + " Static Rules Loaded)\r\n");
             _selfTestOutput.Text = sb.ToString();
@@ -1484,7 +1545,7 @@ namespace SWEEPRDeepblockSetup
             };
             freeBanner.Controls.Add(new Label
             {
-                Text = "Core Ad Blocker, Cookie Auto-Rejector, URL Cleaner & Scam Scanner Are 100% Free Forever",
+                Text = "Core Ad Blocker, Cookie Auto-Rejector & URL Cleaner Are 100% Free Forever",
                 UseMnemonic = false,
                 Font = new Font("Segoe UI", 10.5f, FontStyle.Bold),
                 ForeColor = Color.White,
@@ -1493,7 +1554,7 @@ namespace SWEEPRDeepblockSetup
             });
             freeBanner.Controls.Add(new Label
             {
-                Text = "No sign-up, account, or license key is required to unpack the MV3 extension or use all desktop privacy utilities.",
+                Text = "No sign-up or key required for Free Shield; Pro adds 5-device sync & Total Tab & RAM Tamer.",
                 UseMnemonic = false,
                 Font = new Font("Segoe UI", 9f),
                 ForeColor = Color.FromArgb(209, 250, 229),
@@ -1504,7 +1565,7 @@ namespace SWEEPRDeepblockSetup
 
             p.Controls.Add(new Label
             {
-                Text = "Optional Pro License Key (SWEEPR-DB-XXXX-XXXX-XXXX) — Syncs Up to 5 Devices",
+                Text = "Optional Pro License Key (SWEEPR-DB-XXXX-XXXX-XXXX) — Syncs Up to 5 Devices + RAM Tamer",
                 UseMnemonic = false,
                 Font = new Font("Segoe UI", 9.5f, FontStyle.Bold),
                 ForeColor = Color.FromArgb(203, 213, 225),
@@ -1526,7 +1587,7 @@ namespace SWEEPRDeepblockSetup
 
             var verifyBtn = new Button
             {
-                Text = "Validate & Copy Pro Key for Extension Popup",
+                Text = "Validate Live & Copy Pro Key for Extension",
                 UseMnemonic = false,
                 Location = new Point(22, 194),
                 Size = new Size(380, 42),
@@ -1553,15 +1614,27 @@ namespace SWEEPRDeepblockSetup
                     _keyStatusLabel.Text = "Invalid key format. Full SWEEPR-DB-XXXX-XXXX-XXXX license key required.";
                     return;
                 }
+                string verifyMsg;
+                _keyStatusLabel.ForeColor = Color.FromArgb(148, 163, 184);
+                _keyStatusLabel.Text = "Verifying Pro license key live with sweeprdeepblock.com...";
+                Application.DoEvents();
+                if (!Program.VerifyLicenseKeyLive(normalized, out verifyMsg))
+                {
+                    _keyStatusLabel.ForeColor = Color.FromArgb(248, 113, 113);
+                    _keyStatusLabel.Text = string.IsNullOrEmpty(verifyMsg)
+                        ? "License key could not be verified with sweeprdeepblock.com."
+                        : verifyMsg;
+                    return;
+                }
                 Clipboard.SetText(normalized);
                 _keyStatusLabel.ForeColor = Color.FromArgb(110, 231, 183);
-                _keyStatusLabel.Text = "Pro key verified and copied to clipboard. Paste inside the SWEEPR Deepblock browser toolbar popup.";
+                _keyStatusLabel.Text = "Pro key verified live (RAM Tamer + 5 devices active) and copied to clipboard. Paste inside the extension popup.";
             };
             p.Controls.Add(verifyBtn);
 
             _keyStatusLabel = new Label
             {
-                Text = "Status: Running Free Core Suite (5-Device Pro license key optional).",
+                Text = "Status: Running Free Core Suite (5-Device Pro license key + RAM Tamer optional).",
                 Font = new Font("Segoe UI", 9f),
                 ForeColor = Color.FromArgb(110, 231, 183),
                 Location = new Point(22, 252),

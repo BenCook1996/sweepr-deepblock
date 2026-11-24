@@ -20,12 +20,12 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { CONSOLIDATE_301_MAP, isNoIndexPrunePath, normalizeUrlPath } from './lib/m1-decisions.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = path.resolve(__dirname, '..');
 const WEBSITE_DIR = path.join(ROOT_DIR, 'website');
 const SITEMAP_PATH = path.join(WEBSITE_DIR, 'sitemap.xml');
-const SITEMAP_SITES_PATH = path.join(WEBSITE_DIR, 'sitemap-sites.xml');
 const PAD_PATH = path.join(WEBSITE_DIR, 'pad.xml');
 const INDEXING_QUEUE_PATH = path.join(WEBSITE_DIR, 'indexing-queue.json');
 const SEED_PATH = path.join(ROOT_DIR, 'outreach-seed-deepblock.json');
@@ -49,14 +49,14 @@ const CRM_API_KEY = (process.env.SWEEPR_CRM_API_KEY || '').trim();
 const AUTH_HEADER = CRM_PASS ? 'Basic ' + Buffer.from(`${CRM_USER}:${CRM_PASS}`).toString('base64') : '';
 
 const LANGUAGES = [
-  { code: 'EN', prefix: '2026 Manifest V3 AdBlocker & Cookie Rejector Guide:', cta: 'SWEEPR DeepBlock — Zero Video Ads, Auto Cookie Rejector & Scam Shop Detector' },
-  { code: 'DE', prefix: 'Manifest V3 Werbeblocker & Cookie-Blocker Leitfaden 2026:', cta: 'SWEEPR DeepBlock — Keine Video-Werbung, Auto-Cookie-Ablehnung & Fake-Shop-Schutz' },
-  { code: 'FR', prefix: 'Guide Bloqueur de Publicités MV3 & Refus Auto des Cookies 2026 :', cta: 'SWEEPR DeepBlock — Zéro Pub Vidéo, Refus Cookie <50ms & Détecteur de Faux Sites' },
-  { code: 'ES', prefix: 'Guía 2026 de Bloqueador de Anuncios MV3 y Rechazo de Cookies:', cta: 'SWEEPR DeepBlock — Cero Anuncios de Vídeo, Rechazo de Cookies y Detector de Estafas' },
-  { code: 'IT', prefix: 'Guida AdBlocker MV3 e Rifiuto Automatico Cookie 2026:', cta: 'SWEEPR DeepBlock — Zero Pubblicità Video, Rifiuto Cookie <50ms e Anti-Truffa' },
-  { code: 'PT', prefix: 'Guia Bloqueador de Anúncios MV3 e Rejeição de Cookies 2026:', cta: 'SWEEPR DeepBlock — Zero Anúncios em Vídeo e Detector de Lojas Falsas' },
-  { code: 'NL', prefix: 'Manifest V3 AdBlocker & Automatische Cookie-Weigeraar Gids 2026:', cta: 'SWEEPR DeepBlock — Geen Videoadvertenties, Auto Cookie-Reject & Nepwinkel Detector' },
-  { code: 'JA', prefix: '2026年版 Manifest V3 広告ブロッカー＆Cookie自動拒否ガイド：', cta: 'SWEEPR DeepBlock — 動画広告ゼロ・Cookie自動拒否・偽通販サイト検知' }
+  { code: 'EN', prefix: '2026 Manifest V3 AdBlocker & Cookie Rejector Guide:', cta: 'SWEEPR Deepblock — Zero Video Ads, Auto Cookie Rejector & URL Tracker Stripper' },
+  { code: 'DE', prefix: 'Manifest V3 Werbeblocker & Cookie-Blocker Leitfaden 2026:', cta: 'SWEEPR Deepblock — Keine Video-Werbung, Auto-Cookie-Ablehnung & Tab-RAM-Optimierung' },
+  { code: 'FR', prefix: 'Guide Bloqueur de Publicités MV3 & Refus Auto des Cookies 2026 :', cta: 'SWEEPR Deepblock — Zéro Pub Vidéo, Refus Cookie Automatique & Protection Anti-Pistage' },
+  { code: 'ES', prefix: 'Guía 2026 de Bloqueador de Anuncios MV3 y Rechazo de Cookies:', cta: 'SWEEPR Deepblock — Cero Anuncios de Vídeo, Rechazo de Cookies y Anti-Rastreo URL' },
+  { code: 'IT', prefix: 'Guida AdBlocker MV3 e Rifiuto Automatico Cookie 2026:', cta: 'SWEEPR Deepblock — Zero Pubblicità Video, Rifiuto Cookie Automatico e Anti-Tracciamento' },
+  { code: 'PT', prefix: 'Guia Bloqueador de Anúncios MV3 e Rejeição de Cookies 2026:', cta: 'SWEEPR Deepblock — Zero Anúncios em Vídeo, Rejeição de Cookies e Anti-Rastreamento' },
+  { code: 'NL', prefix: 'Manifest V3 AdBlocker & Automatische Cookie-Weigeraar Gids 2026:', cta: 'SWEEPR Deepblock — Geen Videoadvertenties, Auto Cookie-Reject & Tracker-Stripper' },
+  { code: 'JA', prefix: '2026年版 Manifest V3 広告ブロッカー＆Cookie自動拒否ガイド：', cta: 'SWEEPR Deepblock — 動画広告ゼロ・Cookie自動拒否・URLトラッカー除去' }
 ];
 
 async function verifyAndProbePadXml() {
@@ -134,10 +134,10 @@ async function auditStoreBacklinks() {
     },
     winget: {
       name: 'Windows Package Manager (Winget)',
-      manifestPath: 'winget-manifests/s/SWEEPR/Deepblock/1.2.9/SWEEPR.Deepblock.installer.yaml',
+      manifestPath: 'winget-manifests/s/SWEEPR/Deepblock/1.3.0/SWEEPR.Deepblock.installer.yaml',
       packageId: 'SWEEPR.Deepblock',
-      version: '1.2.9',
-      installerUrl: 'https://github.com/BenCook1996/sweepr-deepblock/releases/download/v1.2.9/SWEEPRDeepblockSetup.exe',
+      version: '1.3.0',
+      installerUrl: 'https://github.com/BenCook1996/sweepr-deepblock/releases/download/v1.3.0/SWEEPRDeepblockSetup.exe',
       status: 'verified'
     },
     downloadPageParity: {
@@ -191,7 +191,7 @@ async function auditStoreBacklinks() {
   const wingetAbs = path.join(ROOT_DIR, storeAudit.winget.manifestPath);
   if (fs.existsSync(wingetAbs)) {
     const content = fs.readFileSync(wingetAbs, 'utf8');
-    storeAudit.winget.status = content.includes('SWEEPR.Deepblock') && content.includes('1.2.9') ? 'Valid Manifest' : 'Incomplete Manifest';
+    storeAudit.winget.status = content.includes('SWEEPR.Deepblock') && content.includes(storeAudit.winget.version) ? 'Valid Manifest' : 'Incomplete Manifest';
   } else {
     storeAudit.winget.status = 'Manifest Missing';
   }
@@ -318,19 +318,50 @@ const GSC_PRIORITY_URLS = new Set([
   'https://sweeprdeepblock.com/guides/how-to-fix-high-ram-usage-on-vivaldi-browser'
 ]);
 
-function loadLiveRuleStats() {
-  let staticCount = 242;
-  let deltaCount = 14;
+function isIndexableRouteOnDisk(rawUrlOrPath) {
+  if (!rawUrlOrPath) return false;
+  const p = normalizeUrlPath(rawUrlOrPath).toLowerCase();
+  if (isNoIndexPrunePath(p) || CONSOLIDATE_301_MAP.has(p)) return false;
+  const candidates = p === '/'
+    ? [path.join(WEBSITE_DIR, 'index.html')]
+    : [path.join(WEBSITE_DIR, `${p.slice(1)}.html`), path.join(WEBSITE_DIR, p.slice(1), 'index.html')];
+  const diskPath = candidates.find((candidate) => fs.existsSync(candidate));
+  if (!diskPath) return false;
   try {
-    const s = JSON.parse(fs.readFileSync(path.join(ROOT_DIR, 'extension/rules/static_ads_and_trackers.json'), 'utf8'));
-    if (Array.isArray(s)) staticCount = s.length;
-  } catch {}
+    const html = fs.readFileSync(diskPath, 'utf8');
+    if (/<meta\s+name=["']robots["']\s+content=["'][^"']*noindex/i.test(html)) return false;
+  } catch {
+    return false;
+  }
+  return true;
+}
+
+for (const u of [...GSC_PRIORITY_URLS]) {
+  if (!isIndexableRouteOnDisk(u)) {
+    GSC_PRIORITY_URLS.delete(u);
+  }
+}
+
+function loadLiveRuleStats() {
+  let staticCount = 0;
+  let deltaCount = 0;
+  for (const rel of [
+    'extension/rules/static_ads_and_trackers.json',
+    'extension/rules/cryptominers.json',
+    'extension/rules/tracker_params.json'
+  ]) {
+    try {
+      const parsed = JSON.parse(fs.readFileSync(path.join(ROOT_DIR, rel), 'utf8'));
+      const arr = Array.isArray(parsed) ? parsed : (parsed.rules || []);
+      staticCount += arr.length;
+    } catch {}
+  }
   try {
     const d = JSON.parse(fs.readFileSync(path.join(ROOT_DIR, 'extension/rules/dynamic_delta.json'), 'utf8'));
-    const rules = Array.isArray(d) ? d : d.rules || [];
+    const rules = Array.isArray(d) ? d : (d.dynamicDnrRules || d.rules || []);
     deltaCount = rules.length;
   } catch {}
-  return { staticCount, deltaCount };
+  return { staticCount: staticCount || 283, deltaCount: deltaCount || 100 };
 }
 
 function loadRecentlyUpdatedUrls() {
@@ -340,8 +371,8 @@ function loadRecentlyUpdatedUrls() {
     try {
       const kw = JSON.parse(fs.readFileSync(KEYWORD_MATRIX_PATH, 'utf8'));
       for (const opp of (kw.opportunities || []).slice(0, 15)) {
-        if (opp.isPublishedOnDisk && opp.targetRoute) {
-          recent.add(`https://sweeprdeepblock.com${opp.targetRoute}`);
+        if (opp.isPublishedOnDisk && opp.targetRoute && isIndexableRouteOnDisk(opp.targetRoute)) {
+          recent.add(`https://sweeprdeepblock.com${normalizeUrlPath(opp.targetRoute)}`);
         }
       }
     } catch {}
@@ -352,6 +383,7 @@ function loadRecentlyUpdatedUrls() {
     const map = st.titleUpdatedAt || {};
     const entries = Object.entries(map).sort((a, b) => new Date(b[1]).getTime() - new Date(a[1]).getTime());
     for (const [p] of entries) {
+      if (!isIndexableRouteOnDisk(p)) continue;
       const full = p.startsWith('http') ? p : `https://sweeprdeepblock.com${p.startsWith('/') ? '' : '/'}${p}`;
       recent.add(full);
     }
@@ -363,14 +395,9 @@ const LIVE_RULE_STATS = loadLiveRuleStats();
 
 function loadSitemapItems() {
   const xml = fs.readFileSync(SITEMAP_PATH, 'utf8');
-  const rawUrls = [...xml.matchAll(/<loc>(.*?)<\/loc>/g)].map((m) => m[1].trim());
-  if (fs.existsSync(SITEMAP_SITES_PATH)) {
-    const sitesXml = fs.readFileSync(SITEMAP_SITES_PATH, 'utf8');
-    const siteUrls = [...sitesXml.matchAll(/<loc>(.*?)<\/loc>/g)].map((m) => m[1].trim());
-    for (const u of siteUrls) {
-      if (!rawUrls.includes(u)) rawUrls.push(u);
-    }
-  }
+  const rawUrls = [...xml.matchAll(/<loc>(.*?)<\/loc>/g)]
+    .map((m) => m[1].trim())
+    .filter((u) => isIndexableRouteOnDisk(u));
   const recentSet = loadRecentlyUpdatedUrls();
   const urls = [
     ...rawUrls.filter((u) => recentSet.has(u) || GSC_PRIORITY_URLS.has(u)),
@@ -477,14 +504,9 @@ async function runIndexingWorkflow() {
   console.log('=======================================================');
 
   const sitemapXml = fs.readFileSync(SITEMAP_PATH, 'utf8');
-  const sitemapUrls = [...sitemapXml.matchAll(/<loc>(.*?)<\/loc>/g)].map((m) => m[1].trim());
-  if (fs.existsSync(SITEMAP_SITES_PATH)) {
-    const sitesXml = fs.readFileSync(SITEMAP_SITES_PATH, 'utf8');
-    const siteUrls = [...sitesXml.matchAll(/<loc>(.*?)<\/loc>/g)].map((m) => m[1].trim());
-    for (const u of siteUrls) {
-      if (!sitemapUrls.includes(u)) sitemapUrls.push(u);
-    }
-  }
+  const sitemapUrls = [...sitemapXml.matchAll(/<loc>(.*?)<\/loc>/g)]
+    .map((m) => m[1].trim())
+    .filter((u) => isIndexableRouteOnDisk(u));
   const sitemapSet = new Set(sitemapUrls);
 
   let queue = { indexnow_key: INDEXNOW_KEY, pending_urls: [], gsc_requested: [], bing_requested: [], last_indexnow_ping: null, last_sitemap_ping: null };
@@ -497,7 +519,7 @@ async function runIndexingWorkflow() {
     } catch {}
   }
 
-  // Filter out any legacy 301-redirected or non-indexable URLs that are no longer in sitemap.xml / sitemap-sites.xml
+  // Filter out any legacy 301-redirected or non-indexable URLs that are no longer in sitemap.xml
   const alreadySubmittedSet = new Set(
     (Array.isArray(queue.submitted_indexnow_urls) ? queue.submitted_indexnow_urls : []).filter((u) => sitemapSet.has(u))
   );
@@ -560,7 +582,7 @@ async function runIndexingWorkflow() {
   queue.submitted_indexnow_urls = [...alreadySubmittedSet];
   fs.writeFileSync(INDEXING_QUEUE_PATH, JSON.stringify(queue, null, 2), 'utf8');
 
-  console.log(`[IndexNow Submissions] Scanned ${sitemapUrls.length} total indexable URLs (sitemap.xml + sitemap-sites.xml). Submitted ${urlsToSubmit.length} priority & delta URLs (${deltaUrls.length} new delta + ${urlsToSubmit.length - deltaUrls.length} GSC priority):`);
+  console.log(`[IndexNow Submissions] Scanned ${sitemapUrls.length} total indexable URLs (sitemap.xml). Submitted ${urlsToSubmit.length} priority & delta URLs (${deltaUrls.length} new delta + ${urlsToSubmit.length - deltaUrls.length} GSC priority):`);
   urlsToSubmit.slice(0, 8).forEach(u => console.log(`   * ${u}`));
   if (urlsToSubmit.length > 8) console.log(`   ... and ${urlsToSubmit.length - 8} more`);
   console.log(`  - www.bing.com/indexnow: ${bingRes}`);

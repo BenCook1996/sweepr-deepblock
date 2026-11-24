@@ -2,12 +2,12 @@ VERIFICATION
 
 Verification is intended to assist the Chocolatey moderators and community in verifying that this package's contents are trustworthy.
 
-1. Download the official v1.2.9 installer binary from GitHub Releases:
-   URL: https://github.com/BenCook1996/sweepr-deepblock/releases/download/v1.2.9/SWEEPRDeepblockSetup.exe
-   File Size: 136,192 bytes
+1. Download the official v1.3.0 installer binary from GitHub Releases:
+   URL: https://github.com/BenCook1996/sweepr-deepblock/releases/download/v1.3.0/SWEEPRDeepblockSetup.exe
+   File Size: 52,736 bytes
 
 2. Confirm the SHA-256 checksum matches the embedded value in tools\chocolateyinstall.ps1:
-   Expected SHA-256: 6A29563C4EB80E7AB87B12FDC33D636D9DA8D898DEEB879DCFEAB1FDD956CD4E
+   Expected SHA-256: 24421E3EEF1CBF8F31F245CC646E1467B45CEE87052202DDDC79EF72642E52FC
    Command: Get-FileHash .\SWEEPRDeepblockSetup.exe -Algorithm SHA256
 
 3. Installer source code & silent switch verification:

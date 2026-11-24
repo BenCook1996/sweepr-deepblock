@@ -32,28 +32,53 @@
 
   <!-- Structured Data (JSON-LD) -->
   <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://sweeprdeepblock.com/"},{"@type":"ListItem","position":2,"name":"Customer Portal","item":"https://sweeprdeepblock.com/login"}]},{"@type":"WebPage","name":"Customer Portal & License Key Manager","url":"https://sweeprdeepblock.com/login","description":"Sign in to your SWEEPR Deepblock Customer Portal with your email to view your license key, manage connected browsers, or update billing in 1 click."}]}</script>
-  <link rel="stylesheet" href="/sweepr-ui.css?v=20261116">
-  <link rel="stylesheet" href="/style.css?v=20261114">
-  <script src="/nav.js?v=20261108" defer></script>
+  <link rel="stylesheet" href="/sweepr-tailwind.min.css?v=20261122">
+  <link rel="stylesheet" href="/style.css?v=20261122">
+  <script src="/nav.js?v=20261122" defer></script>
   <script src="/i18n.js" defer></script>
-  <!-- Google tag (gtag.js) - Sweepr Deepblock -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-01MNBQSL9K"></script>
+  <!-- Google tag (gtag.js) - Sweepr Deepblock (deferred first-party proxy) -->
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-    gtag('config', 'G-01MNBQSL9K');
+    gtag('config', 'G-01MNBQSL9K', {
+      transport_url: window.location.origin + '/metrics',
+      first_party_collection: true
+    });
+    (function(){
+      if (window.__sweeprMetricsScheduled) return;
+      window.__sweeprMetricsScheduled = true;
+      var loaded = false;
+      function loadMetrics() {
+        if (loaded || document.querySelector('script[src*="/metrics/js"]')) return;
+        loaded = true;
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = '/metrics/js?id=G-01MNBQSL9K';
+        document.head.appendChild(s);
+      }
+      ['pointerdown','keydown','scroll','touchstart'].forEach(function(ev){
+        window.addEventListener(ev, loadMetrics, { once: true, passive: true });
+      });
+      window.addEventListener('load', function(){
+        if (typeof window.requestIdleCallback === 'function') {
+          window.requestIdleCallback(loadMetrics, { timeout: 3500 });
+        } else {
+          setTimeout(loadMetrics, 3500);
+        }
+      }, { once: true });
+    })();
   </script>
 </head>
 <body class="text-gray-800">
-  <nav class="glass-nav px-4 md:px-6 py-3.5 md:py-4 flex items-center justify-between">
-    <div class="flex items-center gap-2.5 md:gap-8 min-w-0">
-      <a href="/?home=1" class="flex items-center gap-2.5 sm:gap-3 text-inherit no-underline min-w-0">
-        <div class="logo-box !w-9 !h-9 sm:!w-10 sm:!h-10" aria-hidden="true"></div>
-        <span class="font-extrabold text-base sm:text-xl tracking-tight text-gray-900 truncate">SWEEPR <span class="text-emerald-600">Deepblock</span></span>
+  <nav class="glass-nav px-3 sm:px-4 md:px-6 py-3 sm:py-3.5 md:py-4 flex items-center justify-between">
+    <div class="flex items-center gap-2 md:gap-8 min-w-0">
+      <a href="/" class="flex items-center gap-2 sm:gap-3 text-inherit no-underline min-w-0">
+        <div class="logo-box !w-8 !h-8 sm:!w-10 sm:!h-10" aria-hidden="true"></div>
+        <span class="font-extrabold text-sm sm:text-xl tracking-tight text-gray-900 truncate">SWEEPR <span class="text-emerald-600">Deepblock</span></span>
       </a>
       <div class="hidden md:flex items-center gap-2">
-        <a href="/?home=1#features" class="btn btn-ghost text-sm">Features</a>
+        <a href="/#features" class="btn btn-ghost text-sm">Features</a>
         <a href="/pricing" class="btn btn-ghost text-sm">Pricing</a>
         <div class="relative inline-block text-left" id="navDropdownContainer">
           <button type="button" id="navDropdownBtn" class="btn btn-ghost text-sm flex items-center gap-1.5 cursor-pointer font-medium" aria-expanded="false" aria-haspopup="true">
@@ -73,19 +98,19 @@
                     <span class="text-sm font-bold text-gray-900 group-hover:text-emerald-700 transition-colors">SWEEPR Deepblock vs Total Adblock</span>
                     <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full">Comparison</span>
                   </div>
-                  <p class="text-xs text-gray-500 leading-snug">See how SWEEPR Deepblock compares on YouTube ads, automatic cookie pop-up closing, fake shop alerts, and honest pricing.</p>
+                  <p class="text-xs text-gray-500 leading-snug">See how SWEEPR Deepblock compares on YouTube ads, automatic cookie pop-up closing, URL tracker stripping, and honest pricing.</p>
                 </div>
               </a>
-              <a href="/vs/total-adblock#fakespot" class="flex items-start gap-3 p-3 rounded-xl hover:bg-emerald-50/70 border border-transparent hover:border-emerald-200/60 transition-all text-inherit no-underline group">
+              <a href="/test-lab" class="flex items-start gap-3 p-3 rounded-xl hover:bg-emerald-50/70 border border-transparent hover:border-emerald-200/60 transition-all text-inherit no-underline group">
                 <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
                 </div>
                 <div class="flex-1 min-w-0">
                   <div class="flex items-center justify-between gap-1 mb-0.5">
-                    <span class="text-sm font-bold text-gray-900 group-hover:text-emerald-700 transition-colors">Fake Online Shop Detector</span>
-                    <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full">2026 Guide</span>
+                    <span class="text-sm font-bold text-gray-900 group-hover:text-emerald-700 transition-colors">Live Test Lab</span>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full">Live Check</span>
                   </div>
-                  <p class="text-xs text-gray-500 leading-snug">How SWEEPR warns you about suspicious scam shopping websites before you buy.</p>
+                  <p class="text-xs text-gray-500 leading-snug">Test your browser live against real ad, tracker, and cookie-wall probes.</p>
                 </div>
               </a>
             </div>
@@ -93,9 +118,9 @@
         </div>
       </div>
     </div>
-    <div class="flex gap-2 md:gap-3 items-center">
+    <div class="flex gap-1.5 sm:gap-2 md:gap-3 items-center shrink-0">
       <div class="relative inline-block text-left" id="langDropdownContainer">
-        <button type="button" id="langDropdownBtn" class="btn btn-ghost text-sm flex items-center gap-1.5 px-2.5 py-1.5 cursor-pointer font-medium text-gray-700 hover:text-emerald-600 transition-colors" aria-expanded="false" aria-label="Select Language">
+        <button type="button" id="langDropdownBtn" class="btn btn-ghost text-sm flex items-center gap-1 sm:gap-1.5 !px-2 sm:!px-2.5 !h-9 sm:!h-11 cursor-pointer font-medium text-gray-700 hover:text-emerald-600 transition-colors" aria-expanded="false" aria-label="Select Language">
           <span class="text-base" id="currentLangFlag">🇬🇧</span>
           <span class="text-xs font-bold tracking-wide" id="currentLangCode">EN</span>
           <svg id="langDropdownChevron" class="w-3 h-3 text-gray-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
@@ -109,7 +134,7 @@
           </div>
         </div>
       </div>
-      <a rel="nofollow" href="/login" class="btn text-xs sm:text-sm font-semibold text-emerald-700 bg-emerald-50/60 border border-emerald-200/50 !px-2.5 sm:!px-4">Login</a>
+      <a rel="nofollow" href="/login" class="btn text-xs sm:text-sm font-semibold text-emerald-700 bg-emerald-50/60 border border-emerald-200/50 !px-2.5 sm:!px-4 !h-9 sm:!h-11">Login</a>
       <a href="/download?install=1" class="hidden md:inline-flex btn btn-go gap-2">
         <span>Add to Browser</span>
         <svg class="arrow-icon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
@@ -117,7 +142,7 @@
     </div>
   </nav>
 
-  <main class="flex-1 pt-24 sm:pt-32 pb-14 sm:pb-20 px-4 sm:px-6 max-w-md mx-auto w-full">
+  <main class="flex-1 w-full min-w-0 pt-24 sm:pt-32 pb-14 sm:pb-20 px-4 sm:px-6 max-w-md mx-auto">
     <div class="glass-card p-6 sm:p-10 border border-emerald-200/80 shadow-xl relative">
       <div class="text-center mb-8">
         <div class="logo-box mx-auto mb-4" aria-hidden="true"></div>
@@ -167,14 +192,14 @@
         </div>
         <div class="text-xs text-gray-600 space-y-1.5">
           <div><strong>License Key:</strong> <span id="portalLicenseKey" class="font-mono font-bold text-emerald-700"></span></div>
-          <div><strong>Active Modules:</strong> Auto-Reject Cookie Cleanser, AI Slop SERP Purifier, Fake Store Detector, Encrypted DNS</div>
-          <div id="addonStatusText"><strong>Total Tab &amp; RAM Tamer Add-On:</strong> Enabled</div>
+          <div><strong>Active Modules:</strong> Ad &amp; Video Shield, Auto-Reject Cookie Cleanser, URL Tracker Stripper, Total Tab &amp; RAM Tamer</div>
+          <div id="addonStatusText"><strong>Total Tab &amp; RAM Tamer:</strong> Included in Pro</div>
         </div>
 
         <div class="rounded-2xl border border-gray-200 bg-gray-50 p-3.5 space-y-2.5">
           <div class="flex items-center justify-between">
             <span class="text-xs font-extrabold uppercase tracking-wider text-gray-800">Linked Devices (Any Mix of Desktop &amp; Mobile)</span>
-            <span id="portalDevicesBadge" class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800">0 / 4 Active</span>
+            <span id="portalDevicesBadge" class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800">0 / 5 Active</span>
           </div>
           <p class="text-[11.5px] text-gray-500">Purchased on desktop and downloaded the app separately on another device? Generate a one-time QR code below to activate your account on your separate device.</p>
           <div id="portalDevicesList" class="space-y-1.5 text-xs text-gray-700"></div>
@@ -319,9 +344,9 @@
       if (addonEl) {
         addonEl.textContent = '';
         const strongEl = document.createElement('strong');
-        strongEl.textContent = 'Total Tab & RAM Tamer Add-On: ';
+        strongEl.textContent = 'Total Tab & RAM Tamer: ';
         addonEl.appendChild(strongEl);
-        addonEl.appendChild(document.createTextNode(data.ramTamerAddon ? 'Enabled' : 'Not Included'));
+        addonEl.appendChild(document.createTextNode('Included in Pro'));
       }
       const badge = document.getElementById('subStatusBadge');
       const cancelBtn = document.getElementById('cancelBtn');
@@ -337,7 +362,7 @@
         cancelBtn.disabled = false;
       }
       resEl.classList.remove('hidden');
-      renderPortalDevices(data.devices || [], data.devices_used ?? (data.devices ? data.devices.length : 0), data.devices_max || 4);
+      renderPortalDevices(data.devices || [], data.devices_used ?? (data.devices ? data.devices.length : 0), data.devices_max || 5);
     }
 
     let portalQrInterval = null;
@@ -393,7 +418,7 @@
             });
             const resData = await r.json().catch(() => ({}));
             if (r.ok && resData.ok) {
-              renderPortalDevices(resData.devices || [], resData.devices_used || 0, resData.devices_max || 4);
+              renderPortalDevices(resData.devices || [], resData.devices_used || 0, resData.devices_max || 5);
             } else {
               rmBtn.disabled = false;
               rmBtn.textContent = 'Remove';
@@ -437,9 +462,9 @@
           errSpan.className = 'text-xs text-red-600 font-semibold px-2';
           errSpan.textContent = data.message || data.error || 'Could not create QR';
           svgBox.appendChild(errSpan);
-          timerEl.textContent = 'Remove an active device above if you are at 4/4 devices.';
+          timerEl.textContent = 'Remove an active device above if you are at 5/5 devices.';
           if (Array.isArray(data.devices)) {
-            renderPortalDevices(data.devices, data.devices_used || 4, data.devices_max || 4);
+            renderPortalDevices(data.devices, data.devices_used || 5, data.devices_max || 5);
           }
           return;
         }

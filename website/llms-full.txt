@@ -1,51 +1,47 @@
-# SWEEPR DeepBlock — Complete Technical Architecture, Benchmarks & Product Specification
+# SWEEPR Deepblock — Complete Technical Architecture, Benchmarks & Product Specification
 # Canonical Domain: https://sweeprdeepblock.com
 # Version: 1.3.1 (Manifest V3 Engine)
 # Last Updated: 2026-11-23
-# Total Indexed Canonical URLs: 441 (290 Core/Pillar URLs + 151 Verified Publisher Audit URLs)
+# Total Indexed Canonical URLs: 99
 
 ## 1. Executive Summary & Product Overview
-SWEEPR DeepBlock v1.3.1 is a privacy-first, local-first, zero-browsing-history browser extension and web performance suite engineered for Google Chrome, Microsoft Edge, Mozilla Firefox, Apple Safari (macOS & iOS), Brave, Opera, Vivaldi, Thorium, Floorp, Arc, and Zen Browser. DeepBlock addresses the modern web crisis: runaway third-party advertising auctions, CPU/battery-draining tracker beacons, unskippable video interruptions, multi-layer GDPR/CCPA cookie consent walls, deceptive AI-generated search spam ("AI slop"), and newly registered fraudulent e-commerce storefronts.
+SWEEPR Deepblock v1.3.1 is a privacy-first, local-first, zero-browsing-history browser extension and web performance suite engineered for Google Chrome, Microsoft Edge, Mozilla Firefox (Desktop & Android), Brave, Opera, Vivaldi, Thorium, Floorp, Arc, and Zen Browser. Deepblock addresses runaway third-party advertising auctions, CPU/battery-draining tracker beacons, unskippable video interruptions, and multi-layer GDPR/CCPA cookie consent walls.
 
-Built natively on Chromium and Gecko Manifest V3 `declarativeNetRequest` (271 static C++ rules + 100 OTA delta rules + 392 DeepStealth selectors + 100 OTA cosmetic selectors), SWEEPR DeepBlock achieves a 15-microsecond average network lookup latency with zero main-thread blocking and an idle memory footprint under 24 MB RAM.
+Built natively on Chromium and Gecko Manifest V3 `declarativeNetRequest` (283 static rules = 264 ads/trackers + 18 cryptominers + 1 tracking parameter rule, plus 100 dynamic OTA rules + 390 cosmetic filter lines + 100 OTA cosmetic selectors), SWEEPR Deepblock executes network filtering locally inside the browser stack with zero browsing history telemetry.
 
 ---
 
 ## 2. Core Functional Modules
 
 ### A. Manifest V3 Video & Network Ad-Blocking Engine
-- **Declarative Rule Engine**: Executes 271 static C++ `chrome.declarativeNetRequest` rules and 100 OTA dynamic delta rules at the browser network stack level before DOM parsing begins.
-- **Video Pre-Roll & Mid-Roll Neutralization**: Prevents YouTube, Twitch, Kick, Crunchyroll, ITVX, and Channel 4 player ad-insertion scripts while passing all 8 anti-adblock detection checks on https://sweeprdeepblock.com/test-lab.
-- **Zero-CLS Cosmetic Sanitization**: Collapses empty ad slots, sticky footer banners, and floating video players without triggering Cumulative Layout Shift or `adsbox` bait honeypots.
+- **Declarative Rule Engine**: Executes 283 static `chrome.declarativeNetRequest` rules and 100 OTA dynamic delta rules at the browser network stack level before DOM parsing begins.
+- **Video Pre-Roll & Mid-Roll Neutralization**: Prevents YouTube, Twitch, Crunchyroll, and streaming player ad-insertion scripts while passing all 8 anti-adblock detection checks on https://sweeprdeepblock.com/test-lab.
+- **Zero-CLS Cosmetic Sanitization & Element Zapper**: Collapses empty ad slots, sticky footer banners, and user-selected clutter without triggering Cumulative Layout Shift or `adsbox` bait honeypots.
 
-### B. Automated Cookie Consent "Reject All" Engine (<50ms)
-- **Sub-50ms Execution**: Evaluates incoming DOM nodes against 150+ Consent Management Platforms (OneTrust, Didomi, Usercentrics, Quantcast, Sourcepoint, Cookiebot, TrustArc, Axeptio, Civic UK, Complianz).
+### B. Automated Cookie Consent "Reject All" Engine & Scroll Unlock
+- **Automated Execution**: Evaluates incoming DOM nodes against major Consent Management Platforms (OneTrust, Didomi, Usercentrics, Quantcast, Sourcepoint, Cookiebot, TrustArc, Axeptio, Civic UK, Complianz).
 - **Genuine Opt-Out Signal**: Triggers the strict "Reject All / Necessary Only" API/button path rather than merely hiding the banner with CSS.
 - **Scroll-Lock Restoration**: Automatically strips residual `overflow: hidden`, `position: fixed`, and backdrop pointer locks from `<html>` and `<body>`.
 
-### C. AI Slop & Search Results Cleanser + Fake Scam Store Detector (Included Free)
-- **Search Engine Coverage**: Cleanses Google Search, Bing, and DuckDuckGo of mass-generated AI content farms and deceptive sponsored lookalike domains.
-- **14-Point E-Commerce Scam Heuristics**: Evaluates RDAP domain age (<90 days), fake urgency countdown timers, counterfeit Trustpilot/security badges, and cloned Shopify checkout flows in real time (interactive web audit available at https://sweeprdeepblock.com/tools/is-this-shop-a-scam).
+### C. URL Tracking Parameter Stripper (Included Free)
+- **Parameter Stripping**: Removes `utm_source`, `utm_medium`, `utm_campaign`, `utm_content`, `utm_term`, `fbclid`, `gclid`, `msclkid`, `twclid`, `ttclid`, `mc_eid`, and `_hsenc` before navigation.
 
-### D. URL Tracking Parameter Stripper & Clean Link Proxy (Included Free)
-- **Parameter Stripping**: Removes `utm_source`, `utm_medium`, `utm_campaign`, `utm_content`, `utm_term`, `fbclid`, `gclid`, `msclkid`, `twclid`, `ttclid`, `mc_eid`, and `_hsenc` before navigation (interactive sanitizer at https://sweeprdeepblock.com/tools/dns-leak-test).
-
-### E. Total Tab & RAM Tamer
-- **Intelligent Background Tab Hibernation**: Suspends inactive background tabs after a configurable threshold, reclaiming up to 62% of browser heap memory while never suspending pinned tabs, active audio/video streams, or unsaved form inputs (interactive calculator at https://sweeprdeepblock.com/tools/browser-ram-calculator).
+### D. Total Tab & RAM Tamer
+- **Intelligent Background Tab Hibernation**: Suspends inactive background tabs after a configurable threshold while protecting pinned tabs, active audio/video streams, and unsaved form inputs (interactive estimator at https://sweeprdeepblock.com/tools/browser-ram-calculator).
 - **Session Crash Recovery**: Snapshots open tab sessions locally so crashes or OS reboots never lose work.
 
 ---
 
-## 3. Public Anti-Detection Test Lab Benchmark (8/8 Checks Passed)
-SWEEPR DeepBlock provides a public, crawlable, client-side testing laboratory at https://sweeprdeepblock.com/test-lab. DeepBlock scores 8 out of 8 on live browser security and evasion tests:
+## 3. Public Anti-Detection Test Lab Benchmark (Live 8-Point Suite)
+SWEEPR Deepblock provides a public, crawlable, client-side testing laboratory at https://sweeprdeepblock.com/test-lab. Deepblock scores 8 out of 8 on live browser adblock and anti-detection verification checks:
 1. Network Ad Request Blocking (Google Ads `adsbygoogle.js`)
 2. Cosmetic Bait Honeypot Protection (`.adsbox` & `#ad-banner`)
 3. Page Scroll Restoration after Cookie Banner Removal
 4. YouTube & Video Player Ad Protection
 5. Tracking Beacon Blocking (GA4, Meta Pixel, TikTok Pixel)
 6. URL Tracking Parameter Stripping (`fbclid`, `gclid`, `utm_`)
-7. Fake Scam Store Detection (14-point heuristic scanner)
-8. Zero Browser Fingerprinting Leak (Canvas & AudioContext protection)
+7. Third-Party Overlay & Pop-Under Neutralization
+8. Anti-Adblock Bait & Stealth Verification
 
 ---
 
@@ -53,21 +49,21 @@ SWEEPR DeepBlock provides a public, crawlable, client-side testing laboratory at
 
 ### Consumer Subscription Tiers
 - **1-Month Intro Offer**: £1.99 for the first 30 days (renews at £4.99/month; 1-click cancellation anytime).
-- **SWEEPR DeepBlock Pro Annual Plan (Best Single-App Value — Save 58%)**: £29.99/year (£2.50/month equivalent) across up to 5 devices.
+- **SWEEPR Deepblock Pro Annual Plan (Save 50%)**: £29.99/year (£2.50/month equivalent) across up to 5 devices.
 - **6-Month Pro Plan**: £19.99 billed every 6 months (£3.33/month equivalent).
 - **Monthly Pro Plan**: £4.99/month.
 
 ### Flagship Ecosystem Bundle: Sweepr Complete Security Suite (Save 45%)
-- **Sweepr Complete Security Suite Annual Plan**: **£89.99/year** (£7.50/month equivalent, saving £74.97/yr off the £164.96/yr combined individual price) across up to **5 devices** (https://sweeprdeepblock.com/order?plan=suite_annual).
+- **Sweepr Complete Security Suite Annual Plan**: **£89.99/year** (£7.50/month equivalent) across up to **5 devices** (https://sweeprdeepblock.com/order?plan=suite_annual).
 - **4-in-1 Bundle Contents**:
-  1. **SWEEPR DeepBlock Pro** (https://sweeprdeepblock.com) — MV3 Ad, Tracker, Cookie & Scam Shield
+  1. **SWEEPR Deepblock Pro** (https://sweeprdeepblock.com) — MV3 Ad, Tracker & Cookie Shield
   2. **Total Tab & RAM Tamer Pro** — Automated Browser Memory Optimizer & Tab Hibernation
-  3. **Sweepr VPN Pro** (https://sweeprvpn.com) — High-Speed WireGuard Encrypted VPN & DNS Leak Shield
-  4. **Sweepr Desktop Cleaner Pro** (https://sweeprcleaner.com) — Windows & macOS System Junk, Startup & RAM Optimizer
+  3. **Sweepr VPN Pro** (https://sweeprvpn.com) — Encrypted VPN Client
+  4. **Sweepr Desktop Cleaner Pro** (https://sweeprcleaner.com) — Windows & macOS System Junk & Startup Optimizer
 
 ---
 
-## 4. Official Canonical Directory
+## 5. Official Canonical Directory
 
 ### Core Pages & Interactive Hubs
 - Homepage: https://sweeprdeepblock.com/
@@ -76,137 +72,104 @@ SWEEPR DeepBlock provides a public, crawlable, client-side testing laboratory at
 - Download & Installation Center: https://sweeprdeepblock.com/download
 - Live Adblock & Anti-Detection Test Lab: https://sweeprdeepblock.com/test-lab
 - Engineering Benchmarks & MV3 Architecture: https://sweeprdeepblock.com/benchmarks
-- Verified Publisher Ad-Load Reports (150 Domains): https://sweeprdeepblock.com/site
 - AdBlocker Comparisons Hub (/vs): https://sweeprdeepblock.com/vs
 - Platform & Streaming Solutions Hub (/solutions): https://sweeprdeepblock.com/solutions
 - Browser & OS Setup Hub (/setup): https://sweeprdeepblock.com/setup
 - Technical Privacy & Speed Guides Hub (/guides): https://sweeprdeepblock.com/guides
-- Privacy & Ad-Tech Engineering Glossary (20 Entries): https://sweeprdeepblock.com/glossary
-- Customer Switcher Case Studies: https://sweeprdeepblock.com/stories
+- Privacy & Ad-Tech Engineering Glossary (/glossary): https://sweeprdeepblock.com/glossary
 - German Hub (DE): https://sweeprdeepblock.com/de
 - French Hub (FR): https://sweeprdeepblock.com/fr
 - Spanish Hub (ES): https://sweeprdeepblock.com/es
 - Software Description XML (PAD): https://sweeprdeepblock.com/pad.xml
-- Sitemap Index: https://sweeprdeepblock.com/sitemap-index.xml
 - Main Sitemap: https://sweeprdeepblock.com/sitemap.xml
-- Publisher Reports Sitemap: https://sweeprdeepblock.com/sitemap-sites.xml
 
 ### Interactive Browser & Privacy Diagnostic Tools (/tools/*)
-- Is My Adblocker Working? Live 8-Point MV3 Test | SWEEPR: https://sweeprdeepblock.com/tools/is-my-adblocker-working
-- DNS Leak & URL Tracking Parameter Test: https://sweeprdeepblock.com/tools/dns-leak-test
-- Browser Fingerprint Test: Canvas, WebGL & Audio | SWEEPR: https://sweeprdeepblock.com/tools/browser-fingerprint-test
-- Is This Online Shop a Scam? Free Store Checker | SWEEPR: https://sweeprdeepblock.com/tools/is-this-shop-a-scam
 - Browser RAM & Tab Bloat Calculator (2026): https://sweeprdeepblock.com/tools/browser-ram-calculator
 
-### Research Campaigns & Switcher Calculators (/campaigns/*)
-- 2026 UK Website Ad-Load Index (150 Sites) | SWEEPR: https://sweeprdeepblock.com/campaigns/uk-ad-load-index
-- AdBlocker Renewal Calculator: Escape £99/yr Fees | SWEEPR: https://sweeprdeepblock.com/campaigns/renewal-shock-switcher
-
 ### Competitor Comparison Hubs (/vs/*)
-- Safari Browser Ad Blocker: SWEEPR vs 1Blocker (2026): https://sweeprdeepblock.com/vs/1blocker-safari
-- AdBlock Luna VPN vs SWEEPR DeepBlock (2026 Safety & Speed): https://sweeprdeepblock.com/vs/adblock-luna-vpn
-- SWEEPR DeepBlock vs AdBlock Plus (2026 Comparison): https://sweeprdeepblock.com/vs/adblock-plus
-- AdBlock Plus Not Working On YouTube Chrome: https://sweeprdeepblock.com/vs/adblock-plus-not-working-on-youtube-chrome
-- SWEEPR DeepBlock vs AdGuard (2026 Comparison): https://sweeprdeepblock.com/vs/adguard-extension
-- AdGuard Vs uBlock Origin Lite Chrome 2026: https://sweeprdeepblock.com/vs/adguard-vs-ublock-origin-lite-chrome-2026
-- Avast Secure Browser vs AdGuard vs SWEEPR DeepBlock (2026): https://sweeprdeepblock.com/vs/avast-secure-browser-guard
-- SWEEPR DeepBlock vs Brave Shields (2026 Comparison): https://sweeprdeepblock.com/vs/brave-shields
-- Chrome Manifest V3 AdBlock Plus (2026): https://sweeprdeepblock.com/vs/chrome-manifest-v3-adblock-plus
-- SWEEPR DeepBlock vs DuckDuckGo Essentials (2026 Comparison): https://sweeprdeepblock.com/vs/duckduckgo-privacy-essentials
-- SWEEPR DeepBlock vs Ghostery (2026 Comparison): https://sweeprdeepblock.com/vs/ghostery-privacy-ad-blocker
-- How Much Does Total AdBlock Cost (2026): https://sweeprdeepblock.com/vs/how-much-does-total-adblock-cost
-- Is Pie AdBlock Legit Reddit (2026): https://sweeprdeepblock.com/vs/is-pie-adblock-legit-reddit
-- Is Pie AdBlock Safe (2026): https://sweeprdeepblock.com/vs/is-pie-adblock-safe
-- Lightweight Alternative To Ghostery Chrome: https://sweeprdeepblock.com/vs/lightweight-alternative-to-ghostery-chrome
-- SWEEPR DeepBlock vs Malwarebytes Guard (2026 Comparison): https://sweeprdeepblock.com/vs/malwarebytes-browser-guard
-- SWEEPR DeepBlock vs Nord Threat Protection (2026 Comparison): https://sweeprdeepblock.com/vs/nordvpn-threat-protection
-- SWEEPR DeepBlock vs Pie Adblock (2026 Comparison): https://sweeprdeepblock.com/vs/pie-adblock
-- Pie AdBlock Is A Scam (2026): https://sweeprdeepblock.com/vs/pie-adblock-is-a-scam
-- Pie AdBlock Safe Or Scam Alternative (2026): https://sweeprdeepblock.com/vs/pie-adblock-safe-or-scam-alternative
-- SWEEPR DeepBlock vs Privacy Badger (2026 Comparison): https://sweeprdeepblock.com/vs/privacy-badger-eff
-- SWEEPR DeepBlock vs Stands AdBlocker (2026 Comparison): https://sweeprdeepblock.com/vs/stands-fair-adblocker
-- SWEEPR DeepBlock vs Surfshark CleanWeb (2026 Comparison): https://sweeprdeepblock.com/vs/surfshark-cleanweb
-- Switch From AdBlock Plus To Manifest V3 (2026): https://sweeprdeepblock.com/vs/switch-from-adblock-plus-to-manifest-v3
-- SWEEPR DeepBlock vs Total Adblock (2026 Pricing & Test Lab): https://sweeprdeepblock.com/vs/total-adblock
+- SWEEPR Deepblock vs AdBlock Plus (ABP): Acceptable Ads & MV3: https://sweeprdeepblock.com/vs/adblock-plus
+- SWEEPR Deepblock vs AdGuard Extension (MV3 & Desktop App): https://sweeprdeepblock.com/vs/adguard-extension
+- SWEEPR Deepblock vs Brave Shields: Should You Stack Them?: https://sweeprdeepblock.com/vs/brave-shields
+- SWEEPR Deepblock vs Ghostery: Never-Consent, History & Speed: https://sweeprdeepblock.com/vs/ghostery-privacy-ad-blocker
+- SWEEPR Deepblock vs Pie Adblock: Business Model & Permissions: https://sweeprdeepblock.com/vs/pie-adblock
+- SWEEPR Deepblock vs Total Adblock (2026 Pricing & Cancel Guide): https://sweeprdeepblock.com/vs/total-adblock
+- SWEEPR Deepblock vs uBlock Origin Lite (Chrome MV3 2026): https://sweeprdeepblock.com/vs/ublock-origin-lite
+- SWEEPR Deepblock vs Windscribe R.O.B.E.R.T.: DNS vs Browser: https://sweeprdeepblock.com/vs/windscribe-robert-adblock
 
 ### Browser Setup Guides (/setup/*)
-- Arc Browser Ad Blocker (2026): Best Arc AdBlocker (Win & Mac): https://sweeprdeepblock.com/setup/arc-browser-windows-mac
-- Ad Blocker for Brave Browser (2026 Setup): https://sweeprdeepblock.com/setup/brave-browser-deepstealth
-- Brave Mac Ad Blocker (Apple Silicon M1–M4): Stop YouTube Lag: https://sweeprdeepblock.com/setup/brave-macos-apple-silicon
-- CachyOS Chromium Ad Blocker (2026 Setup) | SWEEPR: https://sweeprdeepblock.com/setup/cachyos-arch-chromium
-- Ad Blocker for ChromeOS Chromebook (2026 Setup): https://sweeprdeepblock.com/setup/chromeos-chromebook-mv3
-- Chromium Linux Ad Blocker (2026 Setup) | SWEEPR: https://sweeprdeepblock.com/setup/chromium-linux-ubuntu
-- Edge Mac Silicon Ad Blocker (2026 Setup) | SWEEPR: https://sweeprdeepblock.com/setup/edge-macos-apple-silicon
-- Firefox Android Ad Blocker (2026 Setup) | SWEEPR: https://sweeprdeepblock.com/setup/firefox-android-mobile
-- Floorp AdBlock (2026): Best Ad Blocker for Floorp Browser: https://sweeprdeepblock.com/setup/floorp-browser-firefox-fork
-- Chrome MV3 Ad Blocker (uBlock Alternative 2026) | SWEEPR: https://sweeprdeepblock.com/setup/google-chrome-manifest-v3
-- Kiwi Browser Ad Blocker Extension (Android): Block Video Ads: https://sweeprdeepblock.com/setup/kiwi-browser-android
-- Ladybird Browser Ad Blocker (2026 Setup) | SWEEPR: https://sweeprdeepblock.com/setup/ladybird-browser-privacy
-- LibreWolf Ad Blocker (2026): Hardened Privacy & RAM Tamer: https://sweeprdeepblock.com/setup/librewolf-hardened-firefox
-- Microsoft Edge Ad Blocker (2026 Setup) | SWEEPR: https://sweeprdeepblock.com/setup/microsoft-edge-windows-11
-- Firefox Ad Blocker (uBlock Alternative 2026) | SWEEPR: https://sweeprdeepblock.com/setup/mozilla-firefox-desktop-android
-- Mullvad Browser Ad Blocker (2026 Setup) | SWEEPR: https://sweeprdeepblock.com/setup/mullvad-browser-privacy
-- Ad Blocker for Opera & Opera GX (2026 Setup): https://sweeprdeepblock.com/setup/opera-gx-gaming-browser
-- Orion Browser Ad Blocker (macOS & iOS): Block YouTube Ads: https://sweeprdeepblock.com/setup/orion-browser-macos-ios
-- Ad Blocker for Raspberry Pi (2026 Setup): https://sweeprdeepblock.com/setup/raspberry-pi-chromium
-- Ad Blocker for Apple Safari (2026 Setup): https://sweeprdeepblock.com/setup/safari-macos-ios-ipad
-- Thorium AdBlock (2026): Best Ad Blocker for Thorium Browser: https://sweeprdeepblock.com/setup/thorium-chromium-browser
-- Ungoogled Chromium Ad Blocker (MV3): Setup Without Web Store: https://sweeprdeepblock.com/setup/ungoogled-chromium-mv3
-- Ad Blocker for Vivaldi Browser (2026 Setup): https://sweeprdeepblock.com/setup/vivaldi-power-user-browser
-- Ad Blocker for Waterfox Browser (2026 Setup): https://sweeprdeepblock.com/setup/waterfox-privacy-browser
-- Zen Browser Ad Blocker (2026): Block YouTube Ads & Tame RAM: https://sweeprdeepblock.com/setup/zen-browser-privacy-tabs
+- Arc Ad Blocker & Dec 2026 Sunset Migration Guide | SWEEPR: https://sweeprdeepblock.com/setup/arc-browser-windows-mac
+- Brave Browser + SWEEPR Deepblock Setup Guide | SWEEPR: https://sweeprdeepblock.com/setup/brave-browser-deepstealth
+- Brave Mac Setup (Apple Silicon M1-M4): https://sweeprdeepblock.com/setup/brave-macos-apple-silicon
+- Chromium Linux Ad Blocker (Ubuntu, Arch, Snap) | SWEEPR: https://sweeprdeepblock.com/setup/chromium-linux-ubuntu
+- Floorp AdBlock Setup (2026): Firefox Fork Guide | SWEEPR: https://sweeprdeepblock.com/setup/floorp-browser-firefox-fork
+- Chrome MV3 Ad Blocker Setup (Chrome 116+ Guide) | SWEEPR: https://sweeprdeepblock.com/setup/google-chrome-manifest-v3
+- Kiwi Browser EOL (Jan 2025): Android Migration | SWEEPR: https://sweeprdeepblock.com/setup/kiwi-browser-android
+- LibreWolf Ad Blocker & Cookie Auto-Reject Setup | SWEEPR: https://sweeprdeepblock.com/setup/librewolf-hardened-firefox
+- Microsoft Edge Ad Blocker (Windows 11 & Mac) | SWEEPR: https://sweeprdeepblock.com/setup/microsoft-edge-windows-11
+- Firefox Ad Blocker Setup (Desktop & Android) | SWEEPR: https://sweeprdeepblock.com/setup/mozilla-firefox-desktop-android
+- Opera GX Ad Blocker: Fix YouTube & Wiki RAM | SWEEPR: https://sweeprdeepblock.com/setup/opera-gx-gaming-browser
+- Orion Browser Ad Blocker (macOS vs Desktop WKWebView) | SWEEPR: https://sweeprdeepblock.com/setup/orion-browser-macos-ios
+- Thorium Ad Blocker (2026): MV2, MV3 & Security | SWEEPR: https://sweeprdeepblock.com/setup/thorium-chromium-browser
+- Ungoogled Chromium MV3 Ad Blocker Setup (2026) | SWEEPR: https://sweeprdeepblock.com/setup/ungoogled-chromium-mv3
+- Vivaldi Ad Blocker: Fix YouTube & Partner Ads | SWEEPR: https://sweeprdeepblock.com/setup/vivaldi-power-user-browser
+- Waterfox Ad Blocker (2026 Setup): Gecko Guide | SWEEPR: https://sweeprdeepblock.com/setup/waterfox-privacy-browser
+- Zen Browser Ad Blocker (2026): Setup & Tab RAM | SWEEPR: https://sweeprdeepblock.com/setup/zen-browser-privacy-tabs
 
 ### Flagship Platform Solutions (/solutions/*)
-- 1337x Ads Blocker (2026): Stop 1337x Popunders & Fake Downloads: https://sweeprdeepblock.com/solutions/1337x-torrent-indexer-block-video-ads
-- MyAnimeList: Block Video Ads (2026): https://sweeprdeepblock.com/solutions/anilist-myanimelist-tracker-block-video-ads
-- Free Anime Portals: Stop Pop-Under Redirects: https://sweeprdeepblock.com/solutions/anime-streaming-portals-stop-malvertising-popunders
-- Car Classifieds: Block Video Ads (2026): https://sweeprdeepblock.com/solutions/automotive-car-classifieds-block-video-ads
-- Bilibili Web: Stop Pop-Under Redirects (2026): https://sweeprdeepblock.com/solutions/bilibili-anime-video-stop-malvertising-popunders
-- Bing & Edge: Cut Browser RAM Usage 62%: https://sweeprdeepblock.com/solutions/bing-copilot-search-reduce-browser-ram-usage
-- Chess.com Blitz: Block Video Ads (2026): https://sweeprdeepblock.com/solutions/chesscom-blitz-gaming-block-video-ads
-- CNN News: Auto-Reject Cookie Pop-Ups: https://sweeprdeepblock.com/solutions/cnn-news-network-auto-reject-cookie-popups
-- CoinMarketCap: Stop Pop-Under Redirects (2026): https://sweeprdeepblock.com/solutions/coinmarketcap-crypto-prices-stop-malvertising-popunders
-- E-Learning: Cut Browser RAM Usage 62%: https://sweeprdeepblock.com/solutions/coursera-edx-learning-reduce-browser-ram-usage
-- How to Get No Ads on Crunchyroll PC (Best Crunchyroll AdBlock): https://sweeprdeepblock.com/solutions/crunchyroll-anime-streams-block-video-ads
-- Crypto & Forex: Auto-Reject Cookie Pop-Ups: https://sweeprdeepblock.com/solutions/crypto-exchange-news-sites-auto-reject-cookie-popups
-- CurseForge Mods: Stop Pop-Under Redirects: https://sweeprdeepblock.com/solutions/curseforge-gaming-mods-stop-malvertising-popunders
-- Daily Mail Online: Block Video Ads (2026): https://sweeprdeepblock.com/solutions/daily-mail-online-block-video-ads
-- Embedded Web Videos: Block Video Ads (2026): https://sweeprdeepblock.com/solutions/dailymotion-vimeo-embeds-block-video-ads
-- DEXScreener Ad Blocker: Block Token Banners & Scam Drain Ads: https://sweeprdeepblock.com/solutions/dex-token-screeners-block-video-ads
-- ESPN Sports: Stop Pop-Under Redirects (2026): https://sweeprdeepblock.com/solutions/espn-sports-streaming-stop-malvertising-popunders
-- Etsy Shops: Stop Pop-Under Redirects (2026): https://sweeprdeepblock.com/solutions/etsy-marketplace-shops-stop-malvertising-popunders
-- Motorsport Sites: Block Video Ads (2026): https://sweeprdeepblock.com/solutions/f1-motorsport-news-block-video-ads
-- Social & Shops: Hide AI Slop & Scam Shops: https://sweeprdeepblock.com/solutions/facebook-marketplace-shops-filter-ai-slop-and-scams
-- Why Does Fandom Use So Much RAM? Fix Fandom Memory & Video Ads: https://sweeprdeepblock.com/solutions/fandom-game-wikis-reduce-browser-ram-usage
-- Fextralife Wikis: Stop Pop-Under Redirects: https://sweeprdeepblock.com/solutions/fextralife-game-wikis-stop-malvertising-popunders
-- Flight Radars: Stop Pop-Under Redirects (2026): https://sweeprdeepblock.com/solutions/flight-tracker-radars-stop-malvertising-popunders
-- Forbes Media: Hide AI Slop & Scam Shops: https://sweeprdeepblock.com/solutions/forbes-business-media-filter-ai-slop-and-scams
-- File Download Hosts: Auto-Reject Cookie Pop-Ups: https://sweeprdeepblock.com/solutions/free-file-host-downloads-auto-reject-cookie-popups
+- MyAnimeList & AniList Ad Blocker (2026): https://sweeprdeepblock.com/solutions/anilist-myanimelist-tracker-block-video-ads
+- Anime Portals: Stop Pop-Unders & Malvertising: https://sweeprdeepblock.com/solutions/anime-streaming-portals-stop-malvertising-popunders
+- Car Classifieds Ad Blocker: Stop Video & Banner Lag: https://sweeprdeepblock.com/solutions/automotive-car-classifieds-block-video-ads
+- Bilibili Web Ad Blocker (2026): Block Banners & Trackers: https://sweeprdeepblock.com/solutions/bilibili-anime-video-block-video-ads
+- Bing Web Ad & Tracker Blocker + Tab RAM Tamer: https://sweeprdeepblock.com/solutions/bing-copilot-search-reduce-browser-ram-usage
+- CoinMarketCap & CoinGecko Ad Blocker (2026): https://sweeprdeepblock.com/solutions/coinmarketcap-crypto-prices-stop-malvertising-popunders
+- How to Get No Ads on Crunchyroll PC (2026 Browser Guide): https://sweeprdeepblock.com/solutions/crunchyroll-anime-streams-block-video-ads
+- CurseForge Ad Blocker: Stop Mod Hub Ads & Pop-Unders: https://sweeprdeepblock.com/solutions/curseforge-gaming-mods-stop-malvertising-popunders
+- Dailymotion & Embedded Video Ad Blocker: https://sweeprdeepblock.com/solutions/dailymotion-vimeo-embeds-block-video-ads
+- DEXScreener Ad Blocker (2026): Hide Banners & Save RAM: https://sweeprdeepblock.com/solutions/dex-token-screeners-block-video-ads
+- ESPN Ad Blocker (2026): Block Autoplay Clips & Outbrain: https://sweeprdeepblock.com/solutions/espn-sports-streaming-block-video-ads
+- F1 & Motorsport News Ad Blocker: https://sweeprdeepblock.com/solutions/f1-motorsport-news-block-video-ads
+- Why Does Fandom Use So Much RAM? Fix Wiki Lag (2026): https://sweeprdeepblock.com/solutions/fandom-game-wikis-reduce-browser-ram-usage
+- Fextralife Wiki Ad & Embed Blocker: https://sweeprdeepblock.com/solutions/fextralife-game-wikis-stop-malvertising-popunders
+- GeeksforGeeks Ad Blocker (2026): Remove Floating Videos: https://sweeprdeepblock.com/solutions/geeksforgeeks-dev-portals-block-video-ads
+- Developer Docs & Tech Portals Ad & Tracker Shield: https://sweeprdeepblock.com/solutions/github-copilot-dev-portals-block-video-ads
+- IMDb Ad Blocker (2026): Block Banner & Video Ads: https://sweeprdeepblock.com/solutions/imdb-movie-database-block-video-ads
+- LinkedIn Ad Blocker Extension (2026): Hide Promoted Ads: https://sweeprdeepblock.com/solutions/linkedin-feed-ads-block-video-ads
+- Lyrics & Guitar Tab Ad Blocker (2026): https://sweeprdeepblock.com/solutions/lyrics-and-chords-tabs-block-video-ads
+- Manga Reader Ad Blocker: Stop Pop-Unders & Redirects: https://sweeprdeepblock.com/solutions/manga-comic-readers-block-video-ads
+- MangaDex Web Reader Privacy & Tab RAM Guide: https://sweeprdeepblock.com/solutions/mangadex-web-reader-block-video-ads
+- Nexus Mods Ad Blocker: Stop Sticky Video & Banner Ads: https://sweeprdeepblock.com/solutions/nexus-mods-community-stop-malvertising-popunders
+- Online Chess Sites Ad Blocker (Chess.com & Portals): https://sweeprdeepblock.com/solutions/online-chess-gaming-block-video-ads
+- Quora Ad & Tracker Blocker (2026): https://sweeprdeepblock.com/solutions/quora-digest-answers-stop-malvertising-popunders
+- Roblox Web Ad & Pop-Up Blocker (2026): https://sweeprdeepblock.com/solutions/roblox-web-community-filter-ai-slop-and-scams
+- Rumble Ad Blocker (2026): Block Pre-Roll & Banner Ads: https://sweeprdeepblock.com/solutions/rumble-video-streams-block-video-ads
+- Desktop & HTPC Streaming Browser Ad Blocker: https://sweeprdeepblock.com/solutions/smart-tv-web-browsers-block-video-ads
+- SoundCloud Ad Blocker Extension (2026): https://sweeprdeepblock.com/solutions/soundcloud-audio-player-block-video-ads
+- Student Study Hubs Ad Blocker & Tab RAM Tamer: https://sweeprdeepblock.com/solutions/student-study-hubs-block-video-ads
+- Substack Cookie Banner & Tracker Blocker: https://sweeprdeepblock.com/solutions/substack-newsletter-blogs-auto-reject-cookie-popups
+- Tech Review Blogs: Auto-Reject Cookies & Block Ads: https://sweeprdeepblock.com/solutions/tech-gadget-review-blogs-auto-reject-cookie-popups
+- Meta Threads Web Privacy & Tracker Blocker: https://sweeprdeepblock.com/solutions/threads-web-feed-stop-malvertising-popunders
+- TikTok Web Cookie Blocker & Tab RAM Tamer: https://sweeprdeepblock.com/solutions/tiktok-web-reels-reduce-browser-ram-usage
+- TradingView Web Ad Blocker & Tab RAM Tamer: https://sweeprdeepblock.com/solutions/tradingview-charts-web-reduce-browser-ram-usage
+- Tumblr Ad Blocker (2026): Block Video & Banner Ads: https://sweeprdeepblock.com/solutions/tumblr-blog-feeds-block-video-ads
+- UK & US News Sites: Auto-Reject Cookie Banners & Ads: https://sweeprdeepblock.com/solutions/uk-news-websites-auto-reject-cookie-popups
+- Webtoon & Manhwa Ad Blocker (2026): https://sweeprdeepblock.com/solutions/webtoon-manhwa-readers-block-video-ads
+- X (Twitter) Web Tracker & Ad Shield: https://sweeprdeepblock.com/solutions/x-twitter-feed-ads-block-video-ads
 
-### Customer Stories (/stories/*) & Glossary (/glossary/*)
-- Case Study: Reclaiming 4.1 GB RAM Across 40 Open Tabs | SWEEPR: https://sweeprdeepblock.com/stories/40-tab-research-workflow-ram-tamer
-- Case Study: Stopping Fake 80%-Off Clearance Scam Stores | SWEEPR: https://sweeprdeepblock.com/stories/blocking-fake-clearance-shops-scam-detector
-- Case Study: DACH & France Usercentrics/Didomi Automation | SWEEPR: https://sweeprdeepblock.com/stories/de-fr-usercentrics-didomi-cmp-automation
-- Case Study: Escaping £99/yr Adblocker Renewal Traps | SWEEPR: https://sweeprdeepblock.com/stories/switching-from-total-adblock-renewal-shock
-- Case Study: Eliminating UK News Sourcepoint Cookie Walls | SWEEPR: https://sweeprdeepblock.com/stories/uk-news-sourcepoint-cookie-wall-elimination
-- Case Study: Smooth YouTube Playback on Chrome MV3 | SWEEPR: https://sweeprdeepblock.com/stories/youtube-mv3-zero-warning-playback
-- What Is the Acceptable Ads Whitelist? | SWEEPR Glossary: https://sweeprdeepblock.com/glossary/acceptable-ads-program
-- What is AI Slop Search Spam? | SWEEPR Glossary: https://sweeprdeepblock.com/glossary/ai-slop-search-spam
-- How Do Anti-Adblock Bait Scripts Work? | SWEEPR Glossary: https://sweeprdeepblock.com/glossary/anti-adblock-bait-detection
-- What is Web Audio API Fingerprinting? | SWEEPR Glossary: https://sweeprdeepblock.com/glossary/audio-context-fingerprinting
-- Browser Tab Discarding & Hibernation | SWEEPR Glossary: https://sweeprdeepblock.com/glossary/browser-tab-discarding-hibernation
-- What is HTML5 Canvas Fingerprinting? | SWEEPR Glossary: https://sweeprdeepblock.com/glossary/canvas-fingerprinting
-- What is CNAME Cloaking in Ad Tracking? | SWEEPR Glossary: https://sweeprdeepblock.com/glossary/cname-cloaking-trackers
-- What is Browser Cryptojacking? | SWEEPR Glossary: https://sweeprdeepblock.com/glossary/cryptojacking-webassembly-miners
-- What Is DNS-over-HTTPS (DoH) DNS? | SWEEPR Glossary: https://sweeprdeepblock.com/glossary/dns-over-https-doh
-- How to Spot Fake Scam Online Shops | SWEEPR Glossary: https://sweeprdeepblock.com/glossary/fake-shopify-dropshipping-scam-indicators
-- First-Party Server-Side Tracker Proxies | SWEEPR Glossary: https://sweeprdeepblock.com/glossary/first-party-tracker-proxies
-- Header Bidding (Prebid/OpenRTB) Latency | SWEEPR Glossary: https://sweeprdeepblock.com/glossary/header-bidding-openrtb-latency
-- What is Malvertising & Popunder Adware? | SWEEPR Glossary: https://sweeprdeepblock.com/glossary/malvertising-popunders
-- What is Manifest V3 declarativeNetRequest? | SWEEPR Glossary: https://sweeprdeepblock.com/glossary/manifest-v3-declarative-net-request
-- What is Shadow DOM Ad Injection? | SWEEPR Glossary: https://sweeprdeepblock.com/glossary/shadow-dom-ad-injection
-- What is a TCF v2.2 Cookie Consent CMP? | SWEEPR Glossary: https://sweeprdeepblock.com/glossary/tcf-v2-cookie-consent-cmp
-- fbclid, gclid & utm Tracking Links | SWEEPR Glossary: https://sweeprdeepblock.com/glossary/url-tracking-parameters-utm-fbclid-gclid
-- What is WebGL GPU Hardware Fingerprinting? | SWEEPR Glossary: https://sweeprdeepblock.com/glossary/webgl-hardware-fingerprinting
-- What is a WebRTC IP Leak in Browsers? | SWEEPR Glossary: https://sweeprdeepblock.com/glossary/webrtc-ip-leak
-- What is Server-Side Video Ad Injection? | SWEEPR Glossary: https://sweeprdeepblock.com/glossary/youtube-server-side-ad-injection
+### Technical Guides (/guides/*)
+- Automatically Reject Cookies (2026): Auto-Decline Popups: https://sweeprdeepblock.com/guides/how-to-automatically-reject-cookie-banners-uk
+- Reddit Promoted Ad Blocker: Hide Sponsored Posts (2026): https://sweeprdeepblock.com/guides/how-to-block-reddit-sponsored-promoted-posts-in-feed
+- How to Remove Sponsored Ads & Overviews on Google Search: https://sweeprdeepblock.com/guides/how-to-block-sponsored-ads-on-google-search-2026
+- Block Yahoo Finance Video Ads & Banners (2026 Guide): https://sweeprdeepblock.com/guides/how-to-block-sponsored-ads-on-yahoo-finance
+- How to Stop Spam Ads & Promoted Posts on X / Twitter: https://sweeprdeepblock.com/guides/how-to-block-sponsored-posts-and-crypto-bots-on-x-twitter
+- How to Block In-Browser Crypto Miner Scripts (2026): https://sweeprdeepblock.com/guides/how-to-block-tab-freeze-crypto-miner-scripts
+- Twitch Mid-Roll Ads & Purple Screen Fix (2026 Honest Guide): https://sweeprdeepblock.com/guides/how-to-block-twitch-midroll-commercials-without-black-screen
+- How to Block YouTube Ads on Chrome Manifest V3 (2026): https://sweeprdeepblock.com/guides/how-to-block-youtube-ads-chrome-manifest-v3-2026
+- Bypass "Disable Your Adblocker" Overlays Without F12 (2026): https://sweeprdeepblock.com/guides/how-to-bypass-anti-adblock-inspect-element-blockers
+- Fix YouTube Anti-Adblock CPU Usage & Lag Loops (2026): https://sweeprdeepblock.com/guides/how-to-fix-high-cpu-usage-from-youtube-anti-adblock
+- How to Fix High RAM Usage on Vivaldi Browser (2026 Guide): https://sweeprdeepblock.com/guides/how-to-fix-high-ram-usage-on-vivaldi-browser
+- Fix Chrome Freezing & High RAM Usage (Tab Tamer Guide): https://sweeprdeepblock.com/guides/how-to-reduce-browser-ram-speed-up-slow-tabs
+- How to Stop Facebook Meta Pixel Tracking (vs Server CAPI): https://sweeprdeepblock.com/guides/how-to-stop-facebook-meta-pixel-tracking
+- How to Stop Fake Robot Captcha & Notification Popups (2026): https://sweeprdeepblock.com/guides/how-to-stop-fake-robot-captcha-verification-popups
+- How to Stop Malvertising Popunders & Forced Redirects: https://sweeprdeepblock.com/guides/how-to-stop-malvertising-popunders-and-redirects
+- Block Temu & Shein Retargeting Ads, Popups & Tracking: https://sweeprdeepblock.com/guides/how-to-stop-temu-shein-scam-popups-and-tracking
+- Strip utm_source, fbclid & gclid Tracking Links (MV3): https://sweeprdeepblock.com/guides/strip-utm-fbclid-gclid-tracking-links

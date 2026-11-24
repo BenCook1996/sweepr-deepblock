@@ -3,8 +3,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const adsCountEl = document.getElementById('adsCount');
   const adsMetricLabelEl = document.getElementById('adsMetricLabel');
   const cookieCountEl = document.getElementById('cookieCount');
-  const slopCountEl = document.getElementById('slopCount');
-  const scamCountEl = document.getElementById('scamCount');
   const adsBlockedTextEl = document.getElementById('adsBlockedText');
   const tierBadgeEl = document.getElementById('tierBadge');
   const hostPermBannerEl = document.getElementById('hostPermBanner');
@@ -41,13 +39,11 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentTabId = null;
   let currentState = {
     proActive: false,
+    ramTamerActive: false,
     settings: {},
     pausedSites: [],
     neverSnoozeSites: [],
-    trustedShopSites: [],
-    cloudTabSessions: [],
-    currentTabScamDetected: false,
-    currentTabScamReasons: []
+    cloudTabSessions: []
   };
 
   chrome.storage.local.get(['draftLicenseKey', 'licenseDrawerOpen', 'proActive'], (uiState) => {
@@ -314,20 +310,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function renderStoreSafety(state) {
     if (!storeSafetyCard || !storeSafetyTitle || !storeSafetySub || !storeSafetyPill) return;
-    if (state.currentTabScamDetected) {
-      storeSafetyCard.classList.add('scam-alert');
-      storeSafetyTitle.textContent = 'Suspicious Store Signals Found';
-      const firstReason = (state.currentTabScamReasons && state.currentTabScamReasons[0]) || 'Fake urgency countdown timer detected on store';
-      storeSafetySub.textContent = firstReason;
-      storeSafetyPill.textContent = 'Risk Alert';
-      storeSafetyPill.className = 'store-pill risk';
-    } else {
-      storeSafetyCard.classList.remove('scam-alert');
-      storeSafetyTitle.textContent = 'Store & Site Check: Verified Safe';
-      storeSafetySub.textContent = '0 phishing or fake-urgency scam signals on this page';
-      storeSafetyPill.textContent = 'Verified Safe';
-      storeSafetyPill.className = 'store-pill';
-    }
+    storeSafetyCard.classList.remove('scam-alert');
+    const isPro = Boolean(state && state.proActive);
+    const hasBonus = Number(state && state.bonusProDaysEarned) > 0;
+    storeSafetyTitle.textContent = isPro ? 'MV3 Shield Active' : 'Free Preview Mode';
+    storeSafetySub.textContent = isPro
+      ? hasBonus
+        ? `Pro active · +${Number(state.bonusProDaysEarned)} bonus referral days`
+        : 'Ads, cookies, and URL trackers shielded'
+      : 'Activate Pro to unlock full MV3 protection';
+    storeSafetyPill.textContent = isPro
+      ? state.plan === 'referral_trial_14d'
+        ? '14d Trial'
+        : 'Shield Active'
+      : 'Free Preview';
+    storeSafetyPill.className = 'store-pill';
   }
 
   function renderState(state) {
@@ -335,11 +332,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const isPro = Boolean(state.proActive);
     const stats = state.stats || {};
     const ads = isPro
-      ? (Number(stats.adsBlocked) || 0) + (Number(stats.aiSlopDetected) || 0)
-      : (Number(stats.adsSpotted) || 0) + (Number(stats.adsBlocked) || 0) + (Number(stats.aiSlopDetected) || 0);
+      ? Number(stats.adsBlocked) || 0
+      : (Number(stats.adsSpotted) || 0) + (Number(stats.adsBlocked) || 0);
     const cookies = Number(stats.cookiePromptsDetected) || 0;
-    const slop = Number(stats.aiSlopDetected) || 0;
-    const scams = Number(stats.fakeStoresDetected) || 0;
 
     if (hostPermBannerEl) {
       hostPermBannerEl.style.display = state.hostPermissionsGranted === false ? 'flex' : 'none';
@@ -348,8 +343,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (adsCountEl) adsCountEl.textContent = String(ads);
     if (adsMetricLabelEl) adsMetricLabelEl.textContent = isPro ? 'Ads' : 'Spotted';
     if (cookieCountEl) cookieCountEl.textContent = String(cookies);
-    if (slopCountEl) slopCountEl.textContent = String(slop);
-    if (scamCountEl) scamCountEl.textContent = String(scams);
     if (adsBlockedTextEl) {
       adsBlockedTextEl.textContent = isPro ? `${ads + cookies} blocked ✓` : `${ads + cookies} spotted · Free Preview`;
     }
@@ -476,9 +469,7 @@ document.addEventListener('DOMContentLoaded', () => {
       totalThreats:
         (Number(stats.adsBlocked) || 0) +
         (Number(stats.adsSpotted) || 0) +
-        (Number(stats.cookiePromptsDetected) || 0) +
-        (Number(stats.aiSlopDetected) || 0) +
-        (Number(stats.fakeStoresDetected) || 0)
+        (Number(stats.cookiePromptsDetected) || 0)
     };
     if (milestoneActionCard) {
       chrome.storage.local.get(['a3MilestoneDismissedAt'], (a3Store) => {
@@ -530,10 +521,10 @@ document.addEventListener('DOMContentLoaded', () => {
               bannerCopy = '🛡️ D90 Win-Back: Complete Security Suite (DeepBlock+VPN+Cleaner) — Save 45%';
               targetUrl = 'https://sweeprdeepblock.com/order?plan=suite_annual&winback=tier_d90&utm_source=extension_d90';
             } else if (wbTier === 'tier_d60') {
-              bannerCopy = '⚡ D60 Win-Back: Annual Pro + FREE 12-Month RAM Tamer Included';
+              bannerCopy = '⚡ D60 Win-Back: Annual Pro (£29.99/yr — 50% Savings Across 5 Devices)';
               targetUrl = 'https://sweeprdeepblock.com/order?plan=annual&winback=tier_d60&utm_source=extension_d60';
             } else {
-              bannerCopy = `⚡ D30 Win-Back (${mState.totalThreats.toLocaleString()} ${countVerb}): 6-Month Plan — Save 33%`;
+              bannerCopy = `⚡ D30 Win-Back (${mState.totalThreats.toLocaleString()} ${countVerb}): 6-Month Plan — Save 25%`;
               targetUrl = 'https://sweeprdeepblock.com/order?plan=six_month&winback=tier_d30&utm_source=extension_d30';
             }
           }
@@ -568,15 +559,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const dismissedRecent = a5Store && a5Store.a5DismissedAt && Date.now() - Number(a5Store.a5DismissedAt) < 14 * 86400 * 1000;
         const tabsHib = Number(stats.tabsHibernated) || 0;
         const totalProtected = ads + cookies;
-        const triggerCleaner = !state.ramTamerActive && tabsHib >= 20;
-        const triggerVpn = !state.ramTamerActive && isPro && totalProtected >= 150;
+        const triggerCleaner = state.plan !== 'suite_annual' && tabsHib >= 20;
+        const triggerVpn = state.plan !== 'suite_annual' && isPro && totalProtected >= 150;
         if (!dismissedRecent && (triggerCleaner || triggerVpn)) {
           const targetUrl = triggerCleaner
             ? 'https://sweeprdeepblock.com/order?plan=suite_annual&utm_source=extension_a5&utm_medium=ram_trigger'
             : 'https://sweeprdeepblock.com/order?plan=suite_annual&utm_source=extension_a5&utm_medium=dns_trigger';
           if (ecosystemCrossSellText) {
             ecosystemCrossSellText.textContent = triggerCleaner
-              ? `🧹 ${tabsHib} idle tabs snoozed — Bundle DeepBlock + RAM Tamer + Cleaner + VPN`
+              ? `🧹 ${tabsHib} idle tabs snoozed — Bundle DeepBlock Pro + Cleaner + VPN`
               : '🔒 Protect up to 5 devices with the Sweepr Complete Security Suite';
           }
           if (a5CrossSellCtaBtn) {
@@ -880,20 +871,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (res.ok && data && data.valid === true) {
           const subStatus = String(data.status || 'active').toLowerCase();
           if (subStatus === 'active' || subStatus === 'trialing') {
-            const addonsList = Array.isArray(data.addons) ? data.addons : [];
-            const ramTamerActive = Boolean(
-              data.ramTamerAddon === true ||
-                addonsList.includes('ram_tamer') ||
-                addonsList.includes('sweepr_secure_bundle')
-            );
+            const ramTamerActive = true;
             const canonicalKey = data.licenseKey || data.license_key || '';
             if (!canonicalKey || canonicalKey.startsWith('ptk_')) {
               return { ok: false, valid: false, error: 'Server did not return a valid license key.' };
             }
             const newSettings = {
               cookieAutoClose: true,
-              hideSearchSpam: true,
-              fakeShopAlerts: true,
               trackerProtection: true,
               adBlocking: true,
               silentMode: true,
@@ -903,13 +887,16 @@ document.addEventListener('DOMContentLoaded', () => {
             await chrome.storage.local.set({
               deviceId,
               proActive: true,
-              ramTamerActive,
+              ramTamerActive: true,
               licenseKey: canonicalKey,
               draftLicenseKey: '',
               licenseDrawerOpen: false,
               licenseToken: data.token || data.license_token || '',
               crmAccountId: data.account_id || '',
               subscriptionStatus: subStatus,
+              plan: data.plan || 'annual',
+              licenseExpiresAt: data.expiresAt || '',
+              bonusProDaysEarned: Number(data.bonusProDaysEarned || 0),
               licenseVerifiedAt: Date.now(),
               settings: newSettings
             });
@@ -928,7 +915,7 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
               chrome.runtime.sendMessage({ type: 'VERIFY_LICENSE', key: canonicalKey }).catch(() => {});
             } catch (e) {}
-            return { ok: true, valid: true, licenseKey: canonicalKey, ramTamerActive, settings: newSettings };
+            return { ok: true, valid: true, licenseKey: canonicalKey, ramTamerActive: true, settings: newSettings };
           }
         }
         if (res.status === 400 || res.status === 403 || res.status === 404 || data?.valid === false) {
@@ -980,11 +967,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (finalRes && finalRes.ok && finalRes.valid) {
           await chrome.storage.local.set({ draftLicenseKey: '', licenseDrawerOpen: false });
           currentState.proActive = true;
+          currentState.ramTamerActive = true;
           currentState.settings =
             (finalRes && finalRes.settings) || {
               cookieAutoClose: true,
-              hideSearchSpam: true,
-              fakeShopAlerts: true,
               trackerProtection: true,
               adBlocking: true,
               silentMode: true,
@@ -1137,8 +1123,6 @@ document.addEventListener('DOMContentLoaded', () => {
           stopPopupQrPolling();
           const newSettings = {
             cookieAutoClose: true,
-            hideSearchSpam: true,
-            fakeShopAlerts: true,
             trackerProtection: true,
             adBlocking: true,
             silentMode: true,
@@ -1148,12 +1132,15 @@ document.addEventListener('DOMContentLoaded', () => {
           await chrome.storage.local.set({
             deviceId,
             proActive: true,
-            ramTamerActive: Boolean(pollData.ramTamerAddon),
+            ramTamerActive: true,
             licenseKey: pollData.licenseKey,
             draftLicenseKey: '',
             licenseDrawerOpen: false,
             crmAccountId: pollData.account_id || '',
             subscriptionStatus: 'active',
+            plan: pollData.plan || 'annual',
+            licenseExpiresAt: pollData.expiresAt || '',
+            bonusProDaysEarned: Number(pollData.bonusProDaysEarned || 0),
             licenseVerifiedAt: Date.now(),
             settings: newSettings
           });

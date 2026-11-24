@@ -1,10 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-GB">
 <head>
   <meta name="color-scheme" content="light">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#0F172A">
   <title>Privacy Policy &amp; Data Protection | SWEEPR Deepblock</title>
   <link rel="icon" type="image/svg+xml" href="/logo.svg">
   <link rel="manifest" href="/site.webmanifest">
@@ -12,6 +11,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <meta name="description" content="SWEEPR Deepblock Privacy Policy: 100% local on-device ad &amp; tracker blocking, zero browsing history uploaded, and GDPR/UK Data Protection compliance.">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+  <meta name="author" content="SWEEPR Global Limited">
+  <meta name="theme-color" content="#ffffff">
   <link rel="canonical" href="https://sweeprdeepblock.com/privacy" />
   <link rel="alternate" hreflang="en" href="https://sweeprdeepblock.com/privacy">
   <link rel="alternate" hreflang="x-default" href="https://sweeprdeepblock.com/privacy">
@@ -19,6 +20,7 @@
   <!-- Open Graph -->
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="SWEEPR Deepblock">
+  <meta property="og:locale" content="en_GB">
   <meta property="og:url" content="https://sweeprdeepblock.com/privacy">
   <meta property="og:title" content="Privacy Policy &amp; Data Protection | SWEEPR Deepblock">
   <meta property="og:description" content="100% local on-device ad blocking &amp; privacy protection. SWEEPR Deepblock never uploads or sells your browsing history.">
@@ -26,19 +28,19 @@
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://sweeprdeepblock.com/privacy">
   <meta name="twitter:title" content="Privacy Policy &amp; Data Protection | SWEEPR Deepblock">
   <meta name="twitter:description" content="100% local on-device ad blocking &amp; privacy protection. SWEEPR Deepblock never uploads or sells your browsing history.">
   <meta name="twitter:image" content="https://sweeprdeepblock.com/og-image.png">
 
   <!-- Structured Data -->
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Privacy Policy & Data Protection | SWEEPR Deepblock","url":"https://sweeprdeepblock.com/privacy","description":"SWEEPR Deepblock Privacy Policy: 100% local on-device ad & tracker blocking, zero browsing history uploaded, and GDPR/UK Data Protection compliance.","breadcrumb":{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://sweeprdeepblock.com/"},{"@type":"ListItem","position":2,"name":"Privacy Policy","item":"https://sweeprdeepblock.com/privacy"}]}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://sweeprdeepblock.com/"},{"@type":"ListItem","position":2,"name":"Privacy Policy","item":"https://sweeprdeepblock.com/privacy"}]},{"@type":"SoftwareApplication","@id":"https://sweeprdeepblock.com/#software","name":"SWEEPR Deepblock","softwareVersion":"1.3.1","url":"https://sweeprdeepblock.com/privacy","downloadUrl":"https://sweeprdeepblock.com/download","operatingSystem":"Chrome, Microsoft Edge, Firefox, Brave, Opera, Windows, macOS, Linux, Android (Firefox)","applicationCategory":"SecurityApplication","featureList":"283 static Manifest V3 declarativeNetRequest rules, GDPR cookie consent auto-rejection, URL tracking parameter stripping, Element Zapper, Anti-Adblock stealth, Total Tab & RAM Tamer","publisher":{"@type":"Organization","name":"SWEEPR Global Limited","url":"https://sweeprdeepblock.com/"},"offers":{"@type":"AggregateOffer","lowPrice":"1.99","highPrice":"89.99","priceCurrency":"GBP","offerCount":"4","url":"https://sweeprdeepblock.com/pricing","priceValidUntil":"2027-12-31","validFrom":"2026-01-01"}},{"@type":"WebPage","name":"Privacy Policy & Data Protection | SWEEPR Deepblock","url":"https://sweeprdeepblock.com/privacy","description":"SWEEPR Deepblock Privacy Policy: 100% local on-device ad & tracker blocking, zero browsing history uploaded, and GDPR/UK Data Protection compliance."}]}</script>
 
-  <link rel="stylesheet" href="/sweepr-tailwind.min.css?v=20261117">
-  <link rel="stylesheet" href="/style.css">
-  <script src="/nav.js" defer></script>
+  <link rel="stylesheet" href="/sweepr-tailwind.min.css?v=20261122">
+  <link rel="stylesheet" href="/style.css?v=20261122">
+  <script src="/nav.js?v=20261122" defer></script>
   <script src="/i18n.js" defer></script>
-  <!-- Google tag (gtag.js) - Sweepr Deepblock -->
-  <script async src="/metrics/js?id=G-01MNBQSL9K"></script>
+  <!-- Google tag (gtag.js) - Sweepr Deepblock (deferred until interaction/idle) -->
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
@@ -47,19 +49,42 @@
       transport_url: window.location.origin + '/metrics',
       first_party_collection: true
     });
+    (function(){
+      if (window.__sweeprMetricsScheduled) return;
+      window.__sweeprMetricsScheduled = true;
+      var loaded = false;
+      function loadMetrics() {
+        if (loaded || document.querySelector('script[src*="/metrics/js"]')) return;
+        loaded = true;
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = '/metrics/js?id=G-01MNBQSL9K';
+        document.head.appendChild(s);
+      }
+      ['pointerdown','keydown','scroll','touchstart'].forEach(function(ev){
+        window.addEventListener(ev, loadMetrics, { once: true, passive: true });
+      });
+      window.addEventListener('load', function(){
+        if (typeof window.requestIdleCallback === 'function') {
+          window.requestIdleCallback(loadMetrics, { timeout: 3500 });
+        } else {
+          setTimeout(loadMetrics, 3500);
+        }
+      }, { once: true });
+    })();
   </script>
 </head>
 <body class="text-gray-800">
 
   <!-- Navigation (Synced with Homepage Menu) -->
-  <nav class="glass-nav px-4 md:px-6 py-3.5 md:py-4 flex items-center justify-between">
-    <div class="flex items-center gap-2.5 md:gap-8 min-w-0">
-      <a href="/" class="flex items-center gap-2.5 sm:gap-3 text-inherit no-underline min-w-0">
-        <div class="logo-box !w-9 !h-9 sm:!w-10 sm:!h-10" aria-hidden="true"></div>
-        <span class="font-extrabold text-base sm:text-xl tracking-tight text-gray-900 truncate">SWEEPR <span class="text-emerald-600">Deepblock</span></span>
+  <nav class="glass-nav px-3 sm:px-4 md:px-6 py-3 sm:py-3.5 md:py-4 flex items-center justify-between">
+    <div class="flex items-center gap-2 md:gap-8 min-w-0">
+      <a href="/" class="flex items-center gap-2 sm:gap-3 text-inherit no-underline min-w-0">
+        <div class="logo-box !w-8 !h-8 sm:!w-10 sm:!h-10" aria-hidden="true"></div>
+        <span class="font-extrabold text-sm sm:text-xl tracking-tight text-gray-900 truncate">SWEEPR <span class="text-emerald-600">Deepblock</span></span>
       </a>
       <div class="hidden md:flex items-center gap-2">
-        <a href="/?home=1#features" class="btn btn-ghost text-sm">Features</a>
+        <a href="/#features" class="btn btn-ghost text-sm">Features</a>
         <a href="/pricing" class="btn btn-ghost text-sm">Pricing</a>
         <div class="relative inline-block text-left" id="navDropdownContainer">
           <button type="button" id="navDropdownBtn" class="btn btn-ghost text-sm flex items-center gap-1.5 cursor-pointer font-medium" aria-expanded="false" aria-haspopup="true">
@@ -79,19 +104,19 @@
                     <span class="text-sm font-bold text-gray-900 group-hover:text-emerald-700 transition-colors">SWEEPR Deepblock vs Total Adblock</span>
                     <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full">Comparison</span>
                   </div>
-                  <p class="text-xs text-gray-500 leading-snug">See how SWEEPR Deepblock compares on YouTube ads, automatic cookie pop-up closing, fake shop alerts, and honest pricing.</p>
+                  <p class="text-xs text-gray-500 leading-snug">See how SWEEPR Deepblock compares on YouTube ads, automatic cookie pop-up closing, URL tracker stripping, and honest pricing.</p>
                 </div>
               </a>
-              <a href="/vs/total-adblock#fakespot" class="flex items-start gap-3 p-3 rounded-xl hover:bg-emerald-50/70 border border-transparent hover:border-emerald-200/60 transition-all text-inherit no-underline group">
+              <a href="/pricing" class="flex items-start gap-3 p-3 rounded-xl hover:bg-emerald-50/70 border border-transparent hover:border-emerald-200/60 transition-all text-inherit no-underline group">
                 <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
                 </div>
                 <div class="flex-1 min-w-0">
                   <div class="flex items-center justify-between gap-1 mb-0.5">
-                    <span class="text-sm font-bold text-gray-900 group-hover:text-emerald-700 transition-colors">Fake Online Shop Detector</span>
-                    <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full">2026 Guide</span>
+                    <span class="text-sm font-bold text-gray-900 group-hover:text-emerald-700 transition-colors">Total Tab &amp; RAM Tamer</span>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full">Included in Pro</span>
                   </div>
-                  <p class="text-xs text-gray-500 leading-snug">How SWEEPR warns you about suspicious scam shopping websites before you buy.</p>
+                  <p class="text-xs text-gray-500 leading-snug">Automatically hibernates inactive background tabs to reduce browser memory usage.</p>
                 </div>
               </a>
             </div>
@@ -99,9 +124,9 @@
         </div>
       </div>
     </div>
-    <div class="flex gap-2 md:gap-3 items-center">
+    <div class="flex gap-1.5 sm:gap-2 md:gap-3 items-center shrink-0">
       <div class="relative inline-block text-left" id="langDropdownContainer">
-        <button type="button" id="langDropdownBtn" class="btn btn-ghost text-sm flex items-center gap-1.5 px-2.5 py-1.5 cursor-pointer font-medium text-gray-700 hover:text-emerald-600 transition-colors" aria-expanded="false" aria-label="Select Language">
+        <button type="button" id="langDropdownBtn" class="btn btn-ghost text-sm flex items-center gap-1 sm:gap-1.5 !px-2 sm:!px-2.5 !h-9 sm:!h-11 cursor-pointer font-medium text-gray-700 hover:text-emerald-600 transition-colors" aria-expanded="false" aria-label="Select Language">
           <span class="text-base" id="currentLangFlag">🇬🇧</span>
           <span class="text-xs font-bold tracking-wide" id="currentLangCode">EN</span>
           <svg id="langDropdownChevron" class="w-3 h-3 text-gray-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
@@ -115,7 +140,7 @@
           </div>
         </div>
       </div>
-      <a rel="nofollow" href="/login" class="btn btn-ghost text-xs sm:text-sm !px-2.5 sm:!px-4">Login</a>
+      <a rel="nofollow" href="/login" class="btn btn-ghost text-xs sm:text-sm !px-2.5 sm:!px-4 !h-9 sm:!h-11">Login</a>
       <a href="/download?install=1" class="hidden md:inline-flex btn btn-go gap-2">
         <span>Add to Browser</span>
         <svg class="arrow-icon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
@@ -123,23 +148,28 @@
     </div>
   </nav>
 
-  <!-- Header -->
-  <header class="max-w-4xl mx-auto px-6 pt-14 pb-8 text-center">
-    <div class="badge mx-auto mb-4">Privacy-First Architecture • GDPR &amp; UK DPA Compliant</div>
-    <h1 class="text-3xl md:text-5xl font-extrabold text-gray-900 tracking-tight mb-4">
-      Privacy Policy &amp; <span class="gradient-text">Data Protection</span>
-    </h1>
-    <p class="text-gray-500 text-base md:text-lg max-w-2xl mx-auto">
-      Last Updated: November 2026 • SWEEPR Global Limited
-    </p>
-  </header>
+  <main class="flex-1 w-full min-w-0 pt-24 sm:pt-32 pb-16 px-4 sm:px-6 max-w-4xl mx-auto space-y-8">
+    <nav aria-label="Breadcrumb" class="flex flex-wrap items-center gap-1.5 text-xs text-gray-500">
+      <a href="/" class="text-emerald-700 hover:underline font-medium">Home</a>
+      <span aria-hidden="true" class="text-gray-400">/</span>
+      <span class="text-gray-700 font-semibold">Privacy Policy</span>
+    </nav>
 
-  <main class="max-w-4xl mx-auto px-6 pb-20 space-y-8">
+    <!-- Header -->
+    <header class="text-center space-y-4">
+      <div class="badge px-3.5 py-1.5 text-xs font-bold mx-auto">Privacy-First Architecture • GDPR &amp; UK DPA Compliant</div>
+      <h1 class="text-3xl md:text-5xl font-extrabold text-gray-900 tracking-tight">
+        Privacy Policy &amp; <span style="color: var(--accent);">Data Protection</span>
+      </h1>
+      <p class="text-gray-500 text-base md:text-lg max-w-2xl mx-auto">
+        Last Updated: November 2026 • SWEEPR Global Limited
+      </p>
+    </header>
 
     <!-- Zero-Knowledge Guarantee Box -->
-    <div class="holo-card p-6 md:p-8 bg-emerald-50/70 border border-emerald-200 flex flex-col md:flex-row items-start md:items-center gap-5">
-      <div class="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center text-2xl shrink-0 font-bold">
-        🔒
+    <div class="glass-card bg-emerald-50/70 border border-emerald-200 rounded-2xl p-6 sm:p-8 shadow-sm flex flex-col md:flex-row items-start md:items-center gap-5">
+      <div class="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center shrink-0">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
       </div>
       <div>
         <h2 class="text-lg font-extrabold text-gray-900">100% Local On-Device Blocking Guarantee</h2>
@@ -149,16 +179,16 @@
       </div>
     </div>
 
-    <div class="holo-card p-8 md:p-10 space-y-8 text-sm text-gray-600 leading-relaxed">
+    <div class="glass-card bg-white border border-gray-200 rounded-2xl shadow-sm p-6 sm:p-10 space-y-8 text-sm text-gray-600 leading-relaxed">
 
       <section id="user-data-collection">
         <h2 class="text-xl font-extrabold text-gray-900 mb-3">1. User Data We Collect (And What We Never Collect)</h2>
         <p class="mb-3">
-          <strong>Yes, we collect limited user data on our website and licensing servers.</strong> We practice strict data minimization and only collect the user data required to deliver your software license, authenticate your account, process payments, provide customer support, and measure aggregate website performance:
+          <strong>Installing and using the free SWEEPR Deepblock extension requires zero account, email address, or payment card.</strong> We practice strict data minimization and only collect limited user data on our website and licensing servers when you purchase a Pro subscription, sign into the Customer Portal, submit a support ticket, or browse <code class="text-emerald-700 font-semibold">sweeprdeepblock.com</code>:
         </p>
         <ul class="list-disc pl-6 space-y-2 text-gray-700">
-          <li><strong>Account, Licensing &amp; Authentication Data:</strong> When you purchase a Pro subscription, activate a trial, or sign in to the Customer Portal (<code class="text-emerald-700 font-semibold">/login</code>), we collect your email address, subscription plan tier, one-time passcode (OTP) login verification records, and a one-way cryptographic hardware/device identifier hash (used solely to enforce your 5-device seat limit).</li>
-          <li><strong>Billing, Currency &amp; Payment Data:</strong> When you check out, we collect your billing country, currency preference, and transaction status. All credit/debit card, Apple Pay, Google Pay, Link, and PayPal payment details are collected and processed directly by <strong>Stripe, Inc.</strong> or <strong>PayPal</strong> under PCI-DSS Level 1 encryption—SWEEPR never sees or stores your raw card number or CVV.</li>
+          <li><strong>Account, Licensing &amp; Authentication Data (Pro / Portal Only):</strong> Only when you purchase a Pro subscription, activate a Pro trial, or sign in to the Customer Portal (<code class="text-emerald-700 font-semibold">/login</code>), we collect your email address, subscription plan tier, one-time passcode (OTP) login verification records, and a one-way cryptographic hardware/device identifier hash (used solely to enforce your 5-device seat limit).</li>
+          <li><strong>Billing, Currency &amp; Payment Data:</strong> When you check out, we collect your billing country, currency preference, and transaction status. All credit/debit card, Apple Pay, Google Pay, Link, Revolut Pay, Amazon Pay, and PayPal payment details are collected and processed directly by <strong>Stripe, Inc.</strong> or <strong>PayPal</strong> under PCI-DSS Level 1 encryption—SWEEPR never sees or stores your raw card number or CVV.</li>
           <li><strong>Website Analytics, Cookies &amp; Attribution Data:</strong> When you visit <code class="text-emerald-700 font-semibold">sweeprdeepblock.com</code>, we collect aggregate usage telemetry (pages visited, referral URLs, browser/OS type, approximate country derived from IP address, and ad-campaign conversion events) using first-party session storage and third-party analytics/attribution cookies disclosed in Section 4.</li>
           <li><strong>Customer Support &amp; Diagnostic Inquiries:</strong> When you contact us via our Support Center or email, we collect your name, email address, and the contents of your message so we can resolve your inquiry.</li>
           <li><strong>What Your Browser Extension Never Collects or Sends Us (No Browsing History Logged — Local-First Engine):</strong> The SWEEPR Deepblock browser extension never transmits the URLs you visit, domain names, webpage content, search engine queries, cookies, passwords, or private browsing data to our servers.</li>
@@ -195,13 +225,12 @@
       </section>
 
       <section id="ai-disclosure">
-        <h2 class="text-xl font-extrabold text-gray-900 mb-3">3. How We Use Artificial Intelligence (AI) &amp; Automated Heuristics</h2>
+        <h2 class="text-xl font-extrabold text-gray-900 mb-3">3. Automated Ad-Filter Engineering &amp; AI Privacy Guarantee</h2>
         <p class="mb-3">
-          <strong>Yes, we use Artificial Intelligence (AI) and machine-assisted heuristic systems</strong> across our threat-intelligence pipeline, in-browser protection modules, and customer operations:
+          <strong>We use automated filter-synthesis pipelines and internal support triage tools, with zero external AI training on customer data:</strong>
         </p>
         <ul class="list-disc pl-6 space-y-2 text-gray-700">
-          <li><strong>On-Device AI Slop &amp; Scam Store Detection:</strong> SWEEPR Deepblock uses AI-trained heuristic classifiers and pattern-scoring rules that execute <strong>100% locally inside your browser</strong> to detect and filter low-quality AI-generated content farms ("AI Slop") on search engines (Google, Bing, DuckDuckGo) and to flag fraudulent e-commerce scam stores and manipulated product reviews before you shop.</li>
-          <li><strong>Automated AI Ad-Filter Synthesis Pipeline:</strong> Our backend engineering pipeline uses automated headless browsers and AI-assisted DOM analysis across 1,000+ public websites daily to identify new ad-injection scripts, cookie consent walls, and tracking parameters. Those findings are compiled into static <code class="text-emerald-700 font-semibold">declarativeNetRequest</code> filter rules delivered to your extension.</li>
+          <li><strong>Automated Ad-Filter Synthesis Pipeline:</strong> Our backend engineering pipeline uses automated headless browsers across public websites to identify new ad-injection scripts, cookie consent walls, and tracking parameters. Those findings are compiled into static <code class="text-emerald-700 font-semibold">declarativeNetRequest</code> and OTA delta filter rules delivered to your extension.</li>
           <li><strong>AI-Assisted Customer Support &amp; Diagnostics:</strong> We may use AI-assisted tools internally to help triage support inquiries, summarize technical bug reports, and improve documentation accuracy.</li>
           <li><strong>Strict AI Privacy Guarantee (Zero AI Training on User Data):</strong> We never transmit your browsing history, webpage DOM contents, search queries, or personal data to external AI providers, and we <strong>never</strong> use customer personal data to train or fine-tune external AI or large language models (LLMs).</li>
         </ul>
@@ -214,7 +243,7 @@
         </p>
         <ul class="list-disc pl-6 space-y-2.5 text-gray-700">
           <li><strong>Google LLC (Google Analytics 4 — Measurement ID <code class="text-xs">G-01MNBQSL9K</code>):</strong> Used on <code class="text-emerald-700 font-semibold">sweeprdeepblock.com</code> to collect aggregate website traffic, page views, session duration, and checkout conversion telemetry. You can opt out at any time using the Google Analytics Opt-out Browser Add-on or by blocking analytics scripts in your browser.</li>
-          <li><strong>Stripe, Inc. &amp; PayPal (Europe) S.à r.l. et Cie, S.C.A.:</strong> Third-party PCI-DSS Level 1 payment processors that collect and process your payment card details, Apple Pay, Google Pay, Link, PayPal account details, billing address, and fraud-prevention signals during checkout.</li>
+          <li><strong>Stripe, Inc. &amp; PayPal (Europe) S.à r.l. et Cie, S.C.A.:</strong> Third-party PCI-DSS Level 1 payment processors that collect and process your payment card details, Apple Pay, Google Pay, Link, Revolut Pay, Amazon Pay, PayPal account details, billing address, and fraud-prevention signals during checkout.</li>
           <li><strong>Advertising &amp; Conversion Attribution Providers (Marketing Website Only):</strong> To measure the performance of our own paid advertising campaigns on our public website and checkout pages, we may load conversion attribution pixels from <strong>Microsoft Corporation (Microsoft Bing Ads — <code class="text-xs">bat.bing.com</code>)</strong>, <strong>Reddit, Inc. (<code class="text-xs">redditstatic.com</code> / <code class="text-xs">alb.reddit.com</code>)</strong>, <strong>Meta Platforms, Inc. (<code class="text-xs">connect.facebook.net</code>)</strong>, and <strong>OpenAI, L.L.C. (<code class="text-xs">ads.openai.com</code>)</strong>. These scripts operate strictly on <code class="text-emerald-700 font-semibold">sweeprdeepblock.com</code> and never run inside the browser extension.</li>
           <li><strong>Cloudflare, Inc. &amp; Railway Corp.:</strong> Cloud infrastructure, Content Delivery Network (CDN), DDoS mitigation, TLS 1.3 termination, and backend hosting providers that process incoming HTTP request headers and IP addresses to serve our website and licensing API securely.</li>
           <li><strong>Country.is (<code class="text-xs">api.country.is</code>) &amp; GeoJS (<code class="text-xs">get.geojs.io</code>):</strong> Privacy-preserving IP-to-country lookup endpoints used on our pricing and checkout pages solely to display your local currency (<code class="text-xs">GBP</code>, <code class="text-xs">USD</code>, or <code class="text-xs">EUR</code>).</li>
@@ -227,13 +256,15 @@
       <section id="extension-permissions">
         <h2 class="text-xl font-extrabold text-gray-900 mb-3">5. Browser Extension Permissions &amp; Chrome Web Store Limited Use</h2>
         <p class="mb-3">
-          Every permission requested in our browser extension manifest (<code class="text-emerald-700 font-semibold">manifest.json</code>) is strictly scoped to a single user-facing privacy, adblocking, or performance feature:
+          Every permission requested in our browser extension manifest (<code class="text-emerald-700 font-semibold">manifest.json</code> v1.3.1) is strictly scoped to a single user-facing privacy, adblocking, or tab-hibernation feature:
         </p>
         <ul class="list-disc pl-6 space-y-2 text-gray-700">
-          <li><strong><code class="text-emerald-700 font-semibold">declarativeNetRequest</code> &amp; <code class="text-emerald-700 font-semibold">declarativeNetRequestWithHostAccess</code>:</strong> Used to block ad networks, third-party trackers, crypto-mining scripts, and URL tracking parameters (<code class="text-xs">utm_*</code>, <code class="text-xs">fbclid</code>, <code class="text-xs">gclid</code>) at the browser network layer without reading page content.</li>
-          <li><strong><code class="text-emerald-700 font-semibold">storage</code>:</strong> Stores your site allowlist, blocked-tracker counters, and license key locally on your device.</li>
-          <li><strong><code class="text-emerald-700 font-semibold">tabs</code> &amp; <code class="text-emerald-700 font-semibold">system.memory</code>:</strong> Used by the <em>Total Tab &amp; RAM Tamer</em> module to display your live browser memory gauge and automatically hibernate idle background tabs while skipping active audio, video, or unsaved forms.</li>
-          <li><strong><code class="text-emerald-700 font-semibold">host_permissions (&lt;all_urls&gt;)</code>:</strong> Required so local content scripts can automatically click "Reject All" on cookie pop-ups, hide AI spam search results, and warn you about fake scam online shops.</li>
+          <li><strong><code class="text-emerald-700 font-semibold">declarativeNetRequest</code> &amp; <code class="text-emerald-700 font-semibold">declarativeNetRequestWithHostAccess</code>:</strong> Used to execute 283 static C++ rules and up to 100 OTA dynamic rules to block ad networks, third-party trackers, crypto-mining scripts, and 20 URL tracking parameters (<code class="text-xs">utm_*</code>, <code class="font-mono text-xs">fbclid</code>, <code class="font-mono text-xs">gclid</code>) at the browser network layer without reading page content.</li>
+          <li><strong><code class="text-emerald-700 font-semibold">storage</code>:</strong> Stores your site allowlist, local block counters, zapped element selectors, and signed Ed25519 license token locally on your device.</li>
+          <li><strong><code class="text-emerald-700 font-semibold">tabs</code> &amp; <code class="text-emerald-700 font-semibold">alarms</code>:</strong> Used by the <em>Total Tab &amp; RAM Tamer</em> module (via <code class="text-xs">chrome.tabs.discard</code>) to monitor idle tab duration and hibernate inactive background tabs after 10 minutes while skipping active, audio, pinned, or form tabs, plus scheduling periodic 12-hour license/filter refreshes.</li>
+          <li><strong><code class="text-emerald-700 font-semibold">scripting</code> &amp; <code class="text-emerald-700 font-semibold">contextMenus</code>:</strong> Injects local cosmetic/cookie-banner auto-reject and anti-adblock stealth scripts and enables right-click Element Zapper and per-site pause controls.</li>
+          <li><strong><code class="text-emerald-700 font-semibold">clipboardRead</code> (<code class="text-xs">optional_permissions</code>):</strong> Requested optionally only if you click to paste a <code class="text-xs">SWEEPR-DB-...</code> license key inside the extension popup.</li>
+          <li><strong><code class="text-emerald-700 font-semibold">host_permissions (&lt;all_urls&gt;)</code>:</strong> Required so local <code class="text-xs">declarativeNetRequest</code> rules and content scripts can block ads and trackers, automatically click "Reject All" on GDPR cookie pop-ups, apply Anti-Adblock stealth, run the Element Zapper, and strip URL tracking parameters locally across websites you visit—without ever logging or uploading your browsing history.</li>
         </ul>
         <p class="mt-3">
           <strong>Chrome Web Store Limited Use Disclosure:</strong> The use of information received from Google APIs and Chrome Extension APIs adheres strictly to the <em>Chrome Web Store User Data Policy</em>, including the <em>Limited Use</em> requirements. We never transfer, sell, or use extension data for personalized advertising or creditworthiness lending.
@@ -266,35 +297,168 @@
   </main>
 
   <!-- Footer -->
-  <footer class="border-t border-gray-200 bg-white/60 py-12 px-6">
-    <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-      <div class="flex items-center gap-3">
-        <div class="logo-box w-8 h-8"></div>
-        <span class="font-bold text-gray-900">SWEEPR Deepblock</span>
+  <footer class="mt-auto pt-8 pb-24 md:pb-8 text-center text-gray-500 text-xs sm:text-sm border-t border-gray-200/70">
+    <div class="max-w-5xl mx-auto px-4">
+      <div class="flex flex-wrap justify-center gap-x-6 gap-y-2 mb-3 font-medium text-gray-600">
+        <a href="/pricing" class="hover:text-emerald-600 transition-colors">Pricing</a>
+        <a href="/vs" class="hover:text-emerald-600 transition-colors">Comparisons</a>
+        <a href="/solutions" class="hover:text-emerald-600 transition-colors">Solutions</a>
+        <a href="/setup" class="hover:text-emerald-600 transition-colors">Setups</a>
+        <a href="/guides" class="hover:text-emerald-600 transition-colors">Guides</a>
+        <a href="/tools" class="hover:text-emerald-600 transition-colors">Diagnostic Tools</a>
+        <a href="/test-lab" class="hover:text-emerald-600 transition-colors">Free Adblock Test Lab</a>
+        <a href="/benchmarks" class="hover:text-emerald-600 transition-colors">Benchmarks</a>
+        <a href="/glossary" class="hover:text-emerald-600 transition-colors">Glossary</a>
+        <a href="/vs/total-adblock" class="hover:text-emerald-600 transition-colors">vs Total Adblock</a>
+        <a href="/download" class="hover:text-emerald-600 transition-colors">Browser Extension</a>
+        <a href="/de" hreflang="de" class="hover:text-emerald-600 transition-colors">Deutsch (DE)</a>
+        <a href="/fr" hreflang="fr" class="hover:text-emerald-600 transition-colors">Français (FR)</a>
+        <a href="/es" hreflang="es" class="hover:text-emerald-600 transition-colors">Español (ES)</a>
+        <a rel="nofollow" href="/login" class="hover:text-emerald-600 transition-colors">Customer Portal</a>
+        <a href="/support" class="hover:text-emerald-600 transition-colors">Support &amp; Help</a>
+        <a href="/privacy" class="hover:text-emerald-600 transition-colors">Privacy Policy</a>
+        <a href="/terms" class="hover:text-emerald-600 transition-colors">Terms of Service</a>
+        <a href="/refund" class="hover:text-emerald-600 transition-colors">Refund Policy</a>
       </div>
-      <div class="flex flex-wrap justify-center gap-6 text-xs font-medium text-gray-600">
-        <a href="/" class="hover:text-gray-900 transition">Overview</a>
-        <a href="/pricing" class="hover:text-gray-900 transition">Pricing</a>
-        <a href="/vs" class="hover:text-gray-900 transition">Comparisons</a>
-        <a href="/solutions" class="hover:text-gray-900 transition">Solutions</a>
-        <a href="/setup" class="hover:text-gray-900 transition">Setups</a>
-        <a href="/guides" class="hover:text-gray-900 transition">Guides</a>
-        <a href="/site" class="hover:text-gray-900 transition">Site Reports</a>
-        <a href="/tools" class="hover:text-gray-900 transition">Diagnostic Tools</a>
-        <a href="/test-lab" class="hover:text-gray-900 transition">8/8 Test Lab</a>
-        <a href="/download" class="hover:text-gray-900 transition">Download</a>
-        <a href="/de" hreflang="de" class="hover:text-gray-900 transition">DE</a>
-        <a href="/fr" hreflang="fr" class="hover:text-gray-900 transition">FR</a>
-        <a href="/es" hreflang="es" class="hover:text-gray-900 transition">ES</a>
-        <a rel="nofollow" href="/login" class="hover:text-gray-900 transition">Customer Portal</a>
-        <a href="/refund" class="hover:text-gray-900 transition">Refund Policy</a>
-        <a href="/terms" class="hover:text-gray-900 transition">Terms of Service</a>
-        <a href="/privacy" class="text-emerald-600 font-bold">Privacy Policy</a>
-        <a href="/support" class="hover:text-gray-900 transition">Support &amp; Help</a>
-      </div>
-      <p class="text-xs text-gray-500">© 2026 SWEEPR Global Limited. All rights reserved.</p>
+
+      <details class="group text-center">
+        <summary class="inline-flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-xs text-gray-400 hover:text-gray-600 cursor-pointer list-none select-none py-1">
+          <span>&copy; 2026 SWEEPR Global Limited. All rights reserved.</span>
+          <span aria-hidden="true">&middot;</span>
+          <span class="font-semibold text-gray-500 group-hover:text-emerald-700 inline-flex items-center gap-1 transition-colors">
+            <span>All 95 Setup Guides, Comparisons &amp; Tools</span>
+            <span class="text-emerald-600 transition-transform group-open:rotate-180">▾</span>
+          </span>
+        </summary>
+        <div class="mt-4 p-5 rounded-2xl border border-gray-200/80 bg-white text-left grid grid-cols-2 sm:grid-cols-4 gap-6 text-xs text-gray-500 shadow-xs">
+          <div>
+            <div class="font-bold text-gray-800 uppercase tracking-wider mb-2 text-[11px]">Setup Guides &amp; Comparisons</div>
+            <ul class="space-y-1.5">
+              <li><a href="/setup/arc-browser-windows-mac" class="hover:text-emerald-600 transition-colors">Arc Browser Ad Blocker (Win &amp; Mac)</a></li>
+              <li><a href="/setup/brave-browser-deepstealth" class="hover:text-emerald-600 transition-colors">Brave Browser MV3 Setup</a></li>
+              <li><a href="/setup/brave-macos-apple-silicon" class="hover:text-emerald-600 transition-colors">Brave Mac (Apple Silicon) Setup</a></li>
+              <li><a href="/setup/chromium-linux-ubuntu" class="hover:text-emerald-600 transition-colors">Chromium Linux &amp; Ubuntu Setup</a></li>
+              <li><a href="/setup/floorp-browser-firefox-fork" class="hover:text-emerald-600 transition-colors">Floorp AdBlock &amp; RAM Setup</a></li>
+              <li><a href="/setup/google-chrome-manifest-v3" class="hover:text-emerald-600 transition-colors">Google Chrome Manifest V3 Setup</a></li>
+              <li><a href="/setup/kiwi-browser-android" class="hover:text-emerald-600 transition-colors">Kiwi Browser Android Archive &amp; Firefox Guide</a></li>
+              <li><a href="/setup/librewolf-hardened-firefox" class="hover:text-emerald-600 transition-colors">LibreWolf Hardened Firefox Setup</a></li>
+              <li><a href="/setup/microsoft-edge-windows-11" class="hover:text-emerald-600 transition-colors">Microsoft Edge Windows 11 Setup</a></li>
+              <li><a href="/setup/mozilla-firefox-desktop-android" class="hover:text-emerald-600 transition-colors">Mozilla Firefox (Desktop &amp; Android)</a></li>
+              <li><a href="/setup/opera-gx-gaming-browser" class="hover:text-emerald-600 transition-colors">Opera &amp; Opera GX Setup</a></li>
+              <li><a href="/setup/orion-browser-macos-ios" class="hover:text-emerald-600 transition-colors">Orion Browser Ad Blocker (macOS)</a></li>
+              <li><a href="/setup/thorium-chromium-browser" class="hover:text-emerald-600 transition-colors">Thorium AdBlock Setup</a></li>
+              <li><a href="/setup/ungoogled-chromium-mv3" class="hover:text-emerald-600 transition-colors">Ungoogled Chromium MV3 Setup</a></li>
+              <li><a href="/setup/vivaldi-power-user-browser" class="hover:text-emerald-600 transition-colors">Vivaldi Browser Setup</a></li>
+              <li><a href="/setup/waterfox-privacy-browser" class="hover:text-emerald-600 transition-colors">Waterfox Privacy Browser Setup</a></li>
+              <li><a href="/setup/zen-browser-privacy-tabs" class="hover:text-emerald-600 transition-colors">Zen Browser Privacy &amp; RAM Setup</a></li>
+              <li><a href="/vs/total-adblock" class="hover:text-emerald-600 transition-colors">vs Total Adblock (2026)</a></li>
+              <li><a href="/vs/ublock-origin-lite" class="hover:text-emerald-600 transition-colors">vs uBlock Origin Lite (MV3)</a></li>
+              <li><a href="/vs/adguard-extension" class="hover:text-emerald-600 transition-colors">vs AdGuard Extension</a></li>
+              <li><a href="/vs/adblock-plus" class="hover:text-emerald-600 transition-colors">vs AdBlock Plus (ABP)</a></li>
+              <li><a href="/vs/ghostery-privacy-ad-blocker" class="hover:text-emerald-600 transition-colors">vs Ghostery Tracker Blocker</a></li>
+              <li><a href="/vs/pie-adblock" class="hover:text-emerald-600 transition-colors">vs Pie Adblock</a></li>
+              <li><a href="/vs/brave-shields" class="hover:text-emerald-600 transition-colors">vs Brave Built-in Shields</a></li>
+              <li><a href="/vs/windscribe-robert-adblock" class="hover:text-emerald-600 transition-colors">vs Windscribe R.O.B.E.R.T.</a></li>
+            </ul>
+          </div>
+          <div>
+            <div class="font-bold text-gray-800 uppercase tracking-wider mb-2 text-[11px]">Platform Ad Solutions</div>
+            <ul class="space-y-1.5">
+              <li><a href="/solutions/anilist-myanimelist-tracker-block-video-ads" class="hover:text-emerald-600 transition-colors">AniList &amp; MyAnimeList Ad Blocker</a></li>
+              <li><a href="/solutions/anime-streaming-portals-stop-malvertising-popunders" class="hover:text-emerald-600 transition-colors">Anime Portals Pop-Under Blocker</a></li>
+              <li><a href="/solutions/automotive-car-classifieds-block-video-ads" class="hover:text-emerald-600 transition-colors">Car Classifieds Video Ad Blocker</a></li>
+              <li><a href="/solutions/bilibili-anime-video-block-video-ads" class="hover:text-emerald-600 transition-colors">Bilibili Web Video Ad Blocker</a></li>
+              <li><a href="/solutions/bing-copilot-search-reduce-browser-ram-usage" class="hover:text-emerald-600 transition-colors">Bing Search Ad &amp; RAM Optimization</a></li>
+              <li><a href="/solutions/coinmarketcap-crypto-prices-stop-malvertising-popunders" class="hover:text-emerald-600 transition-colors">CoinMarketCap Pop-Under Shield</a></li>
+              <li><a href="/solutions/crunchyroll-anime-streams-block-video-ads" class="hover:text-emerald-600 transition-colors">Crunchyroll Web Ad Blocker</a></li>
+              <li><a href="/solutions/curseforge-gaming-mods-stop-malvertising-popunders" class="hover:text-emerald-600 transition-colors">CurseForge Mods Pop-Under Shield</a></li>
+              <li><a href="/solutions/dailymotion-vimeo-embeds-block-video-ads" class="hover:text-emerald-600 transition-colors">Dailymotion &amp; Vimeo Embed Ad Blocker</a></li>
+              <li><a href="/solutions/dex-token-screeners-block-video-ads" class="hover:text-emerald-600 transition-colors">DEXScreener Ad &amp; Banner Blocker</a></li>
+              <li><a href="/solutions/espn-sports-streaming-block-video-ads" class="hover:text-emerald-600 transition-colors">ESPN Sports Web Ad Blocker</a></li>
+              <li><a href="/solutions/f1-motorsport-news-block-video-ads" class="hover:text-emerald-600 transition-colors">Motorsport News Video Ad Blocker</a></li>
+              <li><a href="/solutions/fandom-game-wikis-reduce-browser-ram-usage" class="hover:text-emerald-600 transition-colors">Fandom Wikis RAM &amp; Ad Blocker</a></li>
+              <li><a href="/solutions/fextralife-game-wikis-stop-malvertising-popunders" class="hover:text-emerald-600 transition-colors">Fextralife Wikis Embed &amp; Pop-Under Shield</a></li>
+              <li><a href="/solutions/geeksforgeeks-dev-portals-block-video-ads" class="hover:text-emerald-600 transition-colors">GeeksforGeeks Ad &amp; Popup Blocker</a></li>
+              <li><a href="/solutions/github-copilot-dev-portals-block-video-ads" class="hover:text-emerald-600 transition-colors">Developer Portals Ad &amp; Tracker Shield</a></li>
+              <li><a href="/solutions/imdb-movie-database-block-video-ads" class="hover:text-emerald-600 transition-colors">IMDb Video &amp; Banner Ad Blocker</a></li>
+              <li><a href="/solutions/linkedin-feed-ads-block-video-ads" class="hover:text-emerald-600 transition-colors">LinkedIn Promoted Feed Ad Blocker</a></li>
+              <li><a href="/solutions/lyrics-and-chords-tabs-block-video-ads" class="hover:text-emerald-600 transition-colors">Lyrics &amp; Guitar Tabs Ad Blocker</a></li>
+              <li><a href="/solutions/manga-comic-readers-block-video-ads" class="hover:text-emerald-600 transition-colors">Manga Reader Sites Ad Blocker</a></li>
+            </ul>
+          </div>
+          <div>
+            <div class="font-bold text-gray-800 uppercase tracking-wider mb-2 text-[11px]">Streaming, Wikis &amp; Feeds</div>
+            <ul class="space-y-1.5">
+              <li><a href="/solutions/mangadex-web-reader-block-video-ads" class="hover:text-emerald-600 transition-colors">MangaDex Web Reader Clean Mode</a></li>
+              <li><a href="/solutions/nexus-mods-community-stop-malvertising-popunders" class="hover:text-emerald-600 transition-colors">Nexus Mods Pop-Under &amp; Banner Shield</a></li>
+              <li><a href="/solutions/online-chess-gaming-block-video-ads" class="hover:text-emerald-600 transition-colors">Online Chess Sites Ad Blocker</a></li>
+              <li><a href="/solutions/quora-digest-answers-stop-malvertising-popunders" class="hover:text-emerald-600 transition-colors">Quora Digest Popup &amp; Ad Blocker</a></li>
+              <li><a href="/solutions/roblox-web-community-filter-ai-slop-and-scams" class="hover:text-emerald-600 transition-colors">Roblox Web Ad &amp; Popup Shield</a></li>
+              <li><a href="/solutions/rumble-video-streams-block-video-ads" class="hover:text-emerald-600 transition-colors">Rumble Video Ad Blocker</a></li>
+              <li><a href="/solutions/smart-tv-web-browsers-block-video-ads" class="hover:text-emerald-600 transition-colors">Streaming Web Browsers Ad Blocker</a></li>
+              <li><a href="/solutions/soundcloud-audio-player-block-video-ads" class="hover:text-emerald-600 transition-colors">SoundCloud Web Ad Blocker</a></li>
+              <li><a href="/solutions/student-study-hubs-block-video-ads" class="hover:text-emerald-600 transition-colors">Student Study Hubs Ad Blocker</a></li>
+              <li><a href="/solutions/substack-newsletter-blogs-auto-reject-cookie-popups" class="hover:text-emerald-600 transition-colors">Substack Cookie Popup Auto-Reject</a></li>
+              <li><a href="/solutions/tech-gadget-review-blogs-auto-reject-cookie-popups" class="hover:text-emerald-600 transition-colors">Tech Review Sites Cookie Auto-Reject</a></li>
+              <li><a href="/solutions/threads-web-feed-stop-malvertising-popunders" class="hover:text-emerald-600 transition-colors">Threads Web Tracker &amp; Ad Shield</a></li>
+              <li><a href="/solutions/tiktok-web-reels-reduce-browser-ram-usage" class="hover:text-emerald-600 transition-colors">TikTok Web Ad &amp; RAM Optimization</a></li>
+              <li><a href="/solutions/tradingview-charts-web-reduce-browser-ram-usage" class="hover:text-emerald-600 transition-colors">TradingView Web Ad &amp; RAM Optimization</a></li>
+              <li><a href="/solutions/tumblr-blog-feeds-block-video-ads" class="hover:text-emerald-600 transition-colors">Tumblr Sponsored Post &amp; Ad Blocker</a></li>
+              <li><a href="/solutions/uk-news-websites-auto-reject-cookie-popups" class="hover:text-emerald-600 transition-colors">UK News Cookie Banner Auto-Reject</a></li>
+              <li><a href="/solutions/webtoon-manhwa-readers-block-video-ads" class="hover:text-emerald-600 transition-colors">Webtoon &amp; Manhwa Ad Blocker</a></li>
+              <li><a href="/solutions/x-twitter-feed-ads-block-video-ads" class="hover:text-emerald-600 transition-colors">X (Twitter) Feed Ad Blocker</a></li>
+            </ul>
+          </div>
+          <div>
+            <div class="font-bold text-gray-800 uppercase tracking-wider mb-2 text-[11px]">Guides, Tools &amp; Core</div>
+            <ul class="space-y-1.5">
+              <li><a href="/guides/how-to-automatically-reject-cookie-banners-uk" class="hover:text-emerald-600 transition-colors">Auto-Reject Cookie Banners (UK &amp; EU)</a></li>
+              <li><a href="/guides/how-to-block-reddit-sponsored-promoted-posts-in-feed" class="hover:text-emerald-600 transition-colors">Block Reddit Promoted Posts</a></li>
+              <li><a href="/guides/how-to-block-sponsored-ads-on-google-search-2026" class="hover:text-emerald-600 transition-colors">Block Google Sponsored Search Ads</a></li>
+              <li><a href="/guides/how-to-block-sponsored-ads-on-yahoo-finance" class="hover:text-emerald-600 transition-colors">Block Yahoo Finance Video Ads</a></li>
+              <li><a href="/guides/how-to-block-sponsored-posts-and-crypto-bots-on-x-twitter" class="hover:text-emerald-600 transition-colors">Block Promoted Posts on X / Twitter</a></li>
+              <li><a href="/guides/how-to-block-tab-freeze-crypto-miner-scripts" class="hover:text-emerald-600 transition-colors">Block In-Browser Crypto Miners</a></li>
+              <li><a href="/guides/how-to-block-twitch-midroll-commercials-without-black-screen" class="hover:text-emerald-600 transition-colors">Block Twitch Mid-Roll Ads Cleanly</a></li>
+              <li><a href="/guides/how-to-block-youtube-ads-chrome-manifest-v3-2026" class="hover:text-emerald-600 transition-colors">Block YouTube Ads on Chrome MV3</a></li>
+              <li><a href="/guides/how-to-bypass-anti-adblock-inspect-element-blockers" class="hover:text-emerald-600 transition-colors">Handle Anti-Adblock Overlays</a></li>
+              <li><a href="/guides/how-to-fix-high-cpu-usage-from-youtube-anti-adblock" class="hover:text-emerald-600 transition-colors">Fix YouTube Anti-Adblock CPU Lag</a></li>
+              <li><a href="/guides/how-to-fix-high-ram-usage-on-vivaldi-browser" class="hover:text-emerald-600 transition-colors">Fix High RAM Usage on Vivaldi</a></li>
+              <li><a href="/guides/how-to-reduce-browser-ram-speed-up-slow-tabs" class="hover:text-emerald-600 transition-colors">Reduce Browser RAM &amp; Speed Up Tabs</a></li>
+              <li><a href="/guides/how-to-stop-facebook-meta-pixel-tracking" class="hover:text-emerald-600 transition-colors">Block Meta Pixel Tracking Beacons</a></li>
+              <li><a href="/guides/how-to-stop-fake-robot-captcha-verification-popups" class="hover:text-emerald-600 transition-colors">Stop Fake Robot Captcha Popups</a></li>
+              <li><a href="/guides/how-to-stop-malvertising-popunders-and-redirects" class="hover:text-emerald-600 transition-colors">Stop Malvertising Popunders &amp; Redirects</a></li>
+              <li><a href="/guides/how-to-stop-temu-shein-scam-popups-and-tracking" class="hover:text-emerald-600 transition-colors">Stop Temu &amp; Shein Popups &amp; Trackers</a></li>
+              <li><a href="/guides/strip-utm-fbclid-gclid-tracking-links" class="hover:text-emerald-600 transition-colors">Strip UTM, fbclid &amp; gclid Trackers</a></li>
+              <li><a href="/tools/browser-ram-calculator" class="hover:text-emerald-600 transition-colors">Browser RAM &amp; Tab Bloat Calculator</a></li>
+              <li><a href="/" class="hover:text-emerald-600 transition-colors">SWEEPR Deepblock Home</a></li>
+              <li><a href="/download" class="hover:text-emerald-600 transition-colors">Browser Extension Downloads</a></li>
+              <li><a href="/pricing" class="hover:text-emerald-600 transition-colors">Pricing &amp; Pro Plans</a></li>
+              <li><a href="/benchmarks" class="hover:text-emerald-600 transition-colors">v1.3.1 MV3 Benchmarks</a></li>
+              <li><a href="/test-lab" class="hover:text-emerald-600 transition-colors">Free Adblock Test Lab</a></li>
+              <li><a href="/tools" class="hover:text-emerald-600 transition-colors">Free Browser Privacy &amp; RAM Tools</a></li>
+              <li><a href="/glossary" class="hover:text-emerald-600 transition-colors">Manifest V3 &amp; Privacy Glossary</a></li>
+              <li><a href="/support" class="hover:text-emerald-600 transition-colors">Support &amp; 1-Click Cancellation</a></li>
+              <li><a href="/privacy" class="hover:text-emerald-600 transition-colors">Privacy Policy</a></li>
+              <li><a href="/terms" class="hover:text-emerald-600 transition-colors">Terms of Service</a></li>
+              <li><a href="/refund" class="hover:text-emerald-600 transition-colors">14-Day Refund Policy</a></li>
+              <li><a href="/de" class="hover:text-emerald-600 transition-colors">Deutsch (DE) Hub</a></li>
+              <li><a href="/fr" class="hover:text-emerald-600 transition-colors">Français (FR) Hub</a></li>
+              <li><a href="/es" class="hover:text-emerald-600 transition-colors">Español (ES) Hub</a></li>
+            </ul>
+          </div>
+        </div>
+      </details>
     </div>
   </footer>
-
+  <div class="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-lg border-t border-gray-200/90 px-4 py-2.5 flex items-center justify-between gap-3 md:hidden shadow-2xl" style="padding-bottom: max(0.625rem, env(safe-area-inset-bottom));">
+    <div class="min-w-0">
+      <div class="text-xs font-extrabold text-gray-900 truncate">SWEEPR Deepblock</div>
+      <div class="text-[11px] font-semibold text-emerald-700 truncate">14-Day Money-Back Guarantee</div>
+    </div>
+    <a href="/download?install=1" id="mobileStickyDownloadBtn" class="btn btn-go !h-11 min-h-[44px] !px-4 !rounded-xl text-xs gap-1.5 shrink-0">
+      <span>Install Now</span>
+      <svg class="arrow-icon w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+    </a>
+  </div>
 </body>
 </html>

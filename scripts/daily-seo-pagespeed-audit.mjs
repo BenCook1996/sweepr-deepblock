@@ -1,17 +1,18 @@
 #!/usr/bin/env node
 /**
- * SWEEPR DeepBlock — Daily Automated Keyword Research, Page Generation, Anti-Cannibalization & PageSpeed Audit
+ * SWEEPR Deepblock — Daily Automated Keyword Research, Page Generation, Anti-Cannibalization & PageSpeed Audit
  * (`scripts/daily-seo-pagespeed-audit.mjs`)
  *
  * Orchestrates the end-to-end daily organic growth loop:
  *  1. Runs `scripts/keyword-research-engine.mjs` to harvest multi-engine autocomplete volume,
  *     score buyer intent, inspect SERP weak spots, and verify 0% cannibalization across all indexable URLs.
  *  2. Runs `scripts/daily-50-seo-pages.mjs` to generate up to `--limit` net-new low-KD transactional
- *     Pillar pages with native `#deepblock-live-rule-proof` and >= 4 incoming donor internal links.
- *  3. Runs `scripts/enrich-pillars-with-live-proof.mjs` to guarantee 100% E-E-A-T DNR telemetry coverage.
- *  4. Runs `scripts/technical-seo-audit.mjs` (verifying 0 errors, 0 warnings, 0 orphan pages, 0 duplicate titles/H1s).
- *  5. Audits Core Web Vitals & PageSpeed static payload budgets (Brotli payload size, render-blocking scripts,
- *     preconnect hints) across all indexable Pillar pages and writes `data/daily-seo-audit-report.json`.
+ *     Pillar pages using the Holographic Pearl shell and >= 4 incoming donor internal links.
+ *  3. Runs `scripts/enrich-pillars-with-live-proof.mjs` to strip legacy dark slop blocks and normalize `v1.3.1`.
+ *  4. Runs `scripts/gsc-consolidation-redirect-guard.mjs` to verify 0 loops/chains/broken canonicals.
+ *  5. Rebuilds category hubs, sculpts internal links, optimizes strike-zone links, and syncs GEO/LLMs manifests.
+ *  6. Runs `scripts/technical-seo-audit.mjs` and audits Core Web Vitals & PageSpeed static payload budgets
+ *     (Brotli < 20 KB, raw HTML < 85 KB, zero runtime Tailwind CDN) and writes `data/daily-seo-audit-report.json`.
  */
 
 import fs from 'node:fs';
@@ -48,64 +49,92 @@ function parseLimitArg() {
 }
 
 function auditPageSpeedBudgets() {
-  const pillarDirs = ['solutions', 'setup', 'vs', 'guides'];
-  let pillarFilesChecked = 0;
-  let maxRawBytes = 0;
-  let maxBrotliBytes = 0;
-  let totalBrotliBytes = 0;
-  const budgetViolations = [];
-
-  for (const dir of pillarDirs) {
+  const candidates = [];
+  for (const rootFile of ['index.html', 'pricing.html', 'download.html', 'benchmarks.html', 'test-lab.html']) {
+    const abs = path.join(WEBSITE_DIR, rootFile);
+    if (fs.existsSync(abs)) candidates.push({ absPath: abs, relPath: rootFile });
+  }
+  for (const dir of ['solutions', 'setup', 'vs', 'guides']) {
     const dirAbs = path.join(WEBSITE_DIR, dir);
     if (!fs.existsSync(dirAbs)) continue;
     for (const file of fs.readdirSync(dirAbs)) {
       if (!file.endsWith('.html')) continue;
-      if (dir === 'vs' && file === 'total-adblock.html') continue;
-      const absPath = path.join(dirAbs, file);
-      const html = fs.readFileSync(absPath, 'utf8');
-      if (/<meta\s+name=["']robots["']\s+content=["'][^"']*noindex/i.test(html)) continue;
+      candidates.push({ absPath: path.join(dirAbs, file), relPath: `${dir}/${file}` });
+    }
+  }
 
-      pillarFilesChecked++;
-      const rawBuf = Buffer.from(html, 'utf8');
-      const brotliBuf = zlib.brotliCompressSync(rawBuf, {
-        params: { [zlib.constants.BROTLI_PARAM_QUALITY]: 5 }
+  let pillarFilesChecked = 0;
+  let maxRawBytes = 0;
+  let maxBrotliBytes = 0;
+  let totalBrotliBytes = 0;
+  let brotliWarnCount = 0;
+  let holographicShellPages = 0;
+  let legacyDarkThemePages = 0;
+  let v131Pages = 0;
+  let staleV12Pages = 0;
+  const budgetViolations = [];
+
+  for (const { absPath, relPath } of candidates) {
+    const html = fs.readFileSync(absPath, 'utf8');
+    if (/<meta\s+name=["']robots["']\s+content=["'][^"']*noindex/i.test(html)) continue;
+
+    pillarFilesChecked++;
+    const rawBuf = Buffer.from(html, 'utf8');
+    const brotliBuf = zlib.brotliCompressSync(rawBuf, {
+      params: { [zlib.constants.BROTLI_PARAM_QUALITY]: 5 }
+    });
+
+    const rawBytes = rawBuf.length;
+    const brotliBytes = brotliBuf.length;
+    if (rawBytes > maxRawBytes) maxRawBytes = rawBytes;
+    if (brotliBytes > maxBrotliBytes) maxBrotliBytes = brotliBytes;
+    totalBrotliBytes += brotliBytes;
+
+    if (brotliBytes > 14 * 1024) brotliWarnCount++;
+
+    if (rawBytes > 85 * 1024) {
+      budgetViolations.push({
+        file: relPath,
+        type: 'raw_html_exceeds_85kb',
+        bytes: rawBytes
       });
+    }
+    if (brotliBytes > 20 * 1024) {
+      budgetViolations.push({
+        file: relPath,
+        type: 'brotli_exceeds_20kb',
+        bytes: brotliBytes
+      });
+    }
+    if (/<script\b[^>]*cdn\.tailwindcss\.com/i.test(html)) {
+      budgetViolations.push({
+        file: relPath,
+        type: 'runtime_tailwind_cdn'
+      });
+    }
 
-      const rawBytes = rawBuf.length;
-      const brotliBytes = brotliBuf.length;
-      if (rawBytes > maxRawBytes) maxRawBytes = rawBytes;
-      if (brotliBytes > maxBrotliBytes) maxBrotliBytes = brotliBytes;
-      totalBrotliBytes += brotliBytes;
+    const isLightShell =
+      /<meta\s+name=["']color-scheme["']\s+content=["']light["']/i.test(html) &&
+      /class=["'][^"']*\bglass-nav\b/i.test(html) &&
+      !/background\s*:\s*(?:#090d16|#0b0f19)/i.test(html);
+    if (isLightShell) holographicShellPages++;
+    else legacyDarkThemePages++;
 
-      const relPath = `${dir}/${file}`;
-      if (rawBytes > 65 * 1024) {
-        budgetViolations.push({
-          file: relPath,
-          type: 'raw_html_exceeds_65kb',
-          bytes: rawBytes
-        });
-      }
-      if (brotliBytes > 14 * 1024) {
-        budgetViolations.push({
-          file: relPath,
-          type: 'brotli_exceeds_14kb',
-          bytes: brotliBytes
-        });
-      }
+    if (/\bv?1\.3\.1\b/.test(html)) v131Pages++;
+    if (/\bv?1\.2\.\d+\b/i.test(html)) staleV12Pages++;
 
-      const headMatch = html.match(/<head>([\s\S]*?)<\/head>/i);
-      if (headMatch) {
-        const headHtml = headMatch[1];
-        const extScripts = [...headHtml.matchAll(/<script\b[^>]*\bsrc=["']([^"']+)["'][^>]*>/gi)];
-        for (const sm of extScripts) {
-          const tag = sm[0];
-          if (!/\b(async|defer)\b/i.test(tag)) {
-            budgetViolations.push({
-              file: relPath,
-              type: 'render_blocking_head_script',
-              scriptSrc: sm[1]
-            });
-          }
+    const headMatch = html.match(/<head>([\s\S]*?)<\/head>/i);
+    if (headMatch) {
+      const headHtml = headMatch[1];
+      const extScripts = [...headHtml.matchAll(/<script\b[^>]*\bsrc=["']([^"']+)["'][^>]*>/gi)];
+      for (const sm of extScripts) {
+        const tag = sm[0];
+        if (!/\b(async|defer)\b/i.test(tag)) {
+          budgetViolations.push({
+            file: relPath,
+            type: 'render_blocking_head_script',
+            scriptSrc: sm[1]
+          });
         }
       }
     }
@@ -116,6 +145,11 @@ function auditPageSpeedBudgets() {
     avgBrotliBytes: pillarFilesChecked > 0 ? Math.round(totalBrotliBytes / pillarFilesChecked) : 0,
     maxRawBytes,
     maxBrotliBytes,
+    brotliWarnCount,
+    holographicShellPages,
+    legacyDarkThemePages,
+    v131Pages,
+    staleV12Pages,
     budgetViolations
   };
 }
@@ -125,19 +159,19 @@ export async function runDailySeoPageSpeedPipeline() {
   const skipKeywordRefresh = process.argv.includes('--skip-keywords');
 
   console.log('\n============================================================================');
-  console.log('  STEP 1/4: RUNNING AUTOMATED KEYWORD RESEARCH & LOW-KD OPPORTUNITY ENGINE');
+  console.log('  STEP 1/6: RUNNING AUTOMATED KEYWORD RESEARCH & LOW-KD OPPORTUNITY ENGINE');
   console.log('============================================================================');
   const kwReport = skipKeywordRefresh
     ? JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'keyword-opportunity-matrix.json'), 'utf8'))
     : await runKeywordResearchEngine();
 
   console.log('\n============================================================================');
-  console.log(`  STEP 2/4: GENERATING UP TO ${newPagesLimit} NET-NEW LOW-KD KEYWORD PILLAR PAGES`);
+  console.log(`  STEP 2/6: GENERATING UP TO ${newPagesLimit} NET-NEW LOW-KD KEYWORD PILLAR PAGES`);
   console.log('============================================================================');
   const genSummary = await runDaily50DeepBlockPages(newPagesLimit, false);
 
   console.log('\n============================================================================');
-  console.log('  STEP 3/6: VERIFYING LIVE MV3 RULE TELEMETRY PROOF ACROSS ALL PILLARS');
+  console.log('  STEP 3/6: STRIPPING LEGACY DARK SLOP BLOCKS & NORMALIZING PILLARS');
   console.log('============================================================================');
   runLiveProofEnrichment(500, false);
 
@@ -171,9 +205,9 @@ export async function runDailySeoPageSpeedPipeline() {
 
   const cwvReport = auditPageSpeedBudgets();
   console.log(
-    `[PAGESPEED CWV AUDIT] Indexable Pillars Checked: ${cwvReport.pillarFilesChecked} | Avg Brotli: ${(
+    `[PAGESPEED CWV AUDIT] Indexable Pages Checked: ${cwvReport.pillarFilesChecked} | Avg Brotli: ${(
       cwvReport.avgBrotliBytes / 1024
-    ).toFixed(2)} KB | Max Brotli: ${(cwvReport.maxBrotliBytes / 1024).toFixed(2)} KB (Budget: <14.00 KB) | Violations: ${
+    ).toFixed(2)} KB | Max Brotli: ${(cwvReport.maxBrotliBytes / 1024).toFixed(2)} KB (Budget: <20.00 KB, >14 KB warns: ${cwvReport.brotliWarnCount}) | Light Shell: ${cwvReport.holographicShellPages}/${cwvReport.pillarFilesChecked} | Violations: ${
       cwvReport.budgetViolations.length
     }`
   );

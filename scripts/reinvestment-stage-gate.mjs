@@ -28,20 +28,24 @@ const args = Object.fromEntries(
 
 const proAnnualPriceGbp = 29.99;
 const suiteAnnualPriceGbp = 89.99;
-const suiteAttachRatePct = Number(args.suiteAttach ?? liveEcon.suiteAttachRatePct ?? 22.0);
-// Blended Year-1 Gross AOV = (0.78 * £29.99) + (0.22 * £89.99) = £43.19; Net LTV with renewal = £48.80
-const defaultBlendedLtv = +((1 - suiteAttachRatePct / 100) * proAnnualPriceGbp * 1.15 + (suiteAttachRatePct / 100) * suiteAnnualPriceGbp * 1.15).toFixed(2);
+const suiteAttachRatePct = Number(args.suiteAttach ?? liveEcon.suiteAttachRatePct ?? 0);
 
 const dailySpendGbp = Number(args.spend ?? liveEcon.dailySpendGbp ?? 10.0);
-const blendedCacGbp = Number(args.cac ?? liveEcon.blendedCacGbp ?? 15.8);
-const blendedNetLtvGbp = Number(args.ltv ?? liveEcon.blendedNetLtvGbp ?? defaultBlendedLtv);
-const permissionActivationRatePct = Number(args.activation ?? liveEcon.permissionActivationRatePct ?? 86.2);
-const refundRate14dPct = Number(args.refund ?? liveEcon.refundRate14dPct ?? 2.4);
+const rawCac = args.cac ?? liveEcon.blendedCacGbp;
+const blendedCacGbp = rawCac !== null && rawCac !== undefined && Number(rawCac) > 0 ? Number(rawCac) : null;
+const rawLtv = args.ltv ?? liveEcon.blendedNetLtvGbp;
+const blendedNetLtvGbp = rawLtv !== null && rawLtv !== undefined && Number(rawLtv) > 0 ? Number(rawLtv) : 0;
+const permissionActivationRatePct = Number(args.activation ?? liveEcon.permissionActivationRatePct ?? 0);
+const refundRate14dPct = Number(args.refund ?? liveEcon.refundRate14dPct ?? 0);
+const hasMinimumConversionSample = Boolean(liveEcon.hasMinimumConversionSample || (args.cac && args.ltv));
 
-const ltvToCacRatio = +(blendedNetLtvGbp / blendedCacGbp).toFixed(2);
-const blendedCpauGbp = +(blendedCacGbp / (permissionActivationRatePct / 100)).toFixed(2);
+const ltvToCacRatio = blendedCacGbp && blendedNetLtvGbp > 0 ? +(blendedNetLtvGbp / blendedCacGbp).toFixed(2) : null;
+const blendedCpauGbp =
+  blendedCacGbp && permissionActivationRatePct > 0
+    ? +(blendedCacGbp / (permissionActivationRatePct / 100)).toFixed(2)
+    : null;
 
-// Phase 3 Step 3.4: Per-Ad-Group Cost Per Activated User (CPAU) Optimizer
+// Phase 3 Step 3.4: Per-Ad-Group Cost Per Activated User (CPAU) Optimizer (M1 KEPT_REWRITE routes)
 const baseAdGroups = [
   {
     adGroupId: 'MS_AG1_Competitor_Switchers',
@@ -49,7 +53,7 @@ const baseAdGroups = [
     currentDailySpendGbp: 1.5,
     cacGbp: 13.4,
     permissionActivationRatePct: 89.6,
-    targetLandingPage: '/vs/total-adblock-cancel-subscription'
+    targetLandingPage: '/vs/total-adblock'
   },
   {
     adGroupId: 'MS_AG2_MV3_Privacy_Blocking',
@@ -57,7 +61,7 @@ const baseAdGroups = [
     currentDailySpendGbp: 1.0,
     cacGbp: 14.8,
     permissionActivationRatePct: 87.2,
-    targetLandingPage: '/vs/ublock-origin-alternative-for-chrome'
+    targetLandingPage: '/vs/ublock-origin-lite'
   },
   {
     adGroupId: 'RD_AG1_MV3_Benchmark_Tech',
@@ -65,7 +69,7 @@ const baseAdGroups = [
     currentDailySpendGbp: 3.0,
     cacGbp: 15.9,
     permissionActivationRatePct: 85.4,
-    targetLandingPage: '/tools/is-my-adblocker-working'
+    targetLandingPage: '/test-lab'
   },
   {
     adGroupId: 'RD_AG2_UK_News_Cookie_Walls',
@@ -73,7 +77,7 @@ const baseAdGroups = [
     currentDailySpendGbp: 2.5,
     cacGbp: 16.9,
     permissionActivationRatePct: 83.1,
-    targetLandingPage: '/campaigns/uk-ad-load-index'
+    targetLandingPage: '/guides/how-to-automatically-reject-cookie-banners-uk'
   },
   {
     adGroupId: 'RD_AG3_Renewal_Shock_Switchers',
@@ -81,7 +85,7 @@ const baseAdGroups = [
     currentDailySpendGbp: 2.0,
     cacGbp: 14.2,
     permissionActivationRatePct: 88.4,
-    targetLandingPage: '/campaigns/renewal-shock-switcher'
+    targetLandingPage: '/vs/total-adblock'
   }
 ];
 
@@ -130,29 +134,34 @@ const rankedByCpau = [...adGroupPerformance]
   }));
 
 const stageGates = {
+  minimumConversionSample: {
+    target: '>= 10 paid checkouts',
+    actual: `${Number(liveEcon.totalPaidCheckouts ?? 0)} checkouts`,
+    passed: hasMinimumConversionSample
+  },
   blendedCacUnder18Gbp: {
     target: '<= £18.00',
-    actual: `£${blendedCacGbp.toFixed(2)}`,
-    passed: blendedCacGbp <= 18.0
+    actual: blendedCacGbp ? `£${blendedCacGbp.toFixed(2)}` : 'insufficient_telemetry',
+    passed: Boolean(blendedCacGbp && blendedCacGbp > 0 && blendedCacGbp <= 18.0)
   },
   ltvToCacOver2_2x: {
     target: '>= 2.20x',
-    actual: `${ltvToCacRatio}x`,
-    passed: ltvToCacRatio >= 2.2
+    actual: ltvToCacRatio ? `${ltvToCacRatio}x` : 'insufficient_telemetry',
+    passed: Boolean(ltvToCacRatio && blendedNetLtvGbp > 0 && ltvToCacRatio >= 2.2)
   },
   permissionActivationOver82Pct: {
     target: '>= 82.0%',
     actual: `${permissionActivationRatePct.toFixed(1)}%`,
-    passed: permissionActivationRatePct >= 82.0
+    passed: hasMinimumConversionSample && permissionActivationRatePct >= 82.0
   },
   refundRateUnder4_5Pct: {
     target: '<= 4.5%',
     actual: `${refundRate14dPct.toFixed(1)}%`,
-    passed: refundRate14dPct <= 4.5
+    passed: hasMinimumConversionSample && refundRate14dPct <= 4.5
   }
 };
 
-const allGatesPassed = Object.values(stageGates).every((g) => g.passed);
+const allGatesPassed = hasMinimumConversionSample && Boolean(blendedCacGbp && blendedCacGbp > 0 && blendedNetLtvGbp > 0) && Object.values(stageGates).every((g) => g.passed);
 const recommendedDailyBudgetGbp = allGatesPassed ? 25.0 : 10.0;
 
 const reinvestmentLadder = [
@@ -186,7 +195,7 @@ const reinvestmentLadder = [
     stage: 'Stage 3 (Scale & Ecosystem Bundle Gate)',
     dailyBudgetGbp: 50.0,
     monthlyBudgetGbp: 1500.0,
-    unlocked: allGatesPassed && ltvToCacRatio >= 2.4,
+    unlocked: allGatesPassed && Boolean(ltvToCacRatio && ltvToCacRatio >= 2.4),
     chatgptAdsUnlocked: true,
     channelSplit: {
       redditAdsProspectingGbp: 21.0,
@@ -238,6 +247,6 @@ const outPath = path.join(DATA_DIR, 'reinvestment-stage-gate-report.json');
 fs.writeFileSync(outPath, JSON.stringify(report, null, 2), 'utf8');
 fs.writeFileSync(path.join(DATA_DIR, 'reinvestment-allocation.json'), JSON.stringify(report, null, 2), 'utf8');
 
-console.log(`[STAGE-GATE] LTV:CAC = ${ltvToCacRatio}x (LTV £${blendedNetLtvGbp.toFixed(2)}) | CAC = £${blendedCacGbp.toFixed(2)} | Blended CPAU = £${blendedCpauGbp.toFixed(2)} | Best Ad Group: ${rankedByCpau[0].adGroupId} (£${rankedByCpau[0].cpauGbp} CPAU)`);
+console.log(`[STAGE-GATE] LTV:CAC = ${ltvToCacRatio ? ltvToCacRatio + 'x' : 'N/A'} (LTV £${blendedNetLtvGbp.toFixed(2)}) | CAC = ${blendedCacGbp ? '£' + blendedCacGbp.toFixed(2) : 'N/A'} | Blended CPAU = ${blendedCpauGbp ? '£' + blendedCpauGbp.toFixed(2) : 'N/A'} | Best Ad Group: ${rankedByCpau[0].adGroupId} (£${rankedByCpau[0].cpauGbp} CPAU)`);
 console.log(`[STAGE-GATE] Recommendation: ${report.recommendedAction}`);
 console.log(`[STAGE-GATE] Saved report -> data/reinvestment-stage-gate-report.json`);

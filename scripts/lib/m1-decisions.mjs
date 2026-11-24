@@ -1,0 +1,531 @@
+// Authoritative M1 URL Audit Decisions (95 KEEP_REWRITE, 63 CONSOLIDATE_301, 121 NOINDEX_PRUNE)
+export const KEPT_REWRITE_PATHS = [
+  "/",
+  "/benchmarks",
+  "/de",
+  "/download",
+  "/es",
+  "/fr",
+  "/glossary",
+  "/guides/how-to-automatically-reject-cookie-banners-uk",
+  "/guides/how-to-block-reddit-sponsored-promoted-posts-in-feed",
+  "/guides/how-to-block-sponsored-ads-on-google-search-2026",
+  "/guides/how-to-block-sponsored-ads-on-yahoo-finance",
+  "/guides/how-to-block-sponsored-posts-and-crypto-bots-on-x-twitter",
+  "/guides/how-to-block-tab-freeze-crypto-miner-scripts",
+  "/guides/how-to-block-twitch-midroll-commercials-without-black-screen",
+  "/guides/how-to-block-youtube-ads-chrome-manifest-v3-2026",
+  "/guides/how-to-bypass-anti-adblock-inspect-element-blockers",
+  "/guides/how-to-fix-high-cpu-usage-from-youtube-anti-adblock",
+  "/guides/how-to-fix-high-ram-usage-on-vivaldi-browser",
+  "/guides/how-to-reduce-browser-ram-speed-up-slow-tabs",
+  "/guides/how-to-stop-facebook-meta-pixel-tracking",
+  "/guides/how-to-stop-fake-robot-captcha-verification-popups",
+  "/guides/how-to-stop-malvertising-popunders-and-redirects",
+  "/guides/how-to-stop-temu-shein-scam-popups-and-tracking",
+  "/guides/strip-utm-fbclid-gclid-tracking-links",
+  "/pricing",
+  "/privacy",
+  "/refund",
+  "/setup/arc-browser-windows-mac",
+  "/setup/brave-browser-deepstealth",
+  "/setup/brave-macos-apple-silicon",
+  "/setup/chromium-linux-ubuntu",
+  "/setup/floorp-browser-firefox-fork",
+  "/setup/google-chrome-manifest-v3",
+  "/setup/kiwi-browser-android",
+  "/setup/librewolf-hardened-firefox",
+  "/setup/microsoft-edge-windows-11",
+  "/setup/mozilla-firefox-desktop-android",
+  "/setup/opera-gx-gaming-browser",
+  "/setup/orion-browser-macos-ios",
+  "/setup/thorium-chromium-browser",
+  "/setup/ungoogled-chromium-mv3",
+  "/setup/vivaldi-power-user-browser",
+  "/setup/waterfox-privacy-browser",
+  "/setup/zen-browser-privacy-tabs",
+  "/solutions/anilist-myanimelist-tracker-block-video-ads",
+  "/solutions/anime-streaming-portals-stop-malvertising-popunders",
+  "/solutions/automotive-car-classifieds-block-video-ads",
+  "/solutions/bilibili-anime-video-block-video-ads",
+  "/solutions/bing-copilot-search-reduce-browser-ram-usage",
+  "/solutions/coinmarketcap-crypto-prices-stop-malvertising-popunders",
+  "/solutions/crunchyroll-anime-streams-block-video-ads",
+  "/solutions/curseforge-gaming-mods-stop-malvertising-popunders",
+  "/solutions/dailymotion-vimeo-embeds-block-video-ads",
+  "/solutions/dex-token-screeners-block-video-ads",
+  "/solutions/espn-sports-streaming-block-video-ads",
+  "/solutions/f1-motorsport-news-block-video-ads",
+  "/solutions/fandom-game-wikis-reduce-browser-ram-usage",
+  "/solutions/fextralife-game-wikis-stop-malvertising-popunders",
+  "/solutions/geeksforgeeks-dev-portals-block-video-ads",
+  "/solutions/github-copilot-dev-portals-block-video-ads",
+  "/solutions/imdb-movie-database-block-video-ads",
+  "/solutions/linkedin-feed-ads-block-video-ads",
+  "/solutions/lyrics-and-chords-tabs-block-video-ads",
+  "/solutions/manga-comic-readers-block-video-ads",
+  "/solutions/mangadex-web-reader-block-video-ads",
+  "/solutions/nexus-mods-community-stop-malvertising-popunders",
+  "/solutions/online-chess-gaming-block-video-ads",
+  "/solutions/quora-digest-answers-stop-malvertising-popunders",
+  "/solutions/roblox-web-community-filter-ai-slop-and-scams",
+  "/solutions/rumble-video-streams-block-video-ads",
+  "/solutions/smart-tv-web-browsers-block-video-ads",
+  "/solutions/soundcloud-audio-player-block-video-ads",
+  "/solutions/student-study-hubs-block-video-ads",
+  "/solutions/substack-newsletter-blogs-auto-reject-cookie-popups",
+  "/solutions/tech-gadget-review-blogs-auto-reject-cookie-popups",
+  "/solutions/threads-web-feed-stop-malvertising-popunders",
+  "/solutions/tiktok-web-reels-reduce-browser-ram-usage",
+  "/solutions/tradingview-charts-web-reduce-browser-ram-usage",
+  "/solutions/tumblr-blog-feeds-block-video-ads",
+  "/solutions/uk-news-websites-auto-reject-cookie-popups",
+  "/solutions/webtoon-manhwa-readers-block-video-ads",
+  "/solutions/x-twitter-feed-ads-block-video-ads",
+  "/support",
+  "/terms",
+  "/test-lab",
+  "/tools",
+  "/tools/browser-ram-calculator",
+  "/vs/adblock-plus",
+  "/vs/adguard-extension",
+  "/vs/brave-shields",
+  "/vs/ghostery-privacy-ad-blocker",
+  "/vs/pie-adblock",
+  "/vs/total-adblock",
+  "/vs/ublock-origin-lite",
+  "/vs/windscribe-robert-adblock"
+];
+export const KEPT_URLS_SET = new Set(KEPT_REWRITE_PATHS);
+export const CATEGORY_HUB_PATHS = ['/vs', '/solutions', '/setup', '/guides'];
+export const ALL_INDEXABLE_PATHS = [...KEPT_REWRITE_PATHS, ...CATEGORY_HUB_PATHS].sort((a, b) => {
+  if (a === '/') return -1;
+  if (b === '/') return 1;
+  return a.localeCompare(b);
+});
+export const ALL_INDEXABLE_SET = new Set(ALL_INDEXABLE_PATHS);
+export const EXPLICIT_CONSOLIDATION_ENTRIES = [
+  [
+    "/campaigns/renewal-shock-switcher",
+    "/vs/total-adblock"
+  ],
+  [
+    "/de/usercentrics-cookie-banner-blockieren",
+    "/de"
+  ],
+  [
+    "/fr/bloquer-bandeau-cookie-didomi",
+    "/fr"
+  ],
+  [
+    "/glossary/anti-adblock-bait-detection",
+    "/test-lab"
+  ],
+  [
+    "/glossary/url-tracking-parameters-utm-fbclid-gclid",
+    "/guides/strip-utm-fbclid-gclid-tracking-links"
+  ],
+  [
+    "/stories/switching-from-total-adblock-renewal-shock",
+    "/vs/total-adblock"
+  ],
+  [
+    "/stories/youtube-mv3-zero-warning-playback",
+    "/guides/how-to-fix-high-cpu-usage-from-youtube-anti-adblock"
+  ],
+  [
+    "/tools/is-my-adblocker-working",
+    "/test-lab"
+  ]
+];
+export const PILLAR_CONSOLIDATION_ENTRIES = [
+  [
+    "/guides/how-to-auto-reject-axeptio-and-cookiebot-banners",
+    "/guides/how-to-automatically-reject-cookie-banners-uk"
+  ],
+  [
+    "/guides/how-to-auto-reject-civic-uk-cookie-banners",
+    "/guides/how-to-automatically-reject-cookie-banners-uk"
+  ],
+  [
+    "/guides/how-to-auto-reject-consentmanager-cookie-walls",
+    "/guides/how-to-automatically-reject-cookie-banners-uk"
+  ],
+  [
+    "/guides/how-to-auto-reject-inmobi-and-ogury-mobile-banners",
+    "/guides/how-to-automatically-reject-cookie-banners-uk"
+  ],
+  [
+    "/guides/how-to-auto-reject-usercentrics-cookie-banners",
+    "/guides/how-to-automatically-reject-cookie-banners-uk"
+  ],
+  [
+    "/guides/how-to-auto-reject-webmd-healthline-cookie-walls",
+    "/guides/how-to-automatically-reject-cookie-banners-uk"
+  ],
+  [
+    "/guides/how-to-block-ai-search-summaries-brave-google",
+    "/guides/how-to-block-sponsored-ads-on-google-search-2026"
+  ],
+  [
+    "/guides/how-to-block-anime-streaming-popunders-2026",
+    "/guides/how-to-stop-malvertising-popunders-and-redirects"
+  ],
+  [
+    "/guides/how-to-block-deceptive-click-allow-notification-traps",
+    "/guides/how-to-stop-fake-robot-captcha-verification-popups"
+  ],
+  [
+    "/guides/how-to-block-fake-software-update-malvertising",
+    "/guides/how-to-stop-malvertising-popunders-and-redirects"
+  ],
+  [
+    "/guides/how-to-block-sponsored-ai-citations-in-search-answers",
+    "/guides/how-to-block-sponsored-ads-on-google-search-2026"
+  ],
+  [
+    "/guides/how-to-block-sponsored-ai-overviews-google",
+    "/guides/how-to-block-sponsored-ads-on-google-search-2026"
+  ],
+  [
+    "/guides/how-to-block-sponsored-shopping-carousels-google",
+    "/guides/how-to-block-sponsored-ads-on-google-search-2026"
+  ],
+  [
+    "/guides/how-to-fix-high-battery-drain-on-macbook-chrome-mv3",
+    "/guides/how-to-reduce-browser-ram-speed-up-slow-tabs"
+  ],
+  [
+    "/guides/how-to-fix-high-chrome-tab-sleeping-crashes",
+    "/guides/how-to-reduce-browser-ram-speed-up-slow-tabs"
+  ],
+  [
+    "/guides/how-to-fix-high-fan-noise-from-browser-ad-auctions",
+    "/guides/how-to-reduce-browser-ram-speed-up-slow-tabs"
+  ],
+  [
+    "/guides/how-to-fix-high-gpu-memory-drain-from-web-ads",
+    "/guides/how-to-reduce-browser-ram-speed-up-slow-tabs"
+  ],
+  [
+    "/guides/how-to-fix-high-ram-usage-on-arc-browser",
+    "/guides/how-to-reduce-browser-ram-speed-up-slow-tabs"
+  ],
+  [
+    "/guides/how-to-fix-high-ram-usage-on-brave-browser",
+    "/guides/how-to-reduce-browser-ram-speed-up-slow-tabs"
+  ],
+  [
+    "/guides/how-to-fix-high-ram-usage-on-edge-windows-11",
+    "/guides/how-to-reduce-browser-ram-speed-up-slow-tabs"
+  ],
+  [
+    "/guides/how-to-fix-high-ram-usage-on-firefox-esr",
+    "/guides/how-to-reduce-browser-ram-speed-up-slow-tabs"
+  ],
+  [
+    "/guides/how-to-fix-high-ram-usage-on-snapdragon-x-copilot-pcs",
+    "/guides/how-to-reduce-browser-ram-speed-up-slow-tabs"
+  ],
+  [
+    "/guides/how-to-fix-high-ram-usage-on-steam-deck-desktop",
+    "/guides/how-to-reduce-browser-ram-speed-up-slow-tabs"
+  ],
+  [
+    "/guides/how-to-fix-twitch-purple-screen-adblock-2026",
+    "/guides/how-to-block-twitch-midroll-commercials-without-black-screen"
+  ],
+  [
+    "/guides/how-to-fix-video-stuttering-caused-by-anti-adblock-scripts",
+    "/guides/how-to-fix-high-cpu-usage-from-youtube-anti-adblock"
+  ],
+  [
+    "/guides/how-to-prevent-laptop-battery-drain-from-heavy-ad-trackers",
+    "/guides/how-to-reduce-browser-ram-speed-up-slow-tabs"
+  ],
+  [
+    "/guides/how-to-stop-browser-tab-crashing-oom-mac-windows",
+    "/guides/how-to-reduce-browser-ram-speed-up-slow-tabs"
+  ],
+  [
+    "/guides/how-to-stop-crypto-drainer-scam-ads-2026",
+    "/guides/how-to-stop-malvertising-popunders-and-redirects"
+  ],
+  [
+    "/guides/how-to-stop-silent-web-push-notification-spam",
+    "/guides/how-to-stop-fake-robot-captcha-verification-popups"
+  ],
+  [
+    "/guides/how-to-stop-streaming-site-click-jacking-redirects",
+    "/guides/how-to-stop-malvertising-popunders-and-redirects"
+  ],
+  [
+    "/guides/how-to-test-if-manifest-v3-adblocker-is-working",
+    "/test-lab"
+  ],
+  [
+    "/setup/cachyos-arch-chromium",
+    "/setup/chromium-linux-ubuntu"
+  ],
+  [
+    "/setup/chromeos-chromebook-mv3",
+    "/setup/google-chrome-manifest-v3"
+  ],
+  [
+    "/setup/edge-macos-apple-silicon",
+    "/setup/microsoft-edge-windows-11"
+  ],
+  [
+    "/setup/firefox-android-mobile",
+    "/setup/mozilla-firefox-desktop-android"
+  ],
+  [
+    "/setup/raspberry-pi-chromium",
+    "/setup/chromium-linux-ubuntu"
+  ],
+  [
+    "/solutions/chesscom-blitz-gaming-block-video-ads",
+    "/solutions/online-chess-gaming-block-video-ads"
+  ],
+  [
+    "/solutions/coursera-edx-learning-reduce-browser-ram-usage",
+    "/guides/how-to-reduce-browser-ram-speed-up-slow-tabs"
+  ],
+  [
+    "/solutions/crypto-exchange-news-sites-auto-reject-cookie-popups",
+    "/guides/how-to-automatically-reject-cookie-banners-uk"
+  ],
+  [
+    "/solutions/facebook-marketplace-shops-filter-ai-slop-and-scams",
+    "/guides/how-to-stop-facebook-meta-pixel-tracking"
+  ],
+  [
+    "/solutions/flight-tracker-radars-auto-reject-cookie-popups",
+    "/guides/how-to-automatically-reject-cookie-banners-uk"
+  ],
+  [
+    "/solutions/free-file-host-downloads-auto-reject-cookie-popups",
+    "/guides/how-to-automatically-reject-cookie-banners-uk"
+  ],
+  [
+    "/solutions/google-search-results-filter-ai-slop-and-scams",
+    "/guides/how-to-block-sponsored-ads-on-google-search-2026"
+  ],
+  [
+    "/solutions/medium-tech-blogs-auto-reject-cookie-popups",
+    "/guides/how-to-automatically-reject-cookie-banners-uk"
+  ],
+  [
+    "/solutions/rapidgator-file-downloads-block-video-ads",
+    "/guides/how-to-stop-malvertising-popunders-and-redirects"
+  ],
+  [
+    "/solutions/recipe-food-blogs-auto-reject-cookie-popups",
+    "/guides/how-to-automatically-reject-cookie-banners-uk"
+  ],
+  [
+    "/solutions/reddit-promoted-posts-block-video-ads",
+    "/guides/how-to-block-reddit-sponsored-promoted-posts-in-feed"
+  ],
+  [
+    "/solutions/sports-live-score-sites-stop-malvertising-popunders",
+    "/guides/how-to-stop-malvertising-popunders-and-redirects"
+  ],
+  [
+    "/solutions/temu-aliexpress-shopping-filter-ai-slop-and-scams",
+    "/guides/how-to-stop-temu-shein-scam-popups-and-tracking"
+  ],
+  [
+    "/solutions/twitch-live-streams-block-video-ads",
+    "/guides/how-to-block-twitch-midroll-commercials-without-black-screen"
+  ],
+  [
+    "/solutions/ultimate-guitar-tabs-block-video-ads",
+    "/solutions/lyrics-and-chords-tabs-block-video-ads"
+  ],
+  [
+    "/solutions/weather-radar-portals-auto-reject-cookie-popups",
+    "/guides/how-to-automatically-reject-cookie-banners-uk"
+  ],
+  [
+    "/solutions/youtube-chrome-mv3-block-video-ads",
+    "/guides/how-to-fix-high-cpu-usage-from-youtube-anti-adblock"
+  ],
+  [
+    "/vs/avast-secure-browser-guard",
+    "/vs/adguard-extension"
+  ],
+  [
+    "/vs/total-adblock-cancel-subscription",
+    "/vs/total-adblock"
+  ]
+];
+export const CONSOLIDATE_301_ENTRIES = [...EXPLICIT_CONSOLIDATION_ENTRIES, ...PILLAR_CONSOLIDATION_ENTRIES];
+export const EXPLICIT_CONSOLIDATION_MAP = new Map(EXPLICIT_CONSOLIDATION_ENTRIES);
+export const PILLAR_CONSOLIDATION_MAP = new Map(PILLAR_CONSOLIDATION_ENTRIES);
+export const CONSOLIDATE_301_MAP = new Map(CONSOLIDATE_301_ENTRIES);
+export const NOINDEX_PRUNE_PATHS = [
+  "/campaigns/uk-ad-load-index",
+  "/glossary/acceptable-ads-program",
+  "/glossary/ai-slop-search-spam",
+  "/glossary/audio-context-fingerprinting",
+  "/glossary/browser-tab-discarding-hibernation",
+  "/glossary/canvas-fingerprinting",
+  "/glossary/cname-cloaking-trackers",
+  "/glossary/cryptojacking-webassembly-miners",
+  "/glossary/dns-over-https-doh",
+  "/glossary/fake-shopify-dropshipping-scam-indicators",
+  "/glossary/first-party-tracker-proxies",
+  "/glossary/header-bidding-openrtb-latency",
+  "/glossary/malvertising-popunders",
+  "/glossary/manifest-v3-declarative-net-request",
+  "/glossary/shadow-dom-ad-injection",
+  "/glossary/tcf-v2-cookie-consent-cmp",
+  "/glossary/webgl-hardware-fingerprinting",
+  "/glossary/webrtc-ip-leak",
+  "/glossary/youtube-server-side-ad-injection",
+  "/guides/how-to-auto-mute-and-block-autoplay-video-ads",
+  "/guides/how-to-auto-skip-recipe-blog-life-stories",
+  "/guides/how-to-block-ai-deepfake-celebrity-investment-scams",
+  "/guides/how-to-block-ai-generated-fake-podcast-ads",
+  "/guides/how-to-block-ai-sponsored-product-ads-amazon",
+  "/guides/how-to-block-ai-synthetic-image-ads-google",
+  "/guides/how-to-block-ai-synthetic-voice-ads-on-streaming",
+  "/guides/how-to-block-ai-training-scrapers-in-browser",
+  "/guides/how-to-block-anti-adblock-paywalls-news",
+  "/guides/how-to-block-browser-extension-hijacking-malware",
+  "/guides/how-to-block-deceptive-ai-e-commerce-product-clones",
+  "/guides/how-to-block-deceptive-back-button-hijacking-traps",
+  "/guides/how-to-block-disguised-affiliate-links-reddit-comments",
+  "/guides/how-to-block-fake-ai-shopping-influencer-ads",
+  "/guides/how-to-block-gambling-and-crypto-ads-on-kick",
+  "/guides/how-to-block-malicious-telegram-bot-redirects",
+  "/guides/how-to-block-peacock-paramount-plus-ads-2026",
+  "/guides/how-to-block-prime-video-ads-2026",
+  "/guides/how-to-block-sponsored-ai-influencer-video-ads",
+  "/guides/how-to-block-sponsored-ai-product-recommendations",
+  "/guides/how-to-block-sponsored-job-scams-linkedin-indeed",
+  "/guides/how-to-block-torrent-site-fake-download-buttons",
+  "/guides/how-to-block-tubi-and-pluto-tv-commercials-2026",
+  "/guides/how-to-block-unskippable-audio-ads-on-spotify-web",
+  "/guides/how-to-detect-ai-generated-scam-reviews-amazon",
+  "/guides/how-to-hide-ai-slop-from-google-search",
+  "/guides/how-to-prevent-accelerometer-sensor-fingerprinting",
+  "/guides/how-to-prevent-dns-rebinding-ad-tracker-exploits",
+  "/guides/how-to-prevent-fingerprinting-with-deepstealth",
+  "/guides/how-to-prevent-network-connection-api-fingerprinting",
+  "/guides/how-to-prevent-service-worker-cache-fingerprinting",
+  "/guides/how-to-prevent-tls-client-hello-fingerprinting",
+  "/guides/how-to-prevent-webrtc-ip-leak-ad-trackers",
+  "/guides/how-to-spot-fake-scam-online-shops-uk",
+  "/guides/how-to-stop-audio-context-oscillator-fingerprinting",
+  "/guides/how-to-stop-bluetooth-and-usb-device-fingerprinting",
+  "/guides/how-to-stop-browser-canvas-fingerprinting-trackers",
+  "/guides/how-to-stop-covert-ambient-light-sensor-fingerprinting",
+  "/guides/how-to-stop-covert-device-battery-fingerprinting",
+  "/guides/how-to-stop-cross-device-ultrasonic-fingerprinting",
+  "/guides/how-to-stop-device-motion-sensor-fingerprinting",
+  "/guides/how-to-stop-facebook-instagram-dropshipping-scams",
+  "/guides/how-to-stop-font-enumeration-fingerprinting",
+  "/guides/how-to-stop-location-geolocation-popups",
+  "/guides/how-to-stop-screen-resolution-fingerprinting",
+  "/guides/how-to-stop-video-ad-audio-blasts",
+  "/setup/ladybird-browser-privacy",
+  "/setup/mullvad-browser-privacy",
+  "/setup/safari-macos-ios-ipad",
+  "/site",
+  "/site/20minutes-fr",
+  "/site/allrecipes-com",
+  "/site/autoexpress-co-uk",
+  "/site/chip-de",
+  "/site/edinburghlive-co-uk",
+  "/site/epicurious-com",
+  "/site/forbes-com",
+  "/site/frandroid-com",
+  "/site/gimmesomeoven-com",
+  "/site/hull-daily-mail-co-uk",
+  "/site/macrumors-com",
+  "/site/mobalytics-gg",
+  "/site/n-tv-de",
+  "/site/polygon-com",
+  "/site/rawstory-com",
+  "/site/speedtest-net",
+  "/site/standard-co-uk",
+  "/site/time-com",
+  "/site/variety-com",
+  "/site/walesonline-co-uk",
+  "/site/zdnet-com",
+  "/solutions/1337x-torrent-indexer-block-video-ads",
+  "/solutions/etsy-marketplace-shops-filter-ai-slop-and-scams",
+  "/solutions/hulu-disney-plus-web-block-video-ads",
+  "/solutions/kick-streaming-portals-block-video-ads",
+  "/solutions/max-hbo-streaming-block-video-ads",
+  "/solutions/nyaa-si-anime-torrents-strip-tracking-parameters",
+  "/solutions/paramount-plus-streaming-block-video-ads",
+  "/solutions/peacock-tv-streaming-block-video-ads",
+  "/solutions/pinterest-promoted-pins-filter-ai-slop-and-scams",
+  "/solutions/pluto-tv-stream-channels-block-video-ads",
+  "/solutions/spotify-web-player-block-video-ads",
+  "/solutions/strava-fitness-activity-stop-malvertising-popunders",
+  "/solutions/tubi-tv-free-movies-block-video-ads",
+  "/solutions/viki-asian-streaming-block-video-ads",
+  "/solutions/wattpad-web-novels-stop-malvertising-popunders",
+  "/stories",
+  "/stories/40-tab-research-workflow-ram-tamer",
+  "/stories/blocking-fake-clearance-shops-scam-detector",
+  "/stories/de-fr-usercentrics-didomi-cmp-automation",
+  "/stories/uk-news-sourcepoint-cookie-wall-elimination",
+  "/tools/browser-fingerprint-test",
+  "/tools/dns-leak-test",
+  "/tools/is-this-shop-a-scam",
+  "/vs/1blocker-safari",
+  "/vs/adblock-luna-vpn",
+  "/vs/duckduckgo-privacy-essentials",
+  "/vs/malwarebytes-browser-guard",
+  "/vs/nordvpn-threat-protection",
+  "/vs/privacy-badger-eff",
+  "/vs/stands-fair-adblocker",
+  "/vs/surfshark-cleanweb"
+];
+export const NOINDEX_PRUNE_SET = new Set(NOINDEX_PRUNE_PATHS);
+
+export function normalizeUrlPath(raw) {
+  let p = String(raw || '').trim();
+  p = p.replace(/^https?:\/\/(?:www\.)?sweeprdeepblock\.com/i, '');
+  if (!p.startsWith('/')) p = '/' + p;
+  p = p.replace(/\.html$/i, '').replace(/\/+$/, '');
+  return p || '/';
+}
+
+export function isNoIndexPrunePath(raw) {
+  const p = normalizeUrlPath(raw).toLowerCase();
+  return p === '/site' || p.startsWith('/site/') || NOINDEX_PRUNE_SET.has(p);
+}
+
+export function resolveConsolidationTarget(rawTarget) {
+  let targetPath = normalizeUrlPath(rawTarget);
+  for (let hop = 0; hop < 3; hop += 1) {
+    const next = CONSOLIDATE_301_MAP.get(targetPath);
+    if (!next || next === targetPath) break;
+    targetPath = next;
+  }
+  return targetPath;
+}
+
+export function getM1Decision(raw) {
+  const p = normalizeUrlPath(raw).toLowerCase();
+  if (KEPT_URLS_SET.has(p)) {
+    return { path: p, action: 'KEEP_REWRITE', redirectTarget: null };
+  }
+  if (CONSOLIDATE_301_MAP.has(p)) {
+    return {
+      path: p,
+      action: 'CONSOLIDATE_301',
+      redirectTarget: resolveConsolidationTarget(CONSOLIDATE_301_MAP.get(p))
+    };
+  }
+  if (isNoIndexPrunePath(p)) {
+    return { path: p, action: 'NOINDEX_PRUNE', redirectTarget: null };
+  }
+  return null;
+}

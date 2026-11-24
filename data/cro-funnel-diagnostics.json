@@ -1,17 +1,30 @@
 {
-  "generatedAt": "2026-11-23T18:33:44.209Z",
-  "overallHealth": "OPTIMAL",
+  "generatedAt": "2026-11-23T13:27:42.065Z",
+  "dataMode": "real_telemetry_unfloored",
+  "totalPaidCheckouts": 0,
+  "hasMinimumConversionSample": false,
+  "overallHealth": "INSUFFICIENT_TELEMETRY",
   "unitEconomics": {
-    "updatedAt": "2026-11-23T18:33:44.209Z",
+    "updatedAt": "2026-11-23T13:27:42.063Z",
+    "dataMode": "real_telemetry_unfloored",
     "dailySpendGbp": 10,
-    "blendedCacGbp": 15.6,
-    "year1BlendedAovGbp": 43.31,
-    "blendedNetLtvGbp": 49.37,
-    "ltvToCacRatio": 3.16,
-    "permissionActivationRatePct": 86.8,
-    "freeToProCheckoutRatePct": 4.68,
-    "suiteAttachRatePct": 22.2,
-    "refundRate14dPct": 2.2,
+    "storeAndDownloadViews": 0,
+    "extensionInstalls": 2,
+    "permissionsGranted": 0,
+    "firstValueAhaMoment": 0,
+    "paywallExposures": 0,
+    "totalPaidCheckouts": 0,
+    "suiteAnnualCheckouts": 0,
+    "refunds14d": 0,
+    "hasMinimumConversionSample": false,
+    "blendedCacGbp": null,
+    "year1BlendedAovGbp": 0,
+    "blendedNetLtvGbp": 0,
+    "ltvToCacRatio": null,
+    "permissionActivationRatePct": 0,
+    "freeToProCheckoutRatePct": 0,
+    "suiteAttachRatePct": 0,
+    "refundRate14dPct": 0,
     "pricingTiersGbp": {
       "introMonthly": 1.99,
       "monthlyStandard": 4.99,
@@ -24,112 +37,81 @@
     {
       "stageId": "1_store_or_download_to_install",
       "name": "Download / Store Listing -> Extension Installed",
-      "visitorsIn": 1250,
-      "conversionsOut": 385,
-      "conversionRatePct": 30.8,
+      "visitorsIn": 0,
+      "conversionsOut": 2,
+      "conversionRatePct": 0,
       "targetRatePct": 28,
-      "status": "HEALTHY",
-      "automatedRemedy": "Maintain 1-click browser-detected download CTA and live 8/8 Test Lab proof badge on /download."
+      "status": "INSUFFICIENT_TELEMETRY",
+      "automatedRemedy": "Promote interactive 8/8 Test Lab widget above the fold on /download and /vs/* pages."
     },
     {
       "stageId": "2_install_to_permissions_granted",
       "name": "Extension Installed -> MV3 Permissions Activated",
-      "visitorsIn": 385,
-      "conversionsOut": 334,
-      "conversionRatePct": 86.8,
+      "visitorsIn": 2,
+      "conversionsOut": 0,
+      "conversionRatePct": 0,
       "targetRatePct": 85,
-      "status": "HEALTHY",
-      "automatedRemedy": "Keep 2-step annotated permission visual guide active on /welcome."
+      "status": "BOTTLENECK_DETECTED",
+      "automatedRemedy": "Trigger simplified single-screen permission activation modal in extension onboarding."
     },
     {
       "stageId": "3_permissions_to_aha_moment_60s",
       "name": "Permissions Activated -> First 100 Trackers Blocked / 8/8 Test Lab Run (<60s)",
-      "visitorsIn": 334,
-      "conversionsOut": 268,
-      "conversionRatePct": 80.2,
+      "visitorsIn": 0,
+      "conversionsOut": 0,
+      "conversionRatePct": 0,
       "targetRatePct": 75,
-      "status": "HEALTHY",
-      "automatedRemedy": "Continue auto-opening live 8/8 Test Lab verification receipt upon installation."
+      "status": "INSUFFICIENT_TELEMETRY",
+      "automatedRemedy": "Auto-run 5-second Test Lab diagnostic on /welcome immediately after install."
     },
     {
       "stageId": "4_active_free_to_pro_checkout",
       "name": "Active Free User -> Paid Pro / Suite Checkout",
-      "visitorsIn": 385,
-      "conversionsOut": 18,
-      "conversionRatePct": 4.68,
+      "visitorsIn": 2,
+      "conversionsOut": 0,
+      "conversionRatePct": 0,
       "targetRatePct": 4.2,
-      "status": "HEALTHY",
+      "status": "INSUFFICIENT_TELEMETRY",
       "automatedRemedy": "Paywall Multi-Armed Bandit routes 80% of traffic to highest-RPV framing while testing £1.99 Intro vs £29.99/yr Pro vs £89.99/yr Complete Suite."
     },
     {
       "stageId": "5_pro_checkout_to_complete_suite_bundle",
       "name": "Paid Checkout -> £89.99/yr Sweepr Complete Security Suite Attach",
-      "visitorsIn": 18,
-      "conversionsOut": 4,
-      "conversionRatePct": 22.2,
+      "visitorsIn": 0,
+      "conversionsOut": 0,
+      "conversionRatePct": 0,
       "targetRatePct": 20,
-      "status": "HEALTHY",
-      "automatedRemedy": "Keep 4-in-1 Sweepr Complete Security Suite (£89.99/yr — Save 45%) highlighted across sweeprdeepblock.com, sweeprvpn.com, and sweeprcleaner.com."
+      "status": "INSUFFICIENT_TELEMETRY",
+      "automatedRemedy": "Increase bandit exploration weight on ram_speedometer_bundle variant pre-selecting /order?plan=suite_annual."
     }
   ],
   "paywallBanditSnapshot": {
     "experiment": "paywall_value_framing_v2",
     "epsilon": 0.2,
-    "updatedAt": "2026-11-08T20:57:49.077Z",
-    "leaderVariantId": "ram_speedometer_bundle",
-    "mode": "bandit_exploitation_80_20",
+    "updatedAt": "2026-11-20T00:00:00.000Z",
+    "leaderVariantId": "control_value_stack",
+    "mode": "exploration_uniform",
     "stats": {
       "control_value_stack": {
-        "visitors": 42,
-        "conversions": 2,
+        "visitors": 0,
+        "conversions": 0,
         "suiteAttachCount": 0,
-        "totalRevenueGbp": 59.98
+        "totalRevenueGbp": 0
       },
       "renewal_transparency": {
-        "visitors": 44,
-        "conversions": 3,
-        "suiteAttachCount": 1,
-        "totalRevenueGbp": 149.97
+        "visitors": 0,
+        "conversions": 0,
+        "suiteAttachCount": 0,
+        "totalRevenueGbp": 0
       },
       "ram_speedometer_bundle": {
-        "visitors": 43,
-        "conversions": 3,
-        "suiteAttachCount": 2,
-        "totalRevenueGbp": 209.97
+        "visitors": 0,
+        "conversions": 0,
+        "suiteAttachCount": 0,
+        "totalRevenueGbp": 0
       }
     },
-    "computedMetrics": {
-      "control_value_stack": {
-        "visitors": 42,
-        "conversions": 2,
-        "suiteAttachCount": 0,
-        "totalRevenueGbp": 59.98,
-        "conversionRatePct": 4.76,
-        "aovGbp": 29.99,
-        "rpvGbp": 1.43,
-        "zScoreVsControl": 0
-      },
-      "renewal_transparency": {
-        "visitors": 44,
-        "conversions": 3,
-        "suiteAttachCount": 1,
-        "totalRevenueGbp": 149.97,
-        "conversionRatePct": 6.82,
-        "aovGbp": 49.99,
-        "rpvGbp": 3.41,
-        "zScoreVsControl": 0.41
-      },
-      "ram_speedometer_bundle": {
-        "visitors": 43,
-        "conversions": 3,
-        "suiteAttachCount": 2,
-        "totalRevenueGbp": 209.97,
-        "conversionRatePct": 6.98,
-        "aovGbp": 69.99,
-        "rpvGbp": 4.88,
-        "zScoreVsControl": 0.43
-      }
-    }
+    "computedMetrics": {}
   },
   "strikeZoneSeoPrescriptions": [],
   "ctrEnrichmentTargetsQueued": 9

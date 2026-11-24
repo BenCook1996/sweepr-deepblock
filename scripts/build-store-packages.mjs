@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * SWEEPR DeepBlock v1.2.7 — Cross-Browser Extension Store Packager
+ * SWEEPR Deepblock v1.3.1 — Cross-Browser Extension Store Packager
  * Generates store-ready MV3 ZIP archives with POSIX forward-slash entry paths:
  *   1. Google Chrome Web Store (`dist/sweepr-deepblock-chrome-webstore-mv3.zip` & `dist/sweepr-deepblock-edge-chrome-mv3.zip`)
  *   2. Mozilla Firefox Add-ons / AMO (`dist/sweepr-deepblock-firefox-amo-mv3.zip`)

@@ -345,24 +345,24 @@ export const DEEPBLOCK_ANDROID_HTML = `<!DOCTYPE html>
   <div id="drawerBackdrop" class="drawer-backdrop" onclick="closeDrawer()"></div>
   <nav id="drawerMenu" class="drawer">
     <button class="drawer-item active" data-drawer="home" onclick="switchTab('home')"><span>Power Orb Shield</span><span style="font-size:11px;color:var(--muted)">Home</span></button>
-    <button class="drawer-item" data-drawer="filters" onclick="switchTab('filters')"><span>Protection Filters</span><span style="font-size:11px;color:var(--muted)">Active</span></button>
-    <button class="drawer-item" data-drawer="dns" onclick="switchTab('dns')"><span>System Private DNS</span><span style="font-size:11px;color:var(--muted)">Setup</span></button>
-    <button class="drawer-item" data-drawer="account" onclick="switchTab('account')"><span>Profile &amp; License</span><span style="font-size:11px;color:var(--muted)">3 Devices</span></button>
+    <button class="drawer-item" data-drawer="filters" onclick="switchTab('filters')"><span>Protection Overview</span><span style="font-size:11px;color:var(--muted)">Status</span></button>
+    <button class="drawer-item" data-drawer="dns" onclick="switchTab('dns')"><span>System Private DNS</span><span style="font-size:11px;color:var(--muted)">Inspector</span></button>
+    <button class="drawer-item" data-drawer="account" onclick="switchTab('account')"><span>Profile &amp; License</span><span style="font-size:11px;color:var(--muted)">5 Devices</span></button>
     <button class="drawer-item" onclick="toggleTheme(); closeDrawer();"><span>Appearance Mode</span><span id="drawerThemeText" style="font-size:11px;font-weight:800;color:var(--accent)">Light Mode</span></button>
   </nav>
 
-  <!-- TAB 1: CONCEPT 3 TACTILE POWER ORB HOME -->
+  <!-- TAB 1: MOBILE COMPANION STATUS HOME -->
   <main id="view-home" class="view active">
     <div class="c3-status-header">
-      <div id="statusPill" class="c3-status-pill">SHIELD ON &bull; AD &amp; TRACKER GUARD</div>
-      <div id="statusHeadline" class="c3-headline">System Ad Shield Ready</div>
-      <div id="statusSubline" class="c3-subline">Blocks video ads, cookie pop-ups &amp; app trackers</div>
+      <div id="statusPill" class="c3-status-pill">COMPANION APP &bull; ANDROID STATUS</div>
+      <div id="statusHeadline" class="c3-headline">Checking Private DNS...</div>
+      <div id="statusSubline" class="c3-subline">Use Firefox for Android for full MV3 ad &amp; cookie blocking</div>
     </div>
 
     <div class="c3-orb-stage">
-      <button class="c3-power-orb" onclick="enableAndroidDnsShield()" aria-label="Enable Deepblock Shield">
+      <button class="c3-power-orb" onclick="refreshAndroidDnsStatus(false)" aria-label="Refresh Private DNS Status">
         <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
-        <span id="orbLabel" class="c3-orb-label mono">TAP TO ENABLE</span>
+        <span id="orbLabel" class="c3-orb-label mono">REFRESH STATUS</span>
       </button>
       <div id="dnsMsg" style="font-size:12px;font-weight:700;text-align:center;margin-top:12px;max-width:320px"></div>
     </div>
@@ -370,20 +370,20 @@ export const DEEPBLOCK_ANDROID_HTML = `<!DOCTYPE html>
     <div class="c3-bottom-deck">
       <button class="c3-location-card" onclick="switchTab('filters')">
         <div>
-          <div style="font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em">Active Filter Engine</div>
-          <div style="font-size:14.5px;font-weight:900;margin-top:2px">Video Ads, Trackers &amp; Scam Guard</div>
+          <div style="font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em">Recommended Mobile Browser</div>
+          <div style="font-size:14.5px;font-weight:900;margin-top:2px">Firefox for Android (MV3 Add-on)</div>
         </div>
-        <span class="c3-change-pill">Filters</span>
+        <span class="c3-change-pill">Install</span>
       </button>
 
       <div class="c3-metrics-row">
         <div class="c3-metric-box">
-          <span style="color:var(--muted)">Rules</span>
-          <span class="mono">340,000+</span>
+          <span style="color:var(--muted)">Private DNS</span>
+          <span id="privateDnsValue" class="mono">Checking...</span>
         </div>
         <div class="c3-metric-box">
-          <span style="color:var(--muted)">Mode</span>
-          <span class="mono" style="color:var(--accent-fg)">Zero-Latency</span>
+          <span style="color:var(--muted)">License Limit</span>
+          <span class="mono" style="color:var(--accent-fg)">5 Devices</span>
         </div>
       </div>
     </div>
@@ -391,26 +391,26 @@ export const DEEPBLOCK_ANDROID_HTML = `<!DOCTYPE html>
 
   <section id="view-filters" class="view">
     <div class="card">
-      <div style="font-size:17px;font-weight:900;margin-bottom:8px">Active Filter Modules</div>
-      <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);font-size:13.5px;font-weight:700"><span>Video &amp; Pre-Roll Ad Blocker</span><span style="color:var(--accent-fg)">ACTIVE</span></div>
-      <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);font-size:13.5px;font-weight:700"><span>Cookie Consent Auto-Closer</span><span style="color:var(--accent-fg)">ACTIVE</span></div>
-      <div style="display:flex;justify-content:space-between;padding:12px 0;font-size:13.5px;font-weight:700"><span>Fake Shop &amp; Phishing Guard</span><span style="color:var(--accent-fg)">ACTIVE</span></div>
+      <div style="font-size:17px;font-weight:900;margin-bottom:8px">Mobile &amp; Browser Coverage</div>
+      <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);font-size:13.5px;font-weight:700"><span>Firefox for Android (MV3 Add-on)</span><a href="https://addons.mozilla.org/en-US/firefox/addon/sweepr-deepblock/" target="_blank" rel="noopener" style="color:var(--accent-fg);text-decoration:none">Install on AMO ↗</a></div>
+      <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);font-size:13.5px;font-weight:700"><span>Android Private DNS Status Check</span><span style="color:var(--accent-fg)">ACTIVE</span></div>
+      <div style="display:flex;justify-content:space-between;padding:12px 0;font-size:13.5px;font-weight:700"><span>SWEEPR VpnService / DoH Resolver</span><span style="color:var(--muted)">PLANNED</span></div>
     </div>
   </section>
 
   <section id="view-dns" class="view">
     <div class="card">
-      <div style="font-size:17px;font-weight:900;margin-bottom:6px">Private DNS Shield Setup</div>
-      <p style="font-size:12.5px;color:var(--muted);line-height:1.45">Tap below to copy the SWEEPR Deepblock Private DNS hostname and open system network settings.</p>
-      <button class="btn-primary" onclick="enableAndroidDnsShield()">1-Tap Copy DNS &amp; Open Settings</button>
+      <div style="font-size:17px;font-weight:900;margin-bottom:6px">Android Private DNS Inspector</div>
+      <p id="dnsInspectorDesc" style="font-size:12.5px;color:var(--muted);line-height:1.45">Inspects whether Android Private DNS is configured on your active network connection and opens Android Network Settings.</p>
+      <button class="btn-primary" onclick="refreshAndroidDnsStatus(true)">Open Android Network Settings</button>
     </div>
   </section>
 
   <section id="view-account" class="view">
     <div class="card">
       <div style="font-size:16px;font-weight:900">Activate Pro Device</div>
-      <p style="font-size:12px;color:var(--muted);margin-top:4px;line-height:1.45">Sign in at <strong>sweeprdeepblock.com/login</strong> to scan your QR code or paste your <code>ptk_...</code> pairing code or license key below (up to 3 devices).</p>
-      <input id="codeInput" class="input mono" placeholder="SWEEPR-DB-XXXX or ptk_..." autocomplete="off" />
+      <p style="font-size:12px;color:var(--muted);margin-top:4px;line-height:1.45">Sign in at <strong>sweeprdeepblock.com/login</strong> to scan your QR code or paste your <code>ptk_...</code> pairing code or <code>SWEEPR-DB-XXXX-XXXX-XXXX</code> license key below (up to 5 devices).</p>
+      <input id="codeInput" class="input mono" placeholder="SWEEPR-DB-XXXX-XXXX-XXXX or ptk_..." autocomplete="off" />
       <input id="emailInput" class="input" type="email" placeholder="Account Email" autocomplete="email" />
       <button class="btn-primary" onclick="activateDeepblock()">Activate Pro on This Device</button>
       <div id="actMsg" style="font-size:12px;font-weight:700;margin-top:10px"></div>
@@ -438,6 +438,10 @@ export const DEEPBLOCK_ANDROID_HTML = `<!DOCTYPE html>
 
 <script>
 const API_BASE = 'https://sweeprdeepblock.com';
+const FULL_LICENSE_KEY_RE = /^SWEEPR-[A-Z0-9]{2,8}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/i;
+const PAIRING_TOKEN_RE = /ptk_[A-Za-z0-9_-]{12,64}/;
+const OFFLINE_GRACE_MS = 7 * 24 * 60 * 60 * 1000;
+const SESSION_RECHECK_MS = 12 * 60 * 60 * 1000;
 
 function applyTheme(theme) {
   const isDark = theme === 'dark';
@@ -473,75 +477,163 @@ function switchTab(tab) {
   });
 }
 
+function generateSecureHex(bytes) {
+  const buf = new Uint8Array(bytes);
+  if (typeof crypto !== 'undefined' && typeof crypto.getRandomValues === 'function') {
+    crypto.getRandomValues(buf);
+    return Array.from(buf, b => b.toString(16).padStart(2, '0')).join('');
+  }
+  throw new Error('Secure RNG unavailable');
+}
+
 function getDeviceId() {
   let id = localStorage.getItem('sweepr_db_and_id');
-  if (!id) {
-    id = 'db_mob_' + Math.random().toString(36).slice(2, 12) + Date.now().toString(36);
+  if (!id || !/^db_mob_[0-9a-f]{16,}$/i.test(id)) {
+    id = 'db_mob_' + generateSecureHex(12);
     localStorage.setItem('sweepr_db_and_id', id);
   }
   return id;
 }
 
-function enableAndroidDnsShield() {
-  const key = localStorage.getItem('sweepr_db_key');
+function refreshAndroidDnsStatus(openSettings) {
+  const headline = document.getElementById('statusHeadline');
+  const orbLabel = document.getElementById('orbLabel');
+  const dnsVal = document.getElementById('privateDnsValue');
   const msg = document.getElementById('dnsMsg');
-  if (!key) {
-    msg.style.color = '#ef4444';
-    msg.textContent = 'Activate your Pro key in Profile first to unlock the DNS Shield.';
-    switchTab('account');
-    return;
+  let status = { supported: false, active: false, host: '' };
+  try {
+    if (window.SweeprAndroid && typeof window.SweeprAndroid.getPrivateDnsStatus === 'function') {
+      status = JSON.parse(window.SweeprAndroid.getPrivateDnsStatus() || '{}');
+    }
+  } catch (e) {}
+
+  if (status && status.active) {
+    const label = status.host ? ('DoT: ' + status.host) : 'Private DNS Active';
+    if (headline) headline.textContent = 'Private DNS Active';
+    if (orbLabel) orbLabel.textContent = 'DNS ACTIVE';
+    if (dnsVal) {
+      dnsVal.textContent = status.host || 'Active';
+      dnsVal.style.color = 'var(--accent-fg)';
+    }
+    if (msg) {
+      msg.style.color = 'var(--accent-fg)';
+      msg.textContent = label + ' — Use Firefox for Android + DeepBlock add-on for browser ad blocking.';
+    }
+  } else {
+    if (headline) headline.textContent = window.SweeprAndroid ? 'Private DNS Not Configured' : 'Android Companion Ready';
+    if (orbLabel) orbLabel.textContent = 'CHECK DNS';
+    if (dnsVal) {
+      dnsVal.textContent = status && status.supported === false ? 'Android 9+ Req.' : 'Off / Automatic';
+      dnsVal.style.color = 'var(--muted)';
+    }
+    if (msg) {
+      msg.style.color = 'var(--muted)';
+      msg.textContent = window.SweeprAndroid
+        ? 'Private DNS is off or automatic. SWEEPR DoH resolver is planned; use Firefox for Android for ad blocking.'
+        : 'Open inside the Android app to inspect system Private DNS, or install the Firefox for Android add-on.';
+    }
   }
-  if (window.SweeprAndroid) {
-    window.SweeprAndroid.copyText('dns.adguard-dns.com');
+  if (openSettings && window.SweeprAndroid && typeof window.SweeprAndroid.openWirelessSettings === 'function') {
     window.SweeprAndroid.openWirelessSettings();
-  } else if (navigator.clipboard) {
-    navigator.clipboard.writeText('dns.adguard-dns.com');
   }
-  document.getElementById('orbLabel').textContent = 'PROTECTED';
-  document.getElementById('statusHeadline').textContent = 'Your Browsing is Ad-Free';
-  msg.style.color = 'var(--accent-fg)';
-  msg.textContent = 'Copied dns.adguard-dns.com! Paste in Network -> Private DNS and Save.';
 }
 
 async function activateDeepblock() {
   const raw = (document.getElementById('codeInput').value || '').trim();
   const email = (document.getElementById('emailInput').value || '').trim();
   const msg = document.getElementById('actMsg');
-  if (!raw) { msg.style.color='#ef4444'; msg.textContent='Enter your license key or ptk_ pairing code.'; return; }
-  msg.style.color='var(--muted)'; msg.textContent='Verifying subscription...';
+  const ptkMatch = raw.match(PAIRING_TOKEN_RE);
+  const normalizedKey = raw.toUpperCase();
+  const isFullKey = FULL_LICENSE_KEY_RE.test(normalizedKey);
+  if (!ptkMatch && !isFullKey) {
+    msg.style.color = '#ef4444';
+    msg.textContent = 'Enter your full SWEEPR-DB-XXXX-XXXX-XXXX license key or ptk_ pairing code.';
+    return;
+  }
+  msg.style.color = 'var(--muted)';
+  msg.textContent = 'Verifying subscription...';
   try {
-    const ptkMatch = raw.match(/ptk_[A-Za-z0-9_-]{12,64}/);
-    const url = ptkMatch ? (API_BASE + '/api/device-link/redeem-token') : (API_BASE + '/api/verify-key');
+    const url = ptkMatch ? (API_BASE + '/api/device-link/redeem-token') : (API_BASE + '/api/license-verify');
     const payload = ptkMatch
       ? { token: ptkMatch[0], device_id: getDeviceId(), device_name: 'Mobile Phone', platform: 'android' }
-      : { key: raw, email, device_id: getDeviceId(), device_name: 'Mobile Phone', os: 'android' };
-    const res = await fetch(url, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+      : { license_key: normalizedKey, email, device_id: getDeviceId(), device_name: 'Mobile Phone', platform: 'android' };
+    const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
     const data = await res.json();
-    if (res.ok && (data.ok || data.valid)) {
-      const k = data.license_key || data.licenseKey || raw;
-      localStorage.setItem('sweepr_db_key', k);
+    const resolvedKey = String(data.license_key || data.licenseKey || (isFullKey ? normalizedKey : '')).trim().toUpperCase();
+    if (res.ok && (data.ok || data.valid) && FULL_LICENSE_KEY_RE.test(resolvedKey)) {
+      localStorage.setItem('sweepr_db_key', resolvedKey);
+      localStorage.setItem('sweepr_db_verified_at', String(Date.now()));
+      document.getElementById('codeInput').value = resolvedKey;
       document.getElementById('proBadge').textContent = 'PRO ACTIVE';
-      msg.style.color='var(--accent-fg)';
-      msg.textContent='Pro Activated! Returning to Power Orb...';
+      msg.style.color = 'var(--accent-fg)';
+      msg.textContent = 'Pro Activated! Returning to Power Orb...';
       setTimeout(() => switchTab('home'), 700);
     } else {
-      msg.style.color='#ef4444';
-      msg.textContent = data.message || data.error || 'Invalid activation code.';
+      msg.style.color = '#ef4444';
+      msg.textContent = data.message || data.error || 'Invalid or expired license key.';
     }
   } catch (e) {
-    msg.style.color='#ef4444';
+    msg.style.color = '#ef4444';
     msg.textContent = 'Network error connecting to sweeprdeepblock.com.';
   }
 }
 
-(function init() {
+async function init() {
   const savedTheme = localStorage.getItem('sweepr_db_theme') || 'light';
   applyTheme(savedTheme);
-  if (localStorage.getItem('sweepr_db_key')) {
-    document.getElementById('codeInput').value = localStorage.getItem('sweepr_db_key');
-    document.getElementById('proBadge').textContent = 'PRO ACTIVE';
+  refreshAndroidDnsStatus(false);
+  const savedKey = (localStorage.getItem('sweepr_db_key') || '').trim().toUpperCase();
+  if (!savedKey) return;
+  if (!FULL_LICENSE_KEY_RE.test(savedKey)) {
+    localStorage.removeItem('sweepr_db_key');
+    localStorage.removeItem('sweepr_db_verified_at');
+    return;
   }
-})();
+  let verifiedAt = Number(localStorage.getItem('sweepr_db_verified_at') || 0);
+  if (!verifiedAt || Number.isNaN(verifiedAt)) {
+    verifiedAt = Date.now();
+    localStorage.setItem('sweepr_db_verified_at', String(verifiedAt));
+  }
+  document.getElementById('codeInput').value = savedKey;
+  document.getElementById('proBadge').textContent = 'PRO ACTIVE';
+
+  if (Date.now() - verifiedAt < SESSION_RECHECK_MS) return;
+
+  try {
+    const res = await fetch(API_BASE + '/api/license-verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        license_key: savedKey,
+        device_id: getDeviceId(),
+        device_name: 'Mobile Phone',
+        platform: 'android'
+      })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (res.ok && (data.ok || data.valid)) {
+      localStorage.setItem('sweepr_db_verified_at', String(Date.now()));
+      return;
+    }
+    const explicitlyInactive =
+      data.error === 'subscription_inactive' ||
+      data.error === 'license_revoked' ||
+      (res.status >= 400 && res.status < 500 && res.status !== 429 && data.valid === false);
+    if (explicitlyInactive) {
+      localStorage.removeItem('sweepr_db_key');
+      localStorage.removeItem('sweepr_db_verified_at');
+      document.getElementById('proBadge').textContent = 'Ready';
+    }
+  } catch (e) {
+    if (Date.now() - verifiedAt > OFFLINE_GRACE_MS) {
+      localStorage.removeItem('sweepr_db_key');
+      localStorage.removeItem('sweepr_db_verified_at');
+      document.getElementById('proBadge').textContent = 'Ready';
+    }
+  }
+}
+
+init();
 </script>
 </body>
 </html>`;

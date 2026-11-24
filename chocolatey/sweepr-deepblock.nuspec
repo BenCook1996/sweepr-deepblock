@@ -16,9 +16,17 @@
     <bugTrackerUrl>https://github.com/BenCook1996/sweepr-deepblock/issues</bugTrackerUrl>
     <tags>sweepr deepblock adblocker privacy cookie-banner manifest-v3 edge chrome brave</tags>
     <summary>Native Manifest V3 ad blocker, auto GDPR cookie rejector, AI slop filter, and browser RAM optimizer installer.</summary>
-    <description>SWEEPR Deepblock 1-Click Browser Installer configures the SWEEPR Deepblock Manifest V3 extension across Google Chrome, Microsoft Edge, and Brave with 253+ declarativeNetRequest rules, automated GDPR/CMP Reject All cookie consent dismissal, fake e-commerce store inspection, search AI-slop filtering, and background tab memory controls.
+    <description>SWEEPR Deepblock Desktop Installer deploys the SWEEPR Deepblock desktop privacy utilities and Manifest V3 browser extension across Google Chrome, Microsoft Edge, and Brave.
 
-Silent install supports `/S` (or `/silent`, `--silent`, `/qn`) and silent uninstall supports `--uninstall /S`.</description>
+### Browser &amp; Shortcut Automation Disclosure
+During installation, Setup closes running Chromium browser instances (Google Chrome, Microsoft Edge, and Brave), updates user browser shortcuts to include the `--load-extension` flag pointing to `%LOCALAPPDATA%\SWEEPR\Deepblock\extension`, and relaunches the browser so the extension loads locally. Silent install supports `/S` (or `/silent`, `--silent`, `/qn`) and silent uninstall removes the extension directory and restores shortcuts via `--uninstall /S`.
+
+### Free Utilities vs. Paid Pro Subscription
+- **Included Free:** Desktop URL Tracking Parameter Cleaner, 14-point Scam Domain Audit, 253-rule MV3 Rule Inspector, and local adblock engine self-test.
+- **Paid SWEEPR Deepblock Pro Subscription (`https://sweeprdeepblock.com/pricing`):** Active in-browser ad and YouTube ad blocking, `&lt;50ms` automatic GDPR/CCPA cookie consent rejection, search AI-slop cleansing, fake shop real-time alerts, and Total Tab &amp; RAM Tamer background tab hibernation require an active paid license key.
+
+### VirusTotal Warning Notice
+`SWEEPRDeepblockSetup.exe` is compiled directly from public C# source code (`https://github.com/BenCook1996/sweepr-deepblock/blob/main/installer/SWEEPRDeepblockSetup.cs`; documentation at `https://sweeprdeepblock.com/support`). Some heuristic/ML antivirus engines on VirusTotal may flag the binary at Warning level solely due to its automated browser process termination and `.lnk` shortcut modification behavior.</description>
     <releaseNotes>v1.3.0 ships the self-contained Windows desktop privacy suite with embedded offline MV3 extension package (253 C++ rules), standalone URL tracking cleaner, 14-point scam domain scanner, in-popup slide-over Settings &amp; Tabs menu, and streamlined welcome activation experience.</releaseNotes>
     <copyright>Copyright (c) 2026 SWEEPR Global Limited</copyright>
   </metadata>

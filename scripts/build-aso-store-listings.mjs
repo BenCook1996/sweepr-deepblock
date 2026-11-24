@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 /**
- * SWEEPR DeepBlock v1.2.9 — Multi-Locale Extension Store ASO & CWS Compliance Packager
+ * SWEEPR DeepBlock v1.3.1 — Multi-Locale Extension Store ASO & CWS Compliance Packager
  *
  * 1. Normalizes all 9 `extension/_locales/{locale}/messages.json` files so every locale
  *    strictly satisfies Chrome Web Store & Edge Add-ons hard limits:
  *      - `extName.message.length <= 45`
  *      - `extShortName.message === "DeepBlock"` (<= 12 chars)
  *      - `extDescription.message.length <= 132`
- * 2. Generates localized, keyword-clustered Chrome Web Store, Firefox AMO, Microsoft Edge
- *    Add-ons, and Safari App Store listing markdown packs in `dist/store-listings/{locale}.md`.
+ * 2. Generates localized, keyword-clustered Chrome Web Store, Firefox AMO, and Microsoft Edge
+ *    Add-ons listing markdown packs in `dist/store-listings/{locale}.md`.
  * 3. Emits `dist/store-listings/aso-compliance-report.json` with 100% pass verification.
  */
 
@@ -26,7 +26,7 @@ const CANONICAL_LOCALES = {
   en: {
     extName: 'SWEEPR DeepBlock: Ad Blocker & Cookie Blocker', // 45 chars
     extShortName: 'DeepBlock',
-    extDescription: 'Blocks video & banner ads, auto-rejects GDPR cookie popups, flags scam stores, and frees browser RAM. No browsing history logged.', // 129 chars
+    extDescription: 'Blocks video & banner ads, auto-rejects GDPR cookie popups, strips URL trackers, and frees browser RAM across 5 devices.', // 125 chars
     uiStrings: {
       uiUnlockPro: 'Unlock Full Pro Protection',
       uiFreePreview: 'Free Preview',
@@ -49,12 +49,12 @@ const CANONICAL_LOCALES = {
       'browser ram optimizer'
     ],
     longDescriptionIntro:
-      'SWEEPR DeepBlock is a native Manifest V3 ad blocker, automated GDPR/CMP cookie consent responder, AI search slop filter, and browser RAM optimizer engineered for sub-15µs C++ DeclarativeNetRequest filtering.'
+      'SWEEPR DeepBlock is a native Manifest V3 ad blocker, automated GDPR/CMP cookie consent responder, URL tracking parameter stripper, and browser RAM optimizer built for Chromium and Firefox.'
   },
   de: {
     extName: 'SWEEPR DeepBlock: Werbeblocker & Cookie-Stopp', // 45 chars
     extShortName: 'DeepBlock',
-    extDescription: 'Video-Werbung, Pop-ups & Tracker blockieren, Cookie-Banner automatisch ablehnen, Fake-Shops erkennen und RAM sparen. 100% lokal.', // 128 chars
+    extDescription: 'Video-Werbung, Pop-ups & Tracker blockieren, Cookie-Banner automatisch ablehnen und Browser-RAM sparen. Für 5 Geräte.', // 118 chars
     uiStrings: {
       uiUnlockPro: 'Pro-Schutz freischalten',
       uiFreePreview: 'Gratis-Vorschau',
@@ -74,15 +74,15 @@ const CANONICAL_LOCALES = {
       'cookie banner automatisch ablehnen',
       'youtube werbung blockieren',
       'total adblock alternative',
-      'fake shop erkennung'
+      'browser ram optimieren'
     ],
     longDescriptionIntro:
-      'SWEEPR DeepBlock ist ein nativer Manifest-V3-Werbeblocker mit automatischer DSGVO-Cookie-Ablehnung (<200 ms), Fake-Shop-Schutz und Browser-RAM-Optimierung – 100 % lokal ohne Cloud-Telemetrie.'
+      'SWEEPR DeepBlock ist ein nativer Manifest-V3-Werbeblocker mit automatischer DSGVO-Cookie-Ablehnung, URL-Tracker-Bereinigung und Browser-RAM-Optimierung – 100 % lokal auf Ihrem Gerät.'
   },
   fr: {
     extName: 'SWEEPR DeepBlock : Bloqueur Pubs & Cookies', // 42 chars
     extShortName: 'DeepBlock',
-    extDescription: 'Bloquez pubs vidéo, pop-ups et traqueurs, refusez les bannières cookies RGPD, détectez les faux sites et économisez la RAM.', // 123 chars
+    extDescription: 'Bloquez pubs vidéo, pop-ups et traqueurs, refusez les bannières cookies RGPD et économisez la RAM sur 5 appareils.', // 115 chars
     uiStrings: {
       uiUnlockPro: 'Débloquer la protection Pro',
       uiFreePreview: 'Aperçu gratuit',
@@ -105,12 +105,12 @@ const CANONICAL_LOCALES = {
       'économiser mémoire ram navigateur'
     ],
     longDescriptionIntro:
-      'SWEEPR DeepBlock est un bloqueur de publicités natif Manifest V3 avec refus automatique des bannières cookies RGPD/CNIL, détection des boutiques frauduleuses et optimisation de la mémoire RAM.'
+      'SWEEPR DeepBlock est un bloqueur de publicités natif Manifest V3 avec refus automatique des bannières cookies RGPD/CNIL, suppression des paramètres de suivi URL et optimisation de la mémoire RAM.'
   },
   es: {
     extName: 'SWEEPR DeepBlock: Bloqueador Anuncios Cookies', // 45 chars
     extShortName: 'DeepBlock',
-    extDescription: 'Bloquea anuncios de video, pop-ups y rastreadores, rechaza cookies automáticamente, detecta tiendas falsas y ahorra memoria RAM.', // 128 chars
+    extDescription: 'Bloquea anuncios de video, pop-ups y rastreadores, rechaza cookies automáticamente y ahorra RAM en hasta 5 dispositivos.', // 122 chars
     uiStrings: {
       uiUnlockPro: 'Desbloquear protección Pro',
       uiFreePreview: 'Vista gratuita',
@@ -133,12 +133,12 @@ const CANONICAL_LOCALES = {
       'optimizar ram navegador'
     ],
     longDescriptionIntro:
-      'SWEEPR DeepBlock bloquea anuncios de video, banners y rastreadores mediante motor C++ DeclarativeNetRequest (<15µs), rechaza pop-ups de cookies automáticamente y protege contra tiendas fraudulentas.'
+      'SWEEPR DeepBlock bloquea anuncios de video, banners y rastreadores con motor nativo DeclarativeNetRequest, limpia parámetros de seguimiento URL, rechaza pop-ups de cookies y hiberna pestañas inactivas.'
   },
   it: {
     extName: 'SWEEPR DeepBlock: Blocco Pubblicità e Cookie', // 44 chars
     extShortName: 'DeepBlock',
-    extDescription: 'Blocca annunci video, pop-up e tracker, rifiuta automaticamente i banner cookie, rileva negozi truffa e riduci il consumo RAM.', // 126 chars
+    extDescription: 'Blocca annunci video, pop-up e tracker, rifiuta automaticamente i banner cookie e riduci il consumo RAM su 5 dispositivi.', // 123 chars
     uiStrings: {
       uiUnlockPro: 'Sblocca protezione Pro',
       uiFreePreview: 'Anteprima gratuita',
@@ -161,12 +161,12 @@ const CANONICAL_LOCALES = {
       'risparmiare ram browser'
     ],
     longDescriptionIntro:
-      'SWEEPR DeepBlock blocca annunci video, pop-up e tracker con il motore nativo C++ Manifest V3 (<15µs), rifiuta automaticamente i banner sui cookie GDPR e rileva siti e-commerce truffa.'
+      'SWEEPR DeepBlock blocca annunci video, pop-up e tracker con il motore nativo Manifest V3, rifiuta automaticamente i banner sui cookie GDPR e iberna le schede inattive su 5 dispositivi.'
   },
   nl: {
     extName: 'SWEEPR DeepBlock: Adblocker & Cookie-Blocker', // 44 chars
     extShortName: 'DeepBlock',
-    extDescription: 'Blokkeer videoadvertenties, pop-ups en trackers, weiger cookiebanners automatisch, herken nepwinkels en bespaar browser-RAM.', // 124 chars
+    extDescription: 'Blokkeer videoadvertenties, pop-ups en trackers, weiger cookiebanners automatisch en bespaar RAM op 5 apparaten.', // 116 chars
     uiStrings: {
       uiUnlockPro: 'Pro-bescherming ontgrendelen',
       uiFreePreview: 'Gratis voorbeeld',
@@ -185,16 +185,16 @@ const CANONICAL_LOCALES = {
       'adblocker chrome manifest v3',
       'cookiebanners automatisch weigeren',
       'videoadvertenties blokkeren',
-      'nepwinkel checker',
+      'url trackers strippen',
       'browser geheugen besparen'
     ],
     longDescriptionIntro:
-      'SWEEPR DeepBlock blokkeert videoadvertenties, pop-ups en trackers via C++ DeclarativeNetRequest (<15µs), weigert AVG-cookiebanners automatisch en herkent malafide webwinkels.'
+      'SWEEPR DeepBlock blokkeert videoadvertenties, pop-ups en trackers via Manifest V3 DeclarativeNetRequest, weigert AVG-cookiebanners automatisch en sluimert inactieve tabbladen op 5 apparaten.'
   },
   pl: {
     extName: 'SWEEPR DeepBlock: Blokowanie Reklam i Cookie', // 44 chars
     extShortName: 'DeepBlock',
-    extDescription: 'Blokuj reklamy wideo, pop-upy i trackery, automatycznie odrzucaj banery cookie, wykrywaj fałszywe sklepy i oszczędzaj pamięć RAM.', // 129 chars
+    extDescription: 'Blokuj reklamy wideo, pop-upy i trackery, automatycznie odrzucaj banery cookie i oszczędzaj pamięć RAM na 5 urządzeniach.', // 122 chars
     uiStrings: {
       uiUnlockPro: 'Odblokuj ochronę Pro',
       uiFreePreview: 'Podgląd darmowy',
@@ -213,16 +213,16 @@ const CANONICAL_LOCALES = {
       'blokowanie reklam chrome',
       'automatyczne odrzucanie cookies',
       'blokowanie reklam wideo',
-      'wykrywanie fałszywych sklepów',
+      'usuwanie parametrów śledzących',
       'oszczędzanie ram przeglądarki'
     ],
     longDescriptionIntro:
-      'SWEEPR DeepBlock blokuje reklamy wideo, pop-upy oraz elementy śledzące w silniku C++ Manifest V3 (<15µs), automatycznie odrzuca banery RODO/cookie i chroni przed fałszywymi sklepami.'
+      'SWEEPR DeepBlock blokuje reklamy wideo, pop-upy oraz elementy śledzące w silniku Manifest V3, automatycznie odrzuca banery RODO/cookie i usypia nieaktywne karty na 5 urządzeniach.'
   },
   pt_BR: {
     extName: 'SWEEPR DeepBlock: Bloqueador Anúncios Cookies', // 45 chars
     extShortName: 'DeepBlock',
-    extDescription: 'Bloqueie anúncios em vídeo, pop-ups e rastreadores, rejeite avisos de cookies automaticamente, detecte lojas falsas e poupe RAM.', // 128 chars
+    extDescription: 'Bloqueie anúncios em vídeo, pop-ups e rastreadores, rejeite avisos de cookies automaticamente e poupe RAM em 5 dispositivos.', // 124 chars
     uiStrings: {
       uiUnlockPro: 'Desbloquear proteção Pro',
       uiFreePreview: 'Prévia grátis',
@@ -241,16 +241,16 @@ const CANONICAL_LOCALES = {
       'bloqueador de anúncios chrome',
       'rejeitar cookies automaticamente',
       'bloquear anúncios de vídeo',
-      'detector de lojas falsas',
+      'limpar rastreadores url',
       'economizar ram navegador'
     ],
     longDescriptionIntro:
-      'SWEEPR DeepBlock bloqueia anúncios em vídeo, pop-ups e rastreadores com motor C++ Manifest V3 (<15µs), rejeita banners de cookies LGPD/GDPR automaticamente e detecta lojas virtuais falsas.'
+      'SWEEPR DeepBlock bloqueia anúncios em vídeo, pop-ups e rastreadores com motor Manifest V3, rejeita banners de cookies LGPD/GDPR automaticamente e hiberna abas ociosas em até 5 dispositivos.'
   },
   ja: {
     extName: 'SWEEPR DeepBlock: 広告ブロッカー & Cookie自動拒否', // 38 chars
     extShortName: 'DeepBlock',
-    extDescription: '動画広告・ポップアップ・追跡をブロックし、Cookie同意バナーを自動拒否。詐欺ショップを検知しブラウザのメモリ使用量も削減します。', // 66 chars
+    extDescription: '動画広告・ポップアップ・追跡をブロックし、Cookie同意バナーを自動拒否。URL追跡除去とタブ休止でメモリを節約（最大5台）。', // 69 chars
     uiStrings: {
       uiUnlockPro: 'Pro保護を有効化',
       uiFreePreview: '無料プレビュー',
@@ -269,18 +269,18 @@ const CANONICAL_LOCALES = {
       '広告ブロッカー chrome manifest v3',
       'cookieバナー 自動拒否',
       '動画広告 ブロック',
-      '詐欺サイト 検知',
+      'url トラッカー 除去',
       'ブラウザ メモリ 削減'
     ],
     longDescriptionIntro:
-      'SWEEPR DeepBlockは、C++ DeclarativeNetRequestエンジン（15マイクロ秒未満）で動画広告・バナー広告・トラッカーを高速遮断し、Cookie同意ポップアップの自動拒否や偽通販サイトの検知、メモリ節約を実現します。'
+      'SWEEPR DeepBlockは、Manifest V3のDeclarativeNetRequestエンジンで動画広告・バナー広告・暗号通貨マイナー・URL追跡パラメータを遮断し、Cookie同意バナー自動拒否と非アクティブタブ休止を最大5台で利用できます。'
   }
 };
 
 export function runBuildAsoStoreListings() {
   fs.mkdirSync(OUT_DIR, { recursive: true });
   const manifest = JSON.parse(fs.readFileSync(path.join(EXT_DIR, 'manifest.json'), 'utf8'));
-  const version = manifest.version || '1.2.9';
+  const version = manifest.version || '1.3.1';
 
   let matrixKeywords = [];
   const matrixPath = path.join(ROOT_DIR, 'data', 'keyword-opportunity-matrix.json');
@@ -348,12 +348,11 @@ ${matrixKeywords.length ? `\n### High-Intent Low-KD Switcher Keywords (Synced fr
 ## 3. Store Description Copy (Chrome Web Store / Edge Add-ons / Firefox AMO)
 ${cfg.longDescriptionIntro}
 
-### Verified Engineering Benchmarks (v${version})
-- **242 C++ DeclarativeNetRequest Rules**: Evaluates network requests in \`<15µs\` inside the browser's native C++ engine with zero JavaScript heap bloat.
-- **10,218+ Verified Ad, Tracker & Scam Domains Blocked**: Updated daily via automated multi-source filter harvesting.
-- **Automated GDPR / CCPA Cookie Consent Responder**: Auto-clicks "Reject All" on OneTrust, Quantcast, TrustArc, Didomi, Sourcepoint, and Cookiebot in \`<200ms\` while preserving page scroll locks.
-- **150 Audited UK & Global High-Ad-Load Publishers**: Reduces renderer RAM consumption by up to 62% on heavy news, video, and shopping sites.
-- **Transparent Flat Pricing**: Core MV3 ad & tracker blocker is 100% free forever. Upgrade to **SWEEPR DeepBlock Pro (£29.99/yr flat — £2.50/mo eq., 5 devices)** or the **4-in-1 Sweepr Complete Security Suite (£89.99/yr — 5 devices: DeepBlock Pro + Total Tab & RAM Tamer + Sweepr VPN + Sweepr Desktop Cleaner)** with zero Year-2 renewal shock.
+### Core Protection Capabilities (v${version})
+- **Native Manifest V3 DeclarativeNetRequest Rulesets**: Blocks video/banner ads, cryptominers, and tracking parameters directly inside the browser engine with zero browsing history logged.
+- **Automated GDPR / CCPA Cookie Consent Responder**: Auto-clicks "Reject All" on OneTrust, Quantcast, TrustArc, Didomi, Sourcepoint, and Cookiebot while preserving page scroll locks.
+- **Total Tab & RAM Tamer (Included in Pro)**: Automatically hibernates inactive background tabs to reduce browser memory usage and saves restorable tab sessions.
+- **Transparent Flat Pricing**: Core MV3 preview is free to install. Upgrade to **SWEEPR DeepBlock Pro (£29.99/yr flat — £2.50/mo eq., 5 devices, Total Tab & RAM Tamer included)** or the **Sweepr Complete Security Suite (£89.99/yr — 5 devices: DeepBlock Pro + Sweepr VPN + Sweepr Desktop Cleaner)** with zero Year-2 renewal shock.
 
 ## 4. Reviewer Justification & Privacy Attestation
 - **Zero Browsing History Logged**: All URL and DOM filtering executes 100% locally on the user's device.

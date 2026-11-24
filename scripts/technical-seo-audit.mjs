@@ -7,6 +7,7 @@ const ROOT_DIR = path.resolve(__dirname, '..');
 const WEBSITE_DIR = path.join(ROOT_DIR, 'website');
 const SERVER_PATH = path.join(ROOT_DIR, 'server.js');
 const SCRIPTS_DIR = path.join(ROOT_DIR, 'scripts');
+const STRICT_MODE = process.argv.includes('--strict');
 
 function walk(dir) {
   let results = [];
@@ -27,27 +28,44 @@ const htmlFiles = walk(WEBSITE_DIR);
 console.log(`[AUDIT] Found ${htmlFiles.length} HTML files in website/`);
 
 const results = {
+  strictMode: STRICT_MODE,
   htmlIssues: [],
   htmlWarnings: [],
   pagesAnalyzed: htmlFiles.length,
   indexablePages: 0,
   nonIndexablePages: 0,
+  consolidated301Pages: 0,
+  prunedNoIndexPages: 0,
   serverAudit: {},
   scriptsAudit: {}
 };
 
-// Build index of clean routes & track noindex PSEO routes
+function recordMigrationFinding(finding) {
+  if (STRICT_MODE) {
+    results.htmlIssues.push(finding);
+  } else {
+    results.htmlWarnings.push(finding);
+  }
+}
+
+// Build index of clean routes & track consolidated vs pruned noindex routes
 const existingCleanRoutes = new Set();
-const noIndexPseoRoutes = new Set();
+const consolidated301Routes = new Set();
+const prunedNoIndexRoutes = new Set();
+const allNoIndexRoutes = new Set();
 const incomingInternalLinks = new Map();
 for (const f of htmlFiles) {
   const rel = path.relative(WEBSITE_DIR, f).replace(/\\/g, '/');
   const clean = rel === 'index.html' ? '/' : (rel.endsWith('/index.html') ? '/' + rel.replace(/\/index\.html$/, '') : '/' + rel.replace(/\.html$/, ''));
   existingCleanRoutes.add(clean);
-  if (/^(solutions|setup|vs|guides)\//i.test(rel)) {
-    const raw = fs.readFileSync(f, 'utf8');
-    if (/meta\s+name=["']robots["']\s+content=["'][^"']*noindex/i.test(raw)) {
-      noIndexPseoRoutes.add(clean);
+  const raw = fs.readFileSync(f, 'utf8');
+  const robotsContent = (raw.match(/<meta\s+name=["']robots["']\s+content=["']([^"']+)["']/i)?.[1] || '').toLowerCase();
+  if (/\bnoindex\b/.test(robotsContent)) {
+    allNoIndexRoutes.add(clean);
+    if (/\bnofollow\b/.test(robotsContent)) {
+      prunedNoIndexRoutes.add(clean);
+    } else if (/^(solutions|setup|vs|guides|glossary)\//i.test(rel)) {
+      consolidated301Routes.add(clean);
     }
   }
 }
@@ -65,28 +83,48 @@ const seenTargetKeywords = new Map();
 for (const filePath of htmlFiles) {
   const content = fs.readFileSync(filePath, 'utf8');
   const rel = path.relative(WEBSITE_DIR, filePath).replace(/\\/g, '/');
-  const isNoIndex = /meta\s+name=["']robots["']\s+content=["'][^"']*noindex/i.test(content);
+  const robotsContent = (content.match(/<meta\s+name=["']robots["']\s+content=["']([^"']+)["']/i)?.[1] || '').toLowerCase();
+  const isNoIndex = /\bnoindex\b/.test(robotsContent);
+  const isNoFollow = /\bnofollow\b/.test(robotsContent);
 
   if (isNoIndex) {
     results.nonIndexablePages++;
-    if (/^(solutions|setup|vs|guides)\//i.test(rel)) {
+    if (isNoFollow) {
+      results.prunedNoIndexPages++;
+      if (/^(solutions|setup|vs|guides|glossary)\//i.test(rel)) {
+        const canMatchNoIdx = content.match(/<link\s+rel=["']canonical["']\s+href=["']([^"']+)["']/i);
+        const selfRoute = '/' + rel.replace(/\.html$/, '');
+        const targetRoute = canMatchNoIdx ? canMatchNoIdx[1].trim().replace(/^https?:\/\/(?:www\.)?sweeprdeepblock\.com/i, '') || '/' : null;
+        if (targetRoute && targetRoute !== selfRoute) {
+          results.htmlIssues.push({
+            file: rel,
+            type: 'noindex_prune_301_hijack_risk',
+            msg: `Pruned (noindex, nofollow) page points canonical to ${targetRoute} instead of self (${selfRoute})`
+          });
+        }
+      }
+      continue;
+    }
+
+    results.consolidated301Pages++;
+    if (/^(solutions|setup|vs|guides|glossary)\//i.test(rel)) {
       const canMatchNoIdx = content.match(/<link\s+rel=["']canonical["']\s+href=["']([^"']+)["']/i);
       const selfUrl = `https://sweeprdeepblock.com/${rel.replace(/\.html$/, '')}`;
       if (!canMatchNoIdx || canMatchNoIdx[1].trim() === selfUrl) {
-        results.htmlWarnings.push({
+        recordMigrationFinding({
           file: rel,
           type: 'noindex_self_canonical',
-          msg: 'Consolidated noindex PSEO page should canonicalize to its parent Pillar URL'
+          msg: 'Consolidated noindex, follow PSEO page should canonicalize to its parent Pillar URL'
         });
       } else {
-        const targetRoute = canMatchNoIdx[1].trim().replace(/^https?:\/\/sweeprdeepblock\.com/i, '') || '/';
+        const targetRoute = canMatchNoIdx[1].trim().replace(/^https?:\/\/(?:www\.)?sweeprdeepblock\.com/i, '') || '/';
         if (!existingCleanRoutes.has(targetRoute)) {
           results.htmlIssues.push({
             file: rel,
             type: 'broken_consolidation_canonical',
             msg: `Consolidated noindex PSEO page canonicalizes to non-existent target: ${targetRoute}`
           });
-        } else if (noIndexPseoRoutes.has(targetRoute)) {
+        } else if (allNoIndexRoutes.has(targetRoute)) {
           results.htmlIssues.push({
             file: rel,
             type: 'consolidation_redirect_chain',
@@ -94,8 +132,8 @@ for (const filePath of htmlFiles) {
           });
         }
       }
-      for (const m of content.matchAll(/<a\s+[^>]*href=["'](\/(?:solutions|setup|vs|guides)\/[a-z0-9-]+)["']/gi)) {
-        if (noIndexPseoRoutes.has(m[1])) {
+      for (const m of content.matchAll(/<a\s+[^>]*href=["'](\/(?:solutions|setup|vs|guides|glossary)\/[a-z0-9-]+)["']/gi)) {
+        if (allNoIndexRoutes.has(m[1])) {
           results.htmlWarnings.push({
             file: rel,
             type: 'link_to_noindex_page',
@@ -234,28 +272,69 @@ for (const filePath of htmlFiles) {
     }
   }
 
-  // Live MV3 Rule Proof, Version Freshness, Static CSS & Adult-Rule Checks on indexable PSEO Pillar pages
-  if (/^(solutions|setup|vs|guides)\//i.test(rel) && rel !== 'vs/total-adblock.html' && !rel.endsWith('/index.html')) {
-    if (/Version\s+1\.2\.[257]\b/i.test(content)) {
-      results.htmlWarnings.push({
+  // Holographic Pearl Light Shell, v1.3.1 Version Freshness, 283 Static Rules & Removed-Feature Checks
+  if (/\bv?1\.2\.\d+\b/i.test(content) || /Version\s+1\.2\.\d+/i.test(content)) {
+    recordMigrationFinding({
+      file: rel,
+      type: 'stale_v12_version',
+      msg: 'Indexable page contains stale v1.2.x version string (expected v1.3.1)'
+    });
+  }
+
+  if (
+    /<section\b[^>]*\bid=["'](?:deepblock-live-rule-proof|deepblock-ctr-intent-enrichment|deepblock-ctr-enrichment)["']/i.test(content) ||
+    (/<section\b[^>]*\bid=["']gsc-exact-query-enrichment["'][^>]*>/i.test(content) &&
+      /<section\b[^>]*\bid=["']gsc-exact-query-enrichment["'][^>]*(?:#0f172a|#1e293b|bg-slate-900)/i.test(content))
+  ) {
+    recordMigrationFinding({
+      file: rel,
+      type: 'legacy_slop_block_present',
+      msg: 'Indexable page still contains legacy dark telemetry/enrichment slop section'
+    });
+  }
+
+  const hasColorSchemeLight = /<meta\s+name=["']color-scheme["']\s+content=["']light["']/i.test(content);
+  const hasGlassNav = /class=["'][^"']*\bglass-nav\b/i.test(content);
+  const hasTailwindCss = /\/sweepr-tailwind\.min\.css/i.test(content);
+  const hasStyleCss = /\/style\.css/i.test(content);
+  const hasNavJs = /\/nav\.js/i.test(content);
+  const mainTag = (content.match(/<main\b[^>]*>/i) || [''])[0];
+  const hasSafeMain = /\bw-full\b/.test(mainTag) && /\bmin-w-0\b/.test(mainTag) && /\bpt-24\b/.test(mainTag);
+  const hasDarkWrapper = /background\s*:\s*(?:#090d16|#0b0f19)/i.test(content) || /<body\b[^>]*\bbg-slate-950\b/i.test(content);
+  if (!hasColorSchemeLight || !hasGlassNav || !hasTailwindCss || !hasStyleCss || !hasNavJs || !hasSafeMain || hasDarkWrapper) {
+    recordMigrationFinding({
+      file: rel,
+      type: 'holographic_pearl_shell_mismatch',
+      msg: `Missing Holographic Pearl shell parity (light:${hasColorSchemeLight}, glassNav:${hasGlassNav}, css:${hasTailwindCss && hasStyleCss}, navJs:${hasNavJs}, safeMain:${hasSafeMain}, darkWrapper:${hasDarkWrapper})`
+    });
+  }
+
+  if (!rel.startsWith('tools/')) {
+    const strippedForClaimCheck = content
+      .replace(/not\s+shipped[^.<]*[.<]/gi, '')
+      .replace(/coming\s+soon[^.<]*[.<]/gi, '')
+      .replace(/discontinued[^.<]*[.<]/gi, '')
+      .replace(/does\s+not\s+(?:include|ship|offer)[^.<]*[.<]/gi, '');
+    if (
+      /\b(?:Fake\s+Online\s+Shop|fakeShopAlerts|AI\s+Slop\s+(?:Search\s+)?(?:Cleanser|Filter|Purifier)|hideSearchSpam|Recipe[^<]{0,40}Clutter\s+Stripper|processRecipeAndNewsClutter|Apple\s+Safari\s+(?:extension|macOS\s*&?\s*iOS)|DoH\s+DNS\s+proxy)\b/i.test(
+        strippedForClaimCheck
+      ) ||
+      /\.mobileconfig/i.test(strippedForClaimCheck)
+    ) {
+      recordMigrationFinding({
         file: rel,
-        type: 'stale_pillar_version',
-        msg: 'Indexable Pillar page contains stale Version 1.2.2 / 1.2.5 / 1.2.7 string (expected 1.2.9)'
+        type: 'removed_feature_claim',
+        msg: 'Indexable page references removed/unshipped v1.2.x features (Fake Shop, AI Slop Cleanser, Recipe Stripper, Safari/iOS, or DoH proxy)'
       });
     }
-    if (!content.includes('id="deepblock-live-rule-proof"')) {
-      results.htmlWarnings.push({
-        file: rel,
-        type: 'missing_live_rule_proof',
-        msg: 'Indexable PSEO Pillar page is missing #deepblock-live-rule-proof telemetry section'
-      });
-    } else if (!/#\d+/.test(content)) {
-      results.htmlWarnings.push({
-        file: rel,
-        type: 'empty_live_rule_proof',
-        msg: '#deepblock-live-rule-proof section contains 0 verified DNR rule rows'
-      });
-    }
+  }
+
+  if (/\b(?:242|271)\s+(?:static\s+)?(?:C\+\+\s+)?(?:declarativeNetRequest|DNR)\s+rules/i.test(content)) {
+    recordMigrationFinding({
+      file: rel,
+      type: 'stale_rule_count',
+      msg: 'Indexable page references stale 242/271 DNR rule count (expected 283 static rules)'
+    });
   }
 
   if (/cdn\.tailwindcss\.com/i.test(content)) {
@@ -263,20 +342,6 @@ for (const filePath of htmlFiles) {
       file: rel,
       type: 'runtime_tailwind_cdn',
       msg: 'Page still references runtime cdn.tailwindcss.com instead of static /sweepr-tailwind.min.css'
-    });
-  }
-
-  const proofMatch = content.match(/<section[^>]*id=["']deepblock-live-rule-proof["'][\s\S]*?<\/section>/i);
-  if (
-    proofMatch &&
-    /(eporner|pornoxo|pornoeggs|freeporn|hqporn|sxyprn|realxxx|hotxxx|hotadult|faphouse|tubecup|doublepimp|tophqcam|xlivrdr|doppiocdn|awmdelivery|camsoda|nuvid|nvdst|drtuber|txxx|rvmessage|rvrpush|fhgte|fh-wgt|qoqh|lxax|koxk|u5s5|ey43|ero-advertising|trafficjunky|traffichunt|adspyglass|juicyads|plugrush|exoclick|exosrv|magsrv|pemsrv|realsrv|adxpansion|adtng|tsyndicate|crakrevenue|jads\.co|xvideos|xnxx|xhamster|redtube|youporn|spankbang|chaturbate|stripchat|bongacams|livejasmin|onlyfans)/i.test(
-      proofMatch[0]
-    )
-  ) {
-    results.htmlIssues.push({
-      file: rel,
-      type: 'adult_rule_in_proof_table',
-      msg: '#deepblock-live-rule-proof contains adult/explicit domain patterns'
     });
   }
 
@@ -340,6 +405,22 @@ for (const filePath of htmlFiles) {
             });
           }
           if (item['@type'] === 'SoftwareApplication' || item['@type'] === 'Product') {
+            if (item['@type'] === 'SoftwareApplication') {
+              if (item.softwareVersion && String(item.softwareVersion) !== '1.3.1') {
+                recordMigrationFinding({
+                  file: rel,
+                  type: 'stale_schema_version',
+                  msg: `SoftwareApplication softwareVersion is "${item.softwareVersion}" (expected "1.3.1")`
+                });
+              }
+              if (item.operatingSystem && /\b(?:Safari|iOS)\b/i.test(String(item.operatingSystem))) {
+                recordMigrationFinding({
+                  file: rel,
+                  type: 'invalid_schema_os_safari_ios',
+                  msg: `SoftwareApplication operatingSystem lists unshipped Safari/iOS: "${item.operatingSystem}"`
+                });
+              }
+            }
             if (!item.offers) {
               results.htmlWarnings.push({ file: rel, type: 'json_ld_missing_offers', msg: 'Schema missing offers field' });
             } else {
@@ -465,6 +546,11 @@ if (fs.existsSync(sitemapPath)) {
   for (const u of sitemapUrls) {
     if (u.endsWith('.html') && !u.endsWith('pad.xml')) {
       results.htmlIssues.push({ file: 'sitemap.xml', type: 'sitemap_url_with_html', msg: `Sitemap contains .html extension: ${u}` });
+    }
+    const p = u.replace(/^https?:\/\/(?:www\.)?sweeprdeepblock\.com/i, '') || '/';
+    const cleanP = p.length > 1 && p.endsWith('/') ? p.slice(0, -1) : p;
+    if (allNoIndexRoutes.has(cleanP)) {
+      results.htmlIssues.push({ file: 'sitemap.xml', type: 'noindex_url_in_sitemap', msg: `Noindex URL present in sitemap: ${u}` });
     }
   }
 

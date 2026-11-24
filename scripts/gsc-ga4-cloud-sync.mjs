@@ -19,7 +19,7 @@
  *       `website/pillar-enrichment-state.json` so `gsc-consolidation-redirect-guard.mjs`
  *       promotes it to an indexable Pillar on the same run.
  *     - Identifies Strike-Zone CTR candidates (Positions 3–25, CTR < 3%, outside 14-day cooldown).
- *     - Programmatically submits `sitemap.xml` and `sitemap-sites.xml` via the GSC Sitemaps API.
+ *     - Programmatically submits `sitemap.xml` via the GSC Sitemaps API.
  *     - Inspects up to 8 priority Pillar URLs/run via the GSC URL Inspection API.
  *  3. Google Analytics 4 Data API (`properties/559863555`):
  *     - Queries 28d `activeUsers`, `sessions`, `engagementRate`, and funnel events
@@ -36,6 +36,12 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
+import {
+  ALL_INDEXABLE_SET,
+  CONSOLIDATE_301_MAP,
+  isNoIndexPrunePath,
+  normalizeUrlPath
+} from './lib/m1-decisions.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = path.resolve(__dirname, '..');
@@ -61,6 +67,28 @@ const CRM_API_KEY = (process.env.SWEEPR_CRM_API_KEY || '').trim();
 const GSC_SITE_URL = process.env.GSC_SITE_URL || 'sc-domain:sweeprdeepblock.com';
 const GA4_PROPERTY_ID = process.env.GA4_PROPERTY_ID || '559863555';
 const COOLDOWN_MS = 14 * 24 * 60 * 60 * 1000;
+
+function isIndexableKeptPath(rawPath) {
+  if (!rawPath) return false;
+  const p = normalizeUrlPath(rawPath).toLowerCase();
+  if (isNoIndexPrunePath(p) || CONSOLIDATE_301_MAP.has(p) || !ALL_INDEXABLE_SET.has(p)) {
+    return false;
+  }
+  const relCandidates = p === '/'
+    ? [path.join(WEBSITE_DIR, 'index.html')]
+    : [path.join(WEBSITE_DIR, `${p.slice(1)}.html`), path.join(WEBSITE_DIR, p.slice(1), 'index.html')];
+  const diskPath = relCandidates.find((candidate) => fs.existsSync(candidate));
+  if (!diskPath) return false;
+  try {
+    const html = fs.readFileSync(diskPath, 'utf8');
+    if (/<meta\s+name=["']robots["']\s+content=["'][^"']*noindex/i.test(html)) {
+      return false;
+    }
+  } catch {
+    return false;
+  }
+  return true;
+}
 
 function base64UrlEncode(input) {
   const buf = Buffer.isBuffer(input) ? input : Buffer.from(String(input), 'utf8');
@@ -196,7 +224,11 @@ async function syncGscSearchAnalytics(accessToken, enrichmentState) {
 
   let totalImpressions = 0;
   let totalClicks = 0;
-  const discoveredSet = new Set(Array.isArray(enrichmentState.discoveredGscPaths) ? enrichmentState.discoveredGscPaths : []);
+  const discoveredSet = new Set(
+    (Array.isArray(enrichmentState.discoveredGscPaths) ? enrichmentState.discoveredGscPaths : [])
+      .map((p) => normalizeUrlPath(p))
+      .filter((p) => isIndexableKeptPath(p))
+  );
   const newlyDiscovered = [];
   const strikeZoneCandidates = [];
   const nowMs = Date.now();
@@ -211,13 +243,17 @@ async function syncGscSearchAnalytics(accessToken, enrichmentState) {
     totalImpressions += impressions;
     totalClicks += clicks;
 
-    const urlPath = fullUrl.replace(/^https?:\/\/sweeprdeepblock\.com/i, '').replace(/\/+$/, '') || '/';
-    if (impressions > 0 && /^\/(solutions|setup|vs|guides)\/[a-z0-9-]+$/i.test(urlPath)) {
-      const relHtml = path.join(WEBSITE_DIR, `${urlPath.slice(1)}.html`);
-      if (fs.existsSync(relHtml) && !discoveredSet.has(urlPath)) {
-        discoveredSet.add(urlPath);
-        newlyDiscovered.push(urlPath);
-      }
+    const urlPath = normalizeUrlPath(fullUrl);
+    if (
+      impressions > 0 &&
+      /^\/(solutions|setup|vs|guides)\/[a-z0-9-]+$/i.test(urlPath) &&
+      !isNoIndexPrunePath(urlPath) &&
+      !CONSOLIDATE_301_MAP.has(urlPath) &&
+      isIndexableKeptPath(urlPath) &&
+      !discoveredSet.has(urlPath)
+    ) {
+      discoveredSet.add(urlPath);
+      newlyDiscovered.push(urlPath);
     }
 
     const lastTitleUpdate = enrichmentState.titleUpdatedAt?.[urlPath];
@@ -267,9 +303,9 @@ async function syncGscSearchAnalytics(accessToken, enrichmentState) {
     enrichmentState.gscRecoveryHistory.push(snapshot);
   }
 
-  // 3. Submit both sitemaps via GSC Sitemaps API
+  // 3. Submit active sitemap via GSC Sitemaps API
   const sitemapStatuses = {};
-  for (const smUrl of ['https://sweeprdeepblock.com/sitemap.xml', 'https://sweeprdeepblock.com/sitemap-sites.xml']) {
+  for (const smUrl of ['https://sweeprdeepblock.com/sitemap.xml']) {
     try {
       const smRes = await fetch(`${baseUrl}/sitemaps/${encodeURIComponent(smUrl)}`, {
         method: 'PUT',
@@ -287,7 +323,7 @@ async function syncGscSearchAnalytics(accessToken, enrichmentState) {
   if (fs.existsSync(INDEXING_QUEUE_PATH)) {
     try {
       const queue = JSON.parse(fs.readFileSync(INDEXING_QUEUE_PATH, 'utf8'));
-      const candidates = (queue.pending_urls || []).slice(0, 8);
+      const candidates = (queue.pending_urls || []).filter((u) => isIndexableKeptPath(u)).slice(0, 8);
       for (const inspectionUrl of candidates) {
         try {
           const inspRes = await fetch('https://searchconsole.googleapis.com/v1/urlInspection/index:inspect', {
@@ -594,12 +630,43 @@ export async function runGscGa4CloudSync() {
     gscRecoveryHistory: [],
     ga4FunnelHistory: []
   };
+  const dryRun = process.argv.includes('--dry-run');
+  const skipCrm = process.argv.includes('--skip-crm');
+  let enrichmentStatePruned = false;
   if (fs.existsSync(ENRICHMENT_STATE_PATH)) {
     try {
       enrichmentState = {
         ...enrichmentState,
         ...JSON.parse(fs.readFileSync(ENRICHMENT_STATE_PATH, 'utf8'))
       };
+      if (Array.isArray(enrichmentState.discoveredGscPaths)) {
+        const filteredPaths = [...new Set(
+          enrichmentState.discoveredGscPaths
+            .map((p) => normalizeUrlPath(p))
+            .filter((p) => isIndexableKeptPath(p))
+        )];
+        if (
+          filteredPaths.length !== enrichmentState.discoveredGscPaths.length ||
+          filteredPaths.some((p, idx) => p !== enrichmentState.discoveredGscPaths[idx])
+        ) {
+          enrichmentState.discoveredGscPaths = filteredPaths;
+          enrichmentStatePruned = true;
+        }
+      }
+      for (const mapKey of ['titleUpdatedAt', 'proofUpdatedAt', 'contentHashes']) {
+        if (enrichmentState[mapKey] && typeof enrichmentState[mapKey] === 'object') {
+          for (const rawKey of Object.keys(enrichmentState[mapKey])) {
+            const normKey = normalizeUrlPath(rawKey).toLowerCase();
+            if (isNoIndexPrunePath(normKey) || CONSOLIDATE_301_MAP.has(normKey)) {
+              delete enrichmentState[mapKey][rawKey];
+              enrichmentStatePruned = true;
+            }
+          }
+        }
+      }
+      if (enrichmentStatePruned && !dryRun) {
+        fs.writeFileSync(ENRICHMENT_STATE_PATH, JSON.stringify(enrichmentState, null, 2), 'utf8');
+      }
     } catch {}
   }
 
@@ -692,8 +759,6 @@ export async function runGscGa4CloudSync() {
     warnings
   };
 
-  const dryRun = process.argv.includes('--dry-run');
-  const skipCrm = process.argv.includes('--skip-crm');
   if (!dryRun && !skipCrm) {
     report.crmSync = await syncDeepblockGscGa4ToCentralCrm({ report, gscResult, ga4Result });
   } else {

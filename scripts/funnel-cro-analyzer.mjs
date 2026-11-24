@@ -43,31 +43,33 @@ export function runFunnelCroAnalyzer() {
   const kwMatrix = readJsonSafe(KEYWORD_MATRIX_PATH, { opportunities: [], ctrEnrichmentQueue: [] });
   const rawFunnel = readJsonSafe(FUNNEL_EVENTS_PATH, {});
 
-  // Aggregate funnel stage counts (combining live telemetry counters with verified baseline floor so cold-start never divides by zero)
-  const storeAndDownloadViews = Math.max(1250, Number(rawFunnel.storeAndDownloadViews || 1250));
-  const extensionInstalls = Math.max(385, Number(rawFunnel.extensionInstalls || 385));
-  const permissionsGranted = Math.max(334, Number(rawFunnel.permissionsGranted || 334));
-  const firstValueAhaMoment = Math.max(268, Number(rawFunnel.firstValueAhaMoment || 268));
-  const paywallExposures = Math.max(210, Number(rawFunnel.paywallExposures || 210));
-  const totalPaidCheckouts = Math.max(18, Number(rawFunnel.totalPaidCheckouts || 18));
-  const suiteAnnualCheckouts = Math.max(4, Number(rawFunnel.suiteAnnualCheckouts || 4));
+  // Aggregate real, unfloored funnel telemetry counters (zero synthetic cold-start floors)
+  const storeAndDownloadViews = Math.max(0, Number(rawFunnel.storeAndDownloadViews ?? 0));
+  const extensionInstalls = Math.max(0, Number(rawFunnel.extensionInstalls ?? 0));
+  const permissionsGranted = Math.max(0, Number(rawFunnel.permissionsGranted ?? 0));
+  const firstValueAhaMoment = Math.max(0, Number(rawFunnel.firstValueAhaMoment ?? 0));
+  const paywallExposures = Math.max(0, Number(rawFunnel.paywallExposures ?? 0));
+  const totalPaidCheckouts = Math.max(0, Number(rawFunnel.totalPaidCheckouts ?? 0));
+  const suiteAnnualCheckouts = Math.max(0, Number(rawFunnel.suiteAnnualCheckouts ?? 0));
   const refunds14d = Math.max(0, Number(rawFunnel.refunds14d ?? 0));
 
-  const installRatePct = +((extensionInstalls / storeAndDownloadViews) * 100).toFixed(1);
-  const permissionActivationRatePct = +((permissionsGranted / extensionInstalls) * 100).toFixed(1);
-  const ahaCompletionRatePct = +((firstValueAhaMoment / permissionsGranted) * 100).toFixed(1);
-  const freeToProCheckoutRatePct = +((totalPaidCheckouts / extensionInstalls) * 100).toFixed(2);
-  const suiteAttachRatePct = +((suiteAnnualCheckouts / Math.max(1, totalPaidCheckouts)) * 100).toFixed(1);
-  const refundRate14dPct = +(((refunds14d || 0.4) / Math.max(1, totalPaidCheckouts)) * 100).toFixed(1);
+  const installRatePct = storeAndDownloadViews > 0 ? +((extensionInstalls / storeAndDownloadViews) * 100).toFixed(1) : 0;
+  const permissionActivationRatePct = extensionInstalls > 0 ? +((permissionsGranted / extensionInstalls) * 100).toFixed(1) : 0;
+  const ahaCompletionRatePct = permissionsGranted > 0 ? +((firstValueAhaMoment / permissionsGranted) * 100).toFixed(1) : 0;
+  const freeToProCheckoutRatePct = extensionInstalls > 0 ? +((totalPaidCheckouts / extensionInstalls) * 100).toFixed(2) : 0;
+  const suiteAttachRatePct = totalPaidCheckouts > 0 ? +((suiteAnnualCheckouts / totalPaidCheckouts) * 100).toFixed(1) : 0;
+  const refundRate14dPct = totalPaidCheckouts > 0 ? +((refunds14d / totalPaidCheckouts) * 100).toFixed(1) : 0;
 
   const proAnnualPriceGbp = 29.99;
   const suiteAnnualPriceGbp = 89.99;
-  const year1BlendedAovGbp = +(
-    (1 - suiteAttachRatePct / 100) * proAnnualPriceGbp +
-    (suiteAttachRatePct / 100) * suiteAnnualPriceGbp
-  ).toFixed(2);
-  const blendedNetLtvGbp = +(year1BlendedAovGbp * 1.14).toFixed(2);
-  const blendedCacGbp = Number(rawFunnel.blendedCacGbp || 15.6);
+  const year1BlendedAovGbp =
+    totalPaidCheckouts > 0
+      ? +((1 - suiteAttachRatePct / 100) * proAnnualPriceGbp + (suiteAttachRatePct / 100) * suiteAnnualPriceGbp).toFixed(2)
+      : 0;
+  const blendedNetLtvGbp = totalPaidCheckouts > 0 ? +(year1BlendedAovGbp * 1.14).toFixed(2) : 0;
+  const blendedCacGbp = Number(rawFunnel.blendedCacGbp) > 0 ? Number(rawFunnel.blendedCacGbp) : null;
+  const ltvToCacRatio = blendedCacGbp && blendedNetLtvGbp > 0 ? +(blendedNetLtvGbp / blendedCacGbp).toFixed(2) : null;
+  const hasMinimumConversionSample = totalPaidCheckouts >= 10;
 
   const funnelStages = [
     {
@@ -77,9 +79,9 @@ export function runFunnelCroAnalyzer() {
       conversionsOut: extensionInstalls,
       conversionRatePct: installRatePct,
       targetRatePct: 28.0,
-      status: installRatePct >= 28.0 ? 'HEALTHY' : 'NEEDS_CRO_ATTENTION',
+      status: storeAndDownloadViews === 0 ? 'INSUFFICIENT_TELEMETRY' : installRatePct >= 28.0 ? 'HEALTHY' : 'NEEDS_CRO_ATTENTION',
       automatedRemedy:
-        installRatePct >= 28.0
+        storeAndDownloadViews > 0 && installRatePct >= 28.0
           ? 'Maintain 1-click browser-detected download CTA and live 8/8 Test Lab proof badge on /download.'
           : 'Promote interactive 8/8 Test Lab widget above the fold on /download and /vs/* pages.'
     },
@@ -90,9 +92,9 @@ export function runFunnelCroAnalyzer() {
       conversionsOut: permissionsGranted,
       conversionRatePct: permissionActivationRatePct,
       targetRatePct: 85.0,
-      status: permissionActivationRatePct >= 85.0 ? 'HEALTHY' : 'BOTTLENECK_DETECTED',
+      status: extensionInstalls === 0 ? 'INSUFFICIENT_TELEMETRY' : permissionActivationRatePct >= 85.0 ? 'HEALTHY' : 'BOTTLENECK_DETECTED',
       automatedRemedy:
-        permissionActivationRatePct >= 85.0
+        extensionInstalls > 0 && permissionActivationRatePct >= 85.0
           ? 'Keep 2-step annotated permission visual guide active on /welcome.'
           : 'Trigger simplified single-screen permission activation modal in extension onboarding.'
     },
@@ -103,9 +105,9 @@ export function runFunnelCroAnalyzer() {
       conversionsOut: firstValueAhaMoment,
       conversionRatePct: ahaCompletionRatePct,
       targetRatePct: 75.0,
-      status: ahaCompletionRatePct >= 75.0 ? 'HEALTHY' : 'NEEDS_CRO_ATTENTION',
+      status: permissionsGranted === 0 ? 'INSUFFICIENT_TELEMETRY' : ahaCompletionRatePct >= 75.0 ? 'HEALTHY' : 'NEEDS_CRO_ATTENTION',
       automatedRemedy:
-        ahaCompletionRatePct >= 75.0
+        permissionsGranted > 0 && ahaCompletionRatePct >= 75.0
           ? 'Continue auto-opening live 8/8 Test Lab verification receipt upon installation.'
           : 'Auto-run 5-second Test Lab diagnostic on /welcome immediately after install.'
     },
@@ -116,7 +118,7 @@ export function runFunnelCroAnalyzer() {
       conversionsOut: totalPaidCheckouts,
       conversionRatePct: freeToProCheckoutRatePct,
       targetRatePct: 4.2,
-      status: freeToProCheckoutRatePct >= 4.2 ? 'HEALTHY' : 'NEEDS_CRO_ATTENTION',
+      status: extensionInstalls === 0 || !hasMinimumConversionSample ? 'INSUFFICIENT_TELEMETRY' : freeToProCheckoutRatePct >= 4.2 ? 'HEALTHY' : 'NEEDS_CRO_ATTENTION',
       automatedRemedy:
         'Paywall Multi-Armed Bandit routes 80% of traffic to highest-RPV framing while testing £1.99 Intro vs £29.99/yr Pro vs £89.99/yr Complete Suite.'
     },
@@ -127,9 +129,9 @@ export function runFunnelCroAnalyzer() {
       conversionsOut: suiteAnnualCheckouts,
       conversionRatePct: suiteAttachRatePct,
       targetRatePct: 20.0,
-      status: suiteAttachRatePct >= 20.0 ? 'HEALTHY' : 'BUNDLE_UPSELL_OPPORTUNITY',
+      status: totalPaidCheckouts === 0 ? 'INSUFFICIENT_TELEMETRY' : suiteAttachRatePct >= 20.0 ? 'HEALTHY' : 'BUNDLE_UPSELL_OPPORTUNITY',
       automatedRemedy:
-        suiteAttachRatePct >= 20.0
+        totalPaidCheckouts > 0 && suiteAttachRatePct >= 20.0
           ? 'Keep 4-in-1 Sweepr Complete Security Suite (£89.99/yr — Save 45%) highlighted across sweeprdeepblock.com, sweeprvpn.com, and sweeprcleaner.com.'
           : 'Increase bandit exploration weight on ram_speedometer_bundle variant pre-selecting /order?plan=suite_annual.'
     }
@@ -145,17 +147,27 @@ export function runFunnelCroAnalyzer() {
       estimatedKD: o.metrics?.estimatedKD,
       opportunityScore: o.metrics?.opportunityScore,
       primaryCta: o.pageBlueprint?.primaryCta?.href || '/order?plan=annual',
-      recommendedTool: o.pageBlueprint?.recommendedToolWidget?.toolRoute || '/tools/is-my-adblocker-working',
+      recommendedTool: o.pageBlueprint?.recommendedToolWidget?.toolRoute || '/test-lab',
       status: 'PUBLISHED_AND_INTERLINKED'
     }));
 
   const liveUnitEconomics = {
     updatedAt: new Date().toISOString(),
+    dataMode: 'real_telemetry_unfloored',
     dailySpendGbp: 10.0,
+    storeAndDownloadViews,
+    extensionInstalls,
+    permissionsGranted,
+    firstValueAhaMoment,
+    paywallExposures,
+    totalPaidCheckouts,
+    suiteAnnualCheckouts,
+    refunds14d,
+    hasMinimumConversionSample,
     blendedCacGbp,
     year1BlendedAovGbp,
     blendedNetLtvGbp,
-    ltvToCacRatio: +(blendedNetLtvGbp / blendedCacGbp).toFixed(2),
+    ltvToCacRatio,
     permissionActivationRatePct,
     freeToProCheckoutRatePct,
     suiteAttachRatePct,
@@ -172,7 +184,14 @@ export function runFunnelCroAnalyzer() {
 
   const diagnosticsReport = {
     generatedAt: new Date().toISOString(),
-    overallHealth: funnelStages.every((s) => s.status === 'HEALTHY') ? 'OPTIMAL' : 'ACTION_RECOMMENDED',
+    dataMode: 'real_telemetry_unfloored',
+    totalPaidCheckouts,
+    hasMinimumConversionSample,
+    overallHealth: funnelStages.every((s) => s.status === 'HEALTHY')
+      ? 'OPTIMAL'
+      : funnelStages.some((s) => s.status === 'INSUFFICIENT_TELEMETRY')
+      ? 'INSUFFICIENT_TELEMETRY'
+      : 'ACTION_RECOMMENDED',
     unitEconomics: liveUnitEconomics,
     funnelStages,
     paywallBanditSnapshot: abState,
@@ -182,7 +201,7 @@ export function runFunnelCroAnalyzer() {
   fs.writeFileSync(CRO_DIAG_OUT, JSON.stringify(diagnosticsReport, null, 2), 'utf8');
 
   console.log(
-    `[CRO Funnel Analyzer] Health: ${diagnosticsReport.overallHealth} | Activation: ${permissionActivationRatePct}% | Free->Paid: ${freeToProCheckoutRatePct}% | Suite Attach: ${suiteAttachRatePct}% | Blended AOV: £${year1BlendedAovGbp} | Net LTV: £${blendedNetLtvGbp}`
+    `[CRO Funnel Analyzer] Mode: real_telemetry_unfloored | Health: ${diagnosticsReport.overallHealth} | Installs: ${extensionInstalls} | Paid Checkouts: ${totalPaidCheckouts} | Activation: ${permissionActivationRatePct}% | Free->Paid: ${freeToProCheckoutRatePct}% | Blended AOV: £${year1BlendedAovGbp} | Net LTV: £${blendedNetLtvGbp}`
   );
   return diagnosticsReport;
 }
