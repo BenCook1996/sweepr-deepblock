@@ -34,6 +34,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const openFullSessionsBtn = document.getElementById('openFullSessionsBtn');
   const openCustomModulesBtn = document.getElementById('openCustomModulesBtn');
   const startZapperBtn = document.getElementById('startZapperBtn');
+  const popupChromeAutoVerifyBtn = document.getElementById('popupChromeAutoVerifyBtn');
+  const hasChromeIdentity =
+    typeof chrome !== 'undefined' && chrome.identity && typeof chrome.identity.getAuthToken === 'function';
 
   let currentHostname = '';
   let currentTabId = null;
@@ -400,6 +403,7 @@ document.addEventListener('DOMContentLoaded', () => {
       upgradeCtaBtn.style.display = 'none';
       toggleLicenseDrawerBtn.style.display = 'none';
       licenseDrawerEl.classList.remove('open');
+      if (popupChromeAutoVerifyBtn) popupChromeAutoVerifyBtn.style.display = 'none';
     } else {
       document.body.classList.add('unactivated-mode');
       document.body.classList.remove('pro-mode');
@@ -407,6 +411,17 @@ document.addEventListener('DOMContentLoaded', () => {
       tierBadgeEl.classList.remove('pro');
       upgradeCtaBtn.style.display = 'flex';
       toggleLicenseDrawerBtn.style.display = 'flex';
+      if (popupChromeAutoVerifyBtn) {
+        popupChromeAutoVerifyBtn.style.display = hasChromeIdentity ? 'block' : 'none';
+      }
+      if (state.chromeAutoActivateResult && state.chromeAutoActivateResult.status === 'device_limit_reached') {
+        licenseDrawerEl.classList.add('open');
+        licenseFeedbackEl.style.display = 'block';
+        licenseFeedbackEl.style.color = '#d97706';
+        const used = state.chromeAutoActivateResult.devicesUsed || '';
+        const max = state.chromeAutoActivateResult.devicesMax || 5;
+        licenseFeedbackEl.textContent = `Paid account found (${used}/${max} devices used). Remove an old device at sweeprdeepblock.com/login.`;
+      }
       const upgradeSubtitleEl = document.getElementById('upgradeSubtitleText');
       if (upgradeSubtitleEl) {
         upgradeSubtitleEl.textContent =
@@ -1001,6 +1016,35 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   activateKeyBtn.addEventListener('click', handlePopupActivate);
+  if (popupChromeAutoVerifyBtn && hasChromeIdentity) {
+    popupChromeAutoVerifyBtn.addEventListener('click', () => {
+      if (popupActivationInFlight) return;
+      popupActivationInFlight = true;
+      popupChromeAutoVerifyBtn.disabled = true;
+      popupChromeAutoVerifyBtn.textContent = 'Checking Chrome account...';
+      licenseFeedbackEl.style.display = 'block';
+      licenseFeedbackEl.style.color = '#9ca3af';
+      licenseFeedbackEl.textContent = 'Verifying paid subscription via Google account...';
+      chrome.runtime.sendMessage({ type: 'CHROME_GOOGLE_AUTO_ACTIVATE', interactive: true }, (res) => {
+        popupActivationInFlight = false;
+        popupChromeAutoVerifyBtn.disabled = false;
+        popupChromeAutoVerifyBtn.textContent = 'Verify with Chrome Google account';
+        if (res && res.ok && res.valid) {
+          licenseFeedbackEl.style.display = 'block';
+          licenseFeedbackEl.style.color = '#10b981';
+          licenseFeedbackEl.textContent = '✓ Pro Activated via Chrome account!';
+          chrome.runtime.sendMessage({ type: 'GET_DASHBOARD_STATE' }, (freshState) => {
+            if (freshState) renderState(freshState);
+          });
+        } else {
+          licenseFeedbackEl.style.display = 'block';
+          licenseFeedbackEl.style.color = res && res.reason === 'device_limit_reached' ? '#d97706' : '#ef4444';
+          licenseFeedbackEl.textContent =
+            (res && res.error) || 'No active paid subscription matches this Chrome Google account.';
+        }
+      });
+    });
+  }
   licenseKeyInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();

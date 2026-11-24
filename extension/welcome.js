@@ -185,6 +185,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const welcomeHostPermBanner = document.getElementById('welcomeHostPermBanner');
   const welcomeGrantPermBtn = document.getElementById('welcomeGrantPermBtn');
   const welcomeShortcutsFooter = document.getElementById('welcomeShortcutsFooter');
+  const welcomeChromeAutoBanner = document.getElementById('welcomeChromeAutoBanner');
+  const welcomeChromeAutoBannerText = document.getElementById('welcomeChromeAutoBannerText');
+  const welcomeChromeAutoPortalLink = document.getElementById('welcomeChromeAutoPortalLink');
+  const welcomeChromeAutoVerifyBtn = document.getElementById('welcomeChromeAutoVerifyBtn');
+  const hasChromeIdentity =
+    typeof chrome !== 'undefined' && chrome.identity && typeof chrome.identity.getAuthToken === 'function';
 
   if (typeof chrome !== 'undefined' && chrome.i18n && typeof chrome.i18n.getMessage === 'function') {
     document.querySelectorAll('[data-i18n]').forEach((el) => {
@@ -295,11 +301,99 @@ document.addEventListener('DOMContentLoaded', () => {
     if (licenseKey && !input.value) {
       input.value = licenseKey;
     }
+    if (welcomeChromeAutoVerifyBtn) {
+      welcomeChromeAutoVerifyBtn.style.display = 'none';
+    }
+  }
+
+  function renderChromeAutoBanner(autoRes, isProActive) {
+    if (!welcomeChromeAutoBanner || !welcomeChromeAutoBannerText) return;
+    if (!autoRes || typeof autoRes !== 'object') {
+      welcomeChromeAutoBanner.style.display = 'none';
+      return;
+    }
+    if (autoRes.status === 'activated' && isProActive) {
+      const expText = autoRes.expiresAt
+        ? ` · active until ${new Date(autoRes.expiresAt).toLocaleDateString()}`
+        : '';
+      const slotsText =
+        autoRes.devicesUsed && autoRes.devicesMax
+          ? ` (${autoRes.devicesUsed}/${autoRes.devicesMax} devices)`
+          : '';
+      const whoText = autoRes.emailMasked ? ` for ${autoRes.emailMasked}` : '';
+      welcomeChromeAutoBanner.style.display = 'flex';
+      welcomeChromeAutoBanner.style.background = '#ecfdf5';
+      welcomeChromeAutoBanner.style.borderColor = '#a7f3d0';
+      welcomeChromeAutoBanner.style.color = '#065f46';
+      welcomeChromeAutoBannerText.textContent = `✓ Pro automatically verified${whoText}${slotsText}${expText}.`;
+      if (welcomeChromeAutoPortalLink) welcomeChromeAutoPortalLink.style.display = 'none';
+      return;
+    }
+    if (autoRes.status === 'device_limit_reached' && !isProActive) {
+      const whoText = autoRes.emailMasked ? ` (${autoRes.emailMasked})` : '';
+      const countText =
+        autoRes.devicesUsed && autoRes.devicesMax ? ` (${autoRes.devicesUsed}/${autoRes.devicesMax} devices)` : '';
+      welcomeChromeAutoBanner.style.display = 'flex';
+      welcomeChromeAutoBanner.style.background = '#fffbeb';
+      welcomeChromeAutoBanner.style.borderColor = '#f59e0b';
+      welcomeChromeAutoBanner.style.color = '#92400e';
+      welcomeChromeAutoBannerText.textContent = `Paid Pro subscription found${whoText}, but all device slots are in use${countText}. Remove an unused device to activate this Chrome profile.`;
+      if (welcomeChromeAutoPortalLink) welcomeChromeAutoPortalLink.style.display = 'inline-block';
+      return;
+    }
+    welcomeChromeAutoBanner.style.display = 'none';
+  }
+
+  if (welcomeChromeAutoVerifyBtn) {
+    if (hasChromeIdentity) {
+      welcomeChromeAutoVerifyBtn.style.display = 'flex';
+    }
+    welcomeChromeAutoVerifyBtn.addEventListener('click', () => {
+      if (!hasChromeRuntime || welcomeActivationInFlight) return;
+      welcomeActivationInFlight = true;
+      welcomeChromeAutoVerifyBtn.disabled = true;
+      const origText = welcomeChromeAutoVerifyBtn.textContent;
+      welcomeChromeAutoVerifyBtn.textContent = 'Checking Chrome Google account...';
+      feedback.style.display = 'block';
+      feedback.style.color = '#9ca3af';
+      feedback.textContent = 'Verifying paid subscription via Google account...';
+      chrome.runtime.sendMessage({ type: 'CHROME_GOOGLE_AUTO_ACTIVATE', interactive: true }, async (res) => {
+        try {
+          welcomeChromeAutoVerifyBtn.disabled = false;
+          welcomeChromeAutoVerifyBtn.textContent = origText;
+          if (res && res.ok && res.valid) {
+            markProActivated(res.licenseKey, res.settings);
+            renderChromeAutoBanner({
+              status: 'activated',
+              emailMasked: res.emailMasked || '',
+              expiresAt: res.expiresAt || '',
+              devicesUsed: res.devicesUsed,
+              devicesMax: res.devicesMax
+            }, true);
+          } else {
+            if (res && res.reason === 'device_limit_reached') {
+              renderChromeAutoBanner({
+                status: 'device_limit_reached',
+                emailMasked: res.emailMasked || '',
+                devicesUsed: res.devicesUsed,
+                devicesMax: res.devicesMax
+              }, false);
+            }
+            feedback.style.display = 'block';
+            feedback.style.color = res && res.reason === 'device_limit_reached' ? '#d97706' : '#ef4444';
+            feedback.textContent =
+              (res && res.error) || 'No active paid SWEEPR DeepBlock subscription found for this Chrome Google account.';
+          }
+        } finally {
+          welcomeActivationInFlight = false;
+        }
+      });
+    });
   }
 
   if (hasChromeStorage) {
     chrome.storage.local.get(
-      ['proActive', 'licenseKey', 'draftLicenseKey', 'settings'],
+      ['proActive', 'licenseKey', 'draftLicenseKey', 'settings', 'chromeAutoActivateResult'],
       (stored) => {
         dashboardState = { ...dashboardState, ...(stored || {}) };
         if (stored && stored.proActive && stored.licenseKey) {
@@ -312,6 +406,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
           setActiveWelcomeTab('buy', false);
         }
+        renderChromeAutoBanner(stored && stored.chromeAutoActivateResult, Boolean(stored && stored.proActive));
       }
     );
 
@@ -319,9 +414,12 @@ document.addEventListener('DOMContentLoaded', () => {
       chrome.storage.onChanged.addListener((changes, area) => {
         if (area !== 'local') return;
         if (changes.proActive && changes.proActive.newValue === true) {
-          chrome.storage.local.get(['licenseKey', 'settings'], (s) => {
+          chrome.storage.local.get(['licenseKey', 'settings', 'chromeAutoActivateResult'], (s) => {
             markProActivated(s.licenseKey, s.settings);
+            renderChromeAutoBanner(s.chromeAutoActivateResult, true);
           });
+        } else if (changes.chromeAutoActivateResult && changes.chromeAutoActivateResult.newValue) {
+          renderChromeAutoBanner(changes.chromeAutoActivateResult.newValue, Boolean(dashboardState.proActive));
         }
       });
     }

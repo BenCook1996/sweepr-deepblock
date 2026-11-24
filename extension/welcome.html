@@ -723,11 +723,11 @@
 
           <div class="metrics-grid">
             <div class="metric-card">
-              <div class="metric-val">&lt;50ms</div>
+              <div class="metric-val">Auto</div>
               <div class="metric-lbl">Cookie banner reject</div>
             </div>
             <div class="metric-card">
-              <div class="metric-val">100%</div>
+              <div class="metric-val">MV3</div>
               <div class="metric-lbl">YouTube &amp; pre-roll ads</div>
             </div>
             <div class="metric-card">
@@ -756,6 +756,11 @@
           <div id="welcomeHostPermBanner" style="display:none;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;padding:10px 12px;border-radius:10px;background:#fffbeb;border:1px solid #f59e0b;color:#92400e;font-size:12px;font-weight:700;">
             <span>Site access permission is required to block ads &amp; cookie pop-ups automatically on websites.</span>
             <button type="button" id="welcomeGrantPermBtn" data-i18n="uiGrantPermissions" style="background:#d97706;color:#fff;border:none;border-radius:8px;padding:7px 12px;font-size:11.5px;font-weight:800;cursor:pointer;white-space:nowrap;flex-shrink:0;">Grant Site Access</button>
+          </div>
+
+          <div id="welcomeChromeAutoBanner" style="display:none;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;padding:10px 12px;border-radius:10px;background:#ecfdf5;border:1px solid #a7f3d0;color:#065f46;font-size:12px;font-weight:600;line-height:1.45;">
+            <span id="welcomeChromeAutoBannerText"></span>
+            <a id="welcomeChromeAutoPortalLink" href="https://sweeprdeepblock.com/login?utm_source=extension&amp;utm_medium=welcome_auto" target="_blank" rel="noopener" style="display:none;background:#d97706;color:#fff;border-radius:8px;padding:7px 12px;font-size:11.5px;font-weight:700;text-decoration:none;white-space:nowrap;flex-shrink:0;">Manage Devices</a>
           </div>
 
           <div class="seg-bar" id="welcomeSegBar" role="tablist">
@@ -796,6 +801,10 @@
             <button type="button" id="welcomeActivateBtn" class="primary-cta-btn">
               <span>Activate Pro Protection</span>
               <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+            </button>
+
+            <button type="button" id="welcomeChromeAutoVerifyBtn" style="display:none;margin-top:10px;width:100%;min-height:40px;padding:10px 16px;border-radius:10px;border:1px solid #cbd5e1;background:#f8fafc;color:#0f172a;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;align-items:center;justify-content:center;gap:8px;">
+              <span>Verify Pro with Chrome Google account</span>
             </button>
 
             <div class="inline-link-row">

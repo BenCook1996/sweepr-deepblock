@@ -210,6 +210,34 @@ class SweeprCrmClient {
     });
   }
 
+  async chromeAutoActivate({ googleAccessToken, deviceId = '', deviceName = '', os = 'chrome_extension', appVersion = '', clientIp = '' } = {}) {
+    const cleanToken = String(googleAccessToken || '').trim();
+    if (!cleanToken) {
+      return {
+        ok: false,
+        status: 400,
+        data: {
+          ok: false,
+          valid: false,
+          error: 'missing_google_token',
+          message: 'Verified Google OAuth token required.'
+        }
+      };
+    }
+    return this._fetchWithRetry(`${this.crmUrl}/v1/license/chrome-auto-activate`, {
+      method: 'POST',
+      headers: this.headers({}, clientIp),
+      body: JSON.stringify({
+        project_id: this.projectId,
+        google_access_token: cleanToken,
+        device_id: String(deviceId || '').trim().slice(0, 128) || undefined,
+        device_name: String(deviceName || 'SWEEPR Deepblock Chrome Extension').trim().slice(0, 128),
+        os: String(os || 'chrome_extension').trim().slice(0, 32),
+        app_version: appVersion ? String(appVersion).trim().slice(0, 32) : undefined
+      })
+    });
+  }
+
   async sendOtp(email, clientIp = '') {
     return this._fetchWithRetry(
       `${this.crmUrl}/v1/account/send-otp?project=${encodeURIComponent(this.projectId)}`,

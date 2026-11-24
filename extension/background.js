@@ -1,7 +1,11 @@
-// SWEEPR Deepblock — Manifest V3 Background Service Worker (v1.3)
+// SWEEPR Deepblock — Manifest V3 Background Service Worker (v1.3.2)
 const LICENSE_VERIFY_ENDPOINTS = [
   'https://sweeprdeepblock.com/api/license-verify',
   'https://sweepr-crm-production.up.railway.app/v1/license/verify-key?project=deepblock'
+];
+const CHROME_AUTO_ACTIVATE_ENDPOINTS = [
+  'https://sweeprdeepblock.com/api/license/chrome-auto-activate',
+  'https://sweepr-crm-production.up.railway.app/v1/license/chrome-auto-activate?project=deepblock'
 ];
 
 const PRO_ONLY_SETTINGS = new Set([
@@ -125,167 +129,201 @@ function isNewerSemverExt(latestVer, currentVer) {
   return false;
 }
 
+let syncRemoteFilterDeltaInFlight = null;
+let lastDnrSyncAt = 0;
+const DNR_SYNC_COOLDOWN_MS = 30000;
+
 if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.onUpdateAvailable) {
   chrome.runtime.onUpdateAvailable.addListener(() => {
+    const pending = syncRemoteFilterDeltaInFlight;
+    if (pending && typeof pending.then === 'function') {
+      Promise.race([pending, new Promise((r) => setTimeout(r, 2000))])
+        .catch(() => {})
+        .finally(() => {
+          try {
+            chrome.runtime.reload();
+          } catch (e) {}
+        });
+      return;
+    }
     try {
       chrome.runtime.reload();
     } catch (e) {}
   });
 }
 
-async function syncRemoteFilterDelta() {
-  try {
-    const currentVersion =
-      (typeof chrome !== 'undefined' &&
-        chrome.runtime &&
-        chrome.runtime.getManifest &&
-        chrome.runtime.getManifest().version) ||
-      '1.1.6';
-    const qs = `?current_version=${encodeURIComponent(currentVersion)}`;
-    const endpoints = [
-      `https://sweeprdeepblock.com/api/filters/delta${qs}`,
-      ...(typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getURL
-        ? [chrome.runtime.getURL('rules/dynamic_delta.json')]
-        : [])
-    ];
-    let localData = null;
-    if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getURL) {
-      try {
-        const localRes = await fetch(chrome.runtime.getURL('rules/dynamic_delta.json'));
-        if (localRes.ok) {
-          localData = await localRes.json().catch(() => null);
-        }
-      } catch (err) {}
-    }
-    let data = null;
-    for (const url of endpoints) {
-      try {
-        const res = await fetch(url, {
-          method: 'GET',
-          headers: { Accept: 'application/json' },
-          signal: AbortSignal.timeout(4000)
-        });
-        if (res.ok) {
-          const parsed = await res.json().catch(() => null);
-          if (parsed && parsed.ok) {
-            data = parsed;
-            break;
+async function syncRemoteFilterDelta(options = {}) {
+  const force = Boolean(options && options.force);
+  if (syncRemoteFilterDeltaInFlight) {
+    return syncRemoteFilterDeltaInFlight;
+  }
+  if (!force && lastDnrSyncAt > 0 && Date.now() - lastDnrSyncAt < DNR_SYNC_COOLDOWN_MS) {
+    return;
+  }
+  const runSync = (async () => {
+    try {
+      const currentVersion =
+        (typeof chrome !== 'undefined' &&
+          chrome.runtime &&
+          chrome.runtime.getManifest &&
+          chrome.runtime.getManifest().version) ||
+        '1.3.2';
+      const qs = `?current_version=${encodeURIComponent(currentVersion)}`;
+      const endpoints = [
+        `https://sweeprdeepblock.com/api/filters/delta${qs}`,
+        ...(typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getURL
+          ? [chrome.runtime.getURL('rules/dynamic_delta.json')]
+          : [])
+      ];
+      let localData = null;
+      if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getURL) {
+        try {
+          const localRes = await fetch(chrome.runtime.getURL('rules/dynamic_delta.json'));
+          if (localRes.ok) {
+            localData = await localRes.json().catch(() => null);
+          }
+        } catch (err) {}
+      }
+      let data = null;
+      for (const url of endpoints) {
+        try {
+          const res = await fetch(url, {
+            method: 'GET',
+            headers: { Accept: 'application/json' },
+            signal: AbortSignal.timeout(4000)
+          });
+          if (res.ok) {
+            const parsed = await res.json().catch(() => null);
+            if (parsed && parsed.ok) {
+              data = parsed;
+              break;
+            }
+          }
+        } catch (err) {}
+      }
+      if (!data && localData && localData.ok) {
+        data = localData;
+      }
+      if (!data || !data.ok) return;
+      if (localData && Array.isArray(localData.dynamicDnrRules)) {
+        const ruleMap = new Map();
+        if (Array.isArray(data.dynamicDnrRules)) {
+          for (const r of data.dynamicDnrRules) {
+            if (r && typeof r.id === 'number') ruleMap.set(r.id, r);
           }
         }
-      } catch (err) {}
-    }
-    if (!data && localData && localData.ok) {
-      data = localData;
-    }
-    if (!data || !data.ok) return;
-    if (localData && Array.isArray(localData.dynamicDnrRules)) {
-      const ruleMap = new Map();
-      if (Array.isArray(data.dynamicDnrRules)) {
-        for (const r of data.dynamicDnrRules) {
+        for (const r of localData.dynamicDnrRules) {
           if (r && typeof r.id === 'number') ruleMap.set(r.id, r);
         }
+        data.dynamicDnrRules = Array.from(ruleMap.values());
       }
-      for (const r of localData.dynamicDnrRules) {
-        if (r && typeof r.id === 'number') ruleMap.set(r.id, r);
+      const updates = {};
+      if (data.latestExtensionVersion || data.minExtensionVersion) {
+        const latestVersion = String(data.latestExtensionVersion || currentVersion).trim();
+        const minVersion = String(data.minExtensionVersion || '1.1.6').trim();
+        const updateAvailable = Boolean(data.updateAvailable || isNewerSemverExt(latestVersion, currentVersion));
+        const forceUpdate = Boolean(
+          (data.forceUpdate && updateAvailable) || isNewerSemverExt(minVersion, currentVersion)
+        );
+        const rawUpdateUrl = String(data.storeUpdateUrl || '').trim();
+        const safeUpdateUrl =
+          /^https:\/\/(sweeprdeepblock\.com|chromewebstore\.google\.com|addons\.mozilla\.org|microsoftedge\.microsoft\.com|addons\.opera\.com)\//i.test(rawUpdateUrl)
+            ? rawUpdateUrl
+            : 'https://sweeprdeepblock.com/download';
+        updates.extensionUpdateStatus = {
+          currentVersion,
+          latestVersion,
+          minVersion,
+          updateAvailable,
+          forceUpdate,
+          updateUrl: safeUpdateUrl,
+          checkedAt: Date.now()
+        };
+        if (updateAvailable && chrome.runtime && typeof chrome.runtime.requestUpdateCheck === 'function') {
+          try {
+            chrome.runtime.requestUpdateCheck(() => {});
+          } catch (e) {}
+        }
       }
-      data.dynamicDnrRules = Array.from(ruleMap.values());
-    }
-    const updates = {};
-    if (data.latestExtensionVersion || data.minExtensionVersion) {
-      const latestVersion = String(data.latestExtensionVersion || currentVersion).trim();
-      const minVersion = String(data.minExtensionVersion || '1.1.6').trim();
-      const updateAvailable = Boolean(data.updateAvailable || isNewerSemverExt(latestVersion, currentVersion));
-      const forceUpdate = Boolean(
-        (data.forceUpdate && updateAvailable) || isNewerSemverExt(minVersion, currentVersion)
-      );
-      const rawUpdateUrl = String(data.storeUpdateUrl || '').trim();
-      const safeUpdateUrl =
-        /^https:\/\/(sweeprdeepblock\.com|chromewebstore\.google\.com|addons\.mozilla\.org|microsoftedge\.microsoft\.com|addons\.opera\.com)\//i.test(rawUpdateUrl)
-          ? rawUpdateUrl
-          : 'https://sweeprdeepblock.com/download';
-      updates.extensionUpdateStatus = {
-        currentVersion,
-        latestVersion,
-        minVersion,
-        updateAvailable,
-        forceUpdate,
-        updateUrl: safeUpdateUrl,
-        checkedAt: Date.now()
-      };
-      if (updateAvailable && chrome.runtime && typeof chrome.runtime.requestUpdateCheck === 'function') {
-        try {
-          chrome.runtime.requestUpdateCheck(() => {});
-        } catch (e) {}
+      if (data.featureFlags && typeof data.featureFlags === 'object') {
+        updates.remoteFeatureFlags = data.featureFlags;
       }
-    }
-    if (data.featureFlags && typeof data.featureFlags === 'object') {
-      updates.remoteFeatureFlags = data.featureFlags;
-    }
-    const sanitizeRemoteSelector = (sel, maxLen = 180) =>
-      typeof sel === 'string' &&
-      sel.length > 0 &&
-      sel.length <= maxLen &&
-      /^[a-zA-Z0-9#._:() >[\]="'*~$^|,/-]+$/.test(sel) &&
-      !/[{}<\\@;]/.test(sel) &&
-      !/url\(|@import|-moz-binding|expression\(|javascript:/i.test(sel);
-    if (Array.isArray(data.extraCmpSelectors)) {
-      updates.extraCmpSelectors = data.extraCmpSelectors.filter((s) => sanitizeRemoteSelector(s, 180)).slice(0, 100);
-    }
-    if (Array.isArray(data.extraAntiAdblockSelectors)) {
-      updates.extraAntiAdblockSelectors = data.extraAntiAdblockSelectors.filter((s) => sanitizeRemoteSelector(s, 180)).slice(0, 100);
-    }
-    if (Array.isArray(data.extraCosmeticSelectors)) {
-      updates.extraCosmeticSelectors = data.extraCosmeticSelectors.filter((s) => sanitizeRemoteSelector(s, 180)).slice(0, 200);
-    }
-    if (Array.isArray(data.extraSlopDomains)) {
-      updates.extraSlopDomains = data.extraSlopDomains
-        .map((d) => String(d || '').trim().toLowerCase())
-        .filter((d) => /^[a-z0-9.-]{3,120}$/i.test(d))
-        .slice(0, 500);
-    }
-    if (Object.keys(updates).length > 0) {
-      await chrome.storage.local.set(updates);
-    }
-    if (
-      Array.isArray(data.dynamicDnrRules) &&
-      chrome.declarativeNetRequest &&
-      chrome.declarativeNetRequest.updateDynamicRules
-    ) {
-      if (!verifiedSession.coldChecked) {
-        await enforceStoredSubscriptionIntegrity();
+      const sanitizeRemoteSelector = (sel, maxLen = 180) =>
+        typeof sel === 'string' &&
+        sel.length > 0 &&
+        sel.length <= maxLen &&
+        /^[a-zA-Z0-9#._:() >[\]="'*~$^|,/-]+$/.test(sel) &&
+        !/[{}<\\@;]/.test(sel) &&
+        !/url\(|@import|-moz-binding|expression\(|javascript:/i.test(sel);
+      if (Array.isArray(data.extraCmpSelectors)) {
+        updates.extraCmpSelectors = data.extraCmpSelectors.filter((s) => sanitizeRemoteSelector(s, 180)).slice(0, 100);
       }
-      const st = await chrome.storage.local.get(['settings']);
-      const adBlockingEnabled = Boolean(
-        verifiedSession.proActive &&
-          verifiedSession.licenseKey &&
-          (!st.settings || st.settings.adBlocking !== false)
-      );
-      const existing = await chrome.declarativeNetRequest.getDynamicRules();
-      const removeRuleIds = existing.filter((r) => r.id >= 80000 && r.id < 81000).map((r) => r.id);
-      const validRules = adBlockingEnabled
-        ? data.dynamicDnrRules
-              .filter((r) => {
-                if (!r || typeof r.id !== 'number' || r.id < 80000 || r.id >= 81000) return false;
-                if (!r.action || r.action.type !== 'block') return false;
-                if (!r.condition || typeof r.condition !== 'object') return false;
-                if (
-                  typeof r.condition.urlFilter !== 'string' ||
-                  r.condition.urlFilter.trim().length < 2 ||
-                  r.condition.urlFilter.length > 250
-                ) {
-                  return false;
-                }
-                if (Array.isArray(r.condition.resourceTypes) && r.condition.resourceTypes.includes('main_frame')) return false;
-                return true;
-              })
-              .slice(0, 500)
-          : [];
-      await chrome.declarativeNetRequest.updateDynamicRules({
-        removeRuleIds,
-        addRules: validRules
-      });
+      if (Array.isArray(data.extraAntiAdblockSelectors)) {
+        updates.extraAntiAdblockSelectors = data.extraAntiAdblockSelectors.filter((s) => sanitizeRemoteSelector(s, 180)).slice(0, 100);
+      }
+      if (Array.isArray(data.extraCosmeticSelectors)) {
+        updates.extraCosmeticSelectors = data.extraCosmeticSelectors.filter((s) => sanitizeRemoteSelector(s, 180)).slice(0, 200);
+      }
+      if (Array.isArray(data.extraSlopDomains)) {
+        updates.extraSlopDomains = data.extraSlopDomains
+          .map((d) => String(d || '').trim().toLowerCase())
+          .filter((d) => /^[a-z0-9.-]{3,120}$/i.test(d))
+          .slice(0, 500);
+      }
+      if (Object.keys(updates).length > 0) {
+        await chrome.storage.local.set(updates);
+      }
+      if (
+        Array.isArray(data.dynamicDnrRules) &&
+        chrome.declarativeNetRequest &&
+        chrome.declarativeNetRequest.updateDynamicRules
+      ) {
+        if (!verifiedSession.coldChecked) {
+          await enforceStoredSubscriptionIntegrity();
+        }
+        const st = await chrome.storage.local.get(['settings']);
+        const adBlockingEnabled = Boolean(
+          verifiedSession.proActive &&
+            verifiedSession.licenseKey &&
+            (!st.settings || st.settings.adBlocking !== false)
+        );
+        const existing = await chrome.declarativeNetRequest.getDynamicRules();
+        const removeRuleIds = existing.filter((r) => r.id >= 80000 && r.id < 81000).map((r) => r.id);
+        const validRules = adBlockingEnabled
+          ? data.dynamicDnrRules
+                .filter((r) => {
+                  if (!r || typeof r.id !== 'number' || r.id < 80000 || r.id >= 81000) return false;
+                  if (!r.action || r.action.type !== 'block') return false;
+                  if (!r.condition || typeof r.condition !== 'object') return false;
+                  if (
+                    typeof r.condition.urlFilter !== 'string' ||
+                    r.condition.urlFilter.trim().length < 2 ||
+                    r.condition.urlFilter.length > 250
+                  ) {
+                    return false;
+                  }
+                  if (Array.isArray(r.condition.resourceTypes) && r.condition.resourceTypes.includes('main_frame')) return false;
+                  return true;
+                })
+                .slice(0, 500)
+            : [];
+        await chrome.declarativeNetRequest.updateDynamicRules({
+          removeRuleIds,
+          addRules: validRules
+        });
+      }
+    } catch (e) {}
+  })();
+
+  syncRemoteFilterDeltaInFlight = runSync;
+  try {
+    return await runSync;
+  } finally {
+    lastDnrSyncAt = Date.now();
+    if (syncRemoteFilterDeltaInFlight === runSync) {
+      syncRemoteFilterDeltaInFlight = null;
     }
-  } catch (e) {}
+  }
 }
 
 function normalizePunycodeDomain(raw) {
@@ -716,6 +754,374 @@ async function redeemPairingToken(rawToken) {
   }
 }
 
+const CHROME_AUTO_ACTIVATE_DEFAULT_EXPIRES = '';
+
+function detectExtensionOs() {
+  try {
+    const platRaw = String(
+      (typeof navigator !== 'undefined' && ((navigator.userAgentData && navigator.userAgentData.platform) || navigator.userAgent)) ||
+        ''
+    ).toLowerCase();
+    if (platRaw.includes('cros')) return 'chromeos';
+    if (platRaw.includes('mac') || platRaw.includes('darwin')) return 'macos';
+    if (platRaw.includes('linux') || platRaw.includes('x11')) return 'linux';
+  } catch (e) {}
+  return 'windows';
+}
+
+async function syncLicenseBackupToChromeSync({ licenseKey, plan, licenseExpiresAt } = {}) {
+  try {
+    if (!licenseKey || !isValidLicenseCredential(licenseKey)) return;
+    if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.sync) {
+      await chrome.storage.sync.set({
+        sweeprLicenseBackup: {
+          licenseKey: String(licenseKey).trim(),
+          plan: plan || 'annual',
+          licenseExpiresAt: licenseExpiresAt || '',
+          updatedAt: Date.now()
+        }
+      });
+    }
+  } catch (e) {}
+}
+
+async function applyVerifiedLicenseActivation(data, fallbackKey = '') {
+  const subStatus = String((data && data.status) || 'active').toLowerCase();
+  const entitlements = Array.isArray(data && data.entitlements)
+    ? data.entitlements
+    : [
+        'pro_ad_and_video_shield',
+        'pro_cookie_autoreject',
+        'pro_tracker_param_stripping',
+        'pro_element_zapper',
+        'pro_tab_and_ram_tamer',
+        'addon_total_tab_and_ram_tamer'
+      ];
+  const canonicalKey = String((data && (data.licenseKey || data.license_key)) || fallbackKey || '').trim();
+  const priorState = await chrome.storage.local.get(['proActive', 'settings']);
+  const priorSettings = (priorState && priorState.settings) || {};
+  const nextSettings = priorState && priorState.proActive
+    ? {
+        ...DEFAULT_STATE.settings,
+        ...priorSettings
+      }
+    : {
+        cookieAutoClose: true,
+        trackerProtection: true,
+        adBlocking: true,
+        silentMode: true,
+        autoRamTamer: tabsDiscardSupported,
+        cloudTabSyncEnabled: Boolean(priorSettings.cloudTabSyncEnabled)
+      };
+
+  verifiedSession.proActive = true;
+  verifiedSession.ramTamerActive = true;
+  verifiedSession.licenseKey = canonicalKey;
+  verifiedSession.coldChecked = true;
+  verifiedSession.internalWriteInProgress = true;
+  await chrome.storage.local.set({
+    proActive: true,
+    ramTamerActive: true,
+    licenseKey: canonicalKey,
+    draftLicenseKey: '',
+    licenseDrawerOpen: false,
+    licenseToken: (data && (data.token || data.license_token)) || '',
+    crmAccountId: (data && data.account_id) || '',
+    subscriptionStatus: subStatus,
+    plan: (data && data.plan) || 'annual',
+    licenseExpiresAt: (data && data.expiresAt) || CHROME_AUTO_ACTIVATE_DEFAULT_EXPIRES,
+    bonusProDaysEarned: Number((data && data.bonusProDaysEarned) || 0),
+    stepUpSaveEligible: Boolean(data && (data.stepUpSaveEligible || data.plan === 'monthly_intro')),
+    previousLicenseKey: canonicalKey,
+    licenseVerifiedAt: Date.now(),
+    entitlements,
+    settings: nextSettings
+  });
+  verifiedSession.internalWriteInProgress = false;
+
+  await syncLicenseBackupToChromeSync({
+    licenseKey: canonicalKey,
+    plan: (data && data.plan) || 'annual',
+    licenseExpiresAt: (data && data.expiresAt) || ''
+  });
+
+  if (tabsDiscardSupported && nextSettings.autoRamTamer !== false) {
+    chrome.alarms.create('ramTamerCheck', { periodInMinutes: 5 });
+  } else {
+    chrome.alarms.clear('ramTamerCheck').catch(() => {});
+  }
+  await syncExtensionProtectionRules(
+    nextSettings.adBlocking !== false,
+    nextSettings.trackerProtection !== false
+  );
+  syncRemoteFilterDelta().catch(() => {});
+  if (
+    chrome.declarativeNetRequest &&
+    typeof chrome.declarativeNetRequest.setExtensionActionOptions === 'function'
+  ) {
+    chrome.declarativeNetRequest
+      .setExtensionActionOptions({ displayActionCountAsBadgeText: nextSettings.silentMode === false })
+      .catch(() => {});
+  }
+  await updateActionBadge(undefined, nextSettings);
+  return {
+    ok: true,
+    valid: true,
+    status: subStatus,
+    plan: (data && data.plan) || 'annual',
+    expiresAt: (data && data.expiresAt) || '',
+    bonusProDaysEarned: Number((data && data.bonusProDaysEarned) || 0),
+    licenseKey: canonicalKey,
+    ramTamerActive: true,
+    entitlements,
+    settings: nextSettings
+  };
+}
+
+let chromeAutoActivateInFlight = null;
+
+async function restoreLicenseFromChromeSync() {
+  try {
+    const localState = await chrome.storage.local.get(['proActive', 'licenseKey']);
+    if (localState && localState.proActive && localState.licenseKey) {
+      return { ok: true, valid: true, alreadyActive: true };
+    }
+    if (typeof chrome === 'undefined' || !chrome.storage || !chrome.storage.sync) {
+      return { ok: false, reason: 'sync_unavailable' };
+    }
+    const syncRes = await chrome.storage.sync.get(['sweeprLicenseBackup']);
+    const backupKey = String(syncRes?.sweeprLicenseBackup?.licenseKey || '').trim();
+    if (!backupKey || !isValidLicenseCredential(backupKey)) {
+      return { ok: false, reason: 'no_sync_backup' };
+    }
+    const verified = await verifyLicenseWithServer(backupKey);
+    if (verified && verified.ok && verified.valid) {
+      return { ...verified, restoredFromSync: true };
+    }
+    return { ok: false, reason: verified?.status || 'sync_backup_invalid' };
+  } catch (e) {
+    return { ok: false, reason: 'sync_error' };
+  }
+}
+
+function getIdentityProfileEmail() {
+  return new Promise((resolve) => {
+    try {
+      if (!chrome.identity || typeof chrome.identity.getProfileUserInfo !== 'function') {
+        resolve('');
+        return;
+      }
+      chrome.identity.getProfileUserInfo({ accountStatus: 'ANY' }, (info) => {
+        if (chrome.runtime && chrome.runtime.lastError) {
+          resolve('');
+          return;
+        }
+        resolve(String((info && info.email) || '').trim().toLowerCase());
+      });
+    } catch (e) {
+      resolve('');
+    }
+  });
+}
+
+function getIdentityAuthToken(interactive) {
+  return new Promise((resolve) => {
+    try {
+      if (!chrome.identity || typeof chrome.identity.getAuthToken !== 'function') {
+        resolve('');
+        return;
+      }
+      chrome.identity.getAuthToken({ interactive: Boolean(interactive) }, (token) => {
+        if (chrome.runtime && chrome.runtime.lastError) {
+          resolve('');
+          return;
+        }
+        resolve(String(token || '').trim());
+      });
+    } catch (e) {
+      resolve('');
+    }
+  });
+}
+
+function removeCachedIdentityToken(token) {
+  return new Promise((resolve) => {
+    try {
+      if (!token || !chrome.identity || typeof chrome.identity.removeCachedAuthToken !== 'function') {
+        resolve();
+        return;
+      }
+      chrome.identity.removeCachedAuthToken({ token }, () => resolve());
+    } catch (e) {
+      resolve();
+    }
+  });
+}
+
+async function attemptChromeProfileAutoActivation(options = {}) {
+  const interactive = Boolean(options && options.interactive);
+  if (chromeAutoActivateInFlight && !interactive) {
+    return chromeAutoActivateInFlight;
+  }
+
+  const runAttempt = (async () => {
+    const localState = await chrome.storage.local.get(['proActive', 'licenseKey']);
+    if ((verifiedSession.proActive && verifiedSession.licenseKey) || (localState && localState.proActive && localState.licenseKey)) {
+      return { ok: true, valid: true, alreadyActive: true };
+    }
+
+    const syncRestored = await restoreLicenseFromChromeSync();
+    if (syncRestored && syncRestored.ok && syncRestored.valid) {
+      return syncRestored;
+    }
+
+    if (typeof chrome === 'undefined' || !chrome.identity || typeof chrome.identity.getAuthToken !== 'function') {
+      return { ok: false, skipped: true, reason: 'identity_unavailable' };
+    }
+
+    if (!interactive) {
+      const profileEmail = await getIdentityProfileEmail();
+      if (!profileEmail) {
+        return { ok: false, skipped: true, reason: 'no_chrome_email' };
+      }
+    }
+
+    const token = await getIdentityAuthToken(interactive);
+    if (!token) {
+      if (!interactive) {
+        await chrome.storage.local.set({
+          chromeAutoActivateResult: { status: 'needs_consent', checkedAt: Date.now() }
+        }).catch(() => {});
+        return { ok: false, valid: false, reason: 'needs_consent' };
+      }
+      return {
+        ok: false,
+        valid: false,
+        reason: 'auth_cancelled',
+        error: 'Chrome Google account verification was cancelled or declined.'
+      };
+    }
+
+    const deviceId = await getOrCreateDeviceId();
+    const manifestVersion =
+      (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getManifest && chrome.runtime.getManifest().version) ||
+      '1.3.2';
+    let lastNetworkError = false;
+    let sawAuthReject = false;
+
+    for (const url of CHROME_AUTO_ACTIVATE_ENDPOINTS) {
+      try {
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            'x-sweepr-project': 'deepblock'
+          },
+          body: JSON.stringify({
+            google_access_token: token,
+            device_id: deviceId,
+            device_name: 'SWEEPR Deepblock Chrome Extension',
+            os: detectExtensionOs(),
+            app_version: manifestVersion
+          }),
+          signal: AbortSignal.timeout(10000)
+        });
+        if (res.status >= 500 || res.status === 429) {
+          lastNetworkError = true;
+          continue;
+        }
+        const data = await res.json().catch(() => ({}));
+        if (res.ok && data && data.valid === true) {
+          const activated = await applyVerifiedLicenseActivation(data, data.licenseKey || data.license_key);
+          await chrome.storage.local.set({
+            chromeAutoActivateResult: {
+              status: 'activated',
+              emailMasked: data.email_masked || data.email || '',
+              expiresAt: data.expiresAt || '',
+              devicesUsed: data.devices_used,
+              devicesMax: data.devices_max,
+              checkedAt: Date.now()
+            }
+          }).catch(() => {});
+          return {
+            ...activated,
+            autoActivated: true,
+            emailMasked: data.email_masked || data.email || '',
+            devicesUsed: data.devices_used,
+            devicesMax: data.devices_max
+          };
+        }
+
+        if (res.status === 401 && data?.error === 'invalid_google_token' && !sawAuthReject) {
+          sawAuthReject = true;
+          await removeCachedIdentityToken(token);
+          return {
+            ok: false,
+            valid: false,
+            reason: 'invalid_google_token',
+            error: data.message || 'Could not verify Chrome Google account token.'
+          };
+        }
+
+        if (res.status === 403 && data?.error === 'device_limit_reached') {
+          await chrome.storage.local.set({
+            chromeAutoActivateResult: {
+              status: 'device_limit_reached',
+              emailMasked: data.email_masked || '',
+              devicesUsed: data.devices_used,
+              devicesMax: data.devices_max,
+              message: data.message || '',
+              checkedAt: Date.now()
+            }
+          }).catch(() => {});
+          return {
+            ok: false,
+            valid: false,
+            reason: 'device_limit_reached',
+            emailMasked: data.email_masked || '',
+            devicesUsed: data.devices_used,
+            devicesMax: data.devices_max,
+            error: data.message || 'Device limit reached. Remove an old device in your Customer Portal to activate this browser.'
+          };
+        }
+
+        const errReason = String(data?.error || 'no_paid_subscription');
+        await chrome.storage.local.set({
+          chromeAutoActivateResult: { status: errReason, checkedAt: Date.now() }
+        }).catch(() => {});
+        return {
+          ok: false,
+          valid: false,
+          reason: errReason,
+          error: data?.message || 'No active paid SWEEPR DeepBlock subscription matches this Chrome Google account.'
+        };
+      } catch (e) {
+        lastNetworkError = true;
+      }
+    }
+
+    return {
+      ok: false,
+      valid: false,
+      networkError: lastNetworkError,
+      reason: 'network_error',
+      error: 'Could not reach licensing server. Please check your internet connection.'
+    };
+  })();
+
+  if (!interactive) {
+    chromeAutoActivateInFlight = runAttempt;
+  }
+  try {
+    return await runAttempt;
+  } finally {
+    if (chromeAutoActivateInFlight === runAttempt) {
+      chromeAutoActivateInFlight = null;
+    }
+  }
+}
+
 // Verify license key against Central SWEEPR CRM & SWEEPR Deepblock Licensing API
 async function verifyLicenseWithServer(rawKey) {
   const key = String(rawKey || '').trim();
@@ -761,87 +1167,7 @@ async function verifyLicenseWithServer(rawKey) {
           if (res.ok && data && data.valid === true) {
             const subStatus = String(data.status || 'active').toLowerCase();
             if (subStatus === 'active' || subStatus === 'trialing') {
-              const ramTamerActive = true;
-              const entitlements = Array.isArray(data.entitlements)
-                ? data.entitlements
-                : [
-                    'pro_ad_and_video_shield',
-                    'pro_cookie_autoreject',
-                    'pro_tracker_param_stripping',
-                    'pro_element_zapper',
-                    'pro_tab_and_ram_tamer',
-                    'addon_total_tab_and_ram_tamer'
-                  ];
-              const canonicalKey = data.licenseKey || data.license_key || key;
-              const priorState = await chrome.storage.local.get(['proActive', 'settings']);
-              const priorSettings = (priorState && priorState.settings) || {};
-              const nextSettings = priorState && priorState.proActive
-                ? {
-                    ...DEFAULT_STATE.settings,
-                    ...priorSettings
-                  }
-                : {
-                    cookieAutoClose: true,
-                    trackerProtection: true,
-                    adBlocking: true,
-                    silentMode: true,
-                    autoRamTamer: tabsDiscardSupported,
-                    cloudTabSyncEnabled: Boolean(priorSettings.cloudTabSyncEnabled)
-                  };
-              verifiedSession.proActive = true;
-              verifiedSession.ramTamerActive = true;
-              verifiedSession.licenseKey = canonicalKey;
-              verifiedSession.coldChecked = true;
-              verifiedSession.internalWriteInProgress = true;
-              await chrome.storage.local.set({
-                proActive: true,
-                ramTamerActive: true,
-                licenseKey: canonicalKey,
-                draftLicenseKey: '',
-                licenseDrawerOpen: false,
-                licenseToken: data.token || data.license_token || '',
-                crmAccountId: data.account_id || '',
-                subscriptionStatus: subStatus,
-                plan: data.plan || 'annual',
-                licenseExpiresAt: data.expiresAt || '',
-                bonusProDaysEarned: Number(data.bonusProDaysEarned || 0),
-                stepUpSaveEligible: Boolean(data.stepUpSaveEligible || data.plan === 'monthly_intro'),
-                previousLicenseKey: canonicalKey,
-                licenseVerifiedAt: Date.now(),
-                entitlements,
-                settings: nextSettings
-              });
-              verifiedSession.internalWriteInProgress = false;
-              if (tabsDiscardSupported && nextSettings.autoRamTamer !== false) {
-                chrome.alarms.create('ramTamerCheck', { periodInMinutes: 5 });
-              } else {
-                chrome.alarms.clear('ramTamerCheck').catch(() => {});
-              }
-              await syncExtensionProtectionRules(
-                nextSettings.adBlocking !== false,
-                nextSettings.trackerProtection !== false
-              );
-              syncRemoteFilterDelta().catch(() => {});
-              if (
-                chrome.declarativeNetRequest &&
-                typeof chrome.declarativeNetRequest.setExtensionActionOptions === 'function'
-              ) {
-                chrome.declarativeNetRequest
-                  .setExtensionActionOptions({ displayActionCountAsBadgeText: nextSettings.silentMode === false })
-                  .catch(() => {});
-              }
-              await updateActionBadge(undefined, nextSettings);
-              return {
-                ok: true,
-                valid: true,
-                status: subStatus,
-                plan: data.plan || 'annual',
-                expiresAt: data.expiresAt || '',
-                bonusProDaysEarned: Number(data.bonusProDaysEarned || 0),
-                licenseKey: canonicalKey,
-                ramTamerActive: true,
-                entitlements
-              };
+              return await applyVerifiedLicenseActivation(data, key);
             }
           }
 
@@ -932,6 +1258,9 @@ async function revokeProState(reason = 'inactive', options = {}) {
     }
   });
   verifiedSession.internalWriteInProgress = false;
+  if (options.clearLicenseKey && typeof chrome !== 'undefined' && chrome.storage && chrome.storage.sync) {
+    chrome.storage.sync.remove(['sweeprLicenseBackup']).catch(() => {});
+  }
   chrome.alarms.clear('ramTamerCheck').catch(() => {});
   await syncExtensionProtectionRules(false, false);
 }
@@ -1041,8 +1370,9 @@ async function ensureVerifiedProSession() {
   };
 }
 
-// Immediately ensure DNR rulesets and protection state are active on service worker wakeup
+// Ensure DNR rulesets and protection state are active on service worker wakeup, yielding briefly before rewriting dynamic rules
 enforceStoredSubscriptionIntegrity()
+  .then(() => new Promise((r) => setTimeout(r, 2500)))
   .then(() => syncRemoteFilterDelta())
   .catch(() => {});
 
@@ -1111,18 +1441,23 @@ chrome.runtime.onInstalled.addListener(async (details) => {
   };
   await chrome.storage.local.set(merged);
   await hydrateTabActivityMap();
-  await enforceStoredSubscriptionIntegrity();
+  const authSession = await enforceStoredSubscriptionIntegrity();
+  if (!authSession || !authSession.proActive) {
+    await attemptChromeProfileAutoActivation({ interactive: false });
+  }
   await updateActionBadge(merged.stats, merged.settings);
   if (
     chrome.declarativeNetRequest &&
     typeof chrome.declarativeNetRequest.setExtensionActionOptions === 'function'
   ) {
+    const latestState = await chrome.storage.local.get(['settings']);
+    const latestSettings = (latestState && latestState.settings) || merged.settings;
     chrome.declarativeNetRequest
-      .setExtensionActionOptions({ displayActionCountAsBadgeText: merged.settings?.silentMode === false })
+      .setExtensionActionOptions({ displayActionCountAsBadgeText: latestSettings?.silentMode === false })
       .catch(() => {});
   }
   registerContextMenus();
-  syncRemoteFilterDelta();
+  setTimeout(() => { syncRemoteFilterDelta(); }, 2500);
   try {
     if (chrome.runtime && typeof chrome.runtime.setUninstallURL === 'function') {
       chrome.runtime.setUninstallURL('https://sweeprdeepblock.com/support?feedback=uninstall');
@@ -1160,7 +1495,10 @@ chrome.runtime.onStartup.addListener(async () => {
   chrome.alarms.create('weeklyHeartbeat', { periodInMinutes: 10080 });
   await checkHostPermissionsAndProtection();
   await hydrateTabActivityMap();
-  await enforceStoredSubscriptionIntegrity();
+  const authSession = await enforceStoredSubscriptionIntegrity();
+  if (!authSession || !authSession.proActive) {
+    await attemptChromeProfileAutoActivation({ interactive: false });
+  }
   const st = await chrome.storage.local.get(['settings']);
   if (
     chrome.declarativeNetRequest &&
@@ -1170,11 +1508,8 @@ chrome.runtime.onStartup.addListener(async () => {
       .setExtensionActionOptions({ displayActionCountAsBadgeText: Boolean(st?.settings && st.settings.silentMode === false) })
       .catch(() => {});
   }
-  syncRemoteFilterDelta();
+  setTimeout(() => { syncRemoteFilterDelta(); }, 2500);
 });
-
-// Ensure dynamic DNR rules and remote filter deltas are synced whenever the service worker wakes
-syncRemoteFilterDelta();
 
 // Dynamic Per-Tab Toolbar Action Badge:
 // - Shows "OFF" (slate #64748b) when the active tab's domain is in pausedSites
@@ -1696,6 +2031,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       chrome.storage.local.get([
         ...Object.keys(DEFAULT_STATE),
         'extensionUpdateStatus',
+        'chromeAutoActivateResult',
         'hostPermissionsGranted',
         'stepUpSaveEligible',
         'previousLicenseKey',
@@ -1945,6 +2281,13 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
         await updateActionBadge();
       }
       sendResponse({ ok: true, hostPermissionsGranted: granted });
+    });
+    return true;
+  }
+
+  if (msg.type === 'CHROME_GOOGLE_AUTO_ACTIVATE') {
+    attemptChromeProfileAutoActivation({ interactive: msg.interactive !== false }).then((result) => {
+      sendResponse(result);
     });
     return true;
   }

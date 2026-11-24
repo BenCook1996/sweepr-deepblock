@@ -90,11 +90,29 @@ function createPosixZip(sourceDir, outZip) {
     Add-Type -AssemblyName System.IO.Compression
     Add-Type -AssemblyName System.IO.Compression.FileSystem
     $src = (Resolve-Path '${sourceDir}').Path
+    $fixedTime = [DateTimeOffset]::new(2026, 11, 24, 0, 0, 0, [TimeSpan]::Zero)
+    $files = Get-ChildItem -Path $src -Recurse -File | ForEach-Object {
+      [PSCustomObject]@{
+        FullName = $_.FullName
+        Rel = $_.FullName.Substring($src.Length + 1).Replace('\\', '/')
+      }
+    } | Sort-Object -Property @{ Expression = { $_.Rel }; Ascending = $true }
     $zip = [System.IO.Compression.ZipFile]::Open('${outZip}', [System.IO.Compression.ZipArchiveMode]::Create)
     try {
-      Get-ChildItem -Path $src -Recurse -File | ForEach-Object {
-        $rel = $_.FullName.Substring($src.Length + 1).Replace('\\', '/')
-        [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($zip, $_.FullName, $rel, [System.IO.Compression.CompressionLevel]::Optimal) | Out-Null
+      foreach ($f in $files) {
+        $entry = $zip.CreateEntry($f.Rel, [System.IO.Compression.CompressionLevel]::Optimal)
+        $entry.LastWriteTime = $fixedTime
+        $inStream = [System.IO.File]::OpenRead($f.FullName)
+        try {
+          $outStream = $entry.Open()
+          try {
+            $inStream.CopyTo($outStream)
+          } finally {
+            $outStream.Dispose()
+          }
+        } finally {
+          $inStream.Dispose()
+        }
       }
     } finally {
       $zip.Dispose()
@@ -151,11 +169,12 @@ function validateManifestAssets(manifest, extDir) {
 
 validateManifestAssets(baseManifest, EXT_DIR);
 
-// 1. Build Google Chrome Web Store & Microsoft Edge MV3 Package
+// 1. Build Google Chrome Web Store MV3 Package
 const chromeStaging = path.join(DIST_DIR, 'staging-chrome');
 fs.rmSync(chromeStaging, { recursive: true, force: true });
 copyDirSync(EXT_DIR, chromeStaging, true);
 
+const chromeOAuthClientId = String(process.env.GOOGLE_CHROME_EXT_CLIENT_ID || '').trim();
 const chromeManifest = {
   ...baseManifest,
   default_locale: 'en',
@@ -163,10 +182,19 @@ const chromeManifest = {
   short_name: 'DeepBlock',
   description: '__MSG_extDescription__',
   minimum_chrome_version: '116',
+  permissions: Array.from(new Set([...(baseManifest.permissions || []), 'identity', 'identity.email'])),
   background: {
     service_worker: 'background.js'
   }
 };
+if (chromeOAuthClientId) {
+  chromeManifest.oauth2 = {
+    client_id: chromeOAuthClientId,
+    scopes: ['https://www.googleapis.com/auth/userinfo.email']
+  };
+} else {
+  console.warn('[Store Packager] WARNING: GOOGLE_CHROME_EXT_CLIENT_ID not set — chrome manifest built without oauth2 block.');
+}
 delete chromeManifest.browser_specific_settings;
 
 if (typeof chromeManifest.short_name !== 'string' || chromeManifest.short_name.length > 12) {
@@ -177,10 +205,35 @@ fs.writeFileSync(path.join(chromeStaging, 'manifest.json'), JSON.stringify(chrom
 verifyRulesCompliance(chromeStaging);
 
 const chromeZip = path.join(DIST_DIR, 'sweepr-deepblock-chrome-webstore-mv3.zip');
-const edgeZip = path.join(DIST_DIR, 'sweepr-deepblock-edge-chrome-mv3.zip');
 createPosixZip(chromeStaging, chromeZip);
-fs.writeFileSync(edgeZip, fs.readFileSync(chromeZip));
 fs.rmSync(chromeStaging, { recursive: true, force: true });
+
+// 1b. Build Microsoft Edge Add-ons MV3 Package (without Chrome-only oauth2 / identity.email)
+const edgeStaging = path.join(DIST_DIR, 'staging-edge');
+fs.rmSync(edgeStaging, { recursive: true, force: true });
+copyDirSync(EXT_DIR, edgeStaging, true);
+
+const edgeManifest = {
+  ...baseManifest,
+  default_locale: 'en',
+  name: '__MSG_extName__',
+  short_name: 'DeepBlock',
+  description: '__MSG_extDescription__',
+  minimum_chrome_version: '116',
+  permissions: (baseManifest.permissions || []).filter((p) => p !== 'identity' && p !== 'identity.email'),
+  background: {
+    service_worker: 'background.js'
+  }
+};
+delete edgeManifest.browser_specific_settings;
+delete edgeManifest.oauth2;
+
+fs.writeFileSync(path.join(edgeStaging, 'manifest.json'), JSON.stringify(edgeManifest, null, 2) + '\n', 'utf8');
+verifyRulesCompliance(edgeStaging);
+
+const edgeZip = path.join(DIST_DIR, 'sweepr-deepblock-edge-chrome-mv3.zip');
+createPosixZip(edgeStaging, edgeZip);
+fs.rmSync(edgeStaging, { recursive: true, force: true });
 
 function verifyRulesCompliance(stagingDir) {
   const rulesDir = path.join(stagingDir, 'rules');
@@ -218,6 +271,9 @@ function verifyFirefoxZeroWarnings(ffStagingDir, ffManifest) {
   if (ffManifest.background?.service_worker) {
     throw new Error('[Store Packager] Firefox manifest must not declare background.service_worker.');
   }
+  if ('oauth2' in ffManifest || (ffManifest.permissions || []).some((p) => p === 'identity' || p === 'identity.email')) {
+    throw new Error('[Store Packager] Firefox manifest must not declare Chrome identity/oauth2 keys.');
+  }
   verifyRulesCompliance(ffStagingDir);
   walkJsStagingFiles(ffStagingDir, (jsCode, relPath) => {
     if (/\b(requestUpdateCheck|onRuleMatchedDebug)\b/.test(jsCode)) {
@@ -244,6 +300,9 @@ function verifyOperaSchemaCompliance(operaStagingDir, operaManifest) {
   const perms = operaManifest.permissions || [];
   if (!perms.includes('declarativeNetRequest') || perms.includes('declarativeNetRequestWithHostAccess')) {
     throw new Error('[Store Packager] Opera manifest permissions must include declarativeNetRequest and omit declarativeNetRequestWithHostAccess.');
+  }
+  if ('oauth2' in operaManifest || perms.includes('identity') || perms.includes('identity.email')) {
+    throw new Error('[Store Packager] Opera manifest must omit Chrome identity and oauth2 keys.');
   }
   for (const cs of operaManifest.content_scripts || []) {
     if ('world' in cs) {

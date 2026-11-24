@@ -199,7 +199,7 @@ const STRIPE_PRODUCT_RAM_TAMER = (process.env.STRIPE_PRODUCT_RAM_TAMER || 'prod_
 const STRIPE_PRICE_ANNUAL = (process.env.STRIPE_PRICE_ANNUAL || 'price_1USkjM12f60YC3BgrVwMQXa6').trim();
 const STRIPE_PRICE_SIX_MONTH = (process.env.STRIPE_PRICE_SIX_MONTH || 'price_1USkjM12f60YC3BgMe9vezeT').trim();
 const STRIPE_PRICE_MONTHLY = (process.env.STRIPE_PRICE_MONTHLY || 'price_1USkjM12f60YC3BgGgzH91v5').trim();
-const STRIPE_COUPON = (process.env.STRIPE_COUPON || 'sweepr_intro_gbp_800').trim();
+const STRIPE_COUPON = (process.env.STRIPE_COUPON || 'sweepr_intro_gbp_300').trim();
 
 const BOT_UA_RE =
   /googlebot|bingbot|gptbot|oai-searchbot|chatgpt-user|claudebot|claude-web|anthropic-ai|perplexitybot|applebot|applebot-extended|duckduckbot|yandexbot|baiduspider|cohere-ai|facebookexternalhit|twitterbot|linkedinbot|meta-externalagent|meta-externalfetch|bytespider|amazonbot|diffbot|google-inspectiontool|deepseek-ai|mistralai|qwenbot|semrushbot|ahrefsbot|google-extended|vertex-ai|youbot|brave-web-crawler|kagi-crawler|xai|grok|exabot|petalbot|dotbot|rogerbot|blexbot|turnitinbot|ccbot|timpibot|seekr|feedfetcher-google|archive\.org_bot|screaming frog|siteaudit|chrome-lighthouse|lighthouse|pagespeed/i;
@@ -257,12 +257,8 @@ function buildLocalizedPricing(countryCode = 'GB', overrideCurrency) {
   const sixMonthSavingsAmount = Math.max(0, sixMonthsAtMonthly - cfg.sixMonthAmount);
   const introSavingsAmount = Math.max(0, cfg.monthlyAmount - cfg.introMonthlyAmount);
 
-  const ramAnnualMonthlyEq = cfg.zeroDecimal
-    ? Math.round(cfg.ramTamerAnnualAmount / 12)
-    : Math.floor(cfg.ramTamerAnnualAmount / 12);
-  const ramSixMonthMonthlyEq = cfg.zeroDecimal
-    ? Math.round(cfg.ramTamerSixMonthAmount / 6)
-    : Math.floor(cfg.ramTamerSixMonthAmount / 6);
+  const ramAnnualMonthlyEq = Math.round(cfg.ramTamerAnnualAmount / 12);
+  const ramSixMonthMonthlyEq = Math.round(cfg.ramTamerSixMonthAmount / 6);
 
   const suiteAnnualAmount =
     cfg.currency === 'gbp'
@@ -280,9 +276,7 @@ function buildLocalizedPricing(countryCode = 'GB', overrideCurrency) {
       : cfg.currency === 'eur'
       ? 18497
       : Math.round(suiteAnnualAmount * 1.83);
-  const suiteAnnualMonthlyEq = cfg.zeroDecimal
-    ? Math.round(suiteAnnualAmount / 12)
-    : Math.floor(suiteAnnualAmount / 12);
+  const suiteAnnualMonthlyEq = Math.round(suiteAnnualAmount / 12);
 
   return {
     country: cc,
@@ -5206,6 +5200,90 @@ function getCachedDynamicDelta() {
     }
 
     return sendJson(res, 404, { valid: false, error: 'license_not_found' });
+  }
+
+  // API 3a: Cryptographically Verified Chrome Profile Auto-Activation (Paid Customers Only, Read-Only Lookup)
+  if (
+    req.method === 'POST' &&
+    (pathname === '/api/license/chrome-auto-activate' || pathname === '/v1/license/chrome-auto-activate')
+  ) {
+    if (!checkRateLimit(req, 'license_chrome_auto', 20, 60000)) {
+      return sendJson(
+        res,
+        429,
+        { ok: false, valid: false, error: 'rate_limit_exceeded', message: 'Too many activation attempts. Try again later.' },
+        {},
+        req
+      );
+    }
+    const body = await readBody(req);
+    if (body && body.__tooLarge) {
+      return sendJson(res, 413, { ok: false, valid: false, error: 'payload_too_large' }, {}, req);
+    }
+    const googleAccessToken = String(body?.google_access_token || '').trim();
+    if (!googleAccessToken) {
+      return sendJson(
+        res,
+        400,
+        { ok: false, valid: false, error: 'missing_google_token', message: 'Verified Google OAuth token required.' },
+        {},
+        req
+      );
+    }
+    const clientIp = getClientIp(req);
+    const crmRes = await crm.chromeAutoActivate({
+      googleAccessToken,
+      deviceId: String(body?.device_id || '').trim().slice(0, 128),
+      deviceName: String(body?.device_name || 'SWEEPR Deepblock Chrome Extension').trim().slice(0, 128),
+      os: String(body?.os || 'chrome_extension').trim().slice(0, 32),
+      appVersion: String(body?.app_version || '').trim().slice(0, 32),
+      clientIp
+    });
+
+    if (crmRes.ok && crmRes.data && crmRes.data.valid === true) {
+      const d = crmRes.data;
+      const addonsList = Array.isArray(d.addons) ? d.addons : [];
+      const resolvedPlan = d.plan || 'annual';
+      return sendJson(
+        res,
+        200,
+        {
+          ok: true,
+          valid: true,
+          auto_activated: true,
+          project_id: 'deepblock',
+          account_id: d.account_id,
+          email_masked: d.email_masked || d.email || '',
+          licenseKey: d.licenseKey || d.license_key,
+          license_key: d.license_key || d.licenseKey,
+          token: d.token || d.license_token,
+          license_token: d.license_token || d.token,
+          plan: resolvedPlan,
+          status: d.status || 'active',
+          ramTamerAddon: true,
+          addons: addonsList.includes('ram_tamer') ? addonsList : [...addonsList, 'ram_tamer'],
+          entitlements: buildDeepblockEntitlements(true, resolvedPlan === 'suite_annual'),
+          cancelAtPeriodEnd: Boolean(d.cancelAtPeriodEnd || d.cancel_at_period_end),
+          expiresAt: d.expiresAt,
+          current_period_end: d.current_period_end,
+          devices_used: d.devices_used,
+          devices_max: d.devices_max
+        },
+        {},
+        req
+      );
+    }
+
+    const status = crmRes.status || 502;
+    return sendJson(
+      res,
+      status,
+      crmRes.data && typeof crmRes.data === 'object'
+        ? crmRes.data
+        : { ok: false, valid: false, error: 'crm_unavailable', message: 'Licensing server temporarily unavailable.' },
+      {},
+      req
+    );
   }
 
   // API 3b-0: Customer Portal Login & 6-Digit OTP Send (Checks that email is already signed up before sending 6-digit OTP)

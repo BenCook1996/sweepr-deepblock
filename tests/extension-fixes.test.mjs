@@ -7,7 +7,7 @@ import os from 'node:os';
 import path from 'node:path';
 import vm from 'node:vm';
 import zlib from 'node:zlib';
-import { spawn } from 'node:child_process';
+import { execFileSync, spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -142,9 +142,9 @@ after(async () => {
   }
 });
 
-test('E1: manifest.json bumped to 1.3.1 with scripting, optional clipboardRead, MacCtrl shortcuts, 3 rulesets, and valid surrogates WAR', () => {
+test('E1: manifest.json bumped to 1.3.2 with scripting, optional clipboardRead, MacCtrl shortcuts, 3 rulesets, and valid surrogates WAR', () => {
   const manifest = JSON.parse(fs.readFileSync(path.join(ROOT, 'extension/manifest.json'), 'utf8'));
-  assert.equal(manifest.version, '1.3.1');
+  assert.equal(manifest.version, '1.3.2');
   assert.ok(manifest.permissions.includes('scripting'));
   assert.deepEqual(manifest.optional_permissions, ['clipboardRead']);
 
@@ -237,11 +237,11 @@ test('E4: all 9 _locales/*/messages.json files define the 10 ui* i18n keys', () 
   }
 });
 
-test('E5: built v1.3.1 store ZIPs exist and pass Opera/Chrome/Firefox compliance checks', () => {
+test('E5: built v1.3.2 store ZIPs exist and pass Opera/Chrome/Firefox compliance checks', () => {
   const zips = [
-    'dist/sweepr-deepblock-v1.3.1-chrome-webstore.zip',
-    'dist/sweepr-deepblock-v1.3.1-firefox-amo.zip',
-    'dist/sweepr-deepblock-v1.3.1-opera-addons.zip',
+    'dist/sweepr-deepblock-v1.3.2-chrome-webstore.zip',
+    'dist/sweepr-deepblock-v1.3.2-firefox-amo.zip',
+    'dist/sweepr-deepblock-v1.3.2-opera-addons.zip',
     'dist/sweepr-deepblock-edge-chrome-mv3.zip'
   ];
   for (const z of zips) {
@@ -251,7 +251,7 @@ test('E5: built v1.3.1 store ZIPs exist and pass Opera/Chrome/Firefox compliance
     const manifestEntry = entries.find((e) => e.name === 'manifest.json');
     assert.ok(manifestEntry, `${z} missing manifest.json`);
     const parsedManifest = JSON.parse(manifestEntry.data.toString('utf8'));
-    assert.equal(parsedManifest.version, '1.3.1');
+    assert.equal(parsedManifest.version, '1.3.2');
     for (const e of entries) {
       if (e.name.startsWith('rules/') && e.name.endsWith('.json')) {
         assert.ok(!/"url"\s*:\s*"data:/i.test(e.data.toString('utf8')), `${z}:${e.name} contains data: URL`);
@@ -490,7 +490,7 @@ test('E10: /api/license-verify enforces 5-device cap, includes RAM Tamer in base
   assert.equal(lkBody.valid, true);
 });
 
-test('E11: /api/telemetry/live-proof serves real rule counts and v1.3.1 without fabricated receipts', async () => {
+test('E11: /api/telemetry/live-proof serves real rule counts and v1.3.2 without fabricated receipts', async () => {
   const blockedSitesRaw = JSON.parse(
     fs.readFileSync(path.join(ROOT, 'data', 'deepblock-blocked-sites.json'), 'utf8')
   );
@@ -507,7 +507,7 @@ test('E11: /api/telemetry/live-proof serves real rule counts and v1.3.1 without 
   assert.equal(res.status, 200);
   const body = await res.json();
   assert.equal(body.ok, true);
-  assert.equal(body.version, '1.3.1');
+  assert.equal(body.version, '1.3.2');
   assert.equal(body.activeMv3StaticRules, 283);
   assert.equal(body.activeOtaDeltaRules, 100);
   assert.equal(body.verifiedBlockedDomainsCount, expectedBlockedCount);
@@ -988,4 +988,358 @@ test('E18: index.html inline scripts + nav.js preserve /download?install=1 and f
     const androidDl = runPageScripts(downloadHtml, { userAgent: ANDROID_CHROME, pathname: '/download' });
     assert.equal(androidDl.byId.get('addToBrowserBtn').getAttribute('href'), 'https://addons.mozilla.org/firefox/addon/sweepr-deepblock/');
   }
+});
+
+test('E19: background.js deduplicates DNR startup sync, restores storage.sync license backup, and runs Chrome auto-activation state machine', async () => {
+  const bgSrc = fs.readFileSync(path.join(ROOT, 'extension/background.js'), 'utf8');
+
+  function makeStorageArea(initial = {}) {
+    const store = { ...initial };
+    const get = (keys, cb) => {
+      const result = {};
+      const keyList = Array.isArray(keys) ? keys : keys && typeof keys === 'object' ? Object.keys(keys) : keys ? [String(keys)] : Object.keys(store);
+      for (const k of keyList) {
+        if (Object.prototype.hasOwnProperty.call(store, k)) {
+          result[k] = store[k];
+        } else if (keys && !Array.isArray(keys) && typeof keys === 'object' && Object.prototype.hasOwnProperty.call(keys, k)) {
+          result[k] = keys[k];
+        }
+      }
+      if (typeof cb === 'function') {
+        cb(result);
+        return undefined;
+      }
+      return Promise.resolve(result);
+    };
+    const set = (obj, cb) => {
+      Object.assign(store, obj || {});
+      if (typeof cb === 'function') {
+        cb();
+        return undefined;
+      }
+      return Promise.resolve();
+    };
+    const remove = (keys, cb) => {
+      const list = Array.isArray(keys) ? keys : [keys];
+      for (const k of list) delete store[k];
+      if (typeof cb === 'function') {
+        cb();
+        return undefined;
+      }
+      return Promise.resolve();
+    };
+    return { store, area: { get, set, remove } };
+  }
+
+  function loadBackgroundHarness({ initialLocal = {}, initialSync = {}, profileEmail = '', authToken = '', fetchHandler } = {}) {
+    const localWrap = makeStorageArea(initialLocal);
+    const syncWrap = makeStorageArea(initialSync);
+    const sessionWrap = makeStorageArea({});
+    const dnrDynamicCalls = [];
+    const fetchCalls = [];
+
+    const chromeMock = {
+      runtime: {
+        id: 'bkdfhdgmglfancgpkcbdceinfdlccmpc',
+        lastError: null,
+        getManifest: () => ({ version: '1.3.2' }),
+        getURL: (p) => `chrome-extension://bkdfhdgmglfancgpkcbdceinfdlccmpc/${p}`,
+        setUninstallURL() {},
+        requestUpdateCheck() {},
+        reload() {},
+        onUpdateAvailable: { addListener() {} },
+        onInstalled: { addListener() {} },
+        onStartup: { addListener() {} },
+        onMessage: { addListener() {} }
+      },
+      storage: {
+        local: localWrap.area,
+        sync: syncWrap.area,
+        session: sessionWrap.area,
+        onChanged: { addListener() {} }
+      },
+      declarativeNetRequest: {
+        updateEnabledRulesets: async () => {},
+        updateDynamicRules: async (args) => {
+          dnrDynamicCalls.push(args);
+        },
+        getDynamicRules: async () => [],
+        setExtensionActionOptions: async () => {},
+        onRuleMatchedDebug: { addListener() {} }
+      },
+      permissions: { contains: async () => true },
+      scripting: {
+        unregisterContentScripts: async () => {},
+        registerContentScripts: async () => {}
+      },
+      contextMenus: {
+        removeAll: (cb) => { if (typeof cb === 'function') cb(); },
+        create() {},
+        onClicked: { addListener() {} }
+      },
+      commands: { onCommand: { addListener() {} } },
+      tabs: {
+        discard: async () => {},
+        query: async () => [],
+        onCreated: { addListener() {} },
+        onActivated: { addListener() {} },
+        onUpdated: { addListener() {} },
+        onRemoved: { addListener() {} }
+      },
+      alarms: {
+        create() {},
+        clear: async () => {},
+        onAlarm: { addListener() {} }
+      },
+      action: { setBadgeText() {}, setBadgeBackgroundColor() {} },
+      identity: {
+        getProfileUserInfo: (_opts, cb) => cb({ email: profileEmail, id: profileEmail ? 'g_123' : '' }),
+        getAuthToken: (_opts, cb) => cb(authToken),
+        removeCachedAuthToken: (_opts, cb) => { if (typeof cb === 'function') cb(); }
+      }
+    };
+
+    const customSetTimeout = (fn, delay) => {
+      if (delay === 2500) return 0; // suppress auto wakeup delay so test invokes syncRemoteFilterDelta deterministically
+      return setTimeout(fn, 0);
+    };
+
+    const ctx = {
+      chrome: chromeMock,
+      navigator: {
+        userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/131.0.0.0',
+        userAgentData: { platform: 'Windows', brands: [{ brand: 'Google Chrome' }] },
+        language: 'en-GB'
+      },
+      fetch: async (url, init) => {
+        fetchCalls.push({ url: String(url), init });
+        if (fetchHandler) return fetchHandler(String(url), init);
+        return { ok: false, status: 404, json: async () => ({ ok: false }) };
+      },
+      setTimeout: customSetTimeout,
+      clearTimeout,
+      AbortSignal,
+      URL,
+      URLSearchParams,
+      Intl,
+      crypto: globalThis.crypto,
+      TextEncoder,
+      TextDecoder,
+      console
+    };
+    ctx.self = ctx;
+    ctx.globalThis = ctx;
+    vm.createContext(ctx);
+    vm.runInContext(bgSrc, ctx, { filename: 'extension/background.js' });
+    return { ctx, localStore: localWrap.store, syncStore: syncWrap.store, dnrDynamicCalls, fetchCalls };
+  }
+
+  // 1. Concurrent syncRemoteFilterDelta() calls coalesce into 1 updateDynamicRules write
+  {
+    let deltaFetchCount = 0;
+    const h = loadBackgroundHarness({
+      fetchHandler: async (url) => {
+        if (url.includes('/api/filters/delta')) {
+          deltaFetchCount += 1;
+          await new Promise((r) => setTimeout(r, 15));
+          return {
+            ok: true,
+            status: 200,
+            json: async () => ({
+              ok: true,
+              dynamicDnrRules: [
+                {
+                  id: 80001,
+                  priority: 1,
+                  action: { type: 'block' },
+                  condition: { urlFilter: '||ads.example.test^', resourceTypes: ['script'] }
+                }
+              ]
+            })
+          };
+        }
+        return { ok: false, status: 404, json: async () => ({}) };
+      }
+    });
+    await Promise.all([
+      h.ctx.syncRemoteFilterDelta(),
+      h.ctx.syncRemoteFilterDelta(),
+      h.ctx.syncRemoteFilterDelta()
+    ]);
+    assert.equal(deltaFetchCount, 1, '3 concurrent syncRemoteFilterDelta calls should coalesce into 1 fetch');
+    assert.equal(h.dnrDynamicCalls.length, 1, '3 concurrent syncRemoteFilterDelta calls should execute 1 updateDynamicRules write');
+    // Immediate subsequent call within cooldown should be skipped
+    await h.ctx.syncRemoteFilterDelta();
+    assert.equal(deltaFetchCount, 1, 'Subsequent call within 30s cooldown should skip');
+  }
+
+  // 2. chrome.storage.sync backup restore activates Pro when local storage is empty
+  {
+    const syncedKey = 'SWEEPR-DB-SYNC-2026-ABCD';
+    const h = loadBackgroundHarness({
+      initialSync: {
+        sweeprLicenseBackup: { licenseKey: syncedKey, plan: 'annual', licenseExpiresAt: '2027-01-01T00:00:00.000Z' }
+      },
+      fetchHandler: async (url) => {
+        if (url.includes('/api/license-verify')) {
+          return {
+            ok: true,
+            status: 200,
+            json: async () => ({
+              valid: true,
+              status: 'active',
+              plan: 'annual',
+              licenseKey: syncedKey,
+              expiresAt: '2027-01-01T00:00:00.000Z',
+              token: 'hdr.pay.sig'
+            })
+          };
+        }
+        return { ok: false, status: 404, json: async () => ({}) };
+      }
+    });
+    const res = await h.ctx.restoreLicenseFromChromeSync();
+    assert.equal(res.ok, true);
+    assert.equal(res.restoredFromSync, true);
+    assert.equal(h.localStore.proActive, true);
+    assert.equal(h.localStore.licenseKey, syncedKey);
+  }
+
+  // 3a. attemptChromeProfileAutoActivation() exits silently when no Chrome profile email exists
+  {
+    const h = loadBackgroundHarness({ profileEmail: '' });
+    const res = await h.ctx.attemptChromeProfileAutoActivation({ interactive: false });
+    assert.equal(res.ok, false);
+    assert.equal(res.skipped, true);
+    assert.equal(res.reason, 'no_chrome_email');
+    assert.equal(h.fetchCalls.filter((c) => c.url.includes('chrome-auto-activate')).length, 0);
+  }
+
+  // 3b. attemptChromeProfileAutoActivation() activates Pro cleanly on mocked 200 preserving expiresAt
+  {
+    const expectedExp = '2027-06-15T12:00:00.000Z';
+    const h = loadBackgroundHarness({
+      profileEmail: 'paid@gmail.com',
+      authToken: 'ya29.valid_google_token',
+      fetchHandler: async (url) => {
+        if (url.includes('chrome-auto-activate')) {
+          return {
+            ok: true,
+            status: 200,
+            json: async () => ({
+              ok: true,
+              valid: true,
+              auto_activated: true,
+              licenseKey: 'SWEEPR-DB-AUTO-2026-1111',
+              status: 'active',
+              plan: 'annual',
+              expiresAt: expectedExp,
+              email_masked: 'p**d@gmail.com',
+              devices_used: 2,
+              devices_max: 5,
+              token: 'hdr.pay.sig'
+            })
+          };
+        }
+        return { ok: false, status: 404, json: async () => ({}) };
+      }
+    });
+    const res = await h.ctx.attemptChromeProfileAutoActivation({ interactive: false });
+    assert.equal(res.ok, true);
+    assert.equal(res.valid, true);
+    assert.equal(res.autoActivated, true);
+    assert.equal(h.localStore.proActive, true);
+    assert.equal(h.localStore.licenseExpiresAt, expectedExp);
+    assert.equal(h.localStore.chromeAutoActivateResult.status, 'activated');
+    assert.equal(h.syncStore.sweeprLicenseBackup.licenseKey, 'SWEEPR-DB-AUTO-2026-1111');
+  }
+
+  // 3c. attemptChromeProfileAutoActivation() records device_limit_reached without activating on mocked 403
+  {
+    const h = loadBackgroundHarness({
+      profileEmail: 'full5@gmail.com',
+      authToken: 'ya29.valid_google_token',
+      fetchHandler: async (url) => {
+        if (url.includes('chrome-auto-activate')) {
+          return {
+            ok: false,
+            status: 403,
+            json: async () => ({
+              ok: false,
+              valid: false,
+              error: 'device_limit_reached',
+              email_masked: 'f***5@gmail.com',
+              devices_used: 5,
+              devices_max: 5,
+              message: 'Device limit reached (5/5 devices).'
+            })
+          };
+        }
+        return { ok: false, status: 404, json: async () => ({}) };
+      }
+    });
+    const res = await h.ctx.attemptChromeProfileAutoActivation({ interactive: false });
+    assert.equal(res.ok, false);
+    assert.equal(res.reason, 'device_limit_reached');
+    assert.notEqual(h.localStore.proActive, true);
+    assert.equal(h.localStore.chromeAutoActivateResult.status, 'device_limit_reached');
+    assert.equal(h.localStore.chromeAutoActivateResult.devicesUsed, 5);
+    assert.equal(h.localStore.chromeAutoActivateResult.devicesMax, 5);
+  }
+});
+
+test('E20: build-store-packages.mjs injects identity + conditional oauth2 only in Chrome ZIP and excludes from Edge/Firefox/Opera', () => {
+  try {
+    execFileSync(process.execPath, [path.join(ROOT, 'scripts/build-store-packages.mjs')], {
+      cwd: ROOT,
+      env: { ...process.env, GOOGLE_CHROME_EXT_CLIENT_ID: 'test-client.apps.googleusercontent.com' },
+      stdio: 'pipe'
+    });
+
+    const readManifest = (relZip) => {
+      const entries = readZipEntries(path.join(ROOT, relZip));
+      const m = entries.find((e) => e.name === 'manifest.json');
+      assert.ok(m, `${relZip} missing manifest.json`);
+      return JSON.parse(m.data.toString('utf8'));
+    };
+
+    const chromeM = readManifest('dist/sweepr-deepblock-v1.3.2-chrome-webstore.zip');
+    assert.ok(chromeM.permissions.includes('identity'));
+    assert.ok(chromeM.permissions.includes('identity.email'));
+    assert.equal(chromeM.oauth2?.client_id, 'test-client.apps.googleusercontent.com');
+    assert.deepEqual(chromeM.oauth2?.scopes, ['https://www.googleapis.com/auth/userinfo.email']);
+
+    for (const rel of [
+      'dist/sweepr-deepblock-edge-chrome-mv3.zip',
+      'dist/sweepr-deepblock-v1.3.2-firefox-amo.zip',
+      'dist/sweepr-deepblock-v1.3.2-opera-addons.zip'
+    ]) {
+      const otherM = readManifest(rel);
+      assert.equal(otherM.oauth2, undefined, `${rel} must omit oauth2`);
+      assert.ok(!otherM.permissions.includes('identity'), `${rel} must omit identity permission`);
+      assert.ok(!otherM.permissions.includes('identity.email'), `${rel} must omit identity.email permission`);
+    }
+  } finally {
+    execFileSync(process.execPath, [path.join(ROOT, 'scripts/build-store-packages.mjs')], {
+      cwd: ROOT,
+      env: { ...process.env, GOOGLE_CHROME_EXT_CLIENT_ID: '' },
+      stdio: 'pipe'
+    });
+  }
+});
+
+test('E21: POST /api/license/chrome-auto-activate rejects missing google_access_token with 400 and echoes allowed extension CORS', async () => {
+  const res = await fetch(`${baseUrl}/api/license/chrome-auto-activate`, {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      origin: 'chrome-extension://bkdfhdgmglfancgpkcbdceinfdlccmpc'
+    },
+    body: JSON.stringify({ email: 'victim@gmail.com', device_id: 'ext_db_spoof' })
+  });
+  assert.equal(res.status, 400);
+  assert.equal(res.headers.get('access-control-allow-origin'), 'chrome-extension://bkdfhdgmglfancgpkcbdceinfdlccmpc');
+  const data = await res.json();
+  assert.equal(data.valid, false);
+  assert.equal(data.error, 'missing_google_token');
 });
