@@ -1,21 +1,126 @@
 {
-  "generatedAt": "2026-11-24T18:00:44.514Z",
+  "generatedAt": "2026-11-25T17:28:57.632Z",
   "engineVersion": "2.0.0",
   "summary": {
     "totalIndexablePagesChecked": 99,
     "seedQueriesExpanded": 330,
-    "rawAutocompleteHarvested": 420,
+    "rawAutocompleteHarvested": 470,
     "junkDisqualifiedCount": 14,
-    "lowIntentRejectedCount": 354,
+    "lowIntentRejectedCount": 404,
     "intraBatchSynonymsMerged": 3,
     "alreadyCoveredOrEnrichedCount": 4,
-    "heuristicFallbackCount": 27,
-    "unverifiedHeuristicCandidatesCount": 1,
+    "heuristicFallbackCount": 28,
+    "unverifiedHeuristicCandidatesCount": 2,
     "approvedLowKdOpportunitiesCount": 0,
     "ctrEnrichmentQueueCount": 4
   },
   "opportunities": [],
   "heuristicCandidatesUnverified": [
+    {
+      "id": "kw_vs_download_ghostery_chrome",
+      "keyword": "download ghostery for chrome",
+      "secondaryKeywords": [
+        "ghostery chrome extension download"
+      ],
+      "tokenFingerprint": "chrome|download|ghostery",
+      "pillar": "P1_COMMERCIAL_SWITCHER",
+      "intentTier": "commercial_switcher",
+      "cluster": "vs",
+      "recommendedFormat": "competitor_comparison",
+      "targetRoute": "/vs/download-ghostery-for-chrome",
+      "relPath": "vs/download-ghostery-for-chrome.html",
+      "isPublishedOnDisk": false,
+      "status": "unverified_heuristic_candidate",
+      "metrics": {
+        "opportunityScore": 73.8,
+        "volumeScore": 65,
+        "lowCompetitionScore": 71,
+        "transactionalScore": 70,
+        "estimatedKD": 29,
+        "wordCount": 4
+      },
+      "volumeBreakdown": {
+        "volumeScore": 65,
+        "slotAnchorScore": 41.2,
+        "engineConsensusScore": 10.2,
+        "modifierDepthScore": 14,
+        "volumeSource": "autocomplete_cache",
+        "enginesMatched": [
+          "bing",
+          "ddg"
+        ],
+        "bestRankByEngine": {
+          "bing": 2,
+          "ddg": 2
+        }
+      },
+      "serpCompetition": {
+        "inspectionSource": "lexical_heuristic_fallback",
+        "isHeuristicFallback": true,
+        "serpVerificationStatus": "UNVERIFIED_HEURISTIC",
+        "lowCompetitionScore": 71,
+        "estimatedKD": 29,
+        "signals": {
+          "ugcPoints": 0,
+          "titleGapPoints": 14,
+          "freshnessGapPoints": 12,
+          "longTailPoints": 15,
+          "editorialWallPenalty": 0,
+          "ugcMatchedUrls": [],
+          "editorialDomainsFound": []
+        },
+        "top5Organic": []
+      },
+      "cannibalization": {
+        "status": "clean",
+        "closestExistingPage": "/download",
+        "maxCannibScore": 0.397,
+        "tokenOverlapRatio": 0.371,
+        "jaccardSimilarity": 0.333
+      },
+      "pageBlueprint": {
+        "title": "Download Ghostery For Chrome (2026) | SWEEPR Deepblock",
+        "h1": "Download Ghostery For Chrome: Verified 2026 Manifest V3 Protection & Fix",
+        "metaDescription": "Download Ghostery For Chrome compared in 2026: Manifest V3 ad & tracker defense, GDPR cookie auto-rejection, and transparent £29.99/yr Pro pricing without.",
+        "shortLinkTitle": "Download Ghostery For Chrome",
+        "linkBadge": "VS • KD 29 • Score 73.8",
+        "painPointIssue": "Eliminating download ghostery for chrome with 283 static declarativeNetRequest rules, GDPR CMP auto-rejection, and local-first privacy protection",
+        "beforeStat": "Unskippable Ads & Tracker Walls",
+        "afterStat": "0 Video Ads • Auto-Rejected Cookies",
+        "perfStat": "283 Static DNR Rules",
+        "recommendedToolWidget": {
+          "toolRoute": "/test-lab",
+          "ctaHeadline": "Test Your Current Browser Against Live MV3 Ad & Tracker Vectors",
+          "ctaButton": "Run Free Live MV3 Test Lab →"
+        },
+        "primaryCta": {
+          "href": "/order?plan=annual",
+          "label": "Unlock SWEEPR Deepblock Pro (£29.99/yr — Save 50%)"
+        },
+        "secondaryCta": {
+          "href": "/order?plan=suite_annual",
+          "label": "Bundle VPN + Cleaner + Deepblock + RAM Tamer (£89.99/yr)"
+        },
+        "customFaqs": [
+          {
+            "q": "How does SWEEPR Deepblock solve \"download ghostery for chrome\" in 2026?",
+            "a": "SWEEPR Deepblock v1.3.2 combines 283 static declarativeNetRequest network rules + 100 dynamic OTA delta rules with local-first DOM & player sanitization, eliminating video ad interruptions, cookie walls, and tracker bloat without triggering anti-adblock modals."
+          },
+          {
+            "q": "What about ghostery chrome extension download?",
+            "a": "Yes. Every SWEEPR Deepblock rule pack is compiled natively for Chromium Manifest V3 (Chrome, Edge, Brave, Opera, Thorium, Vivaldi, Arc) and Firefox (Desktop & Android) with zero cloud browsing telemetry."
+          },
+          {
+            "q": "Does SWEEPR Deepblock charge surprise Year-2 renewal price hikes like legacy ad blockers?",
+            "a": "Never. Unlike legacy ad blockers that lure users in with a £19 intro offer and auto-renew at £99–£120/yr, SWEEPR Deepblock Pro is locked at a transparent £29.99/yr (£2.50/mo eq.) across 5 devices, backed by a 1-click cancellation toggle and a 14-day money-back guarantee."
+          },
+          {
+            "q": "What is included in SWEEPR Deepblock Pro vs the Complete Security Suite?",
+            "a": "SWEEPR Deepblock Pro (£29.99/yr or £1.99 1st-Month Intro) unlocks video/banner blocking, GDPR cookie auto-reject, URL tracker stripping, Element Zapper, and Total Tab & RAM Tamer across 5 devices. The Sweepr Complete Security Suite (£89.99/yr, save 45%) bundles Deepblock Pro, Total Tab & RAM Tamer, Sweepr VPN Pro, and Sweepr Desktop Cleaner Pro across 5 devices."
+          }
+        ]
+      }
+    },
     {
       "id": "kw_vs_totaladblock_notwork",
       "keyword": "total adblock not working",
@@ -30,19 +135,19 @@
       "isPublishedOnDisk": false,
       "status": "unverified_heuristic_candidate",
       "metrics": {
-        "opportunityScore": 72.5,
-        "volumeScore": 48,
+        "opportunityScore": 72.8,
+        "volumeScore": 49,
         "lowCompetitionScore": 79,
         "transactionalScore": 87,
         "estimatedKD": 21,
         "wordCount": 4
       },
       "volumeBreakdown": {
-        "volumeScore": 48,
+        "volumeScore": 49,
         "slotAnchorScore": 29.9,
         "engineConsensusScore": 9.1,
-        "modifierDepthScore": 9,
-        "volumeSource": "autocomplete",
+        "modifierDepthScore": 10,
+        "volumeSource": "autocomplete_cache",
         "enginesMatched": [
           "bing",
           "ddg"
@@ -81,7 +186,7 @@
         "h1": "Total AdBlock Not Working: Verified 2026 Manifest V3 Protection & Fix",
         "metaDescription": "Total AdBlock Not Working compared in 2026: Manifest V3 ad & tracker defense, GDPR cookie auto-rejection, and transparent £29.99/yr Pro pricing without.",
         "shortLinkTitle": "Total AdBlock Not Working",
-        "linkBadge": "VS • KD 21 • Score 72.5",
+        "linkBadge": "VS • KD 21 • Score 72.8",
         "painPointIssue": "Eliminating total adblock not working with 283 static declarativeNetRequest rules, GDPR CMP auto-rejection, and local-first privacy protection",
         "beforeStat": "Unskippable Ads & Tracker Walls",
         "afterStat": "0 Video Ads • Auto-Rejected Cookies",
@@ -163,8 +268,8 @@
       "cannibalizationScore": 0.596,
       "serpVerificationStatus": "UNVERIFIED_HEURISTIC",
       "metrics": {
-        "opportunityScore": 56.5,
-        "volumeScore": 52,
+        "opportunityScore": 56.8,
+        "volumeScore": 53,
         "lowCompetitionScore": 79,
         "transactionalScore": 72,
         "estimatedKD": 21,

@@ -1,5 +1,5 @@
 # SWEEPR Deepblock v1.3.2 — Organic Community Seeding & Launch Kit
-Generated: 2026-11-24T18:00:49.157Z | Zero Automated Emails (`zeroEmail: true`)
+Generated: 2026-11-25T17:29:04.187Z | Zero Automated Emails (`zeroEmail: true`)
 
 ## Reddit — r/browsers & r/privacy
 **Title:** We benchmarked Manifest V3 ad blockers on YouTube, TCF v2.2 cookie scroll locks, and multi-tab RAM
