@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-25T17:28:55.069Z",
-  "durationMs": 52969,
+  "generatedAt": "2026-11-26T17:10:26.007Z",
+  "durationMs": 53693,
   "mode": "live_google_cloud_service_account_api",
   "serviceAccountConfigured": true,
   "serviceAccountEmail": "sweepr-seo-bot@sweepr-514223.iam.gserviceaccount.com",
@@ -8,9 +8,9 @@
   "ga4PropertyId": "559863555",
   "trackedDiscoveredGscPathsCount": 64,
   "latestGscSnapshot": {
-    "totalImpressions": 465,
-    "totalClicks": 6,
-    "activePagesWithImpressions": 156,
+    "totalImpressions": 391,
+    "totalClicks": 5,
+    "activePagesWithImpressions": 141,
     "newlyDiscoveredPaths": [],
     "strikeZoneCandidates": [
       {
@@ -54,10 +54,10 @@
       },
       {
         "urlPath": "/setup/arc-browser-windows-mac",
-        "impressions": 13,
+        "impressions": 11,
         "clicks": 0,
         "ctrPct": 0,
-        "position": 21.8,
+        "position": 24.5,
         "topQueries": [
           {
             "query": "arc browser ad blocker",
@@ -69,7 +69,7 @@
       },
       {
         "urlPath": "/setup/floorp-browser-firefox-fork",
-        "impressions": 18,
+        "impressions": 15,
         "clicks": 0,
         "ctrPct": 0,
         "position": 5.6,
@@ -84,10 +84,10 @@
       },
       {
         "urlPath": "/setup/kiwi-browser-android",
-        "impressions": 14,
+        "impressions": 9,
         "clicks": 0,
         "ctrPct": 0,
-        "position": 13.1,
+        "position": 15.8,
         "topQueries": [
           {
             "query": "kiwi browser ad blocker",
@@ -111,15 +111,15 @@
       },
       {
         "urlPath": "/setup/librewolf-hardened-firefox",
-        "impressions": 5,
+        "impressions": 3,
         "clicks": 0,
         "ctrPct": 0,
-        "position": 7.8,
+        "position": 6.7,
         "topQueries": []
       },
       {
         "urlPath": "/setup/orion-browser-macos-ios",
-        "impressions": 23,
+        "impressions": 19,
         "clicks": 0,
         "ctrPct": 0,
         "position": 7.3,
@@ -134,18 +134,18 @@
       },
       {
         "urlPath": "/setup/ungoogled-chromium-mv3",
-        "impressions": 7,
+        "impressions": 4,
         "clicks": 0,
         "ctrPct": 0,
-        "position": 4.7,
+        "position": 3.5,
         "topQueries": []
       },
       {
         "urlPath": "/setup/zen-browser-privacy-tabs",
-        "impressions": 14,
+        "impressions": 13,
         "clicks": 0,
         "ctrPct": 0,
-        "position": 9.7,
+        "position": 9.8,
         "topQueries": []
       },
       {
@@ -173,11 +173,11 @@
         "topQueries": []
       },
       {
-        "urlPath": "/solutions/espn-sports-streaming-block-video-ads",
+        "urlPath": "/solutions/espn-sports-streaming-stop-malvertising-popunders",
         "impressions": 3,
         "clicks": 0,
         "ctrPct": 0,
-        "position": 8,
+        "position": 20.3,
         "topQueries": []
       }
     ],
@@ -228,12 +228,12 @@
     ]
   },
   "latestGa4Snapshot": {
-    "date": "2026-11-25",
-    "activeUsers28d": 254,
-    "sessions28d": 287,
-    "engagementRatePct": 41.1,
-    "avgSessionDurationSec": 100.2,
-    "extensionInstallsStarted": 6,
+    "date": "2026-11-26",
+    "activeUsers28d": 267,
+    "sessions28d": 303,
+    "engagementRatePct": 42.2,
+    "avgSessionDurationSec": 98.1,
+    "extensionInstallsStarted": 8,
     "testLabRuns": 31,
     "beginCheckout": 99,
     "orderPaymentErrors": 2,
@@ -242,12 +242,12 @@
   },
   "warnings": [],
   "crmSync": {
-    "syncedAt": "2026-11-25T17:28:55.069Z",
+    "syncedAt": "2026-11-26T17:10:26.007Z",
     "cloudSync": {
       "url": "https://sweepr-crm-production.up.railway.app/api/crm/seo/gsc/cloud-sync",
       "status": 200,
       "ok": true,
-      "body": "{\"ok\":true,\"mode\":\"cloud_ingest\",\"project_id\":\"deepblock\",\"ingested\":49,\"keywords_added\":25,\"total_rows\":391,\"latest_date\":\"2026-11-23\"}"
+      "body": "{\"ok\":true,\"mode\":\"cloud_ingest\",\"project_id\":\"deepblock\",\"ingested\":45,\"keywords_added\":25,\"total_rows\":436,\"latest_date\":\"2026-11-24\"}"
     },
     "telemetry": {
       "url": "https://sweepr-crm-production.up.railway.app/v1/telemetry/event",

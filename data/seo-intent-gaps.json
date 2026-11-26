@@ -1,11 +1,26 @@
 {
-  "generatedAt": "2026-11-25T17:28:57.632Z",
+  "generatedAt": "2026-11-26T17:10:31.772Z",
   "engineVersion": "2.0.0",
   "seedsQueried": 330,
   "indexablePagesChecked": 99,
-  "totalAutocompleteQueriesDiscovered": 470,
+  "totalAutocompleteQueriesDiscovered": 390,
   "alreadyCoveredCount": 4,
-  "uncoveredIntentGapsCount": 0,
-  "topPriorityGaps": [],
+  "uncoveredIntentGapsCount": 1,
+  "topPriorityGaps": [
+    {
+      "query": "manifest v3 based ublock origin lite",
+      "secondaryKeywords": [],
+      "seed": "P1_COMMERCIAL_SWITCHER",
+      "intentScore": 68,
+      "volumeScore": 60,
+      "lowCompetitionScore": 95,
+      "estimatedKD": 5,
+      "opportunityScore": 75,
+      "recommendedFormat": "competitor_comparison",
+      "suggestedRoute": "/vs/manifest-v3-based-ublock-origin-lite",
+      "closestExistingPage": "/vs/ublock-origin-lite",
+      "overlapRatio": 0.359
+    }
+  ],
   "sampleCoveredQueries": []
 }

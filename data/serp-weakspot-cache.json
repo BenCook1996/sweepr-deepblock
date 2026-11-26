@@ -597,21 +597,59 @@
     "top5Organic": []
   },
   "best manifest v3 adblock": {
-    "ts": 1795103892744,
-    "inspectionSource": "lexical_heuristic_fallback",
-    "lowCompetitionScore": 63,
-    "estimatedKD": 37,
+    "ts": 1795713028732,
+    "inspectionSource": "ddg_html_live",
+    "isHeuristicFallback": false,
+    "serpVerificationStatus": "LIVE_VERIFIED",
+    "lowCompetitionScore": 45,
+    "estimatedKD": 55,
     "editorialWallCount": 0,
     "signals": {
       "ugcPoints": 0,
       "titleGapPoints": 0,
-      "freshnessGapPoints": 18,
+      "freshnessGapPoints": 0,
       "longTailPoints": 15,
       "editorialWallPenalty": 0,
       "ugcMatchedUrls": [],
       "editorialDomainsFound": []
     },
-    "top5Organic": []
+    "top5Organic": [
+      {
+        "rank": 1,
+        "url": "https://www.securitysenses.com/posts/best-ad-blockers-2026-who-survived-manifest-v3",
+        "domain": "securitysenses.com",
+        "title": "Best Ad Blockers in 2026: Who Survived Manifest V3",
+        "snippet": ""
+      },
+      {
+        "rank": 2,
+        "url": "https://allaboutcookies.org/best-ad-blockers-for-chrome",
+        "domain": "allaboutcookies.org",
+        "title": "Best Ad Blockers for Chrome [Tested 2026]: Manifest V3-Ready Picks",
+        "snippet": ""
+      },
+      {
+        "rank": 3,
+        "url": "https://cybersecuritynews.com/10-best-ad-blockers-for-chrome-in-2026-safer-browsing-after-manifest-v3/",
+        "domain": "cybersecuritynews.com",
+        "title": "10 Best Ad Blockers for Chrome in 2026: Safer Browsing After Manifest V3",
+        "snippet": ""
+      },
+      {
+        "rank": 4,
+        "url": "https://www.superchargebrowser.com/library/tested-chrome-ad-blockers-manifest-v3-2026/",
+        "domain": "superchargebrowser.com",
+        "title": "We Tested 7 Chrome Ad Blockers Under Manifest V3 (2026)",
+        "snippet": ""
+      },
+      {
+        "rank": 5,
+        "url": "https://influencermarketinghub.com/ad-blockers-for-chrome/",
+        "domain": "influencermarketinghub.com",
+        "title": "7 Best Ad Blockers for Chrome in 2026: Which Ones Still Work?",
+        "snippet": ""
+      }
+    ]
   },
   "ublock origin vs brave": {
     "ts": 1793831281752,
@@ -803,25 +841,67 @@
     "top5Organic": []
   },
   "manifest v3 based ublock origin lite": {
-    "ts": 1795103893025,
-    "inspectionSource": "lexical_heuristic_fallback",
-    "lowCompetitionScore": 77,
-    "estimatedKD": 23,
+    "ts": 1795713030074,
+    "inspectionSource": "ddg_html_live",
+    "isHeuristicFallback": false,
+    "serpVerificationStatus": "LIVE_VERIFIED",
+    "lowCompetitionScore": 95,
+    "estimatedKD": 5,
     "editorialWallCount": 0,
     "signals": {
-      "ugcPoints": 0,
-      "titleGapPoints": 14,
-      "freshnessGapPoints": 18,
+      "ugcPoints": 25,
+      "titleGapPoints": 25,
+      "freshnessGapPoints": 0,
       "longTailPoints": 15,
       "editorialWallPenalty": 0,
-      "ugcMatchedUrls": [],
+      "ugcMatchedUrls": [
+        "https://www.reddit.com/r/uBlockOrigin/comments/17as8o8/the_real_threat_of_manifest_v3/"
+      ],
       "editorialDomainsFound": []
     },
-    "top5Organic": []
+    "top5Organic": [
+      {
+        "rank": 1,
+        "url": "https://frontbuffer.net/tech/best-manifest-v3-alternatives-for-older-chrome-extensions/",
+        "domain": "frontbuffer.net",
+        "title": "Best Manifest V3 Alternatives: uBlock Origin Lite and More (2026)",
+        "snippet": ""
+      },
+      {
+        "rank": 2,
+        "url": "https://blog.getadmiral.com/ublock-origin-lite-why-the-shift-to-manifest-v3-means-its-time-to-measure-ad-block-rates",
+        "domain": "blog.getadmiral.com",
+        "title": "uBlock Origin Lite: Why the Shift to Manifest V3 Means It&#x27;s Time to ...",
+        "snippet": ""
+      },
+      {
+        "rank": 3,
+        "url": "https://deepwiki.com/gorhill/uBlock/10-ublock-origin-lite-(mv3)",
+        "domain": "deepwiki.com",
+        "title": "uBlock Origin Lite (MV3) | gorhill/uBlock | DeepWiki",
+        "snippet": ""
+      },
+      {
+        "rank": 4,
+        "url": "https://www.reddit.com/r/uBlockOrigin/comments/17as8o8/the_real_threat_of_manifest_v3/",
+        "domain": "reddit.com",
+        "title": "The real threat of Manifest V3 : r/uBlockOrigin - Reddit",
+        "snippet": ""
+      },
+      {
+        "rank": 5,
+        "url": "https://chromewebstore.google.com/detail/ublock-origin-lite/ddkjiahejlhfcafbddmgiahcphecmpfh",
+        "domain": "chromewebstore.google.com",
+        "title": "uBlock Origin Lite - Chrome Web Store",
+        "snippet": ""
+      }
+    ]
   },
   "adblock plus extension interactive mode": {
-    "ts": 1795103893165,
+    "ts": 1795713030793,
     "inspectionSource": "lexical_heuristic_fallback",
+    "isHeuristicFallback": true,
+    "serpVerificationStatus": "UNVERIFIED_HEURISTIC",
     "lowCompetitionScore": 79,
     "estimatedKD": 21,
     "editorialWallCount": 0,
@@ -890,8 +970,10 @@
     "top5Organic": []
   },
   "ublock origin manifest v3 migration": {
-    "ts": 1795103894327,
+    "ts": 1795713031632,
     "inspectionSource": "lexical_heuristic_fallback",
+    "isHeuristicFallback": true,
+    "serpVerificationStatus": "UNVERIFIED_HEURISTIC",
     "lowCompetitionScore": 77,
     "estimatedKD": 23,
     "editorialWallCount": 0,
@@ -907,8 +989,10 @@
     "top5Organic": []
   },
   "adblocker for chrome adblock plus whitelist": {
-    "ts": 1795103894066,
+    "ts": 1795713031487,
     "inspectionSource": "lexical_heuristic_fallback",
+    "isHeuristicFallback": true,
+    "serpVerificationStatus": "UNVERIFIED_HEURISTIC",
     "lowCompetitionScore": 79,
     "estimatedKD": 21,
     "editorialWallCount": 0,
@@ -924,8 +1008,10 @@
     "top5Organic": []
   },
   "adblock plus extension interference": {
-    "ts": 1795103894192,
+    "ts": 1795713031361,
     "inspectionSource": "lexical_heuristic_fallback",
+    "isHeuristicFallback": true,
+    "serpVerificationStatus": "UNVERIFIED_HEURISTIC",
     "lowCompetitionScore": 71,
     "estimatedKD": 29,
     "editorialWallCount": 0,
@@ -975,8 +1061,10 @@
     "top5Organic": []
   },
   "best manifest v3 adblocker vs ublock origin lite": {
-    "ts": 1795103888582,
+    "ts": 1795713028504,
     "inspectionSource": "lexical_heuristic_fallback",
+    "isHeuristicFallback": true,
+    "serpVerificationStatus": "UNVERIFIED_HEURISTIC",
     "lowCompetitionScore": 85,
     "estimatedKD": 15,
     "editorialWallCount": 0,
@@ -1168,8 +1256,10 @@
     "top5Organic": []
   },
   "auto reject cookies chrome extension": {
-    "ts": 1795103892607,
+    "ts": 1795713030955,
     "inspectionSource": "lexical_heuristic_fallback",
+    "isHeuristicFallback": true,
+    "serpVerificationStatus": "UNVERIFIED_HEURISTIC",
     "lowCompetitionScore": 30,
     "estimatedKD": 70,
     "editorialWallCount": 0,
@@ -1185,8 +1275,10 @@
     "top5Organic": []
   },
   "auto reject cookies extension reddit": {
-    "ts": 1795103892892,
+    "ts": 1795713029439,
     "inspectionSource": "lexical_heuristic_fallback",
+    "isHeuristicFallback": true,
+    "serpVerificationStatus": "UNVERIFIED_HEURISTIC",
     "lowCompetitionScore": 30,
     "estimatedKD": 70,
     "editorialWallCount": 0,
@@ -1202,21 +1294,59 @@
     "top5Organic": []
   },
   "will ublock work with manifest v3": {
-    "ts": 1795103893556,
-    "inspectionSource": "lexical_heuristic_fallback",
-    "lowCompetitionScore": 63,
-    "estimatedKD": 37,
+    "ts": 1795713031094,
+    "inspectionSource": "bing_rss_live",
+    "isHeuristicFallback": false,
+    "serpVerificationStatus": "LIVE_VERIFIED",
+    "lowCompetitionScore": 90,
+    "estimatedKD": 10,
     "editorialWallCount": 0,
     "signals": {
       "ugcPoints": 0,
-      "titleGapPoints": 0,
-      "freshnessGapPoints": 18,
+      "titleGapPoints": 25,
+      "freshnessGapPoints": 20,
       "longTailPoints": 15,
       "editorialWallPenalty": 0,
       "ugcMatchedUrls": [],
       "editorialDomainsFound": []
     },
-    "top5Organic": []
+    "top5Organic": [
+      {
+        "rank": 1,
+        "url": "https://microsoftedge.microsoft.com/addons/detail/ublock-origin/odfafepnkmbhccpbejgmiehpchacaeak",
+        "domain": "microsoftedge.microsoft.com",
+        "title": "uBlock Origin - Microsoft Edge Add-ons",
+        "snippet": "IMPORTANT: uBlock Origin is completely unrelated to the site \"ublock.org\". uBlock Origin is not an \"ad blocker\", it's a wide-spectrum content blocker with CPU and memory efficiency as a primary feature."
+      },
+      {
+        "rank": 2,
+        "url": "https://ublock.org/",
+        "domain": "ublock.org",
+        "title": "uBlock - A no-nonsense ad blocker.",
+        "snippet": "uBlock is a free ad blocker for Firefox, Chrome, and Safari that blocks pop-ups, ads, and trackers to protect your privacy."
+      },
+      {
+        "rank": 3,
+        "url": "https://ublockorigin.com/",
+        "domain": "ublockorigin.com",
+        "title": "uBlock Origin - Free, open-source ad blocker extension",
+        "snippet": "Block ads, trackers, pop-ups, and page clutter with uBlock Origin, a free ad blocker. Compare uBlock Origin Lite, browser support, filters, and permissions."
+      },
+      {
+        "rank": 4,
+        "url": "https://chromewebstore.google.com/detail/ublock/epcnnfbjfcgphgdmggkamkmgojdagdnn",
+        "domain": "chromewebstore.google.com",
+        "title": "uBlock - Chrome Web Store",
+        "snippet": "Why uBlock? ☑ Block ads on YouTube, Facebook, and the rest of your favorite sites ☑ Easy to set up, so you can get your pop-up blocker going right away ☑ No customization needed: automatically provides you with the best ad blocking ☑ Protect yourself from trackers, crypto-miners, other privacy risks ☑ Fast performance: less strain on ..."
+      },
+      {
+        "rank": 5,
+        "url": "https://github.com/uBlockOrigin",
+        "domain": "github.com",
+        "title": "uBlockOrigin · GitHub",
+        "snippet": "uBlock-issues Public This is the community-maintained issue tracker for uBlock Origin 1.2k 122"
+      }
+    ]
   },
   "auto reject cookies extension firefox": {
     "ts": 1795103893718,
@@ -1236,8 +1366,10 @@
     "top5Organic": []
   },
   "auto reject cookies plugin": {
-    "ts": 1795103893854,
+    "ts": 1795713031222,
     "inspectionSource": "lexical_heuristic_fallback",
+    "isHeuristicFallback": true,
+    "serpVerificationStatus": "UNVERIFIED_HEURISTIC",
     "lowCompetitionScore": 30,
     "estimatedKD": 70,
     "editorialWallCount": 0,

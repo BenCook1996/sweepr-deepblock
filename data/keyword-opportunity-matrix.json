@@ -1,93 +1,126 @@
 {
-  "generatedAt": "2026-11-25T17:28:57.632Z",
+  "generatedAt": "2026-11-26T17:10:31.772Z",
   "engineVersion": "2.0.0",
   "summary": {
     "totalIndexablePagesChecked": 99,
     "seedQueriesExpanded": 330,
-    "rawAutocompleteHarvested": 470,
-    "junkDisqualifiedCount": 14,
-    "lowIntentRejectedCount": 404,
+    "rawAutocompleteHarvested": 390,
+    "junkDisqualifiedCount": 10,
+    "lowIntentRejectedCount": 330,
     "intraBatchSynonymsMerged": 3,
     "alreadyCoveredOrEnrichedCount": 4,
-    "heuristicFallbackCount": 28,
-    "unverifiedHeuristicCandidatesCount": 2,
-    "approvedLowKdOpportunitiesCount": 0,
+    "heuristicFallbackCount": 23,
+    "unverifiedHeuristicCandidatesCount": 1,
+    "approvedLowKdOpportunitiesCount": 1,
     "ctrEnrichmentQueueCount": 4
   },
-  "opportunities": [],
-  "heuristicCandidatesUnverified": [
+  "opportunities": [
     {
-      "id": "kw_vs_download_ghostery_chrome",
-      "keyword": "download ghostery for chrome",
-      "secondaryKeywords": [
-        "ghostery chrome extension download"
-      ],
-      "tokenFingerprint": "chrome|download|ghostery",
+      "id": "kw_vs_mv3_based_ublocklite",
+      "keyword": "manifest v3 based ublock origin lite",
+      "secondaryKeywords": [],
+      "tokenFingerprint": "based|mv3|ublocklite",
       "pillar": "P1_COMMERCIAL_SWITCHER",
       "intentTier": "commercial_switcher",
       "cluster": "vs",
       "recommendedFormat": "competitor_comparison",
-      "targetRoute": "/vs/download-ghostery-for-chrome",
-      "relPath": "vs/download-ghostery-for-chrome.html",
+      "targetRoute": "/vs/manifest-v3-based-ublock-origin-lite",
+      "relPath": "vs/manifest-v3-based-ublock-origin-lite.html",
       "isPublishedOnDisk": false,
-      "status": "unverified_heuristic_candidate",
+      "status": "approved_for_generation",
       "metrics": {
-        "opportunityScore": 73.8,
-        "volumeScore": 65,
-        "lowCompetitionScore": 71,
-        "transactionalScore": 70,
-        "estimatedKD": 29,
-        "wordCount": 4
+        "opportunityScore": 75,
+        "volumeScore": 60,
+        "lowCompetitionScore": 95,
+        "transactionalScore": 68,
+        "estimatedKD": 5,
+        "wordCount": 6
       },
       "volumeBreakdown": {
-        "volumeScore": 65,
-        "slotAnchorScore": 41.2,
-        "engineConsensusScore": 10.2,
-        "modifierDepthScore": 14,
-        "volumeSource": "autocomplete_cache",
+        "volumeScore": 60,
+        "slotAnchorScore": 47.9,
+        "engineConsensusScore": 0,
+        "modifierDepthScore": 12,
+        "volumeSource": "autocomplete",
         "enginesMatched": [
-          "bing",
-          "ddg"
+          "google"
         ],
         "bestRankByEngine": {
-          "bing": 2,
-          "ddg": 2
+          "google": 2
         }
       },
       "serpCompetition": {
-        "inspectionSource": "lexical_heuristic_fallback",
-        "isHeuristicFallback": true,
-        "serpVerificationStatus": "UNVERIFIED_HEURISTIC",
-        "lowCompetitionScore": 71,
-        "estimatedKD": 29,
+        "inspectionSource": "ddg_html_live",
+        "isHeuristicFallback": false,
+        "serpVerificationStatus": "LIVE_VERIFIED",
+        "lowCompetitionScore": 95,
+        "estimatedKD": 5,
         "signals": {
-          "ugcPoints": 0,
-          "titleGapPoints": 14,
-          "freshnessGapPoints": 12,
+          "ugcPoints": 25,
+          "titleGapPoints": 25,
+          "freshnessGapPoints": 0,
           "longTailPoints": 15,
           "editorialWallPenalty": 0,
-          "ugcMatchedUrls": [],
+          "ugcMatchedUrls": [
+            "https://www.reddit.com/r/uBlockOrigin/comments/17as8o8/the_real_threat_of_manifest_v3/"
+          ],
           "editorialDomainsFound": []
         },
-        "top5Organic": []
+        "top5Organic": [
+          {
+            "rank": 1,
+            "url": "https://frontbuffer.net/tech/best-manifest-v3-alternatives-for-older-chrome-extensions/",
+            "domain": "frontbuffer.net",
+            "title": "Best Manifest V3 Alternatives: uBlock Origin Lite and More (2026)",
+            "snippet": ""
+          },
+          {
+            "rank": 2,
+            "url": "https://blog.getadmiral.com/ublock-origin-lite-why-the-shift-to-manifest-v3-means-its-time-to-measure-ad-block-rates",
+            "domain": "blog.getadmiral.com",
+            "title": "uBlock Origin Lite: Why the Shift to Manifest V3 Means It&#x27;s Time to ...",
+            "snippet": ""
+          },
+          {
+            "rank": 3,
+            "url": "https://deepwiki.com/gorhill/uBlock/10-ublock-origin-lite-(mv3)",
+            "domain": "deepwiki.com",
+            "title": "uBlock Origin Lite (MV3) | gorhill/uBlock | DeepWiki",
+            "snippet": ""
+          },
+          {
+            "rank": 4,
+            "url": "https://www.reddit.com/r/uBlockOrigin/comments/17as8o8/the_real_threat_of_manifest_v3/",
+            "domain": "reddit.com",
+            "title": "The real threat of Manifest V3 : r/uBlockOrigin - Reddit",
+            "snippet": ""
+          },
+          {
+            "rank": 5,
+            "url": "https://chromewebstore.google.com/detail/ublock-origin-lite/ddkjiahejlhfcafbddmgiahcphecmpfh",
+            "domain": "chromewebstore.google.com",
+            "title": "uBlock Origin Lite - Chrome Web Store",
+            "snippet": ""
+          }
+        ]
       },
       "cannibalization": {
         "status": "clean",
-        "closestExistingPage": "/download",
-        "maxCannibScore": 0.397,
-        "tokenOverlapRatio": 0.371,
-        "jaccardSimilarity": 0.333
+        "closestExistingPage": "/vs/ublock-origin-lite",
+        "maxCannibScore": 0.358,
+        "tokenOverlapRatio": 0.359,
+        "jaccardSimilarity": 0.25
       },
       "pageBlueprint": {
-        "title": "Download Ghostery For Chrome (2026) | SWEEPR Deepblock",
-        "h1": "Download Ghostery For Chrome: Verified 2026 Manifest V3 Protection & Fix",
-        "metaDescription": "Download Ghostery For Chrome compared in 2026: Manifest V3 ad & tracker defense, GDPR cookie auto-rejection, and transparent £29.99/yr Pro pricing without.",
-        "shortLinkTitle": "Download Ghostery For Chrome",
-        "linkBadge": "VS • KD 29 • Score 73.8",
-        "painPointIssue": "Eliminating download ghostery for chrome with 283 static declarativeNetRequest rules, GDPR CMP auto-rejection, and local-first privacy protection",
+        "title": "Manifest V3 Based uBlock Origin Lite (2026) | SWEEPR Deepblock",
+        "h1": "Manifest V3 Based uBlock Origin Lite: Verified 2026 Manifest V3 Protection & Fix",
+        "metaDescription": "Manifest V3 Based uBlock Origin Lite compared in 2026: Manifest V3 ad & tracker defense, GDPR cookie auto-rejection, and transparent £29.99/yr Pro pricing.",
+        "shortLinkTitle": "Manifest V3 Based uBlock Origin Lite",
+        "linkBadge": "VS • KD 5 • Score 75",
+        "painPointIssue": "Eliminating manifest v3 based ublock origin lite with 20019 static declarativeNetRequest rules, GDPR CMP auto-rejection, and local-first privacy protection",
         "beforeStat": "Unskippable Ads & Tracker Walls",
         "afterStat": "0 Video Ads • Auto-Rejected Cookies",
-        "perfStat": "283 Static DNR Rules",
+        "perfStat": "20019 Static DNR Rules",
         "recommendedToolWidget": {
           "toolRoute": "/test-lab",
           "ctaHeadline": "Test Your Current Browser Against Live MV3 Ad & Tracker Vectors",
@@ -103,11 +136,11 @@
         },
         "customFaqs": [
           {
-            "q": "How does SWEEPR Deepblock solve \"download ghostery for chrome\" in 2026?",
-            "a": "SWEEPR Deepblock v1.3.2 combines 283 static declarativeNetRequest network rules + 100 dynamic OTA delta rules with local-first DOM & player sanitization, eliminating video ad interruptions, cookie walls, and tracker bloat without triggering anti-adblock modals."
+            "q": "How does SWEEPR Deepblock solve \"manifest v3 based ublock origin lite\" in 2026?",
+            "a": "SWEEPR Deepblock v1.4.0 combines 20019 static declarativeNetRequest network rules + 100 dynamic OTA delta rules with local-first DOM & player sanitization, eliminating video ad interruptions, cookie walls, and tracker bloat without triggering anti-adblock modals."
           },
           {
-            "q": "What about ghostery chrome extension download?",
+            "q": "Does this work on Chrome, Edge, Brave, Opera, and Firefox Manifest V3?",
             "a": "Yes. Every SWEEPR Deepblock rule pack is compiled natively for Chromium Manifest V3 (Chrome, Edge, Brave, Opera, Thorium, Vivaldi, Arc) and Firefox (Desktop & Android) with zero cloud browsing telemetry."
           },
           {
@@ -120,7 +153,9 @@
           }
         ]
       }
-    },
+    }
+  ],
+  "heuristicCandidatesUnverified": [
     {
       "id": "kw_vs_totaladblock_notwork",
       "keyword": "total adblock not working",
@@ -135,19 +170,19 @@
       "isPublishedOnDisk": false,
       "status": "unverified_heuristic_candidate",
       "metrics": {
-        "opportunityScore": 72.8,
-        "volumeScore": 49,
+        "opportunityScore": 72.5,
+        "volumeScore": 48,
         "lowCompetitionScore": 79,
         "transactionalScore": 87,
         "estimatedKD": 21,
         "wordCount": 4
       },
       "volumeBreakdown": {
-        "volumeScore": 49,
+        "volumeScore": 48,
         "slotAnchorScore": 29.9,
         "engineConsensusScore": 9.1,
-        "modifierDepthScore": 10,
-        "volumeSource": "autocomplete_cache",
+        "modifierDepthScore": 9,
+        "volumeSource": "autocomplete",
         "enginesMatched": [
           "bing",
           "ddg"
@@ -186,11 +221,11 @@
         "h1": "Total AdBlock Not Working: Verified 2026 Manifest V3 Protection & Fix",
         "metaDescription": "Total AdBlock Not Working compared in 2026: Manifest V3 ad & tracker defense, GDPR cookie auto-rejection, and transparent £29.99/yr Pro pricing without.",
         "shortLinkTitle": "Total AdBlock Not Working",
-        "linkBadge": "VS • KD 21 • Score 72.8",
-        "painPointIssue": "Eliminating total adblock not working with 283 static declarativeNetRequest rules, GDPR CMP auto-rejection, and local-first privacy protection",
+        "linkBadge": "VS • KD 21 • Score 72.5",
+        "painPointIssue": "Eliminating total adblock not working with 20019 static declarativeNetRequest rules, GDPR CMP auto-rejection, and local-first privacy protection",
         "beforeStat": "Unskippable Ads & Tracker Walls",
         "afterStat": "0 Video Ads • Auto-Rejected Cookies",
-        "perfStat": "283 Static DNR Rules",
+        "perfStat": "20019 Static DNR Rules",
         "recommendedToolWidget": {
           "toolRoute": "/test-lab",
           "ctaHeadline": "Test Your Current Browser Against Live MV3 Ad & Tracker Vectors",
@@ -207,7 +242,7 @@
         "customFaqs": [
           {
             "q": "How does SWEEPR Deepblock solve \"total adblock not working\" in 2026?",
-            "a": "SWEEPR Deepblock v1.3.2 combines 283 static declarativeNetRequest network rules + 100 dynamic OTA delta rules with local-first DOM & player sanitization, eliminating video ad interruptions, cookie walls, and tracker bloat without triggering anti-adblock modals."
+            "a": "SWEEPR Deepblock v1.4.0 combines 20019 static declarativeNetRequest network rules + 100 dynamic OTA delta rules with local-first DOM & player sanitization, eliminating video ad interruptions, cookie walls, and tracker bloat without triggering anti-adblock modals."
           },
           {
             "q": "Does this work on Chrome, Edge, Brave, Opera, and Firefox Manifest V3?",
@@ -268,8 +303,8 @@
       "cannibalizationScore": 0.596,
       "serpVerificationStatus": "UNVERIFIED_HEURISTIC",
       "metrics": {
-        "opportunityScore": 56.8,
-        "volumeScore": 53,
+        "opportunityScore": 56.5,
+        "volumeScore": 52,
         "lowCompetitionScore": 79,
         "transactionalScore": 72,
         "estimatedKD": 21,
