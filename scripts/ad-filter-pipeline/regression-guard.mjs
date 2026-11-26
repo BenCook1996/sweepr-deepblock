@@ -23,6 +23,8 @@ import path from 'node:path';
 import { ROOT_DIR } from './state-db.mjs';
 
 const STATIC_ADS_PATH = path.join(ROOT_DIR, 'extension', 'rules', 'static_ads_and_trackers.json');
+const EASYPRIVACY_PATH = path.join(ROOT_DIR, 'extension', 'rules', 'easyprivacy_trackers.json');
+const REGIONAL_EU_PATH = path.join(ROOT_DIR, 'extension', 'rules', 'regional_eu_filters.json');
 const TRACKER_PARAMS_PATH = path.join(ROOT_DIR, 'extension', 'rules', 'tracker_params.json');
 const CRYPTOMINERS_PATH = path.join(ROOT_DIR, 'extension', 'rules', 'cryptominers.json');
 const CONTENT_SCRIPT_PATH = path.join(ROOT_DIR, 'extension', 'content', 'deepblock-content.js');
@@ -589,32 +591,78 @@ export function runFullCrossSiteRegressionSuite({ baselineStaticRules = null } =
     }
   }
 
-  // 3. Verify unique positive integer rule IDs and MV3 schema compliance
-  const seenIds = new Set();
-  for (const r of staticRules) {
-    if (!Number.isInteger(r.id) || r.id <= 0) {
-      issues.push(`Invalid DNR rule ID: ${r.id}`);
+  // 3. Verify unique positive integer rule IDs and MV3 schema compliance across all 5 rulesets
+  const validateRulesetArray = (label, filePath, rulesArr) => {
+    if (!Array.isArray(rulesArr) || rulesArr.length === 0) {
+      issues.push(`${label} is empty or not an array`);
+      return;
     }
-    if (seenIds.has(r.id)) {
-      issues.push(`Duplicate DNR rule ID detected: #${r.id}`);
+    if (rulesArr.length > 30000) {
+      issues.push(`${label} has ${rulesArr.length} rules, exceeding 30,000 MV3 limit`);
     }
-    seenIds.add(r.id);
+    try {
+      const raw = fs.readFileSync(filePath, 'utf8');
+      if (/"url"\s*:\s*"data:/i.test(raw)) {
+        issues.push(`Disallowed data: URL found in ${label}`);
+      }
+    } catch {}
+    const seen = new Set();
+    for (const r of rulesArr) {
+      if (!Number.isInteger(r.id) || r.id <= 0) {
+        issues.push(`Invalid DNR rule ID in ${label}: ${r.id}`);
+      }
+      if (seen.has(r.id)) {
+        issues.push(`Duplicate DNR rule ID detected in ${label}: #${r.id}`);
+      }
+      seen.add(r.id);
+    }
+  };
+
+  validateRulesetArray('static_ads_and_trackers.json', STATIC_ADS_PATH, staticRules);
+
+  let easyPrivacyRules = [];
+  if (fs.existsSync(EASYPRIVACY_PATH)) {
+    try {
+      easyPrivacyRules = JSON.parse(fs.readFileSync(EASYPRIVACY_PATH, 'utf8'));
+      validateRulesetArray('easyprivacy_trackers.json', EASYPRIVACY_PATH, easyPrivacyRules);
+    } catch (err) {
+      issues.push(`Failed to parse easyprivacy_trackers.json: ${err.message}`);
+    }
+  } else {
+    issues.push('Missing easyprivacy_trackers.json');
+  }
+
+  let regionalEuRules = [];
+  if (fs.existsSync(REGIONAL_EU_PATH)) {
+    try {
+      regionalEuRules = JSON.parse(fs.readFileSync(REGIONAL_EU_PATH, 'utf8'));
+      validateRulesetArray('regional_eu_filters.json', REGIONAL_EU_PATH, regionalEuRules);
+    } catch (err) {
+      issues.push(`Failed to parse regional_eu_filters.json: ${err.message}`);
+    }
+  } else {
+    issues.push('Missing regional_eu_filters.json');
   }
 
   // 4. Verify cryptominers.json is intact
   let minerRules = [];
   try {
     minerRules = JSON.parse(fs.readFileSync(CRYPTOMINERS_PATH, 'utf8'));
-    if (!Array.isArray(minerRules) || minerRules.length === 0) {
-      issues.push('cryptominers.json is empty or invalid');
-    }
+    validateRulesetArray('cryptominers.json', CRYPTOMINERS_PATH, minerRules);
   } catch (err) {
     issues.push(`Failed to parse cryptominers.json: ${err.message}`);
   }
 
-  // 5. Run all Golden Network Canaries against staticRules + tracker_params.json
+  // 5. Run all Golden Network Canaries against all 5 rulesets combined
   const trackerParamsRules = loadTrackerParamsRules();
-  const combinedRules = [...staticRules, ...trackerParamsRules];
+  validateRulesetArray('tracker_params.json', TRACKER_PARAMS_PATH, trackerParamsRules);
+  const combinedRules = [
+    ...staticRules,
+    ...easyPrivacyRules,
+    ...regionalEuRules,
+    ...minerRules,
+    ...trackerParamsRules
+  ];
   let passedCanaries = 0;
   for (const canary of GOLDEN_NETWORK_CANARIES) {
     const winner = evaluateDnrRulesForRequest(combinedRules, canary);

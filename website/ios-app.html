@@ -393,7 +393,7 @@
         </div>
         <div class="c3-metric-box">
           <span style="color:var(--muted)">iOS Safari</span>
-          <span class="mono" style="color:var(--accent-fg)">Coming Soon</span>
+          <span class="mono" style="color:var(--accent-fg)">v1.4.0 Web Extension (App Store Review)</span>
         </div>
       </div>
     </div>
@@ -403,9 +403,9 @@
     <div class="card">
       <div style="font-size:17px;font-weight:900;margin-bottom:8px">Mobile &amp; Desktop Coverage</div>
       <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);font-size:13.5px;font-weight:700"><span>Firefox for Android (MV3 Add-on)</span><a href="https://addons.mozilla.org/en-US/firefox/addon/sweepr-deepblock/" target="_blank" rel="noopener" style="color:var(--accent-fg);text-decoration:none">Install ↗</a></div>
-      <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);font-size:13.5px;font-weight:700"><span>Desktop Extension (Chrome / Edge / Firefox / Brave)</span><span style="color:var(--accent-fg)">Available Now</span></div>
+      <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);font-size:13.5px;font-weight:700"><span>Desktop Extension (Chrome / Edge / Firefox / Safari / Brave)</span><span style="color:var(--accent-fg)">Available Now</span></div>
       <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);font-size:13.5px;font-weight:700"><span>SWEEPR DoH / Android VpnService</span><span style="color:var(--muted)">Planned</span></div>
-      <div style="display:flex;justify-content:space-between;padding:12px 0;font-size:13.5px;font-weight:700"><span>Native iOS Safari Content Blocker</span><span style="color:var(--muted)">Coming Soon</span></div>
+      <div style="display:flex;justify-content:space-between;padding:12px 0;font-size:13.5px;font-weight:700"><span>Native iOS Safari Web Extension (v1.4.0)</span><span style="color:var(--accent-fg)">App Store Submission in Progress</span></div>
     </div>
 
     <details class="card" style="padding:14px 16px">
@@ -416,7 +416,7 @@
       <div style="margin-top:10px;font-size:12px;color:var(--muted);display:flex;flex-direction:column;gap:6px;line-height:1.45">
         <div>• <strong>Firefox for Android:</strong> Runs the full SWEEPR Deepblock extension natively on Android phones &amp; tablets (ads, cookie banners, URL trackers).</div>
         <div>• <strong>Android Companion App:</strong> Checks your device's system Private DNS status and stores your 5-device license activation.</div>
-        <div>• <strong>iOS Safari &amp; SWEEPR DoH DNS:</strong> Currently in development and will be unlocked automatically for 5-device Pro subscribers when launched.</div>
+        <div>• <strong>iOS &amp; macOS Safari Web Extension (v1.4.0):</strong> Native Safari Web Extension shipped in v1.4.0 (App Store submission in progress), covered under your 5-device Pro license and no-card 7-day full Pro trial.</div>
       </div>
     </details>
 
@@ -538,12 +538,12 @@ function refreshMobileShieldStatus(openSettings) {
   const dnsText = document.getElementById('privateDnsStateText');
 
   if (isIOSDevice) {
-    if (orbLabel) orbLabel.textContent = 'COMING SOON';
-    if (headline) headline.textContent = 'Native iOS Safari Coming Soon';
-    if (dnsText) dnsText.textContent = 'Planned';
+    if (orbLabel) orbLabel.textContent = 'SAFARI v1.4.0';
+    if (headline) headline.textContent = 'Native Safari Web Extension (v1.4.0)';
+    if (dnsText) dnsText.textContent = 'App Store Review';
     if (msg) {
       msg.style.color = 'var(--muted)';
-      msg.textContent = 'Native iOS Safari Content Blocker & SWEEPR DoH DNS are planned. Use Chrome/Edge/Firefox on desktop or Firefox for Android today.';
+      msg.textContent = 'SWEEPR Deepblock v1.4.0 ships a native Safari Web Extension for macOS & iOS (App Store submission in progress), plus Chrome/Edge/Firefox on desktop and Firefox for Android.';
     }
     return;
   }

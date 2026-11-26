@@ -243,14 +243,39 @@
       color: #f8fafc;
       box-shadow: 0 24px 50px rgba(15, 23, 42, 0.32);
     }
+
+    /* Missing utility rules not included in website/sweepr-tailwind.min.css */
+    .h-\[430px\] { height: 430px; }
+    .h-\[400px\] { height: 400px; }
+    .h-\[360px\] { height: 360px; }
+    .w-\[42\%\] { width: 42%; }
+    .w-\[272px\] { width: 272px; }
+    .w-\[282px\] { width: 282px; }
+    .max-w-\[440px\] { max-width: 440px; }
+    .pr-4 { padding-right: 1rem; }
+    .pr-5 { padding-right: 1.25rem; }
+    .pb-5 { padding-bottom: 1.25rem; }
+    .pb-14 { padding-bottom: 3.5rem; }
+    .ml-1\.5 { margin-left: 0.375rem; }
+    .-bottom-4 { bottom: -1rem; }
+    .text-\[12px\] { font-size: 12px; }
+    .text-emerald-100\/90 { color: rgba(209, 250, 229, 0.94); }
+    .text-emerald-500 { color: #10b981; }
+    .border-white\/15 { border-color: rgba(255, 255, 255, 0.15); }
+    .decoration-rose-500 { text-decoration-color: #f43f5e; }
   </style>
-  <!-- Google tag (gtag.js) - Sweepr Deepblock -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-01MNBQSL9K"></script>
+  <!-- Google tag (gtag.js) - Sweepr Deepblock (skipped during headless renderConcept export) -->
   <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-01MNBQSL9K');
+    if (!window.location.search.includes('renderConcept=')) {
+      const gs = document.createElement('script');
+      gs.async = true;
+      gs.src = 'https://www.googletagmanager.com/gtag/js?id=G-01MNBQSL9K';
+      document.head.appendChild(gs);
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-01MNBQSL9K');
+    }
   </script>
 </head>
 <body class="min-h-screen pb-24">
@@ -358,52 +383,52 @@
     // REUSABLE REALISTIC UI COMPONENTS (Directly from index.html, order.html, popup.html)
     // ============================================================================
 
-    function renderExtPopup(mode = 'light', domain = 'youtube.com', adsCount = '1,482', cookieCount = '319', ramSaved = '1.8 GB') {
+    function renderExtPopup(mode = 'light', domain = 'youtube.com', adsCount = '1,482', cookieCount = '319', tabCount = '12 tabs') {
       return `
-        <div class="ext-popup-light w-[290px] shrink-0 text-left font-sans">
+        <div class="ext-popup-light w-[282px] shrink-0 text-left font-sans">
           <!-- Header -->
           <div class="flex items-center justify-between mb-2.5">
             <div class="flex items-center gap-2">
               <svg class="w-5 h-5 rounded-md shadow-xs"><use href="#sweepr-logo"/></svg>
-              <span class="text-[13px] font-black tracking-tight text-slate-900">SWEEPR <span class="text-emerald-600">Deepblock</span></span>
+              <span class="text-[12.5px] font-black tracking-tight text-slate-900">SWEEPR <span class="text-emerald-600">Deepblock</span></span>
             </div>
             <div class="flex items-center gap-1.5">
-              <span class="text-[9px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-extrabold tracking-wide uppercase">PRO ACTIVE</span>
+              <span class="text-[8.5px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-extrabold tracking-wide uppercase whitespace-nowrap">Pro Active</span>
             </div>
           </div>
 
           <!-- Row 1: Master Site Shield Card -->
-          <div class="bg-white border border-slate-200 shadow-xs rounded-xl p-3 mb-2">
+          <div class="bg-white border border-slate-200 shadow-xs rounded-xl p-2.5 mb-2">
             <div class="flex items-center justify-between gap-2">
-              <div>
-                <div class="text-[12.5px] font-black text-slate-900">${domain}</div>
-                <div class="text-[10px] font-bold text-emerald-600 mt-0.5">Site Shield ON · Ads &amp; Cookies Blocked</div>
+              <div class="min-w-0">
+                <div class="text-[12px] font-black text-slate-900 truncate">${domain}</div>
+                <div class="text-[9.5px] font-bold text-emerald-600 mt-0.5">Site Shield ON · Ads &amp; Cookies Blocked</div>
               </div>
               <div class="w-10 h-5 rounded-full bg-emerald-500 p-0.5 flex items-center justify-end shadow-inner shrink-0">
                 <div class="w-4 h-4 rounded-full bg-white shadow"></div>
               </div>
             </div>
-            <div class="grid grid-cols-2 gap-1.5 mt-2.5 pt-2 border-t border-slate-100 text-slate-700 text-[9.5px] font-extrabold">
-              <div class="bg-slate-50 border border-slate-200 rounded-lg py-1 px-2 text-center">Pause 5m (Fix Page)</div>
-              <div class="bg-slate-50 border border-slate-200 rounded-lg py-1 px-2 text-center">Hide Element</div>
+            <div class="grid grid-cols-2 gap-1.5 mt-2 pt-2 border-t border-slate-100 text-slate-700 text-[9.5px] font-extrabold">
+              <div class="bg-slate-50 border border-slate-200 rounded-lg py-1 px-1.5 text-center whitespace-nowrap">Pause 5m (Fix)</div>
+              <div class="bg-slate-50 border border-slate-200 rounded-lg py-1 px-1.5 text-center whitespace-nowrap">Hide Element</div>
             </div>
           </div>
 
-          <!-- Row 2: 1-Line Unified Protection & RAM Pill -->
-          <div class="bg-white border border-slate-200 shadow-xs rounded-xl px-3 py-2 mb-2 flex items-center justify-between text-[10px] font-bold text-slate-600">
-            <span>Ads: <strong class="text-emerald-600">${adsCount}</strong> · Cookies: <strong class="text-emerald-600">${cookieCount}</strong> · <strong class="text-emerald-600">⚡ ${ramSaved}</strong></span>
-            <span class="text-[8.5px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-extrabold">SAFE</span>
+          <!-- Row 2: 1-Line Unified Protection & Tab Pill -->
+          <div class="bg-white border border-slate-200 shadow-xs rounded-xl px-2.5 py-2 mb-2 flex items-center justify-between gap-1 text-[8.5px] font-bold text-slate-600">
+            <span class="whitespace-nowrap">Ads: <strong class="text-emerald-600">${adsCount}</strong> · Cookies: <strong class="text-emerald-600">${cookieCount}</strong> · <strong class="text-emerald-600">⚡ ${tabCount}</strong></span>
+            <span class="whitespace-nowrap shrink-0 text-[8px] px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-extrabold">Shield Active</span>
           </div>
 
           <!-- Row 3: Single Primary Action -->
-          <div class="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-extrabold text-[11px] text-center shadow-md shadow-emerald-600/20">
-            ⚡ Free Up RAM Now
+          <div class="w-full py-2 px-3 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-extrabold text-[10.5px] text-center shadow-md shadow-emerald-600/20 whitespace-nowrap">
+            ⚡ Boost Browser Speed Now
           </div>
 
           <!-- Footer Links -->
-          <div class="mt-2 pt-1.5 border-t border-slate-100 flex items-center justify-between text-[9.5px] font-bold text-slate-500">
-            <span>All Settings &amp; Tabs ↗</span>
-            <span>Test Shield ↗</span>
+          <div class="mt-2 pt-1.5 border-t border-slate-100 flex items-center justify-between text-[9px] font-bold text-slate-500">
+            <span>Settings &amp; Tabs ↗</span>
+            <span>Live Shield Test ↗</span>
           </div>
         </div>
       `;
@@ -415,128 +440,108 @@
         <div class="bg-slate-900 rounded-3xl p-3.5 shadow-2xl border border-slate-800 text-white w-full">
           <!-- Browser Top Bar -->
           <div class="flex items-center justify-between gap-2 mb-2.5 px-1">
-            <div class="flex items-center gap-1.5">
+            <div class="flex items-center gap-1.5 shrink-0">
               <span class="w-3 h-3 rounded-full bg-[#ff5f56]"></span>
               <span class="w-3 h-3 rounded-full bg-[#ffbd2e]"></span>
               <span class="w-3 h-3 rounded-full bg-[#27c93f]"></span>
             </div>
-            <div class="flex-1 max-w-[380px] bg-slate-950 border border-slate-800 rounded-lg px-3 py-1 flex items-center justify-between text-xs text-slate-300">
+            <div class="flex-1 max-w-[380px] bg-slate-950 border border-slate-800 rounded-lg px-3 py-1 flex items-center justify-between text-xs text-slate-300 min-w-0">
               <span class="truncate">🔒 youtube.com/watch?v=swiss-alps-4k</span>
-              <span class="text-emerald-400 font-extrabold text-[10px] shrink-0 ml-2">🛡️ SWEEPR Active</span>
+              <span class="text-emerald-400 font-extrabold text-[10px] shrink-0 ml-2 whitespace-nowrap">🛡️ SWEEPR Active</span>
             </div>
-            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shrink-0">
+            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shrink-0 whitespace-nowrap">
               ✓ 0 Ads • 0 Pop-Ups
             </span>
           </div>
 
           <!-- Split Browser Stage -->
           <div class="relative rounded-2xl overflow-hidden bg-white border border-slate-700 ${heightClass}">
-            <!-- AFTER LAYER (Right Half — Clean Light-Mode YouTube) -->
+            <!-- AFTER LAYER (Right Half [50%..100%] — Clean Light-Mode YouTube) -->
             <div class="absolute inset-0 bg-white text-[#0f0f0f] flex flex-col">
-              <div class="h-10 px-3.5 flex items-center justify-between border-b border-gray-200 bg-white shrink-0">
-                <div class="flex items-center gap-2">
-                  <span class="text-gray-700 text-sm">☰</span>
-                  <div class="flex items-center gap-1">
-                    <svg class="w-6 h-4" viewBox="0 0 28 20" fill="none"><rect width="28" height="20" rx="4.5" fill="#FF0000"/><polygon points="11,6 11,14 18.5,10" fill="#FFFFFF"/></svg>
-                    <span class="font-bold text-sm tracking-tighter text-[#0f0f0f]">YouTube</span>
+              <div class="h-10 px-3 flex items-center justify-end border-b border-gray-200 bg-white shrink-0">
+                <div class="flex items-center justify-between gap-2" style="width: 50%; padding-left: 10px;">
+                  <div class="flex items-center gap-1 shrink-0">
+                    <svg class="w-5 h-3.5" viewBox="0 0 28 20" fill="none"><rect width="28" height="20" rx="4.5" fill="#FF0000"/><polygon points="11,6 11,14 18.5,10" fill="#FFFFFF"/></svg>
+                    <span class="font-bold text-xs tracking-tighter text-[#0f0f0f]">YouTube</span>
                   </div>
+                  <span class="px-2 py-0.5 rounded-md text-[9.5px] font-black uppercase tracking-wider bg-emerald-600 text-white whitespace-nowrap shrink-0">
+                    ✓ WITH DEEPBLOCK
+                  </span>
                 </div>
-                <div class="bg-gray-100 border border-gray-300 rounded-full px-3 py-0.5 text-[11px] text-gray-500 w-48 flex justify-between">
-                  <span>Swiss Alps 4K...</span><span>🔍</span>
-                </div>
-                <span class="px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider bg-emerald-600 text-white">
-                  ✓ WITH SWEEPR DEEPBLOCK
-                </span>
               </div>
 
-              <div class="flex-1 grid grid-cols-12 gap-3 p-3.5 overflow-hidden">
-                <div class="col-span-8 flex flex-col justify-between">
-                  <div class="relative rounded-xl overflow-hidden bg-slate-900 aspect-video w-full shadow-md" style="background: linear-gradient(135deg, #0f172a 0%, #065f46 50%, #0284c7 100%);">
-                    <div class="absolute inset-0 flex flex-col items-center justify-center text-white p-4 text-center">
-                      <div class="w-12 h-12 rounded-full bg-emerald-500/90 flex items-center justify-center shadow-lg mb-2">
-                        <span class="text-white font-black text-lg">▶</span>
-                      </div>
-                      <div class="text-base font-black tracking-tight drop-shadow">Swiss Alps 4K 60fps — Ultra HD Stream</div>
-                      <div class="text-xs text-emerald-200 font-bold mt-0.5">Instant Playback · 0 Pre-Roll or Mid-Roll Ads</div>
-                    </div>
-                    <div class="absolute top-2.5 right-2.5 bg-emerald-600 text-white px-2.5 py-1 rounded-full text-[10px] font-extrabold shadow">
+              <div class="flex-1 flex flex-col justify-between p-3 overflow-hidden" style="margin-left: 50%; width: 50%; padding-left: 12px;">
+                <div class="relative rounded-xl overflow-hidden bg-slate-900 flex-1 w-full shadow-md flex flex-col justify-between p-2.5" style="background: linear-gradient(135deg, #0f172a 0%, #065f46 50%, #0284c7 100%);">
+                  <div class="flex justify-end">
+                    <span class="bg-emerald-600 text-white px-2 py-0.5 rounded-full text-[9px] font-extrabold shadow whitespace-nowrap">
                       ✓ Playing Immediately • 0 Ads
-                    </div>
-                    <div class="absolute inset-x-3 bottom-2 space-y-1">
-                      <div class="w-full h-1 bg-white/30 rounded-full"><div class="w-2/5 h-full bg-[#ff0000] rounded-full"></div></div>
-                      <div class="flex justify-between text-[10px] text-white font-semibold">
-                        <span>⏸  🔊  08:14 / 32:00</span>
-                        <span>CC  4K60  ⛶</span>
-                      </div>
-                    </div>
+                    </span>
                   </div>
-                  <div class="mt-2">
-                    <div class="text-xs font-extrabold text-gray-900 truncate">Swiss Alps 4K 60fps — Scenic Mountain Relaxation Film</div>
-                    <div class="mt-1.5 bg-emerald-50 border border-emerald-200 rounded-xl px-3 py-1.5 text-[10.5px] text-emerald-900 font-bold flex items-center justify-between">
-                      <span>✓ Pre-roll video ads &amp; cookie consent walls automatically blocked</span>
-                      <span class="text-emerald-700 font-black">0.5s Load</span>
+                  <div class="my-auto flex flex-col items-center justify-center text-white text-center px-1">
+                    <div class="w-10 h-10 rounded-full bg-emerald-500/90 flex items-center justify-center shadow-lg mb-1.5">
+                      <span class="text-white font-black text-sm">▶</span>
+                    </div>
+                    <div class="text-[12.5px] font-black tracking-tight leading-tight">Swiss Alps 4K 60fps — Ultra HD</div>
+                    <div class="text-[10px] text-emerald-200 font-bold mt-0.5">Instant Playback · 0 Pre-Roll Ads</div>
+                  </div>
+                  <div class="space-y-1">
+                    <div class="w-full h-1 bg-white/30 rounded-full"><div class="w-2/5 h-full bg-[#ff0000] rounded-full"></div></div>
+                    <div class="flex justify-between text-[9.5px] text-white font-semibold">
+                      <span>⏸  🔊  08:14 / 32:00</span>
+                      <span>CC  4K60  ⛶</span>
                     </div>
                   </div>
                 </div>
-                <div class="col-span-4 flex flex-col justify-between">
-                  <div class="text-[11px] font-extrabold text-gray-800 border-b border-gray-200 pb-1">Up Next • Clean Feed</div>
-                  <div class="bg-gray-50 border border-gray-200 rounded-xl p-2 flex gap-2 items-center">
-                    <div class="w-14 h-9 rounded-lg bg-gradient-to-br from-teal-600 to-emerald-800 shrink-0"></div>
-                    <div class="min-w-0">
-                      <div class="text-[10px] font-bold text-gray-900 truncate">Iceland Northern Lights</div>
-                      <div class="text-[9px] text-gray-500">Scenic Earth • 1.9M</div>
-                    </div>
+                <div class="mt-2 space-y-1.5 shrink-0">
+                  <div class="text-[11px] font-extrabold text-gray-900 truncate">Swiss Alps 4K 60fps — Scenic Mountain Film</div>
+                  <div class="bg-emerald-50 border border-emerald-200 rounded-xl px-2.5 py-1.5 text-[9.5px] text-emerald-900 font-bold flex items-center justify-between gap-2">
+                    <span class="truncate">✓ Video ads &amp; cookie walls blocked</span>
+                    <span class="text-emerald-700 font-black whitespace-nowrap shrink-0">36,019 + 100 Rules</span>
                   </div>
-                  <div class="bg-gray-50 border border-gray-200 rounded-xl p-2 flex gap-2 items-center">
-                    <div class="w-14 h-9 rounded-lg bg-gradient-to-br from-sky-600 to-indigo-900 shrink-0"></div>
-                    <div class="min-w-0">
-                      <div class="text-[10px] font-bold text-gray-900 truncate">Deep Ocean Reefs 4K</div>
-                      <div class="text-[9px] text-gray-500">Blue Planet • 1.4M</div>
-                    </div>
-                  </div>
-                  <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-2 text-center text-[10px] font-extrabold text-emerald-800">
-                    ✓ 0 Sponsored Sidebar Ads
+                  <div class="bg-gray-50 border border-gray-200 rounded-xl px-2.5 py-1.5 flex items-center justify-between gap-2">
+                    <span class="text-[9.5px] font-bold text-gray-700 truncate">Up Next: Iceland Northern Lights 4K</span>
+                    <span class="text-[9px] font-extrabold text-emerald-700 whitespace-nowrap shrink-0">0 Sidebar Ads</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            <!-- BEFORE LAYER (Left 48% Clipped — Cluttered YouTube with Pre-Roll Ad + Cookie Wall) -->
+            <!-- BEFORE LAYER (Left 48% Clipped — All content strictly within [0%..46%] so clip-path never slices text) -->
             <div style="width: 100%; clip-path: inset(0 52% 0 0);" class="absolute inset-0 bg-white text-[#0f0f0f] flex flex-col">
-              <div class="h-10 px-3.5 flex items-center justify-between border-b border-rose-200 bg-rose-50 shrink-0">
-                <div class="flex items-center gap-2">
-                  <svg class="w-6 h-4" viewBox="0 0 28 20" fill="none"><rect width="28" height="20" rx="4.5" fill="#FF0000"/><polygon points="11,6 11,14 18.5,10" fill="#FFFFFF"/></svg>
-                  <span class="font-bold text-sm tracking-tighter text-[#0f0f0f]">YouTube</span>
-                  <span class="px-2 py-0.5 rounded-md text-[10px] font-black uppercase bg-rose-600 text-white">✗ WITHOUT DEEPBLOCK</span>
+              <div class="h-10 px-3 flex items-center border-b border-rose-200 bg-rose-50 shrink-0">
+                <div class="flex items-center justify-between gap-1.5" style="width: 46%; padding-right: 6px;">
+                  <div class="flex items-center gap-1 shrink-0">
+                    <svg class="w-5 h-3.5" viewBox="0 0 28 20" fill="none"><rect width="28" height="20" rx="4.5" fill="#FF0000"/><polygon points="11,6 11,14 18.5,10" fill="#FFFFFF"/></svg>
+                    <span class="font-bold text-xs tracking-tighter text-[#0f0f0f]">YouTube</span>
+                  </div>
+                  <span class="px-1.5 py-0.5 rounded-md text-[9px] font-black uppercase bg-rose-600 text-white whitespace-nowrap shrink-0">✗ NO DEEPBLOCK</span>
                 </div>
-                <span class="text-[10px] font-bold text-rose-700">⚠ Interrupted</span>
               </div>
 
-              <div class="flex-1 grid grid-cols-12 gap-3 p-3.5 overflow-hidden">
-                <div class="col-span-8 flex flex-col justify-between">
-                  <div class="relative rounded-xl overflow-hidden bg-rose-950 aspect-video w-full border-2 border-rose-500 p-3 flex flex-col justify-between">
-                    <div class="flex items-center justify-between">
-                      <span class="bg-amber-400 text-black text-[10px] font-black px-2 py-0.5 rounded">Sponsored • Ad 1 of 2 (0:30)</span>
-                      <span class="bg-rose-600 text-white text-[9.5px] font-black px-2 py-0.5 rounded">UNSKIPPABLE</span>
+              <div class="flex-1 p-3 overflow-hidden">
+                <div class="h-full flex flex-col justify-between gap-2" style="width: 46%; padding-right: 6px;">
+                  <div class="relative rounded-xl overflow-hidden bg-rose-950 flex-1 w-full border-2 border-rose-500 p-2.5 flex flex-col justify-between">
+                    <div class="flex items-center justify-between gap-1">
+                      <span class="bg-amber-400 text-black text-[8.5px] font-black px-1.5 py-0.5 rounded whitespace-nowrap">Ad 1 of 2 (0:30)</span>
+                      <span class="bg-rose-600 text-white text-[8.5px] font-black px-1.5 py-0.5 rounded whitespace-nowrap">UNSKIPPABLE</span>
                     </div>
-                    <div class="my-auto text-center">
-                      <div class="text-sm font-black text-amber-300 uppercase">🔥 LOSE BELLY FAT IN 7 DAYS!</div>
-                      <div class="text-[10px] text-rose-200 mt-0.5"> Loud auto-playing video ad blocking your stream...</div>
+                    <div class="my-auto text-center px-1">
+                      <div class="text-xs font-black text-amber-300 uppercase leading-tight">🔥 LOSE BELLY FAT IN 7 DAYS!</div>
+                      <div class="text-[9.5px] text-rose-200 mt-1 leading-snug">Loud auto-playing ad blocking your stream...</div>
                     </div>
-                    <div class="flex items-center justify-between">
-                      <span class="bg-blue-600 text-white text-[9.5px] font-bold px-2.5 py-1 rounded">Visit Advertiser ↗</span>
-                      <span class="bg-black/80 text-white text-[9.5px] font-semibold px-2.5 py-1 rounded border border-white/20">Video plays after 2 ads ⏳</span>
+                    <div class="flex items-center justify-between gap-1">
+                      <span class="bg-blue-600 text-white text-[8.5px] font-bold px-2 py-0.5 rounded whitespace-nowrap">Visit Ad ↗</span>
+                      <span class="bg-black/80 text-white text-[8.5px] font-semibold px-1.5 py-0.5 rounded border border-white/20 whitespace-nowrap">Plays after 2 ads ⏳</span>
                     </div>
                   </div>
-                  <div class="mt-2 bg-rose-50 border-2 border-rose-500 rounded-xl p-2.5 flex items-center justify-between gap-2 shadow-md">
+                  <div class="bg-rose-50 border-2 border-rose-500 rounded-xl p-2 flex items-center justify-between gap-1.5 shadow-md shrink-0">
                     <div class="min-w-0">
-                      <div class="text-[11px] font-black text-rose-800 truncate">🍪 Before you continue to YouTube</div>
-                      <div class="text-[9.5px] text-gray-700 truncate">We &amp; 842 ad partners use cookies to track your clicks.</div>
+                      <div class="text-[10px] font-black text-rose-800 truncate">🍪 Before you continue</div>
+                      <div class="text-[8.5px] text-gray-700 truncate">842 ad partners track clicks.</div>
                     </div>
-                    <span class="px-2.5 py-1 rounded-full bg-rose-600 text-white text-[9.5px] font-bold shrink-0">Accept all</span>
+                    <span class="px-2 py-1 rounded-full bg-rose-600 text-white text-[8.5px] font-bold shrink-0 whitespace-nowrap">Accept all</span>
                   </div>
                 </div>
-                <div class="col-span-4"></div>
               </div>
             </div>
 
@@ -551,56 +556,56 @@
       `;
     }
 
-    // Cookie Auto-Reject + Clean Reader Component
+    // Cookie Auto-Reject + Scroll-Lock Safe Component
     function renderCookieRejectMockup() {
       return `
         <div class="bg-white rounded-2xl border border-slate-200 shadow-xl overflow-hidden text-left">
-          <div class="bg-slate-900 px-4 py-2.5 flex items-center justify-between text-white">
-            <div class="flex items-center gap-1.5">
-              <span class="w-2.5 h-2.5 rounded-full bg-rose-400"></span>
-              <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
-              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
-              <span class="ml-2 text-xs font-mono text-slate-300">🔒 daily-news-uk.co.uk/tech-report</span>
+          <div class="bg-slate-900 px-3.5 py-2 flex items-center justify-between gap-2 text-white">
+            <div class="flex items-center gap-1.5 min-w-0">
+              <span class="w-2.5 h-2.5 rounded-full bg-rose-400 shrink-0"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-amber-400 shrink-0"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 shrink-0"></span>
+              <span class="ml-1.5 text-[10.5px] font-mono text-slate-300 truncate">🔒 daily-news-uk.co.uk/tech</span>
             </div>
-            <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[10px] font-extrabold">
-              ⚡ Auto-Rejected in 38ms
+            <span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[9.5px] font-extrabold whitespace-nowrap shrink-0">
+              ✓ Auto-Rejected Locally
             </span>
           </div>
-          <div class="p-5 space-y-4 relative bg-gradient-to-b from-white to-slate-50">
+          <div class="p-4 space-y-3 relative bg-gradient-to-b from-white to-slate-50">
             <!-- Clean Article Underlying -->
-            <div class="space-y-2">
-              <div class="inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
-                ✓ Clean Reading Mode · Page Scroll Unlocked
+            <div class="space-y-1.5">
+              <div class="inline-flex items-center gap-1.5 text-[9.5px] font-extrabold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                ✓ Scroll-Lock Safe · Page Scroll Unlocked
               </div>
-              <div class="text-lg font-black text-slate-900">Why Modern Browsers Are Moving to Local Privacy Shields</div>
-              <p class="text-xs text-slate-600 leading-relaxed">
-                Instead of simply hiding cookie pop-ups with CSS (which leaves pages frozen with locked scrollbars), SWEEPR Deepblock automatically triggers the official "Reject All" or "Necessary Only" handler in under 50 milliseconds.
+              <div class="text-[15px] font-black text-slate-900 leading-snug">Why Modern Browsers Are Moving to Local Privacy Shields</div>
+              <p class="text-[11px] text-slate-600 leading-relaxed">
+                Instead of hiding cookie pop-ups with CSS (leaving pages frozen), SWEEPR Deepblock clicks "Reject All" or "Necessary Only" and restores page scrolling across 160 CMP frameworks.
               </p>
             </div>
 
             <!-- Crossed-Out Cookie Modal Being Zapped -->
-            <div class="relative rounded-2xl border-2 border-dashed border-rose-300 bg-rose-50/70 p-4 flex items-center justify-between gap-4">
-              <div class="space-y-1 opacity-60 line-through decoration-rose-500">
-                <div class="text-xs font-black text-rose-900">🍪 We Value Your Privacy (842 Ad Partners)</div>
-                <div class="text-[10.5px] text-rose-800">Allow cross-site tracking cookies, fingerprinting &amp; behavioral profiling?</div>
+            <div class="relative rounded-xl border-2 border-dashed border-rose-300 bg-rose-50/70 p-3 flex items-center justify-between gap-2.5">
+              <div class="space-y-0.5 opacity-60 line-through decoration-rose-500 min-w-0">
+                <div class="text-[11px] font-black text-rose-900">🍪 We Value Your Privacy</div>
+                <div class="text-[9.5px] text-rose-800 leading-snug">Allow cross-site tracking cookies &amp; profiling?</div>
               </div>
-              <div class="bg-emerald-600 text-white rounded-xl px-3.5 py-2 text-xs font-black shadow-lg shadow-emerald-600/30 shrink-0 flex items-center gap-1.5">
+              <div class="bg-emerald-600 text-white rounded-xl px-2.5 py-1.5 text-[10.5px] font-black shadow-lg shadow-emerald-600/30 shrink-0 flex items-center gap-1 whitespace-nowrap">
                 <span>✓ "Reject All" Clicked</span>
               </div>
             </div>
 
-            <div class="grid grid-cols-3 gap-2.5 pt-1">
-              <div class="bg-emerald-50/80 border border-emerald-200 rounded-xl p-2.5 text-center">
-                <div class="text-sm font-black text-emerald-700">OneTrust</div>
-                <div class="text-[10px] font-bold text-emerald-900">Auto-Rejected</div>
+            <div class="grid grid-cols-3 gap-2 pt-0.5">
+              <div class="bg-emerald-50/80 border border-emerald-200 rounded-xl p-2 text-center">
+                <div class="text-[11px] font-black text-emerald-700 leading-tight">OneTrust &amp; Cookiebot</div>
+                <div class="text-[9px] font-bold text-emerald-900 mt-0.5">Named CMPs</div>
               </div>
-              <div class="bg-emerald-50/80 border border-emerald-200 rounded-xl p-2.5 text-center">
-                <div class="text-sm font-black text-emerald-700">Quantcast</div>
-                <div class="text-[10px] font-bold text-emerald-900">Auto-Rejected</div>
+              <div class="bg-emerald-50/80 border border-emerald-200 rounded-xl p-2 text-center">
+                <div class="text-[11px] font-black text-emerald-700 leading-tight">Quantcast &amp; Didomi</div>
+                <div class="text-[9px] font-bold text-emerald-900 mt-0.5">Named CMPs</div>
               </div>
-              <div class="bg-emerald-50/80 border border-emerald-200 rounded-xl p-2.5 text-center">
-                <div class="text-sm font-black text-emerald-700">TrustArc &amp; TCF</div>
-                <div class="text-[10px] font-bold text-emerald-900">Auto-Rejected</div>
+              <div class="bg-emerald-50/80 border border-emerald-200 rounded-xl p-2 text-center">
+                <div class="text-[11px] font-black text-emerald-700 leading-tight">Usercentrics + 155 CMPs</div>
+                <div class="text-[9px] font-bold text-emerald-900 mt-0.5">Shadow-DOM + 9 Locales</div>
               </div>
             </div>
           </div>
@@ -608,44 +613,47 @@
       `;
     }
 
-    // Fake Online Shop Detector & Search Cleaner Component
-    function renderScamDetectorMockup() {
+    // URL Tracker Stripper, Cryptominer Shield & Element Zapper Component
+    function renderTrackerZapperMockup() {
       return `
         <div class="bg-white rounded-2xl border border-slate-200 shadow-xl overflow-hidden text-left">
-          <!-- Injected SWEEPR Scam Alert Bar -->
-          <div class="bg-gradient-to-r from-red-600 via-rose-600 to-amber-600 px-4 py-2.5 text-white flex items-center justify-between gap-2">
+          <!-- Header Bar -->
+          <div class="bg-slate-900 px-4 py-2.5 text-white flex items-center justify-between gap-2">
             <div class="flex items-center gap-2">
-              <span class="px-2 py-0.5 rounded bg-black/30 text-[10px] font-black uppercase">⚠️ SWEEPR Scam Shield</span>
-              <span class="text-xs font-extrabold">High-Risk Fake Store Detected: Newly registered domain (4 days old)</span>
+              <span class="px-2 py-0.5 rounded bg-emerald-600 text-white text-[10px] font-black uppercase">🛡️ SWEEPR Deepblock v1.4.0</span>
+              <span class="text-xs font-extrabold text-emerald-100">36,019 Static + 100 OTA Rules (5 DNR Rulesets)</span>
             </div>
-            <span class="px-2.5 py-1 rounded-lg bg-white text-rose-700 text-[10px] font-black shrink-0">Leave Site Safely</span>
+            <span class="px-2.5 py-1 rounded-lg bg-emerald-500 text-white text-[10px] font-black shrink-0">✓ 100% On-Device</span>
           </div>
           <div class="p-5 grid grid-cols-12 gap-4 bg-slate-50">
-            <!-- Left: Suspicious Checkout Flagged -->
-            <div class="col-span-6 bg-white rounded-xl border border-rose-200 p-3.5 space-y-2.5 shadow-xs">
-              <div class="flex items-center justify-between">
-                <span class="text-[10px] font-mono text-rose-700 bg-rose-50 px-2 py-0.5 rounded border border-rose-200">luxury-outlet-88off.top</span>
-                <span class="text-[10px] font-black text-rose-600 uppercase">✗ Risk Score: 96/100</span>
-              </div>
-              <div class="text-xs font-black text-slate-900">Designer Winter Jacket — 89% OFF (Ends in 04:12!)</div>
-              <div class="space-y-1 text-[10.5px] text-rose-800 font-semibold bg-rose-50/80 p-2.5 rounded-lg border border-rose-200">
-                <div>• Fake countdown timer &amp; cloned product photos</div>
-                <div>• No verifiable UK/EU company registration</div>
-                <div>• Card skimming checkout form blocked</div>
-              </div>
-            </div>
-            <!-- Right: Clean Google Search & Link Sanitizer -->
+            <!-- Left: URL Tracker & Cryptominer Shield -->
             <div class="col-span-6 bg-white rounded-xl border border-emerald-200 p-3.5 space-y-2.5 shadow-xs">
               <div class="flex items-center justify-between">
-                <span class="text-[10px] font-extrabold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded">🔍 Clean Search &amp; Links</span>
-                <span class="text-[10px] font-bold text-emerald-600">✓ 0 SEO Spam</span>
+                <span class="text-[10px] font-extrabold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded border border-emerald-200">🔗 URL Tracker Stripper</span>
+                <span class="text-[10px] font-black text-emerald-700 uppercase">✓ 230 Params Stripped</span>
               </div>
-              <div class="text-xs font-black text-slate-900">Google &amp; Bing Search Result Cleanser</div>
-              <div class="bg-slate-50 border border-slate-200 rounded-lg p-2 text-[10px] font-mono text-slate-700">
-                site.com/deal<span class="line-through text-rose-500 bg-rose-50 px-1">?utm_source=ads&amp;fbclid=IwAR2</span>
+              <div class="text-xs font-black text-slate-900">Network-Layer Query Parameter Removal</div>
+              <div class="bg-slate-50 border border-slate-200 rounded-lg p-2 text-[10px] font-mono text-slate-700" style="overflow-wrap:anywhere;">
+                site.com/deal<span class="line-through text-rose-500 bg-rose-50 px-1">?utm_source=ads&amp;fbclid=IwAR2&amp;gclid=Cj0K</span>
+              </div>
+              <div class="space-y-1 text-[10.5px] text-emerald-900 font-semibold bg-emerald-50 p-2.5 rounded-lg border border-emerald-200">
+                <div>• 18 Cryptominer Domains Blocked (<span class="font-mono">cryptominers.json</span>)</div>
+                <div>• 36,000 Ad, EasyPrivacy &amp; EU Rules (<span class="font-mono">5 DNR Rulesets</span>)</div>
+              </div>
+            </div>
+            <!-- Right: DeepStealth & Element Zapper -->
+            <div class="col-span-6 bg-white rounded-xl border border-emerald-200 p-3.5 space-y-2.5 shadow-xs">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] font-extrabold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded border border-emerald-200">🧹 Stealth &amp; Zapper</span>
+                <span class="text-[10px] font-bold text-emerald-700">✓ Per-Site Rules</span>
+              </div>
+              <div class="text-xs font-black text-slate-900">DeepStealth &amp; Custom Element Zapper</div>
+              <div class="space-y-1.5 text-[10.5px] text-slate-700 font-semibold bg-slate-50 p-2.5 rounded-lg border border-slate-200">
+                <div>• <strong class="text-slate-900">Anti-Adblock Bait Spoofing:</strong> DeepStealth MAIN-world shield</div>
+                <div>• <strong class="text-slate-900">Custom Element Zapper:</strong> Click "Hide Element" to save local CSS</div>
               </div>
               <div class="bg-emerald-50 border border-emerald-200 rounded-lg p-2 text-[10.5px] font-bold text-emerald-900">
-                ✓ Hides copy-paste AI spam farms &amp; strips tracking tags
+                ✓ Local MV3 rules — zero remote URL telemetry
               </div>
             </div>
           </div>
@@ -653,56 +661,56 @@
       `;
     }
 
-    // RAM Tamer & 5-Browser Privacy Component
+    // RAM Tamer & Multi-Browser Privacy Component
     function renderRamTamerMockup() {
       return `
-        <div class="bg-white rounded-2xl border border-emerald-200 shadow-xl p-5 text-left space-y-4">
-          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-            <div class="flex items-center gap-2.5">
-              <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-black text-lg">⚡</div>
-              <div>
-                <div class="text-sm font-black text-slate-900">Total Tab &amp; RAM Tamer Engine</div>
-                <div class="text-xs text-slate-500 font-medium">Smart background tab suspension &amp; local-first MV3 engine</div>
+        <div class="bg-white rounded-2xl border border-emerald-200 shadow-xl p-4 text-left space-y-3.5">
+          <div class="flex items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
+            <div class="flex items-center gap-2 min-w-0">
+              <div class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-black text-base shrink-0">⚡</div>
+              <div class="min-w-0">
+                <div class="text-[13px] font-black text-slate-900 truncate">Total Tab &amp; RAM Tamer Engine</div>
+                <div class="text-[10.5px] text-slate-500 font-medium truncate">chrome.tabs.discard hibernation &amp; MV3 engine</div>
               </div>
             </div>
-            <span class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 font-black text-xs border border-emerald-200">
-              -72% RAM Footprint
+            <span class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 font-black text-[10px] border border-emerald-200 whitespace-nowrap shrink-0">
+              10m Idle Auto-Snooze
             </span>
           </div>
 
           <div class="space-y-3">
             <div>
-              <div class="flex justify-between text-xs font-bold text-slate-600 mb-1">
-                <span>Bloated Legacy Adblockers + 25 Open Tabs</span>
-                <span class="text-rose-600 font-black tabular-nums">2.32 GB RAM</span>
+              <div class="flex justify-between gap-2 text-[10.5px] font-bold text-slate-600 mb-1">
+                <span class="truncate">Idle Background Tabs (10+ min)</span>
+                <span class="text-emerald-700 font-black whitespace-nowrap shrink-0">Discarded via tabs.discard</span>
               </div>
               <div class="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
-                <div class="h-full w-[88%] bg-gradient-to-r from-rose-500 to-amber-500 rounded-full"></div>
+                <div class="h-full w-[88%] bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full"></div>
               </div>
             </div>
             <div>
-              <div class="flex justify-between text-xs font-bold text-slate-900 mb-1">
-                <span class="text-emerald-700 font-extrabold">✓ SWEEPR Deepblock MV3 + Auto-Hibernation</span>
-                <span class="text-emerald-600 font-black tabular-nums">0.64 GB RAM (1.68 GB Freed)</span>
+              <div class="flex justify-between gap-2 text-[10.5px] font-bold text-slate-900 mb-1">
+                <span class="text-emerald-700 font-extrabold truncate">✓ Active, Pinned &amp; Audible Tabs</span>
+                <span class="text-emerald-600 font-black whitespace-nowrap shrink-0">Kept Awake + Snapshot</span>
               </div>
               <div class="w-full h-3 bg-emerald-100 rounded-full overflow-hidden">
-                <div class="h-full w-[26%] bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full"></div>
+                <div class="h-full w-[42%] bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-full"></div>
               </div>
             </div>
           </div>
 
-          <div class="grid grid-cols-3 gap-2.5 pt-1">
-            <div class="bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-center">
-              <div class="text-xs font-black text-slate-900">🔒 Zero Browsing Logs</div>
-              <div class="text-[10px] text-slate-500 font-medium">100% On-Device Rules</div>
+          <div class="grid grid-cols-3 gap-2 pt-0.5">
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-2 text-center">
+              <div class="text-[10.5px] font-black text-slate-900 leading-tight">🔒 Zero Browsing Logs</div>
+              <div class="text-[9px] text-slate-500 font-medium mt-0.5">100% On-Device Rules</div>
             </div>
-            <div class="bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-center">
-              <div class="text-xs font-black text-slate-900">🚫 No Acceptable Ads</div>
-              <div class="text-[10px] text-slate-500 font-medium">Zero Paid Whitelists</div>
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-2 text-center">
+              <div class="text-[10.5px] font-black text-slate-900 leading-tight">🚫 No Acceptable Ads</div>
+              <div class="text-[9px] text-slate-500 font-medium mt-0.5">Zero Paid Whitelists</div>
             </div>
-            <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-2.5 text-center">
-              <div class="text-xs font-black text-emerald-900">🌐 Covers 5 Browsers</div>
-              <div class="text-[10px] text-emerald-700 font-bold">Chrome · Firefox · Edge · Safari</div>
+            <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-2 text-center">
+              <div class="text-[10.5px] font-black text-emerald-900 leading-tight">🌐 Covers Up to 5 Devices</div>
+              <div class="text-[9px] text-emerald-700 font-bold mt-0.5">Chrome · Edge · Firefox · Opera</div>
             </div>
           </div>
         </div>
@@ -777,14 +785,14 @@
       const slideData = [
         {
           num: '01',
-          kicker: '✓ Instant Manifest V3 Protection • Covers Up to 5 Devices',
-          h1a: 'Watch YouTube & Browse ',
+          kicker: '✓ 7-Day Free Pro Trial (No Card) • 5 Devices',
+          h1a: 'Watch YouTube &amp; Browse ',
           h1b: 'Without Ads or Cookie Pop-Ups.',
-          sub: 'Stops video ads and flashing banners undetected, automatically clicks "Reject All" on cookie pop-ups, and warns you about scam online shops.',
+          sub: 'Blocks YouTube &amp; banner ads with 36,019 static + 100 OTA MV3 rules across 5 rulesets, auto-rejects cookie pop-ups across 160 CMPs, and hibernates idle tabs to save RAM.',
           bullets: [
-            ['Watch Videos Without Ads', 'Instant 4K playback with 0 pre-roll or mid-roll ads'],
-            ['No More Cookie Pop-Ups', 'Automatically says "No thanks" in under 50ms'],
-            ['Safer Online Shopping', 'Real-time alerts before you buy from fake stores']
+            ['Watch YouTube Without Ads', 'Stops pre-roll/mid-roll video ads &amp; banner trackers across 5 DNR rulesets'],
+            ['Auto-Rejects 160 CMPs', 'Clicks "Reject All" on OneTrust, Cookiebot, Quantcast, Didomi, Usercentrics &amp; more'],
+            ['7-Day Free Pro Trial', 'Full MV3 protection on install (no card needed); sync up to 5 devices with Pro']
           ],
           rightVisual: concept.layoutStyle === 'laptop'
             ? `<div class="w-full"><div class="laptop-shell">${renderYouTubeSplitBrowser('h-[360px]')}</div><div class="laptop-deck"></div></div>`
@@ -792,77 +800,77 @@
         },
         {
           num: '02',
-          kicker: '⚡ Manifest V3 DeepBlock Engine • Instant Stream Protection',
+          kicker: '⚡ 36,019 Static + 100 OTA Rules • 5 DNR Rulesets',
           h1a: 'Zero Video Interruptions. ',
           h1b: '1-Click Site Shield Control.',
-          sub: 'Built to match sweeprdeepblock.com — pin the green shield in your browser toolbar to see live blocked ad & cookie counters, pause for 5 minutes, or zap any page element.',
+          sub: 'Built to match sweeprdeepblock.com — pin the green shield in your browser toolbar to see live blocked ad &amp; cookie counters, pause for 5 minutes, or zap any page element.',
           bullets: [
-            ['1,482+ Ads & Trackers Stopped', 'Blocks pre-roll video ads, banners & behavioral trackers'],
-            ['1-Click Escape Hatch', 'Pause for 5m or whitelist any trusted website instantly'],
-            ['Custom Element Zapper', 'Click "🧹 Hide Element" to remove any annoying box']
+            ['36,019 Static + 100 OTA Rules', '5 MV3 rulesets block video ads, trackers, EU banners &amp; 18 cryptominers'],
+            ['1-Click Escape Hatch', 'Pause 5m (Fix) or manage paused sites from the popup'],
+            ['Interactive Element Zapper', 'Click "Hide Element" to remove distracting page boxes locally']
           ],
           rightVisual: `
-            <div class="relative w-full pr-6 py-4">
-              <div class="w-[84%]">${renderYouTubeSplitBrowser('h-[400px]')}</div>
-              <div class="absolute right-0 top-1/2 -translate-y-1/2 z-30">
-                ${renderExtPopup(concept.id === 'c2' || concept.id === 'c4' ? 'dark' : 'light', 'youtube.com', '1,482', '319', '1.8 GB')}
+            <div class="relative w-full pr-4 pb-14 pt-1">
+              <div class="w-[88%]">${renderYouTubeSplitBrowser('h-[380px]')}</div>
+              <div class="absolute right-0 bottom-0 z-30">
+                ${renderExtPopup(concept.id === 'c2' || concept.id === 'c4' ? 'dark' : 'light', 'youtube.com', '1,482', '319', '12 tabs')}
               </div>
             </div>
           `
         },
         {
           num: '03',
-          kicker: '🍪 Automatic GDPR / UK Cookie Consent Responder (<50ms)',
+          kicker: '🍪 160 CMP Cookie Consent Auto-Rejector • Scroll-Lock Safe',
           h1a: 'Automatically Says "No" to ',
           h1b: 'Annoying Cookie Pop-Ups.',
           sub: 'Normal blockers hide the cookie box and leave the page frozen. SWEEPR Deepblock clicks the official "Reject All" or "Necessary Only" option for you so pages scroll normally.',
           bullets: [
-            ['38ms Auto-Reject Speed', 'Handles OneTrust, Quantcast, TrustArc & Cookiebot'],
-            ['Never Breaks Page Scroll', 'Unlocks frozen body overflow & removes dark overlays'],
-            ['1-Click Clean Reading View', 'Strips recipe clutter & floating video players']
+            ['160 CMPs + Generic Match', 'OneTrust, Cookiebot, Quantcast Choice, Didomi, Usercentrics &amp; 155+ frameworks'],
+            ['Never Breaks Page Scroll', 'Restores body overflow &amp; clears blocking consent overlays'],
+            ['9-Language Reject Matchers', 'Targets Reject All, Decline All &amp; Necessary Only across 9 global locales']
           ],
           rightVisual: `
-            <div class="relative w-full pr-6 py-4">
-              <div class="w-[82%]">${renderCookieRejectMockup()}</div>
-              <div class="absolute right-0 top-1/2 -translate-y-1/2 z-30">
-                ${renderExtPopup('light', 'daily-news-uk.co.uk', '842', '319', '1.4 GB')}
+            <div class="flex items-center gap-3.5 w-full">
+              <div class="flex-1 min-w-0">${renderCookieRejectMockup()}</div>
+              <div class="shrink-0">
+                ${renderExtPopup('light', 'daily-news-uk.co.uk', '842', '319', '8 tabs')}
               </div>
             </div>
           `
         },
         {
           num: '04',
-          kicker: '🛡️ Included Free in Pro • Fake Online Shop & Search Cleaner',
-          h1a: 'Spot Fake Scam Shops ',
-          h1b: 'Before You Enter Your Card.',
-          sub: 'Warns you right away if an online store looks suspicious, hides copy-paste junk websites from Google & Bing search results, and strips tracking tags from links.',
+          kicker: '🛡️ v1.4.0 MV3 Engine • 230-Param Stripper, Miners &amp; Zapper',
+          h1a: 'Strip Tracking Links &amp; ',
+          h1b: 'Zap Clutter Locally.',
+          sub: 'Removes 230 click-tracking query parameters at the network layer, blocks 18 cryptominer domains, spoofs anti-adblock bait probes, and hides unwanted elements.',
           bullets: [
-            ['Real-Time Scam Store Alerts', 'Flags newly registered domains & fake countdown deals'],
-            ['Clean Google & Bing Search', 'Hides low-quality AI spam farms from search results'],
-            ['Private Clean Links', 'Automatically strips ?utm_source, fbclid & gclid trackers']
+            ['Clean Links (230 Params)', 'Automatically strips ?utm_*, fbclid, gclid, msclkid, ttclid &amp; 225 more'],
+            ['DeepStealth + 18 Miner Rules', 'Neutralizes anti-adblock walls &amp; browser cryptomining scripts'],
+            ['Persistent Element Zapper', 'Hide distracting page elements with local per-site CSS rules']
           ],
           rightVisual: `
             <div class="space-y-4 w-full">
-              ${renderScamDetectorMockup()}
+              ${renderTrackerZapperMockup()}
             </div>
           `
         },
         {
           num: '05',
-          kicker: '⚡ Total Tab & RAM Tamer • 100% Private On-Device Filtering',
-          h1a: 'Up to 72% Less RAM. ',
+          kicker: '⚡ Total Tab &amp; RAM Tamer • 100% Private On-Device Filtering',
+          h1a: 'Auto-Snooze Idle Tabs. ',
           h1b: 'Zero Browsing Data Collected.',
-          sub: 'Works quietly in the background without slowing down your computer. Automatically hibernates idle background tabs and never sells or logs your browsing history.',
+          sub: 'Automatically discards idle background tabs after 10 minutes via native chrome.tabs.discard while protecting active, pinned, and audio tabs.',
           bullets: [
-            ['1.68 GB RAM Freed Automatically', 'Suspends inactive background tabs with 0 data loss'],
+            ['10-Min Idle Tab Hibernation', 'Snoozes inactive tabs &amp; backs up restorable session snapshots'],
             ['No Browsing History Logged', '100% local declarativeNetRequest filtering on your device'],
             ['No "Acceptable Ads" Bribes', 'Ad networks can never pay to bypass your shield']
           ],
           rightVisual: `
-            <div class="relative w-full pr-6 py-4">
-              <div class="w-[82%]">${renderRamTamerMockup()}</div>
-              <div class="absolute right-0 top-1/2 -translate-y-1/2 z-30">
-                ${renderExtPopup(concept.id === 'c2' ? 'dark' : 'light', 'sweeprdeepblock.com', '14,820', '4,190', '1.68 GB')}
+            <div class="flex items-center gap-3.5 w-full">
+              <div class="flex-1 min-w-0">${renderRamTamerMockup()}</div>
+              <div class="shrink-0">
+                ${renderExtPopup(concept.id === 'c2' ? 'dark' : 'light', 'sweeprdeepblock.com', '14,820', '4,190', '24 tabs')}
               </div>
             </div>
           `
@@ -884,7 +892,7 @@
               </div>
               <div class="flex items-center gap-3">
                 <span class="text-xs font-extrabold text-slate-500">SLIDE ${slideData.num} / 05</span>
-                <span class="px-3.5 py-1.5 rounded-xl bg-emerald-600 text-white text-xs font-black">★ 4.9 Rating • 5 Browsers</span>
+                <span class="px-3.5 py-1.5 rounded-xl bg-emerald-600 text-white text-xs font-black">36,019 Static + 100 OTA Rules • 5 Devices</span>
               </div>
             </div>
 
@@ -917,7 +925,7 @@
               <span>•</span>
               <span>🔒 Zero Browsing Data Collected (100% On-Device MV3)</span>
               <span>•</span>
-              <span>⚡ Works on Chrome, Firefox, Edge, Brave &amp; Safari</span>
+              <span>⚡ Works on Chrome, Edge, Firefox &amp; Opera (+ Mobile Companions)</span>
             </div>
           </div>
         `;
@@ -1004,7 +1012,7 @@
             </div>
 
             <!-- Bottom Trust Bar Matched to website/index.html -->
-            <div class="pt-4 border-t ${isDarkLeft ? 'border-white/15 text-emerald-200' : 'border-slate-200/80 text-slate-600'} flex items-center justify-between text-[11.5px] font-bold">
+            <div class="pt-4 border-t ${isDarkLeft ? 'border-white/15 text-emerald-200 max-w-[440px]' : 'border-slate-200/80 text-slate-600'} flex items-center justify-between gap-2 text-[11px] font-bold whitespace-nowrap">
               <span>🛡️ 14-Day Guarantee</span>
               <span>•</span>
               <span>🔒 Zero Data Collected</span>
@@ -1046,11 +1054,11 @@
                   Watch YouTube &amp; Browse <span class="${isDark ? 'text-emerald-300' : 'text-emerald-500'}">Without Ads or Pop-Ups.</span>
                 </div>
                 <p class="text-xs ${isDark ? 'text-emerald-100/90' : 'text-slate-600'} font-semibold mt-1.5">
-                  Auto-rejects cookie banners in 38ms • Spots fake shops • Saves 72% RAM
+                  36,019 static + 100 OTA rules • 160 CMP auto-reject • Tab &amp; RAM Tamer
                 </p>
               </div>
               <div class="flex items-center justify-between pt-2 border-t ${isDark ? 'border-white/15' : 'border-slate-200/80'}">
-                <span class="text-[11px] font-extrabold ${isDark ? 'text-emerald-300' : 'text-emerald-700'}">🔒 Zero Data Collected</span>
+                <span class="text-[11px] font-extrabold ${isDark ? 'text-emerald-300' : 'text-emerald-700'}">⚡ 7-Day Free Pro Trial</span>
                 <span class="px-3 py-1 rounded-lg bg-emerald-500 text-white text-xs font-black shadow-xs">Add to Browser →</span>
               </div>
             </div>
@@ -1061,13 +1069,13 @@
                 <div class="col-span-5 ${isDark ? 'pr-4' : ''} space-y-4">
                   <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-extrabold bg-emerald-100 text-emerald-900 border border-emerald-200">
                     <svg class="w-4 h-4 rounded"><use href="#sweepr-logo"/></svg>
-                    <span>SWEEPR DEEPBLOCK • 5 BROWSERS</span>
+                    <span>SWEEPR DEEPBLOCK v1.4.0 • UP TO 5 DEVICES</span>
                   </div>
                   <h3 class="text-[44px] font-black leading-[1.06] tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}">
                     Zero Ads. Zero Cookie Pop-Ups. <span class="${isDark ? 'text-emerald-300' : 'text-emerald-500'}">Clean Web.</span>
                   </h3>
                   <p class="text-[15px] ${isDark ? 'text-emerald-100/90' : 'text-slate-600'} font-medium leading-relaxed">
-                    Blocks YouTube &amp; banner ads, automatically clicks "Reject All" on cookie walls in 38ms, warns about fake online shops, and frees up to 72% browser RAM.
+                    Blocks YouTube &amp; banner ads with 36,019 static + 100 OTA MV3 rules across 5 rulesets, auto-rejects cookie banners across 160 CMPs, strips 230 URL trackers, and hibernates idle tabs. Includes a 7-day no-card Pro trial.
                   </p>
                   <div class="flex items-center gap-4 pt-2">
                     <span class="px-5 py-2.5 rounded-xl bg-emerald-500 text-white font-black text-sm shadow-lg">✓ Install Extension</span>
@@ -1118,7 +1126,7 @@
                 <div class="flex items-center justify-between px-1">
                   <span class="text-xs font-extrabold text-gray-800">
                     Slide ${slideIdx + 1} of 5 — ${
-                      ['Hero YouTube Before/After Split', 'Extension Popup & Stream Shield', 'Auto Cookie Pop-Up Rejector (<50ms)', 'Fake Online Shop & Search Cleaner', 'Total Tab & RAM Tamer + Privacy'][slideIdx]
+                      ['Hero YouTube Split & 7-Day Pro Trial', 'Extension Popup & Stream Shield', 'Cookie Auto-Rejector (160 CMPs + Generic)', 'URL Tracker Stripper, Miners & Zapper', 'Total Tab & RAM Tamer + Privacy'][slideIdx]
                     }
                   </span>
                   <span class="text-[11px] font-mono text-gray-500">1280×800 • 24-bit PNG</span>

@@ -8,6 +8,14 @@ const WEBSITE_DIR = path.join(ROOT_DIR, 'website');
 const SERVER_PATH = path.join(ROOT_DIR, 'server.js');
 const SCRIPTS_DIR = path.join(ROOT_DIR, 'scripts');
 const STRICT_MODE = process.argv.includes('--strict');
+const MANIFEST_JSON = JSON.parse(fs.readFileSync(path.join(ROOT_DIR, 'extension', 'manifest.json'), 'utf8'));
+const EXT_VERSION = String(MANIFEST_JSON.version || '1.4.0').trim();
+const EXPECTED_STATIC_RULES = (MANIFEST_JSON.declarative_net_request?.rule_resources || [])
+  .filter((r) => r.enabled)
+  .reduce((sum, r) => {
+    const rp = path.join(ROOT_DIR, 'extension', r.path);
+    return sum + (fs.existsSync(rp) ? JSON.parse(fs.readFileSync(rp, 'utf8')).length : 0);
+  }, 0);
 
 function walk(dir) {
   let results = [];
@@ -54,11 +62,13 @@ const consolidated301Routes = new Set();
 const prunedNoIndexRoutes = new Set();
 const allNoIndexRoutes = new Set();
 const incomingInternalLinks = new Map();
+const htmlContentCache = new Map();
 for (const f of htmlFiles) {
   const rel = path.relative(WEBSITE_DIR, f).replace(/\\/g, '/');
   const clean = rel === 'index.html' ? '/' : (rel.endsWith('/index.html') ? '/' + rel.replace(/\/index\.html$/, '') : '/' + rel.replace(/\.html$/, ''));
   existingCleanRoutes.add(clean);
   const raw = fs.readFileSync(f, 'utf8');
+  htmlContentCache.set(f, raw);
   const robotsContent = (raw.match(/<meta\s+name=["']robots["']\s+content=["']([^"']+)["']/i)?.[1] || '').toLowerCase();
   if (/\bnoindex\b/.test(robotsContent)) {
     allNoIndexRoutes.add(clean);
@@ -81,7 +91,7 @@ const seenH1s = new Map();
 const seenTargetKeywords = new Map();
 
 for (const filePath of htmlFiles) {
-  const content = fs.readFileSync(filePath, 'utf8');
+  const content = htmlContentCache.get(filePath) ?? fs.readFileSync(filePath, 'utf8');
   const rel = path.relative(WEBSITE_DIR, filePath).replace(/\\/g, '/');
   const robotsContent = (content.match(/<meta\s+name=["']robots["']\s+content=["']([^"']+)["']/i)?.[1] || '').toLowerCase();
   const isNoIndex = /\bnoindex\b/.test(robotsContent);
@@ -272,12 +282,12 @@ for (const filePath of htmlFiles) {
     }
   }
 
-  // Holographic Pearl Light Shell, v1.3.1 Version Freshness, 283 Static Rules & Removed-Feature Checks
+  // Holographic Pearl Light Shell, Extension Version Freshness, Static Rules & Removed-Feature Checks
   if (/\bv?1\.2\.\d+\b/i.test(content) || /Version\s+1\.2\.\d+/i.test(content)) {
     recordMigrationFinding({
       file: rel,
       type: 'stale_v12_version',
-      msg: 'Indexable page contains stale v1.2.x version string (expected v1.3.1)'
+      msg: `Indexable page contains stale v1.2.x version string (expected v${EXT_VERSION})`
     });
   }
 
@@ -316,7 +326,7 @@ for (const filePath of htmlFiles) {
       .replace(/discontinued[^.<]*[.<]/gi, '')
       .replace(/does\s+not\s+(?:include|ship|offer)[^.<]*[.<]/gi, '');
     if (
-      /\b(?:Fake\s+Online\s+Shop|fakeShopAlerts|AI\s+Slop\s+(?:Search\s+)?(?:Cleanser|Filter|Purifier)|hideSearchSpam|Recipe[^<]{0,40}Clutter\s+Stripper|processRecipeAndNewsClutter|Apple\s+Safari\s+(?:extension|macOS\s*&?\s*iOS)|DoH\s+DNS\s+proxy)\b/i.test(
+      /\b(?:Fake\s+Online\s+Shop|fakeShopAlerts|AI\s+Slop\s+(?:Search\s+)?(?:Cleanser|Filter|Purifier)|hideSearchSpam|Recipe[^<]{0,40}Clutter\s+Stripper|processRecipeAndNewsClutter|DoH\s+DNS\s+proxy)\b/i.test(
         strippedForClaimCheck
       ) ||
       /\.mobileconfig/i.test(strippedForClaimCheck)
@@ -324,7 +334,7 @@ for (const filePath of htmlFiles) {
       recordMigrationFinding({
         file: rel,
         type: 'removed_feature_claim',
-        msg: 'Indexable page references removed/unshipped v1.2.x features (Fake Shop, AI Slop Cleanser, Recipe Stripper, Safari/iOS, or DoH proxy)'
+        msg: 'Indexable page references removed/unshipped v1.2.x features (Fake Shop, AI Slop Cleanser, Recipe Stripper, or DoH proxy)'
       });
     }
   }
@@ -333,7 +343,7 @@ for (const filePath of htmlFiles) {
     recordMigrationFinding({
       file: rel,
       type: 'stale_rule_count',
-      msg: 'Indexable page references stale 242/271 DNR rule count (expected 283 static rules)'
+      msg: `Indexable page references stale 242/271 DNR rule count (expected ${EXPECTED_STATIC_RULES.toLocaleString('en-US')} static rules)`
     });
   }
 
@@ -406,18 +416,18 @@ for (const filePath of htmlFiles) {
           }
           if (item['@type'] === 'SoftwareApplication' || item['@type'] === 'Product') {
             if (item['@type'] === 'SoftwareApplication') {
-              if (item.softwareVersion && String(item.softwareVersion) !== '1.3.1') {
+              if (item.softwareVersion && String(item.softwareVersion) !== EXT_VERSION) {
                 recordMigrationFinding({
                   file: rel,
                   type: 'stale_schema_version',
-                  msg: `SoftwareApplication softwareVersion is "${item.softwareVersion}" (expected "1.3.1")`
+                  msg: `SoftwareApplication softwareVersion is "${item.softwareVersion}" (expected "${EXT_VERSION}")`
                 });
               }
-              if (item.operatingSystem && /\b(?:Safari|iOS)\b/i.test(String(item.operatingSystem))) {
+              if (item.operatingSystem && /\borion\b/i.test(String(item.operatingSystem))) {
                 recordMigrationFinding({
                   file: rel,
-                  type: 'invalid_schema_os_safari_ios',
-                  msg: `SoftwareApplication operatingSystem lists unshipped Safari/iOS: "${item.operatingSystem}"`
+                  type: 'invalid_schema_os_orion',
+                  msg: `SoftwareApplication operatingSystem lists unsupported Orion browser: "${item.operatingSystem}"`
                 });
               }
             }
@@ -493,7 +503,7 @@ for (const filePath of htmlFiles) {
 let orphanPagesCount = 0;
 
 for (const filePath of htmlFiles) {
-  const content = fs.readFileSync(filePath, 'utf8');
+  const content = htmlContentCache.get(filePath) ?? fs.readFileSync(filePath, 'utf8');
   if (/meta\s+name=["']robots["']\s+content=["'][^"']*noindex/i.test(content)) continue;
   const rel = path.relative(WEBSITE_DIR, filePath).replace(/\\/g, '/');
   const clean = rel === 'index.html' ? '/' : (rel.endsWith('/index.html') ? '/' + rel.replace(/\/index\.html$/, '') : '/' + rel.replace(/\.html$/, ''));
@@ -585,7 +595,7 @@ if (fs.existsSync(sitemapPath)) {
   for (const srcPath of canonicalPathSet) {
     const abs = toDiskHtml(srcPath);
     if (!abs) continue;
-    const html = fs.readFileSync(abs, 'utf8');
+    const html = htmlContentCache.get(abs) ?? fs.readFileSync(abs, 'utf8');
     const relSrc = path.relative(WEBSITE_DIR, abs).replace(/\\/g, '/');
     const outTargets = new Set();
     for (const m of html.matchAll(/<a\b(?:"[^"]*"|'[^']*'|[^'">])*>/gi)) {

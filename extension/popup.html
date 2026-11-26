@@ -100,6 +100,11 @@
       color: #047857;
       border-color: #a7f3d0;
     }
+    .status-pill.expired {
+      background: #fef2f2;
+      color: #b91c1c;
+      border-color: #fecaca;
+    }
 
     /* ROW 1: Zero-Travel Top-Right Anchor — Full-Row Clickable Master Site Shield Card (Concentric Radius: 18px = 8px inner + 10px pad) */
     .site-card {
@@ -390,6 +395,12 @@
     }
     .store-pill.risk::before {
       background: #f59e0b;
+    }
+    .store-pill.expired {
+      color: #b91c1c;
+    }
+    .store-pill.expired::before {
+      background: #dc2626;
     }
 
     /* ROW 4: State-Aware Primary Action + Progressive Disclosure License Input */
@@ -930,7 +941,7 @@
   <div class="action-stage">
     <!-- Primary Green CTA (Zero prices or amounts) -->
     <button type="button" id="upgradeCtaBtn" class="btn-go">
-      <span data-i18n="uiUnlockPro">Unlock Full Pro Protection</span>
+      <span id="upgradeCtaText" data-i18n="uiUnlockPro">Unlock Full Pro Protection</span>
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
     </button>
 

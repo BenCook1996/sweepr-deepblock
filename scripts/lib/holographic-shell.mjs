@@ -28,15 +28,19 @@ export const ASSET_VERSION = '20261122';
 
 export const PRODUCT_FACTS = Object.freeze({
   name: 'SWEEPR Deepblock',
-  version: '1.3.1',
-  staticDnrRules: 283,
+  version: '1.4.0',
+  staticDnrRules: 36019,
   staticRuleBreakdown: Object.freeze({
-    adsAndTrackers: 264,
+    adsAndTrackers: 20000,
+    easyPrivacy: 12000,
+    regionalEu: 4000,
     cryptominers: 18,
     trackerParams: 1
   }),
-  operatingSystem: 'Chrome, Microsoft Edge, Firefox, Brave, Opera, Windows, macOS, Linux, Android (Firefox)',
-  browsersLabel: 'Chrome, Edge, Firefox, Brave & Opera',
+  trackerParamsStripped: 229,
+  cmpFrameworks: 160,
+  operatingSystem: 'Chrome, Microsoft Edge, Firefox, Safari (macOS & iOS), Brave, Opera, Windows, macOS, Linux, iOS, Android (Firefox)',
+  browsersLabel: 'Chrome, Edge, Firefox, Safari, Brave & Opera',
   devicesIncluded: 5,
   pricing: Object.freeze({
     introMonthlyGbp: 1.99,
@@ -52,7 +56,7 @@ export const KEPT_DIRECTORY_95 = Object.freeze({
     { href: '/', label: 'SWEEPR Deepblock Home' },
     { href: '/download', label: 'Browser Extension Downloads' },
     { href: '/pricing', label: 'Pricing & Pro Plans' },
-    { href: '/benchmarks', label: 'v1.3.1 MV3 Benchmarks' },
+    { href: '/benchmarks', label: 'v1.4.0 MV3 Benchmarks' },
     { href: '/test-lab', label: 'Free Adblock Test Lab' },
     { href: '/tools', label: 'Free Browser Privacy & RAM Tools' },
     { href: '/glossary', label: 'Manifest V3 & Privacy Glossary' },
@@ -208,7 +212,7 @@ export function buildJsonLd({
       downloadUrl: `${SITE_ORIGIN}/download`,
       operatingSystem: PRODUCT_FACTS.operatingSystem,
       applicationCategory: 'SecurityApplication',
-      featureList: `${PRODUCT_FACTS.staticDnrRules} static Manifest V3 declarativeNetRequest rules, GDPR cookie consent auto-rejection, URL tracking parameter stripping, Element Zapper, Anti-Adblock stealth, and Total Tab & RAM Tamer`,
+      featureList: `${PRODUCT_FACTS.staticDnrRules.toLocaleString('en-US')} static Manifest V3 declarativeNetRequest rules across 5 rulesets, GDPR cookie consent auto-rejection across ${PRODUCT_FACTS.cmpFrameworks} CMP frameworks, ${PRODUCT_FACTS.trackerParamsStripped}-parameter URL tracking stripping, Element Zapper, Anti-Adblock stealth, Total Tab & RAM Tamer, and no-card 7-day full Pro trial`,
       author: {
         '@type': 'Organization',
         name: 'SWEEPR Global Limited',

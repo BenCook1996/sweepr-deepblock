@@ -1,50 +1,302 @@
-// SWEEPR Deepblock — Real-Time Content Script (v1.3)
+// SWEEPR Deepblock — Real-Time Content Script (v1.4)
 // 1. Zero-Copy Website Auto-Activation Bridge (sweeprdeepblock.com)
-// 2. GDPR Cookie Banner Detector & Auto-Rejector (Safe Scroll-Unlock)
+// 2. GDPR Cookie Banner Detector & Auto-Rejector (160 CMPs + Safe Scroll-Unlock)
 // 3. YouTube & Anti-Adblock Stealth DOM Shield
 // 4. Interactive Page Element Zapper ("Hide Distracting Element")
 // 5. Throttled MutationObservers for Zero Main-Thread Jank
 
 (function () {
+  const CMP_FRAMEWORKS = [
+    { id: 'onetrust', name: 'OneTrust', containers: ['#onetrust-banner-sdk', '#onetrust-consent-sdk'], rejectButtons: ['#onetrust-reject-all-handler', '.ot-pc-refuse-all-handler', '.onetrust-close-btn-handler'] },
+    { id: 'cookiebot', name: 'Cookiebot', containers: ['#CybotCookiebotDialog', '#CybotCookiebotDialogBody'], rejectButtons: ['#CybotCookiebotDialogBodyButtonDecline', '#CybotCookiebotDialogBodyLevelButtonLevelOptinDeclineAll', '#CybotCookiebotDialogBodyLevelButtonDecline'] },
+    { id: 'quantcast-choice', name: 'Quantcast Choice', containers: ['.qc-cmp2-container', '#qc-cmp2-container'], rejectButtons: ['.qc-cmp2-summary-buttons button[mode="secondary"]', 'button.qc-cmp2-summary-buttons__button--reject'] },
+    { id: 'didomi', name: 'Didomi', containers: ['#didomi-host', '#didomi-popup', '.didomi-popup-container'], rejectButtons: ['.didomi-continue-without-agreeing', '#didomi-notice-disagree-button', 'button.didomi-components-button--secondary'] },
+    { id: 'usercentrics', name: 'Usercentrics', containers: ['#usercentrics-root', '#uc-center-container', '[data-testid="uc-app-container"]'], rejectButtons: ['[data-testid="uc-deny-all-button"]', 'button[data-testid="uc-reject-all-button"]', '#uc-btn-deny-banner'] },
+    { id: 'sourcepoint', name: 'Sourcepoint', containers: ['[id^="sp_message_container_"]', '.sp_message_container'], rejectButtons: ['button.sp_choice_type_13', 'button.sp_choice_type_REJECT_ALL', '.sp_message_container button[title*="Reject" i]'] },
+    { id: 'trustarc', name: 'TrustArc', containers: ['#truste-consent-track', '#truste-consent-content', '.truste_box_overlay'], rejectButtons: ['#truste-consent-required', '.truste-declined-button', '#truste-consent-close'] },
+    { id: 'cookieyes', name: 'CookieYes', containers: ['.cky-consent-container', '#cky-consent-banner', '.cky-modal'], rejectButtons: ['[data-cky-tag="reject-button"]', '.cky-btn-reject'] },
+    { id: 'osano', name: 'Osano', containers: ['.osano-cm-window', '.osano-cm-dialog'], rejectButtons: ['.osano-cm-denyAll', '.osano-cm-deny', '.osano-cm-dialog__close'] },
+    { id: 'iubenda', name: 'Iubenda', containers: ['#iubenda-cs-banner', '.iubenda-cs-container'], rejectButtons: ['.iubenda-cs-reject-btn'] },
+    { id: 'termly', name: 'Termly', containers: ['#termly-code-snippet-support', '[data-termly-banner]', '.t-consentPrompt'], rejectButtons: ['[data-tid="banner-decline"]'] },
+    { id: 'consentmanager', name: 'Consentmanager', containers: ['#cmpbox', '#cmpwrapper', '.cmpboxBG'], rejectButtons: ['.cmpboxbtnno', '#cmpbntnotxt'] },
+    { id: 'axeptio', name: 'Axeptio', containers: ['#axeptio_overlay', '.axeptio_mount', '#axeptio_main'], rejectButtons: ['#axeptio_btn_dismiss', 'button[data-axeptio-action="refuse"]', '[data-testid="axeptio-btn-dismiss"]'] },
+    { id: 'sirdata', name: 'Sirdata CMP', containers: ['#sd-cmp', '.sd-cmp-container'], rejectButtons: ['.sd-cmp-reject-all', '#sd-cmp-reject-all-button', 'button[data-sd-cmp-action="reject"]'] },
+    { id: 'admiral', name: 'Admiral CMP', containers: ['#admiral-consent-banner', '[class*="admiral-consent"]', '.admiral-cmp'], rejectButtons: ['[class*="admiral-reject"]', 'button[data-admiral-action="reject"]'] },
+    { id: 'civic-cookie-control', name: 'Civic Cookie Control', containers: ['#ccc', '#ccc-notify', '#ccc-module'], rejectButtons: ['#ccc-reject-settings', '#ccc-notify-reject', 'button.ccc-reject-button'] },
+    { id: 'cookie-information', name: 'Cookie Information', containers: ['#cookie-information-template-wrapper', '#coiOverlay'], rejectButtons: ['#declineButton', '.coi-banner__decline'] },
+    { id: 'cookiescript', name: 'CookieScript', containers: ['#cookiescript_injected', '#cookiescript_wrapper'], rejectButtons: ['#cookiescript_reject'] },
+    { id: 'cookiehub', name: 'CookieHub', containers: ['.ch2-container', '#ch2-dialog', '.ch2'], rejectButtons: ['.ch2-deny-all-btn'] },
+    { id: 'ketch', name: 'Ketch', containers: ['#lanyard_root', '#ketch-banner', '.ketch-banner'], rejectButtons: ['[data-testid="ketch-banner-reject"]', '#ketch-reject-all'] },
+    { id: 'transcend', name: 'Transcend Airgap', containers: ['#transcend-consent-manager', 'transcend-consent-manager'], rejectButtons: ['[data-transcend-action="reject-all"]', 'button.transcend-reject-all'] },
+    { id: 'securiti', name: 'Securiti Privacy Center', containers: ['.securiti-cmp-banner', '#securiti-cookie-banner'], rejectButtons: ['.securiti-reject-btn', 'button[data-securiti-reject]'] },
+    { id: 'evidon', name: 'Evidon / Crownpeak', containers: ['#_evidon_banner', '#_evidon-background', '.evidon-banner'], rejectButtons: ['#_evidon-decline-button', '.evidon-banner-declinebutton'] },
+    { id: 'tealium-consent', name: 'Tealium Consent Manager', containers: ['#__tealium_consent_prompt', '#tealium-consent-banner', '.utag-consent-banner'], rejectButtons: ['#tealium-consent-decline', '.utag-consent-decline'] },
+    { id: 'ensighten', name: 'Ensighten Privacy', containers: ['#ensNotifyBanner', '.ensNotifyBanner'], rejectButtons: ['#ensRejectAll', '#ensCloseBanner', '.ens-reject-all'] },
+    { id: 'adobe-optin', name: 'Adobe Experience Consent', containers: ['#adobe-privacy-banner', '.adobe-consent-banner'], rejectButtons: ['.adobe-consent-reject', '#adobe-privacy-decline'] },
+    { id: 'oracle-consent', name: 'Oracle Consent Manager', containers: ['#oracle-consent-banner', '.ora-consent-banner'], rejectButtons: ['.ora-consent-decline', '#oracle-consent-reject'] },
+    { id: 'sfbx-appconsent', name: 'SFBX AppConsent', containers: ['#appconsent_nativ', '.appconsent-container', '#appconsent'], rejectButtons: ['.appconsent-refuse-all', 'button[data-ac-action="refuse"]'] },
+    { id: 'commanders-act', name: 'Commanders Act (TrustCommander)', containers: ['#tc-privacy-wrapper', '#popin_tc_privacy', '#tc_privacy_banner'], rejectButtons: ['#popin_tc_privacy_button_2', '#tc_privacy_button_reject', 'button[id*="tc_privacy_reject"]'] },
+    { id: 'sibbo', name: 'Sibbo CMP', containers: ['#sibbo-cmp', '.sibbo-cmp-banner'], rejectButtons: ['#sibbo-cmp-reject', '.sibbo-cmp-btn-reject'] },
+    { id: 'liveramp-privacymanager', name: 'LiveRamp Privacy Manager', containers: ['#lr-privacy-manager', '.lr-pm-container', '[id^="factor-cmp"]'], rejectButtons: ['.lr-pm-reject-all', 'button[data-lr-reject]'] },
+    { id: 'gravito', name: 'Gravito CMP', containers: ['#gravitoCMP', '.gravitoCMP-wrapper'], rejectButtons: ['#gravitoCMP-reject-all', '.gravitoCMP-reject-btn'] },
+    { id: 'piwik-pro', name: 'Piwik PRO Consent Manager', containers: ['#ppms_cm_consent_popup', '.ppms_cm_popup_container'], rejectButtons: ['#ppms_cm_reject-all'] },
+    { id: 'matomo-consent', name: 'Matomo Consent Manager', containers: ['#matomo-consent-banner', '.matomo-cookie-consent'], rejectButtons: ['#matomo-consent-decline', '.matomo-cookie-decline'] },
+    { id: 'trusted-shops-consent', name: 'Trusted Shops Consent', containers: ['#ts-consent-banner', '.ts-consent-modal'], rejectButtons: ['#ts-consent-reject', '.ts-consent-btn-reject'] },
+    { id: 'complianz', name: 'Complianz GDPR/CCPA', containers: ['#cmplz-cookiebanner-container', '.cmplz-cookiebanner'], rejectButtons: ['.cmplz-deny'] },
+    { id: 'borlabs-cookie', name: 'Borlabs Cookie', containers: ['#BorlabsCookieBox', '.BorlabsCookie', '#BorlabsCookieBoxWrap'], rejectButtons: ['a[data-cookie-refuse]', '#BorlabsCookieBtnRefuse', '._brlbs-refuse-btn', 'button[data-borlabs-cookie-refuse]'] },
+    { id: 'real-cookie-banner', name: 'Real Cookie Banner', containers: ['.rcb-banner', '#devowl-real-cookie-banner'], rejectButtons: ['.rcb-btn-reject', 'button[data-rcb-action="reject"]', '.rcb-reject-all'] },
+    { id: 'cookienotice', name: 'Cookie Notice & Compliance', containers: ['#cookie-notice', '.cookie-notice-container'], rejectButtons: ['#cn-refuse-cookie', '.cn-refuse-cookie'] },
+    { id: 'gdpr-cookie-compliance', name: 'GDPR Cookie Compliance (Moove)', containers: ['#moove_gdpr_cookie_info_bar', '.moove-gdpr-info-bar-container'], rejectButtons: ['.moove-gdpr-infobar-reject-btn'] },
+    { id: 'cookie-law-info', name: 'Cookie Law Info', containers: ['#cookie-law-info-bar', '.cli-bar-container'], rejectButtons: ['#cookie_action_close_header_reject', '.cli_action_button[data-cli_action="reject"]'] },
+    { id: 'pandectes', name: 'Pandectes GDPR Compliance', containers: ['#pandectes-banner', '.pandectes-banner'], rejectButtons: ['.pd-cp-decline-btn', '#pd-cp-decline'] },
+    { id: 'cookiefirst', name: 'CookieFirst', containers: ['#cookiefirst-root', '.cf-banner', '[data-cookiefirst-widget]'], rejectButtons: ['[data-cookiefirst-action="reject"]'] },
+    { id: 'shopify-privacy-banner', name: 'Shopify Customer Privacy Banner', containers: ['#shopify-pc__banner', '.shopify-pc__banner'], rejectButtons: ['#shopify-pc__banner__btn-decline'] },
+    { id: 'wix-cookie-banner', name: 'Wix Cookie Consent', containers: ['[data-hook="consent-banner"]', '.cookie-banner-wix', '#wix-cookie-banner'], rejectButtons: ['[data-hook="consent-banner-decline-button"]', 'button[data-hook="decline-all-button"]'] },
+    { id: 'squarespace-cookie-banner', name: 'Squarespace Cookie Banner', containers: ['.sqs-cookie-banner-v2', '.sqs-cookie-banner'], rejectButtons: ['.sqs-cookie-banner-v2-deny'] },
+    { id: 'finsweet-cookie-consent', name: 'Finsweet Cookie Consent', containers: ['[fs-cc="banner"]', '.fs-cc-banner_component'], rejectButtons: ['[fs-cc="deny"]'] },
+    { id: 'hubspot-cookie-banner', name: 'HubSpot Cookie Banner', containers: ['#hs-eu-cookie-confirmation', '#hs-banner-parent'], rejectButtons: ['#hs-eu-decline-button'] },
+    { id: 'bigcommerce-cookie', name: 'BigCommerce Cookie Consent', containers: ['[data-consent-manager-dialog]', '#bc-consent-banner'], rejectButtons: ['[data-consent-manager-reject]', 'button.bc-consent-reject'] },
+    { id: 'magento-cookie-notice', name: 'Magento Cookie Notice', containers: ['#notice-cookie-block', '.message.global.cookie'], rejectButtons: ['#btn-cookie-deny', '.cookie-deny', '#btn-cookie-decline'] },
+    { id: 'prestashop-lgcookieslaw', name: 'PrestaShop LGCookiesLaw', containers: ['#lgcookieslaw_banner', '.lgcookieslaw-banner'], rejectButtons: ['#lgcookieslaw_reject', '.lgcookieslaw-btn-reject'] },
+    { id: 'prestashop-ets-cookie', name: 'PrestaShop Cookie Banner (ETS)', containers: ['#ets_cb_banner', '.kb-cookie-bar'], rejectButtons: ['.ets_cb_reject', '.kb-cookie-reject'] },
+    { id: 'drupal-eu-cookie-compliance', name: 'Drupal EU Cookie Compliance', containers: ['#sliding-popup', '.eu-cookie-compliance-banner'], rejectButtons: ['.eu-cookie-compliance-decline-button', '.eu-cookie-compliance-banner .decline-button'] },
+    { id: 'joomla-cookiehint', name: 'Joomla CookieHint', containers: ['#redim-cookiehint', '.cookiehint'], rejectButtons: ['#cookiehintsubmitno', '.cookiehint_decline'] },
+    { id: 'typo3-mindshape', name: 'TYPO3 Mindshape Cookie Consent', containers: ['.mindshape-cookie-consent', '#mindshape-cookie-consent'], rejectButtons: ['.mindshape-cookie-consent-deny'] },
+    { id: 'typo3-sg-cookie-optin', name: 'TYPO3 sg_cookie_optin', containers: ['#sg-cookie-optin', '.sg-cookie-optin-box'], rejectButtons: ['.sg-cookie-optin-reject', 'button[data-sg-cookie-reject]'] },
+    { id: 'shopware-cookie-permission', name: 'Shopware Cookie Permission', containers: ['.cookie-permission-container', '#cookie-permission-bar'], rejectButtons: ['.js-cookie-permission-deny', 'button.cookie-permission-deny'] },
+    { id: 'wp-cookie-consent', name: 'WP Cookie Consent (WPEka)', containers: ['#wpl-cookie-consent', '.wpl-cookie-consent-bar'], rejectButtons: ['#cookie_action_reject', '.wpl-reject-btn'] },
+    { id: 'wp-autoterms', name: 'WP AutoTerms Cookie Banner', containers: ['#wpautoterms-cookie-banner', '.wpautoterms-consent'], rejectButtons: ['.wpautoterms-cookie-reject'] },
+    { id: 'beautiful-cookie-banner', name: 'Beautiful Cookie Consent Banner', containers: ['.nsc_bar_container', '#nsc_bar'], rejectButtons: ['.nsc_bar_decline'] },
+    { id: 'data443-gdpr-framework', name: 'The GDPR Framework (Data443)', containers: ['#gdpr-cookie-consent-bar', '.gdpr-consent-bar'], rejectButtons: ['.gdpr-decline-btn', '#gdpr-cookie-decline'] },
+    { id: 'ct-ultimate-gdpr', name: 'CT Ultimate GDPR', containers: ['#ct-ultimate-gdpr-cookie-popup', '.ct-ultimate-gdpr-cookie-modal'], rejectButtons: ['#ct-ultimate-gdpr-cookie-reject', '.ct-ultimate-gdpr-cookie-decline'] },
+    { id: 'ginger-eu-cookie', name: 'Ginger EU Cookie Law', containers: ['#ginger_banner', '.ginger-banner'], rejectButtons: ['.ginger_btn_refuse', '.ginger-reject'] },
+    { id: 'weepie-cookie-allow', name: 'WeePie Cookie Allow', containers: ['#wpca_banner', '.wpca-cookie-bar'], rejectButtons: ['.wpca-decline-btn', '#wpca_decline'] },
+    { id: 'webtoffee-gdpr', name: 'WebToffee GDPR Cookie Consent', containers: ['#wt-cli-cookie-consent-bar', '.wt-cli-cookie-bar'], rejectButtons: ['#wt-cli-reject-btn'] },
+    { id: 'eu-cookie-law-wp', name: 'EU Cookie Law (WP)', containers: ['.pea_cook_wrapper', '#pea_cook_wrapper'], rejectButtons: ['.pea_cook_btn_refuse', '#pea_cook_refuse'] },
+    { id: 'seers-cookie', name: 'Seers Consent Management', containers: ['#seers-cookie-banner', '.seers-cookie-consent'], rejectButtons: ['#seers-reject-all', '.seers-cmp-reject-btn'] },
+    { id: 'consentik', name: 'Consentik GDPR Cookies', containers: ['#consentik-banner', '.consentik-cookie-banner'], rejectButtons: ['.consentik-decline-btn', '#consentik-reject-all'] },
+    { id: 'avada-gdpr-cookies', name: 'Avada GDPR Cookies', containers: ['#avada-cookie-bar', '.avada-cookies-banner'], rejectButtons: ['.avada-cookies-decline', '#avada-cookie-decline'] },
+    { id: 'booster-eu-cookie', name: 'Booster EU Cookie Bar', containers: ['#ba-cookie-bar', '.ba-cookie-banner'], rejectButtons: ['.ba-cookie-decline', '#ba-cookie-reject'] },
+    { id: 'consentmo', name: 'Consentmo (iSenseLabs) GDPR', containers: ['#gdpr-cc-banner', '.consentmo-banner', '.cc-m-banner'], rejectButtons: ['.cc-m-decline', '#gdpr-cc-decline-btn', '.consentmo-decline-btn'] },
+    { id: 'wpconsent', name: 'WPConsent', containers: ['#wpconsent-container', '.wpconsent-banner'], rejectButtons: ['#wpconsent-cancel-all', '.wpconsent-cancel-cookies'] },
+    { id: 'ghost-cookie-banner', name: 'Ghost Portal Cookie Banner', containers: ['.gh-cookie-banner', '#gh-cookie-consent'], rejectButtons: ['.gh-cookie-decline', '#gh-cookie-reject'] },
+    { id: 'pressidium-cookie-consent', name: 'Pressidium Cookie Consent', containers: ['.pressidium-cookie-consent', '#pressidium-cc'], rejectButtons: ['.pressidium-cc-deny', 'button[data-pressidium-cc="reject"]'] },
+    { id: 'consentmagic', name: 'ConsentMagic', containers: ['.cs-consent-banner', '#consentmagic-banner'], rejectButtons: ['.cs-reject-all', '#consentmagic-reject-all'] },
+    { id: 'osano-cookieconsent-oss', name: 'CookieConsent v3 (Insites OSS)', containers: ['.cc-window', '.cc-banner'], rejectButtons: ['.cc-deny', '.cc-btn.cc-deny'] },
+    { id: 'orestbida-cookieconsent', name: 'Orestbida CookieConsent', containers: ['#cc--main', '#cc-main', '.cm-wrapper'], rejectButtons: ['#c-s-bn', '.cm__btn[data-role="necessary"]', 'button[data-role="necessary"]', '#s-rall-bn'] },
+    { id: 'klaro', name: 'Klaro! Consent Manager', containers: ['.klaro', '#klaro'], rejectButtons: ['.klaro .cm-btn-decline', '.klaro button.cn-decline', '.klaro .cm-btn-danger'] },
+    { id: 'tarteaucitron', name: 'TarteAuCitron.js', containers: ['#tarteaucitronRoot', '#tarteaucitronAlertBig'], rejectButtons: ['#tarteaucitronAllDenied', '#tarteaucitronAllDenied2', '.tarteaucitronDeny'] },
+    { id: 'orejime', name: 'Orejime', containers: ['.orejime-ModalWrapper', '.orejime-Notice', '#orejime'], rejectButtons: ['.orejime-Notice-declineButton'] },
+    { id: 'silktide-cookie-banner', name: 'Silktide Cookie Banner', containers: ['#silktide-cookie-banner', '.silktide-cookie-banner'], rejectButtons: ['.silktide-reject-button', 'button[data-silktide-reject]'] },
+    { id: 'cookie-bar-eu', name: 'CookieBAR (cookie-bar.eu)', containers: ['#cookie-bar', '#cookie-bar-prompt'], rejectButtons: ['#cookie-bar-button-no', '.cb-disable'] },
+    { id: 'cookiecuttr', name: 'jQuery CookieCuttr', containers: ['.cc-cookies-cuttr', '#cookie-cuttr'], rejectButtons: ['.cc-cookie-decline-cuttr', 'a.cc-cookie-decline'] },
+    { id: 'gdpr-cookie-notice', name: 'gdpr-cookie-notice', containers: ['.gdpr-cookie-notice', '#gdpr-cookie-notice'], rejectButtons: ['.gdpr-cookie-notice-nav-item-btn-reject', '.gdpr-cookie-notice-reject'] },
+    { id: 'react-cookie-consent', name: 'react-cookie-consent', containers: ['.CookieConsent'], rejectButtons: ['#rcc-decline-button'] },
+    { id: 'vanilla-cookieconsent', name: 'vanilla-cookieconsent', containers: ['#cm-container', '.cm-container'], rejectButtons: ['.cm-btn-reject-all', 'button[data-cc="reject-all"]'] },
+    { id: 'c15t', name: 'c15t Consent', containers: ['[data-c15t-dialog]', '#c15t-banner'], rejectButtons: ['[data-c15t-reject-all]', 'button[data-c15t-action="reject"]'] },
+    { id: 'govuk-cookie-banner', name: 'GOV.UK Cookie Banner', containers: ['.govuk-cookie-banner', '#govuk-cookie-banner'], rejectButtons: ['.govuk-cookie-banner button[value="reject"]', 'button[data-cookie-action="reject"]'] },
+    { id: 'nhsuk-cookie-banner', name: 'NHS UK Cookie Banner', containers: ['#nhsuk-cookie-banner', '.nhsuk-cookie-banner'], rejectButtons: ['#nhsuk-cookie-banner__link_reject', 'button[data-nhs-cookie-reject]'] },
+    { id: 'europa-cck', name: 'European Commission CCK', containers: ['#cookie-consent-toolkit', '.wt-cck-banner', '.cck-banner'], rejectButtons: ['.wt-cck-btn-refuse', '.cck-actions-button-refuse', 'a[href="#refuse"]'] },
+    { id: 'grt-cookie-consent', name: 'GRT Cookie Consent', containers: ['.grt-cookie', '#grt-cookie'], rejectButtons: ['.grt-cookie-decline'] },
+    { id: 'glowcookies', name: 'GlowCookies', containers: ['#glowCookies-banner', '.glowCookies__banner'], rejectButtons: ['#rejectCookies', '.glowCookies__btn--reject'] },
+    { id: 'bootstrap-cookie-alert', name: 'Bootstrap Cookie Alert', containers: ['.cookiealert', '#cookiealert'], rejectButtons: ['.declinecookies'] },
+    { id: 'vue-cookie-accept-decline', name: 'vue-cookie-accept-decline', containers: ['.cookie__bar', '.cookie__floating'], rejectButtons: ['.cookie__bar__buttons__button--decline', '.cookie__floating__buttons__button--decline'] },
+    { id: 'ngx-cookieconsent', name: 'ngx-cookieconsent', containers: ['#ngx-cc-window', '.ngx-cc-window'], rejectButtons: ['.ngx-cc-deny'] },
+    { id: 'svelte-cookie-consent', name: 'svelte-cookie-consent', containers: ['.cookieConsent', '.cookieConsentToggle'], rejectButtons: ['.cookieConsent__Button--Decline', 'button[data-gdpr-reject]'] },
+    { id: 'cookie-though', name: 'cookie-though', containers: ['.ct-container', '#cookie-though'], rejectButtons: ['.ct-button-reject', 'button[data-ct-reject]'] },
+    { id: 'oil-js', name: 'OIL.js', containers: ['.as-oil', '#as-oil-dialog'], rejectButtons: ['.as-oil__btn-optout', '[data-qa="oil-NoCookieButton"]'] },
+    { id: 'google-funding-choices', name: 'Google Funding Choices', containers: ['.fc-consent-root', '.fc-dialog-container'], rejectButtons: ['.fc-cta-do-not-consent'] },
+    { id: 'freeprivacypolicy-cc', name: 'FreePrivacyPolicy Cookie Consent', containers: ['.freeprivacypolicy-com---nb', '#freeprivacypolicy-com---nb'], rejectButtons: ['.freeprivacypolicy-com---nb .cc-nb-reject'] },
+    { id: 'termsfeed-cookie-consent', name: 'TermsFeed Cookie Consent', containers: ['#termsfeed-com---nb', '.termsfeed-com---nb'], rejectButtons: ['.termsfeed-com---nb .cc-nb-reject', '#termsfeed-reject-btn'] },
+    { id: 'privacypolicies-cc', name: 'PrivacyPolicies.com Cookie Consent', containers: ['#privacypolicies-com---nb', '.privacypolicies-com---nb'], rejectButtons: ['.privacypolicies-com---nb .cc-nb-reject'] },
+    { id: 'cookie-confirm', name: 'Cookie Confirm', containers: ['#cookie-confirm-banner', '.cookie-confirm-dialog'], rejectButtons: ['.cookie-confirm-reject'] },
+    { id: 'enzuzo', name: 'Enzuzo', containers: ['#enzuzo-cookie-banner', '.enzuzo-cookie-banner'], rejectButtons: ['#enzuzo-reject-all', '.enzuzo-decline-btn'] },
+    { id: 'termageddon', name: 'Termageddon', containers: ['#termageddon-consent', '.termageddon-cookie-banner'], rejectButtons: ['.termageddon-decline-btn', '#termageddon-reject'] },
+    { id: 'google-consent', name: 'Google Consent Banner', containers: ['#CXQnmb', 'form[action*="consent.google"]'], rejectButtons: ['form[action*="consent.google"] button[aria-label*="Reject" i]', '#W0wltc'] },
+    { id: 'youtube-consent', name: 'YouTube Consent Dialog', containers: ['ytd-consent-bump-v2-lightbox', 'tp-yt-paper-dialog.ytd-consent-bump-v2-lightbox'], rejectButtons: ['ytd-consent-bump-v2-lightbox button[aria-label*="Reject" i]'] },
+    { id: 'microsoft-bnp', name: 'Microsoft / Bing Cookie Banner', containers: ['#bnp_container', '#msccBanner', '.ms-cookie-banner'], rejectButtons: ['#bnp_btn_reject', '#msccRejectBtn'] },
+    { id: 'amazon-sp-cc', name: 'Amazon Cookie Preferences', containers: ['#sp-cc', '#sp-cc-form'], rejectButtons: ['#sp-cc-rejectall-link', 'input#sp-cc-rejectall-link', 'button#sp-cc-rejectall-link'] },
+    { id: 'meta-cookie-dialog', name: 'Meta / Facebook Cookie Dialog', containers: ['[data-testid="cookie-policy-manage-dialog"]', '[data-testid="cookie-policy-dialog"]'], rejectButtons: ['[data-testid="cookie-policy-manage-dialog-decline-button"]', '[data-cookiebanner="decline_button"]'] },
+    { id: 'linkedin-cookie-consent', name: 'LinkedIn Cookie Consent', containers: ['#artdeco-global-alert-container', '.artdeco-global-alert[type="COOKIE_CONSENT"]'], rejectButtons: ['.artdeco-global-alert button[action-type="DENY"]'] },
+    { id: 'reddit-cookie-banner', name: 'Reddit Cookie Banner', containers: ['shreddit-cookie-banner', '#reddit-cookie-banner'], rejectButtons: ['button[data-testid="reject-nonessential-cookies"]'] },
+    { id: 'tiktok-cookie-banner', name: 'TikTok Cookie Banner', containers: ['tiktok-cookie-banner', '#tiktok-cookie-banner'], rejectButtons: ['button[data-e2e="cookie-banner-decline"]'] },
+    { id: 'clickio', name: 'Clickio Consent', containers: ['#clickio-consent-container', '.cl-consent-node', '#cl-consent'], rejectButtons: ['.cl-consent__btn--reject', '#cl-consent-reject'] },
+    { id: 'inmobi-choice', name: 'InMobi Choice CMP', containers: ['#inmobi-cmp-container', '.inmobi-choice-banner'], rejectButtons: ['.inmobi-choice-reject', 'button[data-inmobi-reject]'] },
+    { id: 'ezoic-consent', name: 'Ezoic Consent Management', containers: ['#ez-cookie-dialog-wrapper', '#ez-cookie-dialog'], rejectButtons: ['#ez-reject-all', '#ez-decline-all', 'button.ez-cmp-reject'] },
+    { id: 'mediavine-cmp', name: 'Mediavine CMP', containers: ['#mediavine-cmp-container', '.mv-cmp-banner', '[data-name="mediavine-cmp"]'], rejectButtons: ['.mv-cmp-reject-all', 'button[data-mv-cmp="reject"]'] },
+    { id: 'raptive-cmp', name: 'Raptive / AdThrive CMP', containers: ['#adthrive-cmp-container', '.raptive-cmp-banner'], rejectButtons: ['.raptive-cmp-reject-all', '.adthrive-cmp-reject'] },
+    { id: 'freestar-cmp', name: 'Freestar CMP', containers: ['#fs-cmp-banner', '.freestar-cmp-container'], rejectButtons: ['.fs-cmp-reject', '.freestar-cmp-reject'] },
+    { id: 'nitropay-cmp', name: 'NitroPay CMP', containers: ['#ncmp__container', '.ncmp__banner'], rejectButtons: ['.ncmp__btn--reject', 'button.ncmp__btn-reject'] },
+    { id: 'monumetric-cmp', name: 'Monumetric CMP', containers: ['#mm-cmp-banner', '.monumetric-cmp'], rejectButtons: ['.mm-cmp-reject'] },
+    { id: 'snigel-adconsent', name: 'Snigel AdConsent', containers: ['#snigel-cmp-framework', '.adconsent-banner', '#adconsent-popup'], rejectButtons: ['#adconsent-reject-all', '.adconsent-decline'] },
+    { id: 'venatus-cmp', name: 'Venatus CMP', containers: ['#vnt-cmp-banner', '.venatus-cmp'], rejectButtons: ['.vnt-cmp-reject-all'] },
+    { id: 'playwire-cmp', name: 'Playwire Ramp CMP', containers: ['#pw-cmp-banner', '.pw-cmp-container'], rejectButtons: ['.pw-cmp-reject-all'] },
+    { id: 'ogury-cmp', name: 'Ogury Choice Manager', containers: ['#ogury-cmp-container', '.ogury-consent-modal'], rejectButtons: ['.ogury-cmp-refuse-all'] },
+    { id: 'uniconsent', name: 'UniConsent CMP', containers: ['#uniccmp', '.unic-modal-container'], rejectButtons: ['#unic-reject-all', '.unic-btn-reject'] },
+    { id: 'consent-studio', name: 'Consent Studio', containers: ['#consent-studio-banner', '.consent-studio-dialog'], rejectButtons: ['#consent-studio-reject', '.consent-studio-decline'] },
+    { id: 'cassie-syrenis', name: 'Cassie (Syrenis)', containers: ['#cassie-cookie-module', '.cassie-cookie-banner'], rejectButtons: ['#cassie_reject_all_banner', '.cassie-reject-all'] },
+    { id: 'datagrail', name: 'DataGrail Consent', containers: ['#datagrail-consent-banner', '.dg-consent-banner'], rejectButtons: ['.dg-consent-reject', '[data-dg-action="reject"]'] },
+    { id: 'ethyca-fides', name: 'Ethyca Fides', containers: ['#fides-banner', '#fides-overlay', '.fides-modal-container'], rejectButtons: ['#fides-reject-all-button', '.fides-reject-all-button', 'button[data-testid="Reject all-btn"]'] },
+    { id: 'mineos', name: 'MineOS Consent', containers: ['#mineos-consent-banner', '.mineos-cmp'], rejectButtons: ['.mineos-reject-all'] },
+    { id: 'privado', name: 'Privado Consent', containers: ['#privado-cookie-banner', '.privado-cmp'], rejectButtons: ['.privado-reject-btn'] },
+    { id: 'ebay-gdpr-banner', name: 'eBay GDPR Banner', containers: ['#gdpr-banner', '.gdpr-banner-container'], rejectButtons: ['#gdpr-banner-decline', 'button#gdpr-banner-decline'] },
+    { id: 'poool-consent', name: 'Poool Consent', containers: ['#poool-consent-banner', '.poool-cmp'], rejectButtons: ['.poool-cmp-reject'] },
+    { id: 'contentpass', name: 'Contentpass CMP', containers: ['#cp-consent-banner', '.contentpass-cmp'], rejectButtons: ['.contentpass-reject'] },
+    { id: 'stackoverflow-consent', name: 'Stack Overflow Consent Banner', containers: ['.js-consent-banner', '#onetrust-consent-sdk .js-consent-banner'], rejectButtons: ['.js-reject-cookies', 'button.js-reject-cookies'] },
+    { id: 'ccm19', name: 'CCM19', containers: ['#ccm-widget', '.ccm-modal', '#ccm-control-panel'], rejectButtons: ['.ccm--decline-cookies', '#ccm-decline-all'] },
+    { id: 'bbc-cookies', name: 'BBC Cookies Banner', containers: ['#bbccookies', '.bbc-cookie-banner'], rejectButtons: ['#bbccookies-reject-button', 'button[data-bbc-cookie-reject]'] },
+    { id: 'cloudflare-zaraz', name: 'Cloudflare Zaraz Consent', containers: ['#cf-zaraz-consent', '.zaraz-consent-modal'], rejectButtons: ['.zaraz-reject-all', '#cf-zaraz-reject'] },
+    { id: 'etracker-consent', name: 'etracker Consent', containers: ['#etracker-consent-banner', '.etracker-cookie-notice'], rejectButtons: ['#etracker-consent-reject', '.etracker-decline'] },
+    { id: 'clym', name: 'Clym Privacy Widget', containers: ['#clym-widget', '.clym-privacy-widget'], rejectButtons: ['.clym-reject-all', '#clym-decline-btn'] },
+    { id: 'secure-privacy', name: 'Secure Privacy', containers: ['#sp-cc-banner', '.secureprivacy-banner'], rejectButtons: ['#sp-cc-decline', '.secureprivacy-decline'] },
+    { id: 'metomic', name: 'Metomic Consent', containers: ['#metomic-consent-banner', '.mtm-consent-bar'], rejectButtons: ['.mtm-reject-all', '#metomic-reject'] },
+    { id: 'illow', name: 'Illow Cookie Banner', containers: ['.illow-cookie-banner', '#illow-cookie-banner'], rejectButtons: ['.illow-reject-all', '#illow-decline-btn'] },
+    { id: 'cookieguard', name: 'CookieGuard', containers: ['#cookieguard-banner', '.cookieguard-container'], rejectButtons: ['.cookieguard-decline'] },
+    { id: 'adopt-lgpd', name: 'AdOpt (LGPD)', containers: ['#adopt-cookie-banner', '.adopt-c-banner'], rejectButtons: ['#adopt-reject-all-button', '.adopt-reject-btn'] },
+    { id: 'dponet-lgpd', name: 'DPOnet (LGPD)', containers: ['#dponet-cookie-banner', '.dponet-cmp'], rejectButtons: ['.dponet-reject-all'] },
+    { id: 'privacytools-br', name: 'PrivacyTools (LGPD)', containers: ['#privacytools-banner', '.pt-cookie-banner'], rejectButtons: ['.pt-cookie-reject', '#privacytools-reject'] },
+    { id: 'privtech-jp', name: 'PrivTech Trust 360', containers: ['#privtech-consent-banner', '.privtech-cmp'], rejectButtons: ['.privtech-reject-all'] },
+    { id: 'datasign-webtru', name: 'DataSign webtru', containers: ['#webtru-banner', '.webtru-consent-dialog'], rejectButtons: ['.webtru-reject-all', '#webtru-decline'] },
+    { id: 'shinystat-cmp', name: 'ShinyStat CMP', containers: ['#shinystat-cookie-banner', '.shinystat-cmp'], rejectButtons: ['.shinystat-cmp-reject'] },
+    { id: 'yahoo-oath-cmp', name: 'Yahoo / Oath CMP', containers: ['#consent-page', '.consent-wizard'], rejectButtons: ['.consent-wizard button[name="reject"]', '.consent-wizard button.reject-all'] },
+    { id: 'umbraco-cookie-consent', name: 'Umbraco Cookie Consent', containers: ['#umbraco-cookie-consent', '.umb-cookie-banner'], rejectButtons: ['.umb-cookie-reject', '#umbraco-cookie-reject'] },
+    { id: 'craft-cookie-consent', name: 'Craft CMS Cookie Consent', containers: ['.craft-cookie-banner', '#craft-cookie-consent'], rejectButtons: ['.craft-cookie-decline', '#craft-cookie-reject'] },
+    { id: 'brevo-cookie-consent', name: 'Brevo Cookie Consent', containers: ['#brevo-cookie-banner', '.sib-cookie-consent'], rejectButtons: ['.sib-cookie-decline'] },
+    { id: 'zoho-cookie-consent', name: 'Zoho Cookie Consent', containers: ['#zoho-cookie-banner', '.zoho-cookie-bar'], rejectButtons: ['.zoho-cookie-reject'] },
+    { id: 'salesforce-cookie-consent', name: 'Salesforce Cookie Consent', containers: ['c-cookie-consent', '.sfdc-cookie-consent', '#salesforce-cookie-banner'], rejectButtons: ['.sfdc-cookie-reject', 'button[data-sfdc-cookie-reject]'] },
+    { id: 'sap-cdc-consent', name: 'SAP Customer Data Cloud Consent', containers: ['#gigya-consent-banner', '.gigya-cookie-consent'], rejectButtons: ['.gigya-consent-reject', '#gigya-cookie-reject'] },
+    { id: 'truendo', name: 'Truendo CMP', containers: ['#truendo-cookie-banner', '#truendo-widget', '.truendo-banner'], rejectButtons: ['#truendo-reject-all', '.truendo-decline-btn', 'button[data-tr-action="deny"]'] },
+    { id: 'monsido', name: 'Monsido / CivicPlus Consent', containers: ['#monsido-cookie-banner', '.monsido-consent-dialog'], rejectButtons: ['.monsido-reject-all', '#monsido-decline'] }
+  ];
+
   const CMP_SELECTORS = [
-    '#onetrust-banner-sdk',
-    '#CybotCookiebotDialog',
-    '.qc-cmp2-container',
-    '#didomi-host',
-    '#usercentrics-root',
-    '[id*="cookie-banner" i]',
-    '[class*="cookie-consent" i]'
+    ...new Set([
+      ...CMP_FRAMEWORKS.flatMap((f) => f.containers),
+      '[id*="cookie-banner" i]',
+      '[class*="cookie-consent" i]',
+      '[id*="cookie-consent" i]',
+      '[class*="cookie-banner" i]',
+      '[role="dialog"][aria-label*="cookie" i]'
+    ])
   ];
 
   const CMP_REJECT_BUTTONS = [
-    '#onetrust-reject-all-handler',
-    '#CybotCookiebotDialogBodyButtonDecline',
-    '.qc-cmp2-summary-buttons button[mode="secondary"]',
-    '.didomi-continue-without-agreeing',
-    'button[aria-label*="reject" i]',
-    'button[aria-label*="decline" i]'
+    ...new Set([
+      ...CMP_FRAMEWORKS.flatMap((f) => f.rejectButtons || []),
+      'button[aria-label*="reject" i]',
+      'button[aria-label*="decline" i]',
+      'button[aria-label*="refuse" i]',
+      'button[aria-label*="ablehnen" i]',
+      'button[aria-label*="refuser" i]',
+      'button[aria-label*="rechazar" i]',
+      'button[aria-label*="rifiuta" i]',
+      'button[aria-label*="weigeren" i]',
+      'button[aria-label*="rejeitar" i]',
+      'button[aria-label*="odrzuć" i]'
+    ])
   ];
 
-  function queryAllDeep(root, selector, depth = 0, out = []) {
-    if (!root || depth > 4 || typeof root.querySelectorAll !== 'function') return out;
+  const CMP_REJECT_TEXT_PATTERNS = [
+    // English (en)
+    /^(reject|reject all|decline|decline all|deny|deny all|refuse|refuse all|necessary only|only necessary|essential only|only essential|only required|use necessary cookies only|allow necessary only|reject non-essential|decline optional|continue without accepting|disagree|no thanks)$/i,
+    // German (de)
+    /^(alle ablehnen|ablehnen|alles ablehnen|nur notwendige|nur erforderliche|nur essenzielle|nur funktionale|ohne einwilligung fortfahren|weiter ohne zustimmung|einwilligung ablehnen|nicht zustimmen)$/i,
+    // French (fr)
+    /^(tout refuser|refuser|refuser tout|tout rejeter|rejeter|continuer sans accepter|uniquement les essentiels|seulement les nécessaires|cookies nécessaires uniquement|ne pas accepter)$/i,
+    // Spanish (es)
+    /^(rechazar todo|rechazar todas|rechazar|denegar todo|denegar|solo necesarias|sólo necesarias|solo esenciales|únicamente necesarias|continuar sin aceptar|no aceptar)$/i,
+    // Italian (it)
+    /^(rifiuta tutto|rifiuta tutti|rifiuta|nega tutto|solo necessari|solo essenziali|continua senza accettare|rifiuta e continua|non accetto)$/i,
+    // Dutch (nl)
+    /^(alles weigeren|weigeren|alles afwijzen|afwijzen|alleen noodzakelijk|alleen essentiële|enkel noodzakelijke|doorgaan zonder accepteren|niet akkoord)$/i,
+    // Portuguese (pt_BR)
+    /^(rejeitar tudo|rejeitar todos|rejeitar|recusar tudo|recusar|apenas necessários|apenas essenciais|somente necessários|continuar sem aceitar|não aceitar)$/i,
+    // Polish (pl)
+    /^(odrzuć wszystko|odrzuć wszystkie|odrzuć|odmów|tylko niezbędne|tylko konieczne|kontynuuj bez akceptacji|nie wyrażam zgody)$/i,
+    // Japanese (ja)
+    /^(すべて拒否|全て拒否|拒否する|拒否|同意しない|必須のみ|必要なCookieのみ|必須Cookieのみ|承諾せずに続行)$/i
+  ];
+
+  function getCmpFrameworkCount() {
+    return CMP_FRAMEWORKS.length;
+  }
+
+  const cmpRegistryMeta = Object.freeze({
+    count: CMP_FRAMEWORKS.length,
+    frameworks: Object.freeze(
+      CMP_FRAMEWORKS.map((f) =>
+        Object.freeze({
+          id: f.id,
+          name: f.name,
+          containers: Object.freeze([...f.containers]),
+          rejectButtons: Object.freeze([...(f.rejectButtons || [])])
+        })
+      )
+    ),
+    containerSelectorCount: CMP_SELECTORS.length,
+    rejectSelectorCount: CMP_REJECT_BUTTONS.length,
+    supportedLocales: Object.freeze(['en', 'de', 'fr', 'es', 'it', 'nl', 'pl', 'pt_BR', 'ja'])
+  });
+
+  try {
+    if (typeof globalThis !== 'undefined') {
+      globalThis.__SWEEPR_CMP_REGISTRY__ = cmpRegistryMeta;
+      globalThis.getCmpFrameworkCount = getCmpFrameworkCount;
+    }
+    if (typeof window !== 'undefined' && window !== (typeof globalThis !== 'undefined' ? globalThis : null)) {
+      window.__SWEEPR_CMP_REGISTRY__ = cmpRegistryMeta;
+      window.getCmpFrameworkCount = getCmpFrameworkCount;
+    }
+  } catch (e) {}
+
+  if (typeof document === 'undefined' || typeof window === 'undefined') {
+    return;
+  }
+
+  function collectShadowRoots(root, depth = 0, out = []) {
+    if (!root || depth > 4) return out;
     try {
-      const matched = root.querySelectorAll(selector);
-      for (let i = 0; i < matched.length; i++) out.push(matched[i]);
-      const allEls = root.querySelectorAll('*');
-      for (let i = 0; i < allEls.length && i < 600; i++) {
-        if (allEls[i].shadowRoot) {
-          queryAllDeep(allEls[i].shadowRoot, selector, depth + 1, out);
+      if (typeof root.querySelectorAll === 'function') {
+        const allEls = root.querySelectorAll('*');
+        for (let i = 0; i < allEls.length; i++) {
+          const el = allEls[i];
+          if (el && el.shadowRoot) {
+            out.push(el.shadowRoot);
+            collectShadowRoots(el.shadowRoot, depth + 1, out);
+          }
         }
       }
     } catch (e) {}
     return out;
   }
 
-  function queryDeep(root, selectors) {
+  function queryAllDeep(root, selector, depth = 0, out = [], shadowRoots = null) {
+    if (!root || depth > 4 || typeof root.querySelectorAll !== 'function') return out;
+    try {
+      const matched = root.querySelectorAll(selector);
+      for (let i = 0; i < matched.length; i++) out.push(matched[i]);
+      const roots = Array.isArray(shadowRoots) ? shadowRoots : collectShadowRoots(root, depth);
+      for (let i = 0; i < roots.length; i++) {
+        try {
+          const subMatched = roots[i].querySelectorAll(selector);
+          for (let j = 0; j < subMatched.length; j++) out.push(subMatched[j]);
+        } catch (err) {}
+      }
+    } catch (e) {}
+    return out;
+  }
+
+  function queryDeep(root, selectors, filterFn = null, shadowRoots = null) {
+    if (!root) return null;
     const list = Array.isArray(selectors) ? selectors : [selectors];
+    const roots = Array.isArray(shadowRoots) ? shadowRoots : collectShadowRoots(root, 0);
     for (const sel of list) {
-      const found = queryAllDeep(root, sel, 0, []);
-      if (found.length > 0) return found[0];
+      const found = queryAllDeep(root, sel, 0, [], roots);
+      for (let i = 0; i < found.length; i++) {
+        if (!filterFn || filterFn(found[i])) {
+          return found[i];
+        }
+      }
     }
     return null;
   }
@@ -381,34 +633,142 @@
     window.addEventListener('keydown', onKeyDown, true);
   }
 
-  if (chrome.runtime && chrome.runtime.onMessage) {
+  if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.onMessage) {
     chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
       if (msg && msg.type === 'START_ELEMENT_ZAPPER') {
         startElementZapper();
-        sendResponse({ ok: true });
+        if (typeof sendResponse === 'function') sendResponse({ ok: true });
+      } else if (msg && msg.type === 'PRO_ENTITLEMENT_CHANGED' && msg.proActive === false) {
+        disableContentProtectionsOnExpiry();
+        if (typeof sendResponse === 'function') sendResponse({ ok: true });
       }
     });
   }
 
-  function unlockScrollIfFrozenByModal() {
+  const CMP_SCROLL_LOCK_CLASSES = [
+    'didomi-popup-open',
+    'sp-message-open',
+    'qc-cmp2-showing-ui',
+    'cmplz-blocked',
+    'onetrust-pc-dark-filter',
+    'cookie-modal-open',
+    'cookies-modal-open',
+    'no-scroll',
+    'noscroll',
+    'overflow-hidden',
+    'modal-open',
+    'has-cookie-banner',
+    'cc--anim'
+  ];
+
+  function unlockScrollIfFrozenByModal(isEntitled = true) {
+    if (isEntitled === false) return;
     try {
-      const htmlOverflow = window.getComputedStyle(document.documentElement).overflow;
-      const bodyOverflow = document.body ? window.getComputedStyle(document.body).overflow : '';
-      if (htmlOverflow === 'hidden') {
-        document.documentElement.style.setProperty('overflow', 'auto', 'important');
+      const targets = [document.documentElement, document.body].filter(Boolean);
+      for (const el of targets) {
+        if (el.classList && typeof el.classList.remove === 'function') {
+          for (const cls of CMP_SCROLL_LOCK_CLASSES) {
+            el.classList.remove(cls);
+          }
+        }
+        const computed = typeof getComputedStyle === 'function' ? getComputedStyle(el) : null;
+        const ov = computed ? computed.overflow : '';
+        const ovY = computed ? computed.overflowY : '';
+        const pos = computed ? computed.position : '';
+        if (ov === 'hidden' || ov === 'clip' || ovY === 'hidden' || ovY === 'clip') {
+          if (el.style && typeof el.style.setProperty === 'function') {
+            el.style.setProperty('overflow', 'auto', 'important');
+            el.style.setProperty('overflow-y', 'auto', 'important');
+          }
+        }
+        if (pos === 'fixed' && (ov === 'hidden' || ov === 'clip' || ovY === 'hidden' || ovY === 'clip')) {
+          if (el.style && typeof el.style.setProperty === 'function') {
+            el.style.setProperty('position', 'static', 'important');
+          }
+        }
       }
-      if (bodyOverflow === 'hidden' && document.body) {
-        document.body.style.setProperty('overflow', 'auto', 'important');
+      if (document.body && document.body.style && typeof document.body.style.setProperty === 'function') {
+        const bodyComputed = typeof getComputedStyle === 'function' ? getComputedStyle(document.body) : null;
+        if (bodyComputed && bodyComputed.pointerEvents === 'none') {
+          document.body.style.setProperty('pointer-events', 'auto', 'important');
+        }
       }
     } catch (e) {}
   }
 
-  // 1. GDPR Cookie Banner Handling (Shadow-DOM Aware <50ms Rejector + Deduped Counter)
+  function findFirstBannerMatch(allCmpSelectors) {
+    try {
+      const direct = document.querySelector(allCmpSelectors.join(','));
+      if (direct) return direct;
+    } catch (e) {
+      for (let i = 0; i < allCmpSelectors.length; i++) {
+        try {
+          const hit = document.querySelector(allCmpSelectors[i]);
+          if (hit) return hit;
+        } catch (err) {}
+      }
+    }
+    const shadowRoots = collectShadowRoots(document, 0);
+    if (shadowRoots.length === 0) return null;
+    const joined = allCmpSelectors.join(',');
+    for (let i = 0; i < shadowRoots.length; i++) {
+      const sr = shadowRoots[i];
+      if (!sr) continue;
+      if (typeof sr.querySelector === 'function') {
+        try {
+          const hit = sr.querySelector(joined);
+          if (hit) return hit;
+        } catch (e) {
+          for (let j = 0; j < allCmpSelectors.length; j++) {
+            try {
+              const hit = sr.querySelector(allCmpSelectors[j]);
+              if (hit) return hit;
+            } catch (err) {}
+          }
+        }
+      }
+      if (typeof sr.querySelectorAll === 'function') {
+        for (let j = 0; j < allCmpSelectors.length; j++) {
+          try {
+            const hits = sr.querySelectorAll(allCmpSelectors[j]);
+            if (hits && hits.length > 0) return hits[0];
+          } catch (err) {}
+        }
+      }
+    }
+    return null;
+  }
+
+  function isButtonEnabled(el) {
+    if (!el || el.disabled) return false;
+    if (typeof el.getAttribute === 'function') {
+      const ariaDisabled = el.getAttribute('aria-disabled');
+      if (ariaDisabled === 'true') return false;
+      const disabledAttr = el.getAttribute('disabled');
+      if (disabledAttr !== null && disabledAttr !== undefined) return false;
+    }
+    return true;
+  }
+
+  function matchesRejectLabel(el) {
+    if (!isButtonEnabled(el)) return false;
+    const textLabel = (el.textContent || '').replace(/\s+/g, ' ').trim();
+    const aria = typeof el.getAttribute === 'function' ? (el.getAttribute('aria-label') || '').replace(/\s+/g, ' ').trim() : '';
+    const valLabel = String(el.value || '').replace(/\s+/g, ' ').trim();
+    const raw = textLabel || aria || valLabel;
+    if (!raw || raw.length > 64) return false;
+    for (let i = 0; i < CMP_REJECT_TEXT_PATTERNS.length; i++) {
+      if (CMP_REJECT_TEXT_PATTERNS[i].test(raw)) return true;
+    }
+    return false;
+  }
+
+  // 1. GDPR Cookie Banner Handling (Shadow-DOM Aware Auto-Rejector + Deduped Counter)
   function processCookieBanners(proActive, extraCmpSelectors = []) {
     const allCmpSelectors = Array.isArray(extraCmpSelectors) && extraCmpSelectors.length > 0
       ? [...CMP_SELECTORS, ...extraCmpSelectors]
       : CMP_SELECTORS;
-    const foundBanner = document.querySelector(allCmpSelectors.join(','));
+    const foundBanner = findFirstBannerMatch(allCmpSelectors);
     if (!foundBanner) return;
     if (foundBanner.dataset && foundBanner.dataset.deepblockRejected === '1') return;
 
@@ -419,22 +779,21 @@
 
     if (proActive) {
       let clicked = false;
-      const rejectBtn = queryDeep(document, CMP_REJECT_BUTTONS);
+      const searchRoot = foundBanner.shadowRoot || foundBanner;
+      let rejectBtn = queryDeep(searchRoot, CMP_REJECT_BUTTONS, isButtonEnabled);
+      if (!rejectBtn) {
+        rejectBtn = queryDeep(document, CMP_REJECT_BUTTONS, isButtonEnabled);
+      }
       if (rejectBtn) {
         rejectBtn.click();
         clicked = true;
       }
 
       if (!clicked) {
-        const searchRoot = foundBanner.shadowRoot || foundBanner;
-        const buttons = queryAllDeep(searchRoot, 'button, a[role="button"]');
+        const buttons = queryAllDeep(searchRoot, 'button, a[role="button"], input[type="button"], input[type="submit"]');
         for (let i = 0; i < buttons.length; i++) {
           const b = buttons[i];
-          if (
-            /^(reject all|decline all|necessary only|essential only|refuse all|continue without accepting)$/i.test(
-              (b.textContent || '').trim()
-            )
-          ) {
+          if (matchesRejectLabel(b)) {
             b.click();
             clicked = true;
             break;
@@ -444,15 +803,48 @@
 
       if (clicked) {
         if (foundBanner.dataset) foundBanner.dataset.deepblockRejected = '1';
-        unlockScrollIfFrozenByModal();
+        unlockScrollIfFrozenByModal(true);
         reportMetric('cookiePromptsRejected', 1);
       }
     }
   }
 
+  let ytShieldActive = false;
+  let ytShieldObserver = null;
+  let domProtectionObserver = null;
+
+  function removeYouTubeCosmeticStyle() {
+    try {
+      const ytEl = document.getElementById('deepblock-yt-cosmetic');
+      if (ytEl) ytEl.remove();
+    } catch (e) {}
+  }
+
+  function disableContentProtectionsOnExpiry() {
+    ytShieldActive = false;
+    try {
+      if (ytShieldObserver && typeof ytShieldObserver.disconnect === 'function') {
+        ytShieldObserver.disconnect();
+        ytShieldObserver = null;
+      }
+      if (domProtectionObserver && typeof domProtectionObserver.disconnect === 'function') {
+        domProtectionObserver.disconnect();
+        domProtectionObserver = null;
+      }
+    } catch (e) {}
+    removeUniversalAdCosmeticStyle();
+    removeYouTubeCosmeticStyle();
+    try {
+      const customEl = document.getElementById('deepblock-custom-zapper');
+      if (customEl) customEl.remove();
+    } catch (e) {}
+    syncStealthPausedSignal(true);
+  }
+
   // 2. YouTube Ad-Pod Shield
   function initYouTubeAdShield() {
     if (!/(^|\.)youtube\.com$/i.test(location.hostname)) return;
+    ytShieldActive = true;
 
     if (!document.getElementById('deepblock-yt-cosmetic')) {
       const style = document.createElement('style');
@@ -479,6 +871,7 @@
     let wasMutedBeforeAd = false;
 
     function neutralizeYouTubeVideoAd() {
+      if (!ytShieldActive) return;
       const player = document.querySelector('#movie_player, .html5-video-player');
       if (!player) return;
 
@@ -528,8 +921,11 @@
 
     neutralizeYouTubeVideoAd();
     const throttledYtCheck = createThrottle(neutralizeYouTubeVideoAd, 120);
-    const obs = new MutationObserver(throttledYtCheck);
-    obs.observe(document.documentElement, {
+    if (ytShieldObserver && typeof ytShieldObserver.disconnect === 'function') {
+      ytShieldObserver.disconnect();
+    }
+    ytShieldObserver = new MutationObserver(throttledYtCheck);
+    ytShieldObserver.observe(document.documentElement, {
       childList: true,
       subtree: true,
       attributes: true,
@@ -1071,148 +1467,197 @@
   injectUniversalAdCosmeticStyle();
 
   function syncStealthPausedSignal(paused) {
+    const isPaused = Boolean(paused);
     try {
-      window.dispatchEvent(new CustomEvent('_ds_cfg', { detail: { p: Boolean(paused) } }));
+      if (typeof document !== 'undefined' && document.documentElement && document.documentElement.dataset) {
+        document.documentElement.dataset.dsPaused = isPaused ? '1' : '0';
+      }
+    } catch (e) {}
+    try {
+      window.dispatchEvent(new CustomEvent('_ds_cfg', { detail: { p: isPaused } }));
     } catch (e) {}
   }
 
-  chrome.storage.local.get(
-    [
-      'proActive',
-      'licenseKey',
-      'pausedSites',
-      'settings',
-      'customHiddenSelectors',
-      'remoteFeatureFlags',
-      'extraCmpSelectors',
-      'extraAntiAdblockSelectors',
-      'extraCosmeticSelectors'
-    ],
-    (res) => {
-      const pausedSites = Array.isArray(res && res.pausedSites) ? res.pausedSites : [];
-      const settings = (res && res.settings) || {};
+  function hasActiveProEntitlement(res) {
+    if (!res || !res.proActive) return false;
+    const subStatus = String(res.subscriptionStatus || '').toLowerCase();
+    const plan = String(res.plan || '').toLowerCase();
+    const rawTrialExp = res.trialExpiresAt || (subStatus === 'trialing' ? res.licenseExpiresAt : 0);
+    const trialExpMs = typeof rawTrialExp === 'number'
+      ? rawTrialExp
+      : (typeof rawTrialExp === 'string' && rawTrialExp ? Date.parse(rawTrialExp) : 0);
+    const isTrialExpired =
+      subStatus === 'trial_expired' ||
+      subStatus === 'expired' ||
+      subStatus === 'canceled' ||
+      subStatus === 'inactive' ||
+      ((subStatus === 'trialing' || plan === 'trial_7d') && Number.isFinite(trialExpMs) && trialExpMs > 0 && Date.now() >= trialExpMs);
+    if (isTrialExpired) return false;
+    const hasValidCredential = Boolean(
+      res.licenseKey || (subStatus === 'trialing' && Number.isFinite(trialExpMs) && trialExpMs > Date.now())
+    );
+    return hasValidCredential;
+  }
 
-      function countAndReportPageAds(metricName = 'adsBlocked') {
-        try {
-          const adSlotSelector = [
-            'ins.adsbygoogle',
-            '[id^="google_ads_iframe"]',
-            '[data-ad-slot]',
-            '[data-ad-client]',
-            '[data-google-query-id]',
-            '.adsbox',
-            '.ad-banner',
-            '.ad-slot',
-            '.advertisement',
-            'ytd-ad-slot-renderer',
-            'ytd-in-feed-ad-layout-renderer',
-            'iframe[src*="doubleclick.net"]',
-            'iframe[src*="googlesyndication.com"]',
-            '[id*="taboola"]',
-            '[id*="outbrain"]'
-          ].join(',');
-          const nodes = document.querySelectorAll(adSlotSelector);
-          let newlyCounted = 0;
-          for (const el of nodes) {
-            if (!el.dataset || el.dataset.deepblockAdCounted === '1') continue;
-            el.dataset.deepblockAdCounted = '1';
-            newlyCounted++;
-          }
-          if (newlyCounted > 0) {
-            reportMetric(metricName, Math.min(newlyCounted, 25));
-          }
-        } catch (e) {}
+  if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.onChanged && typeof chrome.storage.onChanged.addListener === 'function') {
+    chrome.storage.onChanged.addListener((changes, areaName) => {
+      if (areaName !== 'local' || !changes) return;
+      const droppedPro = changes.proActive && changes.proActive.newValue === false;
+      const trialExpiredStatus =
+        changes.subscriptionStatus &&
+        ['trial_expired', 'expired', 'canceled', 'inactive'].includes(String(changes.subscriptionStatus.newValue || '').toLowerCase());
+      if (droppedPro || trialExpiredStatus) {
+        disableContentProtectionsOnExpiry();
       }
+    });
+  }
 
-      const extraCmpSelectors = Array.isArray(res && res.extraCmpSelectors) ? res.extraCmpSelectors : [];
-      const isPaidEntitled = Boolean(res && res.proActive && res.licenseKey);
-      const isPausedSite = Boolean(currentHost && pausedSites.includes(currentHost));
-      if (!isPaidEntitled || isPausedSite) {
-        removeUniversalAdCosmeticStyle();
-        syncStealthPausedSignal(true);
-        if (!isPaidEntitled && !isPausedSite) {
-          const runFreeDiagnosticPass = () => {
-            countAndReportPageAds('adsSpotted');
-            processCookieBanners(false, extraCmpSelectors);
-          };
-          if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', runFreeDiagnosticPass, { once: true });
-          } else {
-            runFreeDiagnosticPass();
-          }
-        }
-        return;
-      }
+  if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local && typeof chrome.storage.local.get === 'function') {
+    chrome.storage.local.get(
+      [
+        'proActive',
+        'licenseKey',
+        'subscriptionStatus',
+        'plan',
+        'trialExpiresAt',
+        'licenseExpiresAt',
+        'pausedSites',
+        'settings',
+        'customHiddenSelectors',
+        'remoteFeatureFlags',
+        'extraCmpSelectors',
+        'extraAntiAdblockSelectors',
+        'extraCosmeticSelectors'
+      ],
+      (res) => {
+        const pausedSites = Array.isArray(res && res.pausedSites) ? res.pausedSites : [];
+        const settings = (res && res.settings) || {};
 
-      const adBlockingEnabled = settings.adBlocking !== false;
-      syncStealthPausedSignal(!adBlockingEnabled);
-
-      if (adBlockingEnabled) {
-        if (/(^|\.)sweeprdeepblock\.com$/i.test(currentHost)) {
+        function countAndReportPageAds(metricName = 'adsBlocked') {
           try {
-            document.documentElement.dataset.sweeprExtensionActive = '1';
+            const adSlotSelector = [
+              'ins.adsbygoogle',
+              '[id^="google_ads_iframe"]',
+              '[data-ad-slot]',
+              '[data-ad-client]',
+              '[data-google-query-id]',
+              '.adsbox',
+              '.ad-banner',
+              '.ad-slot',
+              '.advertisement',
+              'ytd-ad-slot-renderer',
+              'ytd-in-feed-ad-layout-renderer',
+              'iframe[src*="doubleclick.net"]',
+              'iframe[src*="googlesyndication.com"]',
+              '[id*="taboola"]',
+              '[id*="outbrain"]'
+            ].join(',');
+            const nodes = document.querySelectorAll(adSlotSelector);
+            let newlyCounted = 0;
+            for (const el of nodes) {
+              if (!el.dataset || el.dataset.deepblockAdCounted === '1') continue;
+              el.dataset.deepblockAdCounted = '1';
+              newlyCounted++;
+            }
+            if (newlyCounted > 0) {
+              reportMetric(metricName, Math.min(newlyCounted, 25));
+            }
           } catch (e) {}
         }
-        injectUniversalAdCosmeticStyle();
-        if (Array.isArray(res && res.extraCosmeticSelectors)) {
-          injectIsolatedOtaCosmeticStyles(res.extraCosmeticSelectors);
-        }
-      } else {
-        removeUniversalAdCosmeticStyle();
-      }
 
-      const flags = (res && res.remoteFeatureFlags) || {};
-      const extraAntiAdblockSelectors = Array.isArray(res && res.extraAntiAdblockSelectors)
-        ? res.extraAntiAdblockSelectors
-        : [];
-      for (const extraSel of extraAntiAdblockSelectors) {
-        if (typeof extraSel === 'string' && extraSel && !ANTI_ADBLOCK_WALL_SELECTORS.includes(extraSel)) {
-          ANTI_ADBLOCK_WALL_SELECTORS.push(extraSel);
+        const extraCmpSelectors = Array.isArray(res && res.extraCmpSelectors) ? res.extraCmpSelectors : [];
+        const isPaidEntitled = hasActiveProEntitlement(res);
+        const isPausedSite = Boolean(currentHost && pausedSites.includes(currentHost));
+        if (!isPaidEntitled || isPausedSite) {
+          removeUniversalAdCosmeticStyle();
+          removeYouTubeCosmeticStyle();
+          syncStealthPausedSignal(true);
+          if (!isPaidEntitled && !isPausedSite) {
+            const runFreeDiagnosticPass = () => {
+              countAndReportPageAds('adsSpotted');
+              processCookieBanners(false, extraCmpSelectors);
+            };
+            if (document.readyState === 'loading') {
+              document.addEventListener('DOMContentLoaded', runFreeDiagnosticPass, { once: true });
+            } else {
+              runFreeDiagnosticPass();
+            }
+          }
+          return;
         }
-      }
 
-      function runDomProtectionPass() {
+        const adBlockingEnabled = settings.adBlocking !== false;
+        syncStealthPausedSignal(!adBlockingEnabled);
+
         if (adBlockingEnabled) {
+          if (/(^|\.)sweeprdeepblock\.com$/i.test(currentHost)) {
+            try {
+              document.documentElement.dataset.sweeprExtensionActive = '1';
+            } catch (e) {}
+          }
           injectUniversalAdCosmeticStyle();
-          countAndReportPageAds('adsBlocked');
           if (Array.isArray(res && res.extraCosmeticSelectors)) {
             injectIsolatedOtaCosmeticStyles(res.extraCosmeticSelectors);
           }
-          if (flags.youtubeAdShield !== false) {
-            initYouTubeAdShield();
-          }
-          if (flags.antiAdblockStealth !== false) {
-            processAntiAdblockStealth();
-          }
+        } else {
+          removeUniversalAdCosmeticStyle();
         }
-        if (res && res.customHiddenSelectors) {
-          applySavedCustomHiddenSelectors(res.customHiddenSelectors);
-        }
-        if (settings.cookieAutoClose !== false && flags.cookieAutoClose !== false) {
-          processCookieBanners(true, extraCmpSelectors);
-        }
-      }
 
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', runDomProtectionPass, { once: true });
-      } else {
-        runDomProtectionPass();
-      }
-
-      const throttledDomPass = createThrottle(() => {
-        if (adBlockingEnabled) {
-          countAndReportPageAds('adsBlocked');
-          if (flags.antiAdblockStealth !== false) {
-            processAntiAdblockStealth();
+        const flags = (res && res.remoteFeatureFlags) || {};
+        const extraAntiAdblockSelectors = Array.isArray(res && res.extraAntiAdblockSelectors)
+          ? res.extraAntiAdblockSelectors
+          : [];
+        for (const extraSel of extraAntiAdblockSelectors) {
+          if (typeof extraSel === 'string' && extraSel && !ANTI_ADBLOCK_WALL_SELECTORS.includes(extraSel)) {
+            ANTI_ADBLOCK_WALL_SELECTORS.push(extraSel);
           }
         }
-        if (settings.cookieAutoClose !== false && flags.cookieAutoClose !== false) {
-          processCookieBanners(true, extraCmpSelectors);
+
+        function runDomProtectionPass() {
+          if (adBlockingEnabled) {
+            injectUniversalAdCosmeticStyle();
+            countAndReportPageAds('adsBlocked');
+            if (Array.isArray(res && res.extraCosmeticSelectors)) {
+              injectIsolatedOtaCosmeticStyles(res.extraCosmeticSelectors);
+            }
+            if (flags.youtubeAdShield !== false) {
+              initYouTubeAdShield();
+            }
+            if (flags.antiAdblockStealth !== false) {
+              processAntiAdblockStealth();
+            }
+          }
+          if (res && res.customHiddenSelectors) {
+            applySavedCustomHiddenSelectors(res.customHiddenSelectors);
+          }
+          if (settings.cookieAutoClose !== false && flags.cookieAutoClose !== false) {
+            processCookieBanners(true, extraCmpSelectors);
+          }
         }
-      }, 200);
-      const domObs = new MutationObserver(throttledDomPass);
-      domObs.observe(document.documentElement, { childList: true, subtree: true });
-      setTimeout(() => domObs.disconnect(), 20000);
-    }
-  );
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', runDomProtectionPass, { once: true });
+        } else {
+          runDomProtectionPass();
+        }
+
+        const throttledDomPass = createThrottle(() => {
+          if (adBlockingEnabled) {
+            countAndReportPageAds('adsBlocked');
+            if (flags.antiAdblockStealth !== false) {
+              processAntiAdblockStealth();
+            }
+          }
+          if (settings.cookieAutoClose !== false && flags.cookieAutoClose !== false) {
+            processCookieBanners(true, extraCmpSelectors);
+          }
+        }, 200);
+        domProtectionObserver = new MutationObserver(throttledDomPass);
+        domProtectionObserver.observe(document.documentElement, { childList: true, subtree: true });
+        setTimeout(() => {
+          if (domProtectionObserver) domProtectionObserver.disconnect();
+        }, 20000);
+      }
+    );
+  }
 })();

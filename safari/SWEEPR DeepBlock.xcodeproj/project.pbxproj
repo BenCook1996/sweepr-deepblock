@@ -1,0 +1,823 @@
+// !$*UTF8*$!
+//
+//  project.pbxproj
+//  SWEEPR DeepBlock
+//
+//  Copyright (c) 2026 Benjamin Cook (SWEEPR DeepBlock). All rights reserved.
+//  Proprietary and confidential. Unauthorized copying, distribution, or
+//  open-source redistribution is strictly prohibited.
+//
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 55;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		B10000000000000000000001 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000010 /* ViewController.swift */; };
+		B10000000000000000000002 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000030 /* AppDelegate.swift */; };
+		B10000000000000000000003 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000033 /* Assets.xcassets */; };
+		B10000000000000000000004 /* Main.html in Resources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000013 /* Main.html */; };
+		B10000000000000000000005 /* Style.css in Resources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000011 /* Style.css */; };
+		B10000000000000000000006 /* Script.js in Resources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000012 /* Script.js */; };
+		B10000000000000000000007 /* SWEEPR DeepBlock Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = A10000000000000000000002 /* SWEEPR DeepBlock Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B10000000000000000000011 /* SafariWebExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000020 /* SafariWebExtensionHandler.swift */; };
+		B10000000000000000000012 /* Resources in Resources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000021 /* Resources */; };
+		B10000000000000000000021 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000010 /* ViewController.swift */; };
+		B10000000000000000000022 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000050 /* AppDelegate.swift */; };
+		B10000000000000000000023 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000051 /* SceneDelegate.swift */; };
+		B10000000000000000000024 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000054 /* Assets.xcassets */; };
+		B10000000000000000000025 /* Main.html in Resources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000013 /* Main.html */; };
+		B10000000000000000000026 /* Style.css in Resources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000011 /* Style.css */; };
+		B10000000000000000000027 /* Script.js in Resources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000012 /* Script.js */; };
+		B10000000000000000000028 /* SWEEPR DeepBlock Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = A10000000000000000000004 /* SWEEPR DeepBlock Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B10000000000000000000031 /* SafariWebExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000020 /* SafariWebExtensionHandler.swift */; };
+		B10000000000000000000032 /* Resources in Resources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000021 /* Resources */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		C10000000000000000000001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F10000000000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E10000000000000000000002;
+			remoteInfo = "SWEEPR DeepBlock Extension (macOS)";
+		};
+		C10000000000000000000002 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F10000000000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E10000000000000000000004;
+			remoteInfo = "SWEEPR DeepBlock Extension (iOS)";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		D10000000000000000000001 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				B10000000000000000000007 /* SWEEPR DeepBlock Extension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D10000000000000000000002 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				B10000000000000000000028 /* SWEEPR DeepBlock Extension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		A10000000000000000000001 /* SWEEPR DeepBlock.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SWEEPR DeepBlock.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A10000000000000000000002 /* SWEEPR DeepBlock Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "SWEEPR DeepBlock Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A10000000000000000000003 /* SWEEPR DeepBlock.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SWEEPR DeepBlock.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A10000000000000000000004 /* SWEEPR DeepBlock Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "SWEEPR DeepBlock Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A10000000000000000000010 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		A10000000000000000000011 /* Style.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = Style.css; sourceTree = "<group>"; };
+		A10000000000000000000012 /* Script.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = Script.js; sourceTree = "<group>"; };
+		A10000000000000000000013 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = Base; path = Base.lproj/Main.html; sourceTree = "<group>"; };
+		A10000000000000000000020 /* SafariWebExtensionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariWebExtensionHandler.swift; sourceTree = "<group>"; };
+		A10000000000000000000021 /* Resources */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Resources; sourceTree = "<group>"; };
+		A10000000000000000000030 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		A10000000000000000000031 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A10000000000000000000032 /* SWEEPR DeepBlock.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "SWEEPR DeepBlock.entitlements"; sourceTree = "<group>"; };
+		A10000000000000000000033 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A10000000000000000000040 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A10000000000000000000041 /* SWEEPR DeepBlock Extension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "SWEEPR DeepBlock Extension.entitlements"; sourceTree = "<group>"; };
+		A10000000000000000000050 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		A10000000000000000000051 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		A10000000000000000000052 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A10000000000000000000053 /* SWEEPR DeepBlock.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "SWEEPR DeepBlock.entitlements"; sourceTree = "<group>"; };
+		A10000000000000000000054 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A10000000000000000000060 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A10000000000000000000061 /* SWEEPR DeepBlock Extension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "SWEEPR DeepBlock Extension.entitlements"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		D20000000000000000000001 = {
+			isa = PBXGroup;
+			children = (
+				D20000000000000000000002 /* SWEEPR DeepBlock */,
+				D20000000000000000000003 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		D20000000000000000000002 /* SWEEPR DeepBlock */ = {
+			isa = PBXGroup;
+			children = (
+				D20000000000000000000010 /* Shared (App) */,
+				D20000000000000000000020 /* Shared (Extension) */,
+				D20000000000000000000030 /* macOS (App) */,
+				D20000000000000000000040 /* macOS (Extension) */,
+				D20000000000000000000050 /* iOS (App) */,
+				D20000000000000000000060 /* iOS (Extension) */,
+			);
+			path = "SWEEPR DeepBlock";
+			sourceTree = "<group>";
+		};
+		D20000000000000000000003 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A10000000000000000000001 /* SWEEPR DeepBlock.app */,
+				A10000000000000000000002 /* SWEEPR DeepBlock Extension.appex */,
+				A10000000000000000000003 /* SWEEPR DeepBlock.app */,
+				A10000000000000000000004 /* SWEEPR DeepBlock Extension.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		D20000000000000000000010 /* Shared (App) */ = {
+			isa = PBXGroup;
+			children = (
+				A10000000000000000000010 /* ViewController.swift */,
+				D20000000000000000000011 /* Resources */,
+			);
+			path = "Shared (App)";
+			sourceTree = "<group>";
+		};
+		D20000000000000000000011 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				A20000000000000000000013 /* Main.html */,
+				A10000000000000000000011 /* Style.css */,
+				A10000000000000000000012 /* Script.js */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		D20000000000000000000020 /* Shared (Extension) */ = {
+			isa = PBXGroup;
+			children = (
+				A10000000000000000000020 /* SafariWebExtensionHandler.swift */,
+				A10000000000000000000021 /* Resources */,
+			);
+			path = "Shared (Extension)";
+			sourceTree = "<group>";
+		};
+		D20000000000000000000030 /* macOS (App) */ = {
+			isa = PBXGroup;
+			children = (
+				A10000000000000000000030 /* AppDelegate.swift */,
+				A10000000000000000000031 /* Info.plist */,
+				A10000000000000000000032 /* SWEEPR DeepBlock.entitlements */,
+				A10000000000000000000033 /* Assets.xcassets */,
+			);
+			path = "macOS (App)";
+			sourceTree = "<group>";
+		};
+		D20000000000000000000040 /* macOS (Extension) */ = {
+			isa = PBXGroup;
+			children = (
+				A10000000000000000000040 /* Info.plist */,
+				A10000000000000000000041 /* SWEEPR DeepBlock Extension.entitlements */,
+			);
+			path = "macOS (Extension)";
+			sourceTree = "<group>";
+		};
+		D20000000000000000000050 /* iOS (App) */ = {
+			isa = PBXGroup;
+			children = (
+				A10000000000000000000050 /* AppDelegate.swift */,
+				A10000000000000000000051 /* SceneDelegate.swift */,
+				A10000000000000000000052 /* Info.plist */,
+				A10000000000000000000053 /* SWEEPR DeepBlock.entitlements */,
+				A10000000000000000000054 /* Assets.xcassets */,
+			);
+			path = "iOS (App)";
+			sourceTree = "<group>";
+		};
+		D20000000000000000000060 /* iOS (Extension) */ = {
+			isa = PBXGroup;
+			children = (
+				A10000000000000000000060 /* Info.plist */,
+				A10000000000000000000061 /* SWEEPR DeepBlock Extension.entitlements */,
+			);
+			path = "iOS (Extension)";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		E10000000000000000000001 /* SWEEPR DeepBlock (macOS) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F20000000000000000000001 /* Build configuration list for PBXNativeTarget "SWEEPR DeepBlock (macOS)" */;
+			buildPhases = (
+				E20000000000000000000001 /* Sources */,
+				E20000000000000000000002 /* Frameworks */,
+				E20000000000000000000003 /* Resources */,
+				D10000000000000000000001 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E30000000000000000000001 /* PBXTargetDependency */,
+			);
+			name = "SWEEPR DeepBlock (macOS)";
+			productName = "SWEEPR DeepBlock (macOS)";
+			productReference = A10000000000000000000001 /* SWEEPR DeepBlock.app */;
+			productType = "com.apple.product-type.application";
+		};
+		E10000000000000000000002 /* SWEEPR DeepBlock Extension (macOS) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F20000000000000000000002 /* Build configuration list for PBXNativeTarget "SWEEPR DeepBlock Extension (macOS)" */;
+			buildPhases = (
+				E20000000000000000000011 /* Sources */,
+				E20000000000000000000012 /* Frameworks */,
+				E20000000000000000000013 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "SWEEPR DeepBlock Extension (macOS)";
+			productName = "SWEEPR DeepBlock Extension (macOS)";
+			productReference = A10000000000000000000002 /* SWEEPR DeepBlock Extension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		E10000000000000000000003 /* SWEEPR DeepBlock (iOS) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F20000000000000000000003 /* Build configuration list for PBXNativeTarget "SWEEPR DeepBlock (iOS)" */;
+			buildPhases = (
+				E20000000000000000000021 /* Sources */,
+				E20000000000000000000022 /* Frameworks */,
+				E20000000000000000000023 /* Resources */,
+				D10000000000000000000002 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E30000000000000000000002 /* PBXTargetDependency */,
+			);
+			name = "SWEEPR DeepBlock (iOS)";
+			productName = "SWEEPR DeepBlock (iOS)";
+			productReference = A10000000000000000000003 /* SWEEPR DeepBlock.app */;
+			productType = "com.apple.product-type.application";
+		};
+		E10000000000000000000004 /* SWEEPR DeepBlock Extension (iOS) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F20000000000000000000004 /* Build configuration list for PBXNativeTarget "SWEEPR DeepBlock Extension (iOS)" */;
+			buildPhases = (
+				E20000000000000000000031 /* Sources */,
+				E20000000000000000000032 /* Frameworks */,
+				E20000000000000000000033 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "SWEEPR DeepBlock Extension (iOS)";
+			productName = "SWEEPR DeepBlock Extension (iOS)";
+			productReference = A10000000000000000000004 /* SWEEPR DeepBlock Extension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F10000000000000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1540;
+				LastUpgradeCheck = 1540;
+				TargetAttributes = {
+					E10000000000000000000001 = {
+						CreatedOnToolsVersion = 15.4;
+					};
+					E10000000000000000000002 = {
+						CreatedOnToolsVersion = 15.4;
+					};
+					E10000000000000000000003 = {
+						CreatedOnToolsVersion = 15.4;
+					};
+					E10000000000000000000004 = {
+						CreatedOnToolsVersion = 15.4;
+					};
+				};
+			};
+			buildConfigurationList = F20000000000000000000000 /* Build configuration list for PBXProject "SWEEPR DeepBlock" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = D20000000000000000000001;
+			productRefGroup = D20000000000000000000003 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				E10000000000000000000001 /* SWEEPR DeepBlock (macOS) */,
+				E10000000000000000000002 /* SWEEPR DeepBlock Extension (macOS) */,
+				E10000000000000000000003 /* SWEEPR DeepBlock (iOS) */,
+				E10000000000000000000004 /* SWEEPR DeepBlock Extension (iOS) */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		E20000000000000000000003 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B10000000000000000000003 /* Assets.xcassets in Resources */,
+				B10000000000000000000004 /* Main.html in Resources */,
+				B10000000000000000000005 /* Style.css in Resources */,
+				B10000000000000000000006 /* Script.js in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E20000000000000000000013 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B10000000000000000000012 /* Resources in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E20000000000000000000023 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B10000000000000000000024 /* Assets.xcassets in Resources */,
+				B10000000000000000000025 /* Main.html in Resources */,
+				B10000000000000000000026 /* Style.css in Resources */,
+				B10000000000000000000027 /* Script.js in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E20000000000000000000033 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B10000000000000000000032 /* Resources in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		E20000000000000000000002 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E20000000000000000000012 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E20000000000000000000022 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E20000000000000000000032 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		E20000000000000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B10000000000000000000001 /* ViewController.swift in Sources */,
+				B10000000000000000000002 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E20000000000000000000011 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B10000000000000000000011 /* SafariWebExtensionHandler.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E20000000000000000000021 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B10000000000000000000021 /* ViewController.swift in Sources */,
+				B10000000000000000000022 /* AppDelegate.swift in Sources */,
+				B10000000000000000000023 /* SceneDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E20000000000000000000031 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B10000000000000000000031 /* SafariWebExtensionHandler.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		E30000000000000000000001 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E10000000000000000000002 /* SWEEPR DeepBlock Extension (macOS) */;
+			targetProxy = C10000000000000000000001 /* PBXContainerItemProxy */;
+		};
+		E30000000000000000000002 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E10000000000000000000004 /* SWEEPR DeepBlock Extension (iOS) */;
+			targetProxy = C10000000000000000000002 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		A20000000000000000000013 /* Main.html */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A10000000000000000000013 /* Base */,
+			);
+			name = Main.html;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		F30000000000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		F30000000000000000000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		F30000000000000000000011 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "SWEEPR DeepBlock/macOS (App)/SWEEPR DeepBlock.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 140;
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = "SWEEPR DeepBlock/macOS (App)/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.4.0;
+				OTHER_CODE_SIGN_FLAGS = "--options=runtime";
+				PRODUCT_BUNDLE_IDENTIFIER = com.sweeprdeepblock.safari;
+				PRODUCT_NAME = "SWEEPR DeepBlock";
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		F30000000000000000000012 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "SWEEPR DeepBlock/macOS (App)/SWEEPR DeepBlock.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 140;
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = "SWEEPR DeepBlock/macOS (App)/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.4.0;
+				OTHER_CODE_SIGN_FLAGS = "--options=runtime";
+				PRODUCT_BUNDLE_IDENTIFIER = com.sweeprdeepblock.safari;
+				PRODUCT_NAME = "SWEEPR DeepBlock";
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		F30000000000000000000021 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "SWEEPR DeepBlock/macOS (Extension)/SWEEPR DeepBlock Extension.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 140;
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = "SWEEPR DeepBlock/macOS (Extension)/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.4.0;
+				OTHER_CODE_SIGN_FLAGS = "--options=runtime";
+				PRODUCT_BUNDLE_IDENTIFIER = com.sweeprdeepblock.safari.Extension;
+				PRODUCT_NAME = "SWEEPR DeepBlock Extension";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		F30000000000000000000022 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "SWEEPR DeepBlock/macOS (Extension)/SWEEPR DeepBlock Extension.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 140;
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = "SWEEPR DeepBlock/macOS (Extension)/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.4.0;
+				OTHER_CODE_SIGN_FLAGS = "--options=runtime";
+				PRODUCT_BUNDLE_IDENTIFIER = com.sweeprdeepblock.safari.Extension;
+				PRODUCT_NAME = "SWEEPR DeepBlock Extension";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		F30000000000000000000031 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "SWEEPR DeepBlock/iOS (App)/SWEEPR DeepBlock.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 140;
+				INFOPLIST_FILE = "SWEEPR DeepBlock/iOS (App)/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.4.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sweeprdeepblock.safari;
+				PRODUCT_NAME = "SWEEPR DeepBlock";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		F30000000000000000000032 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "SWEEPR DeepBlock/iOS (App)/SWEEPR DeepBlock.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 140;
+				INFOPLIST_FILE = "SWEEPR DeepBlock/iOS (App)/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.4.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sweeprdeepblock.safari;
+				PRODUCT_NAME = "SWEEPR DeepBlock";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		F30000000000000000000041 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "SWEEPR DeepBlock/iOS (Extension)/SWEEPR DeepBlock Extension.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 140;
+				INFOPLIST_FILE = "SWEEPR DeepBlock/iOS (Extension)/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.4.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sweeprdeepblock.safari.Extension;
+				PRODUCT_NAME = "SWEEPR DeepBlock Extension";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		F30000000000000000000042 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "SWEEPR DeepBlock/iOS (Extension)/SWEEPR DeepBlock Extension.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 140;
+				INFOPLIST_FILE = "SWEEPR DeepBlock/iOS (Extension)/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.4.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sweeprdeepblock.safari.Extension;
+				PRODUCT_NAME = "SWEEPR DeepBlock Extension";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		F20000000000000000000000 /* Build configuration list for PBXProject "SWEEPR DeepBlock" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F30000000000000000000001 /* Debug */,
+				F30000000000000000000002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F20000000000000000000001 /* Build configuration list for PBXNativeTarget "SWEEPR DeepBlock (macOS)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F30000000000000000000011 /* Debug */,
+				F30000000000000000000012 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F20000000000000000000002 /* Build configuration list for PBXNativeTarget "SWEEPR DeepBlock Extension (macOS)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F30000000000000000000021 /* Debug */,
+				F30000000000000000000022 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F20000000000000000000003 /* Build configuration list for PBXNativeTarget "SWEEPR DeepBlock (iOS)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F30000000000000000000031 /* Debug */,
+				F30000000000000000000032 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F20000000000000000000004 /* Build configuration list for PBXNativeTarget "SWEEPR DeepBlock Extension (iOS)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F30000000000000000000041 /* Debug */,
+				F30000000000000000000042 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = F10000000000000000000001 /* Project object */;
+}

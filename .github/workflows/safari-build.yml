@@ -1,0 +1,195 @@
+# Copyright (c) 2026 Benjamin Cook (SWEEPR DeepBlock). All rights reserved.
+name: SWEEPR DeepBlock — Safari (macOS & iOS) Build & App Store Connect CI
+
+on:
+  workflow_dispatch:
+    inputs:
+      submit_to_app_store:
+        description: 'Build signed archive and upload to App Store Connect (requires Apple signing secrets)'
+        required: false
+        type: boolean
+        default: false
+      configuration:
+        description: 'Xcode build configuration'
+        required: false
+        type: choice
+        options:
+          - Release
+          - Debug
+        default: Release
+  push:
+    paths:
+      - 'safari/**'
+      - 'extension/**'
+      - 'scripts/build-store-packages.mjs'
+      - '.github/workflows/safari-build.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sweepr-deepblock-safari-build
+  cancel-in-progress: false
+
+jobs:
+  build-safari-macos-and-ios:
+    runs-on: macos-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Build Store Packages & Sync Safari MV3 Resources
+        run: |
+          node scripts/build-store-packages.mjs
+          test -f dist/sweepr-deepblock-safari-mv3.zip
+          test -f dist/sweepr-deepblock-v1.4.0-safari-mv3.zip
+          test -f "safari/SWEEPR DeepBlock/Shared (Extension)/Resources/manifest.json"
+
+      - name: Verify Proprietary Closed-Source Compliance & Packaging Tests
+        run: |
+          if find . -maxdepth 3 -iname "LICENSE*" -o -iname "COPYING*" -o -iname "NOTICE*" | grep -q .; then
+            echo "Disallowed open-source license notice file detected"
+            exit 1
+          fi
+          node --test tests/safari-and-packaging.test.mjs
+
+      - name: Validate Safari Web Extension Bundle via xcrun safari-web-extension-converter
+        run: |
+          EXT_DIR="$RUNNER_TEMP/safari-mv3-ext"
+          CONV_DIR="$RUNNER_TEMP/safari-converter-check"
+          rm -rf "$EXT_DIR" "$CONV_DIR"
+          mkdir -p "$EXT_DIR" "$CONV_DIR"
+          unzip -q dist/sweepr-deepblock-safari-mv3.zip -d "$EXT_DIR"
+          xcrun safari-web-extension-converter "$EXT_DIR" \
+            --project-location "$CONV_DIR" \
+            --app-name "SWEEPR DeepBlock" \
+            --bundle-identifier "com.sweeprdeepblock.safari" \
+            --swift \
+            --no-open \
+            --no-prompt \
+            --force
+
+      - name: Build Unsigned macOS Safari App & Extension (xcodebuild)
+        run: |
+          xcodebuild \
+            -project "safari/SWEEPR DeepBlock.xcodeproj" \
+            -scheme "SWEEPR DeepBlock (macOS)" \
+            -configuration "${{ inputs.configuration || 'Release' }}" \
+            -destination "generic/platform=macOS" \
+            -derivedDataPath "$RUNNER_TEMP/DerivedData-macOS" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            clean build
+
+      - name: Build Unsigned iOS Safari App & Extension (xcodebuild)
+        run: |
+          xcodebuild \
+            -project "safari/SWEEPR DeepBlock.xcodeproj" \
+            -scheme "SWEEPR DeepBlock (iOS)" \
+            -configuration "${{ inputs.configuration || 'Release' }}" \
+            -destination "generic/platform=iOS" \
+            -derivedDataPath "$RUNNER_TEMP/DerivedData-iOS" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            clean build
+
+      - name: Upload Safari MV3 Extension Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: sweepr-deepblock-safari-mv3
+          path: |
+            dist/sweepr-deepblock-safari-mv3.zip
+            dist/sweepr-deepblock-v1.4.0-safari-mv3.zip
+          retention-days: 30
+
+      - name: Signed Archive & App Store Connect Upload (macOS & iOS)
+        if: ${{ inputs.submit_to_app_store == true && secrets.APPLE_APP_STORE_CONNECT_KEY_ID != '' }}
+        env:
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APPLE_CERT_BASE64: ${{ secrets.APPLE_CERT_BASE64 }}
+          APPLE_CERT_PASSWORD: ${{ secrets.APPLE_CERT_PASSWORD }}
+          APPLE_APP_STORE_CONNECT_KEY_ID: ${{ secrets.APPLE_APP_STORE_CONNECT_KEY_ID }}
+          APPLE_APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APPLE_APP_STORE_CONNECT_ISSUER_ID }}
+          APPLE_APP_STORE_CONNECT_PRIVATE_KEY: ${{ secrets.APPLE_APP_STORE_CONNECT_PRIVATE_KEY }}
+        run: |
+          KEYCHAIN_PATH="$RUNNER_TEMP/signing.keychain-db"
+          KEYCHAIN_PASS="$(openssl rand -hex 24)"
+          security create-keychain -p "$KEYCHAIN_PASS" "$KEYCHAIN_PATH"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+          security unlock-keychain -p "$KEYCHAIN_PASS" "$KEYCHAIN_PATH"
+          echo "$APPLE_CERT_BASE64" | base64 --decode > "$RUNNER_TEMP/cert.p12"
+          security import "$RUNNER_TEMP/cert.p12" -P "$APPLE_CERT_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN_PATH"
+          security list-keychain -d user -s "$KEYCHAIN_PATH"
+
+          mkdir -p "$HOME/.appstoreconnect/private_keys"
+          printf '%s' "$APPLE_APP_STORE_CONNECT_PRIVATE_KEY" > "$HOME/.appstoreconnect/private_keys/AuthKey_${APPLE_APP_STORE_CONNECT_KEY_ID}.p8"
+
+          xcodebuild archive \
+            -project "safari/SWEEPR DeepBlock.xcodeproj" \
+            -scheme "SWEEPR DeepBlock (macOS)" \
+            -configuration Release \
+            -destination "generic/platform=macOS" \
+            -archivePath "$RUNNER_TEMP/SWEEPRDeepBlock-macOS.xcarchive" \
+            DEVELOPMENT_TEAM="$APPLE_TEAM_ID"
+
+          xcodebuild archive \
+            -project "safari/SWEEPR DeepBlock.xcodeproj" \
+            -scheme "SWEEPR DeepBlock (iOS)" \
+            -configuration Release \
+            -destination "generic/platform=iOS" \
+            -archivePath "$RUNNER_TEMP/SWEEPRDeepBlock-iOS.xcarchive" \
+            DEVELOPMENT_TEAM="$APPLE_TEAM_ID"
+
+          cat > "$RUNNER_TEMP/ExportOptions.plist" <<EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key>
+            <string>app-store</string>
+            <key>teamID</key>
+            <string>${APPLE_TEAM_ID}</string>
+            <key>uploadSymbols</key>
+            <true/>
+          </dict>
+          </plist>
+          EOF
+
+          xcodebuild -exportArchive \
+            -archivePath "$RUNNER_TEMP/SWEEPRDeepBlock-macOS.xcarchive" \
+            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" \
+            -exportPath "$RUNNER_TEMP/export-macOS" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$HOME/.appstoreconnect/private_keys/AuthKey_${APPLE_APP_STORE_CONNECT_KEY_ID}.p8" \
+            -authenticationKeyID "$APPLE_APP_STORE_CONNECT_KEY_ID" \
+            -authenticationKeyIssuerID "$APPLE_APP_STORE_CONNECT_ISSUER_ID"
+
+          xcodebuild -exportArchive \
+            -archivePath "$RUNNER_TEMP/SWEEPRDeepBlock-iOS.xcarchive" \
+            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" \
+            -exportPath "$RUNNER_TEMP/export-iOS" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$HOME/.appstoreconnect/private_keys/AuthKey_${APPLE_APP_STORE_CONNECT_KEY_ID}.p8" \
+            -authenticationKeyID "$APPLE_APP_STORE_CONNECT_KEY_ID" \
+            -authenticationKeyIssuerID "$APPLE_APP_STORE_CONNECT_ISSUER_ID"
+
+          xcrun altool --upload-app \
+            -f "$RUNNER_TEMP/export-macOS/SWEEPR DeepBlock.pkg" \
+            -t macos \
+            --apiKey "$APPLE_APP_STORE_CONNECT_KEY_ID" \
+            --apiIssuer "$APPLE_APP_STORE_CONNECT_ISSUER_ID"
+
+          xcrun altool --upload-app \
+            -f "$RUNNER_TEMP/export-iOS/SWEEPR DeepBlock.ipa" \
+            -t ios \
+            --apiKey "$APPLE_APP_STORE_CONNECT_KEY_ID" \
+            --apiIssuer "$APPLE_APP_STORE_CONNECT_ISSUER_ID"
+
+          rm -f "$RUNNER_TEMP/cert.p12" "$HOME/.appstoreconnect/private_keys/AuthKey_${APPLE_APP_STORE_CONNECT_KEY_ID}.p8"
+          security delete-keychain "$KEYCHAIN_PATH" || true

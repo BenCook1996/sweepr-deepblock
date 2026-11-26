@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 /**
- * SWEEPR Deepblock v1.3.1 — Cross-Browser Extension Store Packager
+ * SWEEPR DeepBlock v1.4.0 — Cross-Browser Extension Store Packager
  * Generates store-ready MV3 ZIP archives with POSIX forward-slash entry paths:
  *   1. Google Chrome Web Store (`dist/sweepr-deepblock-chrome-webstore-mv3.zip` & `dist/sweepr-deepblock-edge-chrome-mv3.zip`)
  *   2. Mozilla Firefox Add-ons / AMO (`dist/sweepr-deepblock-firefox-amo-mv3.zip`)
  *   3. Opera Add-ons (`dist/sweepr-deepblock-opera-mv3.zip`)
+ *   4. Apple Safari Web Extension macOS & iOS (`dist/sweepr-deepblock-safari-mv3.zip` + `safari/SWEEPR DeepBlock/Shared (Extension)/Resources/`)
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -34,9 +35,9 @@ function sanitizeProdJs(code) {
 }
 
 /**
- * Strips Chromium-only feature-guarded API blocks so Firefox AMO static linting produces 0 warnings.
+ * Strips Chromium-only feature-guarded API blocks so Firefox AMO / Safari WebKit static checks produce 0 warnings.
  */
-function sanitizeFirefoxJs(code) {
+function stripUnsupportedRuntimeAndDebugApis(code) {
   return sanitizeProdJs(code)
     .replace(
       /\r?\n[ \t]*if \(updateAvailable && chrome\.runtime && typeof chrome\.runtime\.requestUpdateCheck === 'function'\) \{\r?\n[ \t]*try \{\r?\n[ \t]*chrome\.runtime\.requestUpdateCheck\(\(\) => \{\}\);\r?\n[ \t]*\} catch \(e\) \{\}\r?\n[ \t]*\}/g,
@@ -50,6 +51,14 @@ function sanitizeFirefoxJs(code) {
       /\r?\n[ \t]*if \(chrome\.runtime && typeof chrome\.runtime\.requestUpdateCheck === 'function'\) \{\r?\n[ \t]*try \{\r?\n[ \t]*chrome\.runtime\.requestUpdateCheck\(\(status\) => \{\r?\n[ \t]*if \(status === 'update_available'\) \{\r?\n[ \t]*chrome\.runtime\.reload\(\);\r?\n[ \t]*\} else \{\r?\n[ \t]*chrome\.tabs\.create\(\{ url: targetUrl \}\);\r?\n[ \t]*\}\r?\n[ \t]*\}\);\r?\n[ \t]*return;\r?\n[ \t]*\} catch \(e\) \{\}\r?\n[ \t]*\}/g,
       ''
     );
+}
+
+function sanitizeFirefoxJs(code) {
+  return stripUnsupportedRuntimeAndDebugApis(code);
+}
+
+function sanitizeSafariJs(code) {
+  return stripUnsupportedRuntimeAndDebugApis(code);
 }
 
 /**
@@ -72,6 +81,8 @@ function copyDirSync(src, dest, isStoreProd = true, targetBrowser = 'chromium') 
       let transformed;
       if (targetBrowser === 'firefox') {
         transformed = sanitizeFirefoxJs(raw);
+      } else if (targetBrowser === 'safari') {
+        transformed = sanitizeSafariJs(raw);
       } else if (targetBrowser === 'opera') {
         transformed = sanitizeOperaJs(raw);
       } else {
@@ -243,6 +254,22 @@ function verifyRulesCompliance(stagingDir) {
     if (/"url"\s*:\s*"data:/i.test(raw)) {
       throw new Error(`[Store Packager] Disallowed data: redirect URL found in ${entry}`);
     }
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) {
+      if (parsed.length > 30000) {
+        throw new Error(`[Store Packager] DNR ruleset ${entry} has ${parsed.length} rules (> 30,000 limit)`);
+      }
+      const seenIds = new Set();
+      for (const rule of parsed) {
+        if (!Number.isInteger(rule.id) || rule.id <= 0) {
+          throw new Error(`[Store Packager] Invalid DNR rule ID ${rule.id} in ${entry}`);
+        }
+        if (seenIds.has(rule.id)) {
+          throw new Error(`[Store Packager] Duplicate DNR rule ID ${rule.id} in ${entry}`);
+        }
+        seenIds.add(rule.id);
+      }
+    }
   }
   const surrogatePath = path.join(rulesDir, 'surrogates', 'adsbygoogle.js');
   if (!fs.existsSync(surrogatePath)) {
@@ -336,7 +363,7 @@ const ffManifest = {
   browser_specific_settings: {
     gecko: {
       id: 'extension@sweeprdeepblock.com',
-      strict_min_version: '140.0',
+      strict_min_version: '128.0',
       data_collection_permissions: {
         required: ['none']
       }
@@ -385,16 +412,111 @@ const operaZip = path.join(DIST_DIR, 'sweepr-deepblock-opera-mv3.zip');
 createPosixZip(operaStaging, operaZip);
 fs.rmSync(operaStaging, { recursive: true, force: true });
 
+function verifySafariCompliance(safariStagingDir, safariManifest) {
+  if ('minimum_chrome_version' in safariManifest || 'browser_specific_settings' in safariManifest || 'oauth2' in safariManifest) {
+    throw new Error('[Store Packager] Safari manifest must omit minimum_chrome_version, browser_specific_settings, and oauth2.');
+  }
+  if (safariManifest.background?.service_worker !== 'background.js' || 'scripts' in (safariManifest.background || {})) {
+    throw new Error('[Store Packager] Safari manifest background must define service_worker: "background.js" without scripts.');
+  }
+  const disallowedPerms = new Set(['identity', 'identity.email', 'clipboardRead']);
+  const allPerms = [...(safariManifest.permissions || []), ...(safariManifest.optional_permissions || [])];
+  for (const p of allPerms) {
+    if (disallowedPerms.has(p)) {
+      throw new Error(`[Store Packager] Safari manifest must omit unsupported permission "${p}".`);
+    }
+  }
+  const requiredPerms = [
+    'declarativeNetRequest',
+    'declarativeNetRequestWithHostAccess',
+    'storage',
+    'alarms',
+    'tabs',
+    'contextMenus',
+    'scripting'
+  ];
+  for (const reqPerm of requiredPerms) {
+    if (!(safariManifest.permissions || []).includes(reqPerm)) {
+      throw new Error(`[Store Packager] Safari manifest missing required permission "${reqPerm}".`);
+    }
+  }
+  for (const cs of safariManifest.content_scripts || []) {
+    if ('world' in cs) {
+      throw new Error('[Store Packager] Safari manifest content_scripts must omit "world" property.');
+    }
+  }
+  verifyRulesCompliance(safariStagingDir);
+  validateManifestAssets(safariManifest, safariStagingDir);
+  walkJsStagingFiles(safariStagingDir, (jsCode, relPath) => {
+    if (/\b(requestUpdateCheck|onRuleMatchedDebug)\b/.test(jsCode)) {
+      throw new Error(`[Store Packager] Unsupported Chromium/debug API left in Safari staging: ${relPath}`);
+    }
+    if (/http:\/\/(?:localhost|127\.0\.0\.1):\d+/i.test(jsCode)) {
+      throw new Error(`[Store Packager] Localhost URL left in Safari staging: ${relPath}`);
+    }
+  });
+  console.log('[Store Packager] Verified Safari MV3 staging: valid ES6 syntax, WebKit manifest compliance & 0 unsupported APIs.');
+}
+
+// 4. Build Apple Safari MV3 Package (macOS & iOS) & sync Xcode Shared (Extension)/Resources
+const safariStaging = path.join(DIST_DIR, 'staging-safari');
+fs.rmSync(safariStaging, { recursive: true, force: true });
+copyDirSync(EXT_DIR, safariStaging, true, 'safari');
+
+const safariDisallowedPerms = new Set(['identity', 'identity.email', 'clipboardRead']);
+const safariManifest = {
+  ...baseManifest,
+  default_locale: 'en',
+  name: '__MSG_extName__',
+  short_name: 'DeepBlock',
+  description: '__MSG_extDescription__',
+  permissions: (baseManifest.permissions || []).filter((p) => !safariDisallowedPerms.has(p)),
+  background: {
+    service_worker: 'background.js'
+  }
+};
+if (Array.isArray(baseManifest.optional_permissions)) {
+  const filteredOptPerms = baseManifest.optional_permissions.filter((p) => !safariDisallowedPerms.has(p));
+  if (filteredOptPerms.length > 0) {
+    safariManifest.optional_permissions = filteredOptPerms;
+  } else {
+    delete safariManifest.optional_permissions;
+  }
+}
+if (Array.isArray(safariManifest.content_scripts)) {
+  safariManifest.content_scripts = safariManifest.content_scripts.map((cs) => {
+    const clean = { ...cs };
+    delete clean.world;
+    return clean;
+  });
+}
+delete safariManifest.minimum_chrome_version;
+delete safariManifest.browser_specific_settings;
+delete safariManifest.oauth2;
+
+fs.writeFileSync(path.join(safariStaging, 'manifest.json'), JSON.stringify(safariManifest, null, 2) + '\n', 'utf8');
+verifySafariCompliance(safariStaging, safariManifest);
+
+const safariResourcesDir = path.join(ROOT_DIR, 'safari', 'SWEEPR DeepBlock', 'Shared (Extension)', 'Resources');
+fs.rmSync(safariResourcesDir, { recursive: true, force: true });
+copyDirSync(safariStaging, safariResourcesDir, false, 'safari');
+
+const safariZip = path.join(DIST_DIR, 'sweepr-deepblock-safari-mv3.zip');
+createPosixZip(safariStaging, safariZip);
+fs.rmSync(safariStaging, { recursive: true, force: true });
+
 console.log('Built POSIX-compliant store packages:');
 console.log(' - Chrome Web Store MV3:', chromeZip, fs.statSync(chromeZip).size, 'bytes');
 console.log(' - Edge/Chrome MV3:     ', edgeZip, fs.statSync(edgeZip).size, 'bytes');
 console.log(' - Firefox AMO MV3:     ', ffZip, fs.statSync(ffZip).size, 'bytes');
 console.log(' - Opera Add-ons MV3:   ', operaZip, fs.statSync(operaZip).size, 'bytes');
+console.log(' - Safari MV3 (macOS/iOS):', safariZip, fs.statSync(safariZip).size, 'bytes');
 
 fs.writeFileSync(path.join(DIST_DIR, `sweepr-deepblock-v${baseManifest.version}-chrome-webstore.zip`), fs.readFileSync(chromeZip));
 fs.writeFileSync(path.join(DIST_DIR, `sweepr-deepblock-v${baseManifest.version}-firefox-amo.zip`), fs.readFileSync(ffZip));
 fs.writeFileSync(path.join(DIST_DIR, `sweepr-deepblock-v${baseManifest.version}-opera-addons.zip`), fs.readFileSync(operaZip));
+fs.writeFileSync(path.join(DIST_DIR, `sweepr-deepblock-v${baseManifest.version}-safari-mv3.zip`), fs.readFileSync(safariZip));
 fs.writeFileSync(path.join(ROOT_DIR, 'website', 'sweepr-deepblock-extension.zip'), fs.readFileSync(chromeZip));
 fs.writeFileSync(path.join(ROOT_DIR, 'website', 'sweepr-deepblock-firefox.xpi'), fs.readFileSync(ffZip));
 fs.writeFileSync(path.join(ROOT_DIR, 'website', 'sweepr-deepblock.xpi'), fs.readFileSync(ffZip));
-console.log(` - Synced v${baseManifest.version} packages + website/sweepr-deepblock-extension.zip and .xpi`);
+console.log(` - Synced v${baseManifest.version} packages + website/sweepr-deepblock-extension.zip, .xpi, and safari/ Resources`);

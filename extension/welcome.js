@@ -73,6 +73,7 @@ async function directVerifyAndPersistLicense(rawKey) {
               subscriptionStatus: 'active',
               plan: d.plan || 'annual',
               licenseExpiresAt: d.expiresAt || '',
+              trialExpiresAt: 0,
               bonusProDaysEarned: Number(d.bonusProDaysEarned || 0),
               licenseVerifiedAt: Date.now(),
               settings
@@ -113,6 +114,8 @@ async function directVerifyAndPersistLicense(rawKey) {
             autoRamTamer: true,
             cloudTabSyncEnabled: true
           };
+          const isTrialPlan = subStatus === 'trialing' || String(data.plan || '').toLowerCase() === 'trial_7d';
+          const resolvedTrialExp = isTrialPlan ? Number(data.trialExpiresAt || 0) : 0;
           if (hasChromeStorage) {
             await chrome.storage.local.set({
               deviceId,
@@ -126,6 +129,8 @@ async function directVerifyAndPersistLicense(rawKey) {
               subscriptionStatus: subStatus,
               plan: data.plan || 'annual',
               licenseExpiresAt: data.expiresAt || '',
+              trialExpiresAt: resolvedTrialExp,
+              ...(isTrialPlan && data.trialStartedAt ? { trialStartedAt: Number(data.trialStartedAt) } : {}),
               bonusProDaysEarned: Number(data.bonusProDaysEarned || 0),
               licenseVerifiedAt: Date.now(),
               settings
@@ -136,6 +141,8 @@ async function directVerifyAndPersistLicense(rawKey) {
               await chrome.declarativeNetRequest.updateEnabledRulesets({
                 enableRulesetIds: [
                   'ads_and_trackers',
+                  'regional_eu_filters',
+                  'easyprivacy_trackers',
                   'tracker_param_stripping',
                   'cryptominers_and_heavy_scripts'
                 ],
@@ -148,8 +155,10 @@ async function directVerifyAndPersistLicense(rawKey) {
             valid: true,
             licenseKey: canonicalKey,
             ramTamerActive: true,
+            status: subStatus,
             plan: data.plan || 'annual',
             expiresAt: data.expiresAt || '',
+            trialExpiresAt: resolvedTrialExp,
             bonusProDaysEarned: Number(data.bonusProDaysEarned || 0),
             settings
           };
@@ -182,6 +191,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const inlineTrialBtn = document.getElementById('welcomeInlineTrialBtn');
   const feedback = document.getElementById('welcomeKeyFeedback');
   const badge = document.getElementById('welcomeStatusBadge');
+  const welcomeTrialBanner = document.getElementById('welcomeTrialBanner');
+  const welcomeTrialBannerTitle = document.getElementById('welcomeTrialBannerTitle');
+  const welcomeTrialBannerDesc = document.getElementById('welcomeTrialBannerDesc');
+  const welcomeBuyTitle = document.getElementById('welcomeBuyTitle');
+  const welcomeBuyDesc = document.getElementById('welcomeBuyDesc');
+  const welcomeBuyCtaText = document.getElementById('welcomeBuyCtaText');
   const welcomeHostPermBanner = document.getElementById('welcomeHostPermBanner');
   const welcomeGrantPermBtn = document.getElementById('welcomeGrantPermBtn');
   const welcomeShortcutsFooter = document.getElementById('welcomeShortcutsFooter');
@@ -276,15 +291,61 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let dashboardState = {
     proActive: false,
+    subscriptionStatus: 'unactivated',
+    plan: '',
+    trialStartedAt: 0,
+    trialExpiresAt: 0,
     settings: {}
   };
 
   if (!btn || !input || !feedback) return;
 
+  function parseEpochMs(v) {
+    if (typeof v === 'number') return Number.isFinite(v) ? v : 0;
+    if (typeof v === 'string' && v.trim()) {
+      const num = Number(v);
+      if (Number.isFinite(num) && num > 0) return num;
+      const parsed = Date.parse(v);
+      return Number.isFinite(parsed) ? parsed : 0;
+    }
+    return 0;
+  }
+
+  function formatRemainingVerbose(expMs) {
+    const diff = Number(expMs) - Date.now();
+    if (!Number.isFinite(diff) || diff <= 0) return '0 hours remaining';
+    const totalHours = Math.floor(diff / 3600000);
+    const days = Math.floor(totalHours / 24);
+    const hours = totalHours % 24;
+    if (days > 0) {
+      return `${days} day${days === 1 ? '' : 's'}, ${hours} hour${hours === 1 ? '' : 's'} remaining`;
+    }
+    if (hours > 0) return `${hours} hour${hours === 1 ? '' : 's'} remaining`;
+    return 'Less than 1 hour remaining';
+  }
+
+  function deriveWelcomeTrialState(stored) {
+    const st = stored || {};
+    const isPro = Boolean(st.proActive);
+    const status = String(st.subscriptionStatus || '').toLowerCase();
+    const plan = String(st.plan || '').toLowerCase();
+    const expMs = parseEpochMs(st.trialExpiresAt || (status === 'trialing' ? st.licenseExpiresAt : 0));
+    const expiredByClock = expMs > 0 && Date.now() >= expMs;
+    const isActiveTrial = isPro && (status === 'trialing' || plan === 'trial_7d') && !expiredByClock;
+    const isTrialExpired =
+      status === 'trial_expired' ||
+      (!isPro && status === 'expired' && plan === 'trial_7d') ||
+      (!isPro && plan === 'trial_7d' && Boolean(st.trialStartedAt || expMs)) ||
+      (status === 'trialing' && expiredByClock);
+    const remainingText = isActiveTrial && expMs > 0 ? formatRemainingVerbose(expMs) : '';
+    return { isPro, isActiveTrial, isTrialExpired, expiresAtMs: expMs, remainingText };
+  }
+
   function markProActivated(licenseKey, settings) {
     dashboardState.proActive = true;
     dashboardState.licenseKey = licenseKey || dashboardState.licenseKey || input.value.trim();
     if (settings) dashboardState.settings = settings;
+    if (welcomeTrialBanner) welcomeTrialBanner.style.display = 'none';
     setActiveWelcomeTab('key', false);
     if (inlineTrialBtn && inlineTrialBtn.parentElement) {
       inlineTrialBtn.parentElement.style.display = 'none';
@@ -296,6 +357,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.textContent = '✓ Pro Protection Active';
     btn.style.background = '#047857';
     if (badge) {
+      badge.className = 'badge';
       badge.textContent = 'Pro subscription active — all modules unlocked';
     }
     if (licenseKey && !input.value) {
@@ -304,6 +366,101 @@ document.addEventListener('DOMContentLoaded', () => {
     if (welcomeChromeAutoVerifyBtn) {
       welcomeChromeAutoVerifyBtn.style.display = 'none';
     }
+  }
+
+  function renderWelcomeState(stored) {
+    dashboardState = { ...dashboardState, ...(stored || {}) };
+    const info = deriveWelcomeTrialState(dashboardState);
+    if (info.isActiveTrial && dashboardState.plan !== 'referral_trial_14d') {
+      if (badge) {
+        badge.className = 'badge';
+        badge.textContent = info.remainingText
+          ? `7-Day Pro Trial · ${info.remainingText}`
+          : '7-Day Pro Trial Active';
+      }
+      if (welcomeTrialBanner && welcomeTrialBannerTitle && welcomeTrialBannerDesc) {
+        welcomeTrialBanner.className = 'trial-banner';
+        welcomeTrialBanner.style.display = 'block';
+        welcomeTrialBannerTitle.textContent = info.remainingText
+          ? `7-Day Full Pro Trial Active — ${info.remainingText}`
+          : '7-Day Full Pro Trial Active';
+        welcomeTrialBannerDesc.textContent =
+          'No card required. YouTube Shield, 160+ CMP Cookie Auto-Reject + Scroll Unlock, OTA Delta, RAM Tamer, and 5-device sync are active now.';
+      }
+      if (welcomeBuyTitle) welcomeBuyTitle.textContent = 'Upgrade to Full Pro Anytime';
+      if (welcomeBuyDesc) {
+        welcomeBuyDesc.textContent =
+          'Keep uninterrupted YouTube Shield, Cookie Auto-Reject, OTA filter updates, RAM Tamer, and 5-device sync after your 7-day trial.';
+      }
+      if (welcomeBuyCtaText) welcomeBuyCtaText.textContent = 'Upgrade to Pro Protection';
+      if (inlineTrialBtn && inlineTrialBtn.parentElement) {
+        inlineTrialBtn.parentElement.style.display = '';
+      }
+      btn.textContent = 'Activate Paid License Key';
+      btn.style.background = '';
+      setActiveWelcomeTab('buy', false);
+      renderChromeAutoBanner(dashboardState.chromeAutoActivateResult, true);
+      return;
+    }
+
+    if (info.isTrialExpired) {
+      dashboardState.proActive = false;
+      if (badge) {
+        badge.className = 'badge expired';
+        badge.textContent = 'Trial Expired — Upgrade to Pro';
+      }
+      if (welcomeTrialBanner && welcomeTrialBannerTitle && welcomeTrialBannerDesc) {
+        welcomeTrialBanner.className = 'trial-banner expired';
+        welcomeTrialBanner.style.display = 'block';
+        welcomeTrialBannerTitle.textContent = 'Your 7-Day Pro Trial Has Expired';
+        welcomeTrialBannerDesc.textContent =
+          'Pro features (YouTube Shield, Cookie Auto-Reject + Scroll Unlock, OTA Delta, RAM Tamer & 5-device sync) are paused. Upgrade or enter a paid license key to restore full protection.';
+      }
+      if (welcomeBuyTitle) welcomeBuyTitle.textContent = 'Your 7-Day Pro Trial Has Expired';
+      if (welcomeBuyDesc) {
+        welcomeBuyDesc.textContent =
+          'Upgrade now to immediately re-enable YouTube Shield, Cookie Auto-Reject + Scroll Unlock, OTA Delta, RAM Tamer, and 5-device sync.';
+      }
+      if (welcomeBuyCtaText) welcomeBuyCtaText.textContent = 'Upgrade to Restore Pro Protection';
+      if (inlineTrialBtn && inlineTrialBtn.parentElement) {
+        inlineTrialBtn.parentElement.style.display = '';
+      }
+      btn.textContent = 'Activate Pro Protection';
+      btn.style.background = '';
+      if (dashboardState.draftLicenseKey && !input.value) {
+        input.value = dashboardState.draftLicenseKey;
+      }
+      setActiveWelcomeTab('buy', false);
+      renderChromeAutoBanner(dashboardState.chromeAutoActivateResult, false);
+      return;
+    }
+
+    if (dashboardState.proActive && dashboardState.licenseKey) {
+      markProActivated(dashboardState.licenseKey, dashboardState.settings);
+      renderChromeAutoBanner(dashboardState.chromeAutoActivateResult, true);
+      return;
+    }
+
+    if (welcomeTrialBanner) welcomeTrialBanner.style.display = 'none';
+    if (badge) {
+      badge.className = 'badge';
+      badge.textContent = 'Extension installed — activate Pro';
+    }
+    if (welcomeBuyTitle) welcomeBuyTitle.textContent = 'Unlock SWEEPR Deepblock Pro';
+    if (welcomeBuyDesc) {
+      welcomeBuyDesc.textContent =
+        'Block YouTube and web ads, auto-reject cookie banners, strip URL trackers, and hibernate background tabs across up to 5 devices.';
+    }
+    if (welcomeBuyCtaText) welcomeBuyCtaText.textContent = 'Unlock Full Pro Protection';
+    if (dashboardState.licenseKey || dashboardState.draftLicenseKey) {
+      if (!input.value) {
+        input.value = dashboardState.licenseKey || dashboardState.draftLicenseKey;
+      }
+      setActiveWelcomeTab('key', false);
+    } else {
+      setActiveWelcomeTab('buy', false);
+    }
+    renderChromeAutoBanner(dashboardState.chromeAutoActivateResult, false);
   }
 
   function renderChromeAutoBanner(autoRes, isProActive) {
@@ -391,32 +548,37 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  const WELCOME_STATE_KEYS = [
+    'proActive',
+    'licenseKey',
+    'draftLicenseKey',
+    'settings',
+    'chromeAutoActivateResult',
+    'subscriptionStatus',
+    'plan',
+    'trialStartedAt',
+    'trialExpiresAt',
+    'licenseExpiresAt'
+  ];
+
   if (hasChromeStorage) {
-    chrome.storage.local.get(
-      ['proActive', 'licenseKey', 'draftLicenseKey', 'settings', 'chromeAutoActivateResult'],
-      (stored) => {
-        dashboardState = { ...dashboardState, ...(stored || {}) };
-        if (stored && stored.proActive && stored.licenseKey) {
-          markProActivated(stored.licenseKey, stored.settings);
-        } else if (stored && (stored.licenseKey || stored.draftLicenseKey)) {
-          if (!input.value) {
-            input.value = stored.licenseKey || stored.draftLicenseKey;
-          }
-          setActiveWelcomeTab('key', false);
-        } else {
-          setActiveWelcomeTab('buy', false);
-        }
-        renderChromeAutoBanner(stored && stored.chromeAutoActivateResult, Boolean(stored && stored.proActive));
-      }
-    );
+    chrome.storage.local.get(WELCOME_STATE_KEYS, (stored) => {
+      renderWelcomeState(stored || {});
+    });
 
     if (chrome.storage.onChanged) {
       chrome.storage.onChanged.addListener((changes, area) => {
-        if (area !== 'local') return;
-        if (changes.proActive && changes.proActive.newValue === true) {
-          chrome.storage.local.get(['licenseKey', 'settings', 'chromeAutoActivateResult'], (s) => {
-            markProActivated(s.licenseKey, s.settings);
-            renderChromeAutoBanner(s.chromeAutoActivateResult, true);
+        if (area !== 'local' || !changes) return;
+        if (
+          changes.proActive ||
+          changes.subscriptionStatus ||
+          changes.trialExpiresAt ||
+          changes.licenseExpiresAt ||
+          changes.plan ||
+          changes.licenseKey
+        ) {
+          chrome.storage.local.get(WELCOME_STATE_KEYS, (s) => {
+            renderWelcomeState(s || {});
           });
         } else if (changes.chromeAutoActivateResult && changes.chromeAutoActivateResult.newValue) {
           renderChromeAutoBanner(changes.chromeAutoActivateResult.newValue, Boolean(dashboardState.proActive));
@@ -427,11 +589,39 @@ document.addEventListener('DOMContentLoaded', () => {
     setActiveWelcomeTab('buy', false);
   }
 
+  const welcomeTrialInterval = setInterval(() => {
+    const info = deriveWelcomeTrialState(dashboardState);
+    if (info.isActiveTrial || info.isTrialExpired) {
+      renderWelcomeState(dashboardState);
+    }
+  }, 60000);
+  const stopWelcomeInterval = () => clearInterval(welcomeTrialInterval);
+  window.addEventListener('pagehide', stopWelcomeInterval);
+  window.addEventListener('unload', stopWelcomeInterval);
+
   let welcomeActivationInFlight = false;
 
   async function applyActivationResult(finalRes, key) {
     btn.disabled = false;
     if (finalRes && finalRes.ok && finalRes.valid) {
+      const planLower = String(finalRes.plan || 'annual').toLowerCase();
+      const statusLower = String(finalRes.status || 'active').toLowerCase();
+      if (planLower === 'trial_7d' || statusLower === 'trialing') {
+        renderWelcomeState({
+          ...dashboardState,
+          proActive: true,
+          licenseKey: finalRes.licenseKey || key,
+          plan: finalRes.plan || 'trial_7d',
+          subscriptionStatus: finalRes.status || 'trialing',
+          trialExpiresAt: Number(finalRes.trialExpiresAt || dashboardState.trialExpiresAt || 0),
+          licenseExpiresAt: finalRes.expiresAt || dashboardState.licenseExpiresAt || '',
+          settings: finalRes.settings || dashboardState.settings
+        });
+        return;
+      }
+      dashboardState.plan = finalRes.plan || 'annual';
+      dashboardState.subscriptionStatus = finalRes.status || 'active';
+      dashboardState.trialExpiresAt = 0;
       markProActivated(finalRes.licenseKey || key, finalRes.settings || {
         cookieAutoClose: true,
         trackerProtection: true,
@@ -541,7 +731,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (hasChromeStorage) {
       chrome.storage.local.set({ draftLicenseKey: input.value });
     }
-    if (!dashboardState.proActive) {
+    if ((!dashboardState.proActive || dashboardState.plan === 'trial_7d') && raw !== dashboardState.licenseKey) {
       if (FULL_LICENSE_KEY_RE.test(raw) || PAIRING_TOKEN_RE.test(raw)) {
         feedback.style.display = 'block';
         feedback.style.color = '#059669';

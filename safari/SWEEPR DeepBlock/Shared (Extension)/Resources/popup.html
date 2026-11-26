@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light">
+  <title>SWEEPR Deepblock</title>
+  <style>
+    :root {
+      color-scheme: light;
+      /* Primitive Tokens (@Memorisely Design System Pillar 9) */
+      --emerald-500: #10b981;
+      --emerald-600: #059669;
+      --emerald-700: #047857;
+      --slate-50: #f8fafc;
+      --slate-100: #f1f5f9;
+      --slate-200: #e2e8f0;
+      --slate-300: #cbd5e1;
+      --slate-500: #64748b;
+      --slate-700: #334155;
+      --slate-900: #0f172a;
+
+      /* Semantic Tokens & Concentric Radius Math (R_outer = R_inner + Padding) */
+      --bg: var(--slate-50);
+      --card-bg: #ffffff;
+      --card-border: var(--slate-200);
+      --surface-muted: var(--slate-100);
+      --border-muted: var(--slate-200);
+      --accent: var(--emerald-500);
+      --accent-dark: var(--emerald-600);
+      --action-primary: var(--emerald-600);
+      --action-primary-hover: var(--emerald-700);
+      --text: var(--slate-900);
+      --text-secondary: var(--slate-700);
+      --muted: var(--slate-500);
+      --radius-card-inner: 8px;
+      --space-card-pad: 10px;
+      --radius-card-outer: calc(var(--radius-card-inner) + var(--space-card-pad)); /* 18px */
+      --radius-drawer-inner: 8px;
+      --space-drawer-pad: 6px;
+      --radius-drawer-outer: calc(var(--radius-drawer-inner) + var(--space-drawer-pad)); /* 14px */
+      --focus-ring: 0 0 0 2px #ffffff, 0 0 0 4px var(--emerald-500);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      width: 360px;
+      max-width: 100vw;
+      margin: 0;
+      padding: 12px;
+      font-family: "Plus Jakarta Sans", "Segoe UI Variable", "Segoe UI", -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+      color: var(--text);
+      background-color: var(--bg);
+      overflow-x: hidden;
+      overflow-y: hidden;
+    }
+
+    /* Compact Brand Strip */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      padding: 0 2px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 800;
+      font-size: 12px;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+    .logo {
+      width: 20px;
+      height: 20px;
+      border-radius: 6px;
+      display: grid;
+      place-items: center;
+    }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .status-pill {
+      font-size: 9px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: #fffbeb;
+      color: #b45309;
+      border: 1px solid #fde68a;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .status-pill.pro {
+      background: #ecfdf5;
+      color: #047857;
+      border-color: #a7f3d0;
+    }
+    .status-pill.expired {
+      background: #fef2f2;
+      color: #b91c1c;
+      border-color: #fecaca;
+    }
+
+    /* ROW 1: Zero-Travel Top-Right Anchor — Full-Row Clickable Master Site Shield Card (Concentric Radius: 18px = 8px inner + 10px pad) */
+    .site-card {
+      background: var(--card-bg);
+      border: 2px solid rgba(16, 185, 129, 0.75);
+      border-radius: var(--radius-card-outer, 18px);
+      padding: var(--space-card-pad, 10px);
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
+      transition: border-color 140ms ease, background 140ms ease;
+    }
+    .site-card:hover {
+      border-color: #059669;
+    }
+    .site-card.paused {
+      background: #ffffff;
+      border-color: #cbd5e1;
+    }
+    .site-top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      min-height: 40px;
+      cursor: pointer;
+      user-select: none;
+      border-radius: var(--radius-card-inner, 8px);
+    }
+    .site-top-row:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+    .site-brand-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      flex: 1;
+    }
+    .shield-icon-box {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-card-inner, 8px);
+      background: #059669;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background 140ms ease;
+    }
+    .site-card.paused .shield-icon-box {
+      background: #94a3b8;
+    }
+    .site-domain {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 185px;
+      letter-spacing: -0.01em;
+    }
+    .site-status-sub {
+      font-size: 10.5px;
+      color: #059669;
+      font-weight: 600;
+      margin-top: 2px;
+    }
+    .site-card.paused .site-status-sub {
+      color: #64748b;
+    }
+
+    /* Visual Switch Indicator inside Full-Row Target */
+    .switch-btn {
+      width: 48px;
+      height: 26px;
+      border-radius: 999px;
+      background: #059669;
+      border: none;
+      position: relative;
+      cursor: pointer;
+      padding: 0;
+      flex-shrink: 0;
+      transition: background 120ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .switch-btn:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+    .switch-btn::after {
+      content: "";
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #ffffff;
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      transform: translateX(22px);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+      transition: transform 120ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .switch-btn.off,
+    .site-card.paused .switch-btn {
+      background: #cbd5e1;
+    }
+    .switch-btn.off::after,
+    .site-card.paused .switch-btn::after {
+      transform: translateX(0);
+    }
+    .switch-btn.pro-lock {
+      width: auto;
+      height: auto;
+      background: #fffbeb;
+      color: #b45309;
+      border: 1px solid #fde68a;
+      font-size: 9.5px;
+      font-weight: 800;
+      padding: 5px 10px;
+    }
+    .switch-btn.pro-lock::after { display: none; }
+
+    /* ROW 2: 44px Ergonomic Quick-Fix Bar (Fitts's Law >=44px Hit Targets) */
+    .escape-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    body.unactivated-mode .escape-row {
+      display: none;
+    }
+    .btn-chip {
+      min-height: 44px;
+      background: #ffffff;
+      color: var(--text-secondary);
+      border: 1px solid var(--border-muted);
+      border-radius: 12px;
+      padding: 8px 10px;
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      white-space: nowrap;
+      position: relative;
+      transition: all 120ms ease;
+    }
+    .btn-chip:hover {
+      border-color: #10b981;
+      color: #047857;
+      background: #f8fafc;
+    }
+    .btn-chip:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+    .btn-chip:active {
+      transform: scale(0.98);
+    }
+
+    /* Instant Linear/Stripe-Style <kbd> Tooltips (@Memorisely [pljDzSOF-Do]) */
+    .has-kbd-tooltip {
+      position: relative;
+    }
+    .kbd-tooltip {
+      position: absolute;
+      bottom: calc(100% + 6px);
+      right: 0;
+      background: #0f172a;
+      color: #f8fafc;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 7px;
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(3px);
+      transition: opacity 110ms ease, transform 110ms ease;
+      z-index: 60;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.22);
+    }
+    .has-kbd-tooltip:hover .kbd-tooltip,
+    .has-kbd-tooltip:focus-visible .kbd-tooltip,
+    .has-kbd-tooltip:focus-within .kbd-tooltip {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .kbd-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 1px 4px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 9px;
+      font-weight: 800;
+      color: #a7f3d0;
+      line-height: 1.2;
+    }
+    .escape-row > :first-child .kbd-tooltip {
+      left: 0;
+      right: auto;
+    }
+    .btn-ram-boost .kbd-tooltip {
+      left: 50%;
+      right: auto;
+      transform: translateX(-50%) translateY(3px);
+    }
+    .btn-ram-boost.has-kbd-tooltip:hover .kbd-tooltip,
+    .btn-ram-boost.has-kbd-tooltip:focus-visible .kbd-tooltip,
+    .btn-ram-boost.has-kbd-tooltip:focus-within .kbd-tooltip {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ROW 3: De-Containerized Keyline Tabular Telemetry Row (@Memorisely [VpXDo2_PbIQ]) */
+    .telemetry-pill-row {
+      background: transparent;
+      border-top: 1px solid var(--border-muted);
+      border-bottom: 1px solid var(--border-muted);
+      border-left: none;
+      border-right: none;
+      border-radius: 0;
+      padding: 8px 4px;
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      font-variant-numeric: tabular-nums;
+    }
+    .telemetry-pill-row.scam-alert {
+      border: 1px solid #f59e0b;
+      border-radius: 10px;
+      padding: 8px 10px;
+      background: #fffbeb;
+    }
+    .telemetry-metrics {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+    .telemetry-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+    .stat-num {
+      font-weight: 800;
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+    }
+    .telemetry-divider {
+      color: #cbd5e1;
+    }
+    .store-pill {
+      font-size: 10px;
+      font-weight: 700;
+      color: #047857;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      flex-shrink: 0;
+    }
+    .store-pill::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #10b981;
+    }
+    .store-pill.risk {
+      color: #b45309;
+    }
+    .store-pill.risk::before {
+      background: #f59e0b;
+    }
+    .store-pill.expired {
+      color: #b91c1c;
+    }
+    .store-pill.expired::before {
+      background: #dc2626;
+    }
+
+    /* ROW 4: State-Aware Primary Action + Progressive Disclosure License Input */
+    .action-stage {
+      margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    /* Full-Width Primary CTA Button (Fitts's Law 46px Height — Zero Prices/Amounts in Wording + Complete 5-State Matrix) */
+    .btn-go,
+    .btn-ram-boost {
+      width: 100%;
+      min-height: 46px;
+      padding: 10px 14px;
+      border: none;
+      border-radius: 12px;
+      background: var(--action-primary, #059669);
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 12.5px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 2px 8px rgba(5, 150, 105, 0.2);
+      transition: background 120ms ease, transform 120ms ease, box-shadow 120ms ease;
+    }
+    .btn-go:hover,
+    .btn-ram-boost:hover {
+      background: var(--action-primary-hover, #047857);
+    }
+    .btn-go:focus-visible,
+    .btn-ram-boost:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+    .btn-go:active,
+    .btn-ram-boost:active {
+      transform: scale(0.99);
+    }
+    .btn-go:disabled,
+    .btn-ram-boost:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+    body.unactivated-mode .btn-ram-boost {
+      display: none;
+    }
+    body.pro-mode .btn-go,
+    body.pro-mode #upgradeSubtitleText,
+    body.pro-mode .license-disclosure-wrap {
+      display: none !important;
+    }
+
+    /* Progressive Disclosure License Drawer (Concentric Radius: 14px = 8px inner + 6px pad) */
+    .license-disclosure-wrap {
+      background: #ffffff;
+      border: 1px solid var(--border-muted);
+      border-radius: var(--radius-drawer-outer, 14px);
+      overflow: hidden;
+    }
+    .license-disclosure-btn {
+      width: 100%;
+      min-height: 38px;
+      padding: 8px 12px;
+      background: transparent;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+    .license-disclosure-btn:hover {
+      color: var(--text);
+      background: #f8fafc;
+    }
+    .license-disclosure-btn:focus-visible {
+      outline: none;
+      box-shadow: inset 0 0 0 2px var(--emerald-500);
+    }
+    .drawer-box {
+      display: none;
+      padding: var(--space-drawer-pad, 6px);
+      border-top: 1px solid #f1f5f9;
+      background: #ffffff;
+    }
+    .drawer-box.open {
+      display: block;
+    }
+    .license-label-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 4px;
+      padding: 0 2px;
+    }
+    .license-input-label {
+      display: block;
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--text-secondary);
+      margin-bottom: 0;
+      padding-left: 0;
+      letter-spacing: 0.01em;
+    }
+    .license-auto-hint {
+      font-size: 9.5px;
+      font-weight: 800;
+      color: #047857;
+    }
+    .license-input-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .license-input {
+      flex: 1;
+      min-height: 38px;
+      padding: 7px 10px;
+      border: 1px solid #cbd5e1;
+      background: #f8fafc;
+      color: var(--text);
+      border-radius: var(--radius-drawer-inner, 8px);
+      font-size: 11.5px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-weight: 700;
+      outline: none;
+    }
+    .license-input:focus {
+      border-color: #059669;
+      background: #ffffff;
+      box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.18);
+    }
+    .paste-unlock-btn {
+      min-height: 38px;
+      background: #0f172a;
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-drawer-inner, 8px);
+      padding: 7px 11px;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .paste-unlock-btn:hover {
+      background: #1e293b;
+    }
+    .paste-unlock-btn:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+
+    /* ROW 5: 42px Full-Width 2-Button Segmented Footer Bar */
+    .footer-links {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      margin-top: 10px;
+      background: #ffffff;
+      border: 1px solid var(--border-muted);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .link-btn {
+      min-height: 42px;
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-weight: 700;
+      font-size: 11.5px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      text-decoration: none;
+      transition: background 120ms ease, color 120ms ease;
+    }
+    .link-btn:first-child {
+      border-right: 1px solid var(--border-muted);
+    }
+    .link-btn:hover {
+      background: #f8fafc;
+      color: #059669;
+    }
+    .link-btn:focus-visible {
+      outline: none;
+      box-shadow: inset 0 0 0 2px var(--emerald-500);
+    }
+
+    /* Slide-Over Menu Sub-View (6 Core Engines + Saved Sessions & Site Lists) */
+    .popup-menu-nav {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+    .popup-back-btn,
+    .popup-help-btn {
+      min-height: 34px;
+      padding: 6px 10px;
+      border-radius: 10px;
+      border: 1px solid var(--border-muted);
+      background: #ffffff;
+      color: var(--text-secondary);
+      font-size: 11px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: border-color 120ms ease, color 120ms ease, background 120ms ease;
+    }
+    .popup-back-btn:hover,
+    .popup-help-btn:hover {
+      border-color: var(--emerald-500);
+      color: var(--emerald-700);
+      background: #f8fafc;
+    }
+    .popup-back-btn:focus-visible,
+    .popup-help-btn:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+    .popup-seg-bar {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px;
+      padding: 3px;
+      border-radius: 10px;
+      background: var(--surface-muted);
+      border: 1px solid var(--border-muted);
+    }
+    .popup-seg-btn {
+      min-height: 28px;
+      border: none;
+      border-radius: 7px;
+      background: transparent;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 120ms ease, color 120ms ease;
+    }
+    .popup-seg-btn.active {
+      background: #ffffff;
+      color: var(--text);
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
+    }
+    .popup-menu-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+    .popup-engine-row {
+      width: 100%;
+      padding: 8px 10px;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid var(--slate-100);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      text-align: left;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 120ms ease;
+    }
+    .popup-engine-row:last-child {
+      border-bottom: none;
+    }
+    .popup-engine-row:hover {
+      background: var(--slate-50);
+    }
+    .popup-engine-row:focus-visible {
+      outline: none;
+      box-shadow: inset 0 0 0 2px var(--emerald-500);
+    }
+    .popup-engine-title {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .popup-engine-sub {
+      font-size: 10px;
+      color: var(--muted);
+      margin-top: 1px;
+    }
+    .popup-list-tabs {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 3px;
+      padding: 4px;
+      background: var(--surface-muted);
+      border-bottom: 1px solid var(--border-muted);
+    }
+    .popup-list-tab {
+      min-height: 28px;
+      border: none;
+      border-radius: 7px;
+      background: transparent;
+      color: var(--muted);
+      font-size: 10.5px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+    }
+    .popup-list-tab.active {
+      background: #ffffff;
+      color: var(--text);
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
+    }
+    .popup-list-body {
+      padding: 8px 10px;
+      max-height: 250px;
+      overflow-y: auto;
+    }
+    .popup-list-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 6px 0;
+      border-bottom: 1px solid var(--slate-100);
+      font-size: 11px;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+    .popup-list-row:last-child {
+      border-bottom: none;
+    }
+    .popup-mini-btn {
+      background: #ecfdf5;
+      color: #047857;
+      border: 1px solid #a7f3d0;
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 10px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .popup-list-empty {
+      font-size: 11px;
+      color: var(--muted);
+      padding: 10px 2px;
+      text-align: center;
+    }
+
+    /* Hidden compatibility nodes so popup.js telemetry/hooks never fail */
+    .sr-compat {
+      display: none !important;
+    }
+
+    .host-perm-banner {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: #fffbeb;
+      border: 1px solid #f59e0b;
+      color: #92400e;
+      font-size: 10.5px;
+      font-weight: 700;
+    }
+    .host-perm-btn {
+      background: #d97706;
+      color: #ffffff;
+      border: none;
+      border-radius: 7px;
+      padding: 6px 10px;
+      font-size: 10px;
+      font-weight: 800;
+      font-family: inherit;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .upgrade-subtitle {
+      font-size: 10.5px;
+      color: var(--muted);
+      text-align: center;
+      font-weight: 600;
+      margin-top: 6px;
+      line-height: 1.35;
+    }
+    .upgrade-subtitle:empty {
+      display: none;
+    }
+    .popup-qr-toggle-btn {
+      margin-top: 8px;
+      width: 100%;
+      padding: 7px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border-muted);
+      background: #f8fafc;
+      color: var(--text-secondary);
+      font-size: 10.5px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+    }
+    .popup-qr-toggle-btn:hover {
+      border-color: #059669;
+      color: #047857;
+      background: #ecfdf5;
+    }
+    .popup-qr-box {
+      display: none;
+      margin-top: 8px;
+      padding: 10px;
+      border-radius: 8px;
+      background: #f8fafc;
+      border: 1px solid var(--border-muted);
+      text-align: center;
+    }
+    .popup-qr-svg {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 6px;
+    }
+    .popup-qr-svg svg {
+      width: 136px;
+      height: 136px;
+      border-radius: 6px;
+      background: #ffffff;
+      padding: 4px;
+      border: 1px solid var(--border-muted);
+    }
+
+    @media (pointer: coarse), (max-width: 480px) {
+      body {
+        width: 100%;
+        min-width: 320px;
+        max-width: 430px;
+        padding: 14px;
+      }
+      .kbd-tooltip,
+      .kbd-badge {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="unactivated-mode">
+  <!-- Compact Brand Strip -->
+  <div class="header">
+    <div class="brand">
+      <div class="logo">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="20" height="20" fill="none">
+          <rect width="64" height="64" rx="16" fill="#059669"/>
+          <path d="M32 10L50 17.5V31C50 43.2 42.3 51.8 32 55.5C21.7 51.8 14 43.2 14 31V17.5L32 10Z" fill="white" fill-opacity="0.16" stroke="#a7f3d0" stroke-width="2.8" stroke-linejoin="round"/>
+          <path d="M23.5 32.5L29.5 38.5L42.5 23.5" stroke="#ffffff" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <span>SWEEPR <span style="color:#059669">Deepblock</span></span>
+    </div>
+    <div class="header-actions">
+      <span id="tierBadge" class="status-pill" data-i18n="uiFreePreview">Free Preview</span>
+    </div>
+  </div>
+
+  <!-- ROW 1: Zero-Travel Top-Right Anchor — Full-Row Clickable Master Site Shield Card (336x60px) -->
+  <div id="popupMainView">
+  <div id="hostPermBanner" class="host-perm-banner">
+    <span>Site access needed for page ad &amp; cookie blocking</span>
+    <button type="button" id="grantHostPermBtn" class="host-perm-btn" data-i18n="uiGrantPermissions">Grant Site Access</button>
+  </div>
+  <div id="siteBar" class="site-card">
+    <div class="site-top-row has-kbd-tooltip" id="siteBarClickRow" role="switch" aria-checked="true" tabindex="0">
+      <div class="site-brand-left">
+        <div class="shield-icon-box" aria-hidden="true">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+          </svg>
+        </div>
+        <div style="min-width:0;">
+          <div class="site-domain" id="currentSiteLabel">All Websites</div>
+          <div class="site-status-sub" id="currentSiteSub">Click anywhere on card to pause site</div>
+        </div>
+      </div>
+      <button type="button" id="sitePauseBtn" class="switch-btn" aria-label="Toggle site protection"></button>
+      <span class="kbd-tooltip" role="tooltip">Toggle Site Shield <kbd class="kbd-badge">Alt+Shift+S</kbd></span>
+    </div>
+  </div>
+
+  <!-- ROW 2: 44px Ergonomic Quick-Fix Bar -->
+  <div class="escape-row">
+    <button type="button" id="pause5MinBtn" class="btn-chip has-kbd-tooltip">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      <span data-i18n="uiPause5m">Pause 5m (Fix)</span>
+      <span class="kbd-tooltip" role="tooltip">Reloads page paused for 5m</span>
+    </button>
+    <button type="button" id="startZapperBtn" class="btn-chip has-kbd-tooltip">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+      <span data-i18n="uiHideElement">Hide Element</span>
+      <span class="kbd-tooltip" role="tooltip">Click element to hide <kbd class="kbd-badge">Esc</kbd></span>
+    </button>
+  </div>
+
+  <!-- ROW 3: Tabular Telemetry Row -->
+  <div id="storeSafetyCard" class="telemetry-pill-row">
+    <div class="telemetry-metrics">
+      <span class="telemetry-item"><span class="stat-num" id="adsCount">0</span> <span id="adsMetricLabel">Ads</span></span>
+      <span class="telemetry-divider">·</span>
+      <span class="telemetry-item"><span class="stat-num" id="cookieCount">0</span> Cookies</span>
+      <span class="telemetry-divider">·</span>
+      <span class="telemetry-item" id="ramHeadlineMetric" style="color:#059669;font-weight:800;">0 tabs</span>
+    </div>
+    <span class="store-pill" id="storeSafetyPill">Shield Active</span>
+    <!-- Hidden compatibility nodes -->
+    <span id="storeSafetyTitle" class="sr-compat">Shield Status</span>
+    <span id="storeSafetySub" class="sr-compat">Silent protection active</span>
+    <span id="adsBlockedText" class="sr-compat">0</span>
+    <div id="ramBarFill" class="sr-compat"></div>
+    <div id="ramDescriptionText" class="sr-compat"></div>
+    <button type="button" id="autoRamToggleBtn" class="sr-compat"></button>
+    <button type="button" id="keepSiteAwakeBtn" class="sr-compat"></button>
+    <span id="savedTabsCount" class="sr-compat">0</span>
+    <div id="savedTabsList" class="sr-compat"></div>
+  </div>
+
+  <!-- ROW 4: State-Aware Primary Action + Progressive Disclosure License Drawer -->
+  <div class="action-stage">
+    <!-- Primary Green CTA (Zero prices or amounts) -->
+    <button type="button" id="upgradeCtaBtn" class="btn-go">
+      <span id="upgradeCtaText" data-i18n="uiUnlockPro">Unlock Full Pro Protection</span>
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+    </button>
+
+    <!-- Progressive Disclosure License Input -->
+    <div class="license-disclosure-wrap">
+      <button type="button" id="toggleLicenseDrawerBtn" class="license-disclosure-btn">
+        <span data-i18n="uiHaveKey">Have a Pro License Key?</span>
+        <span style="color:#059669;font-weight:800;">▾</span>
+      </button>
+      <div id="licenseDrawer" class="drawer-box">
+        <div class="license-label-row">
+          <label for="licenseKeyInput" class="license-input-label">Pro License Key</label>
+          <span class="license-auto-hint">Auto-Unlocks</span>
+        </div>
+        <div class="license-input-row">
+          <input type="text" id="licenseKeyInput" class="license-input" placeholder="SWEEPR-DB-XXXX-XXXX-XXXX or ptk_..." autocomplete="off" spellcheck="false" />
+          <button type="button" id="pasteKeyBtn" class="paste-unlock-btn">Paste &amp; Unlock</button>
+          <button type="button" id="activateKeyBtn" class="sr-compat">Unlock</button>
+        </div>
+        <div id="licenseFeedback" style="font-size:10px;color:#059669;font-weight:700;margin-top:5px;display:none;"></div>
+        <button type="button" id="popupChromeAutoVerifyBtn" class="popup-qr-toggle-btn" style="display:none;color:#047857;">Verify with Chrome Google account</button>
+        <button type="button" id="popupShowQrBtn" class="popup-qr-toggle-btn">Or scan QR code to pair another device</button>
+        <div id="popupQrBox" class="popup-qr-box">
+          <div id="popupQrSvg" class="popup-qr-svg"></div>
+          <div id="popupQrStatus" style="font-size:10px;color:var(--muted);font-weight:700;margin-bottom:6px;">Scan with another signed-in device</div>
+          <button type="button" id="popupRefreshQrBtn" class="popup-mini-btn">Refresh QR</button>
+        </div>
+      </div>
+    </div>
+    <div id="upgradeSubtitleText" class="upgrade-subtitle"></div>
+
+    <!-- Pro Active Single Action: 1-Click Speed Boost (Zero prices or amounts in green button) -->
+    <button type="button" id="reclaimRamBtn" class="btn-ram-boost has-kbd-tooltip">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+      <span data-i18n="uiBoostSpeed">Boost Browser Speed Now</span>
+      <span class="kbd-tooltip" role="tooltip">Snooze inactive tabs <kbd class="kbd-badge">Alt+Shift+Z</kbd></span>
+    </button>
+  </div>
+
+  <!-- Automation A3: Value Receipt & Milestone Upgrade Card -->
+  <div id="milestoneActionCard" style="display:none;margin-top:8px;padding:8px 10px;border-radius:10px;background:#ecfdf5;border:1px solid #10b981;align-items:center;justify-content:space-between;gap:6px;">
+    <span id="milestoneActionText" style="font-size:10px;font-weight:700;color:#065f46;">Milestone reached — unlock full Pro protection</span>
+    <div style="display:flex;gap:4px;flex-shrink:0;">
+      <button type="button" id="a3MilestoneUpgradeBtn" style="background:#059669;color:#fff;border:none;border-radius:6px;padding:5px 8px;font-size:10px;font-weight:800;cursor:pointer;">Unlock Pro</button>
+      <button type="button" id="a3MilestoneDismissBtn" style="background:transparent;color:var(--muted);border:1px solid var(--border-muted);border-radius:6px;padding:4px 6px;font-size:10px;font-weight:700;cursor:pointer;">✕</button>
+    </div>
+  </div>
+
+  <!-- Automation A4: Step-Up & Win-Back Banner -->
+  <div id="stepUpAndWinbackBanner" style="display:none;margin-top:8px;padding:8px 10px;border-radius:10px;background:#fffbeb;border:1px solid #f59e0b;align-items:center;justify-content:space-between;gap:6px;">
+    <span id="stepUpAndWinbackText" style="font-size:10px;font-weight:700;color:#92400e;">Upgrade to Annual Pro Protection</span>
+    <div style="display:flex;gap:4px;flex-shrink:0;">
+      <button type="button" id="a4SwitchPlanBtn" style="background:#d97706;color:#fff;border:none;border-radius:6px;padding:5px 8px;font-size:10px;font-weight:800;cursor:pointer;">Switch Plan</button>
+      <button type="button" id="a4DismissBtn" style="background:transparent;color:#92400e;border:1px solid #fcd34d;border-radius:6px;padding:4px 6px;font-size:10px;font-weight:700;cursor:pointer;">✕</button>
+    </div>
+  </div>
+
+  <!-- Automation A5: Sweepr Ecosystem Cross-Sell Router -->
+  <div id="ecosystemCrossSellCard" style="display:none;margin-top:8px;padding:8px 10px;border-radius:10px;background:#f0f9ff;border:1px solid #bae6fd;align-items:center;justify-content:space-between;gap:6px;">
+    <span id="ecosystemCrossSellText" style="font-size:10px;font-weight:700;color:#075985;">Unlock Complete Security Suite</span>
+    <div style="display:flex;gap:4px;flex-shrink:0;">
+      <button type="button" id="a5CrossSellCtaBtn" style="background:#0284c7;color:#fff;border:none;border-radius:6px;padding:5px 8px;font-size:10px;font-weight:800;cursor:pointer;">Explore Suite ↗</button>
+      <button type="button" id="a5CrossSellDismissBtn" style="background:transparent;color:#0369a1;border:1px solid #7dd3fc;border-radius:6px;padding:4px 6px;font-size:10px;font-weight:700;cursor:pointer;">✕</button>
+    </div>
+  </div>
+
+  <!-- ROW 5: 42px Full-Width 2-Button Segmented Footer Bar -->
+  <div class="footer-links">
+    <button type="button" id="openCustomModulesBtn" class="link-btn">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
+      <span data-i18n="uiSettingsTabs">Settings &amp; Tabs</span>
+    </button>
+    <button type="button" id="openTestLabBtn" class="link-btn">
+      <svg width="14" height="14" fill="none" stroke="#059669" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      <span data-i18n="uiLiveTest">Live Shield Test</span>
+    </button>
+    <button type="button" id="openDashboardBtn" class="sr-compat">Settings</button>
+    <button type="button" id="openFullSessionsBtn" class="sr-compat">Restore Tabs</button>
+  </div>
+
+  <!-- Milestone Review Prompt -->
+  <div id="reviewMilestoneBanner" style="display:none;margin-top:8px;padding:8px 10px;border-radius:10px;background:#ecfdf5;border:1px solid #a7f3d0;align-items:center;justify-content:space-between;gap:6px;">
+    <span id="reviewMilestoneText" style="font-size:10px;font-weight:700;color:var(--text);">Enjoying SWEEPR Deepblock?</span>
+    <div style="display:flex;gap:4px;flex-shrink:0;">
+      <button type="button" id="reviewRateBtn" style="background:#059669;color:#fff;border:none;border-radius:6px;padding:5px 8px;font-size:10px;font-weight:800;cursor:pointer;">Leave Review</button>
+      <button type="button" id="reviewDismissBtn" style="background:transparent;color:var(--muted);border:1px solid var(--border-muted);border-radius:6px;padding:4px 6px;font-size:10px;font-weight:700;cursor:pointer;">✕</button>
+    </div>
+  </div>
+
+  <!-- Optional Update Banner -->
+  <div id="extUpdateBanner" style="display:none;margin-top:8px;padding:8px 10px;border-radius:10px;background:#ecfdf5;border:1px solid #10b981;align-items:center;justify-content:space-between;gap:8px;">
+    <span id="extUpdateBannerText" style="font-size:10px;font-weight:800;color:#065f46;">New update available</span>
+    <button type="button" id="extUpdateBannerBtn" style="background:#059669;color:#fff;border:none;border-radius:6px;padding:5px 8px;font-size:10px;font-weight:800;cursor:pointer;">Update Now</button>
+  </div>
+  </div>
+
+  <!-- Slide-Over Menu View (Option 1: 6 Core Engines + Saved Sessions & Site Lists) -->
+  <div id="popupMenuView" style="display:none;">
+    <div class="popup-menu-nav">
+      <button type="button" id="popupMenuBackBtn" class="popup-back-btn">&larr; Shield</button>
+      <div class="popup-seg-bar" role="tablist">
+        <button type="button" id="popupMenuTabEngines" class="popup-seg-btn active" role="tab">Engines</button>
+        <button type="button" id="popupMenuTabLists" class="popup-seg-btn" role="tab">Lists &amp; Tabs</button>
+      </div>
+      <button type="button" id="popupOpenWelcomeBtn" class="popup-help-btn" title="Activation &amp; Support">Help &#8599;</button>
+    </div>
+
+    <div id="popupEnginesPane" class="popup-menu-card">
+      <button type="button" class="popup-engine-row" data-popup-setting="adBlocking">
+        <div>
+          <div class="popup-engine-title">Video &amp; Page Ad Blocking</div>
+          <div class="popup-engine-sub">YouTube pre-roll &amp; anti-adblock cloaking</div>
+        </div>
+        <span class="switch-btn pro-lock" data-setting="adBlocking">PRO</span>
+      </button>
+      <button type="button" class="popup-engine-row" data-popup-setting="cookieAutoClose">
+        <div>
+          <div class="popup-engine-title">Auto-Decline Cookie Pop-Ups</div>
+          <div class="popup-engine-sub">Auto-clicks Reject All on supported CMP banners</div>
+        </div>
+        <span class="switch-btn pro-lock" data-setting="cookieAutoClose">PRO</span>
+      </button>
+      <button type="button" class="popup-engine-row" data-popup-setting="trackerProtection">
+        <div>
+          <div class="popup-engine-title">Tracker-Free Links</div>
+          <div class="popup-engine-sub">Strips click tracking parameters</div>
+        </div>
+        <span class="switch-btn pro-lock" data-setting="trackerProtection">PRO</span>
+      </button>
+      <button type="button" class="popup-engine-row" data-popup-setting="silentMode">
+        <div>
+          <div class="popup-engine-title">100% Silent Mode</div>
+          <div class="popup-engine-sub">Hide on-page toasts &amp; counter badges</div>
+        </div>
+        <span class="switch-btn pro-lock" data-setting="silentMode">PRO</span>
+      </button>
+      <button type="button" class="popup-engine-row" data-popup-setting="autoRamTamer" id="popupAutoRamRow">
+        <div>
+          <div class="popup-engine-title">Auto-Hibernate Idle Tabs</div>
+          <div class="popup-engine-sub">Snoozes inactive tabs to free RAM</div>
+        </div>
+        <span class="switch-btn pro-lock" data-setting="autoRamTamer">PRO</span>
+      </button>
+      <button type="button" class="popup-engine-row" data-popup-setting="cloudTabSyncEnabled">
+        <div>
+          <div class="popup-engine-title">Sync Saved Tab Sessions</div>
+          <div class="popup-engine-sub">Backs up saved tabs to browser sync</div>
+        </div>
+        <span class="switch-btn pro-lock" data-setting="cloudTabSyncEnabled">PRO</span>
+      </button>
+    </div>
+
+    <div id="popupListsPane" class="popup-menu-card" style="display:none;">
+      <div class="popup-list-tabs" id="popupListTabsBar">
+        <button type="button" class="popup-list-tab active" data-popup-list-tab="sessions">Sessions</button>
+        <button type="button" class="popup-list-tab" data-popup-list-tab="paused">Paused</button>
+        <button type="button" class="popup-list-tab" data-popup-list-tab="pinned">Pinned</button>
+        <button type="button" class="popup-list-tab" data-popup-list-tab="hidden">Hidden</button>
+      </div>
+      <div class="popup-list-body">
+        <div id="popupSessionsList"></div>
+        <div id="popupPausedList" style="display:none;"></div>
+        <div id="popupPinnedList" style="display:none;"></div>
+        <div id="popupHiddenList" style="display:none;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Non-Dismissible Mandatory Update Overlay -->
+  <div id="extForceUpdateOverlay" role="alertdialog" aria-modal="true" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(15,23,42,0.96);color:#f8fafc;padding:24px 18px;flex-direction:column;align-items:center;justify-content:center;text-align:center;">
+    <div style="font-size:15px;font-weight:900;margin-bottom:6px;">Mandatory Update Required</div>
+    <div id="extForceUpdateDesc" style="font-size:11.5px;color:#cbd5e1;line-height:1.45;margin-bottom:16px;">
+      A critical security and ad-blocking engine update is required to continue using SWEEPR Deepblock.
+    </div>
+    <button type="button" id="extForceUpdateBtn" style="width:100%;padding:11px 14px;border-radius:10px;border:none;background:#10b981;color:#052e16;font-size:12px;font-weight:900;cursor:pointer;">
+      Update SWEEPR Deepblock Now &rarr;
+    </button>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

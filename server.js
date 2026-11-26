@@ -775,10 +775,11 @@ function markWebhookEventProcessed(eventId) {
 const MAX_DEVICES_PER_LICENSE = 5; // 1 primary device + 4 additional devices per paid subscription
 const HIGH_ENTROPY_LICENSE_KEY_RE = /^SWEEPR-[A-Z0-9]{2,8}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/i;
 const REFERRALS_FILE = path.join(DATA_DIR, 'referrals.json');
+const TRIALS_FILE = path.join(DATA_DIR, 'trials.json');
 const SUPPORT_DLQ_FILE = path.join(DATA_DIR, 'support-dlq.json');
 const AB_STATE_FILE = path.join(DATA_DIR, 'ab-experiments-state.json');
 
-let BUNDLED_MANIFEST_VERSION = '1.3.1';
+let BUNDLED_MANIFEST_VERSION = '1.4.0';
 try {
   const parsedMf = JSON.parse(fs.readFileSync(path.join(__dirname, 'extension', 'manifest.json'), 'utf8'));
   if (parsedMf && parsedMf.version) BUNDLED_MANIFEST_VERSION = String(parsedMf.version).trim();
@@ -809,6 +810,37 @@ function saveReferralsStore(store) {
     fs.writeFileSync(tmpPath, JSON.stringify(store, null, 2), 'utf8');
     fs.renameSync(tmpPath, REFERRALS_FILE);
   } catch {}
+}
+
+function loadTrialsStore() {
+  let store = { byIdentityHash: {}, trials: {} };
+  if (fs.existsSync(TRIALS_FILE)) {
+    try {
+      const parsed = JSON.parse(fs.readFileSync(TRIALS_FILE, 'utf8'));
+      if (parsed && typeof parsed === 'object') {
+        store = {
+          byIdentityHash: parsed.byIdentityHash && typeof parsed.byIdentityHash === 'object' ? parsed.byIdentityHash : {},
+          trials: parsed.trials && typeof parsed.trials === 'object' ? parsed.trials : {}
+        };
+      }
+    } catch {}
+  }
+  return store;
+}
+
+function saveTrialsStore(store) {
+  try {
+    fs.mkdirSync(path.dirname(TRIALS_FILE), { recursive: true });
+    const tmpPath = `${TRIALS_FILE}.tmp`;
+    fs.writeFileSync(tmpPath, JSON.stringify(store, null, 2), 'utf8');
+    fs.renameSync(tmpPath, TRIALS_FILE);
+  } catch {}
+}
+
+function hashTrialIdentity(kind, raw) {
+  const val = String(raw || '').trim();
+  if (!val) return '';
+  return crypto.createHash('sha256').update(`sweepr_trial:${kind}:${val}`).digest('hex').slice(0, 32);
 }
 
 function applyReferralBonusToVerifyPayload(licenseKey, payload, alreadyAppliedDays = 0) {
@@ -3029,7 +3061,7 @@ function getCachedDynamicDelta() {
 }
 
   // API -1b: Dynamic Filter Delta & Remote Feature-Flag Kill-Switch + Extension Version Gate Endpoint
-  const LATEST_EXTENSION_VERSION = String(process.env.LATEST_EXTENSION_VERSION || '1.3.1').trim();
+  const LATEST_EXTENSION_VERSION = String(process.env.LATEST_EXTENSION_VERSION || '1.4.0').trim();
   const MIN_EXTENSION_VERSION = String(process.env.MIN_EXTENSION_VERSION || '1.1.6').trim();
   const FORCE_EXTENSION_UPDATE = process.env.FORCE_EXTENSION_UPDATE === 'true';
   const compareSemver = (latestVer, currentVer) => {
@@ -3333,31 +3365,36 @@ function getCachedDynamicDelta() {
   if (req.method === 'GET' && pathname === '/api/telemetry/live-proof') {
     const now = Date.now();
     if (!global.__liveProofCache || now - global.__liveProofCache.ts > 30000) {
-      let staticAdsCount = 0;
-      let cryptominerRulesCount = 0;
-      let trackerParamRulesCount = 0;
+      let staticRulesCount = 0;
+      let rulesetsActive = 0;
+      const staticRulesByRuleset = {};
       let otaDeltaCount = 0;
       let blockedSitesTotal = 0;
       let blockedSitesUpdatedAt = null;
       let sampleBlockedDomains = [];
 
+      const extDir = path.join(__dirname, 'extension');
       try {
-        const s = JSON.parse(
-          fs.readFileSync(path.join(__dirname, 'extension', 'rules', 'static_ads_and_trackers.json'), 'utf8')
-        );
-        if (Array.isArray(s)) staticAdsCount = s.length;
-      } catch {}
-      try {
-        const c = JSON.parse(
-          fs.readFileSync(path.join(__dirname, 'extension', 'rules', 'cryptominers.json'), 'utf8')
-        );
-        if (Array.isArray(c)) cryptominerRulesCount = c.length;
-      } catch {}
-      try {
-        const t = JSON.parse(
-          fs.readFileSync(path.join(__dirname, 'extension', 'rules', 'tracker_params.json'), 'utf8')
-        );
-        if (Array.isArray(t)) trackerParamRulesCount = t.length;
+        const mf = JSON.parse(fs.readFileSync(path.join(extDir, 'manifest.json'), 'utf8'));
+        const resources = Array.isArray(mf?.declarative_net_request?.rule_resources)
+          ? mf.declarative_net_request.rule_resources
+          : [];
+        for (const rr of resources) {
+          if (!rr || !rr.id || !rr.path) continue;
+          const relPath = String(rr.path).replace(/^\/+/, '');
+          const absPath = path.resolve(extDir, relPath);
+          if (!absPath.startsWith(extDir + path.sep)) continue;
+          let count = 0;
+          try {
+            const parsed = JSON.parse(fs.readFileSync(absPath, 'utf8'));
+            if (Array.isArray(parsed)) count = parsed.length;
+          } catch {}
+          staticRulesByRuleset[rr.id] = count;
+          if (rr.enabled) {
+            staticRulesCount += count;
+            rulesetsActive += 1;
+          }
+        }
       } catch {}
       try {
         const d = JSON.parse(
@@ -3376,7 +3413,6 @@ function getCachedDynamicDelta() {
         sampleBlockedDomains = sitesArr.slice(0, 5);
       } catch {}
 
-      const staticRulesCount = staticAdsCount + cryptominerRulesCount + trackerParamRulesCount;
       global.__liveProofCache = {
         ts: now,
         payload: {
@@ -3386,13 +3422,9 @@ function getCachedDynamicDelta() {
           verifiedBlockedDomainsCount: blockedSitesTotal,
           blockedDomainsListUpdatedAt: blockedSitesUpdatedAt,
           activeMv3StaticRules: staticRulesCount,
-          staticRulesByRuleset: {
-            ads_and_trackers: staticAdsCount,
-            cryptominers_and_heavy_scripts: cryptominerRulesCount,
-            tracker_param_stripping: trackerParamRulesCount
-          },
+          staticRulesByRuleset,
           activeOtaDeltaRules: otaDeltaCount,
-          rulesetsActive: 3,
+          rulesetsActive,
           testLabChecksCount: 8,
           maxDevicesPerLicense: MAX_DEVICES_PER_LICENSE,
           sampleBlockedDomains,
@@ -3629,6 +3661,137 @@ function getCachedDynamicDelta() {
           maxDevices: MAX_DEVICES_PER_LICENSE,
           suiteDiscountUrl: `/order?plan=suite_annual&ref=${encodeURIComponent(code)}`
         }
+      },
+      {},
+      req
+    );
+  }
+
+  // No-Card 7-Day Full Pro Trial Start (idempotent by installId / deviceFingerprint, zero payment details)
+  if (req.method === 'POST' && (pathname === '/api/trial/start' || pathname === '/v1/trial/start')) {
+    if (req.headers.origin && !isSameOriginWriteRequest(req, { allowExtension: true })) {
+      return sendJson(res, 403, { ok: false, error: 'cross_origin_forbidden' }, {}, req);
+    }
+    if (!checkRateLimit(req, 'trial_start', 20, 60000)) {
+      return sendJson(res, 429, { ok: false, error: 'rate_limit_exceeded' }, {}, req);
+    }
+    const body = await readBody(req);
+    if (body && body.__tooLarge) {
+      return sendJson(res, 413, { ok: false, error: 'payload_too_large' }, {}, req);
+    }
+    const installId = String(body?.installId || body?.install_id || body?.deviceId || body?.device_id || '')
+      .trim()
+      .slice(0, 128);
+    const deviceFingerprint = String(body?.deviceFingerprint || body?.device_fingerprint || body?.fingerprint || '')
+      .trim()
+      .slice(0, 256);
+
+    if (!installId && !deviceFingerprint) {
+      return sendJson(
+        res,
+        400,
+        {
+          ok: false,
+          error: 'install_identifier_required',
+          message: 'installId or deviceFingerprint is required.'
+        },
+        {},
+        req
+      );
+    }
+
+    const installHash = installId ? hashTrialIdentity('install', installId) : '';
+    const fpHash = deviceFingerprint ? hashTrialIdentity('fp', deviceFingerprint) : '';
+    const store = loadTrialsStore();
+    const existingKey =
+      (installHash && store.byIdentityHash[installHash]) ||
+      (fpHash && store.byIdentityHash[fpHash]) ||
+      '';
+    const existing = existingKey ? store.trials[existingKey] : null;
+
+    if (existing) {
+      let mutated = false;
+      if (installHash && store.byIdentityHash[installHash] !== existing.trialKey) {
+        store.byIdentityHash[installHash] = existing.trialKey;
+        mutated = true;
+      }
+      if (fpHash && store.byIdentityHash[fpHash] !== existing.trialKey) {
+        store.byIdentityHash[fpHash] = existing.trialKey;
+        mutated = true;
+      }
+      if (!Array.isArray(existing.devices)) {
+        existing.devices = [];
+        mutated = true;
+      }
+      if (installId && !existing.devices.includes(installId) && existing.devices.length < MAX_DEVICES_PER_LICENSE) {
+        existing.devices.push(installId);
+        mutated = true;
+      }
+      if (mutated) saveTrialsStore(store);
+
+      const expMs = Number(existing.trialExpiresAt || Date.parse(existing.expiresAt || ''));
+      const expired = Number.isFinite(expMs) && expMs > 0 && Date.now() >= expMs;
+      return sendJson(
+        res,
+        200,
+        {
+          ok: true,
+          idempotent: true,
+          requiresCard: false,
+          trialKey: existing.trialKey,
+          licenseKey: existing.trialKey,
+          status: expired ? 'trial_expired' : 'trialing',
+          plan: existing.plan || 'trial_7d',
+          trialStartedAt: existing.trialStartedAt,
+          trialExpiresAt: existing.trialExpiresAt,
+          expiresAt: existing.expiresAt,
+          maxDevices: MAX_DEVICES_PER_LICENSE,
+          devicesUsed: existing.devices.length
+        },
+        {},
+        req
+      );
+    }
+
+    let trialKey = generateHighEntropyLicenseKey();
+    while (store.trials[trialKey] || licenses.has(trialKey)) {
+      trialKey = generateHighEntropyLicenseKey();
+    }
+    const nowMs = Date.now();
+    const trialExpiresAt = nowMs + 7 * 86400000;
+    const expiresIso = new Date(trialExpiresAt).toISOString();
+    store.trials[trialKey] = {
+      trialKey,
+      status: 'trialing',
+      plan: 'trial_7d',
+      ramTamerAddon: true,
+      maxDevices: MAX_DEVICES_PER_LICENSE,
+      devices: installId ? [installId] : [],
+      trialStartedAt: nowMs,
+      trialExpiresAt,
+      expiresAt: expiresIso,
+      createdAt: new Date(nowMs).toISOString()
+    };
+    if (installHash) store.byIdentityHash[installHash] = trialKey;
+    if (fpHash) store.byIdentityHash[fpHash] = trialKey;
+    saveTrialsStore(store);
+
+    return sendJson(
+      res,
+      200,
+      {
+        ok: true,
+        idempotent: false,
+        requiresCard: false,
+        trialKey,
+        licenseKey: trialKey,
+        status: 'trialing',
+        plan: 'trial_7d',
+        trialStartedAt: nowMs,
+        trialExpiresAt,
+        expiresAt: expiresIso,
+        maxDevices: MAX_DEVICES_PER_LICENSE,
+        devicesUsed: installId ? 1 : 0
       },
       {},
       req
@@ -4943,12 +5106,60 @@ function getCachedDynamicDelta() {
     if (crmRes.ok) {
       return sendJson(res, 200, crmRes.data);
     }
+    if (verifiedHighKey) {
+      const trialsStoreForActivate = loadTrialsStore();
+      const localTrialRec = trialsStoreForActivate.trials?.[verifiedHighKey];
+      if (localTrialRec) {
+        const expMs = Number(localTrialRec.trialExpiresAt || Date.parse(localTrialRec.expiresAt || ''));
+        if (Number.isFinite(expMs) && expMs > 0 && Date.now() >= expMs) {
+          return sendJson(res, 403, {
+            ok: false,
+            valid: false,
+            status: 'trial_expired',
+            error: 'trial_expired',
+            message: 'Your 7-day Pro trial has expired.'
+          });
+        }
+        const actDeviceId = String(body?.device_id || '').trim().slice(0, 128);
+        if (!Array.isArray(localTrialRec.devices)) localTrialRec.devices = [];
+        if (actDeviceId && !localTrialRec.devices.includes(actDeviceId)) {
+          if (localTrialRec.devices.length >= MAX_DEVICES_PER_LICENSE) {
+            return sendJson(res, 403, {
+              ok: false,
+              valid: false,
+              error: 'device_limit_reached',
+              message: `Device limit reached (${MAX_DEVICES_PER_LICENSE} devices max).`,
+              devices_used: localTrialRec.devices.length,
+              devices_max: MAX_DEVICES_PER_LICENSE
+            });
+          }
+          localTrialRec.devices.push(actDeviceId);
+          saveTrialsStore(trialsStoreForActivate);
+        }
+        return sendJson(res, 200, {
+          ok: true,
+          valid: true,
+          project_id: 'deepblock',
+          licenseKey: localTrialRec.trialKey,
+          plan: localTrialRec.plan || 'trial_7d',
+          status: 'trialing',
+          ramTamerAddon: true,
+          entitlements: buildDeepblockEntitlements(true, false),
+          trialStartedAt: localTrialRec.trialStartedAt,
+          trialExpiresAt: localTrialRec.trialExpiresAt,
+          expiresAt: localTrialRec.expiresAt,
+          devices_used: localTrialRec.devices.length,
+          devices_max: MAX_DEVICES_PER_LICENSE,
+          maxDevices: MAX_DEVICES_PER_LICENSE
+        });
+      }
+    }
     return sendJson(res, crmRes.status || 401, crmRes.data);
   }
 
   // API 3: Extension License Verification (Central SWEEPR CRM authoritative check + Ed25519 JWS + live Stripe fallback)
   if (
-    (pathname === '/api/license-verify' || pathname === '/v1/license/verify-key') &&
+    (pathname === '/api/license-verify' || pathname === '/api/license/verify' || pathname === '/v1/license/verify-key') &&
     (req.method === 'GET' || req.method === 'POST')
   ) {
     if (!checkRateLimit(req, 'license_verify', 30, 60000)) {
@@ -5052,14 +5263,16 @@ function getCachedDynamicDelta() {
     let record = licenses.get(key) || licenses.get(key.toUpperCase());
     const refStoreForVerify = isHighEntropyKey ? loadReferralsStore() : { trials: {} };
     const referralTrialRec = isHighEntropyKey ? refStoreForVerify.trials?.[key.toUpperCase()] : null;
+    const trialsStoreForVerify = isHighEntropyKey ? loadTrialsStore() : { trials: {} };
+    const trialRec = isHighEntropyKey ? trialsStoreForVerify.trials?.[key.toUpperCase()] : null;
 
     const negExpiresAt = negativeLicenseCache.get(key.toUpperCase());
-    if (!record && !referralTrialRec && negExpiresAt && Date.now() < negExpiresAt) {
+    if (!record && !referralTrialRec && !trialRec && negExpiresAt && Date.now() < negExpiresAt) {
       return sendJson(res, 404, { valid: false, error: 'license_not_found' });
     }
 
     // 3. Stateless live Stripe fallback if server restarted and CRM was unreachable during checkout (60s rate-guarded cache)
-    if (!record && !referralTrialRec && STRIPE_SECRET_KEY && isHighEntropyKey) {
+    if (!record && !referralTrialRec && !trialRec && STRIPE_SECRET_KEY && isHighEntropyKey) {
       try {
         const activeSubs = await getCachedActiveStripeSubs();
         const matchedSub = activeSubs.find(
@@ -5196,6 +5409,72 @@ function getCachedDynamicDelta() {
           devices_used: referralTrialRec.devices.length,
           devices_max: MAX_DEVICES_PER_LICENSE
         })
+      );
+    }
+
+    if (trialRec) {
+      const expMs = Number(trialRec.trialExpiresAt || Date.parse(trialRec.expiresAt || ''));
+      if (Number.isFinite(expMs) && expMs > 0 && Date.now() >= expMs) {
+        return sendJson(
+          res,
+          403,
+          {
+            valid: false,
+            status: 'trial_expired',
+            error: 'trial_expired',
+            plan: trialRec.plan || 'trial_7d',
+            trialStartedAt: trialRec.trialStartedAt,
+            trialExpiresAt: trialRec.trialExpiresAt,
+            expiresAt: trialRec.expiresAt,
+            message: 'Your 7-day Pro trial has expired.'
+          },
+          {},
+          req
+        );
+      }
+      if (!Array.isArray(trialRec.devices)) trialRec.devices = [];
+      if (deviceId) {
+        const alreadyRegistered = trialRec.devices.some((d) => (typeof d === 'string' ? d : d?.id) === deviceId);
+        if (!alreadyRegistered) {
+          if (trialRec.devices.length >= MAX_DEVICES_PER_LICENSE) {
+            return sendJson(
+              res,
+              403,
+              {
+                valid: false,
+                error: 'device_limit_reached',
+                message: `Device limit reached (${MAX_DEVICES_PER_LICENSE} devices max).`,
+                devices_used: trialRec.devices.length,
+                devices_max: MAX_DEVICES_PER_LICENSE
+              },
+              {},
+              req
+            );
+          }
+          trialRec.devices.push(deviceId);
+          saveTrialsStore(trialsStoreForVerify);
+        }
+      }
+      return sendJson(
+        res,
+        200,
+        {
+          valid: true,
+          project_id: 'deepblock',
+          licenseKey: trialRec.trialKey,
+          plan: trialRec.plan || 'trial_7d',
+          status: 'trialing',
+          ramTamerAddon: true,
+          entitlements: buildDeepblockEntitlements(true, false),
+          trialStartedAt: trialRec.trialStartedAt,
+          trialExpiresAt: trialRec.trialExpiresAt,
+          expiresAt: trialRec.expiresAt,
+          devices_used: trialRec.devices.length,
+          devices_max: MAX_DEVICES_PER_LICENSE,
+          maxDevices: MAX_DEVICES_PER_LICENSE
+        },
+        {},
+        req
       );
     }
 

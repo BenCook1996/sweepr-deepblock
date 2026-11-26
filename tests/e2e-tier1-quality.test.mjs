@@ -39,8 +39,8 @@ const REMOVED_FEATURE_RULES = [
     re: /\b(?:encrypted\s+dns\s+proxy|dns-over-https\s*\(?doh\)?\s+proxy|sweepr\s+doh\s+dns|built-in\s+doh\s+dns)\b/gi
   },
   {
-    name: 'ios_safari_orion_support',
-    re: /\b(?:ios\s+safari|orion\s*\(?macos\s*(?:&|and)\s*ios\)?|safari\s*\(?macos\s*(?:&|and)\s*ios\)?|(?:works?|supports?)\s+(?:on\s+|in\s+)?(?:(?!\b(?:vs\.?|versus|unlike|compared\s+(?:to|with)|instead\s+of)\b)[^.!?\n]){0,120}(?<!\b(?:1blocker|adguard|wipr|ublock(?:\s+origin)?|ghostery|total\s+adblock|adblock\s+plus|better\s+blocker)\s+for\s+)\bsafari(?!-only\b)|(?:chrome|edge|firefox|brave|opera)(?:(?!\b(?:vs\.?|versus|unlike|compared\s+(?:to|with)|instead\s+of)\b)[^.!?\n]){0,100}(?<!\b(?:1blocker|adguard|wipr|ublock(?:\s+origin)?|ghostery|total\s+adblock|adblock\s+plus|better\s+blocker)\s+for\s+)\bsafari(?!-only\b)|\bsafari\s*(?:&|and|,)\s*(?:brave|edge|chrome|firefox|opera))/gi
+    name: 'orion_support',
+    re: /\borion\s*\(?macos\s*(?:&|and)\s*ios\)?/gi
   }
 ];
 
@@ -351,7 +351,7 @@ function auditHtmlPage(urlPath, resStatus, headers, html, manifestVersion, { exp
           issues.push(`JSON-LD ${f.key} stale version "${staleFieldVer}" (manifest is ${manifestVersion})`);
         }
       }
-      if (f.key === 'operatingSystem' && /\b(safari|ios|orion)\b/i.test(valStr)) {
+      if (f.key === 'operatingSystem' && /\borion\b/i.test(valStr)) {
         issues.push(`JSON-LD operatingSystem claims unsupported platform ("${valStr}")`);
       }
       if (['featureList', 'description', 'name', 'headline'].includes(f.key)) {

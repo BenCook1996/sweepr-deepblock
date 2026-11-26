@@ -163,7 +163,7 @@
           window.__sweeprLiveProof = data;
           const tickers = document.querySelectorAll('[data-live-proof-ticker]');
           tickers.forEach((el) => {
-            el.textContent = `Verified Live: ${Number(data.verifiedBlockedDomainsCount || 10218).toLocaleString()}+ Ad & Tracker Rules • ${data.activeMv3StaticRules || 283} C++ DNR Rules • Automated Cookie Auto-Reject`;
+            el.textContent = `Verified Live: ${Number(data.verifiedBlockedDomainsCount || 10218).toLocaleString()}+ Ad & Tracker Rules • ${data.activeMv3StaticRules || 36019} C++ DNR Rules • Automated Cookie Auto-Reject`;
           });
         })
         .catch(() => {});
@@ -444,7 +444,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       const osBtnLbl = document.getElementById('osDownloadText') || document.getElementById('downloadBtnLabel');
       if (osBtnLbl) {
-        osBtnLbl.textContent = isIos ? 'View Supported Browsers & Roadmap' : 'Activate on Android — Free';
+        osBtnLbl.textContent = isIos ? 'Safari (iOS) & Platform Downloads' : 'Activate on Android — Free';
       }
     } else if (!isBot && /chrome\/|chromium\//.test(ua) && !/edg\/|firefox\/|fxios\//.test(ua) && currentPath !== '/download' && currentPath !== '/download.html') {
       const cwsUrl = 'https://chromewebstore.google.com/detail/sweepr-deepblock-ad-cooki/bkdfhdgmglfancgpkcbdceinfdlccmpc';

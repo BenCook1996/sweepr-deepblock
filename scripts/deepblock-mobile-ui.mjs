@@ -5,7 +5,7 @@ export const DEEPBLOCK_ANDROID_HTML = `<!DOCTYPE html>
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>SWEEPR Deepblock</title>
+<title>SWEEPR Deepblock — Android Companion</title>
 <style>
   :root[data-theme="light"] {
     --bg: #f8fafc;
@@ -344,8 +344,8 @@ export const DEEPBLOCK_ANDROID_HTML = `<!DOCTYPE html>
 
   <div id="drawerBackdrop" class="drawer-backdrop" onclick="closeDrawer()"></div>
   <nav id="drawerMenu" class="drawer">
-    <button class="drawer-item active" data-drawer="home" onclick="switchTab('home')"><span>Power Orb Shield</span><span style="font-size:11px;color:var(--muted)">Home</span></button>
-    <button class="drawer-item" data-drawer="filters" onclick="switchTab('filters')"><span>Protection Overview</span><span style="font-size:11px;color:var(--muted)">Status</span></button>
+    <button class="drawer-item active" data-drawer="home" onclick="switchTab('home')"><span>Companion Status</span><span style="font-size:11px;color:var(--muted)">Home</span></button>
+    <button class="drawer-item" data-drawer="filters" onclick="switchTab('filters')"><span>Firefox &amp; Coverage</span><span style="font-size:11px;color:var(--muted)">Setup</span></button>
     <button class="drawer-item" data-drawer="dns" onclick="switchTab('dns')"><span>System Private DNS</span><span style="font-size:11px;color:var(--muted)">Inspector</span></button>
     <button class="drawer-item" data-drawer="account" onclick="switchTab('account')"><span>Profile &amp; License</span><span style="font-size:11px;color:var(--muted)">5 Devices</span></button>
     <button class="drawer-item" onclick="toggleTheme(); closeDrawer();"><span>Appearance Mode</span><span id="drawerThemeText" style="font-size:11px;font-weight:800;color:var(--accent)">Light Mode</span></button>
@@ -354,9 +354,9 @@ export const DEEPBLOCK_ANDROID_HTML = `<!DOCTYPE html>
   <!-- TAB 1: MOBILE COMPANION STATUS HOME -->
   <main id="view-home" class="view active">
     <div class="c3-status-header">
-      <div id="statusPill" class="c3-status-pill">COMPANION APP &bull; ANDROID STATUS</div>
+      <div id="statusPill" class="c3-status-pill">COMPANION APP &bull; FIREFOX + PRIVATE DNS</div>
       <div id="statusHeadline" class="c3-headline">Checking Private DNS...</div>
-      <div id="statusSubline" class="c3-subline">Use Firefox for Android for full MV3 ad &amp; cookie blocking</div>
+      <div id="statusSubline" class="c3-subline">Firefox for Android add-on + lightweight Private DNS &amp; license companion app (no local VPN)</div>
     </div>
 
     <div class="c3-orb-stage">
@@ -391,17 +391,18 @@ export const DEEPBLOCK_ANDROID_HTML = `<!DOCTYPE html>
 
   <section id="view-filters" class="view">
     <div class="card">
-      <div style="font-size:17px;font-weight:900;margin-bottom:8px">Mobile &amp; Browser Coverage</div>
+      <div style="font-size:17px;font-weight:900;margin-bottom:8px">Firefox Add-on &amp; Companion Coverage</div>
       <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);font-size:13.5px;font-weight:700"><span>Firefox for Android (MV3 Add-on)</span><a href="https://addons.mozilla.org/en-US/firefox/addon/sweepr-deepblock/" target="_blank" rel="noopener" style="color:var(--accent-fg);text-decoration:none">Install on AMO ↗</a></div>
       <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);font-size:13.5px;font-weight:700"><span>Android Private DNS Status Check</span><span style="color:var(--accent-fg)">ACTIVE</span></div>
-      <div style="display:flex;justify-content:space-between;padding:12px 0;font-size:13.5px;font-weight:700"><span>SWEEPR VpnService / DoH Resolver</span><span style="color:var(--muted)">PLANNED</span></div>
+      <div style="display:flex;justify-content:space-between;padding:12px 0;font-size:13.5px;font-weight:700"><span>System-Wide VPN / DoH Adblocking</span><span style="color:var(--muted)">NOT IN THIS APP (PLANNED)</span></div>
+      <p style="font-size:12px;color:var(--muted);line-height:1.45;margin-top:10px">This lightweight Android APK is a Private DNS status &amp; 5-device license companion app — it does not run a local VPN or filter non-browser app traffic. Install the Firefox for Android add-on above for full MV3 ad &amp; cookie blocking.</p>
     </div>
   </section>
 
   <section id="view-dns" class="view">
     <div class="card">
       <div style="font-size:17px;font-weight:900;margin-bottom:6px">Android Private DNS Inspector</div>
-      <p id="dnsInspectorDesc" style="font-size:12.5px;color:var(--muted);line-height:1.45">Inspects whether Android Private DNS is configured on your active network connection and opens Android Network Settings.</p>
+      <p id="dnsInspectorDesc" style="font-size:12.5px;color:var(--muted);line-height:1.45">Inspects whether Android Private DNS is configured on your active network connection and opens Android Network Settings. This companion app does not create a local VPN or filter non-browser app traffic.</p>
       <button class="btn-primary" onclick="refreshAndroidDnsStatus(true)">Open Android Network Settings</button>
     </div>
   </section>
@@ -419,20 +420,20 @@ export const DEEPBLOCK_ANDROID_HTML = `<!DOCTYPE html>
 
   <nav class="bottom-nav">
     <button class="nav-tab active" id="tab-home" onclick="switchTab('home')">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg>
-      <span>Connect</span>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      <span>Status</span>
     </button>
     <button class="nav-tab" id="tab-filters" onclick="switchTab('filters')">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
-      <span>Filters</span>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      <span>Firefox</span>
     </button>
     <button class="nav-tab" id="tab-dns" onclick="switchTab('dns')">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-      <span>Shields</span>
+      <span>Private DNS</span>
     </button>
     <button class="nav-tab" id="tab-account" onclick="switchTab('account')">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>
-      <span>Profile</span>
+      <span>License</span>
     </button>
   </nav>
 
@@ -529,7 +530,7 @@ function refreshAndroidDnsStatus(openSettings) {
     if (msg) {
       msg.style.color = 'var(--muted)';
       msg.textContent = window.SweeprAndroid
-        ? 'Private DNS is off or automatic. SWEEPR DoH resolver is planned; use Firefox for Android for ad blocking.'
+        ? 'Private DNS is off or automatic. This companion app does not run a VPN; use Firefox for Android + DeepBlock add-on for ad & cookie blocking.'
         : 'Open inside the Android app to inspect system Private DNS, or install the Firefox for Android add-on.';
     }
   }
@@ -566,7 +567,7 @@ async function activateDeepblock() {
       document.getElementById('codeInput').value = resolvedKey;
       document.getElementById('proBadge').textContent = 'PRO ACTIVE';
       msg.style.color = 'var(--accent-fg)';
-      msg.textContent = 'Pro Activated! Returning to Power Orb...';
+      msg.textContent = 'Pro Activated! Returning to Companion Status...';
       setTimeout(() => switchTab('home'), 700);
     } else {
       msg.style.color = '#ef4444';

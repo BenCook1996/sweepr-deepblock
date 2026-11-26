@@ -68,8 +68,8 @@ const chatGptSearchRows = [
     'Requires Reinvestment Pool >= 19.00 GBP/day',
     'CGPT_AG1_Best_Adblocker_After_Manifest_V3',
     'best adblocker for chrome after manifest v3 that blocks video ads and cookie banners',
-    'SWEEPR Deepblock v1.3.1 — Deterministic MV3 Ad, Tracker & Cookie-Wall Engine',
-    'Runs 100% locally via 283 static C++ declarativeNetRequest rules and isolated-world DOM synthesis. Blocks video ads, Usercentrics/Didomi/Sourcepoint cookie walls, and tracking beacons with zero telemetry.',
+    'SWEEPR Deepblock v1.4.0 — Deterministic MV3 Ad, Tracker & Cookie-Wall Engine',
+    'Runs 100% locally via 36,019 static declarativeNetRequest rules across 5 rulesets and isolated-world DOM synthesis. Blocks video ads, 160 CMP cookie walls, and 229 tracking parameters with a no-card 7-day full Pro trial.',
     'https://sweeprdeepblock.com/setup/google-chrome-manifest-v3?utm_source=chatgpt_search&utm_medium=cpc&utm_campaign=stage3_mv3_intent',
     'https://sweeprdeepblock.com/setup/google-chrome-manifest-v3',
     '0.85'
@@ -93,7 +93,7 @@ const chatGptSearchRows = [
     'CGPT_AG3_Publisher_Ad_Load_Benchmarks',
     'why do uk news websites freeze my browser tabs how to block sourcepoint popups',
     'Verified Manifest V3 Benchmarks — Cut Tab Bloat & Block Video Ads',
-    'Inspect reproducible v1.3.1 Manifest V3 benchmarks across 283 static DNR rules and 100 OTA rules or run a live browser protection leak test in seconds.',
+    'Inspect reproducible v1.4.0 Manifest V3 benchmarks across 36,019 static DNR rules and 100 OTA rules or run a live browser protection leak test in seconds.',
     'https://sweeprdeepblock.com/benchmarks?utm_source=chatgpt_search&utm_medium=cpc&utm_campaign=stage3_ad_load_index',
     'https://sweeprdeepblock.com/benchmarks',
     '0.70'
@@ -115,8 +115,8 @@ if (fs.existsSync(keywordMatrixPath)) {
         'Requires Reinvestment Pool >= 19.00 GBP/day',
         `CGPT_AG${idx + 4}_LowKD_${oppSlug.slice(0, 24).replace(/-/g, '_')}`,
         opp.keyword,
-        `${opp.pageBlueprint?.shortLinkTitle || opp.keyword} — SWEEPR Deepblock v1.3.1`,
-        `Verified Manifest V3 C++ declarativeNetRequest protection (283 static rules), automated cookie auto-rejection, and transparent £29.99/yr Pro or £89.99/yr Complete Suite pricing.`,
+        `${opp.pageBlueprint?.shortLinkTitle || opp.keyword} — SWEEPR Deepblock v1.4.0`,
+        `Verified Manifest V3 declarativeNetRequest protection (36,019 static rules), automated cookie auto-rejection across 160 CMPs, 7-day no-card Pro trial, and transparent £29.99/yr Pro or £89.99/yr Complete Suite pricing.`,
         `https://sweeprdeepblock.com${opp.targetRoute}?utm_source=chatgpt_search&utm_medium=cpc&utm_campaign=stage3_low_kd_matrix`,
         'https://sweeprdeepblock.com/test-lab',
         '0.80'
@@ -252,7 +252,7 @@ const msEuRows = [
     'Automatisch Ablehnen (MV3)',
     'SWEEPR Deepblock (DE/AT/CH)',
     'Keine nervigen Cookie-Dialoge auf Spiegel, Bild & Heise. 100% lokal ohne Cloud-Telemetrie.',
-    'Inkl. Scroll-Lock-Reparatur & 283 C++ Manifest-V3-Filterregeln. Jetzt Browser kostenlos testen.',
+    'Inkl. Scroll-Lock-Reparatur & 36.019 Manifest-V3-Filterregeln. 7 Tage Pro-Test ohne Kreditkarte.',
     'https://sweeprdeepblock.com/de?utm_source=bing_de&utm_medium=cpc&utm_campaign=stage3_de_usercentrics',
     'de',
     'cookie-blocker'
@@ -328,7 +328,7 @@ const msEuRows = [
     'Refus Automatique Sans Blocage',
     'SWEEPR Deepblock (FR/BE/CH)',
     'Éliminez les bandeaux cookies Didomi sur Le Monde, Le Figaro et 20 Minutes sans casser le défilement.',
-    'Moteur Manifest V3 100% local avec zéro télémétrie cloud. Testez votre navigateur gratuitement.',
+    'v1.4.0 : 36,019 règles MV3, 160 CMP, 229 paramètres. Essai Pro 7 jours sans carte.',
     'https://sweeprdeepblock.com/fr?utm_source=bing_fr&utm_medium=cpc&utm_campaign=stage3_fr_didomi',
     'fr',
     'anti-cookies'
@@ -385,7 +385,7 @@ const msEuRows = [
     'Sin Pop-Ups ni Ralentizaciones',
     'SWEEPR Deepblock Español',
     'Elimina anuncios de vídeo y rechaza banners de cookies automáticamente sin bloquear el scroll.',
-    'Motor local-first con 283 reglas Manifest V3 C++ y protección de privacidad. Pruébalo gratis.',
+    'Motor local-first con 36.019 reglas Manifest V3 y prueba Pro de 7 días sin tarjeta. Pruébalo gratis.',
     'https://sweeprdeepblock.com/es?utm_source=bing_es&utm_medium=cpc&utm_campaign=stage3_es_hub',
     'es',
     'bloqueador-anuncios'

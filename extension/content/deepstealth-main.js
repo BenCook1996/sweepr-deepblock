@@ -24,13 +24,26 @@
   let extPaused = false;
   try {
     window.addEventListener('_ds_cfg', function (ev) {
-      if (ev && ev.detail && typeof ev.detail.p === 'boolean') {
-        extPaused = ev.detail.p;
+      let detail = ev && ev.detail;
+      if (typeof detail === 'string') {
+        try {
+          detail = JSON.parse(detail);
+        } catch (e) {
+          detail = null;
+        }
+      }
+      if (detail && typeof detail.p === 'boolean') {
+        extPaused = detail.p;
       }
     });
   } catch (e) {}
 
   function isProEntitled() {
+    try {
+      if (typeof document !== 'undefined' && document.documentElement && document.documentElement.dataset) {
+        if (document.documentElement.dataset.dsPaused === '1') return false;
+      }
+    } catch (e) {}
     return !extPaused;
   }
 

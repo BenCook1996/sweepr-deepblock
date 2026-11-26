@@ -97,7 +97,7 @@ before(async () => {
       CRM_ADMIN_PASSWORD: 'test_admin_password',
       OWNER_EMAIL: 'owner@sweeprdeepblock.test',
       OWNER_LICENSE_KEY: 'SWEEPR-DB-OWNR-2026-9999',
-      LATEST_EXTENSION_VERSION: '1.3.1',
+      LATEST_EXTENSION_VERSION: '1.4.0',
       STRIPE_SECRET_KEY: '',
       DISABLE_CMO_AUTOPILOT: '1',
       TRUST_PROXY: '',
@@ -142,9 +142,9 @@ after(async () => {
   }
 });
 
-test('E1: manifest.json bumped to 1.3.2 with scripting, optional clipboardRead, MacCtrl shortcuts, 3 rulesets, and valid surrogates WAR', () => {
+test('E1: manifest.json bumped to 1.4.0 with scripting, optional clipboardRead, MacCtrl shortcuts, 5 rulesets, Gecko 128.0, and valid surrogates WAR', () => {
   const manifest = JSON.parse(fs.readFileSync(path.join(ROOT, 'extension/manifest.json'), 'utf8'));
-  assert.equal(manifest.version, '1.3.2');
+  assert.equal(manifest.version, '1.4.0');
   assert.ok(manifest.permissions.includes('scripting'));
   assert.deepEqual(manifest.optional_permissions, ['clipboardRead']);
 
@@ -153,7 +153,14 @@ test('E1: manifest.json bumped to 1.3.2 with scripting, optional clipboardRead, 
   }
 
   const rulesetIds = (manifest.declarative_net_request?.rule_resources || []).map((r) => r.id);
-  assert.deepEqual(rulesetIds, ['ads_and_trackers', 'tracker_param_stripping', 'cryptominers_and_heavy_scripts']);
+  assert.deepEqual(rulesetIds, [
+    'ads_and_trackers',
+    'easyprivacy_trackers',
+    'regional_eu_filters',
+    'tracker_param_stripping',
+    'cryptominers_and_heavy_scripts'
+  ]);
+  assert.equal(manifest.browser_specific_settings?.gecko?.strict_min_version, '128.0');
 
   const allContentScripts = (manifest.content_scripts || []).flatMap((cs) => cs.js || []);
   assert.ok(!allContentScripts.includes('content/deepstealth-main.js'), 'deepstealth-main.js must not be static in content_scripts');
@@ -237,11 +244,13 @@ test('E4: all 9 _locales/*/messages.json files define the 10 ui* i18n keys', () 
   }
 });
 
-test('E5: built v1.3.2 store ZIPs exist and pass Opera/Chrome/Firefox compliance checks', () => {
+test('E5: built v1.4.0 store ZIPs exist and pass Opera/Chrome/Firefox compliance checks', () => {
+  const manifestVersion = JSON.parse(fs.readFileSync(path.join(ROOT, 'extension/manifest.json'), 'utf8')).version;
+  assert.equal(manifestVersion, '1.4.0');
   const zips = [
-    'dist/sweepr-deepblock-v1.3.2-chrome-webstore.zip',
-    'dist/sweepr-deepblock-v1.3.2-firefox-amo.zip',
-    'dist/sweepr-deepblock-v1.3.2-opera-addons.zip',
+    `dist/sweepr-deepblock-v${manifestVersion}-chrome-webstore.zip`,
+    `dist/sweepr-deepblock-v${manifestVersion}-firefox-amo.zip`,
+    `dist/sweepr-deepblock-v${manifestVersion}-opera-addons.zip`,
     'dist/sweepr-deepblock-edge-chrome-mv3.zip'
   ];
   for (const z of zips) {
@@ -251,7 +260,7 @@ test('E5: built v1.3.2 store ZIPs exist and pass Opera/Chrome/Firefox compliance
     const manifestEntry = entries.find((e) => e.name === 'manifest.json');
     assert.ok(manifestEntry, `${z} missing manifest.json`);
     const parsedManifest = JSON.parse(manifestEntry.data.toString('utf8'));
-    assert.equal(parsedManifest.version, '1.3.2');
+    assert.equal(parsedManifest.version, manifestVersion);
     for (const e of entries) {
       if (e.name.startsWith('rules/') && e.name.endsWith('.json')) {
         assert.ok(!/"url"\s*:\s*"data:/i.test(e.data.toString('utf8')), `${z}:${e.name} contains data: URL`);
@@ -393,7 +402,7 @@ test('E7: deepblock-content.js isolates settings.adBlocking === false so cookieA
   assert.equal(removedCosmetic, true, 'removeUniversalAdCosmeticStyle must run when adBlocking === false');
 });
 
-test('E8: live server.js in production allows Chrome/Edge/Opera/Firefox/Safari origins, blocks unknown extension IDs with 403, and serves v1.3.1 delta', async () => {
+test('E8: live server.js in production allows Chrome/Edge/Opera/Firefox/Safari origins, blocks unknown extension IDs with 403, and serves v1.4.0 delta', async () => {
   const allowedOrigins = [
     'chrome-extension://bkdfhdgmglfancgpkcbdceinfdlccmpc',
     'chrome-extension://pbidlabhfmaoghmofkaegcgjgmaajhop',
@@ -432,7 +441,7 @@ test('E8: live server.js in production allows Chrome/Edge/Opera/Firefox/Safari o
   const deltaRes = await fetch(`${baseUrl}/api/filters/delta?current_version=1.3.0`);
   assert.equal(deltaRes.status, 200);
   const deltaJson = await deltaRes.json();
-  assert.equal(deltaJson.latestExtensionVersion, '1.3.1');
+  assert.equal(deltaJson.latestExtensionVersion, '1.4.0');
   assert.equal(deltaJson.updateAvailable, true);
 });
 
@@ -490,7 +499,7 @@ test('E10: /api/license-verify enforces 5-device cap, includes RAM Tamer in base
   assert.equal(lkBody.valid, true);
 });
 
-test('E11: /api/telemetry/live-proof serves real rule counts and v1.3.2 without fabricated receipts', async () => {
+test('E11: /api/telemetry/live-proof serves real rule counts and v1.4.0 without fabricated receipts', async () => {
   const blockedSitesRaw = JSON.parse(
     fs.readFileSync(path.join(ROOT, 'data', 'deepblock-blocked-sites.json'), 'utf8')
   );
@@ -503,12 +512,21 @@ test('E11: /api/telemetry/live-proof serves real rule counts and v1.3.2 without 
       : 0);
   assert.ok(expectedBlockedCount >= 16100, `Expected >= 16100 blocked domains, got ${expectedBlockedCount}`);
 
+  const mf = JSON.parse(fs.readFileSync(path.join(ROOT, 'extension/manifest.json'), 'utf8'));
+  const enabledResources = (mf.declarative_net_request?.rule_resources || []).filter((r) => r.enabled);
+  const expectedStaticRules = enabledResources.reduce(
+    (sum, r) => sum + JSON.parse(fs.readFileSync(path.join(ROOT, 'extension', r.path), 'utf8')).length,
+    0
+  );
+  assert.equal(expectedStaticRules, 36019);
+
   const res = await fetch(`${baseUrl}/api/telemetry/live-proof`);
   assert.equal(res.status, 200);
   const body = await res.json();
   assert.equal(body.ok, true);
-  assert.equal(body.version, '1.3.2');
-  assert.equal(body.activeMv3StaticRules, 283);
+  assert.equal(body.version, '1.4.0');
+  assert.equal(body.activeMv3StaticRules, expectedStaticRules);
+  assert.equal(body.rulesetsActive, enabledResources.length);
   assert.equal(body.activeOtaDeltaRules, 100);
   assert.equal(body.verifiedBlockedDomainsCount, expectedBlockedCount);
   assert.equal(body.maxDevicesPerLicense, 5);
@@ -946,7 +964,7 @@ test('E18: index.html inline scripts + nav.js preserve /download?install=1 and f
     const { anchors, byId } = runPageScripts(indexHtml, { userAgent: botUa, extraScripts: [navJs] });
     assert.equal(byId.get('downloadBtn').getAttribute('href'), '/download?install=1', `Bot UA must keep #downloadBtn href`);
     assert.equal(byId.get('osDownloadText').textContent, 'Install Free Extension', `Bot UA must keep #osDownloadText`);
-    assert.match(byId.get('heroDeviceBadgeText').textContent, /Works on Chrome, Edge, Firefox, Brave & Opera/);
+    assert.match(byId.get('heroDeviceBadgeText').textContent, /Works on Chrome, Edge, Firefox,.*Brave & Opera/);
     assert.equal(byId.get('mobileStickyDownloadBtn').getAttribute('href'), '/download?install=1');
     const footerDownload = anchors.find((a) => !a.id && a.textContent === 'Browser Extension');
     assert.ok(footerDownload, 'Footer Browser Extension link must exist');
@@ -1042,7 +1060,7 @@ test('E19: background.js deduplicates DNR startup sync, restores storage.sync li
       runtime: {
         id: 'bkdfhdgmglfancgpkcbdceinfdlccmpc',
         lastError: null,
-        getManifest: () => ({ version: '1.3.2' }),
+        getManifest: () => ({ version: '1.4.0' }),
         getURL: (p) => `chrome-extension://bkdfhdgmglfancgpkcbdceinfdlccmpc/${p}`,
         setUninstallURL() {},
         requestUpdateCheck() {},
@@ -1303,7 +1321,8 @@ test('E20: build-store-packages.mjs injects identity + conditional oauth2 only i
       return JSON.parse(m.data.toString('utf8'));
     };
 
-    const chromeM = readManifest('dist/sweepr-deepblock-v1.3.2-chrome-webstore.zip');
+    const extVersion = JSON.parse(fs.readFileSync(path.join(ROOT, 'extension/manifest.json'), 'utf8')).version;
+    const chromeM = readManifest(`dist/sweepr-deepblock-v${extVersion}-chrome-webstore.zip`);
     assert.ok(chromeM.permissions.includes('identity'));
     assert.ok(chromeM.permissions.includes('identity.email'));
     assert.equal(chromeM.oauth2?.client_id, 'test-client.apps.googleusercontent.com');
@@ -1311,13 +1330,20 @@ test('E20: build-store-packages.mjs injects identity + conditional oauth2 only i
 
     for (const rel of [
       'dist/sweepr-deepblock-edge-chrome-mv3.zip',
-      'dist/sweepr-deepblock-v1.3.2-firefox-amo.zip',
-      'dist/sweepr-deepblock-v1.3.2-opera-addons.zip'
+      `dist/sweepr-deepblock-v${extVersion}-firefox-amo.zip`,
+      `dist/sweepr-deepblock-v${extVersion}-opera-addons.zip`
     ]) {
       const otherM = readManifest(rel);
       assert.equal(otherM.oauth2, undefined, `${rel} must omit oauth2`);
       assert.ok(!otherM.permissions.includes('identity'), `${rel} must omit identity permission`);
       assert.ok(!otherM.permissions.includes('identity.email'), `${rel} must omit identity.email permission`);
+    }
+    const safariRel = 'dist/sweepr-deepblock-safari-mv3.zip';
+    if (fs.existsSync(path.join(ROOT, safariRel))) {
+      const safariM = readManifest(safariRel);
+      assert.equal(safariM.oauth2, undefined, `${safariRel} must omit oauth2`);
+      assert.ok(!safariM.permissions.includes('identity'), `${safariRel} must omit identity permission`);
+      assert.ok(!safariM.permissions.includes('identity.email'), `${safariRel} must omit identity.email permission`);
     }
   } finally {
     execFileSync(process.execPath, [path.join(ROOT, 'scripts/build-store-packages.mjs')], {

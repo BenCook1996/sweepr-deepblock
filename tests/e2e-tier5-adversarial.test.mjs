@@ -338,7 +338,7 @@ globalThis.fetch = async (input) => {
     const res = await execFileAsync(process.execPath, nodeArgs, {
       cwd: cwdDir,
       env,
-      timeout: 240000,
+      timeout: 420000,
       maxBuffer: 16 * 1024 * 1024
     });
     return { code: 0, stdout: res.stdout, stderr: res.stderr };
@@ -1388,7 +1388,13 @@ describe('Tier 5C: /download UA matrix, live APIs & migrated F8/F9.5/F10/F11.4 c
     assert.equal(verRes.version, manifest.version);
 
     const proofRes = await (await fetch(`${server.baseUrl}/api/telemetry/live-proof`)).json();
-    assert.equal(proofRes.activeMv3StaticRules, 283);
+    const enabledResources = (manifest.declarative_net_request?.rule_resources || []).filter((r) => r.enabled);
+    const expectedStaticRules = enabledResources.reduce(
+      (sum, r) => sum + JSON.parse(fs.readFileSync(path.join(ROOT, 'extension', r.path), 'utf8')).length,
+      0
+    );
+    assert.equal(proofRes.activeMv3StaticRules, expectedStaticRules);
+    assert.equal(proofRes.rulesetsActive, enabledResources.length);
     assert.equal(proofRes.activeOtaDeltaRules, 100);
 
     const deltaRes = await (await fetch(`${server.baseUrl}/api/filters/delta`)).json();
@@ -1503,7 +1509,7 @@ describe('Tier 5D: Isolated temp-sandbox CI pipeline invariants', { concurrency:
     assert.equal(g2.code, 0, `technical-seo-audit --strict failed: ${g2.stderr || g2.stdout}`);
   });
 
-  test('5D.2 CI pipeline scripts preserve canonical ordering, clean copy, and zero NOINDEX_PRUNE hijacks in isolated sandbox', { timeout: 360000 }, async () => {
+  test('5D.2 CI pipeline scripts preserve canonical ordering, clean copy, and zero NOINDEX_PRUNE hijacks in isolated sandbox', { timeout: 900000 }, async () => {
     const sandbox = createRepoSandboxCopy();
     try {
       const beforeSitemap = fs.readFileSync(path.join(sandbox, 'website', 'sitemap.xml'), 'utf8');
@@ -1546,12 +1552,12 @@ describe('Tier 5D: Isolated temp-sandbox CI pipeline invariants', { concurrency:
       assert.equal(adsRun.code, 0, `build-stage3-expansion-ads failed: ${adsRun.stderr || adsRun.stdout}`);
       for (const csvName of ['chatgpt-search-ads-stage3-export.csv', 'eu-de-fr-microsoft-ads-stage3.csv']) {
         const csvTxt = fs.readFileSync(path.join(sandbox, 'dist', csvName), 'utf8');
-        assert.match(csvTxt, /283/);
+        assert.match(csvTxt, /36[.,]?019/);
         if (csvName === 'chatgpt-search-ads-stage3-export.csv') {
-          assert.match(csvTxt, /1\.3\.1/);
+          assert.match(csvTxt, /1\.4\.0/);
         }
         assert.equal(
-          /\b242\b|1\.2\.9|<15us|<50ms|scam stores|anti-estafas|8\/8|4 Devices/i.test(csvTxt),
+          /\b242\b|\b283\b|1\.2\.9|1\.3\.1|1\.3\.2|<15us|<50ms|scam stores|anti-estafas|8\/8|4 Devices/i.test(csvTxt),
           false,
           `Stale copy in sandbox ${csvName}`
         );

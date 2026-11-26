@@ -157,7 +157,7 @@
         Dictionary.com (<code class="px-2 py-0.5 rounded bg-slate-100 text-emerald-800 font-mono text-2xl sm:text-3xl">dictionary.com</code>) — Ad-Tech &amp; CMP Profile
       </h1>
       <div class="glass-card p-5 sm:p-6 bg-white border border-gray-200 rounded-2xl shadow-sm space-y-3">
-        <p class="text-gray-800 text-base leading-relaxed m-0">Static pattern profiling for <strong>dictionary.com</strong> models roughly <strong>61 OpenRTB calls</strong> (~10342 KB), <strong>38 tracking patterns</strong>, and a OneTrust GDPR overlay (~375 MB estimated tab overhead). <strong>SWEEPR Deepblock v1.3.1</strong> applies 283 static C++ <code class="px-1.5 py-0.5 rounded bg-slate-100 text-emerald-800 font-mono text-xs">declarativeNetRequest</code> rules at Chromium’s network layer while rejecting non-essential consent dialogs.</p>
+        <p class="text-gray-800 text-base leading-relaxed m-0">Static pattern profiling for <strong>dictionary.com</strong> models roughly <strong>61 OpenRTB calls</strong> (~10342 KB), <strong>38 tracking patterns</strong>, and a OneTrust GDPR overlay (~375 MB estimated tab overhead). <strong>SWEEPR Deepblock v1.4.0</strong> applies 36,019 static C++ <code class="px-1.5 py-0.5 rounded bg-slate-100 text-emerald-800 font-mono text-xs">declarativeNetRequest</code> rules at Chromium’s network layer while rejecting non-essential consent dialogs.</p>
         <div class="flex flex-wrap gap-4 text-xs font-bold">
           <a href="/test-lab" class="text-emerald-700 underline">Run Live Browser Test Lab &rarr;</a>
           <a href="/tools/browser-ram-calculator" class="text-emerald-700 underline">Estimate Tab RAM Savings &rarr;</a>
@@ -167,20 +167,20 @@
 
     <div class="bg-amber-50 border border-amber-200 border-l-4 rounded-2xl p-5 text-sm text-amber-900 leading-relaxed" style="border-left-color:#f59e0b;">
       <h3 class="text-base font-extrabold text-gray-900 mb-1.5">Heuristic Ad-Tech Profile Estimate (Not Live Browser Telemetry)</h3>
-      <div>Numbers on this page are static baseline estimates of typical SSP/ad-tech and CMP patterns for <strong>dictionary.com</strong> rather than live Playwright or HAR telemetry. Test real-time browser blocking in our <a href="/test-lab" class="text-emerald-700 font-semibold underline">Browser Test Lab</a> or review <a href="/benchmarks" class="text-emerald-700 font-semibold underline">v1.3.1 MV3 Benchmarks</a>.</div>
+      <div>Numbers on this page are static baseline estimates of typical SSP/ad-tech and CMP patterns for <strong>dictionary.com</strong> rather than live Playwright or HAR telemetry. Test real-time browser blocking in our <a href="/test-lab" class="text-emerald-700 font-semibold underline">Browser Test Lab</a> or review <a href="/benchmarks" class="text-emerald-700 font-semibold underline">v1.4.0 MV3 Benchmarks</a>.</div>
     </div>
 
     <section class="glass-card p-6 sm:p-8 bg-white border border-gray-200 rounded-2xl shadow-sm">
       <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
         <h2 class="text-xl sm:text-2xl font-extrabold text-gray-900 tracking-tight">Dictionary.com: CPRA Global Privacy Control &amp; US-Nat String Handling &amp; OneTrust Breakdown</h2>
-        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 shrink-0">v1.3.1 · 283 Static Rules</span>
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 shrink-0">v1.4.0 · 36,019 Static Rules</span>
       </div>
       <div class="space-y-4">
         <p class="text-sm text-gray-700 leading-relaxed">
           Focused on real-time forecast dashboards, speed diagnostics, and reference tools, <strong>dictionary.com</strong> exhibits elevated multi-bidder density driven by background AJAX telemetry refreshes and high-impact takeover skins framing utility widgets. Based on static baseline estimates, one daily visit totals roughly <strong>0.30 GB monthly</strong> (3.60 GB annually) in third-party ad transfers (~7.0 minutes across 100 page loads).
         </p>
         <p class="text-sm text-gray-700 leading-relaxed">
-          <strong>Consent Layer (OneTrust GDPR):</strong> North American and global domains predominantly respond to IAB US-Nat consent arrays and HTTP <code class="px-1.5 py-0.5 rounded bg-slate-100 text-emerald-800 font-mono text-xs">Sec-GPC: 1</code> opt-out preference headers. Even when Global Privacy Control transmits successfully, client-side JavaScript waterfall libraries still spawn heavy iframe bid requests and background viewability polling timers unless blocked prior to network dispatch. Specifically on dictionary.com, the site typically uses a <code class="px-1.5 py-0.5 rounded bg-slate-100 text-emerald-800 font-mono text-xs">#onetrust-consent-sdk</code> modal backdrop and <code class="px-1.5 py-0.5 rounded bg-slate-100 text-emerald-800 font-mono text-xs">#onetrust-banner-sdk</code> sticky footer banner that initializes Optanon consent groups (<code class="px-1.5 py-0.5 rounded bg-slate-100 text-emerald-800 font-mono text-xs">C0001</code>–<code class="px-1.5 py-0.5 rounded bg-slate-100 text-emerald-800 font-mono text-xs">C0004</code>) via <code class="px-1.5 py-0.5 rounded bg-slate-100 text-emerald-800 font-mono text-xs">OptanonActiveGroups</code> before firing Google Tag Manager triggers. SWEEPR Deepblock v1.3.1 triggers native <code class="px-1.5 py-0.5 rounded bg-slate-100 text-emerald-800 font-mono text-xs">#onetrust-reject-all-handler</code> callbacks cleanly at <code class="px-1.5 py-0.5 rounded bg-slate-100 text-emerald-800 font-mono text-xs">document_start</code>, persisting strictly-necessary cookies only. Preserve bandwidth during diagnostic or weather checks so measurements reflect actual ISP performance rather than ad transfers.
+          <strong>Consent Layer (OneTrust GDPR):</strong> North American and global domains predominantly respond to IAB US-Nat consent arrays and HTTP <code class="px-1.5 py-0.5 rounded bg-slate-100 text-emerald-800 font-mono text-xs">Sec-GPC: 1</code> opt-out preference headers. Even when Global Privacy Control transmits successfully, client-side JavaScript waterfall libraries still spawn heavy iframe bid requests and background viewability polling timers unless blocked prior to network dispatch. Specifically on dictionary.com, the site typically uses a <code class="px-1.5 py-0.5 rounded bg-slate-100 text-emerald-800 font-mono text-xs">#onetrust-consent-sdk</code> modal backdrop and <code class="px-1.5 py-0.5 rounded bg-slate-100 text-emerald-800 font-mono text-xs">#onetrust-banner-sdk</code> sticky footer banner that initializes Optanon consent groups (<code class="px-1.5 py-0.5 rounded bg-slate-100 text-emerald-800 font-mono text-xs">C0001</code>–<code class="px-1.5 py-0.5 rounded bg-slate-100 text-emerald-800 font-mono text-xs">C0004</code>) via <code class="px-1.5 py-0.5 rounded bg-slate-100 text-emerald-800 font-mono text-xs">OptanonActiveGroups</code> before firing Google Tag Manager triggers. SWEEPR Deepblock v1.4.0 triggers native <code class="px-1.5 py-0.5 rounded bg-slate-100 text-emerald-800 font-mono text-xs">#onetrust-reject-all-handler</code> callbacks cleanly at <code class="px-1.5 py-0.5 rounded bg-slate-100 text-emerald-800 font-mono text-xs">document_start</code>, persisting strictly-necessary cookies only. Preserve bandwidth during diagnostic or weather checks so measurements reflect actual ISP performance rather than ad transfers.
         </p>
         <ul class="list-disc pl-5 space-y-2 pt-1">
           <li class="text-sm text-gray-700 leading-relaxed"><strong class="text-gray-900">Ad Exchange Orchestrator — doubleclick.net:</strong> Google Ad Manager / DoubleClick (<code class="px-1.5 py-0.5 rounded bg-slate-100 text-emerald-800 font-mono text-xs">doubleclick.net</code>) executes synchronous GPT tag initialization, SafeFrame sandbox negotiation, and cross-property frequency capping lookups prior to layout stabilization.</li>
@@ -194,9 +194,9 @@
     <section id="publisher-baseline-comparison" class="glass-card bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
       <div class="overflow-x-auto w-full">
         <table class="w-full text-left border-collapse text-sm">
-          <caption class="sr-only">dictionary.com heuristic ad-tech baseline vs SWEEPR Deepblock v1.3.1</caption>
+          <caption class="sr-only">dictionary.com heuristic ad-tech baseline vs SWEEPR Deepblock v1.4.0</caption>
           <thead class="bg-gray-50 border-b border-gray-200">
-            <tr><th scope="col" class="px-4 py-3 text-xs font-bold uppercase tracking-wider text-gray-600">dictionary.com Profile</th><th scope="col" class="px-4 py-3 text-xs font-bold uppercase tracking-wider text-gray-600">Unshielded Browser (Est.)</th><th scope="col" class="px-4 py-3 text-xs font-bold uppercase tracking-wider text-gray-600">SWEEPR Deepblock v1.3.1</th></tr>
+            <tr><th scope="col" class="px-4 py-3 text-xs font-bold uppercase tracking-wider text-gray-600">dictionary.com Profile</th><th scope="col" class="px-4 py-3 text-xs font-bold uppercase tracking-wider text-gray-600">Unshielded Browser (Est.)</th><th scope="col" class="px-4 py-3 text-xs font-bold uppercase tracking-wider text-gray-600">SWEEPR Deepblock v1.4.0</th></tr>
           </thead>
           <tbody class="divide-y divide-gray-200">
             <tr class="hover:bg-emerald-50/30 transition-colors"><td class="px-4 py-3.5 font-semibold text-gray-900">Bid Auctions &amp; Transfer</td><td class="px-4 py-3.5 text-gray-700">~61 requests (10.1 MB est.)</td><td class="px-4 py-3.5 text-gray-700">Matched SSP/ad hosts blocked at DNR layer</td></tr>
@@ -210,7 +210,7 @@
 
     <div class="space-y-3">
       <h2 class="text-xl font-extrabold text-gray-900 tracking-tight">Matched Static DNR Rules for Dictionary.com</h2>
-      <p class="text-sm text-gray-600">Rules below are read directly from <code class="px-1.5 py-0.5 rounded bg-slate-100 text-emerald-800 font-mono text-xs">extension/rules/static_ads_and_trackers.json</code> in SWEEPR Deepblock v1.3.1.</p>
+      <p class="text-sm text-gray-600">Rules below are read directly from <code class="px-1.5 py-0.5 rounded bg-slate-100 text-emerald-800 font-mono text-xs">extension/rules/static_ads_and_trackers.json</code> in SWEEPR Deepblock v1.4.0.</p>
       <section id="dnr-filter-patterns" class="glass-card bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
       <div class="overflow-x-auto w-full">
         <table class="w-full text-left border-collapse text-sm">
@@ -232,9 +232,9 @@
 
     <section class="glass-card p-6 sm:p-8 bg-white border border-emerald-200 rounded-2xl shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
       <div class="space-y-2 max-w-2xl">
-        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800">SWEEPR Deepblock v1.3.1</span>
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800">SWEEPR Deepblock v1.4.0</span>
         <h2 class="text-xl sm:text-2xl font-extrabold text-gray-900 tracking-tight">Browse dictionary.com Without Ad-Tech Clutter</h2>
-        <p class="text-sm text-gray-600 leading-relaxed">283 static Manifest V3 declarativeNetRequest rules, automated GDPR cookie rejection, URL tracking parameter stripping, and Total Tab &amp; RAM Tamer across 5 devices.</p>
+        <p class="text-sm text-gray-600 leading-relaxed">36,019 static Manifest V3 declarativeNetRequest rules, automated GDPR cookie rejection, URL tracking parameter stripping, and Total Tab &amp; RAM Tamer across 5 devices.</p>
       </div>
       <div class="flex flex-col sm:flex-row gap-3 shrink-0 w-full md:w-auto">
         <a href="/download?install=1" class="btn btn-go px-5 py-3 rounded-xl font-bold text-sm justify-center no-underline">Install Free Extension</a>
@@ -278,7 +278,7 @@
       </a>
       <a href="/benchmarks" class="glass-card p-4 bg-white border border-slate-200/90 hover:border-emerald-400 rounded-2xl no-underline transition-all block">
         <div class="text-[11px] font-bold uppercase tracking-wider text-emerald-700 mb-1">Architecture</div>
-        <div class="text-sm font-bold text-slate-900 leading-snug">SWEEPR Deepblock v1.3.1 Benchmarks</div>
+        <div class="text-sm font-bold text-slate-900 leading-snug">SWEEPR Deepblock v1.4.0 Benchmarks</div>
       </a>
       <a href="/guides/how-to-automatically-reject-cookie-banners-uk" class="glass-card p-4 bg-white border border-slate-200/90 hover:border-emerald-400 rounded-2xl no-underline transition-all block">
         <div class="text-[11px] font-bold uppercase tracking-wider text-emerald-700 mb-1">Cookie Guide</div>
@@ -422,7 +422,7 @@
               <li><a href="/" class="hover:text-emerald-600 transition-colors">SWEEPR Deepblock Home</a></li>
               <li><a href="/download" class="hover:text-emerald-600 transition-colors">Browser Extension Downloads</a></li>
               <li><a href="/pricing" class="hover:text-emerald-600 transition-colors">Pricing &amp; Pro Plans</a></li>
-              <li><a href="/benchmarks" class="hover:text-emerald-600 transition-colors">v1.3.1 MV3 Benchmarks</a></li>
+              <li><a href="/benchmarks" class="hover:text-emerald-600 transition-colors">v1.4.0 MV3 Benchmarks</a></li>
               <li><a href="/test-lab" class="hover:text-emerald-600 transition-colors">Free Adblock Test Lab</a></li>
               <li><a href="/tools" class="hover:text-emerald-600 transition-colors">Free Browser Privacy &amp; RAM Tools</a></li>
               <li><a href="/support" class="hover:text-emerald-600 transition-colors">Support &amp; 1-Click Cancellation</a></li>

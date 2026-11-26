@@ -35,6 +35,19 @@ document.addEventListener('DOMContentLoaded', () => {
   const openCustomModulesBtn = document.getElementById('openCustomModulesBtn');
   const startZapperBtn = document.getElementById('startZapperBtn');
   const popupChromeAutoVerifyBtn = document.getElementById('popupChromeAutoVerifyBtn');
+  const popupMainView = document.getElementById('popupMainView');
+  const popupMenuView = document.getElementById('popupMenuView');
+  const popupMenuBackBtn = document.getElementById('popupMenuBackBtn');
+  const popupOpenWelcomeBtn = document.getElementById('popupOpenWelcomeBtn');
+  const popupMenuTabEngines = document.getElementById('popupMenuTabEngines');
+  const popupMenuTabLists = document.getElementById('popupMenuTabLists');
+  const popupEnginesPane = document.getElementById('popupEnginesPane');
+  const popupListsPane = document.getElementById('popupListsPane');
+  const popupListTabsBar = document.getElementById('popupListTabsBar');
+  const popupSessionsList = document.getElementById('popupSessionsList');
+  const popupPausedList = document.getElementById('popupPausedList');
+  const popupPinnedList = document.getElementById('popupPinnedList');
+  const popupHiddenList = document.getElementById('popupHiddenList');
   const hasChromeIdentity =
     typeof chrome !== 'undefined' && chrome.identity && typeof chrome.identity.getAuthToken === 'function';
 
@@ -43,11 +56,66 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentState = {
     proActive: false,
     ramTamerActive: false,
+    subscriptionStatus: 'unactivated',
+    plan: '',
+    trialStartedAt: 0,
+    trialExpiresAt: 0,
     settings: {},
     pausedSites: [],
     neverSnoozeSites: [],
     cloudTabSessions: []
   };
+
+  function parseEpochMs(v) {
+    if (typeof v === 'number') return Number.isFinite(v) ? v : 0;
+    if (typeof v === 'string' && v.trim()) {
+      const num = Number(v);
+      if (Number.isFinite(num) && num > 0) return num;
+      const parsed = Date.parse(v);
+      return Number.isFinite(parsed) ? parsed : 0;
+    }
+    return 0;
+  }
+
+  function formatRemainingDaysHours(expMs, { verbose = false } = {}) {
+    const diff = Number(expMs) - Date.now();
+    if (!Number.isFinite(diff) || diff <= 0) return verbose ? '0 hours remaining' : '0h left';
+    const totalHours = Math.floor(diff / 3600000);
+    const days = Math.floor(totalHours / 24);
+    const hours = totalHours % 24;
+    if (verbose) {
+      if (days > 0) {
+        return `${days} day${days === 1 ? '' : 's'}, ${hours} hour${hours === 1 ? '' : 's'} remaining`;
+      }
+      if (hours > 0) return `${hours} hour${hours === 1 ? '' : 's'} remaining`;
+      return 'Less than 1 hour remaining';
+    }
+    if (days > 0) return `${days}d ${hours}h left`;
+    if (hours > 0) return `${hours}h left`;
+    return '<1h left';
+  }
+
+  function deriveTrialState(state) {
+    const st = state || {};
+    const isPro = Boolean(st.proActive);
+    const status = String(st.subscriptionStatus || '').toLowerCase();
+    const plan = String(st.plan || '').toLowerCase();
+    const expMs = parseEpochMs(st.trialExpiresAt || (status === 'trialing' ? st.licenseExpiresAt : 0));
+    const expiredByClock = expMs > 0 && Date.now() >= expMs;
+    const isActiveTrial = isPro && (status === 'trialing' || plan === 'trial_7d') && !expiredByClock;
+    const isTrialExpired =
+      status === 'trial_expired' ||
+      (!isPro && status === 'expired' && plan === 'trial_7d') ||
+      (!isPro && plan === 'trial_7d' && Boolean(st.trialStartedAt || expMs)) ||
+      (status === 'trialing' && expiredByClock);
+    const remainingShort = isActiveTrial && expMs > 0 ? formatRemainingDaysHours(expMs) : '';
+    const remainingVerbose = isActiveTrial && expMs > 0 ? formatRemainingDaysHours(expMs, { verbose: true }) : '';
+    return { isPro, isActiveTrial, isTrialExpired, expiresAtMs: expMs, remainingShort, remainingVerbose };
+  }
+
+  function isUiProActive(st = currentState) {
+    return Boolean(st && st.proActive) && !deriveTrialState(st).isTrialExpired;
+  }
 
   chrome.storage.local.get(['draftLicenseKey', 'licenseDrawerOpen', 'proActive'], (uiState) => {
     if (uiState && typeof uiState.draftLicenseKey === 'string' && uiState.draftLicenseKey && licenseKeyInput) {
@@ -241,18 +309,25 @@ document.addEventListener('DOMContentLoaded', () => {
     chrome.storage.local.set({ licenseDrawerOpen: true });
     licenseFeedbackEl.style.display = 'block';
     licenseFeedbackEl.style.color = '#d97706';
+    const trialInfo = deriveTrialState(currentState);
     licenseFeedbackEl.textContent =
       customMsg ||
-      '🔒 Unlock Pro or enter your SWEEPR-DB-XXXX-XXXX-XXXX license key above.';
+      (trialInfo.isTrialExpired
+        ? '🔒 Your 7-day Pro trial has expired. Upgrade or enter a SWEEPR-DB-XXXX-XXXX-XXXX license key above.'
+        : '🔒 Unlock Pro or enter your SWEEPR-DB-XXXX-XXXX-XXXX license key above.');
     licenseKeyInput.focus();
   }
 
   function updateSiteBarState() {
-    if (!currentState.proActive) {
+    const trialInfo = deriveTrialState(currentState);
+    const isPro = Boolean(currentState.proActive) && !trialInfo.isTrialExpired;
+    if (!isPro) {
       siteBarEl.classList.add('paused');
       sitePauseBtn.className = 'switch-btn pro-lock';
       sitePauseBtn.textContent = 'PRO';
-      currentSiteSubEl.textContent = 'Unlock Pro below to enable full Site Shield';
+      currentSiteSubEl.textContent = trialInfo.isTrialExpired
+        ? 'Trial expired — upgrade to restore Site Shield'
+        : 'Unlock Pro below to enable full Site Shield';
       return;
     }
     sitePauseBtn.textContent = '';
@@ -314,50 +389,80 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderStoreSafety(state) {
     if (!storeSafetyCard || !storeSafetyTitle || !storeSafetySub || !storeSafetyPill) return;
     storeSafetyCard.classList.remove('scam-alert');
-    const isPro = Boolean(state && state.proActive);
+    const trialInfo = deriveTrialState(state);
+    const isPro = trialInfo.isPro;
     const hasBonus = Number(state && state.bonusProDaysEarned) > 0;
+    if (isPro && state && state.plan === 'referral_trial_14d') {
+      storeSafetyTitle.textContent = 'MV3 Shield Active';
+      storeSafetySub.textContent = 'Ads, cookies, and URL trackers shielded';
+      storeSafetyPill.textContent = '14d Trial';
+      storeSafetyPill.className = 'store-pill';
+      return;
+    }
+    if (trialInfo.isActiveTrial) {
+      storeSafetyTitle.textContent = '7-Day Pro Trial Active';
+      storeSafetySub.textContent = trialInfo.remainingShort
+        ? `Full Pro protection active · ${trialInfo.remainingShort}`
+        : 'Full Pro protection active';
+      storeSafetyPill.textContent = trialInfo.remainingShort
+        ? `Trial · ${trialInfo.remainingShort}`
+        : '7-Day Pro Trial';
+      storeSafetyPill.className = 'store-pill';
+      return;
+    }
+    if (trialInfo.isTrialExpired) {
+      storeSafetyTitle.textContent = 'Trial Expired';
+      storeSafetySub.textContent = '7-day Pro trial ended — upgrade to restore protection';
+      storeSafetyPill.textContent = 'Trial Expired';
+      storeSafetyPill.className = 'store-pill expired';
+      return;
+    }
     storeSafetyTitle.textContent = isPro ? 'MV3 Shield Active' : 'Free Preview Mode';
     storeSafetySub.textContent = isPro
       ? hasBonus
         ? `Pro active · +${Number(state.bonusProDaysEarned)} bonus referral days`
         : 'Ads, cookies, and URL trackers shielded'
       : 'Activate Pro to unlock full MV3 protection';
-    storeSafetyPill.textContent = isPro
-      ? state.plan === 'referral_trial_14d'
-        ? '14d Trial'
-        : 'Shield Active'
-      : 'Free Preview';
+    storeSafetyPill.textContent = isPro ? 'Shield Active' : 'Free Preview';
     storeSafetyPill.className = 'store-pill';
   }
 
   function renderState(state) {
     currentState = state || currentState;
-    const isPro = Boolean(state.proActive);
-    const stats = state.stats || {};
+    const trialInfo = deriveTrialState(currentState);
+    if (trialInfo.isTrialExpired) {
+      currentState.proActive = false;
+    }
+    const isPro = Boolean(currentState.proActive) && !trialInfo.isTrialExpired;
+    const stats = currentState.stats || {};
     const ads = isPro
       ? Number(stats.adsBlocked) || 0
       : (Number(stats.adsSpotted) || 0) + (Number(stats.adsBlocked) || 0);
     const cookies = Number(stats.cookiePromptsDetected) || 0;
 
     if (hostPermBannerEl) {
-      hostPermBannerEl.style.display = state.hostPermissionsGranted === false ? 'flex' : 'none';
+      hostPermBannerEl.style.display = currentState.hostPermissionsGranted === false ? 'flex' : 'none';
     }
 
     if (adsCountEl) adsCountEl.textContent = String(ads);
     if (adsMetricLabelEl) adsMetricLabelEl.textContent = isPro ? 'Ads' : 'Spotted';
     if (cookieCountEl) cookieCountEl.textContent = String(cookies);
     if (adsBlockedTextEl) {
-      adsBlockedTextEl.textContent = isPro ? `${ads + cookies} blocked ✓` : `${ads + cookies} spotted · Free Preview`;
+      adsBlockedTextEl.textContent = isPro
+        ? `${ads + cookies} blocked ✓`
+        : trialInfo.isTrialExpired
+        ? `${ads + cookies} spotted · Trial Expired`
+        : `${ads + cookies} spotted · Free Preview`;
     }
 
-    const sessions = Array.isArray(state.cloudTabSessions) ? state.cloudTabSessions : [];
+    const sessions = Array.isArray(currentState.cloudTabSessions) ? currentState.cloudTabSessions : [];
     if (savedTabsCountEl) savedTabsCountEl.textContent = String(sessions.length);
 
     const popupAutoRamRow = document.getElementById('popupAutoRamRow');
-    if (state.ramMetrics) {
-      const totalTabs = Number(state.ramMetrics.totalTabs) || 1;
-      const discardedCount = Number(state.ramMetrics.discardedCount) || 0;
-      const discardSupported = state.ramMetrics.tabsDiscardSupported !== false;
+    if (currentState.ramMetrics) {
+      const totalTabs = Number(currentState.ramMetrics.totalTabs) || 1;
+      const discardedCount = Number(currentState.ramMetrics.discardedCount) || 0;
+      const discardSupported = currentState.ramMetrics.tabsDiscardSupported !== false;
       if (reclaimRamBtn) {
         reclaimRamBtn.style.display = discardSupported ? '' : 'none';
       }
@@ -368,7 +473,7 @@ document.addEventListener('DOMContentLoaded', () => {
         discardSupported && discardedCount > 0 ? `${discardedCount} sleeping` : `${totalTabs} tabs`;
       const scaleRatio = isPro && discardSupported ? Math.min(0.85, Math.max(0.18, (totalTabs * 4) / 100)) : 0;
       ramBarFillEl.style.transform = `scaleX(${scaleRatio.toFixed(2)})`;
-      const autoOn = !state.settings || state.settings.autoRamTamer !== false;
+      const autoOn = !currentState.settings || currentState.settings.autoRamTamer !== false;
       if (autoRamToggleBtn) {
         if (!isPro) {
           autoRamToggleBtn.textContent = '🔒 Auto-Pilot';
@@ -387,7 +492,9 @@ document.addEventListener('DOMContentLoaded', () => {
       ramDescEl.textContent = !discardSupported
         ? `Tab hibernation is not supported in this browser · ${totalTabs} open tab${totalTabs === 1 ? '' : 's'}.`
         : !isPro
-        ? 'Unlock Pro to automatically hibernate idle background tabs.'
+        ? trialInfo.isTrialExpired
+          ? 'Trial expired — upgrade to restore automatic tab hibernation.'
+          : 'Unlock Pro to automatically hibernate idle background tabs.'
         : !autoOn
         ? 'Auto-Pilot paused. Enable Auto-Hibernate or click Boost Browser Speed Now to snooze idle tabs.'
         : discardedCount > 0
@@ -395,11 +502,19 @@ document.addEventListener('DOMContentLoaded', () => {
         : `Auto-Pilot active · ${totalTabs} open tabs monitored in background.`;
     }
 
+    const upgradeCtaTextEl = document.getElementById('upgradeCtaText');
+    const upgradeSubtitleEl = document.getElementById('upgradeSubtitleText');
     if (isPro) {
       document.body.classList.add('pro-mode');
-      document.body.classList.remove('unactivated-mode');
-      tierBadgeEl.textContent = getMsg('uiProActive', 'Pro Active');
-      tierBadgeEl.classList.add('pro');
+      document.body.classList.remove('unactivated-mode', 'trial-expired-mode');
+      if (trialInfo.isActiveTrial && currentState.plan !== 'referral_trial_14d') {
+        tierBadgeEl.textContent = trialInfo.remainingShort
+          ? `7-Day Pro Trial · ${trialInfo.remainingShort}`
+          : '7-Day Pro Trial';
+      } else {
+        tierBadgeEl.textContent = getMsg('uiProActive', 'Pro Active');
+      }
+      tierBadgeEl.className = 'status-pill pro';
       upgradeCtaBtn.style.display = 'none';
       toggleLicenseDrawerBtn.style.display = 'none';
       licenseDrawerEl.classList.remove('open');
@@ -407,27 +522,39 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       document.body.classList.add('unactivated-mode');
       document.body.classList.remove('pro-mode');
-      tierBadgeEl.textContent = getMsg('uiFreePreview', 'Free Preview');
-      tierBadgeEl.classList.remove('pro');
+      document.body.classList.toggle('trial-expired-mode', trialInfo.isTrialExpired);
+      if (trialInfo.isTrialExpired) {
+        tierBadgeEl.textContent = 'Trial Expired';
+        tierBadgeEl.className = 'status-pill expired';
+        if (upgradeCtaTextEl) upgradeCtaTextEl.textContent = 'Trial Expired — Upgrade to Pro';
+      } else {
+        tierBadgeEl.textContent = getMsg('uiFreePreview', 'Free Preview');
+        tierBadgeEl.className = 'status-pill';
+        if (upgradeCtaTextEl) upgradeCtaTextEl.textContent = getMsg('uiUnlockPro', 'Unlock Full Pro Protection');
+      }
       upgradeCtaBtn.style.display = 'flex';
       toggleLicenseDrawerBtn.style.display = 'flex';
       if (popupChromeAutoVerifyBtn) {
         popupChromeAutoVerifyBtn.style.display = hasChromeIdentity ? 'block' : 'none';
       }
-      if (state.chromeAutoActivateResult && state.chromeAutoActivateResult.status === 'device_limit_reached') {
+      if (currentState.chromeAutoActivateResult && currentState.chromeAutoActivateResult.status === 'device_limit_reached') {
         licenseDrawerEl.classList.add('open');
         licenseFeedbackEl.style.display = 'block';
         licenseFeedbackEl.style.color = '#d97706';
-        const used = state.chromeAutoActivateResult.devicesUsed || '';
-        const max = state.chromeAutoActivateResult.devicesMax || 5;
+        const used = currentState.chromeAutoActivateResult.devicesUsed || '';
+        const max = currentState.chromeAutoActivateResult.devicesMax || 5;
         licenseFeedbackEl.textContent = `Paid account found (${used}/${max} devices used). Remove an old device at sweeprdeepblock.com/login.`;
       }
-      const upgradeSubtitleEl = document.getElementById('upgradeSubtitleText');
       if (upgradeSubtitleEl) {
-        upgradeSubtitleEl.textContent =
-          state.abVariant === 'variant_b_risk_free_14d'
-            ? '14-Day 100% Risk-Free Guarantee · 1-Click Portal Cancel'
-            : 'One Subscription · Chrome, Edge, Firefox & Opera';
+        if (trialInfo.isTrialExpired) {
+          upgradeSubtitleEl.textContent =
+            'Your 7-day Pro trial ended. Upgrade to restore YouTube Shield, Cookie Auto-Reject, OTA Delta, RAM Tamer & 5-device sync.';
+        } else {
+          upgradeSubtitleEl.textContent =
+            currentState.abVariant === 'variant_b_risk_free_14d'
+              ? '14-Day 100% Risk-Free Guarantee · 1-Click Portal Cancel'
+              : 'One Subscription · Chrome, Edge, Firefox & Opera';
+        }
       }
     }
 
@@ -664,7 +791,11 @@ document.addEventListener('DOMContentLoaded', () => {
   function handleToggleSiteShield(e) {
     if (e && e.type === 'keydown' && e.key !== 'Enter' && e.key !== ' ') return;
     if (e && e.type === 'keydown') e.preventDefault();
-    if (!currentState.proActive) {
+    if (!isUiProActive()) {
+      if (currentState.proActive) {
+        currentState.proActive = false;
+        renderState(currentState);
+      }
       openProRequiredPrompt();
       return;
     }
@@ -697,7 +828,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // 1-Click "Pause 5m (Fix Page)" Broken-Website Escape Hatch
   if (pause5MinBtn) {
     pause5MinBtn.addEventListener('click', () => {
-      if (!currentState.proActive) {
+      if (!isUiProActive()) {
+        if (currentState.proActive) {
+          currentState.proActive = false;
+          renderState(currentState);
+        }
         openProRequiredPrompt();
         return;
       }
@@ -733,8 +868,22 @@ document.addEventListener('DOMContentLoaded', () => {
   // 1-Click "Keep Site Awake" Whitelist Toggle for Tab & RAM Tamer
   if (keepSiteAwakeBtn) {
     keepSiteAwakeBtn.addEventListener('click', () => {
+      if (!isUiProActive()) {
+        if (currentState.proActive) {
+          currentState.proActive = false;
+          renderState(currentState);
+        }
+        openProRequiredPrompt();
+        return;
+      }
       if (!currentHostname) return;
       chrome.runtime.sendMessage({ type: 'TOGGLE_NEVER_SNOOZE_SITE', hostname: currentHostname }, (res) => {
+        if (res && res.requiresPro) {
+          currentState.proActive = false;
+          renderState(currentState);
+          openProRequiredPrompt(res.error);
+          return;
+        }
         if (res && res.ok) {
           currentState.neverSnoozeSites = res.neverSnoozeSites;
           updateSiteBarState();
@@ -746,7 +895,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // 1-Click Auto-Pilot Background RAM Tamer Toggle
   if (autoRamToggleBtn) {
     autoRamToggleBtn.addEventListener('click', () => {
-      if (!currentState.proActive) {
+      if (!isUiProActive()) {
+        if (currentState.proActive) {
+          currentState.proActive = false;
+          renderState(currentState);
+        }
         openProRequiredPrompt('🔒 Tab & RAM Tamer Auto-Pilot requires an active Pro subscription.');
         return;
       }
@@ -766,7 +919,11 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   reclaimRamBtn.addEventListener('click', () => {
-    if (!currentState.proActive) {
+    if (!isUiProActive()) {
+      if (currentState.proActive) {
+        currentState.proActive = false;
+        renderState(currentState);
+      }
       openProRequiredPrompt('🔒 Tab & RAM Tamer requires an active Pro subscription.');
       return;
     }
@@ -821,7 +978,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (startZapperBtn) {
     startZapperBtn.addEventListener('click', () => {
-      if (!currentState.proActive) {
+      if (!isUiProActive()) {
+        if (currentState.proActive) {
+          currentState.proActive = false;
+          renderState(currentState);
+        }
         openProRequiredPrompt('🔒 Element Hider requires an active Pro subscription.');
         return;
       }
@@ -899,6 +1060,7 @@ document.addEventListener('DOMContentLoaded', () => {
               autoRamTamer: true,
               cloudTabSyncEnabled: true
             };
+            const isTrialPlan = subStatus === 'trialing' || String(data.plan || '').toLowerCase() === 'trial_7d';
             await chrome.storage.local.set({
               deviceId,
               proActive: true,
@@ -911,6 +1073,8 @@ document.addEventListener('DOMContentLoaded', () => {
               subscriptionStatus: subStatus,
               plan: data.plan || 'annual',
               licenseExpiresAt: data.expiresAt || '',
+              trialExpiresAt: isTrialPlan ? Number(data.trialExpiresAt || 0) : 0,
+              ...(isTrialPlan && data.trialStartedAt ? { trialStartedAt: Number(data.trialStartedAt) } : {}),
               bonusProDaysEarned: Number(data.bonusProDaysEarned || 0),
               licenseVerifiedAt: Date.now(),
               settings: newSettings
@@ -920,6 +1084,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 await chrome.declarativeNetRequest.updateEnabledRulesets({
                   enableRulesetIds: [
                     'ads_and_trackers',
+                    'regional_eu_filters',
+                    'easyprivacy_trackers',
                     'tracker_param_stripping',
                     'cryptominers_and_heavy_scripts'
                   ],
@@ -1184,6 +1350,7 @@ document.addEventListener('DOMContentLoaded', () => {
             subscriptionStatus: 'active',
             plan: pollData.plan || 'annual',
             licenseExpiresAt: pollData.expiresAt || '',
+            trialExpiresAt: 0,
             bonusProDaysEarned: Number(pollData.bonusProDaysEarned || 0),
             licenseVerifiedAt: Date.now(),
             settings: newSettings
@@ -1193,6 +1360,8 @@ document.addEventListener('DOMContentLoaded', () => {
               await chrome.declarativeNetRequest.updateEnabledRulesets({
                 enableRulesetIds: [
                   'ads_and_trackers',
+                  'regional_eu_filters',
+                  'easyprivacy_trackers',
                   'tracker_param_stripping',
                   'cryptominers_and_heavy_scripts'
                 ],
@@ -1227,20 +1396,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Slide-Over Popup Menu (Option 1): 6 Core Engines + Saved Sessions & Site Lists
-  const popupMainView = document.getElementById('popupMainView');
-  const popupMenuView = document.getElementById('popupMenuView');
-  const popupMenuBackBtn = document.getElementById('popupMenuBackBtn');
-  const popupOpenWelcomeBtn = document.getElementById('popupOpenWelcomeBtn');
-  const popupMenuTabEngines = document.getElementById('popupMenuTabEngines');
-  const popupMenuTabLists = document.getElementById('popupMenuTabLists');
-  const popupEnginesPane = document.getElementById('popupEnginesPane');
-  const popupListsPane = document.getElementById('popupListsPane');
-  const popupListTabsBar = document.getElementById('popupListTabsBar');
-  const popupSessionsList = document.getElementById('popupSessionsList');
-  const popupPausedList = document.getElementById('popupPausedList');
-  const popupPinnedList = document.getElementById('popupPinnedList');
-  const popupHiddenList = document.getElementById('popupHiddenList');
-
   function setPopupMenuVisible(showMenu) {
     if (!popupMainView || !popupMenuView) return;
     popupMainView.style.display = showMenu ? 'none' : 'block';
@@ -1282,7 +1437,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function renderPopupMenu(state) {
     const st = state || currentState || {};
-    const isPro = Boolean(st.proActive);
+    const isPro = Boolean(st.proActive) && !deriveTrialState(st).isTrialExpired;
     const settings = st.settings || {};
 
     document.querySelectorAll('#popupEnginesPane [data-setting]').forEach((sw) => {
@@ -1322,7 +1477,15 @@ document.addEventListener('DOMContentLoaded', () => {
           act.textContent = 'Reopen';
           act.addEventListener('click', () => {
             act.textContent = 'Opening...';
-            chrome.runtime.sendMessage({ type: 'RESTORE_SAVED_SESSION', sessionId: sess.id }, () => {
+            chrome.runtime.sendMessage({ type: 'RESTORE_SAVED_SESSION', sessionId: sess.id }, (res) => {
+              if (res && res.requiresPro) {
+                act.textContent = 'Reopen';
+                currentState.proActive = false;
+                setPopupMenuVisible(false);
+                renderState(currentState);
+                openProRequiredPrompt(res.error);
+                return;
+              }
               act.textContent = 'Reopened';
             });
           });
@@ -1376,7 +1539,11 @@ document.addEventListener('DOMContentLoaded', () => {
         curAct.className = 'popup-mini-btn';
         curAct.textContent = currentPinned ? 'Pinned Awake ✓' : 'Keep this site awake';
         curAct.addEventListener('click', () => {
-          if (!currentState.proActive) {
+          if (!isUiProActive()) {
+            if (currentState.proActive) {
+              currentState.proActive = false;
+              renderState(currentState);
+            }
             setPopupMenuVisible(false);
             openProRequiredPrompt();
             return;
@@ -1458,7 +1625,11 @@ document.addEventListener('DOMContentLoaded', () => {
     row.addEventListener('click', () => {
       const settingKey = row.getAttribute('data-popup-setting');
       if (!settingKey) return;
-      if (!currentState.proActive) {
+      if (!isUiProActive()) {
+        if (currentState.proActive) {
+          currentState.proActive = false;
+          renderState(currentState);
+        }
         setPopupMenuVisible(false);
         openProRequiredPrompt();
         return;
@@ -1504,4 +1675,38 @@ document.addEventListener('DOMContentLoaded', () => {
       chrome.tabs.create({ url: 'https://sweeprdeepblock.com/test-lab?utm_source=extension&utm_medium=popup' });
     });
   }
+
+  if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.onChanged && typeof chrome.storage.onChanged.addListener === 'function') {
+    chrome.storage.onChanged.addListener((changes, area) => {
+      if (area !== 'local' || !changes) return;
+      if (changes.proActive || changes.subscriptionStatus || changes.trialExpiresAt || changes.licenseExpiresAt || changes.plan) {
+        chrome.runtime.sendMessage({ type: 'GET_DASHBOARD_STATE' }, (freshState) => {
+          if (freshState) renderState(freshState);
+        });
+      }
+    });
+  }
+
+  const trialCountdownInterval = setInterval(() => {
+    const info = deriveTrialState(currentState);
+    if (info.isActiveTrial || info.isTrialExpired) {
+      const liveExpired =
+        Boolean(currentState.proActive) &&
+        (info.isTrialExpired || (info.expiresAtMs > 0 && Date.now() >= info.expiresAtMs));
+      if (liveExpired) {
+        currentState.proActive = false;
+        renderState(currentState);
+        chrome.runtime.sendMessage({ type: 'GET_DASHBOARD_STATE' }, (freshState) => {
+          if (freshState) renderState(freshState);
+        });
+      } else {
+        renderState(currentState);
+      }
+    }
+  }, 60000);
+  const stopCountdownTimer = () => {
+    clearInterval(trialCountdownInterval);
+  };
+  window.addEventListener('pagehide', stopCountdownTimer);
+  window.addEventListener('unload', stopCountdownTimer);
 });

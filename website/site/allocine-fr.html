@@ -157,7 +157,7 @@
         AlloCiné (FR) (<code class="px-2 py-0.5 rounded bg-slate-100 text-emerald-800 font-mono text-2xl sm:text-3xl">allocine.fr</code>) — Ad-Tech &amp; CMP Profile
       </h1>
       <div class="glass-card p-5 sm:p-6 bg-white border border-gray-200 rounded-2xl shadow-sm space-y-3">
-        <p class="text-gray-800 text-base leading-relaxed m-0">On unshielded EU Entertainment (FR) pages like <strong>allocine.fr</strong>, browsers typically initiate ~<strong>66 external ad auctions</strong> alongside 42 tracker patterns under Didomi CNIL CMP. Enabling <strong>SWEEPR Deepblock v1.3.1</strong> blocks matched ad-exchange hosts and clears consent scroll locks.</p>
+        <p class="text-gray-800 text-base leading-relaxed m-0">On unshielded EU Entertainment (FR) pages like <strong>allocine.fr</strong>, browsers typically initiate ~<strong>66 external ad auctions</strong> alongside 42 tracker patterns under Didomi CNIL CMP. Enabling <strong>SWEEPR Deepblock v1.4.0</strong> blocks matched ad-exchange hosts and clears consent scroll locks.</p>
         <div class="flex flex-wrap gap-4 text-xs font-bold">
           <a href="/test-lab" class="text-emerald-700 underline">Run Live Browser Test Lab &rarr;</a>
           <a href="/tools/browser-ram-calculator" class="text-emerald-700 underline">Estimate Tab RAM Savings &rarr;</a>
@@ -167,20 +167,20 @@
 
     <div class="bg-amber-50 border border-amber-200 border-l-4 rounded-2xl p-5 text-sm text-amber-900 leading-relaxed" style="border-left-color:#f59e0b;">
       <h3 class="text-base font-extrabold text-gray-900 mb-1.5">Heuristic Ad-Tech Profile Estimate (Not Live Browser Telemetry)</h3>
-      <div>Numbers on this page are static baseline estimates of typical SSP/ad-tech and CMP patterns for <strong>allocine.fr</strong> rather than live Playwright or HAR telemetry. Test real-time browser blocking in our <a href="/test-lab" class="text-emerald-700 font-semibold underline">Browser Test Lab</a> or review <a href="/benchmarks" class="text-emerald-700 font-semibold underline">v1.3.1 MV3 Benchmarks</a>.</div>
+      <div>Numbers on this page are static baseline estimates of typical SSP/ad-tech and CMP patterns for <strong>allocine.fr</strong> rather than live Playwright or HAR telemetry. Test real-time browser blocking in our <a href="/test-lab" class="text-emerald-700 font-semibold underline">Browser Test Lab</a> or review <a href="/benchmarks" class="text-emerald-700 font-semibold underline">v1.4.0 MV3 Benchmarks</a>.</div>
     </div>
 
     <section class="glass-card p-6 sm:p-8 bg-white border border-gray-200 rounded-2xl shadow-sm">
       <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
         <h2 class="text-xl sm:text-2xl font-extrabold text-gray-900 tracking-tight">AlloCiné (FR): French CNIL Article 82 Enforcement Context &amp; Didomi CNIL Breakdown</h2>
-        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 shrink-0">v1.3.1 · 283 Static Rules</span>
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 shrink-0">v1.4.0 · 36,019 Static Rules</span>
       </div>
       <div class="space-y-4">
         <p class="text-sm text-gray-700 leading-relaxed">
           Focused on French cinema listings, box-office reviews, and streaming guides, <strong>allocine.fr</strong> exhibits elevated multi-bidder density driven by theatrical skin takeovers and video trailer pre-roll ad wrappers before film clips start. Based on static baseline estimates, one daily visit totals roughly <strong>0.33 GB monthly</strong> (3.99 GB annually) in third-party ad transfers (~7.8 minutes across 100 page loads).
         </p>
         <p class="text-sm text-gray-700 leading-relaxed">
-          <strong>Consent Layer (Didomi CNIL CMP):</strong> French publishers operate under CNIL Article 82 deliberation guidelines requiring first-layer parity for "Continuer sans accepter" alongside acceptance controls. Despite strict regulatory scrutiny from Paris auditors, multi-stage vendor trees routinely re-trigger modal backdrops across paginated sports galleries, recipe cards, and consumer electronics comparisons. Specifically on allocine.fr, the site typically uses a <code class="px-1.5 py-0.5 rounded bg-slate-100 text-emerald-800 font-mono text-xs">#didomi-host</code> Shadow-DOM wrapper combined with <code class="px-1.5 py-0.5 rounded bg-slate-100 text-emerald-800 font-mono text-xs">didomi-popup-open</code> root scroll locks that enforces French CNIL consent proof requirements across SmartAdServer and Criteo SSP bid adapters. SWEEPR Deepblock v1.3.1 invokes Didomi’s "Continuer sans accepter" handler inside the host shadow root automatically while restoring smooth scrolling. Check showtimes and film ratings immediately without waiting through pre-roll commercial wrappers.
+          <strong>Consent Layer (Didomi CNIL CMP):</strong> French publishers operate under CNIL Article 82 deliberation guidelines requiring first-layer parity for "Continuer sans accepter" alongside acceptance controls. Despite strict regulatory scrutiny from Paris auditors, multi-stage vendor trees routinely re-trigger modal backdrops across paginated sports galleries, recipe cards, and consumer electronics comparisons. Specifically on allocine.fr, the site typically uses a <code class="px-1.5 py-0.5 rounded bg-slate-100 text-emerald-800 font-mono text-xs">#didomi-host</code> Shadow-DOM wrapper combined with <code class="px-1.5 py-0.5 rounded bg-slate-100 text-emerald-800 font-mono text-xs">didomi-popup-open</code> root scroll locks that enforces French CNIL consent proof requirements across SmartAdServer and Criteo SSP bid adapters. SWEEPR Deepblock v1.4.0 invokes Didomi’s "Continuer sans accepter" handler inside the host shadow root automatically while restoring smooth scrolling. Check showtimes and film ratings immediately without waiting through pre-roll commercial wrappers.
         </p>
         <ul class="list-disc pl-5 space-y-2 pt-1">
           <li class="text-sm text-gray-700 leading-relaxed"><strong class="text-gray-900">Ad Exchange Orchestrator — doubleclick.net:</strong> Google Ad Manager / DoubleClick (<code class="px-1.5 py-0.5 rounded bg-slate-100 text-emerald-800 font-mono text-xs">doubleclick.net</code>) executes synchronous GPT tag initialization, SafeFrame sandbox negotiation, and cross-property frequency capping lookups prior to layout stabilization.</li>
@@ -194,9 +194,9 @@
     <section id="publisher-baseline-comparison" class="glass-card bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
       <div class="overflow-x-auto w-full">
         <table class="w-full text-left border-collapse text-sm">
-          <caption class="sr-only">allocine.fr heuristic ad-tech baseline vs SWEEPR Deepblock v1.3.1</caption>
+          <caption class="sr-only">allocine.fr heuristic ad-tech baseline vs SWEEPR Deepblock v1.4.0</caption>
           <thead class="bg-gray-50 border-b border-gray-200">
-            <tr><th scope="col" class="px-4 py-3 text-xs font-bold uppercase tracking-wider text-gray-600">allocine.fr Profile</th><th scope="col" class="px-4 py-3 text-xs font-bold uppercase tracking-wider text-gray-600">Unshielded Browser (Est.)</th><th scope="col" class="px-4 py-3 text-xs font-bold uppercase tracking-wider text-gray-600">SWEEPR Deepblock v1.3.1</th></tr>
+            <tr><th scope="col" class="px-4 py-3 text-xs font-bold uppercase tracking-wider text-gray-600">allocine.fr Profile</th><th scope="col" class="px-4 py-3 text-xs font-bold uppercase tracking-wider text-gray-600">Unshielded Browser (Est.)</th><th scope="col" class="px-4 py-3 text-xs font-bold uppercase tracking-wider text-gray-600">SWEEPR Deepblock v1.4.0</th></tr>
           </thead>
           <tbody class="divide-y divide-gray-200">
             <tr class="hover:bg-emerald-50/30 transition-colors"><td class="px-4 py-3.5 font-semibold text-gray-900">Bid Auctions &amp; Transfer</td><td class="px-4 py-3.5 text-gray-700">~66 requests (11.2 MB est.)</td><td class="px-4 py-3.5 text-gray-700">Matched SSP/ad hosts blocked at DNR layer</td></tr>
@@ -210,7 +210,7 @@
 
     <div class="space-y-3">
       <h2 class="text-xl font-extrabold text-gray-900 tracking-tight">Matched Static DNR Rules for AlloCiné (FR)</h2>
-      <p class="text-sm text-gray-600">Rules below are read directly from <code class="px-1.5 py-0.5 rounded bg-slate-100 text-emerald-800 font-mono text-xs">extension/rules/static_ads_and_trackers.json</code> in SWEEPR Deepblock v1.3.1.</p>
+      <p class="text-sm text-gray-600">Rules below are read directly from <code class="px-1.5 py-0.5 rounded bg-slate-100 text-emerald-800 font-mono text-xs">extension/rules/static_ads_and_trackers.json</code> in SWEEPR Deepblock v1.4.0.</p>
       <section id="dnr-filter-patterns" class="glass-card bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
       <div class="overflow-x-auto w-full">
         <table class="w-full text-left border-collapse text-sm">
@@ -232,9 +232,9 @@
 
     <section class="glass-card p-6 sm:p-8 bg-white border border-emerald-200 rounded-2xl shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
       <div class="space-y-2 max-w-2xl">
-        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800">SWEEPR Deepblock v1.3.1</span>
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800">SWEEPR Deepblock v1.4.0</span>
         <h2 class="text-xl sm:text-2xl font-extrabold text-gray-900 tracking-tight">Browse allocine.fr Without Ad-Tech Clutter</h2>
-        <p class="text-sm text-gray-600 leading-relaxed">283 static Manifest V3 declarativeNetRequest rules, automated GDPR cookie rejection, URL tracking parameter stripping, and Total Tab &amp; RAM Tamer across 5 devices.</p>
+        <p class="text-sm text-gray-600 leading-relaxed">36,019 static Manifest V3 declarativeNetRequest rules, automated GDPR cookie rejection, URL tracking parameter stripping, and Total Tab &amp; RAM Tamer across 5 devices.</p>
       </div>
       <div class="flex flex-col sm:flex-row gap-3 shrink-0 w-full md:w-auto">
         <a href="/download?install=1" class="btn btn-go px-5 py-3 rounded-xl font-bold text-sm justify-center no-underline">Install Free Extension</a>
@@ -278,7 +278,7 @@
       </a>
       <a href="/benchmarks" class="glass-card p-4 bg-white border border-slate-200/90 hover:border-emerald-400 rounded-2xl no-underline transition-all block">
         <div class="text-[11px] font-bold uppercase tracking-wider text-emerald-700 mb-1">Architecture</div>
-        <div class="text-sm font-bold text-slate-900 leading-snug">SWEEPR Deepblock v1.3.1 Benchmarks</div>
+        <div class="text-sm font-bold text-slate-900 leading-snug">SWEEPR Deepblock v1.4.0 Benchmarks</div>
       </a>
       <a href="/guides/how-to-automatically-reject-cookie-banners-uk" class="glass-card p-4 bg-white border border-slate-200/90 hover:border-emerald-400 rounded-2xl no-underline transition-all block">
         <div class="text-[11px] font-bold uppercase tracking-wider text-emerald-700 mb-1">Cookie Guide</div>
@@ -422,7 +422,7 @@
               <li><a href="/" class="hover:text-emerald-600 transition-colors">SWEEPR Deepblock Home</a></li>
               <li><a href="/download" class="hover:text-emerald-600 transition-colors">Browser Extension Downloads</a></li>
               <li><a href="/pricing" class="hover:text-emerald-600 transition-colors">Pricing &amp; Pro Plans</a></li>
-              <li><a href="/benchmarks" class="hover:text-emerald-600 transition-colors">v1.3.1 MV3 Benchmarks</a></li>
+              <li><a href="/benchmarks" class="hover:text-emerald-600 transition-colors">v1.4.0 MV3 Benchmarks</a></li>
               <li><a href="/test-lab" class="hover:text-emerald-600 transition-colors">Free Adblock Test Lab</a></li>
               <li><a href="/tools" class="hover:text-emerald-600 transition-colors">Free Browser Privacy &amp; RAM Tools</a></li>
               <li><a href="/support" class="hover:text-emerald-600 transition-colors">Support &amp; 1-Click Cancellation</a></li>

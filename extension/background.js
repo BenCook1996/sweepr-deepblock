@@ -1,4 +1,4 @@
-// SWEEPR Deepblock — Manifest V3 Background Service Worker (v1.3.2)
+// SWEEPR Deepblock — Manifest V3 Background Service Worker (v1.4.0)
 const LICENSE_VERIFY_ENDPOINTS = [
   'https://sweeprdeepblock.com/api/license-verify',
   'https://sweepr-crm-production.up.railway.app/v1/license/verify-key?project=deepblock'
@@ -7,6 +7,14 @@ const CHROME_AUTO_ACTIVATE_ENDPOINTS = [
   'https://sweeprdeepblock.com/api/license/chrome-auto-activate',
   'https://sweepr-crm-production.up.railway.app/v1/license/chrome-auto-activate?project=deepblock'
 ];
+const TRIAL_START_ENDPOINTS = [
+  'https://sweeprdeepblock.com/api/trial/start',
+  'https://sweepr-crm-production.up.railway.app/v1/trial/start?project=deepblock'
+];
+const TRIAL_DURATION_MS = 7 * 24 * 60 * 60 * 1000;
+const ADS_RULESET_IDS = ['ads_and_trackers', 'regional_eu_filters'];
+const TRACKER_RULESET_IDS = ['easyprivacy_trackers', 'tracker_param_stripping', 'cryptominers_and_heavy_scripts'];
+const ALL_STATIC_RULESET_IDS = [...ADS_RULESET_IDS, ...TRACKER_RULESET_IDS];
 
 const PRO_ONLY_SETTINGS = new Set([
   'adBlocking',
@@ -31,6 +39,8 @@ function isValidLicenseCredential(value) {
   const v = String(value || '').trim();
   return FULL_LICENSE_KEY_RE.test(v) || COMPACT_JWS_RE.test(v);
 }
+
+const isLocalTrialKey = (value) => /^SWEEPR-TRIAL-/i.test(String(value || '').trim());
 
 function generateSecureDeviceHex(byteLen = 8) {
   if (typeof crypto !== 'undefined') {
@@ -167,7 +177,7 @@ async function syncRemoteFilterDelta(options = {}) {
           chrome.runtime &&
           chrome.runtime.getManifest &&
           chrome.runtime.getManifest().version) ||
-        '1.3.2';
+        '1.4.0';
       const qs = `?current_version=${encodeURIComponent(currentVersion)}`;
       const endpoints = [
         `https://sweeprdeepblock.com/api/filters/delta${qs}`,
@@ -255,20 +265,36 @@ async function syncRemoteFilterDelta(options = {}) {
         /^[a-zA-Z0-9#._:() >[\]="'*~$^|,/-]+$/.test(sel) &&
         !/[{}<\\@;]/.test(sel) &&
         !/url\(|@import|-moz-binding|expression\(|javascript:/i.test(sel);
-      if (Array.isArray(data.extraCmpSelectors)) {
-        updates.extraCmpSelectors = data.extraCmpSelectors.filter((s) => sanitizeRemoteSelector(s, 180)).slice(0, 100);
+      if (!verifiedSession.coldChecked || (verifiedSession.proActive && verifiedSession.trialExpiresAt > 0 && Date.now() >= verifiedSession.trialExpiresAt)) {
+        await enforceStoredSubscriptionIntegrity({ force: verifiedSession.coldChecked });
       }
-      if (Array.isArray(data.extraAntiAdblockSelectors)) {
-        updates.extraAntiAdblockSelectors = data.extraAntiAdblockSelectors.filter((s) => sanitizeRemoteSelector(s, 180)).slice(0, 100);
-      }
-      if (Array.isArray(data.extraCosmeticSelectors)) {
-        updates.extraCosmeticSelectors = data.extraCosmeticSelectors.filter((s) => sanitizeRemoteSelector(s, 180)).slice(0, 200);
-      }
-      if (Array.isArray(data.extraSlopDomains)) {
-        updates.extraSlopDomains = data.extraSlopDomains
-          .map((d) => String(d || '').trim().toLowerCase())
-          .filter((d) => /^[a-z0-9.-]{3,120}$/i.test(d))
-          .slice(0, 500);
+      const st = await chrome.storage.local.get(['settings']);
+      const adBlockingEnabled = Boolean(
+        verifiedSession.proActive &&
+          verifiedSession.licenseKey &&
+          (!st.settings || st.settings.adBlocking !== false)
+      );
+      if (adBlockingEnabled) {
+        if (Array.isArray(data.extraCmpSelectors)) {
+          updates.extraCmpSelectors = data.extraCmpSelectors.filter((s) => sanitizeRemoteSelector(s, 180)).slice(0, 100);
+        }
+        if (Array.isArray(data.extraAntiAdblockSelectors)) {
+          updates.extraAntiAdblockSelectors = data.extraAntiAdblockSelectors.filter((s) => sanitizeRemoteSelector(s, 180)).slice(0, 100);
+        }
+        if (Array.isArray(data.extraCosmeticSelectors)) {
+          updates.extraCosmeticSelectors = data.extraCosmeticSelectors.filter((s) => sanitizeRemoteSelector(s, 180)).slice(0, 200);
+        }
+        if (Array.isArray(data.extraSlopDomains)) {
+          updates.extraSlopDomains = data.extraSlopDomains
+            .map((d) => String(d || '').trim().toLowerCase())
+            .filter((d) => /^[a-z0-9.-]{3,120}$/i.test(d))
+            .slice(0, 500);
+        }
+      } else {
+        updates.extraCmpSelectors = [];
+        updates.extraAntiAdblockSelectors = [];
+        updates.extraCosmeticSelectors = [];
+        updates.extraSlopDomains = [];
       }
       if (Object.keys(updates).length > 0) {
         await chrome.storage.local.set(updates);
@@ -278,15 +304,6 @@ async function syncRemoteFilterDelta(options = {}) {
         chrome.declarativeNetRequest &&
         chrome.declarativeNetRequest.updateDynamicRules
       ) {
-        if (!verifiedSession.coldChecked) {
-          await enforceStoredSubscriptionIntegrity();
-        }
-        const st = await chrome.storage.local.get(['settings']);
-        const adBlockingEnabled = Boolean(
-          verifiedSession.proActive &&
-            verifiedSession.licenseKey &&
-            (!st.settings || st.settings.adBlocking !== false)
-        );
         const existing = await chrome.declarativeNetRequest.getDynamicRules();
         const removeRuleIds = existing.filter((r) => r.id >= 80000 && r.id < 81000).map((r) => r.id);
         const validRules = adBlockingEnabled
@@ -423,11 +440,11 @@ async function syncPausedSiteDnrAllowlist(passedPausedSites, options = {}) {
     }
 
     if (!options.skipStealthSync) {
-      const st = await chrome.storage.local.get(['proActive', 'licenseKey', 'settings']);
+      const auth = await ensureVerifiedProSession();
+      const st = await chrome.storage.local.get(['settings']);
       const adOn = Boolean(
-        st &&
-          st.proActive &&
-          st.licenseKey &&
+        auth.proActive &&
+          auth.licenseKey &&
           (!st.settings || st.settings.adBlocking !== false)
       );
       await syncDeepStealthRegistration(adOn, cleanDomains);
@@ -452,19 +469,27 @@ async function syncExtensionProtectionRules(enableAdBlocking, enableTrackerProte
       const enableRulesetIds = [];
       const disableRulesetIds = [];
       if (adEnabled) {
-        enableRulesetIds.push('ads_and_trackers', 'cryptominers_and_heavy_scripts');
+        enableRulesetIds.push(...ADS_RULESET_IDS);
       } else {
-        disableRulesetIds.push('ads_and_trackers', 'cryptominers_and_heavy_scripts');
+        disableRulesetIds.push(...ADS_RULESET_IDS);
       }
       if (trackerEnabled) {
-        enableRulesetIds.push('tracker_param_stripping');
+        enableRulesetIds.push(...TRACKER_RULESET_IDS);
       } else {
-        disableRulesetIds.push('tracker_param_stripping');
+        disableRulesetIds.push(...TRACKER_RULESET_IDS);
       }
-      await chrome.declarativeNetRequest.updateEnabledRulesets({
-        enableRulesetIds,
-        disableRulesetIds
-      });
+      try {
+        await chrome.declarativeNetRequest.updateEnabledRulesets({
+          enableRulesetIds,
+          disableRulesetIds
+        });
+      } catch (rulesetErr) {
+        const legacyIds = new Set(['ads_and_trackers', 'tracker_param_stripping', 'cryptominers_and_heavy_scripts']);
+        await chrome.declarativeNetRequest.updateEnabledRulesets({
+          enableRulesetIds: enableRulesetIds.filter((id) => legacyIds.has(id)),
+          disableRulesetIds: disableRulesetIds.filter((id) => legacyIds.has(id))
+        });
+      }
     }
 
     if (!adEnabled && chrome.declarativeNetRequest && chrome.declarativeNetRequest.updateDynamicRules) {
@@ -493,6 +518,10 @@ let verifiedSession = {
   ramTamerActive: false,
   licenseKey: '',
   deviceId: '',
+  plan: '',
+  subscriptionStatus: 'unactivated',
+  trialExpiresAt: 0,
+  coldChecked: false,
   internalWriteInProgress: false
 };
 let integrityCheckInFlight = null;
@@ -520,6 +549,9 @@ const DEFAULT_STATE = {
   subscriptionStatus: 'unactivated',
   plan: '',
   licenseExpiresAt: '',
+  trialStartedAt: 0,
+  trialExpiresAt: 0,
+  trialSyncedWithServer: false,
   bonusProDaysEarned: 0,
   licenseVerifiedAt: 0,
   entitlements: [],
@@ -631,7 +663,7 @@ async function sendAnonymousTelemetry(eventName, properties = {}, onceStorageKey
       await chrome.storage.local.set({ [onceStorageKey]: Date.now() });
     }
     const deviceId = await getOrCreateDeviceId();
-    const manifest = chrome.runtime && chrome.runtime.getManifest ? chrome.runtime.getManifest() : { version: '1.3.1' };
+    const manifest = chrome.runtime && chrome.runtime.getManifest ? chrome.runtime.getManifest() : { version: '1.4.0' };
     const envMeta = detectExtensionEnvironment();
     const safeProps = { ...envMeta };
     if (properties && typeof properties === 'object') {
@@ -650,7 +682,7 @@ async function sendAnonymousTelemetry(eventName, properties = {}, onceStorageKey
         os: envMeta.os_platform ? envMeta.os_platform.toLowerCase() : 'browser_extension',
         browser: envMeta.browser,
         device_id: deviceId,
-        app_version: manifest.version || '1.3.1',
+        app_version: manifest.version || '1.4.0',
         properties: safeProps
       })
     }).catch(() => {});
@@ -683,10 +715,303 @@ async function checkHostPermissionsAndProtection() {
   return Boolean(granted);
 }
 
+function parseTrialExpiryMs(store) {
+  if (!store || typeof store !== 'object') return 0;
+  const subStatus = String(store.subscriptionStatus || '').toLowerCase();
+  const rawExp = store.trialExpiresAt || (subStatus === 'trialing' ? store.licenseExpiresAt : 0);
+  if (typeof rawExp === 'number') return Number.isFinite(rawExp) ? rawExp : 0;
+  if (typeof rawExp === 'string' && rawExp) {
+    const parsed = Date.parse(rawExp);
+    return Number.isFinite(parsed) ? parsed : 0;
+  }
+  return 0;
+}
+
+function isLocalTrialExpired(store, now = Date.now()) {
+  if (!store || typeof store !== 'object') return false;
+  const subStatus = String(store.subscriptionStatus || '').toLowerCase();
+  const plan = String(store.plan || '').toLowerCase();
+  if (subStatus === 'active' && plan !== 'trial_7d') return false;
+  if (subStatus === 'trial_expired') return true;
+  if (plan === 'trial_7d' || subStatus === 'trialing') {
+    const expMs = parseTrialExpiryMs(store);
+    return expMs > 0 && now >= expMs;
+  }
+  return false;
+}
+
+function isValidStoredTrial7d(store, now = Date.now()) {
+  if (!store || typeof store !== 'object') return false;
+  const key = String(store.licenseKey || '').trim();
+  if (!key || !isValidLicenseCredential(key)) return false;
+  if (isLocalTrialKey(key)) {
+    const subStatus = String(store.subscriptionStatus || '').toLowerCase();
+    const planName = String(store.plan || '').toLowerCase();
+    if (subStatus !== 'trialing' || planName !== 'trial_7d') return false;
+  }
+
+  const trialStartedAt = Number(store.trialStartedAt);
+  if (!Number.isFinite(trialStartedAt) || trialStartedAt <= 0 || trialStartedAt > now + 60000) {
+    return false;
+  }
+
+  const trialExpMs = parseTrialExpiryMs(store);
+  if (
+    !Number.isFinite(trialExpMs) ||
+    trialExpMs <= trialStartedAt ||
+    trialExpMs - trialStartedAt > TRIAL_DURATION_MS + 60000 ||
+    trialExpMs <= now
+  ) {
+    return false;
+  }
+
+  if (store.licenseExpiresAt !== undefined && store.licenseExpiresAt !== null && store.licenseExpiresAt !== '') {
+    const parsedLicExp =
+      typeof store.licenseExpiresAt === 'number'
+        ? store.licenseExpiresAt
+        : Date.parse(String(store.licenseExpiresAt));
+    if (!Number.isFinite(parsedLicExp) || parsedLicExp <= 0 || Math.abs(parsedLicExp - trialExpMs) > 60000) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+function isValidStoredReferralTrial14d(store, now = Date.now()) {
+  if (!store || typeof store !== 'object') return false;
+  const key = String(store.licenseKey || '').trim();
+  if (!key || isLocalTrialKey(key) || !isValidLicenseCredential(key)) return false;
+  const subStatus = String(store.subscriptionStatus || '').toLowerCase();
+  if (subStatus === 'trial_expired' || subStatus === 'active') return false;
+  const trialExpMs = parseTrialExpiryMs(store);
+  const max14dMs = 14 * 24 * 60 * 60 * 1000;
+  if (!Number.isFinite(trialExpMs) || trialExpMs <= now) return false;
+  const startedAt = Number(store.trialStartedAt || 0);
+  if (startedAt > 0) {
+    if (!Number.isFinite(startedAt) || startedAt > now + 60000 || trialExpMs <= startedAt || trialExpMs - startedAt > max14dMs + 60000) {
+      return false;
+    }
+  } else if (trialExpMs - now > max14dMs + 60000) {
+    return false;
+  }
+  return true;
+}
+
+function buildFullProEntitlementsList() {
+  return [
+    'pro_ad_and_video_shield',
+    'pro_cookie_autoreject',
+    'pro_tracker_param_stripping',
+    'pro_element_zapper',
+    'pro_tab_and_ram_tamer',
+    'addon_total_tab_and_ram_tamer'
+  ];
+}
+
+function scheduleTrialExpiryAlarm(trialExpiresAt) {
+  const expMs = Number(trialExpiresAt || 0);
+  if (expMs > Date.now() && typeof chrome !== 'undefined' && chrome.alarms && chrome.alarms.create) {
+    try {
+      chrome.alarms.create('trialExpiryCheck', { when: expMs });
+    } catch (e) {}
+  }
+}
+
+async function registerTrialWithServer(deviceId, localStartedAt, localExpiresAt) {
+  try {
+    const currentVersion =
+      (typeof chrome !== 'undefined' &&
+        chrome.runtime &&
+        chrome.runtime.getManifest &&
+        chrome.runtime.getManifest().version) ||
+      '1.4.0';
+    const envMeta = detectExtensionEnvironment();
+    const deviceFingerprint = `${deviceId}:${envMeta.browser}:${envMeta.os_platform}`;
+    for (const url of TRIAL_START_ENDPOINTS) {
+      try {
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            'x-sweepr-project': 'deepblock'
+          },
+          body: JSON.stringify({
+            installId: deviceId,
+            deviceId,
+            deviceFingerprint,
+            appVersion: currentVersion,
+            localStartedAt,
+            localExpiresAt
+          }),
+          signal: AbortSignal.timeout(4000)
+        });
+        if (!res.ok) continue;
+        const data = await res.json().catch(() => ({}));
+        if (!data || !data.ok) continue;
+        const cur = await chrome.storage.local.get(['subscriptionStatus', 'plan', 'proActive']);
+        const curPlan = String((cur && cur.plan) || '').toLowerCase();
+        const curStatus = String((cur && cur.subscriptionStatus) || '').toLowerCase();
+        // Do not overwrite an active paid upgrade
+        if (curStatus === 'active' && curPlan && curPlan !== 'trial_7d') {
+          return data;
+        }
+        const serverStatus = String(data.status || 'trialing').toLowerCase();
+        const serverExpMs = Number(data.trialExpiresAt || 0) || (data.expiresAt ? Date.parse(data.expiresAt) : localExpiresAt);
+        if (serverStatus === 'trial_expired' || (Number.isFinite(serverExpMs) && serverExpMs > 0 && Date.now() >= serverExpMs)) {
+          await revokeProState('trial_expired', { preserveLicenseKey: true });
+          return data;
+        }
+        const canonicalTrialKey = String(data.trialKey || data.licenseKey || '').trim();
+        if (canonicalTrialKey && isValidLicenseCredential(canonicalTrialKey)) {
+          const startedAt = Number(data.trialStartedAt || localStartedAt || Date.now());
+          verifiedSession.licenseKey = canonicalTrialKey;
+          verifiedSession.trialExpiresAt = serverExpMs;
+          verifiedSession.internalWriteInProgress = true;
+          try {
+            await chrome.storage.local.set({
+              licenseKey: canonicalTrialKey,
+              trialStartedAt: startedAt,
+              trialExpiresAt: serverExpMs,
+              licenseExpiresAt: serverExpMs,
+              trialSyncedWithServer: true
+            });
+          } finally {
+            verifiedSession.internalWriteInProgress = false;
+          }
+          scheduleTrialExpiryAlarm(serverExpMs);
+          await syncLicenseBackupToChromeSync({
+            licenseKey: canonicalTrialKey,
+            plan: 'trial_7d',
+            licenseExpiresAt: serverExpMs
+          });
+        }
+        return data;
+      } catch (e) {}
+    }
+  } catch (e) {}
+  return null;
+}
+
+async function startAutomatic7DayTrial(existingStore = {}) {
+  if (
+    existingStore &&
+    (existingStore.trialStartedAt ||
+      existingStore.subscriptionStatus === 'trial_expired' ||
+      (existingStore.proActive && existingStore.licenseKey && String(existingStore.plan || '').toLowerCase() !== 'trial_7d'))
+  ) {
+    return null;
+  }
+  const deviceId = await getOrCreateDeviceId();
+  const hex1 = generateSecureDeviceHex(2).toUpperCase();
+  const hex2 = generateSecureDeviceHex(2).toUpperCase();
+  const hex3 = generateSecureDeviceHex(2).toUpperCase();
+  const localTrialKey = `SWEEPR-TRIAL-${hex1}-${hex2}-${hex3}`;
+  const now = Date.now();
+  const trialExpiresAt = now + TRIAL_DURATION_MS;
+  const trialSettings = {
+    adBlocking: true,
+    cookieAutoClose: true,
+    trackerProtection: true,
+    silentMode: true,
+    autoRamTamer: tabsDiscardSupported,
+    cloudTabSyncEnabled: true
+  };
+  const entitlements = buildFullProEntitlementsList();
+
+  verifiedSession.proActive = true;
+  verifiedSession.ramTamerActive = true;
+  verifiedSession.licenseKey = localTrialKey;
+  verifiedSession.plan = 'trial_7d';
+  verifiedSession.subscriptionStatus = 'trialing';
+  verifiedSession.trialExpiresAt = trialExpiresAt;
+  verifiedSession.coldChecked = true;
+  verifiedSession.internalWriteInProgress = true;
+  try {
+    await chrome.storage.local.set({
+      deviceId,
+      proActive: true,
+      ramTamerActive: true,
+      licenseKey: localTrialKey,
+      subscriptionStatus: 'trialing',
+      plan: 'trial_7d',
+      trialStartedAt: now,
+      trialExpiresAt,
+      licenseExpiresAt: trialExpiresAt,
+      trialSyncedWithServer: false,
+      licenseVerifiedAt: now,
+      entitlements,
+      settings: trialSettings
+    });
+  } finally {
+    verifiedSession.internalWriteInProgress = false;
+  }
+
+  scheduleTrialExpiryAlarm(trialExpiresAt);
+  if (tabsDiscardSupported) {
+    try {
+      chrome.alarms.create('ramTamerCheck', { periodInMinutes: 5 });
+    } catch (e) {}
+  }
+
+  await syncExtensionProtectionRules(true, true);
+  if (
+    chrome.declarativeNetRequest &&
+    typeof chrome.declarativeNetRequest.setExtensionActionOptions === 'function'
+  ) {
+    chrome.declarativeNetRequest
+      .setExtensionActionOptions({ displayActionCountAsBadgeText: false })
+      .catch(() => {});
+  }
+  await updateActionBadge(undefined, trialSettings);
+
+  // Opportunistically register trial with server for 5-device portability without blocking offline installs
+  await registerTrialWithServer(deviceId, now, trialExpiresAt);
+
+  const postState = await chrome.storage.local.get(['proActive', 'licenseKey', 'subscriptionStatus', 'trialStartedAt', 'trialExpiresAt']);
+  return {
+    ok: Boolean(postState && postState.proActive),
+    proActive: Boolean(postState && postState.proActive),
+    licenseKey: (postState && postState.licenseKey) || localTrialKey,
+    subscriptionStatus: (postState && postState.subscriptionStatus) || 'trialing',
+    plan: 'trial_7d',
+    trialStartedAt: (postState && postState.trialStartedAt) || now,
+    trialExpiresAt: (postState && postState.trialExpiresAt) || trialExpiresAt
+  };
+}
+
 async function preserveOfflineGraceSession() {
-  const stored = await chrome.storage.local.get(['proActive', 'licenseKey', 'licenseVerifiedAt', 'entitlements', 'settings', 'plan', 'licenseExpiresAt', 'bonusProDaysEarned']);
+  const stored = await chrome.storage.local.get([
+    'proActive',
+    'licenseKey',
+    'licenseVerifiedAt',
+    'entitlements',
+    'settings',
+    'plan',
+    'subscriptionStatus',
+    'trialStartedAt',
+    'trialExpiresAt',
+    'licenseExpiresAt',
+    'bonusProDaysEarned'
+  ]);
+  if (isLocalTrialExpired(stored)) {
+    return null;
+  }
+  const storedKey = String(stored.licenseKey || '').trim();
+  const storedPlan = String(stored.plan || '').toLowerCase();
+  const storedStatus = String(stored.subscriptionStatus || '').toLowerCase();
+  if (isLocalTrialKey(storedKey)) {
+    if (storedStatus !== 'trialing' || storedPlan !== 'trial_7d' || !isValidStoredTrial7d(stored)) {
+      return null;
+    }
+  } else if (storedPlan === 'referral_trial_14d' && !isValidStoredReferralTrial14d(stored)) {
+    return null;
+  } else if ((storedPlan === 'trial_7d' || storedStatus === 'trialing') && !isValidStoredTrial7d(stored)) {
+    return null;
+  }
   const withinOfflineGrace =
-    Boolean(stored.proActive && stored.licenseKey && stored.licenseVerifiedAt) &&
+    Boolean(stored.proActive && storedKey && stored.licenseVerifiedAt) &&
     Date.now() - Number(stored.licenseVerifiedAt) <= OFFLINE_GRACE_MS;
   if (!withinOfflineGrace) {
     return null;
@@ -696,6 +1021,9 @@ async function preserveOfflineGraceSession() {
   verifiedSession.proActive = true;
   verifiedSession.ramTamerActive = true;
   verifiedSession.licenseKey = String(stored.licenseKey).trim();
+  verifiedSession.plan = String(stored.plan || 'annual');
+  verifiedSession.subscriptionStatus = String(stored.subscriptionStatus || 'active');
+  verifiedSession.trialExpiresAt = parseTrialExpiryMs(stored);
   verifiedSession.coldChecked = true;
   await syncExtensionProtectionRules(adBlockingOn, trackerOn);
   return {
@@ -771,7 +1099,7 @@ function detectExtensionOs() {
 
 async function syncLicenseBackupToChromeSync({ licenseKey, plan, licenseExpiresAt } = {}) {
   try {
-    if (!licenseKey || !isValidLicenseCredential(licenseKey)) return;
+    if (!licenseKey || isLocalTrialKey(licenseKey) || !isValidLicenseCredential(licenseKey)) return;
     if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.sync) {
       await chrome.storage.sync.set({
         sweeprLicenseBackup: {
@@ -787,18 +1115,17 @@ async function syncLicenseBackupToChromeSync({ licenseKey, plan, licenseExpiresA
 
 async function applyVerifiedLicenseActivation(data, fallbackKey = '') {
   const subStatus = String((data && data.status) || 'active').toLowerCase();
+  const planName = String((data && data.plan) || 'annual');
+  const isTrialPlan = subStatus === 'trialing' || planName === 'trial_7d' || planName === 'referral_trial_14d';
+  const rawTrialExp = data && (data.trialExpiresAt || (isTrialPlan ? data.expiresAt : 0));
+  const resolvedTrialExpMs = isTrialPlan
+    ? (typeof rawTrialExp === 'number' ? rawTrialExp : (rawTrialExp ? Date.parse(rawTrialExp) : 0))
+    : 0;
   const entitlements = Array.isArray(data && data.entitlements)
     ? data.entitlements
-    : [
-        'pro_ad_and_video_shield',
-        'pro_cookie_autoreject',
-        'pro_tracker_param_stripping',
-        'pro_element_zapper',
-        'pro_tab_and_ram_tamer',
-        'addon_total_tab_and_ram_tamer'
-      ];
+    : buildFullProEntitlementsList();
   const canonicalKey = String((data && (data.licenseKey || data.license_key)) || fallbackKey || '').trim();
-  const priorState = await chrome.storage.local.get(['proActive', 'settings']);
+  const priorState = await chrome.storage.local.get(['proActive', 'settings', 'subscriptionStatus', 'plan']);
   const priorSettings = (priorState && priorState.settings) || {};
   const nextSettings = priorState && priorState.proActive
     ? {
@@ -811,44 +1138,69 @@ async function applyVerifiedLicenseActivation(data, fallbackKey = '') {
         adBlocking: true,
         silentMode: true,
         autoRamTamer: tabsDiscardSupported,
-        cloudTabSyncEnabled: Boolean(priorSettings.cloudTabSyncEnabled)
+        cloudTabSyncEnabled:
+          priorState && priorState.subscriptionStatus === 'trial_expired'
+            ? true
+            : Boolean(priorSettings.cloudTabSyncEnabled)
       };
 
   verifiedSession.proActive = true;
   verifiedSession.ramTamerActive = true;
   verifiedSession.licenseKey = canonicalKey;
+  verifiedSession.plan = planName;
+  verifiedSession.subscriptionStatus = subStatus;
+  verifiedSession.trialExpiresAt = Number.isFinite(resolvedTrialExpMs) && resolvedTrialExpMs > 0 ? resolvedTrialExpMs : 0;
   verifiedSession.coldChecked = true;
+  const resolvedTrialStart = isTrialPlan
+    ? Number(
+        (data && data.trialStartedAt) ||
+          (planName === 'trial_7d' && resolvedTrialExpMs > TRIAL_DURATION_MS
+            ? Math.min(Date.now(), resolvedTrialExpMs - TRIAL_DURATION_MS)
+            : Date.now())
+      )
+    : 0;
   verifiedSession.internalWriteInProgress = true;
-  await chrome.storage.local.set({
-    proActive: true,
-    ramTamerActive: true,
-    licenseKey: canonicalKey,
-    draftLicenseKey: '',
-    licenseDrawerOpen: false,
-    licenseToken: (data && (data.token || data.license_token)) || '',
-    crmAccountId: (data && data.account_id) || '',
-    subscriptionStatus: subStatus,
-    plan: (data && data.plan) || 'annual',
-    licenseExpiresAt: (data && data.expiresAt) || CHROME_AUTO_ACTIVATE_DEFAULT_EXPIRES,
-    bonusProDaysEarned: Number((data && data.bonusProDaysEarned) || 0),
-    stepUpSaveEligible: Boolean(data && (data.stepUpSaveEligible || data.plan === 'monthly_intro')),
-    previousLicenseKey: canonicalKey,
-    licenseVerifiedAt: Date.now(),
-    entitlements,
-    settings: nextSettings
-  });
-  verifiedSession.internalWriteInProgress = false;
+  try {
+    await chrome.storage.local.set({
+      proActive: true,
+      ramTamerActive: true,
+      licenseKey: canonicalKey,
+      draftLicenseKey: '',
+      licenseDrawerOpen: false,
+      licenseToken: (data && (data.token || data.license_token)) || '',
+      crmAccountId: (data && data.account_id) || '',
+      subscriptionStatus: subStatus,
+      plan: planName,
+      licenseExpiresAt: (data && data.expiresAt) || CHROME_AUTO_ACTIVATE_DEFAULT_EXPIRES,
+      trialExpiresAt: verifiedSession.trialExpiresAt,
+      trialStartedAt: isTrialPlan && resolvedTrialStart > 0 ? resolvedTrialStart : 0,
+      bonusProDaysEarned: Number((data && data.bonusProDaysEarned) || 0),
+      stepUpSaveEligible: Boolean(data && (data.stepUpSaveEligible || planName === 'monthly_intro')),
+      previousLicenseKey: canonicalKey,
+      licenseVerifiedAt: Date.now(),
+      entitlements,
+      settings: nextSettings
+    });
+  } finally {
+    verifiedSession.internalWriteInProgress = false;
+  }
+
+  if (!isTrialPlan && chrome.alarms && typeof chrome.alarms.clear === 'function') {
+    Promise.resolve(chrome.alarms.clear('trialExpiryCheck')).catch(() => {});
+  } else if (verifiedSession.trialExpiresAt > Date.now()) {
+    scheduleTrialExpiryAlarm(verifiedSession.trialExpiresAt);
+  }
 
   await syncLicenseBackupToChromeSync({
     licenseKey: canonicalKey,
-    plan: (data && data.plan) || 'annual',
+    plan: planName,
     licenseExpiresAt: (data && data.expiresAt) || ''
   });
 
   if (tabsDiscardSupported && nextSettings.autoRamTamer !== false) {
     chrome.alarms.create('ramTamerCheck', { periodInMinutes: 5 });
   } else {
-    chrome.alarms.clear('ramTamerCheck').catch(() => {});
+    Promise.resolve(chrome.alarms.clear('ramTamerCheck')).catch(() => {});
   }
   await syncExtensionProtectionRules(
     nextSettings.adBlocking !== false,
@@ -868,8 +1220,9 @@ async function applyVerifiedLicenseActivation(data, fallbackKey = '') {
     ok: true,
     valid: true,
     status: subStatus,
-    plan: (data && data.plan) || 'annual',
+    plan: planName,
     expiresAt: (data && data.expiresAt) || '',
+    trialExpiresAt: verifiedSession.trialExpiresAt,
     bonusProDaysEarned: Number((data && data.bonusProDaysEarned) || 0),
     licenseKey: canonicalKey,
     ramTamerActive: true,
@@ -1005,7 +1358,7 @@ async function attemptChromeProfileAutoActivation(options = {}) {
     const deviceId = await getOrCreateDeviceId();
     const manifestVersion =
       (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getManifest && chrome.runtime.getManifest().version) ||
-      '1.3.2';
+      '1.4.0';
     let lastNetworkError = false;
     let sawAuthReject = false;
 
@@ -1125,7 +1478,7 @@ async function attemptChromeProfileAutoActivation(options = {}) {
 // Verify license key against Central SWEEPR CRM & SWEEPR Deepblock Licensing API
 async function verifyLicenseWithServer(rawKey) {
   const key = String(rawKey || '').trim();
-  if (!isValidLicenseCredential(key) || key.length > 512) {
+  if (!isValidLicenseCredential(key) || isLocalTrialKey(key) || key.length > 512) {
     await revokeProState('invalid_key_format', { preserveLicenseKey: false });
     return {
       ok: false,
@@ -1172,12 +1525,15 @@ async function verifyLicenseWithServer(rawKey) {
           }
 
           if (res.status === 400 || res.status === 401 || res.status === 403 || res.status === 404 || data?.valid === false) {
-            const statusReason = String(data?.status || data?.error || 'inactive').toLowerCase();
+            const statusReason = String(data?.error || data?.status || 'inactive').toLowerCase() === 'trial_expired'
+              ? 'trial_expired'
+              : String(data?.status || data?.error || 'inactive').toLowerCase();
             const isExplicitlyInactive =
               res.status === 403 &&
               (statusReason === 'subscription_inactive' ||
                 statusReason === 'canceled' ||
                 statusReason === 'expired' ||
+                statusReason === 'trial_expired' ||
                 statusReason === 'unpaid');
             if (isExplicitlyInactive) {
               await revokeProState(statusReason, { preserveLicenseKey: true });
@@ -1185,7 +1541,10 @@ async function verifyLicenseWithServer(rawKey) {
                 ok: false,
                 valid: false,
                 status: statusReason,
-                error: 'Your Pro subscription is no longer active. Please renew to unlock Pro features.'
+                error:
+                  statusReason === 'trial_expired'
+                    ? 'Your 7-day Pro trial has expired. Please upgrade to restore Pro features.'
+                    : 'Your Pro subscription is no longer active. Please renew to unlock Pro features.'
               };
             }
             lastRejectedResult = {
@@ -1233,36 +1592,81 @@ async function verifyLicenseWithServer(rawKey) {
 }
 
 async function revokeProState(reason = 'inactive', options = {}) {
+  const reasonStr = String(reason);
   verifiedSession.proActive = false;
   verifiedSession.ramTamerActive = false;
   verifiedSession.licenseKey = '';
+  verifiedSession.plan = '';
+  verifiedSession.subscriptionStatus = reasonStr;
+  verifiedSession.trialExpiresAt = 0;
+  verifiedSession.coldChecked = true;
   verifiedSession.internalWriteInProgress = true;
-  const existing = await chrome.storage.local.get(['churnedAt', 'licenseKey', 'previousLicenseKey']);
-  const preservedKey = options.clearLicenseKey ? '' : (existing?.licenseKey || '');
-  await chrome.storage.local.set({
-    proActive: false,
-    ramTamerActive: false,
-    licenseKey: preservedKey,
-    previousLicenseKey: existing?.previousLicenseKey || existing?.licenseKey || '',
-    subscriptionStatus: String(reason),
-    churnedAt: existing?.churnedAt || Date.now(),
-    licenseVerifiedAt: Date.now(),
-    entitlements: [],
-    settings: {
-      cookieAutoClose: false,
-      trackerProtection: false,
-      adBlocking: false,
-      silentMode: false,
-      autoRamTamer: false,
-      cloudTabSyncEnabled: false
-    }
-  });
-  verifiedSession.internalWriteInProgress = false;
+  try {
+    const existing = await chrome.storage.local.get(['churnedAt', 'licenseKey', 'previousLicenseKey', 'plan']);
+    const preservedKey = options.clearLicenseKey ? '' : (existing?.licenseKey || '');
+    const isTrialReason = reasonStr === 'trial_expired' || String(existing?.plan || '').toLowerCase() === 'trial_7d';
+    await chrome.storage.local.set({
+      proActive: false,
+      ramTamerActive: false,
+      licenseKey: preservedKey,
+      previousLicenseKey: isTrialReason
+        ? (existing?.previousLicenseKey || '')
+        : (existing?.previousLicenseKey || existing?.licenseKey || ''),
+      subscriptionStatus: reasonStr,
+      churnedAt: existing?.churnedAt || Date.now(),
+      licenseVerifiedAt: Date.now(),
+      ...(options.resetTrialWindow
+        ? { trialStartedAt: 0, trialExpiresAt: 0, licenseExpiresAt: '', plan: '' }
+        : {}),
+      entitlements: [],
+      extraCmpSelectors: [],
+      extraAntiAdblockSelectors: [],
+      extraCosmeticSelectors: [],
+      settings: {
+        cookieAutoClose: false,
+        trackerProtection: false,
+        adBlocking: false,
+        silentMode: false,
+        autoRamTamer: false,
+        cloudTabSyncEnabled: false
+      }
+    });
+  } finally {
+    verifiedSession.internalWriteInProgress = false;
+  }
   if (options.clearLicenseKey && typeof chrome !== 'undefined' && chrome.storage && chrome.storage.sync) {
     chrome.storage.sync.remove(['sweeprLicenseBackup']).catch(() => {});
   }
-  chrome.alarms.clear('ramTamerCheck').catch(() => {});
+  syncSessionsToChromeSync([], false);
+  if (typeof chrome !== 'undefined' && chrome.alarms && typeof chrome.alarms.clear === 'function') {
+    Promise.resolve(chrome.alarms.clear('ramTamerCheck')).catch(() => {});
+    Promise.resolve(chrome.alarms.clear('trialExpiryCheck')).catch(() => {});
+  }
   await syncExtensionProtectionRules(false, false);
+  await updateActionBadge();
+  try {
+    if (
+      typeof chrome !== 'undefined' &&
+      chrome.tabs &&
+      typeof chrome.tabs.query === 'function' &&
+      typeof chrome.tabs.sendMessage === 'function'
+    ) {
+      const tabs = await chrome.tabs.query({});
+      if (Array.isArray(tabs)) {
+        for (const tab of tabs) {
+          if (tab && tab.id) {
+            Promise.resolve(
+              chrome.tabs.sendMessage(tab.id, {
+                type: 'PRO_ENTITLEMENT_CHANGED',
+                proActive: false,
+                subscriptionStatus: reasonStr
+              })
+            ).catch(() => {});
+          }
+        }
+      }
+    }
+  } catch (e) {}
 }
 
 // Guard against manual DevTools tampering with chrome.storage.local while honoring legitimate popup/welcome activations
@@ -1271,28 +1675,91 @@ if (chrome.storage && chrome.storage.onChanged) {
     if (areaName !== 'local' || verifiedSession.internalWriteInProgress) return;
     const newVerifiedAt = Number(changes.licenseVerifiedAt?.newValue || 0);
     const freshKey = String(changes.licenseKey?.newValue || verifiedSession.licenseKey || '').trim();
+    const changedStatus = String(changes.subscriptionStatus?.newValue || '').toLowerCase();
     if (
       changes.proActive?.newValue === true &&
+      changedStatus !== 'trial_expired' &&
       freshKey &&
       !freshKey.startsWith('ptk_') &&
       newVerifiedAt > 0 &&
       Date.now() - newVerifiedAt < 15000
     ) {
-      verifiedSession.proActive = true;
-      verifiedSession.ramTamerActive = true;
-      verifiedSession.licenseKey = freshKey;
-      verifiedSession.coldChecked = true;
-      chrome.storage.local.get(['settings'], (s) => {
-        const st = (s && s.settings) || {};
-        syncExtensionProtectionRules(st.adBlocking !== false, st.trackerProtection !== false).catch(() => {});
-      });
-      syncRemoteFilterDelta().catch(() => {});
+      chrome.storage.local.get(
+        [
+          'proActive',
+          'licenseKey',
+          'licenseVerifiedAt',
+          'subscriptionStatus',
+          'plan',
+          'trialStartedAt',
+          'trialExpiresAt',
+          'licenseExpiresAt',
+          'settings'
+        ],
+        (s) => {
+          const store = s || {};
+          const subStatus = String(store.subscriptionStatus || '').toLowerCase();
+          const planName = String(store.plan || '').toLowerCase();
+          if (subStatus === 'trial_expired' || isLocalTrialExpired(store)) {
+            verifiedSession.proActive = false;
+            verifiedSession.ramTamerActive = false;
+            verifiedSession.licenseKey = '';
+            verifiedSession.plan = '';
+            verifiedSession.subscriptionStatus = 'trial_expired';
+            verifiedSession.trialExpiresAt = 0;
+            verifiedSession.coldChecked = false;
+            enforceStoredSubscriptionIntegrity({ force: true }).catch(() => {});
+            return;
+          }
+          const resolvedKey = String(store.licenseKey || freshKey).trim();
+          const trialExpMs = parseTrialExpiryMs(store);
+          const isLocalKey = isLocalTrialKey(resolvedKey);
+          const isReferralTrial = planName === 'referral_trial_14d';
+          const isTrial7d = planName === 'trial_7d' || (subStatus === 'trialing' && !isReferralTrial);
+          const isTrial = isTrial7d || isReferralTrial || subStatus === 'trialing';
+          const localKeyValid = !isLocalKey || (subStatus === 'trialing' && planName === 'trial_7d' && isValidStoredTrial7d(store));
+          const trialStateValid = isTrial7d
+            ? isValidStoredTrial7d(store)
+            : isReferralTrial
+            ? isValidStoredReferralTrial14d(store)
+            : !isLocalKey;
+          if (!store.proActive || !resolvedKey || !isValidLicenseCredential(resolvedKey) || !localKeyValid || !trialStateValid) {
+            verifiedSession.proActive = false;
+            verifiedSession.ramTamerActive = false;
+            verifiedSession.licenseKey = '';
+            verifiedSession.plan = '';
+            verifiedSession.subscriptionStatus = (isTrial || isLocalKey) ? 'trial_expired' : (subStatus || 'unactivated');
+            verifiedSession.trialExpiresAt = 0;
+            verifiedSession.coldChecked = false;
+            enforceStoredSubscriptionIntegrity({ force: true }).catch(() => {});
+            return;
+          }
+          verifiedSession.proActive = true;
+          verifiedSession.ramTamerActive = true;
+          verifiedSession.licenseKey = resolvedKey;
+          verifiedSession.plan = store.plan || (isTrial ? 'trial_7d' : 'annual');
+          verifiedSession.subscriptionStatus = subStatus || (isTrial ? 'trialing' : 'active');
+          verifiedSession.trialExpiresAt = isTrial ? trialExpMs : 0;
+          verifiedSession.coldChecked = true;
+          const st = store.settings || {};
+          syncExtensionProtectionRules(st.adBlocking !== false, st.trackerProtection !== false).catch(() => {});
+          syncRemoteFilterDelta().catch(() => {});
+        }
+      );
       return;
     }
-    const tamperedPro = changes.proActive && changes.proActive.newValue === true && !verifiedSession.proActive;
-    const tamperedRam = changes.ramTamerActive && changes.ramTamerActive.newValue === true && !verifiedSession.ramTamerActive;
-    if (tamperedPro || tamperedRam) {
-      enforceStoredSubscriptionIntegrity();
+    const tamperedPro = Boolean(changes.proActive && changes.proActive.newValue === true);
+    const tamperedRam = Boolean(changes.ramTamerActive && changes.ramTamerActive.newValue === true);
+    const tamperedTrialField = Boolean(
+      changes.trialStartedAt ||
+      changes.trialExpiresAt ||
+      changes.licenseExpiresAt ||
+      changes.subscriptionStatus ||
+      changes.plan ||
+      changes.licenseKey
+    );
+    if (tamperedPro || tamperedRam || tamperedTrialField) {
+      enforceStoredSubscriptionIntegrity({ force: true }).catch(() => {});
     }
   });
 }
@@ -1304,14 +1771,98 @@ async function enforceStoredSubscriptionIntegrity(options = {}) {
   }
 
   const runIntegrityCheck = (async () => {
-    const store = await chrome.storage.local.get(['proActive', 'licenseKey', 'licenseVerifiedAt', 'settings']);
+    const store = await chrome.storage.local.get([
+      'proActive',
+      'ramTamerActive',
+      'licenseKey',
+      'licenseVerifiedAt',
+      'settings',
+      'subscriptionStatus',
+      'plan',
+      'trialStartedAt',
+      'trialExpiresAt',
+      'licenseExpiresAt',
+      'trialSyncedWithServer',
+      'entitlements'
+    ]);
     const key = String(store.licenseKey || '').trim();
-    if (!key || !store.proActive || !isValidLicenseCredential(key)) {
+    const subStatus = String(store.subscriptionStatus || '').toLowerCase();
+    const planName = String(store.plan || '').toLowerCase();
+
+    // Immediate trial expiry check (beats cache TTL and offline grace)
+    if (isLocalTrialExpired(store)) {
+      if (store.proActive || store.ramTamerActive || subStatus !== 'trial_expired') {
+        await revokeProState('trial_expired', { preserveLicenseKey: true });
+      } else {
+        verifiedSession.coldChecked = true;
+        verifiedSession.proActive = false;
+        verifiedSession.ramTamerActive = false;
+        verifiedSession.licenseKey = '';
+        verifiedSession.plan = '';
+        verifiedSession.subscriptionStatus = 'trial_expired';
+        verifiedSession.trialExpiresAt = 0;
+        await syncExtensionProtectionRules(false, false);
+      }
+      return { proActive: false, ramTamerActive: false };
+    }
+
+    // Local SWEEPR-TRIAL-* keys may ONLY exist for an active, un-expired trial_7d trial
+    const isLocalKey = isLocalTrialKey(key);
+    if (isLocalKey && (subStatus !== 'trialing' || planName !== 'trial_7d')) {
+      await revokeProState('trial_expired', { clearLicenseKey: true, resetTrialWindow: true });
+      return { proActive: false, ramTamerActive: false };
+    }
+
+    // Active 7-day local/server trial branch (strict invariant validation — never mint a trial key here)
+    const isReferralTrial = planName === 'referral_trial_14d';
+    const isTrial7d = planName === 'trial_7d' || (subStatus === 'trialing' && !isReferralTrial);
+    if (isTrial7d && (store.proActive || store.ramTamerActive)) {
+      if (!isValidStoredTrial7d(store)) {
+        await revokeProState('trial_expired', { clearLicenseKey: true, resetTrialWindow: true });
+        return { proActive: false, ramTamerActive: false };
+      }
+
+      const trialExpMs = parseTrialExpiryMs(store);
+      verifiedSession.proActive = true;
+      verifiedSession.ramTamerActive = true;
+      verifiedSession.licenseKey = key;
+      verifiedSession.plan = store.plan || 'trial_7d';
+      verifiedSession.subscriptionStatus = 'trialing';
+      verifiedSession.trialExpiresAt = trialExpMs;
       verifiedSession.coldChecked = true;
-      verifiedSession.proActive = false;
-      verifiedSession.ramTamerActive = false;
-      verifiedSession.licenseKey = '';
-      await syncExtensionProtectionRules(false, false);
+
+      scheduleTrialExpiryAlarm(trialExpMs);
+      const adBlockingOn = !store.settings || store.settings.adBlocking !== false;
+      const trackerOn = !store.settings || store.settings.trackerProtection !== false;
+      await syncExtensionProtectionRules(adBlockingOn, trackerOn);
+
+      if (planName === 'trial_7d' && !store.trialSyncedWithServer) {
+        const deviceId = await getOrCreateDeviceId();
+        registerTrialWithServer(deviceId, Number(store.trialStartedAt), trialExpMs).catch(() => {});
+      }
+      return { proActive: true, ramTamerActive: true };
+    }
+
+    if (isReferralTrial && (store.proActive || store.ramTamerActive) && !isValidStoredReferralTrial14d(store)) {
+      await revokeProState('trial_expired', { clearLicenseKey: true, resetTrialWindow: true });
+      return { proActive: false, ramTamerActive: false };
+    }
+
+    if (!key || !store.proActive || !isValidLicenseCredential(key)) {
+      if (store.proActive || store.ramTamerActive) {
+        await revokeProState(subStatus && subStatus !== 'trialing' ? subStatus : 'unactivated', {
+          clearLicenseKey: !isValidLicenseCredential(key)
+        });
+      } else {
+        verifiedSession.coldChecked = true;
+        verifiedSession.proActive = false;
+        verifiedSession.ramTamerActive = false;
+        verifiedSession.licenseKey = '';
+        verifiedSession.plan = '';
+        verifiedSession.subscriptionStatus = subStatus || 'unactivated';
+        verifiedSession.trialExpiresAt = 0;
+        await syncExtensionProtectionRules(false, false);
+      }
       return { proActive: false, ramTamerActive: false };
     }
 
@@ -1321,6 +1872,9 @@ async function enforceStoredSubscriptionIntegrity(options = {}) {
       verifiedSession.proActive = true;
       verifiedSession.ramTamerActive = true;
       verifiedSession.licenseKey = key;
+      verifiedSession.plan = store.plan || 'annual';
+      verifiedSession.subscriptionStatus = subStatus || 'active';
+      verifiedSession.trialExpiresAt = isReferralTrial ? parseTrialExpiryMs(store) : 0;
       verifiedSession.coldChecked = true;
       const adBlockingOn = !store.settings || store.settings.adBlocking !== false;
       const trackerOn = !store.settings || store.settings.trackerProtection !== false;
@@ -1332,10 +1886,15 @@ async function enforceStoredSubscriptionIntegrity(options = {}) {
     verifiedSession.coldChecked = true;
     if (verified.networkError || verified.offlineGrace) {
       const withinOfflineGrace =
-        Boolean(store.licenseVerifiedAt) && Date.now() - Number(store.licenseVerifiedAt) <= OFFLINE_GRACE_MS;
+        Boolean(store.licenseVerifiedAt) &&
+        Date.now() - Number(store.licenseVerifiedAt) <= OFFLINE_GRACE_MS &&
+        !isLocalTrialExpired(store);
       verifiedSession.proActive = Boolean(store.proActive && key && withinOfflineGrace);
       verifiedSession.ramTamerActive = Boolean(verifiedSession.proActive && key && withinOfflineGrace);
       verifiedSession.licenseKey = withinOfflineGrace ? key : '';
+      verifiedSession.plan = withinOfflineGrace ? (store.plan || 'annual') : '';
+      verifiedSession.subscriptionStatus = withinOfflineGrace ? (subStatus || 'active') : (subStatus || 'unactivated');
+      verifiedSession.trialExpiresAt = withinOfflineGrace && isReferralTrial ? parseTrialExpiryMs(store) : 0;
       const adBlockingOn = verifiedSession.proActive && (!store.settings || store.settings.adBlocking !== false);
       const trackerOn = verifiedSession.proActive && (!store.settings || store.settings.trackerProtection !== false);
       await syncExtensionProtectionRules(adBlockingOn, trackerOn);
@@ -1359,14 +1918,21 @@ async function enforceStoredSubscriptionIntegrity(options = {}) {
 }
 
 async function ensureVerifiedProSession() {
-  if (!verifiedSession.coldChecked) {
-    await enforceStoredSubscriptionIntegrity();
+  const trialExpiredInMemory =
+    verifiedSession.proActive &&
+    verifiedSession.trialExpiresAt > 0 &&
+    Date.now() >= verifiedSession.trialExpiresAt;
+  if (!verifiedSession.coldChecked || trialExpiredInMemory) {
+    await enforceStoredSubscriptionIntegrity({ force: trialExpiredInMemory });
   }
   const proActive = Boolean(verifiedSession.proActive && verifiedSession.licenseKey);
   return {
     proActive,
     ramTamerActive: proActive,
-    licenseKey: verifiedSession.licenseKey || ''
+    licenseKey: verifiedSession.licenseKey || '',
+    subscriptionStatus: verifiedSession.subscriptionStatus || 'unactivated',
+    plan: verifiedSession.plan || '',
+    trialExpiresAt: verifiedSession.trialExpiresAt || 0
   };
 }
 
@@ -1439,19 +2005,35 @@ chrome.runtime.onInstalled.addListener(async (details) => {
     settings: mergedSettings,
     stats: { ...DEFAULT_STATE.stats, ...(existing.stats || {}) }
   };
-  await chrome.storage.local.set(merged);
+  verifiedSession.internalWriteInProgress = true;
+  try {
+    await chrome.storage.local.set(merged);
+  } finally {
+    verifiedSession.internalWriteInProgress = false;
+  }
   await hydrateTabActivityMap();
   const authSession = await enforceStoredSubscriptionIntegrity();
   if (!authSession || !authSession.proActive) {
-    await attemptChromeProfileAutoActivation({ interactive: false });
+    const autoRes = await attemptChromeProfileAutoActivation({ interactive: false });
+    const latestOnInstall = await chrome.storage.local.get(['trialStartedAt', 'subscriptionStatus', 'proActive']);
+    if (
+      details &&
+      details.reason === 'install' &&
+      (!autoRes || !autoRes.valid) &&
+      !latestOnInstall?.proActive &&
+      !latestOnInstall?.trialStartedAt &&
+      latestOnInstall?.subscriptionStatus !== 'trial_expired'
+    ) {
+      await startAutomatic7DayTrial(merged);
+    }
   }
-  await updateActionBadge(merged.stats, merged.settings);
+  const refreshedState = await chrome.storage.local.get(['stats', 'settings']);
+  await updateActionBadge(refreshedState.stats || merged.stats, refreshedState.settings || merged.settings);
   if (
     chrome.declarativeNetRequest &&
     typeof chrome.declarativeNetRequest.setExtensionActionOptions === 'function'
   ) {
-    const latestState = await chrome.storage.local.get(['settings']);
-    const latestSettings = (latestState && latestState.settings) || merged.settings;
+    const latestSettings = (refreshedState && refreshedState.settings) || merged.settings;
     chrome.declarativeNetRequest
       .setExtensionActionOptions({ displayActionCountAsBadgeText: latestSettings?.silentMode === false })
       .catch(() => {});
@@ -1466,7 +2048,9 @@ chrome.runtime.onInstalled.addListener(async (details) => {
 
   const hostPermOk = await checkHostPermissionsAndProtection();
   if (details.reason === 'install') {
-    chrome.tabs.create({ url: chrome.runtime.getURL('welcome.html'), active: false });
+    if (chrome.tabs && typeof chrome.tabs.create === 'function') {
+      chrome.tabs.create({ url: chrome.runtime.getURL('welcome.html'), active: false });
+    }
     chrome.alarms.create('activationRescueCheck', { delayInMinutes: 1440 });
   }
   if (details.reason === 'install' || details.reason === 'update') {
@@ -1703,6 +2287,8 @@ async function toggleSitePauseByHostname(rawHostname) {
 if (chrome.contextMenus && chrome.contextMenus.onClicked) {
   chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     if (info.menuItemId === 'sweepr-zap-element' && tab && tab.id) {
+      const auth = await ensureVerifiedProSession();
+      if (!auth.proActive || !auth.licenseKey) return;
       chrome.tabs.sendMessage(tab.id, { type: 'START_ELEMENT_ZAPPER' });
     } else if (info.menuItemId === 'sweepr-toggle-site' && tab && tab.url && /^https?:\/\//i.test(tab.url)) {
       try {
@@ -1883,6 +2469,10 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
     }
     return;
   }
+  if (alarm.name === 'trialExpiryCheck') {
+    await enforceStoredSubscriptionIntegrity({ force: true });
+    return;
+  }
   if (alarm.name === 'licenseVerifyCheck') {
     await enforceStoredSubscriptionIntegrity({ force: true });
     return;
@@ -1911,16 +2501,16 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
     return;
   }
   if (alarm.name === 'ramTamerCheck') {
-    const { proActive, licenseKey, settings, remoteFeatureFlags } = await chrome.storage.local.get([
-      'proActive',
-      'licenseKey',
+    const auth = await ensureVerifiedProSession();
+    if (!auth.proActive || !auth.licenseKey) return;
+    const { settings, remoteFeatureFlags } = await chrome.storage.local.get([
       'settings',
       'remoteFeatureFlags'
     ]);
     const autoEnabled =
       (!settings || settings.autoRamTamer !== false) &&
       (!remoteFeatureFlags || remoteFeatureFlags.autoRamTamer !== false);
-    if (proActive && licenseKey && autoEnabled) {
+    if (autoEnabled) {
       await hibernateInactiveTabs({ isAutoBackground: true });
     }
   }
@@ -2027,22 +2617,23 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   }
 
   if (msg.type === 'GET_DASHBOARD_STATE') {
-    Promise.all([
-      chrome.storage.local.get([
-        ...Object.keys(DEFAULT_STATE),
-        'extensionUpdateStatus',
-        'chromeAutoActivateResult',
-        'hostPermissionsGranted',
-        'stepUpSaveEligible',
-        'previousLicenseKey',
-        'churnedAt',
-        'abVariantOverride',
-        'deviceId'
-      ]),
-      getRamSpeedometerMetrics(),
-      chrome.tabs.query({ active: true, currentWindow: true })
-    ]).then(async ([store, ramMetrics]) => {
+    (async () => {
       const auth = await ensureVerifiedProSession();
+      const [store, ramMetrics] = await Promise.all([
+        chrome.storage.local.get([
+          ...Object.keys(DEFAULT_STATE),
+          'extensionUpdateStatus',
+          'chromeAutoActivateResult',
+          'hostPermissionsGranted',
+          'stepUpSaveEligible',
+          'previousLicenseKey',
+          'churnedAt',
+          'abVariantOverride',
+          'deviceId'
+        ]),
+        getRamSpeedometerMetrics(),
+        chrome.tabs.query({ active: true, currentWindow: true })
+      ]);
       const deviceId = store.deviceId || (await getOrCreateDeviceId());
       const mergedStats = { ...DEFAULT_STATE.stats, ...(store.stats || {}) };
       const adStatCount = auth.proActive
@@ -2083,14 +2674,27 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
           .catch(() => {});
       }
 
+      const trialExpMs = parseTrialExpiryMs(store);
+      const remainingMs = trialExpMs > Date.now() ? trialExpMs - Date.now() : 0;
+      const trialDaysRemaining = Math.floor(remainingMs / 86400000);
+      const trialHoursRemaining = Math.floor((remainingMs % 86400000) / 3600000);
+
       sendResponse({
         ...DEFAULT_STATE,
         ...store,
         proActive: Boolean(auth.proActive),
         ramTamerActive: Boolean(auth.proActive),
         licenseKey: auth.licenseKey || '',
+        subscriptionStatus: auth.proActive
+          ? store.subscriptionStatus || auth.subscriptionStatus || 'active'
+          : store.subscriptionStatus || 'unactivated',
         plan: store.plan || '',
         licenseExpiresAt: store.licenseExpiresAt || '',
+        trialStartedAt: Number(store.trialStartedAt || 0),
+        trialExpiresAt: Number(store.trialExpiresAt || 0),
+        trialSyncedWithServer: Boolean(store.trialSyncedWithServer),
+        trialDaysRemaining,
+        trialHoursRemaining,
         bonusProDaysEarned: Number(store.bonusProDaysEarned || 0),
         settings: { ...DEFAULT_STATE.settings, ...(store.settings || {}) },
         stats: mergedStats,
@@ -2104,7 +2708,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
         hostPermissionsGranted: store.hostPermissionsGranted !== false,
         extensionUpdateStatus: store.extensionUpdateStatus || null
       });
-    });
+    })();
     return true;
   }
 
@@ -2170,17 +2774,27 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 
   if (msg.type === 'TOGGLE_NEVER_SNOOZE_SITE') {
     const host = String(msg.hostname || '').replace(/^www\./i, '').trim().toLowerCase();
-    chrome.storage.local.get(['neverSnoozeSites'], async (res) => {
-      if (!host) {
-        sendResponse({ ok: false });
-        return;
+    Promise.all([ensureVerifiedProSession(), chrome.storage.local.get(['neverSnoozeSites'])]).then(
+      async ([auth, res]) => {
+        if (!auth.proActive || !auth.licenseKey) {
+          sendResponse({
+            ok: false,
+            requiresPro: true,
+            error: 'Active paid Pro subscription required.'
+          });
+          return;
+        }
+        if (!host) {
+          sendResponse({ ok: false });
+          return;
+        }
+        const current = Array.isArray(res?.neverSnoozeSites) ? res.neverSnoozeSites : [];
+        const keptAwake = !current.includes(host);
+        const updated = keptAwake ? [...current, host] : current.filter((h) => h !== host);
+        await chrome.storage.local.set({ neverSnoozeSites: updated });
+        sendResponse({ ok: true, neverSnoozeSites: updated, keptAwake, hostname: host });
       }
-      const current = Array.isArray(res.neverSnoozeSites) ? res.neverSnoozeSites : [];
-      const keptAwake = !current.includes(host);
-      const updated = keptAwake ? [...current, host] : current.filter((h) => h !== host);
-      await chrome.storage.local.set({ neverSnoozeSites: updated });
-      sendResponse({ ok: true, neverSnoozeSites: updated, keptAwake, hostname: host });
-    });
+    );
     return true;
   }
 

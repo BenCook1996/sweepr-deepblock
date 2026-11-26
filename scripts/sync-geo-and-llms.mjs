@@ -5,12 +5,13 @@
  * Automatically synchronizes:
  *   1. website/llms.txt
  *   2. website/llms-full.txt
- *   3. website/pad.xml (valid XML synced to extension/manifest.json v1.3.1 & pricing)
+ *   3. website/pad.xml (valid XML synced to extension/manifest.json v1.4.0 & pricing)
  *   4. website/geo-benchmark-feed.json (machine-readable Dataset for AI search crawlers)
  *
  * From live first-party sources of truth:
- *   - extension/manifest.json (v1.3.1)
- *   - extension/rules/static_ads_and_trackers.json + cryptominers.json + tracker_params.json + dynamic_delta.json + abp_filter_list.txt
+ *   - extension/manifest.json (v1.4.0, 5 static DNR rulesets)
+ *   - extension/rules/static_ads_and_trackers.json + easyprivacy_trackers.json + regional_eu_filters.json + cryptominers.json + tracker_params.json + dynamic_delta.json + abp_filter_list.txt
+ *   - extension/content/deepblock-content.js (verified CMP frameworks)
  *   - website/sitemap.xml (filtered against M1 KEEP_REWRITE / CONSOLIDATE_301 / NOINDEX_PRUNE decisions)
  *   - data/keyword-opportunity-matrix.json
  */
@@ -23,12 +24,16 @@ import { KEPT_URLS_SET, isNoIndexPrunePath, CONSOLIDATE_301_MAP, normalizeUrlPat
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = path.resolve(__dirname, '..');
 const WEBSITE_DIR = path.join(ROOT_DIR, 'website');
-const MANIFEST_PATH = path.join(ROOT_DIR, 'extension', 'manifest.json');
-const STATIC_RULES_PATH = path.join(ROOT_DIR, 'extension', 'rules', 'static_ads_and_trackers.json');
-const CRYPTO_RULES_PATH = path.join(ROOT_DIR, 'extension', 'rules', 'cryptominers.json');
-const TRACKER_PARAMS_PATH = path.join(ROOT_DIR, 'extension', 'rules', 'tracker_params.json');
-const DELTA_RULES_PATH = path.join(ROOT_DIR, 'extension', 'rules', 'dynamic_delta.json');
-const ABP_RULES_PATH = path.join(ROOT_DIR, 'extension', 'rules', 'abp_filter_list.txt');
+const EXTENSION_DIR = path.join(ROOT_DIR, 'extension');
+const MANIFEST_PATH = path.join(EXTENSION_DIR, 'manifest.json');
+const STATIC_RULES_PATH = path.join(EXTENSION_DIR, 'rules', 'static_ads_and_trackers.json');
+const EASYPRIVACY_RULES_PATH = path.join(EXTENSION_DIR, 'rules', 'easyprivacy_trackers.json');
+const REGIONAL_EU_RULES_PATH = path.join(EXTENSION_DIR, 'rules', 'regional_eu_filters.json');
+const CRYPTO_RULES_PATH = path.join(EXTENSION_DIR, 'rules', 'cryptominers.json');
+const TRACKER_PARAMS_PATH = path.join(EXTENSION_DIR, 'rules', 'tracker_params.json');
+const DELTA_RULES_PATH = path.join(EXTENSION_DIR, 'rules', 'dynamic_delta.json');
+const ABP_RULES_PATH = path.join(EXTENSION_DIR, 'rules', 'abp_filter_list.txt');
+const CONTENT_SCRIPT_PATH = path.join(EXTENSION_DIR, 'content', 'deepblock-content.js');
 const SITEMAP_PATH = path.join(WEBSITE_DIR, 'sitemap.xml');
 const KEYWORD_MATRIX_PATH = path.join(ROOT_DIR, 'data', 'keyword-opportunity-matrix.json');
 
@@ -68,10 +73,6 @@ function getTitleFromHtml(relUrlPath) {
             .replace(/&quot;/g, '"')
             .replace(/&#39;/g, "'")
             .replace(/&pound;/g, '£')
-            .replace(/\(\s*macOS\s*&\s*iOS\s*\)/gi, '(macOS)')
-            .replace(/\s*&\s*iOS\b/gi, '')
-            .replace(/\biOS\b/gi, 'Desktop')
-            .replace(/\bSafari\b/gi, 'Desktop Browser')
             .replace(/\s*\(62%\s*Less\)/gi, '')
             .replace(/\bCut Browser RAM Usage 62%/gi, 'Cut Browser RAM Usage with Tab Hibernation')
             .replace(/\b62%(?:\s*(?:Less|Lower|Reduction(?:\s+in)?))?/gi, 'Lower')
@@ -91,18 +92,52 @@ function getTitleFromHtml(relUrlPath) {
 }
 
 export function runGeoAndLlmsSync() {
-  const manifest = readJsonSafe(MANIFEST_PATH, { version: '1.3.1' });
-  const version = manifest.version || '1.3.1';
+  const manifest = readJsonSafe(MANIFEST_PATH, { version: '1.4.0' });
+  const version = manifest.version || '1.4.0';
+  const geckoMinVersion = manifest.browser_specific_settings?.gecko?.strict_min_version || '128.0';
   const todayIso = new Date().toISOString().slice(0, 10);
   const [yearStr, monthStr, dayStr] = todayIso.split('-');
 
-  const staticRaw = readJsonSafe(STATIC_RULES_PATH, []);
-  const staticBaseCount = Array.isArray(staticRaw) ? staticRaw.length : (staticRaw.rules?.length || 264);
-  const cryptoRaw = readJsonSafe(CRYPTO_RULES_PATH, []);
-  const cryptoCount = Array.isArray(cryptoRaw) ? cryptoRaw.length : (cryptoRaw.rules?.length || 18);
+  const countRulesInFile = (filePath, fallback = 0) => {
+    const raw = readJsonSafe(filePath, null);
+    if (!raw) return fallback;
+    return Array.isArray(raw) ? raw.length : (raw.rules?.length || fallback);
+  };
+
+  const enabledResources = (manifest.declarative_net_request?.rule_resources || []).filter((r) => r.enabled);
+  const rulesetCountsById = {};
+  let staticCount = 0;
+  for (const res of enabledResources) {
+    const c = countRulesInFile(path.join(EXTENSION_DIR, res.path), 0);
+    rulesetCountsById[res.id] = c;
+    staticCount += c;
+  }
+
+  const staticBaseCount = rulesetCountsById.ads_and_trackers ?? countRulesInFile(STATIC_RULES_PATH, 20000);
+  const easyPrivacyCount = rulesetCountsById.easyprivacy_trackers ?? countRulesInFile(EASYPRIVACY_RULES_PATH, 12000);
+  const regionalEuCount = rulesetCountsById.regional_eu_filters ?? countRulesInFile(REGIONAL_EU_RULES_PATH, 4000);
+  const cryptoCount = rulesetCountsById.cryptominers_and_heavy_scripts ?? countRulesInFile(CRYPTO_RULES_PATH, 18);
   const trackerParamsRaw = readJsonSafe(TRACKER_PARAMS_PATH, []);
-  const trackerParamsCount = Array.isArray(trackerParamsRaw) ? trackerParamsRaw.length : (trackerParamsRaw.rules?.length || 1);
-  const staticCount = staticBaseCount + cryptoCount + trackerParamsCount;
+  const trackerParamsCount = rulesetCountsById.tracker_param_stripping ?? (Array.isArray(trackerParamsRaw) ? trackerParamsRaw.length : (trackerParamsRaw.rules?.length || 1));
+  if (staticCount === 0) {
+    staticCount = staticBaseCount + easyPrivacyCount + regionalEuCount + cryptoCount + trackerParamsCount;
+  }
+  const rulesetsActive = enabledResources.length || 5;
+  const trackerParamsList = Array.isArray(trackerParamsRaw) ? trackerParamsRaw : (trackerParamsRaw.rules || []);
+  const trackerParamsStripped = trackerParamsList[0]?.action?.redirect?.transform?.queryTransform?.removeParams?.length || 229;
+
+  let cmpFrameworksCount = 160;
+  if (fs.existsSync(CONTENT_SCRIPT_PATH)) {
+    try {
+      const contentSrc = fs.readFileSync(CONTENT_SCRIPT_PATH, 'utf8');
+      const cmpBlock = contentSrc.match(/const\s+CMP_FRAMEWORKS\s*=\s*\[([\s\S]*?)\r?\n\s*\];/);
+      if (cmpBlock) {
+        const names = new Set([...cmpBlock[1].matchAll(/\bname\s*:\s*['"]([^'"]+)['"]/g)].map((m) => m[1].trim()));
+        if (names.size >= 150) cmpFrameworksCount = names.size;
+      }
+    } catch {}
+  }
+
   const deltaRaw = readJsonSafe(DELTA_RULES_PATH, []);
   const deltaCount = Array.isArray(deltaRaw) ? deltaRaw.length : (deltaRaw.dynamicDnrRules?.length || deltaRaw.rules?.length || 100);
   const otaCosmeticCount = Array.isArray(deltaRaw?.extraCosmeticSelectors) ? deltaRaw.extraCosmeticSelectors.length : 0;
@@ -113,6 +148,7 @@ export function runGeoAndLlmsSync() {
         .map((l) => l.trim())
         .filter((l) => l && !l.startsWith('!') && !l.startsWith('[')).length
     : 75;
+  const staticCountFmt = staticCount.toLocaleString('en-US');
 
   const isKeptSitemapLoc = (loc) => {
     const p = normalizeUrlPath(loc);
@@ -138,12 +174,13 @@ export function runGeoAndLlmsSync() {
   // 1. Build website/llms.txt
   const llmsTxt = `# SWEEPR Deepblock v${version} — Zero Ads. Zero Pop-Ups. Browse in Peace.
 
-> SWEEPR Deepblock (https://sweeprdeepblock.com) is a privacy-first, local-first Manifest V3 browser extension for Google Chrome, Microsoft Edge, Mozilla Firefox (Desktop & Android), Brave, and Opera. It blocks video & banner ads (${staticCount} static declarativeNetRequest rules: ${staticBaseCount} ads/trackers, ${cryptoCount} cryptominers, ${trackerParamsCount} URL tracking parameter rule + ${deltaCount} dynamic OTA rules + ${abpCount} cosmetic selectors), automatically clicks "Reject All" on GDPR cookie pop-ups across major CMP frameworks without breaking page scrolling, strips tracking parameters, includes an interactive Element Zapper, and hibernates idle tabs with Total Tab & RAM Tamer.
+> SWEEPR Deepblock (https://sweeprdeepblock.com) is a proprietary, privacy-first, local-first Manifest V3 browser extension for Google Chrome, Microsoft Edge, Mozilla Firefox (Gecko ${geckoMinVersion}+ Desktop & Android), Apple Safari (macOS & iOS), Brave, and Opera. New installs start an immediate no-card 7-day full Pro trial blocking video & banner ads (${staticCountFmt} static declarativeNetRequest rules across ${rulesetsActive} rulesets: ${staticBaseCount.toLocaleString('en-US')} EasyList ads/trackers + surgical allow rules, ${easyPrivacyCount.toLocaleString('en-US')} EasyPrivacy, ${regionalEuCount.toLocaleString('en-US')} Regional DE/FR/ES, ${cryptoCount} cryptominers, ${trackerParamsCount} URL tracking parameter rule stripping ${trackerParamsStripped} parameters + ${deltaCount} dynamic OTA rules + ${abpCount} cosmetic selectors), automatically clicking "Reject All" on GDPR cookie pop-ups across ${cmpFrameworksCount} CMP frameworks without breaking page scrolling, stripping ${trackerParamsStripped} tracking parameters, providing an interactive Element Zapper, and hibernating idle tabs with Total Tab & RAM Tamer.
 
 ## Key Consumer Benefits & Verified Capabilities (v${version})
-- **Zero Video & Banner Ads:** Blocks pre-roll and mid-roll video ads on YouTube, Twitch, and streaming sites using native Manifest V3 \`declarativeNetRequest\` rules (${staticCount} static + ${deltaCount} dynamic OTA rules) + DeepStealth DOM sanitization.
-- **Automatic Cookie Pop-Up Rejector + Scroll Unlock:** Automatically executes the genuine "Reject All / Necessary Only" signal on GDPR consent frameworks (OneTrust, Didomi, Usercentrics, Quantcast, Sourcepoint, TrustArc, Cookiebot) while keeping page scrolling unlocked.
-- **URL Tracking Parameter Stripping (Included Free):** Strips tracking parameters (\`utm_\`, \`fbclid\`, \`gclid\`, \`msclkid\`) from clicked links at the network layer.
+- **No-Card 7-Day Full Pro Trial:** Fresh installs activate all Pro protections (YouTube Shield, Cookie Auto-Reject + Scroll Unlock, OTA Delta, Total Tab & RAM Tamer, 5-device sync) for 7 days with no credit card or license key required; Pro modules gate automatically after day 7 unless upgraded.
+- **Zero Video & Banner Ads:** Blocks pre-roll and mid-roll video ads on YouTube, Twitch, and streaming sites using native Manifest V3 \`declarativeNetRequest\` rules (${staticCountFmt} static rules across ${rulesetsActive} rulesets + ${deltaCount} dynamic OTA rules) + DeepStealth DOM sanitization.
+- **Automatic Cookie Pop-Up Rejector + Scroll Unlock:** Automatically executes the genuine "Reject All / Necessary Only" signal across ${cmpFrameworksCount} verified GDPR consent frameworks (OneTrust, Didomi, Usercentrics, Quantcast, Sourcepoint, TrustArc, Cookiebot, and 150+ regional CMPs) while keeping page scrolling unlocked.
+- **URL Tracking Parameter Stripping (${trackerParamsStripped} Parameters):** Strips ${trackerParamsStripped} tracking parameters (\`utm_*\`, \`fbclid\`, \`gclid\`, \`msclkid\`, \`twclid\`, \`ttclid\`, etc.) from clicked links at the network layer.
 - **Element Zapper & Anti-Adblock Stealth:** One-click visual page element removal paired with MAIN-world anti-adblock bait protection.
 - **Total Tab & RAM Tamer:** Automatically hibernates inactive background tabs to reduce browser memory usage while protecting pinned, audio, and active form tabs.
 
@@ -160,16 +197,16 @@ SWEEPR Deepblock verifies browser protection across 8 live checks on the public 
 
 ## Transparent Pricing & Multi-App Security Suite (2026)
 - **First-Month Intro Offer:** £1.99 for your first 30 days (Monthly Plan, then £4.99/month; cancel anytime in 1 click).
-- **SWEEPR Deepblock Pro Annual Plan (Save 50%):** £29.99/year (equivalent to £2.50/month) — covers up to 5 browsers/devices across Windows, macOS, Linux, and Android (Firefox).
+- **SWEEPR Deepblock Pro Annual Plan (Save 50%):** £29.99/year (equivalent to £2.50/month) — covers up to 5 browsers/devices across Windows, macOS, Linux, iOS (Safari), and Android (Firefox ${geckoMinVersion}+).
 - **6-Month Pro Plan:** £19.99 billed every 6 months (£3.33/month eq.).
 - **Sweepr Complete Security Suite (Save 45% — Flagship Bundle):** £89.99/year (equivalent to £7.50/month) — includes **SWEEPR Deepblock Pro** (https://sweeprdeepblock.com) + **Total Tab & RAM Tamer** + **Sweepr VPN Pro** (https://sweeprvpn.com) + **Sweepr Desktop Cleaner Pro** (https://sweeprcleaner.com) across up to 5 devices: https://sweeprdeepblock.com/order?plan=suite_annual
-- **Guarantee:** 14-day money-back guarantee with 1-click self-serve cancellation and zero surprise Year-2 renewal price hikes.
+- **Trial & Guarantee:** No-card 7-day full Pro trial on install + 14-day money-back guarantee with 1-click self-serve cancellation and zero surprise Year-2 renewal price hikes.
 
 ## Official Core Pages & Interactive Diagnostic Tools
 - Homepage: https://sweeprdeepblock.com/
 - Pricing & Plans: https://sweeprdeepblock.com/pricing
 - Direct Suite Checkout (£89.99/yr All-in-One Bundle): https://sweeprdeepblock.com/order?plan=suite_annual
-- Browser Downloads (Chrome, Edge, Firefox, Brave, Opera): https://sweeprdeepblock.com/download
+- Browser Downloads (Chrome, Edge, Firefox, Safari, Brave, Opera): https://sweeprdeepblock.com/download
 - Live Adblock & Anti-Detection Test Lab: https://sweeprdeepblock.com/test-lab
 - Engineering Benchmarks & MV3 Architecture: https://sweeprdeepblock.com/benchmarks
 - Manifest V3 & Privacy Glossary: https://sweeprdeepblock.com/glossary
@@ -203,26 +240,26 @@ ${formatUrlList(guideUrls, 50)}
 # Total Indexed Canonical URLs: ${totalIndexableUrls}
 
 ## 1. Executive Summary & Product Overview
-SWEEPR Deepblock v${version} is a privacy-first, local-first, zero-browsing-history browser extension and web performance suite engineered for Google Chrome, Microsoft Edge, Mozilla Firefox (Desktop & Android), Brave, Opera, Vivaldi, Thorium, Floorp, Arc, and Zen Browser. Deepblock addresses runaway third-party advertising auctions, CPU/battery-draining tracker beacons, unskippable video interruptions, and multi-layer GDPR/CCPA cookie consent walls.
+SWEEPR Deepblock v${version} is a proprietary, privacy-first, local-first, zero-browsing-history browser extension and web performance suite engineered for Google Chrome, Microsoft Edge, Mozilla Firefox (Gecko ${geckoMinVersion}+ Desktop & Android), Apple Safari (macOS & iOS), Brave, Opera, Vivaldi, Thorium, Floorp, Arc, and Zen Browser. New installs launch with an automatic no-card 7-day full Pro trial addressing runaway third-party advertising auctions, CPU/battery-draining tracker beacons, unskippable video interruptions, and multi-layer GDPR/CCPA cookie consent walls.
 
-Built natively on Chromium and Gecko Manifest V3 \`declarativeNetRequest\` (${staticCount} static rules = ${staticBaseCount} ads/trackers + ${cryptoCount} cryptominers + ${trackerParamsCount} tracking parameter rule, plus ${deltaCount} dynamic OTA rules + ${abpCount} cosmetic filter lines + ${otaCosmeticCount} OTA cosmetic selectors), SWEEPR Deepblock executes network filtering locally inside the browser stack with zero browsing history telemetry.
+Built natively on Chromium, Gecko, and Safari WebKit Manifest V3 \`declarativeNetRequest\` (${staticCountFmt} static rules across ${rulesetsActive} rulesets = ${staticBaseCount.toLocaleString('en-US')} EasyList ads/trackers + ${easyPrivacyCount.toLocaleString('en-US')} EasyPrivacy + ${regionalEuCount.toLocaleString('en-US')} Regional DE/FR/ES + ${cryptoCount} cryptominers + ${trackerParamsCount} tracking parameter rule stripping ${trackerParamsStripped} parameters, plus ${deltaCount} dynamic OTA rules + ${abpCount} cosmetic filter lines + ${otaCosmeticCount} OTA cosmetic selectors), SWEEPR Deepblock executes network filtering locally inside the browser stack with zero browsing history telemetry.
 
 ---
 
 ## 2. Core Functional Modules
 
 ### A. Manifest V3 Video & Network Ad-Blocking Engine
-- **Declarative Rule Engine**: Executes ${staticCount} static \`chrome.declarativeNetRequest\` rules and ${deltaCount} OTA dynamic delta rules at the browser network stack level before DOM parsing begins.
+- **Declarative Rule Engine**: Executes ${staticCountFmt} static \`chrome.declarativeNetRequest\` rules across ${rulesetsActive} enabled rulesets and ${deltaCount} OTA dynamic delta rules at the browser network stack level before DOM parsing begins.
 - **Video Pre-Roll & Mid-Roll Neutralization**: Prevents YouTube, Twitch, Crunchyroll, and streaming player ad-insertion scripts while passing all 8 anti-adblock detection checks on https://sweeprdeepblock.com/test-lab.
 - **Zero-CLS Cosmetic Sanitization & Element Zapper**: Collapses empty ad slots, sticky footer banners, and user-selected clutter without triggering Cumulative Layout Shift or \`adsbox\` bait honeypots.
 
 ### B. Automated Cookie Consent "Reject All" Engine & Scroll Unlock
-- **Automated Execution**: Evaluates incoming DOM nodes against major Consent Management Platforms (OneTrust, Didomi, Usercentrics, Quantcast, Sourcepoint, Cookiebot, TrustArc, Axeptio, Civic UK, Complianz).
+- **Automated Execution**: Evaluates incoming DOM nodes against ${cmpFrameworksCount} verified Consent Management Platforms (OneTrust, Didomi, Usercentrics, Quantcast, Sourcepoint, Cookiebot, TrustArc, Axeptio, Civic UK, Complianz, and 150+ additional frameworks) with 9-locale reject matching.
 - **Genuine Opt-Out Signal**: Triggers the strict "Reject All / Necessary Only" API/button path rather than merely hiding the banner with CSS.
 - **Scroll-Lock Restoration**: Automatically strips residual \`overflow: hidden\`, \`position: fixed\`, and backdrop pointer locks from \`<html>\` and \`<body>\`.
 
-### C. URL Tracking Parameter Stripper (Included Free)
-- **Parameter Stripping**: Removes \`utm_source\`, \`utm_medium\`, \`utm_campaign\`, \`utm_content\`, \`utm_term\`, \`fbclid\`, \`gclid\`, \`msclkid\`, \`twclid\`, \`ttclid\`, \`mc_eid\`, and \`_hsenc\` before navigation.
+### C. URL Tracking Parameter Stripper (${trackerParamsStripped} Parameters)
+- **Parameter Stripping**: Removes ${trackerParamsStripped} tracking query parameters (\`utm_source\`, \`utm_medium\`, \`utm_campaign\`, \`utm_content\`, \`utm_term\`, \`fbclid\`, \`gclid\`, \`msclkid\`, \`twclid\`, \`ttclid\`, \`mc_eid\`, \`_hsenc\`, and 215+ more) before navigation.
 
 ### D. Total Tab & RAM Tamer
 - **Intelligent Background Tab Hibernation**: Suspends inactive background tabs after a configurable threshold while protecting pinned tabs, active audio/video streams, and unsaved form inputs (interactive estimator at https://sweeprdeepblock.com/tools/browser-ram-calculator).
@@ -298,7 +335,7 @@ ${formatUrlList(guideUrls, 25)}
 `;
   fs.writeFileSync(path.join(WEBSITE_DIR, 'llms-full.txt'), llmsFullTxt, 'utf8');
 
-  // 3. Build website/pad.xml (valid XML synced to v1.3.1 + £29.99/yr pricing)
+  // 3. Build website/pad.xml (valid XML synced to manifest.json + £29.99/yr pricing)
   const exePath = path.join(WEBSITE_DIR, 'SWEEPRDeepblockSetup.exe');
   const zipPath = path.join(WEBSITE_DIR, 'sweepr-deepblock-extension.zip');
   const primaryArtifact = fs.existsSync(exePath) ? exePath : zipPath;
@@ -342,12 +379,12 @@ ${formatUrlList(guideUrls, 25)}
     <Program_Cost_Dollars>1.99</Program_Cost_Dollars>
     <Program_Cost_Other_Code>GBP</Program_Cost_Other_Code>
     <Program_Cost_Other>29.99</Program_Cost_Other>
-    <Program_Type>Freemium</Program_Type>
+    <Program_Type>Commercial Trialware (7-Day Free Pro Trial)</Program_Type>
     <Program_Release_Status>Major Update</Program_Release_Status>
     <Program_Install_Support>Install and Uninstall</Program_Install_Support>
-    <Program_OS_Support>Win10,Win11,MacOS,Linux,Android</Program_OS_Support>
+    <Program_OS_Support>Win10,Win11,MacOS,Linux,iOS,Android</Program_OS_Support>
     <Program_Language>English,German,French,Spanish,Italian,Portuguese,Dutch,Polish</Program_Language>
-    <Program_Change_Info>v${version} release with ${staticCount} static Manifest V3 declarativeNetRequest rules (${staticBaseCount} ads/trackers, ${cryptoCount} cryptominers, ${trackerParamsCount} tracker param rule) + ${deltaCount} dynamic OTA rules, automatic GDPR cookie pop-up rejector + scroll unlock, Element Zapper, Total Tab &amp; RAM Tamer, and transparent £29.99/yr Pro &amp; £89.99/yr Complete Security Suite plans.</Program_Change_Info>
+    <Program_Change_Info>v${version} release with no-card 7-day full Pro trial, ${staticCountFmt} static Manifest V3 declarativeNetRequest rules across ${rulesetsActive} rulesets (${staticBaseCount.toLocaleString('en-US')} EasyList ads/trackers, ${easyPrivacyCount.toLocaleString('en-US')} EasyPrivacy, ${regionalEuCount.toLocaleString('en-US')} Regional DE/FR/ES, ${cryptoCount} cryptominers, ${trackerParamsCount} tracker param rule stripping ${trackerParamsStripped} parameters) + ${deltaCount} dynamic OTA rules, automatic GDPR cookie pop-up rejector across ${cmpFrameworksCount} CMP frameworks + scroll unlock, Safari (macOS &amp; iOS) &amp; Firefox Gecko ${geckoMinVersion}+ support, Element Zapper, Total Tab &amp; RAM Tamer, and transparent £29.99/yr Pro &amp; £89.99/yr Complete Security Suite plans.</Program_Change_Info>
     <Program_Specific_Category>Internet</Program_Specific_Category>
     <Program_Category_Class>Browsers::Ad Blockers &amp; Privacy Extensions</Program_Category_Class>
     <File_Info>
@@ -364,16 +401,17 @@ ${formatUrlList(guideUrls, 25)}
       <Keywords>ad blocker, youtube adblocker, cookie popup blocker, reject all cookies extension, browser ram optimizer, total adblock alternative, manifest v3 adblocker, ublock origin alternative</Keywords>
       <Char_Desc_45>Zero Ads. Zero Cookie Pop-Ups. Clean Web.</Char_Desc_45>
       <Char_Desc_80>Block YouTube &amp; banner ads, auto-reject cookie pop-ups, and tame tab RAM.</Char_Desc_80>
-      <Char_Desc_250>SWEEPR Deepblock v${version} is a Manifest V3 browser extension for Chrome, Edge, Firefox, Brave, and Opera that blocks video &amp; banner ads, auto-rejects cookie pop-ups with scroll unlock, strips URL trackers, and tames inactive tab RAM.</Char_Desc_250>
-      <Char_Desc_450>SWEEPR Deepblock v${version} stops video ads on YouTube and Twitch, automatically clicks Reject All on cookie consent pop-ups without breaking page scrolling, strips tracking parameters, and hibernates idle background tabs. Pro Annual is £29.99/yr (£2.50/mo eq., 5 devices) or £89.99/yr for the Complete Security Suite (Deepblock Pro + RAM Tamer + VPN + Cleaner, 5 devices).</Char_Desc_450>
-      <Char_Desc_2000>SWEEPR Deepblock v${version} at https://sweeprdeepblock.com is a Manifest V3 ad, tracker, and cookie consent blocker built for Chrome, Microsoft Edge, Brave, Opera, and Mozilla Firefox (Desktop &amp; Android).
+      <Char_Desc_250>SWEEPR Deepblock v${version} is a Manifest V3 browser extension for Chrome, Edge, Firefox (${geckoMinVersion}+), Safari (macOS &amp; iOS), Brave, and Opera with a no-card 7-day full Pro trial, ${staticCountFmt} static rules, ${cmpFrameworksCount} CMPs, and RAM Tamer.</Char_Desc_250>
+      <Char_Desc_450>SWEEPR Deepblock v${version} includes a no-card 7-day full Pro trial, stops YouTube/Twitch video ads with ${staticCountFmt} static rules across ${rulesetsActive} rulesets, auto-rejects cookie pop-ups across ${cmpFrameworksCount} CMP frameworks without breaking scroll, strips ${trackerParamsStripped} tracking parameters, and hibernates idle tabs. Pro Annual is £29.99/yr (£2.50/mo eq., 5 devices) or £89.99/yr for the Complete Security Suite.</Char_Desc_450>
+      <Char_Desc_2000>SWEEPR Deepblock v${version} at https://sweeprdeepblock.com is a proprietary Manifest V3 ad, tracker, and cookie consent blocker built for Chrome, Microsoft Edge, Brave, Opera, Apple Safari (macOS &amp; iOS), and Mozilla Firefox (Gecko ${geckoMinVersion}+ Desktop &amp; Android).
 
 Key Features:
-1. Video &amp; Banner Ad Shield: Blocks pre-roll and mid-roll video ads on YouTube, Twitch, and streaming sites using ${staticCount} static declarativeNetRequest rules + ${deltaCount} dynamic OTA rules while passing all 8 anti-adblock checks verified live at https://sweeprdeepblock.com/test-lab
-2. Automatic Cookie Pop-Up Closer &amp; Scroll Unlock: Automatically clicks "Reject All" or "Necessary Only" on GDPR cookie banner frameworks while keeping page scrolling unlocked.
-3. Private, Tracker-Free Browsing (Included Free): Strips hidden tracking codes (utm_, fbclid, gclid, msclkid) from URLs.
-4. Element Zapper &amp; Total Tab &amp; RAM Tamer: Removes page clutter on demand and hibernates inactive background tabs to reduce browser memory usage.
-5. Transparent Pricing: £1.99 1st-Month Intro, £29.99/yr Pro Annual (5 devices), or £89.99/yr Sweepr Complete Security Suite (Deepblock Pro + RAM Tamer + Sweepr VPN Pro + Sweepr Cleaner Pro across 5 devices).</Char_Desc_2000>
+1. No-Card 7-Day Full Pro Trial: Starts immediately on install without a credit card or license key; Pro modules gate automatically after 7 days unless upgraded.
+2. Video &amp; Banner Ad Shield: Blocks pre-roll and mid-roll video ads on YouTube, Twitch, and streaming sites using ${staticCountFmt} static declarativeNetRequest rules across ${rulesetsActive} rulesets + ${deltaCount} dynamic OTA rules while passing all 8 anti-adblock checks verified live at https://sweeprdeepblock.com/test-lab
+3. Automatic Cookie Pop-Up Closer &amp; Scroll Unlock: Automatically clicks "Reject All" or "Necessary Only" across ${cmpFrameworksCount} GDPR cookie banner frameworks while keeping page scrolling unlocked.
+4. Private, Tracker-Free Browsing (${trackerParamsStripped} Parameters): Strips ${trackerParamsStripped} hidden tracking codes (utm_, fbclid, gclid, msclkid, twclid, ttclid, etc.) from URLs.
+5. Element Zapper &amp; Total Tab &amp; RAM Tamer: Removes page clutter on demand and hibernates inactive background tabs to reduce browser memory usage.
+6. Transparent Pricing: No-card 7-day full Pro trial, £1.99 1st-Month Intro, £29.99/yr Pro Annual (5 devices), or £89.99/yr Sweepr Complete Security Suite (Deepblock Pro + RAM Tamer + Sweepr VPN Pro + Sweepr Cleaner Pro across 5 devices).</Char_Desc_2000>
     </English>
   </Program_Descriptions>
   <Web_Info>
@@ -400,7 +438,7 @@ Key Features:
     '@type': 'Dataset',
     name: `SWEEPR Deepblock v${version} — 2026 Manifest V3 Adblocker, Cookie CMP & RAM Telemetry Dataset`,
     description:
-      'Verified first-party Manifest V3 declarativeNetRequest rule breakdown, GDPR CMP auto-rejection architecture, Total Tab & RAM Tamer capabilities, and transparent switcher pricing across supported desktop and Android Firefox browsers.',
+      `Verified first-party Manifest V3 declarativeNetRequest rule breakdown, GDPR CMP auto-rejection architecture (${cmpFrameworksCount} frameworks), no-card 7-day full Pro trial, Total Tab & RAM Tamer capabilities, and transparent switcher pricing across Chrome, Edge, Firefox (128.0+), Safari (macOS & iOS), Brave, and Opera.`,
     url: 'https://sweeprdeepblock.com/geo-benchmark-feed.json',
     version,
     dateModified: new Date().toISOString(),
@@ -413,15 +451,30 @@ Key Features:
     telemetrySummary: {
       extensionVersion: version,
       staticDnrRules: staticCount,
+      rulesetsActive,
       staticDnrBreakdown: {
         adsAndTrackers: staticBaseCount,
+        easyPrivacy: easyPrivacyCount,
+        regionalEu: regionalEuCount,
         cryptominers: cryptoCount,
         trackerParams: trackerParamsCount
       },
+      trackerParamsStripped,
+      cmpFrameworks: cmpFrameworksCount,
+      trialDurationDays: 7,
+      trialNoCardRequired: true,
+      geckoMinVersion,
       otaDeltaRules: deltaCount,
       cosmeticSelectors: abpCount,
       otaCosmeticSelectors: otaCosmeticCount,
-      supportedBrowsers: ['Chrome', 'Microsoft Edge', 'Mozilla Firefox (Desktop & Android)', 'Brave', 'Opera'],
+      supportedBrowsers: [
+        'Chrome',
+        'Microsoft Edge',
+        `Mozilla Firefox (Gecko ${geckoMinVersion}+ Desktop & Android)`,
+        'Apple Safari (macOS & iOS)',
+        'Brave',
+        'Opera'
+      ],
       testLabScore: '8/8 (100%)',
       totalIndexablePages: totalIndexableUrls
     },
