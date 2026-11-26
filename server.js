@@ -1218,18 +1218,73 @@ function syncTrialAccountDevicesToStore(acc) {
   saveTrialsStore(store);
 }
 
+function evictExpiredTrialAccountIfNeeded(accOrKey) {
+  if (!accOrKey) return false;
+  let acc = typeof accOrKey === 'object' ? accOrKey : null;
+  const rawStr = typeof accOrKey === 'string' ? accOrKey.trim() : '';
+  if (!acc && rawStr) {
+    acc =
+      licenses.get(rawStr) ||
+      licenses.get(rawStr.toUpperCase()) ||
+      accountsById.get(rawStr) ||
+      accountsById.get(`trial_${rawStr.toUpperCase()}`) ||
+      null;
+  }
+  if (!acc || !acc.isTrial7d) return false;
+
+  const upperKey = String(acc.licenseKey || '').trim().toUpperCase();
+  const accExpMs = Number(acc.trialExpiresAt || Date.parse(acc.expiresAt || ''));
+  let diskExpired = false;
+  let diskMissing = false;
+  if (upperKey) {
+    const store = loadTrialsStore();
+    const rec = store.trials && store.trials[upperKey];
+    if (!rec) {
+      diskMissing = true;
+    } else {
+      const recExpMs = Number(rec.trialExpiresAt || Date.parse(rec.expiresAt || ''));
+      if (!Number.isFinite(recExpMs) || recExpMs <= 0 || Date.now() >= recExpMs) {
+        diskExpired = true;
+      }
+    }
+  }
+  const accExpired = !Number.isFinite(accExpMs) || accExpMs <= 0 || Date.now() >= accExpMs;
+  if (!accExpired && !diskExpired && !diskMissing) {
+    return false;
+  }
+
+  acc.status = 'trial_expired';
+  if (acc.id) accountsById.delete(acc.id);
+  if (acc.licenseKey) {
+    licenses.delete(acc.licenseKey);
+    licenses.delete(String(acc.licenseKey).toUpperCase());
+  }
+  if (upperKey) {
+    licenses.delete(upperKey);
+    accountsById.delete(`trial_${upperKey}`);
+  }
+  return true;
+}
+
 function findOrHydrateTrialAccount(candidateKey) {
   const upperKey = String(candidateKey || '').trim().toUpperCase();
   if (!upperKey || !HIGH_ENTROPY_LICENSE_KEY_RE.test(upperKey)) return null;
   const store = loadTrialsStore();
   const rec = store.trials && store.trials[upperKey];
-  if (!rec) return null;
+  if (!rec) {
+    evictExpiredTrialAccountIfNeeded(upperKey);
+    return null;
+  }
   const expMs = Number(rec.trialExpiresAt || Date.parse(rec.expiresAt || ''));
-  if (!Number.isFinite(expMs) || expMs <= Date.now()) {
+  if (!Number.isFinite(expMs) || expMs <= 0 || expMs <= Date.now()) {
+    evictExpiredTrialAccountIfNeeded(upperKey);
     return null;
   }
   const existing = licenses.get(upperKey);
   if (existing && existing.isTrial7d) {
+    if (evictExpiredTrialAccountIfNeeded(existing)) {
+      return null;
+    }
     if (!(existing.devices instanceof Set)) existing.devices = new Set();
     if (!(existing.deviceMeta instanceof Map)) existing.deviceMeta = new Map();
     for (const devId of Array.isArray(rec.devices) ? rec.devices : []) {
@@ -1268,6 +1323,8 @@ function findOrHydrateTrialAccount(candidateKey) {
     licenseKey: upperKey,
     ramTamerAddon: true,
     entitlements: buildDeepblockEntitlements(true, false),
+    trialStartedAt: rec.trialStartedAt,
+    trialExpiresAt: expMs,
     expiresAt: rec.expiresAt || new Date(expMs).toISOString(),
     createdAt: createdIso,
     devices: devicesSet,
@@ -5320,7 +5377,8 @@ function getCachedDynamicDelta() {
       const crmStatus = String(crmVerify.data.status || 'active').toLowerCase();
       if (crmVerify.data.valid && (crmStatus === 'active' || crmStatus === 'trialing')) {
         const addonsList = Array.isArray(crmVerify.data.addons) ? crmVerify.data.addons : [];
-        const localRec = licenses.get(key) || licenses.get(key.toUpperCase()) || null;
+        const rawLocalRec = licenses.get(key) || licenses.get(key.toUpperCase()) || null;
+        const localRec = rawLocalRec && !evictExpiredTrialAccountIfNeeded(rawLocalRec) ? rawLocalRec : null;
         if (localRec) {
           const seatCheck = registerLocalDeviceForAccount(localRec, deviceId, { deviceName, platform });
           if (!seatCheck.ok) {
@@ -5364,6 +5422,11 @@ function getCachedDynamicDelta() {
     }
 
     let record = licenses.get(key) || licenses.get(key.toUpperCase());
+    let expiredHydratedTrial = null;
+    if (record && evictExpiredTrialAccountIfNeeded(record)) {
+      expiredHydratedTrial = record;
+      record = null;
+    }
     const refStoreForVerify = isHighEntropyKey ? loadReferralsStore() : { trials: {} };
     const referralTrialRec = isHighEntropyKey ? refStoreForVerify.trials?.[key.toUpperCase()] : null;
     const trialsStoreForVerify = isHighEntropyKey ? loadTrialsStore() : { trials: {} };
@@ -5425,6 +5488,25 @@ function getCachedDynamicDelta() {
           }
           record.status = 'active';
         } catch {}
+      }
+
+      if (record.isTrial7d && evictExpiredTrialAccountIfNeeded(record)) {
+        return sendJson(
+          res,
+          403,
+          {
+            valid: false,
+            status: 'trial_expired',
+            error: 'trial_expired',
+            plan: record.plan || 'trial_7d',
+            ...(record.trialStartedAt ? { trialStartedAt: record.trialStartedAt } : {}),
+            ...(record.trialExpiresAt ? { trialExpiresAt: record.trialExpiresAt } : {}),
+            ...(record.expiresAt ? { expiresAt: record.expiresAt } : {}),
+            message: 'Your 7-day Pro trial has expired.'
+          },
+          {},
+          req
+        );
       }
 
       if (record.isReferralTrial && record.expiresAt && Date.now() > Date.parse(record.expiresAt)) {
@@ -5575,6 +5657,25 @@ function getCachedDynamicDelta() {
           devices_used: trialRec.devices.length,
           devices_max: MAX_DEVICES_PER_LICENSE,
           maxDevices: MAX_DEVICES_PER_LICENSE
+        },
+        {},
+        req
+      );
+    }
+
+    if (expiredHydratedTrial) {
+      return sendJson(
+        res,
+        403,
+        {
+          valid: false,
+          status: 'trial_expired',
+          error: 'trial_expired',
+          plan: expiredHydratedTrial.plan || 'trial_7d',
+          ...(expiredHydratedTrial.trialStartedAt ? { trialStartedAt: expiredHydratedTrial.trialStartedAt } : {}),
+          ...(expiredHydratedTrial.trialExpiresAt ? { trialExpiresAt: expiredHydratedTrial.trialExpiresAt } : {}),
+          ...(expiredHydratedTrial.expiresAt ? { expiresAt: expiredHydratedTrial.expiresAt } : {}),
+          message: 'Your 7-day Pro trial has expired.'
         },
         {},
         req
@@ -5984,9 +6085,10 @@ function getCachedDynamicDelta() {
     const crmLookup = await crm.portalLookup(effectiveLookup, lookupKey, clientIp);
     if (crmLookup.ok && crmLookup.data && crmLookup.data.ok) {
       const d = crmLookup.data;
-      const localRec = isEmail
+      const rawLocalRec = isEmail
         ? accountsByEmail.get(effectiveLookup.toLowerCase())
         : licenses.get(lookupKey) || licenses.get(lookupKey.toUpperCase());
+      const localRec = rawLocalRec && !evictExpiredTrialAccountIfNeeded(rawLocalRec) ? rawLocalRec : null;
       const planName = d.plan || localRec?.plan || 'annual';
       return sendJson(
         res,
@@ -6012,6 +6114,9 @@ function getCachedDynamicDelta() {
     let record = isEmail
       ? accountsByEmail.get(effectiveLookup.toLowerCase())
       : licenses.get(lookupKey) || licenses.get(lookupKey.toUpperCase()) || findOrHydrateTrialAccount(lookupKey);
+    if (record && evictExpiredTrialAccountIfNeeded(record)) {
+      record = null;
+    }
 
     if (isEmail && record && !verifyLocalAccountKeyOrCode(record, lookupKey)) {
       record = null;
@@ -6113,6 +6218,9 @@ function getCachedDynamicDelta() {
     let record = isEmail
       ? accountsByEmail.get(effectiveLookup.toLowerCase())
       : licenses.get(lookupKey) || licenses.get(lookupKey.toUpperCase()) || findOrHydrateTrialAccount(lookupKey);
+    if (record && evictExpiredTrialAccountIfNeeded(record)) {
+      record = null;
+    }
 
     if (isEmail && record && !verifyLocalAccountKeyOrCode(record, lookupKey)) {
       return sendJson(res, 401, { ok: false, error: 'invalid_credentials' });
@@ -6203,7 +6311,10 @@ function getCachedDynamicDelta() {
     const sess = isExtOrigin ? null : verifySessionCookie(reqObj);
     if (sess && sess.sub) {
       let bySub = accountsById.get(sess.sub) || (sess.email ? accountsByEmail.get(String(sess.email).toLowerCase()) : null);
-      if (!bySub && sess.email) {
+      if (bySub && evictExpiredTrialAccountIfNeeded(bySub)) {
+        bySub = null;
+      }
+      if (!bySub && sess.email && !String(sess.sub).startsWith('trial_')) {
         try {
           const crmLookup = await crm.portalLookup(String(sess.email).toLowerCase(), '', clientIp);
           if (crmLookup && crmLookup.ok && crmLookup.data?.ok) {
@@ -6218,7 +6329,7 @@ function getCachedDynamicDelta() {
           }
         } catch {}
       }
-      if (bySub && (bySub.status === 'active' || bySub.status === 'trialing')) {
+      if (bySub && !evictExpiredTrialAccountIfNeeded(bySub) && (bySub.status === 'active' || bySub.status === 'trialing')) {
         return bySub;
       }
     }
@@ -6234,6 +6345,9 @@ function getCachedDynamicDelta() {
         return null;
       }
       let acc = accountsByEmail.get(rawLookup);
+      if (acc && evictExpiredTrialAccountIfNeeded(acc)) {
+        acc = null;
+      }
       if (acc && (acc.status === 'active' || acc.status === 'trialing') && verifyLocalAccountKeyOrCode(acc, keyOrCode)) {
         return acc;
       }
@@ -6256,6 +6370,9 @@ function getCachedDynamicDelta() {
     const candidateKey = keyOrCode || rawLookup;
     if (candidateKey && HIGH_ENTROPY_LICENSE_KEY_RE.test(candidateKey)) {
       let acc = licenses.get(candidateKey) || licenses.get(candidateKey.toUpperCase()) || findOrHydrateTrialAccount(candidateKey);
+      if (acc && evictExpiredTrialAccountIfNeeded(acc)) {
+        acc = null;
+      }
       if (acc && (acc.status === 'active' || acc.status === 'trialing')) {
         return acc;
       }
@@ -6389,7 +6506,10 @@ function getCachedDynamicDelta() {
     if (!row || row.redeemedAt !== null || Date.now() > row.expiresAt) {
       return sendJson(res, 401, { ok: false, error: 'token_expired_or_already_used' });
     }
-    const acc = accountsById.get(row.accountId);
+    let acc = accountsById.get(row.accountId);
+    if (acc && evictExpiredTrialAccountIfNeeded(acc)) {
+      acc = null;
+    }
     if (!acc || (acc.status !== 'active' && acc.status !== 'trialing')) {
       return sendJson(res, 403, { ok: false, error: 'subscription_inactive' });
     }
@@ -6530,7 +6650,10 @@ function getCachedDynamicDelta() {
       });
     }
     if (ch.status === 'approved' && ch.accountId) {
-      const acc = accountsById.get(ch.accountId);
+      let acc = accountsById.get(ch.accountId);
+      if (acc && evictExpiredTrialAccountIfNeeded(acc)) {
+        acc = null;
+      }
       if (!acc || (acc.status !== 'active' && acc.status !== 'trialing')) {
         return sendJson(res, 403, { ok: false, status: 'expired', error: 'subscription_inactive' });
       }
@@ -6640,8 +6763,11 @@ function getCachedDynamicDelta() {
     const token = String(parsedUrl.searchParams.get('token') || '').trim();
     const challengeId = String(parsedUrl.searchParams.get('challenge') || '').trim();
     const sess = verifySessionCookie(req);
-    const loggedInAcc =
+    let loggedInAcc =
       sess && sess.sub ? accountsById.get(sess.sub) || (sess.email ? accountsByEmail.get(String(sess.email).toLowerCase()) : null) : null;
+    if (loggedInAcc && evictExpiredTrialAccountIfNeeded(loggedInAcc)) {
+      loggedInAcc = null;
+    }
     const ch = challengeId ? qrPairingChallenges.get(challengeId) : null;
 
     const pairHtml = `<!DOCTYPE html>

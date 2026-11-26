@@ -928,4 +928,136 @@ describe('Tier 5 Hardening — Backend Trial, Licensing, Website Spec Sync & Gen
       }
     });
   }
+
+  test('T5H-13 [R2 REGRESSION]: hydrated trial_7d key expires naturally without restart across license-verify, portal, and device-link endpoints', async () => {
+    const mkKey = () => {
+      const h = crypto.randomBytes(6).toString('hex').toUpperCase();
+      return `SWEEPR-DB-${h.slice(0, 4)}-${h.slice(4, 8)}-${h.slice(8, 12)}`;
+    };
+    const shortKey = mkKey();
+    const shortKey2 = mkKey();
+    const nowMs = Date.now();
+    const expMs = nowMs + 2500;
+    const trialsPath = path.join(server.tempDataDir, 'trials.json');
+    const existingStore = fs.existsSync(trialsPath)
+      ? JSON.parse(fs.readFileSync(trialsPath, 'utf8'))
+      : { byIdentityHash: {}, trials: {} };
+    for (const k of [shortKey, shortKey2]) {
+      existingStore.trials[k] = {
+        trialKey: k,
+        status: 'trialing',
+        plan: 'trial_7d',
+        ramTamerAddon: true,
+        maxDevices: 5,
+        devices: ['ext_dev_1'],
+        trialStartedAt: nowMs,
+        trialExpiresAt: expMs,
+        expiresAt: new Date(expMs).toISOString(),
+        createdAt: new Date(nowMs).toISOString()
+      };
+    }
+    fs.writeFileSync(trialsPath, JSON.stringify(existingStore, null, 2));
+
+    const extOrigin = 'chrome-extension://bkdfhdgmglfancgpkcbdceinfdlccmpc';
+    const preCreate = await fetch(`${server.baseUrl}/api/device-link/create-token`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Origin: extOrigin },
+      body: JSON.stringify({ licenseKey: shortKey, device_id: 'ext_dev_1' })
+    });
+    assert.equal(preCreate.status, 200, 'Pre-expiry create-token must succeed and hydrate account');
+    const preTokenJson = await preCreate.json();
+    assert.equal(preTokenJson.ok, true);
+    assert.match(String(preTokenJson.token || ''), /^ptk_/);
+
+    const preCreate2 = await fetch(`${server.baseUrl}/api/device-link/create-token`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Origin: extOrigin },
+      body: JSON.stringify({ licenseKey: shortKey2, device_id: 'ext_dev_1' })
+    });
+    assert.equal(preCreate2.status, 200);
+    const preTokenJson2 = await preCreate2.json();
+
+    const preLookup = await fetch(`${server.baseUrl}/api/portal/lookup`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ lookup: shortKey })
+    });
+    assert.equal(preLookup.status, 200, 'Pre-expiry portal lookup must succeed');
+    const setCookie = preLookup.headers.get('set-cookie') || '';
+    const sessionCookie = setCookie.split(';')[0];
+    assert.match(sessionCookie, /^sweepr_session=/);
+
+    const waitMs = Math.max(100, expMs - Date.now() + 150);
+    await new Promise((r) => setTimeout(r, waitMs));
+    assert.ok(Date.now() > expMs);
+
+    // Redeem-first on shortKey2 proves /api/device-link/redeem itself evicts un-evicted hydrated trial_7d
+    const postRedeemFirst2 = await fetch(`${server.baseUrl}/api/device-link/redeem`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Origin: extOrigin },
+      body: JSON.stringify({ token: preTokenJson2.token, device_id: 'ext_dev_2' })
+    });
+    assert.equal(postRedeemFirst2.status, 403, 'Redeem-first on expired hydrated trial_7d must return 403');
+    assert.equal((await postRedeemFirst2.json()).error, 'subscription_inactive');
+
+    const getVerify = await fetch(
+      `${server.baseUrl}/api/license-verify?key=${encodeURIComponent(shortKey)}&device_id=ext_dev_1`
+    );
+    assert.equal(getVerify.status, 403, 'Hydrated trial_7d must return 403 after expiry on GET /api/license-verify');
+    const getVerifyJson = await getVerify.json();
+    assert.equal(getVerifyJson.valid, false);
+    assert.equal(getVerifyJson.status, 'trial_expired');
+    assert.equal(getVerifyJson.error, 'trial_expired');
+
+    const postVerify = await fetch(`${server.baseUrl}/api/license-verify`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ key: shortKey, device_id: 'ext_dev_1' })
+    });
+    assert.equal(postVerify.status, 403, 'Hydrated trial_7d must return 403 after expiry on POST /api/license-verify');
+    assert.equal((await postVerify.json()).error, 'trial_expired');
+
+    const postLookup = await fetch(`${server.baseUrl}/api/portal/lookup`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ lookup: shortKey })
+    });
+    assert.equal(postLookup.status, 404, 'Expired hydrated trial_7d must return 404 on /api/portal/lookup');
+
+    const postCancel = await fetch(`${server.baseUrl}/api/portal/cancel`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ lookup: shortKey })
+    });
+    assert.equal(postCancel.status, 404, 'Expired hydrated trial_7d must return 404 on /api/portal/cancel');
+
+    const postCreateAfter = await fetch(`${server.baseUrl}/api/device-link/create-token`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Origin: extOrigin },
+      body: JSON.stringify({ licenseKey: shortKey, device_id: 'ext_dev_1' })
+    });
+    assert.equal(postCreateAfter.status, 401, 'Expired hydrated trial_7d must return 401 on /api/device-link/create-token (key)');
+
+    const postCreateCookieAfter = await fetch(`${server.baseUrl}/api/device-link/create-token`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Cookie: sessionCookie },
+      body: JSON.stringify({ device_id: 'ext_dev_1' })
+    });
+    assert.equal(postCreateCookieAfter.status, 401, 'Expired hydrated trial_7d must return 401 on /api/device-link/create-token (session)');
+
+    const postRemoveAfter = await fetch(`${server.baseUrl}/api/portal/devices/remove`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Origin: extOrigin },
+      body: JSON.stringify({ licenseKey: shortKey, device_id: 'ext_dev_1' })
+    });
+    assert.equal(postRemoveAfter.status, 401, 'Expired hydrated trial_7d must return 401 on /api/portal/devices/remove');
+
+    const postRedeemAfter = await fetch(`${server.baseUrl}/api/device-link/redeem`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Origin: extOrigin },
+      body: JSON.stringify({ token: preTokenJson.token, device_id: 'ext_dev_2' })
+    });
+    assert.equal(postRedeemAfter.status, 403, 'Expired hydrated trial_7d must return 403 on /api/device-link/redeem');
+    assert.equal((await postRedeemAfter.json()).error, 'subscription_inactive');
+  });
 });
