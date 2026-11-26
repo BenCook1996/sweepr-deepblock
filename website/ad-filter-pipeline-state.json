@@ -1,8 +1,20 @@
 {
-  "updatedAt": "2026-11-24T09:07:24.254Z",
+  "updatedAt": "2026-11-25T07:43:31.878Z",
   "dedupWindowDays": 30,
-  "totalTrackedDomains": 31160,
+  "totalTrackedDomains": 32160,
   "recentRuns": [
+    {
+      "run_id": "adpipe-2026-11-25-2yq1s",
+      "started_at": "2026-11-25T07:42:42.727Z",
+      "completed_at": "2026-11-25T07:43:31.878Z",
+      "sites_sampled": 1000,
+      "sites_scanned": 1000,
+      "leaks_detected": 0,
+      "rules_auto_patched": 0,
+      "manual_review_count": 0,
+      "commit_hash": "f302f261",
+      "crm_synced": 1
+    },
     {
       "run_id": "adpipe-2026-11-24-i3le8",
       "started_at": "2026-11-24T09:06:08.916Z",
@@ -219191,6 +219203,7006 @@
     "gadgetbeacon.co.uk": {
       "category": "blogs",
       "lastScannedAt": 1795511239425,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "foodietribune.fr": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "skilletcentral.org": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "animezone.au": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "siliconnetwork.news": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cyberscoop.com": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "respawnreport.es": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "heraldscoop.au": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "postdaily.co.uk": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "skilletstandard.nl": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "buzzfocus.it": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "heraldtribune.ca": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bingenetwork.com": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "spicestandard.fr": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cinemajournal.ca": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "devnation.com": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "esportsnation.co": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "gazettepulse.news": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "heraldindex.tv": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "metrocentral.es": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bingestream.gg": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bingebulletin.fr": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "kernelmagazine.net": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "raidscoop.us": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "insiderledger.co": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "savorytimes.net": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "postmagazine.nl": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "showbizwatch.de": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cravewire.org": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "showbiznetwork.jp": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "observernetwork.com": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "tribunemedia.net": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dailypress.jp": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bingeradar.nl": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "silicontimes.jp": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "streampress.ca": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "animewire.au": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "lootpulse.it": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "popexpress.ca": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bingebeat.jp": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cloudjournal.info": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bistroexpress.it": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "skilletmedia.tv": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "heraldtoday.me": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "codedaily.fr": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "skillettribune.es": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "silicondigest.us": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "skillethub.me": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "raidstandard.io": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "kerneltribune.us": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bytedaily.news": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "screencentral.es": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "raidzone.net": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "kernelzone.jp": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "animereview.io": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "respawnspot.gg": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "siliconportal.nl": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "animestream.gg": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "recipewire.me": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "esportscentral.es": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "raidstream.gg": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "respawnpress.gg": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cloudjournal.nl": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bakenetwork.info": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "observerpulse.tv": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cravemedia.me": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "otakubeacon.es": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "savoryspot.fr": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "arenascoop.de": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "gazettewire.org": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "spicezone.au": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "insidertribune.nl": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "buzzwatch.de": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "esportsvoice.com": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "devbeat.es": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "pixelplanet.me": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "chronicledaily.org": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "streammedia.co": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "bistrobulletin.nl": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "buzzplanet.io": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dailyfocus.net": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "stackreview.com": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "savoryjournal.jp": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "popbeacon.jp": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "spicebeat.tv": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "foodiereview.nl": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "popmirror.ca": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "raidstream.ca": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "stacktimes.au": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "animevoice.co": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "kernelreview.nl": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "spicespot.au": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "celebworld.au": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bakejournal.news": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "arenaplanet.es": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cyberstream.me": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "postwiki.info": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "chroniclemagazine.nl": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "skilletglobe.info": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "animetribune.me": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bistroguide.de": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cinemastream.tv": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "spicevoice.com": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "lootbulletin.it": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cravetoday.net": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "arenaguide.co.uk": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "siliconspot.au": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cravestream.gg": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "kernelhub.me": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "otakubulletin.au": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "raidpress.au": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "pixelhub.au": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bistrobeat.it": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "savorydigest.au": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "stackcentral.io": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "stackexpress.gg": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "byteledger.ca": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dispatchglobe.nl": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "foodietoday.au": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "gazettedigest.au": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "otakuledger.es": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "codebulletin.ca": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "kitchenpulse.it": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "esportshub.it": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "insiderstream.org": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dispatchtimes.nl": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "byteplanet.es": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "pixelspot.us": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "foodienation.de": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dailydaily.nl": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "kerneldaily.tv": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "codebulletin.me": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "kernelfocus.es": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bingeplanet.de": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "celebvoice.fr": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "streamportal.me": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "esportsscoop.es": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "raidtimes.ca": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "skillethub.info": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "kernelmedia.au": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "celebexpress.info": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bingewire.tv": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bytebulletin.us": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "tribunenetwork.es": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "postfocus.co": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "arcadebeacon.gg": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "celebhub.co.uk": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "poststream.jp": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "gadgetfocus.ca": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "foodietoday.co": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "observerdigest.us": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "tribunereport.news": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "buzzvoice.co": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "arenatoday.io": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bossscoop.info": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "spicevoice.fr": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dailyguide.jp": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bistroonline.news": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "nexustribune.org": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "lootspot.gg": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cravepulse.es": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cloudhub.es": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "streamtribune.co.uk": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "gadgetpulse.jp": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "lootdigest.gg": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "respawnbeacon.net": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "lootnation.info": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cyberworld.it": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "devdaily.fr": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "arcadepress.org": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "circuitmedia.gg": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "showbizbeat.net": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "byteledger.es": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dailyexpress.co": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "kitchenmagazine.au": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "skilletscoop.us": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "recipebulletin.net": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "insiderzone.co.uk": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "skilletbeat.net": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "screentribune.us": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cravewiki.co.uk": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bytewiki.ca": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "observerguide.net": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "otakumagazine.au": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "otakureview.jp": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "pantryledger.au": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "poptoday.com": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dailybeacon.info": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "respawnfocus.tv": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "streamstream.tv": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bytevoice.jp": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cloudstream.jp": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "siliconledger.news": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bingefocus.ca": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "lootexpress.jp": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "devbeacon.net": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "streamstream.it": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "siliconscoop.co": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "showbizwiki.fr": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "kitchenwire.de": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bakedaily.ca": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "arcademirror.me": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "kerneljournal.it": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "postnetwork.gg": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bytenation.gg": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "arcadeguide.de": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bingemedia.info": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "showbizpress.nl": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "craveexpress.io": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "arenamagazine.co": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "nexusmedia.tv": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "popstream.es": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "tribuneexpress.it": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "metrotoday.me": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "tribuneradar.gg": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "stackbeacon.us": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dailyplanet.us": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "lootexpress.de": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "buzzonline.me": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "showbizwiki.de": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "esportsguide.me": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bistrowiki.au": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "devtimes.io": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "pixelnation.news": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "tribunewire.me": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "kitchenworld.gg": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "stackworld.it": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dispatchpulse.news": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "raidstandard.me": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "pixeltoday.au": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bakebeacon.jp": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "streamledger.fr": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "arenatimes.io": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "foodietoday.net": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dispatchpulse.us": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "gadgetbulletin.nl": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "poppulse.fr": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "otakuwiki.co.uk": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "celebhub.io": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "stackdaily.news": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "gazettehub.us": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "celebguide.info": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "pantryportal.io": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "siliconwire.me": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "animedaily.me": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "lootexpress.tv": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "esportsvoice.it": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "pantryspot.us": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "kitchenplanet.es": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "recipeledger.it": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "nexusindex.org": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "showbizstandard.gg": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "spicebeat.nl": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "stackmirror.jp": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "savoryscoop.tv": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "respawndaily.fr": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "esportstimes.au": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "metroindex.jp": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cinemadigest.info": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "arenareview.info": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "heraldfocus.me": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cravepulse.au": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "questnation.net": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cinemamagazine.tv": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "savorybeat.au": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "skilletindex.ca": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "arcadespot.io": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "gadgetglobe.org": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "silicondigest.it": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "gazettemirror.fr": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "kitchenonline.co.uk": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "byteradar.io": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "kitchenportal.com": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "cloudplanet.co": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "screenbeacon.de": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "postguide.co.uk": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "otakuzone.au": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "metroguide.es": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "kitchenmirror.com": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "bingedigest.es": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "buzzplanet.co": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "spiceguide.jp": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "foodiebulletin.jp": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bakebulletin.com": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "foodiewire.it": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "tribunenetwork.net": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bingezone.nl": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cloudscoop.com": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "bossvoice.net": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cravevoice.it": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "circuitradar.it": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "arenaindex.co": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "postnation.nl": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "raidvoice.org": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bakezone.tv": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "respawnindex.com": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "recipescoop.info": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "devwatch.info": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "circuitwire.co.uk": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "observerpress.fr": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "kerneltribune.org": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "codestandard.org": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "screenvoice.jp": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "spicejournal.us": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "arenamedia.me": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dispatchnation.jp": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "streamdigest.de": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "siliconspot.news": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "lootscoop.org": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "esportsplanet.it": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "metroledger.fr": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bossledger.fr": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "celebplanet.it": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "pixelstream.au": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "animefocus.org": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "lootjournal.news": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "savorywiki.info": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "streamexpress.me": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cyberjournal.es": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "gadgetreport.jp": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "craveindex.co": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cyberonline.es": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "observerexpress.co.uk": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "arenabulletin.net": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "circuitvoice.gg": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dailyonline.us": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cloudonline.net": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "raidmirror.jp": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bingewatch.us": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "savoryportal.net": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "arenamedia.it": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "pixelstream.me": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "esportstoday.news": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "nexusglobe.io": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "screenjournal.nl": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "esportsnation.ca": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "skilletdaily.jp": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cinemamedia.de": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "savorytoday.nl": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "stackmedia.fr": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bingeonline.au": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "skilletscoop.net": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "metrobulletin.io": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "screencentral.net": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "siliconguide.au": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "gazettewiki.fr": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "tribunewiki.com": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "raidvoice.ca": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "devradar.com": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "siliconnation.news": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "kerneljournal.fr": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "raidnetwork.nl": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "savorywiki.us": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "observerstream.de": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "otakustandard.fr": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "codedigest.us": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "savorybulletin.au": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "foodieledger.au": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "kernelmagazine.de": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "showbizdaily.gg": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "gadgetplanet.co.uk": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "lootpulse.me": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "gadgetpulse.tv": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "gazettebulletin.gg": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bossnetwork.jp": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "arenawiki.info": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "otakumedia.de": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "respawnindex.info": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "animepulse.co": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "byteledger.info": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "savoryexpress.jp": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bossscoop.us": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "skilletbulletin.fr": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "kitchennetwork.nl": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cinemascoop.us": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "heralddigest.us": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cravereport.nl": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "celebnetwork.fr": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "foodiebeat.fr": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "siliconstandard.de": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "buzzledger.co": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "buzzmirror.us": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "observerpulse.co.uk": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bingewatch.ca": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "spicevoice.me": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "craveonline.net": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "pantryindex.au": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "showbizhub.io": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "lootonline.es": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "gadgettimes.it": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "nexusdaily.com": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "siliconwiki.org": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dailyspot.au": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cravetimes.es": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "postplanet.tv": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "postdaily.us": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "kitchenmirror.io": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dispatchbeat.com": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bistrospot.it": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bingescoop.de": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "buzzwire.net": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "silicononline.de": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "postbeat.fr": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "arcadeguide.co": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "showbiznation.it": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "nexusindex.nl": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "otakumagazine.gg": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "pixelexpress.de": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "streamonline.me": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "nexushub.io": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "pixelmirror.co.uk": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "savoryplanet.co.uk": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "buzztribune.gg": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "buzzbulletin.me": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "pixelcentral.au": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "kernelfocus.au": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "otakujournal.com": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "kitchenworld.info": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "animetribune.au": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "nexusbulletin.me": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "foodiereview.au": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "foodiemirror.org": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "kernelreport.us": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "questwiki.es": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "silicondigest.ca": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "kernelbeacon.me": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "siliconguide.tv": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "chroniclewiki.nl": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bakereview.us": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "raidtimes.us": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "otakuledger.news": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "siliconreview.us": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bakeglobe.gg": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "raidledger.de": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "esportstimes.co.uk": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "skilletindex.jp": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "tribunebeat.de": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "raidhub.news": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bistrobeat.es": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "animeexpress.news": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "buzzbeat.gg": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "screenhub.com": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "respawnscoop.ca": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "gadgetindex.de": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cyberpress.us": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "celebwire.com": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "otakuwire.net": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "raidportal.tv": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cyberscoop.org": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "savoryhub.org": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cloudreport.it": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "screenfocus.io": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "devmirror.au": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bistroplanet.news": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "skillethub.com": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dailybulletin.ca": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "foodienation.org": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "esportsbulletin.org": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "otakuspot.fr": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "raidmedia.com": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "dailybeat.org": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bakespot.nl": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "chroniclemedia.co": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "devwiki.org": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "tribuneonline.jp": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bakecentral.net": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "chronicletimes.jp": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "lootdaily.info": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "pantrymirror.co": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dailywatch.tv": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "silicontimes.co": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "screenbulletin.io": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "metrofocus.gg": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dailyonline.jp": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cinemajournal.co": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "esportsjournal.nl": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "otakuwatch.co.uk": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "lootjournal.me": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "metronation.org": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "tribunescoop.jp": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "showbizindex.co": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "esportstoday.co.uk": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "kitchenmirror.co": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "circuitwiki.tv": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "posttribune.nl": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "observerpress.es": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "spicestandard.de": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bytecentral.me": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "raidwatch.net": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "questwire.de": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "buzzvoice.org": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dailyvoice.com": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "loottoday.info": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "recipetimes.fr": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "gazettenation.news": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "gadgetwiki.au": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cravedaily.tv": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "codescoop.it": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "questexpress.fr": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cyberreport.fr": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "metronation.me": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bingeradar.de": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "screenzone.au": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "foodiereport.ca": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "kernelmedia.net": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "raidcentral.news": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bosspulse.co.uk": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "otakureview.co.uk": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "savoryhub.info": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "lootwire.co.uk": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "arenawiki.de": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "devportal.it": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "skilletjournal.io": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "metroledger.au": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "circuitreview.es": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "observerworld.de": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "savoryguide.io": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "streampress.news": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "pantryglobe.es": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "siliconplanet.jp": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "gadgetspot.us": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "recipereview.io": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "gadgetdigest.com": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "popstandard.info": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "kitchenscoop.io": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cloudmirror.net": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "questdaily.nl": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bingeglobe.me": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "spiceportal.net": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "pixeltimes.info": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "animeportal.de": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "lootreport.gg": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "showbizradar.fr": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bossmagazine.it": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cinematoday.de": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "metropulse.co.uk": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "questscoop.org": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dispatchtribune.tv": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "skilletbeacon.nl": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "chronicleledger.us": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cloudstandard.au": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "respawnreview.info": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cravewatch.news": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "kernelpulse.tv": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "tribunestream.ca": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "savoryjournal.io": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "foodiehub.info": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "heraldwiki.es": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bistroplanet.org": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "arenaradar.de": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "tribuneindex.gg": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "codereport.au": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bosszone.me": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "celebnation.tv": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "questportal.gg": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "showbizradar.us": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "popmirror.org": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "kitchenstandard.io": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "metrobulletin.org": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cravespot.nl": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "lootexpress.us": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "gadgetdigest.io": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "skilletbeat.es": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "savorybeat.gg": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cloudhub.news": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "streamhub.com": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "recipeworld.ca": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dispatchdaily.nl": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "postfocus.me": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "stacktribune.us": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "circuitdigest.gg": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "screenjournal.com": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "tribunenetwork.news": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "siliconguide.us": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "respawnglobe.nl": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "streamplanet.nl": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cloudplanet.fr": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "questworld.co.uk": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "questpress.de": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "observerspot.org": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "tribunetribune.com": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "raidtribune.gg": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "postdigest.ca": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "nexustoday.fr": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bistropress.de": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bistrowatch.gg": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "pixelnetwork.it": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "observerglobe.fr": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "tribuneportal.jp": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bakeradar.co": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cloudglobe.fr": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dailystandard.com": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "streammagazine.tv": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "savorymedia.it": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "recipepulse.nl": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "pantrywatch.news": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "gazettezone.com": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "respawnzone.org": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "popguide.me": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "celebvoice.co": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "otakuexpress.de": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "kitchenradar.it": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "spicewatch.au": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bistroindex.me": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "animebulletin.es": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "lootbeacon.news": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "kerneldigest.io": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "raidmirror.au": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "pantryreport.org": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "insiderscoop.ca": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "byteworld.nl": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "lootdaily.news": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "kernelspot.au": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "chroniclehub.me": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "metrotribune.au": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "kernelwire.info": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bakeledger.es": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bakeworld.us": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bakemedia.co": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "heraldwatch.gg": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "foodiestandard.us": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "spicebeat.de": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "pantrybeacon.net": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cinemawire.tv": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "lootradar.es": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cinemahub.au": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "animeradar.nl": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "buzzhub.news": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "stacktribune.co": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dailybeat.news": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "esportsglobe.io": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "insiderglobe.net": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "metronetwork.info": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "streamwiki.com": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dailydaily.ca": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "chronicleplanet.news": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "observeronline.me": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "kitchenwatch.co.uk": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "savoryreport.co.uk": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "nexusmagazine.nl": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "stackportal.fr": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "loottoday.nl": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "streamhub.org": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "bakeindex.co.uk": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "siliconportal.news": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "heraldbulletin.au": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "gadgetfocus.it": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "nexusradar.net": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "raidhub.fr": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "spicepulse.au": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "heraldtoday.jp": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "circuittribune.es": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bingescoop.es": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bakehub.gg": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dispatchonline.jp": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "gazettefocus.us": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cinemabulletin.nl": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "siliconstandard.net": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "postmedia.us": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "tribuneglobe.gg": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "respawnreport.fr": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "bistropulse.info": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "observerindex.co": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "heraldmedia.es": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "tribuneglobe.de": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dailytribune.de": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "gadgetworld.gg": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cravewatch.fr": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "arenaglobe.it": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bingespot.gg": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cyberstream.org": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "questportal.nl": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "craveonline.news": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "esportsjournal.net": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "otakuwatch.gg": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "pixeltimes.fr": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dispatchguide.news": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "heraldtribune.com": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "foodiejournal.news": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "recipejournal.ca": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "otakutribune.au": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "insiderwire.ca": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "lootscoop.de": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "streamreport.us": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "arcadefocus.au": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "chroniclereport.it": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "recipepulse.jp": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "arenaexpress.jp": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cyberstandard.ca": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "buzzexpress.gg": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "raidjournal.gg": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "pantrymedia.us": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dailytribune.news": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "screenjournal.news": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "kitchenguide.nl": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "stackfocus.news": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "esportsledger.ca": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cyberwatch.co": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "otakumedia.net": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "devmedia.it": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bistromirror.es": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dispatchscoop.me": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "recipeindex.info": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "esportsstream.es": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "chroniclemirror.net": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "pixelmirror.nl": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "pantryledger.ca": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "metrowatch.me": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "lootbeacon.co": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "screenpulse.it": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "arenareview.gg": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "insidermirror.news": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "respawnscoop.me": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "arcadefocus.it": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "arcadeindex.nl": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "arcadewire.com": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "celebpress.tv": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "streamtimes.fr": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dispatchscoop.fr": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "heraldguide.jp": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bossnetwork.tv": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "clouddigest.org": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "popwire.info": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "screenreview.gg": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bistrostream.net": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "chronicletribune.au": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "raidtoday.io": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dailyzone.org": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "codebeat.co.uk": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "circuitfocus.es": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "buzztimes.com": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "foodiemedia.es": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "heraldtoday.org": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cloudjournal.net": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "arenapress.es": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "codetimes.nl": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "buzzwire.me": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "pixeljournal.gg": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "arenazone.org": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dispatchpulse.tv": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "heraldtoday.news": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "kitchenportal.co": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "insiderpress.it": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "showbizjournal.news": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "kitchenhub.es": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "spiceworld.us": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "savorypulse.nl": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "arcadereport.us": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bingenetwork.io": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "skilletbulletin.nl": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "arenawire.ca": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "kernelmedia.co": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "animecentral.tv": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "lootportal.it": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "esportsonline.com": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bingejournal.us": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "spicetoday.com": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "respawnworld.info": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cinemabulletin.ca": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "animespot.es": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "animeexpress.tv": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "metroexpress.co": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cinemanation.nl": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "buzzbulletin.gg": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "animenation.info": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "poppulse.tv": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "respawnwire.me": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "circuitnation.nl": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "observerstream.tv": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "raidglobe.it": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "streampress.tv": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "pixelbulletin.org": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "spiceportal.ca": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "devreport.co": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cinemawiki.org": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "savoryportal.gg": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "questmedia.org": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "chronicleonline.it": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bistrowiki.me": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "pantrymedia.ca": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "respawnmirror.de": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "gadgetbeat.nl": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "observerglobe.io": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "poststream.gg": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "circuitmirror.es": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "animejournal.org": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "stackstandard.gg": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "gadgetfocus.jp": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "kitchenfocus.ca": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bistrodaily.net": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "skilletstandard.au": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bistrobeacon.us": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cyberbeat.com": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "bakeglobe.fr": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "pixeltoday.com": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "foodietoday.me": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "lootguide.news": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "lootnation.net": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "foodiebulletin.tv": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "streamnetwork.fr": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cravereport.es": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dispatchjournal.io": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "siliconbeat.de": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "esportsreview.gg": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "postnetwork.tv": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "buzzstandard.au": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "insidertimes.tv": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "esportsindex.net": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "gadgetmagazine.jp": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "animespot.co": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "recipevoice.ca": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "observervoice.io": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "otakuscoop.info": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "otakumagazine.nl": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "kernelmedia.fr": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bytetoday.jp": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bosstimes.net": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bossspot.it": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bingewiki.org": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dailydaily.news": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "chroniclewiki.gg": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bistrowire.fr": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bossstream.co": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "heraldzone.it": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "savoryplanet.jp": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cinemanation.jp": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cloudmirror.au": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "lootcentral.io": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "gadgetnation.org": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "screenwire.ca": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "observernetwork.es": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "craveonline.us": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "questzone.co.uk": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "heraldmagazine.gg": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "screenzone.net": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "siliconmagazine.me": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "kernelguide.us": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "skilletscoop.it": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bakewiki.org": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "arenawire.nl": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bosscentral.net": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "animereport.nl": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bingestream.tv": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "foodiemirror.gg": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "observerwire.co": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "devreview.co.uk": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "otakubeat.it": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "devglobe.news": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "esportsworld.org": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "metrospot.info": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bistroledger.com": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "bistrowatch.org": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "spicehub.co.uk": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "streamjournal.us": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "tribunetimes.fr": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "screenspot.co": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "streamradar.me": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "gadgetmagazine.de": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "respawnjournal.ca": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "pixelonline.news": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "silicondaily.net": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "poptimes.info": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "animenetwork.us": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bakevoice.fr": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "recipeportal.io": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bistrodaily.org": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "pixelnetwork.tv": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "respawnledger.de": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "heraldpress.it": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "chronicleexpress.gg": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "codefocus.net": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "respawnreview.es": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "observermirror.us": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bakeglobe.co": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "raidexpress.net": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "showbizstream.news": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bingepulse.jp": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "showbizplanet.us": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dispatchmagazine.us": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "popbeat.nl": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "stackmirror.io": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "screenmedia.fr": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "poppress.it": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bistrozone.net": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "buzzportal.es": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cinemareview.co": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "arenajournal.es": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "recipereview.com": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "chroniclenation.fr": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bakeindex.jp": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "foodieradar.tv": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "heraldtribune.jp": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "baketoday.com": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "nexuswatch.gg": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "recipeplanet.it": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "lootworld.nl": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "insiderbulletin.org": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bossindex.gg": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "arcadereport.au": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "skilletstream.info": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "screenplanet.ca": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "tribunecentral.tv": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "arenaplanet.info": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "celebtoday.fr": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "heraldledger.jp": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "celebexpress.au": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dailyonline.me": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "tribunefocus.au": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "circuitbulletin.org": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "heraldstream.co": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "kitchenspot.ca": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "otakubeacon.net": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "kitchendaily.au": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dailyhub.au": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "animebeat.org": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "screenvoice.net": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "respawnhub.news": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "popbulletin.tv": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bistroradar.net": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "heraldtribune.me": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "popreport.org": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cinemaexpress.es": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "showbiznation.net": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "skilletdaily.org": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "recipemedia.jp": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "esportsvoice.co": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "questwatch.io": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bosszone.gg": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "pantryportal.tv": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dailyscoop.au": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "cloudreview.nl": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "celebdigest.fr": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "streamcentral.nl": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "buzznation.com": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "gazettereview.tv": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "animecentral.org": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "insiderstream.tv": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "lootworld.co": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "arenajournal.org": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "gadgetpress.jp": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "arenawatch.gg": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cinemastandard.us": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "devplanet.me": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cloudexpress.gg": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "nexusledger.ca": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "siliconmedia.us": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bingestandard.info": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bingewatch.info": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "skilletradar.ca": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dispatchstream.nl": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "gadgetexpress.news": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "lootpress.us": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "kernelstandard.io": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "baketoday.nl": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "questplanet.es": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "animehub.nl": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "stackpress.de": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bistrotribune.com": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "recipescoop.co": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "animedigest.org": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "arenaguide.co": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dispatchspot.jp": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "arcadeledger.it": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "kitchenscoop.info": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "kitchenwiki.org": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bingeworld.co": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "tribunebeat.gg": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "heraldnation.com": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "devmirror.net": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "circuitnetwork.nl": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "stackplanet.gg": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cyberglobe.co.uk": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "bytescoop.news": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cinemamirror.news": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "metronetwork.es": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bistroguide.info": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bistromirror.news": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "streamreview.net": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bingemirror.io": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bakeledger.news": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "savorybulletin.fr": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "popjournal.co": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "skilletmagazine.net": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "dispatchmagazine.com": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "questplanet.net": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cloudtribune.news": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "pantrynation.jp": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "foodiecentral.org": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "buzztribune.co.uk": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "clean",
+      "leaksFound": 0
+    },
+    "nexuspress.co.uk": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "insiderplanet.io": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "insiderplanet.org": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "observerhub.de": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "bingenetwork.tv": {
+      "category": "entertainment",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "cravebeacon.news": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "siliconbulletin.com": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "insiderwire.tv": {
+      "category": "news",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "kitchenpulse.jp": {
+      "category": "recipes",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "circuitonline.news": {
+      "category": "blogs",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "queststandard.au": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
+      "scanCount": 1,
+      "lastStatus": "unreachable",
+      "leaksFound": 0
+    },
+    "arcadeexpress.co": {
+      "category": "gaming",
+      "lastScannedAt": 1795592609439,
       "scanCount": 1,
       "lastStatus": "unreachable",
       "leaksFound": 0
