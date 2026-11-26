@@ -39,6 +39,7 @@ fs.mkdirSync(ES_DIR, { recursive: true });
 
 const VERSION = PRODUCT_FACTS.version;
 const STATIC_RULES = PRODUCT_FACTS.staticDnrRules;
+const TRACKER_PARAMS = PRODUCT_FACTS.trackerParamsStripped;
 
 const RECIPROCAL_HUB_HREFLANGS = [
   { lang: 'en', href: `${SITE_ORIGIN}/` },
@@ -58,13 +59,13 @@ const I18N_CHROME = {
     matrixSubtitle: 'Alle Filterregeln, Cookie-Ablehnungen und URL-Parameter-Bereinigungen laufen lokal in Ihrer nativen Browser-Engine ohne Verlaufsspeicherung.',
     matrixCols: ['Browser / Plattform', 'Mindestversion', 'Verteilung', `Funktionen in v${VERSION}`],
     matrixRows: [
-      ['Google Chrome & Brave', 'Chromium 116+', 'Chrome Web Store', `${STATIC_RULES} statische C++ DNR-Regeln (264 Ad/Tracker, 18 Miner, 1 URL-Stripper), 100 OTA-Regeln, YouTube-Schutz, CMP-Ablehnung, Tab & RAM Tamer`],
-      ['Microsoft Edge', 'Edge 116+ (MV3)', 'Edge Add-ons', 'Volle MV3-Parität, 20-Parameter URL-Stripper, Element-Zapper, 5-Geräte-Lizenzsync'],
-      ['Mozilla Firefox (Desktop & Android)', 'Gecko 140.0+', 'Mozilla Add-ons (AMO)', 'Signiertes XPI-Paket für Desktop & Android; blockiert Video-Ads, Usercentrics/Sourcepoint & Miner'],
+      ['Google Chrome & Brave', 'Chromium 116+', 'Chrome Web Store', `${STATIC_RULES.toLocaleString('de-DE')} statische C++ DNR-Regeln (5 Regelsätze: EasyList, EasyPrivacy, Regional EU, 18 Miner, 1 URL-Stripper), 100 OTA-Regeln, YouTube-Schutz, 160 CMPs, Tab & RAM Tamer`],
+      ['Microsoft Edge', 'Edge 116+ (MV3)', 'Edge Add-ons', `Volle MV3-Parität, ${TRACKER_PARAMS}-Parameter URL-Stripper, Element-Zapper, 5-Geräte-Lizenzsync`],
+      ['Mozilla Firefox (Desktop & Android)', 'Gecko 128.0+', 'Mozilla Add-ons (AMO)', 'Signiertes XPI-Paket für Desktop & Android; blockiert Video-Ads, Usercentrics/Sourcepoint & Miner'],
       ['Opera Desktop', 'Chromium 116+', 'Opera Add-ons', 'Natives MV3-Paket ohne Telemetrie, Cryptominer-Schutz & 10-Min.-Tab-Ruhezustand (chrome.tabs.discard)']
     ],
     plansTitle: 'Transparente EUR-Preise, 5-Geräte-Schutz & 14-Tage-Garantie',
-    plansLead: 'Jeder Pro-Tarif schützt bis zu 5 Desktop- oder Mobilbrowser gleichzeitig (inklusive Total Tab & RAM Tamer, 20-Parameter URL-Stripper und 7 Tage Offline-Kulanzzeit) mit 1-Klick-Kündigung und 14-tägiger Geld-zurück-Garantie.',
+    plansLead: `Jeder Pro-Tarif schützt bis zu 5 Desktop- oder Mobilbrowser gleichzeitig (inklusive Total Tab & RAM Tamer, ${TRACKER_PARAMS}-Parameter URL-Stripper und 7 Tage Offline-Kulanzzeit) mit 1-Klick-Kündigung und 14-tägiger Geld-zurück-Garantie.`,
     plansCards: [
       { name: 'Jahrestarif (-51% vs. Monat)', price: '€34,99/Jahr', eq: '€2,92/Monat äquiv. · Flache Verlängerung', href: '/order?plan=annual', cta: 'Jahrestarif wählen' },
       { name: '6-Monats-Tarif', price: '€22,99 / 6 Mon.', eq: '€3,83/Monat äquiv. · 5 Geräte', href: '/order?plan=six_month', cta: '6-Monats-Tarif wählen' },
@@ -91,13 +92,13 @@ const I18N_CHROME = {
     matrixSubtitle: 'Toutes les règles réseau, refus de cookies et suppressions de traceurs URL s’exécutent localement sans jamais enregistrer votre historique.',
     matrixCols: ['Navigateur / Plateforme', 'Moteur Minimum', 'Canal Officiel', `Capacités v${VERSION}`],
     matrixRows: [
-      ['Google Chrome & Brave', 'Chromium 116+', 'Chrome Web Store', `${STATIC_RULES} règles DNR C++ statiques (264 pub/traceur, 18 mineurs, 1 nettoyage URL), 100 règles OTA, bouclier YouTube, refus CMP, RAM Tamer`],
-      ['Microsoft Edge', 'Edge 116+ (MV3)', 'Edge Add-ons', 'Parité MV3 complète, suppression de 20 paramètres URL, Element Zapper, synchro 5 appareils'],
-      ['Mozilla Firefox (Bureau & Android)', 'Gecko 140.0+', 'Mozilla Add-ons (AMO)', 'Extension XPI signée sur bureau & Android ; bloque pubs vidéo, Didomi/Quantcast & mineurs'],
+      ['Google Chrome & Brave', 'Chromium 116+', 'Chrome Web Store', `${STATIC_RULES.toLocaleString('fr-FR')} règles DNR C++ statiques (5 listes : EasyList, EasyPrivacy, EU, 18 mineurs, 1 nettoyage URL), 100 règles OTA, bouclier YouTube, 160 CMPs, RAM Tamer`],
+      ['Microsoft Edge', 'Edge 116+ (MV3)', 'Edge Add-ons', `Parité MV3 complète, suppression de ${TRACKER_PARAMS} paramètres URL, Element Zapper, synchro 5 appareils`],
+      ['Mozilla Firefox (Bureau & Android)', 'Gecko 128.0+', 'Mozilla Add-ons (AMO)', 'Extension XPI signée sur bureau & Android ; bloque pubs vidéo, Didomi/Quantcast & mineurs'],
       ['Opera Desktop', 'Chromium 116+', 'Opera Add-ons', 'Package MV3 natif zéro télémétrie, blocage cryptomineurs & mise en veille à 10 min (chrome.tabs.discard)']
     ],
     plansTitle: 'Tarifs EUR Transparents, 5 Appareils & Garantie 14 Jours',
-    plansLead: 'Chaque licence Pro protège jusqu’à 5 navigateurs simultanément (avec Total Tab & RAM Tamer, nettoyeur de 20 paramètres URL et grâce hors-ligne de 7 jours), annulation en 1 clic et remboursement intégral sous 14 jours.',
+    plansLead: `Chaque licence Pro protège jusqu’à 5 navigateurs simultanément (avec Total Tab & RAM Tamer, nettoyeur de ${TRACKER_PARAMS} paramètres URL et grâce hors-ligne de 7 jours), annulation en 1 clic et remboursement intégral sous 14 jours.`,
     plansCards: [
       { name: 'Offre Annuelle (-51% vs mensuel)', price: '34,99 €/an', eq: '2,92 €/mois éq. · Renouvellement fixe', href: '/order?plan=annual', cta: 'Choisir l’offre annuelle' },
       { name: 'Offre 6 Mois', price: '22,99 € / 6 mois', eq: '3,83 €/mois éq. · 5 appareils', href: '/order?plan=six_month', cta: 'Choisir 6 mois' },
@@ -124,13 +125,13 @@ const I18N_CHROME = {
     matrixSubtitle: 'Todas las reglas de red, rechazos de cookies y limpieza de parámetros URL se ejecutan localmente sin registrar tu historial.',
     matrixCols: ['Navegador / Plataforma', 'Motor Mínimo', 'Canal Oficial', `Capacidades v${VERSION}`],
     matrixRows: [
-      ['Google Chrome & Brave', 'Chromium 116+', 'Chrome Web Store', `${STATIC_RULES} reglas DNR C++ estáticas (264 anuncios/rastreadores, 18 mineros, 1 limpiador URL), 100 reglas OTA, escudo YouTube, rechazo CMP, RAM Tamer`],
-      ['Microsoft Edge', 'Edge 116+ (MV3)', 'Edge Add-ons', 'Paridad MV3 completa, limpieza de 20 parámetros URL, Element Zapper, 5 dispositivos'],
-      ['Mozilla Firefox (Escritorio y Android)', 'Gecko 140.0+', 'Mozilla Add-ons (AMO)', 'Extensión XPI firmada para PC y Android; bloquea vídeo-anuncios, Didomi/OneTrust y mineros'],
+      ['Google Chrome & Brave', 'Chromium 116+', 'Chrome Web Store', `${STATIC_RULES.toLocaleString('es-ES')} reglas DNR C++ estáticas (5 listas: EasyList, EasyPrivacy, EU, 18 mineros, 1 limpiador URL), 100 reglas OTA, escudo YouTube, 160 CMPs, RAM Tamer`],
+      ['Microsoft Edge', 'Edge 116+ (MV3)', 'Edge Add-ons', `Paridad MV3 completa, limpieza de ${TRACKER_PARAMS} parámetros URL, Element Zapper, 5 dispositivos`],
+      ['Mozilla Firefox (Escritorio y Android)', 'Gecko 128.0+', 'Mozilla Add-ons (AMO)', 'Extensión XPI firmada para PC y Android; bloquea vídeo-anuncios, Didomi/OneTrust y mineros'],
       ['Opera Desktop', 'Chromium 116+', 'Opera Add-ons', 'Paquete MV3 nativo sin telemetría, bloqueo criptominero e hibernación a los 10 min (chrome.tabs.discard)']
     ],
     plansTitle: 'Precios Transparentes en EUR, 5 Dispositivos y Garantía de 14 Días',
-    plansLead: 'Cada licencia Pro protege hasta 5 navegadores a la vez (incluye Total Tab & RAM Tamer, limpiador de 20 parámetros URL y 7 días de margen sin conexión), con cancelación en 1 clic y garantía de devolución de 14 días.',
+    plansLead: `Cada licencia Pro protege hasta 5 navegadores a la vez (incluye Total Tab & RAM Tamer, limpiador de ${TRACKER_PARAMS} parámetros URL y 7 días de margen sin conexión), con cancelación en 1 clic y garantía de devolución de 14 días.`,
     plansCards: [
       { name: 'Plan Anual (-51% vs mensual)', price: '34,99 €/año', eq: '2,92 €/mes equiv. · Renovación plana', href: '/order?plan=annual', cta: 'Elegir Plan Anual' },
       { name: 'Plan 6 Meses', price: '22,99 € / 6 meses', eq: '3,83 €/mes equiv. · 5 dispositivos', href: '/order?plan=six_month', cta: 'Elegir 6 Meses' },
@@ -387,8 +388,8 @@ fs.writeFileSync(
     regulatoryCards: [
       {
         tag: 'C++ DNR Pipeline',
-        title: `${STATIC_RULES} statische + 100 OTA-Regeln vor Socket-Aufbau`,
-        body: `SWEEPR Deepblock v${VERSION} blockiert 264 Ad- und Tracker-Regeln, 18 Krypto-Miner-Regeln und bereinigt 20 URL-Tracking-Parameter (<code class="px-1 py-0.5 rounded bg-slate-200 text-emerald-900 font-mono text-xs">fbclid</code>, <code class="px-1 py-0.5 rounded bg-slate-200 text-emerald-900 font-mono text-xs">gclid</code>, <code class="px-1 py-0.5 rounded bg-slate-200 text-emerald-900 font-mono text-xs">utm_*</code>) direkt in der C++-Engine von Manifest V3.`
+        title: `${STATIC_RULES.toLocaleString('de-DE')} statische + 100 OTA-Regeln vor Socket-Aufbau`,
+        body: `SWEEPR Deepblock v${VERSION} blockiert ${STATIC_RULES.toLocaleString('de-DE')} statische DNR-Regeln (5 Regelsätze inkl. EasyList, EasyPrivacy, Regional EU &amp; 18 Krypto-Miner-Regeln) und bereinigt ${TRACKER_PARAMS} URL-Tracking-Parameter (<code class="px-1 py-0.5 rounded bg-slate-200 text-emerald-900 font-mono text-xs">fbclid</code>, <code class="px-1 py-0.5 rounded bg-slate-200 text-emerald-900 font-mono text-xs">gclid</code>, <code class="px-1 py-0.5 rounded bg-slate-200 text-emerald-900 font-mono text-xs">utm_*</code>) direkt in der C++-Engine von Manifest V3.`
       },
       {
         tag: 'Usercentrics Shadow-DOM',
@@ -464,7 +465,7 @@ fs.writeFileSync(
       }
     ],
     cmpTechnicalTitle: 'Parameter-Hygiene & OTA-Regeln',
-    cmpTechnicalBodyHtml: `<p class="text-sm text-gray-700 m-0">Neben ${STATIC_RULES} statischen DNR-Regeln (inklusive 20-Parameter URL-Stripper) stehen 100 dynamische OTA-Regeln bereit. Besuchen Sie den <a href="/de" class="text-emerald-700 font-semibold underline">Deutsch (/de) Hub</a> oder das <a href="/test-lab" class="text-emerald-700 font-semibold underline">Test-Labor</a>.</p>`,
+    cmpTechnicalBodyHtml: `<p class="text-sm text-gray-700 m-0">Neben ${STATIC_RULES.toLocaleString('de-DE')} statischen DNR-Regeln (inklusive ${TRACKER_PARAMS}-Parameter URL-Stripper) stehen 100 dynamische OTA-Regeln bereit. Besuchen Sie den <a href="/de" class="text-emerald-700 font-semibold underline">Deutsch (/de) Hub</a> oder das <a href="/test-lab" class="text-emerald-700 font-semibold underline">Test-Labor</a>.</p>`,
     faqs: [
       {
         q: 'Warum friert das Scrollen bei einfachen CSS-Regeln ein?',
@@ -500,8 +501,8 @@ fs.writeFileSync(
     regulatoryCards: [
       {
         tag: 'Filtrage C++ DNR',
-        title: `${STATIC_RULES} règles statiques + 100 règles OTA instantanées`,
-        body: `Deepblock v${VERSION} bloque 264 règles pub/traceurs, 18 règles anticryptominage et supprime 20 paramètres de pistage (<code class="px-1 py-0.5 rounded bg-slate-200 text-emerald-900 font-mono text-xs">fbclid</code>, <code class="px-1 py-0.5 rounded bg-slate-200 text-emerald-900 font-mono text-xs">gclid</code>, <code class="px-1 py-0.5 rounded bg-slate-200 text-emerald-900 font-mono text-xs">utm_*</code>) directement dans la couche réseau Manifest V3.`
+        title: `${STATIC_RULES.toLocaleString('fr-FR')} règles statiques + 100 règles OTA instantanées`,
+        body: `Deepblock v${VERSION} bloque ${STATIC_RULES.toLocaleString('fr-FR')} règles DNR statiques (5 listes : EasyList, EasyPrivacy, EU, 18 règles anticryptominage) et supprime ${TRACKER_PARAMS} paramètres de pistage (<code class="px-1 py-0.5 rounded bg-slate-200 text-emerald-900 font-mono text-xs">fbclid</code>, <code class="px-1 py-0.5 rounded bg-slate-200 text-emerald-900 font-mono text-xs">gclid</code>, <code class="px-1 py-0.5 rounded bg-slate-200 text-emerald-900 font-mono text-xs">utm_*</code>) directement dans la couche réseau Manifest V3.`
       },
       {
         tag: 'Didomi & Quantcast CNIL',
@@ -539,7 +540,7 @@ fs.writeFileSync(
       },
       {
         q: 'Le nettoyeur d’URL et Total Tab & RAM Tamer sont-ils inclus ?',
-        a: 'Oui. Le retrait de 20 paramètres de suivi d’URL et la mise en veille des onglets après 10 minutes d’inactivité sont inclus sans surcoût.'
+        a: `Oui. Le retrait de ${TRACKER_PARAMS} paramètres de suivi d’URL et la mise en veille des onglets après 10 minutes d’inactivité sont inclus sans surcoût.`
       }
     ]
   }),
@@ -613,8 +614,8 @@ fs.writeFileSync(
     regulatoryCards: [
       {
         tag: 'Motor Nativo C++',
-        title: `${STATIC_RULES} reglas estáticas + 100 reglas OTA dinámicas`,
-        body: `Compilado sobre Manifest V3 con 264 reglas de anuncios/rastreadores, 18 reglas anticriptominería y 1 regla de limpieza de 20 parámetros URL (<code class="px-1 py-0.5 rounded bg-slate-200 text-emerald-900 font-mono text-xs">utm_*</code>, <code class="px-1 py-0.5 rounded bg-slate-200 text-emerald-900 font-mono text-xs">fbclid</code>, <code class="px-1 py-0.5 rounded bg-slate-200 text-emerald-900 font-mono text-xs">gclid</code>, <code class="px-1 py-0.5 rounded bg-slate-200 text-emerald-900 font-mono text-xs">ttclid</code>).`
+        title: `${STATIC_RULES.toLocaleString('es-ES')} reglas estáticas + 100 reglas OTA dinámicas`,
+        body: `Compilado sobre Manifest V3 con ${STATIC_RULES.toLocaleString('es-ES')} reglas DNR estáticas (5 listas: EasyList, EasyPrivacy, EU, 18 reglas anticriptominería) y 1 regla de limpieza de ${TRACKER_PARAMS} parámetros URL (<code class="px-1 py-0.5 rounded bg-slate-200 text-emerald-900 font-mono text-xs">utm_*</code>, <code class="px-1 py-0.5 rounded bg-slate-200 text-emerald-900 font-mono text-xs">fbclid</code>, <code class="px-1 py-0.5 rounded bg-slate-200 text-emerald-900 font-mono text-xs">gclid</code>, <code class="px-1 py-0.5 rounded bg-slate-200 text-emerald-900 font-mono text-xs">ttclid</code>).`
       },
       {
         tag: 'Rechazo CMP TCF v2.2',

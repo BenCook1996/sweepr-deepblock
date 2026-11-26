@@ -222,6 +222,7 @@
   // LAYER 2: Global Ad SDK & Canary Variable Spoofing (AdSense, GPT, IMA, Admiral, FuckAdBlock)
   // ============================================================================
   const safeDefine = (obj, prop, value) => {
+    if (!isProEntitled()) return;
     try {
       Object.defineProperty(obj, prop, {
         get: () => value,
@@ -231,284 +232,286 @@
     } catch (e) {}
   };
 
-  safeDefine(window, 'canRunAds', true);
-  safeDefine(window, 'isAdBlockActive', false);
-  safeDefine(window, 'adblock', false);
-  safeDefine(window, '__adblock', false);
-  safeDefine(window, '__ads', true);
-  safeDefine(window, 'hasAdblock', false);
-  safeDefine(window, 'adBlocker', false);
-  safeDefine(window, 'is_gen', false);
-  safeDefine(window, 'google_ad_status', 1);
-  safeDefine(window, 'google_ad_loaded', true);
+  if (isProEntitled()) {
+    safeDefine(window, 'canRunAds', true);
+    safeDefine(window, 'isAdBlockActive', false);
+    safeDefine(window, 'adblock', false);
+    safeDefine(window, '__adblock', false);
+    safeDefine(window, '__ads', true);
+    safeDefine(window, 'hasAdblock', false);
+    safeDefine(window, 'adBlocker', false);
+    safeDefine(window, 'is_gen', false);
+    safeDefine(window, 'google_ad_status', 1);
+    safeDefine(window, 'google_ad_loaded', true);
 
-  // Google AdSense (window.adsbygoogle) Surrogate Stub
-  const adsbygoogleStub = {
-    loaded: true,
-    push: function (obj) {
-      if (obj && typeof obj.callback === 'function') {
-        try {
-          obj.callback();
-        } catch (e) {}
-      }
-      return 1;
-    }
-  };
-  try {
-    window.adsbygoogle = window.adsbygoogle || adsbygoogleStub;
-    window.adsbygoogle.loaded = true;
-    window.adsbygoogle.push = adsbygoogleStub.push;
-  } catch (e) {}
-
-  // Google Publisher Tag (window.googletag) Surrogate Stub
-  const createSlotStub = () => {
-    const slot = {
-      addService: () => slot,
-      setTargeting: () => slot,
-      getTargeting: () => [],
-      getTargetingKeys: () => [],
-      clearTargeting: () => slot,
-      setCategoryExclusion: () => slot,
-      setCollapseEmptyDiv: () => slot,
-      defineSizeMapping: () => slot,
-      getSlotElementId: () => 'div-gpt-ad-stub',
-      getAdUnitPath: () => '/stub',
-      getServices: () => [],
-      getSizes: () => [{ getWidth: () => 300, getHeight: () => 250 }]
-    };
-    return slot;
-  };
-
-  const pubadsStub = {
-    addEventListener: function (event, cb) {
-      if (event === 'slotRenderEnded' && typeof cb === 'function') {
-        setTimeout(() => {
+    // Google AdSense (window.adsbygoogle) Surrogate Stub
+    const adsbygoogleStub = {
+      loaded: true,
+      push: function (obj) {
+        if (obj && typeof obj.callback === 'function') {
           try {
-            cb({
-              isEmpty: false,
-              size: [300, 250],
-              slot: createSlotStub(),
-              advertiserId: 1,
-              campaignId: 1,
-              creativeId: 1,
-              lineItemId: 1
-            });
+            obj.callback();
           } catch (e) {}
-        }, 5);
+        }
+        return 1;
       }
-      return pubadsStub;
-    },
-    removeEventListener: () => pubadsStub,
-    enableSingleRequest: () => {},
-    enableAsyncRendering: () => {},
-    enableSyncRendering: () => {},
-    enableVideoAds: () => {},
-    collapseEmptyDivs: () => {},
-    disableInitialLoad: () => {},
-    setTargeting: () => pubadsStub,
-    clearTargeting: () => pubadsStub,
-    setCentering: () => {},
-    setCookieOptions: () => pubadsStub,
-    setLocation: () => pubadsStub,
-    setPublisherProvidedId: () => pubadsStub,
-    setConfig: () => pubadsStub,
-    getConfig: () => ({ targeting: {} }),
-    getEventLog: () => ({ getAllEvents: () => [] }),
-    getSlotIdMap: () => ({}),
-    getAttributeKeys: () => [],
-    get: () => null,
-    set: () => pubadsStub,
-    updateCorrelator: () => pubadsStub,
-    isInitialLoadDisabled: () => false,
-    isSRA: () => true,
-    refresh: () => {},
-    clear: () => true,
-    getSlots: () => [createSlotStub()]
-  };
+    };
+    try {
+      window.adsbygoogle = window.adsbygoogle || adsbygoogleStub;
+      window.adsbygoogle.loaded = true;
+      window.adsbygoogle.push = adsbygoogleStub.push;
+    } catch (e) {}
 
-  const cmdQueue = [];
-  cmdQueue.push = function (...fns) {
-    for (const fn of fns) {
-      if (typeof fn === 'function') {
-        try {
-          fn();
-        } catch (e) {}
+    // Google Publisher Tag (window.googletag) Surrogate Stub
+    const createSlotStub = () => {
+      const slot = {
+        addService: () => slot,
+        setTargeting: () => slot,
+        getTargeting: () => [],
+        getTargetingKeys: () => [],
+        clearTargeting: () => slot,
+        setCategoryExclusion: () => slot,
+        setCollapseEmptyDiv: () => slot,
+        defineSizeMapping: () => slot,
+        getSlotElementId: () => 'div-gpt-ad-stub',
+        getAdUnitPath: () => '/stub',
+        getServices: () => [],
+        getSizes: () => [{ getWidth: () => 300, getHeight: () => 250 }]
+      };
+      return slot;
+    };
+
+    const pubadsStub = {
+      addEventListener: function (event, cb) {
+        if (event === 'slotRenderEnded' && typeof cb === 'function') {
+          setTimeout(() => {
+            try {
+              cb({
+                isEmpty: false,
+                size: [300, 250],
+                slot: createSlotStub(),
+                advertiserId: 1,
+                campaignId: 1,
+                creativeId: 1,
+                lineItemId: 1
+              });
+            } catch (e) {}
+          }, 5);
+        }
+        return pubadsStub;
+      },
+      removeEventListener: () => pubadsStub,
+      enableSingleRequest: () => {},
+      enableAsyncRendering: () => {},
+      enableSyncRendering: () => {},
+      enableVideoAds: () => {},
+      collapseEmptyDivs: () => {},
+      disableInitialLoad: () => {},
+      setTargeting: () => pubadsStub,
+      clearTargeting: () => pubadsStub,
+      setCentering: () => {},
+      setCookieOptions: () => pubadsStub,
+      setLocation: () => pubadsStub,
+      setPublisherProvidedId: () => pubadsStub,
+      setConfig: () => pubadsStub,
+      getConfig: () => ({ targeting: {} }),
+      getEventLog: () => ({ getAllEvents: () => [] }),
+      getSlotIdMap: () => ({}),
+      getAttributeKeys: () => [],
+      get: () => null,
+      set: () => pubadsStub,
+      updateCorrelator: () => pubadsStub,
+      isInitialLoadDisabled: () => false,
+      isSRA: () => true,
+      refresh: () => {},
+      clear: () => true,
+      getSlots: () => [createSlotStub()]
+    };
+
+    const cmdQueue = [];
+    cmdQueue.push = function (...fns) {
+      for (const fn of fns) {
+        if (typeof fn === 'function') {
+          try {
+            fn();
+          } catch (e) {}
+        }
       }
-    }
-    return cmdQueue.length;
-  };
+      return cmdQueue.length;
+    };
 
-  const googletagStub = {
-    cmd: cmdQueue,
-    apiReady: true,
-    pubadsReady: true,
-    version: '2026010101',
-    companionAds: () => ({ addEventListener: () => {}, setRefreshUnfilledSlots: () => {} }),
-    content: () => ({ setContent: () => {} }),
-    defineSlot: () => createSlotStub(),
-    defineOutOfPageSlot: () => createSlotStub(),
-    defineUnit: () => createSlotStub(),
-    destroySlots: () => true,
-    disablePublisherConsole: () => {},
-    display: () => {},
-    enableServices: () => {},
-    getVersion: () => '2026010101',
-    setConfig: () => {},
-    getConfig: () => ({ targeting: {} }),
-    openConsole: () => {},
-    pubads: () => pubadsStub,
-    setAdIframeTitle: () => {},
-    sizeMapping: () => ({
-      addSize: function () {
+    const googletagStub = {
+      cmd: cmdQueue,
+      apiReady: true,
+      pubadsReady: true,
+      version: '2026010101',
+      companionAds: () => ({ addEventListener: () => {}, setRefreshUnfilledSlots: () => {} }),
+      content: () => ({ setContent: () => {} }),
+      defineSlot: () => createSlotStub(),
+      defineOutOfPageSlot: () => createSlotStub(),
+      defineUnit: () => createSlotStub(),
+      destroySlots: () => true,
+      disablePublisherConsole: () => {},
+      display: () => {},
+      enableServices: () => {},
+      getVersion: () => '2026010101',
+      setConfig: () => {},
+      getConfig: () => ({ targeting: {} }),
+      openConsole: () => {},
+      pubads: () => pubadsStub,
+      setAdIframeTitle: () => {},
+      sizeMapping: () => ({
+        addSize: function () {
+          return this;
+        },
+        build: () => []
+      })
+    };
+
+    try {
+      window.googletag = Object.assign(window.googletag || {}, googletagStub);
+    } catch (e) {}
+
+    // Google IMA HTML5 Video SDK (window.google.ima) Surrogate Stub
+    // Prevents video players on news/streaming sites from hanging when IMA pre-roll ads are blocked
+    try {
+      window.google = window.google || {};
+      if (!window.google.ima) {
+        const AdEvent = {
+          Type: {
+            ALL_ADS_COMPLETED: 'allAdsCompleted',
+            CONTENT_RESUME_REQUESTED: 'contentResumeRequested',
+            CONTENT_PAUSE_REQUESTED: 'contentPauseRequested',
+            LOADED: 'loaded',
+            STARTED: 'started',
+            COMPLETE: 'complete',
+            SKIPPED: 'skipped'
+          }
+        };
+        const AdErrorEvent = { Type: { AD_ERROR: 'adError' } };
+        const AdsManagerLoadedEvent = { Type: { ADS_MANAGER_LOADED: 'adsManagerLoaded' } };
+
+        const createAdsManagerStub = () => {
+          const listeners = {};
+          return {
+            addEventListener: (type, fn) => {
+              listeners[type] = listeners[type] || [];
+              listeners[type].push(fn);
+            },
+            removeEventListener: () => {},
+            init: () => {},
+            start: () => {
+              // Immediately signal that ads finished so main video plays right away
+              const resumeFns = listeners[AdEvent.Type.CONTENT_RESUME_REQUESTED] || [];
+              const doneFns = listeners[AdEvent.Type.ALL_ADS_COMPLETED] || [];
+              setTimeout(() => {
+                resumeFns.forEach((f) => { try { f({ type: AdEvent.Type.CONTENT_RESUME_REQUESTED }); } catch (e) {} });
+                doneFns.forEach((f) => { try { f({ type: AdEvent.Type.ALL_ADS_COMPLETED }); } catch (e) {} });
+              }, 5);
+            },
+            resize: () => {},
+            destroy: () => {},
+            setVolume: () => {},
+            getVolume: () => 0,
+            pause: () => {},
+            resume: () => {},
+            skip: () => {},
+            getRemainingTime: () => 0
+          };
+        };
+
+        window.google.ima = {
+          AdDisplayContainer: function () {
+            this.initialize = function () {};
+            this.destroy = function () {};
+          },
+          AdsLoader: function () {
+            const loaderListeners = {};
+            this.addEventListener = function (type, fn) {
+              loaderListeners[type] = loaderListeners[type] || [];
+              loaderListeners[type].push(fn);
+            };
+            this.removeEventListener = function () {};
+            this.contentComplete = function () {};
+            this.destroy = function () {};
+            this.getSettings = function () {
+              return {
+                setPlayerType: () => {},
+                setPlayerVersion: () => {},
+                setVpaidMode: () => {},
+                setLocale: () => {},
+                setAutoPlayAdBreaks: () => {}
+              };
+            };
+            this.requestAds = function () {
+              const loadedFns = loaderListeners[AdsManagerLoadedEvent.Type.ADS_MANAGER_LOADED] || [];
+              setTimeout(() => {
+                loadedFns.forEach((f) => {
+                  try {
+                    f({
+                      getAdsManager: () => createAdsManagerStub()
+                    });
+                  } catch (e) {}
+                });
+              }, 5);
+            };
+          },
+          AdsRequest: function () {},
+          AdsRenderingSettings: function () {},
+          ImaSdkSettings: { VpaidMode: { ENABLED: 1, INSECURE: 2, DISABLED: 0 } },
+          ViewMode: { NORMAL: 'normal', FULLSCREEN: 'fullscreen' },
+          AdEvent,
+          AdErrorEvent,
+          AdsManagerLoadedEvent,
+          settings: { setLocale: () => {}, setVpaidMode: () => {}, setDisableCustomPlaybackForIOS10Plus: () => {} }
+        };
+      }
+    } catch (e) {}
+
+    // Neutralize BlockAdBlock / FuckAdBlock / SniffAdBlock classes & instances
+    function FakeAdBlockDetector() {}
+    FakeAdBlockDetector.prototype = {
+      check: function ( loop ) {
+        return false;
+      },
+      clearEvent: function () {},
+      emitEvent: function (detected) {
         return this;
       },
-      build: () => []
-    })
-  };
-
-  try {
-    window.googletag = Object.assign(window.googletag || {}, googletagStub);
-  } catch (e) {}
-
-  // Google IMA HTML5 Video SDK (window.google.ima) Surrogate Stub
-  // Prevents video players on news/streaming sites from hanging when IMA pre-roll ads are blocked
-  try {
-    window.google = window.google || {};
-    if (!window.google.ima) {
-      const AdEvent = {
-        Type: {
-          ALL_ADS_COMPLETED: 'allAdsCompleted',
-          CONTENT_RESUME_REQUESTED: 'contentResumeRequested',
-          CONTENT_PAUSE_REQUESTED: 'contentPauseRequested',
-          LOADED: 'loaded',
-          STARTED: 'started',
-          COMPLETE: 'complete',
-          SKIPPED: 'skipped'
+      setOption: function () {
+        return this;
+      },
+      on: function (detected, fn) {
+        if (detected === false && typeof fn === 'function') {
+          try {
+            fn();
+          } catch (e) {}
+        } else {
+          notifyStealthBypass('fuckadblock-on-detected-suppressed');
         }
-      };
-      const AdErrorEvent = { Type: { AD_ERROR: 'adError' } };
-      const AdsManagerLoadedEvent = { Type: { ADS_MANAGER_LOADED: 'adsManagerLoaded' } };
-
-      const createAdsManagerStub = () => {
-        const listeners = {};
-        return {
-          addEventListener: (type, fn) => {
-            listeners[type] = listeners[type] || [];
-            listeners[type].push(fn);
-          },
-          removeEventListener: () => {},
-          init: () => {},
-          start: () => {
-            // Immediately signal that ads finished so main video plays right away
-            const resumeFns = listeners[AdEvent.Type.CONTENT_RESUME_REQUESTED] || [];
-            const doneFns = listeners[AdEvent.Type.ALL_ADS_COMPLETED] || [];
-            setTimeout(() => {
-              resumeFns.forEach((f) => { try { f({ type: AdEvent.Type.CONTENT_RESUME_REQUESTED }); } catch (e) {} });
-              doneFns.forEach((f) => { try { f({ type: AdEvent.Type.ALL_ADS_COMPLETED }); } catch (e) {} });
-            }, 5);
-          },
-          resize: () => {},
-          destroy: () => {},
-          setVolume: () => {},
-          getVolume: () => 0,
-          pause: () => {},
-          resume: () => {},
-          skip: () => {},
-          getRemainingTime: () => 0
-        };
-      };
-
-      window.google.ima = {
-        AdDisplayContainer: function () {
-          this.initialize = function () {};
-          this.destroy = function () {};
-        },
-        AdsLoader: function () {
-          const loaderListeners = {};
-          this.addEventListener = function (type, fn) {
-            loaderListeners[type] = loaderListeners[type] || [];
-            loaderListeners[type].push(fn);
-          };
-          this.removeEventListener = function () {};
-          this.contentComplete = function () {};
-          this.destroy = function () {};
-          this.getSettings = function () {
-            return {
-              setPlayerType: () => {},
-              setPlayerVersion: () => {},
-              setVpaidMode: () => {},
-              setLocale: () => {},
-              setAutoPlayAdBreaks: () => {}
-            };
-          };
-          this.requestAds = function () {
-            const loadedFns = loaderListeners[AdsManagerLoadedEvent.Type.ADS_MANAGER_LOADED] || [];
-            setTimeout(() => {
-              loadedFns.forEach((f) => {
-                try {
-                  f({
-                    getAdsManager: () => createAdsManagerStub()
-                  });
-                } catch (e) {}
-              });
-            }, 5);
-          };
-        },
-        AdsRequest: function () {},
-        AdsRenderingSettings: function () {},
-        ImaSdkSettings: { VpaidMode: { ENABLED: 1, INSECURE: 2, DISABLED: 0 } },
-        ViewMode: { NORMAL: 'normal', FULLSCREEN: 'fullscreen' },
-        AdEvent,
-        AdErrorEvent,
-        AdsManagerLoadedEvent,
-        settings: { setLocale: () => {}, setVpaidMode: () => {}, setDisableCustomPlaybackForIOS10Plus: () => {} }
-      };
-    }
-  } catch (e) {}
-
-  // Neutralize BlockAdBlock / FuckAdBlock / SniffAdBlock classes & instances
-  function FakeAdBlockDetector() {}
-  FakeAdBlockDetector.prototype = {
-    check: function ( loop ) {
-      return false;
-    },
-    clearEvent: function () {},
-    emitEvent: function (detected) {
-      return this;
-    },
-    setOption: function () {
-      return this;
-    },
-    on: function (detected, fn) {
-      if (detected === false && typeof fn === 'function') {
-        try {
-          fn();
-        } catch (e) {}
-      } else {
-        notifyStealthBypass('fuckadblock-on-detected-suppressed');
+        return this;
+      },
+      onDetected: function () {
+        notifyStealthBypass('fuckadblock-onDetected-suppressed');
+        return this;
+      },
+      onNotDetected: function (fn) {
+        if (typeof fn === 'function') {
+          try {
+            fn();
+          } catch (e) {}
+        }
+        return this;
       }
-      return this;
-    },
-    onDetected: function () {
-      notifyStealthBypass('fuckadblock-onDetected-suppressed');
-      return this;
-    },
-    onNotDetected: function (fn) {
-      if (typeof fn === 'function') {
-        try {
-          fn();
-        } catch (e) {}
-      }
-      return this;
-    }
-  };
+    };
 
-  const fakeDetectorInstance = new FakeAdBlockDetector();
-  for (const name of ['BlockAdBlock', 'FuckAdBlock', 'SniffAdBlock']) {
-    safeDefine(window, name, FakeAdBlockDetector);
-  }
-  for (const inst of ['blockAdBlock', 'fuckAdBlock', 'sniffAdBlock']) {
-    safeDefine(window, inst, fakeDetectorInstance);
+    const fakeDetectorInstance = new FakeAdBlockDetector();
+    for (const name of ['BlockAdBlock', 'FuckAdBlock', 'SniffAdBlock']) {
+      safeDefine(window, name, FakeAdBlockDetector);
+    }
+    for (const inst of ['blockAdBlock', 'fuckAdBlock', 'sniffAdBlock']) {
+      safeDefine(window, inst, fakeDetectorInstance);
+    }
   }
 
   // ============================================================================
@@ -954,112 +957,114 @@
     return false;
   };
 
-  try {
-    Object.defineProperty(window, 'exo99HL3903jjdxtrnLoad', {
-      value: true,
-      writable: false,
-      configurable: false
-    });
-  } catch (e) {
-    window.exo99HL3903jjdxtrnLoad = true;
-  }
-
-  try {
-    Object.defineProperty(window, 'initEPNB', {
-      value: noopFn,
-      writable: false,
-      configurable: false
-    });
-  } catch (e) {}
-
-  // Neutralize ExoClick popMagic v7.0.0 & PopAds / OnClick / AdSpyglass globals before inline scripts run
-  try {
-    Object.defineProperty(window, 'exoJsPop101', {
-      value: Object.freeze({ add: noopFn }),
-      writable: false,
-      configurable: false
-    });
-  } catch (e) {}
-
   if (isProEntitled()) {
+    try {
+      Object.defineProperty(window, 'exo99HL3903jjdxtrnLoad', {
+        value: true,
+        writable: false,
+        configurable: false
+      });
+    } catch (e) {
+      window.exo99HL3903jjdxtrnLoad = true;
+    }
+
+    try {
+      Object.defineProperty(window, 'initEPNB', {
+        value: noopFn,
+        writable: false,
+        configurable: false
+      });
+    } catch (e) {}
+
+    // Neutralize ExoClick popMagic v7.0.0 & PopAds / OnClick / AdSpyglass globals before inline scripts run
+    try {
+      Object.defineProperty(window, 'exoJsPop101', {
+        value: Object.freeze({ add: noopFn }),
+        writable: false,
+        configurable: false
+      });
+    } catch (e) {}
+
     try {
       window.localStorage.removeItem('clabdfr');
     } catch (e) {}
-  }
 
-  try {
-    const popMagicStub = new Proxy(
-      {
-        version: 7,
-        url: '',
-        config: {},
-        open_count: 999,
-        top: window,
-        init: noopFn,
-        preparePop: noopFn,
-        shouldShow: () => false,
-        venorShouldShow: () => false,
-        addEvent: noopFn,
-        addEventToElement: noopFn,
-        buildUrl: () => '',
-        getunga: noopFn,
-        setAsOpened: noopFn,
-        isOpened: () => true,
-        loadHosted: noopFn,
-        findLinkToOpen: () => null,
-        methods: {
-          default: noopFn,
-          chromeTab: noopFn,
-          popup: noopFn
-        }
-      },
-      {
-        get(target, prop) {
-          return prop in target ? target[prop] : noopFn;
+    try {
+      const popMagicStub = new Proxy(
+        {
+          version: 7,
+          url: '',
+          config: {},
+          open_count: 999,
+          top: window,
+          init: noopFn,
+          preparePop: noopFn,
+          shouldShow: () => false,
+          venorShouldShow: () => false,
+          addEvent: noopFn,
+          addEventToElement: noopFn,
+          buildUrl: () => '',
+          getunga: noopFn,
+          setAsOpened: noopFn,
+          isOpened: () => true,
+          loadHosted: noopFn,
+          findLinkToOpen: () => null,
+          methods: {
+            default: noopFn,
+            chromeTab: noopFn,
+            popup: noopFn
+          }
         },
-        set() {
-          return true;
+        {
+          get(target, prop) {
+            return prop in target ? target[prop] : noopFn;
+          },
+          set() {
+            return true;
+          }
         }
-      }
-    );
-    Object.defineProperty(window, 'popMagic', {
-      get: () => popMagicStub,
-      set: () => {},
-      configurable: false
-    });
-  } catch (e) {}
+      );
+      Object.defineProperty(window, 'popMagic', {
+        get: () => popMagicStub,
+        set: () => {},
+        configurable: false
+      });
+    } catch (e) {}
+  }
 
   // Neutralize PopAds (_pop, popns, PopURL), OnClick Wasm loader (zomhphp), and AdSpyglass (__aaZoneid)
   const dummyPopArray = [];
   dummyPopArray.push = function () {
     return 0;
   };
-  safeDefine(window, '_pop', dummyPopArray);
-  safeDefine(window, 'popns', '0');
-  safeDefine(window, 'PopURL', '');
-  safeDefine(window, '__aaZoneid', undefined);
-  safeDefine(window, 'zomhphp', noopFn);
-  safeDefine(window, 'jlduc', noopFn);
-  safeDefine(window, 'zfgloadedpopup', true);
-  safeDefine(window, 'zfgloadedbanner', true);
-  safeDefine(window, 'zfgloadedinpage', true);
-  safeDefine(window, 'zfgloadedtag', true);
-  safeDefine(window, 'zfgcodeloadedonclick', true);
-  safeDefine(window, 'zfgcodeloadeddl', true);
-  safeDefine(window, 'zfgcodeloadedbanner', true);
-  safeDefine(window, 'zfgcodeloadedinpage', true);
-  safeDefine(window, 'zfgcodeloadedtag', true);
-  safeDefine(window, 'clkAISVShowing', true);
-  safeDefine(window, 'd450e30498de14e8a86ba9b7ef35b856', true);
-  safeDefine(window, 'd450e30498de14e8d450e30498de14e8', true);
-  safeDefine(window, '_pao', Object.freeze({ parse: noopFn, fbparse: noopFn, bbrparse: noopFn }));
-  safeDefine(window, 'AdscoreInit', noopFn);
-  safeDefine(window, 'mergedPopups', Object.freeze([]));
-  safeDefine(window, 'openPopunder', noopFn);
-  safeDefine(window, 'loadBannerContent', noopFn);
-  safeDefine(window, 'backgroundBanner', false);
-  safeDefine(window, 'Popunder', noopFn);
-  safeDefine(window, 'EPeventFire', noopFn);
+  if (isProEntitled()) {
+    safeDefine(window, '_pop', dummyPopArray);
+    safeDefine(window, 'popns', '0');
+    safeDefine(window, 'PopURL', '');
+    safeDefine(window, '__aaZoneid', undefined);
+    safeDefine(window, 'zomhphp', noopFn);
+    safeDefine(window, 'jlduc', noopFn);
+    safeDefine(window, 'zfgloadedpopup', true);
+    safeDefine(window, 'zfgloadedbanner', true);
+    safeDefine(window, 'zfgloadedinpage', true);
+    safeDefine(window, 'zfgloadedtag', true);
+    safeDefine(window, 'zfgcodeloadedonclick', true);
+    safeDefine(window, 'zfgcodeloadeddl', true);
+    safeDefine(window, 'zfgcodeloadedbanner', true);
+    safeDefine(window, 'zfgcodeloadedinpage', true);
+    safeDefine(window, 'zfgcodeloadedtag', true);
+    safeDefine(window, 'clkAISVShowing', true);
+    safeDefine(window, 'd450e30498de14e8a86ba9b7ef35b856', true);
+    safeDefine(window, 'd450e30498de14e8d450e30498de14e8', true);
+    safeDefine(window, '_pao', Object.freeze({ parse: noopFn, fbparse: noopFn, bbrparse: noopFn }));
+    safeDefine(window, 'AdscoreInit', noopFn);
+    safeDefine(window, 'mergedPopups', Object.freeze([]));
+    safeDefine(window, 'openPopunder', noopFn);
+    safeDefine(window, 'loadBannerContent', noopFn);
+    safeDefine(window, 'backgroundBanner', false);
+    safeDefine(window, 'Popunder', noopFn);
+    safeDefine(window, 'EPeventFire', noopFn);
+  }
 
   // Intercept window.atob to neutralize PopAds base64-encoded rotating domains (.min.css / magnific-popup.min.js)
   const origAtob = window.atob;

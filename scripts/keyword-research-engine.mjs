@@ -46,9 +46,9 @@ const ENRICHMENT_STATE_PATH = path.join(WEBSITE_DIR, 'pillar-enrichment-state.js
 
 const MANIFEST_VERSION = (() => {
   try {
-    return JSON.parse(fs.readFileSync(path.join(ROOT_DIR, 'extension/manifest.json'), 'utf8')).version || '1.3.1';
+    return JSON.parse(fs.readFileSync(path.join(ROOT_DIR, 'extension/manifest.json'), 'utf8')).version || '1.4.0';
   } catch {
-    return '1.3.1';
+    return '1.4.0';
   }
 })();
 
@@ -56,6 +56,8 @@ const STATIC_RULE_COUNT = (() => {
   let total = 0;
   for (const rel of [
     'extension/rules/static_ads_and_trackers.json',
+    'extension/rules/easyprivacy_trackers.json',
+    'extension/rules/regional_eu_filters.json',
     'extension/rules/cryptominers.json',
     'extension/rules/tracker_params.json'
   ]) {
@@ -65,7 +67,7 @@ const STATIC_RULE_COUNT = (() => {
       total += arr.length;
     } catch {}
   }
-  return total || 283;
+  return total || 36019;
 })();
 
 const DELTA_RULE_COUNT = (() => {

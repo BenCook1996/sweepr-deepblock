@@ -7,7 +7,7 @@
  *  2. Extracts real, verified Manifest V3 `declarativeNetRequest` (DNR) rules from `extension/rules/*.json`
  *     and `extension/rules/abp_filter_list.txt` for downstream scripts (`loadLiveRules`).
  *  3. Strips legacy dark `#deepblock-live-rule-proof`, `#deepblock-ctr-intent-enrichment`, `#deepblock-ctr-enrichment`,
- *     and dark `#gsc-exact-query-enrichment` blocks, and normalizes v1.2.x version strings to `v1.3.1`.
+ *     and dark `#gsc-exact-query-enrichment` blocks, and normalizes v1.2.x/v1.3.x version strings to `v1.4.0`.
  *  4. Updates `<lastmod>` in `website/sitemap.xml` ONLY for URLs whose HTML content was actually modified.
  *
  * Usage:
@@ -35,9 +35,9 @@ const KEYWORD_MATRIX_PATH = path.join(ROOT_DIR, 'data', 'keyword-opportunity-mat
 
 const MANIFEST_VERSION = (() => {
   try {
-    return JSON.parse(fs.readFileSync(MANIFEST_PATH, 'utf8')).version || '1.3.1';
+    return JSON.parse(fs.readFileSync(MANIFEST_PATH, 'utf8')).version || '1.4.0';
   } catch {
-    return '1.3.1';
+    return '1.4.0';
   }
 })();
 

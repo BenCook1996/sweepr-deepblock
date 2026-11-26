@@ -252,9 +252,27 @@ export const PROTECTED_LEGITIMATE_NETWORK_CANARIES = [
     initiator: 'sweeprdeepblock.com'
   },
   {
+    name: 'SWEEPR DeepBlock Own-Domain GA4 Analytics Script (Tracker-Only Exclusion)',
+    url: 'https://www.google-analytics.com/analytics.js',
+    resourceType: 'script',
+    initiator: 'sweeprdeepblock.com'
+  },
+  {
+    name: 'SWEEPR DeepBlock Own-Domain GA4 Collect XHR (Tracker-Only Exclusion)',
+    url: 'https://www.google-analytics.com/g/collect?v=2&tid=G-01MNBQSL9K',
+    resourceType: 'xmlhttprequest',
+    initiator: 'sweeprdeepblock.com'
+  },
+  {
     name: 'SWEEPR DeepBlock Own-Domain GTM Script (Rule #44 Exclusion)',
     url: 'https://www.googletagmanager.com/gtag/js?id=G-01MNBQSL9K',
     resourceType: 'script',
+    initiator: 'sweeprdeepblock.com'
+  },
+  {
+    name: 'SWEEPR DeepBlock Own-Domain GTM XHR (Tracker-Only Exclusion)',
+    url: 'https://www.googletagmanager.com/gtm.js?id=GTM-TEST',
+    resourceType: 'xmlhttprequest',
     initiator: 'sweeprdeepblock.com'
   },
   {

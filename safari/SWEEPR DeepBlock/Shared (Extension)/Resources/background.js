@@ -770,6 +770,15 @@ function isValidStoredTrial7d(store, now = Date.now()) {
     }
   }
 
+  const lastVerifiedAt = Number(store.licenseVerifiedAt || 0);
+  if (lastVerifiedAt > 0 && now + 60000 < lastVerifiedAt) {
+    return false;
+  }
+  const lastClockSeenAt = Number(store.lastClockSeenAt || 0);
+  if (lastClockSeenAt > 0 && now + 60000 < lastClockSeenAt) {
+    return false;
+  }
+
   return true;
 }
 
@@ -783,14 +792,34 @@ function isValidStoredReferralTrial14d(store, now = Date.now()) {
   const max14dMs = 14 * 24 * 60 * 60 * 1000;
   if (!Number.isFinite(trialExpMs) || trialExpMs <= now) return false;
   const startedAt = Number(store.trialStartedAt || 0);
-  if (startedAt > 0) {
-    if (!Number.isFinite(startedAt) || startedAt > now + 60000 || trialExpMs <= startedAt || trialExpMs - startedAt > max14dMs + 60000) {
-      return false;
-    }
-  } else if (trialExpMs - now > max14dMs + 60000) {
+  if (
+    !Number.isFinite(startedAt) ||
+    startedAt <= 0 ||
+    startedAt > now + 60000 ||
+    trialExpMs <= startedAt ||
+    trialExpMs - startedAt > max14dMs + 60000
+  ) {
+    return false;
+  }
+  const lastVerifiedAt = Number(store.licenseVerifiedAt || 0);
+  if (lastVerifiedAt > 0 && now + 60000 < lastVerifiedAt) {
+    return false;
+  }
+  const lastClockSeenAt = Number(store.lastClockSeenAt || 0);
+  if (lastClockSeenAt > 0 && now + 60000 < lastClockSeenAt) {
     return false;
   }
   return true;
+}
+
+async function advanceMonotonicClockWatermark(now = Date.now()) {
+  try {
+    const res = await chrome.storage.local.get(['lastClockSeenAt']);
+    const prev = Number((res && res.lastClockSeenAt) || 0);
+    if (!Number.isFinite(prev) || now > prev) {
+      await chrome.storage.local.set({ lastClockSeenAt: now });
+    }
+  } catch (e) {}
 }
 
 function buildFullProEntitlementsList() {
@@ -936,6 +965,7 @@ async function startAutomatic7DayTrial(existingStore = {}) {
       licenseExpiresAt: trialExpiresAt,
       trialSyncedWithServer: false,
       licenseVerifiedAt: now,
+      lastClockSeenAt: now,
       entitlements,
       settings: trialSettings
     });
@@ -981,6 +1011,7 @@ async function preserveOfflineGraceSession() {
     'proActive',
     'licenseKey',
     'licenseVerifiedAt',
+    'lastClockSeenAt',
     'entitlements',
     'settings',
     'plan',
@@ -1005,9 +1036,15 @@ async function preserveOfflineGraceSession() {
   } else if ((storedPlan === 'trial_7d' || storedStatus === 'trialing') && !isValidStoredTrial7d(stored)) {
     return null;
   }
+  const now = Date.now();
+  const graceElapsed = now - Number(stored.licenseVerifiedAt);
+  const lastClockSeenAt = Number(stored.lastClockSeenAt || 0);
+  const clockRolledBack = lastClockSeenAt > 0 && now + 60000 < lastClockSeenAt;
   const withinOfflineGrace =
     Boolean(stored.proActive && storedKey && stored.licenseVerifiedAt) &&
-    Date.now() - Number(stored.licenseVerifiedAt) <= OFFLINE_GRACE_MS;
+    !clockRolledBack &&
+    graceElapsed >= -60000 &&
+    graceElapsed <= OFFLINE_GRACE_MS;
   if (!withinOfflineGrace) {
     return null;
   }
@@ -1173,6 +1210,7 @@ async function applyVerifiedLicenseActivation(data, fallbackKey = '') {
       stepUpSaveEligible: Boolean(data && (data.stepUpSaveEligible || planName === 'monthly_intro')),
       previousLicenseKey: canonicalKey,
       licenseVerifiedAt: Date.now(),
+      lastClockSeenAt: Date.now(),
       entitlements,
       settings: nextSettings
     });
@@ -1471,10 +1509,13 @@ async function attemptChromeProfileAutoActivation(options = {}) {
 }
 
 // Verify license key against Central SWEEPR CRM & SWEEPR Deepblock Licensing API
-async function verifyLicenseWithServer(rawKey) {
+async function verifyLicenseWithServer(rawKey, options = {}) {
+  const revokeOnInvalid = Boolean(options && options.revokeOnInvalid);
   const key = String(rawKey || '').trim();
   if (!isValidLicenseCredential(key) || isLocalTrialKey(key) || key.length > 512) {
-    await revokeProState('invalid_key_format', { preserveLicenseKey: false });
+    if (revokeOnInvalid) {
+      await revokeProState('invalid_key_format', { preserveLicenseKey: false });
+    }
     return {
       ok: false,
       valid: false,
@@ -1531,7 +1572,9 @@ async function verifyLicenseWithServer(rawKey) {
                 statusReason === 'trial_expired' ||
                 statusReason === 'unpaid');
             if (isExplicitlyInactive) {
-              await revokeProState(statusReason, { preserveLicenseKey: true });
+              if (revokeOnInvalid || !verifiedSession.proActive || verifiedSession.licenseKey === key) {
+                await revokeProState(statusReason, { preserveLicenseKey: true });
+              }
               return {
                 ok: false,
                 valid: false,
@@ -1561,13 +1604,18 @@ async function verifyLicenseWithServer(rawKey) {
       }
     }
 
-    const graced = await preserveOfflineGraceSession();
-    if (graced) {
-      return graced;
+    if (lastRejectedResult && !lastNetworkError && !sawTransientHttpError) {
+      if (revokeOnInvalid) {
+        await revokeProState(lastRejectedResult.status || 'inactive', { preserveLicenseKey: true });
+      }
+      return lastRejectedResult;
     }
 
-    if (lastRejectedResult && !lastNetworkError && !sawTransientHttpError) {
-      return lastRejectedResult;
+    if (lastNetworkError || sawTransientHttpError) {
+      const graced = await preserveOfflineGraceSession();
+      if (graced) {
+        return graced;
+      }
     }
 
     return {
@@ -1729,6 +1777,13 @@ if (chrome.storage && chrome.storage.onChanged) {
             enforceStoredSubscriptionIntegrity({ force: true }).catch(() => {});
             return;
           }
+          if (!isLocalKey) {
+            verifiedSession.proActive = false;
+            verifiedSession.ramTamerActive = false;
+            verifiedSession.coldChecked = false;
+            verifyLicenseWithServer(resolvedKey, { revokeOnInvalid: true }).catch(() => {});
+            return;
+          }
           verifiedSession.proActive = true;
           verifiedSession.ramTamerActive = true;
           verifiedSession.licenseKey = resolvedKey;
@@ -1771,6 +1826,7 @@ async function enforceStoredSubscriptionIntegrity(options = {}) {
       'ramTamerActive',
       'licenseKey',
       'licenseVerifiedAt',
+      'lastClockSeenAt',
       'settings',
       'subscriptionStatus',
       'plan',
@@ -1863,7 +1919,7 @@ async function enforceStoredSubscriptionIntegrity(options = {}) {
 
     const verifiedAt = Number(store.licenseVerifiedAt || 0);
     const ageMs = Date.now() - verifiedAt;
-    if (!force && verifiedAt > 0 && ageMs >= 0 && ageMs < VERIFIED_SESSION_CACHE_TTL_MS) {
+    if (!force && verifiedSession.coldChecked && verifiedAt > 0 && ageMs >= 0 && ageMs < VERIFIED_SESSION_CACHE_TTL_MS) {
       verifiedSession.proActive = true;
       verifiedSession.ramTamerActive = true;
       verifiedSession.licenseKey = key;
@@ -1877,23 +1933,33 @@ async function enforceStoredSubscriptionIntegrity(options = {}) {
       return { proActive: true, ramTamerActive: true };
     }
 
-    const verified = await verifyLicenseWithServer(key);
+    const verified = await verifyLicenseWithServer(key, { revokeOnInvalid: true });
     verifiedSession.coldChecked = true;
     if (verified.networkError || verified.offlineGrace) {
+      const now = Date.now();
+      const graceElapsed = now - Number(store.licenseVerifiedAt);
+      const lastClockSeenAt = Number(store.lastClockSeenAt || 0);
+      const clockRolledBack = lastClockSeenAt > 0 && now + 60000 < lastClockSeenAt;
       const withinOfflineGrace =
         Boolean(store.licenseVerifiedAt) &&
-        Date.now() - Number(store.licenseVerifiedAt) <= OFFLINE_GRACE_MS &&
+        !clockRolledBack &&
+        graceElapsed >= -60000 &&
+        graceElapsed <= OFFLINE_GRACE_MS &&
         !isLocalTrialExpired(store);
-      verifiedSession.proActive = Boolean(store.proActive && key && withinOfflineGrace);
-      verifiedSession.ramTamerActive = Boolean(verifiedSession.proActive && key && withinOfflineGrace);
-      verifiedSession.licenseKey = withinOfflineGrace ? key : '';
-      verifiedSession.plan = withinOfflineGrace ? (store.plan || 'annual') : '';
-      verifiedSession.subscriptionStatus = withinOfflineGrace ? (subStatus || 'active') : (subStatus || 'unactivated');
-      verifiedSession.trialExpiresAt = withinOfflineGrace && isReferralTrial ? parseTrialExpiryMs(store) : 0;
-      const adBlockingOn = verifiedSession.proActive && (!store.settings || store.settings.adBlocking !== false);
-      const trackerOn = verifiedSession.proActive && (!store.settings || store.settings.trackerProtection !== false);
+      if (!withinOfflineGrace || !store.proActive || !key) {
+        await revokeProState(clockRolledBack ? 'clock_tampered' : 'offline_grace_expired', { preserveLicenseKey: true });
+        return { proActive: false, ramTamerActive: false };
+      }
+      verifiedSession.proActive = true;
+      verifiedSession.ramTamerActive = true;
+      verifiedSession.licenseKey = key;
+      verifiedSession.plan = store.plan || 'annual';
+      verifiedSession.subscriptionStatus = subStatus || 'active';
+      verifiedSession.trialExpiresAt = isReferralTrial ? parseTrialExpiryMs(store) : 0;
+      const adBlockingOn = !store.settings || store.settings.adBlocking !== false;
+      const trackerOn = !store.settings || store.settings.trackerProtection !== false;
       await syncExtensionProtectionRules(adBlockingOn, trackerOn);
-      return { proActive: verifiedSession.proActive, ramTamerActive: verifiedSession.ramTamerActive };
+      return { proActive: true, ramTamerActive: true };
     }
     const isValid = Boolean(verified.valid);
     return {
@@ -2054,6 +2120,7 @@ chrome.runtime.onInstalled.addListener(async (details) => {
 });
 
 chrome.runtime.onStartup.addListener(async () => {
+  await advanceMonotonicClockWatermark();
   registerContextMenus();
   chrome.alarms.create('ramTamerCheck', { periodInMinutes: 5 });
   chrome.alarms.create('licenseVerifyCheck', { periodInMinutes: 720 });
@@ -2138,6 +2205,8 @@ function normalizeHost(rawUrl) {
 async function checkAndClosePopunderTab(tabId, candidateUrl, openerTabId) {
   if (!tabId || !candidateUrl || /^(chrome(-extension)?|edge|about|moz-extension):\/\//i.test(candidateUrl)) return false;
   try {
+    const auth = await ensureVerifiedProSession();
+    if (!auth.proActive || !auth.licenseKey) return false;
     const store = await chrome.storage.local.get(['settings', 'pausedSites']);
     const settings = store.settings || DEFAULT_STATE.settings;
     if (settings.adBlocking === false) return false;
@@ -2452,10 +2521,12 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
     return;
   }
   if (alarm.name === 'trialExpiryCheck') {
+    await advanceMonotonicClockWatermark();
     await enforceStoredSubscriptionIntegrity({ force: true });
     return;
   }
   if (alarm.name === 'licenseVerifyCheck') {
+    await advanceMonotonicClockWatermark();
     await enforceStoredSubscriptionIntegrity({ force: true });
     return;
   }

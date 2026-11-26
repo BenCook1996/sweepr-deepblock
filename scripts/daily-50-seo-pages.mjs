@@ -50,6 +50,8 @@ const INDEXNOW_KEY = '9a4e7b2c5d8f1a3e6b9c0d4f7a2e5b8c';
 const LIVE_RULES_DATA = loadLiveRules();
 const MANIFEST_VERSION = LIVE_RULES_DATA?.manifestVersion || PRODUCT_FACTS.version;
 const STATIC_RULE_COUNT = LIVE_RULES_DATA?.staticCount || PRODUCT_FACTS.staticDnrRules;
+const STATIC_RULE_FMT = Number(STATIC_RULE_COUNT).toLocaleString('en-US');
+const CMP_COUNT = PRODUCT_FACTS.cmpFrameworks;
 
 const PLATFORMS = [
   { slug: 'youtube-chrome-mv3', shortName: 'YouTube (Chrome MV3)', name: 'YouTube on Google Chrome (Manifest V3)', category: 'Video Streaming', issue: 'Unskippable pre-roll ads, mid-roll interruptions, and anti-adblock warning modals' },
@@ -251,7 +253,7 @@ const PROBLEMS = [
     h1Suffix: 'From Sponsored Junk, Malvertising & Tracker Beacons',
     metaDescPrefix: 'Block sponsored junk, malvertising redirects, and cross-site tracker beacons on',
     beforeStat: 'Cluttered with Display Ads & Tracker Beacons',
-    afterStat: 'Clean View With 283 Static MV3 DNR Rules',
+    afterStat: `Clean View With ${STATIC_RULE_FMT} Static MV3 DNR Rules`,
     perfStat: 'DNR + Cosmetic Shield'
   },
   {
@@ -331,7 +333,7 @@ const PROBLEMS = [
     h1Suffix: 'in 2026',
     metaDescPrefix: 'Stop third-party ad network and tracker requests at the Manifest V3 DNR layer on',
     beforeStat: 'Third-Party Ad & Telemetry Connections',
-    afterStat: '264 Ad/Tracker DNR Network Rules Active',
+    afterStat: `${STATIC_RULE_FMT} DNR Network Rules Active`,
     perfStat: 'MV3 C++ Network Filtering'
   },
   {
@@ -381,16 +383,16 @@ const PROBLEMS = [
     h1Suffix: 'in Real Time',
     metaDescPrefix: 'Block retargeting pixels, URL tracking beacons, and malvertising redirects on',
     beforeStat: 'Exposed to Retargeting Pixels & Malvertising',
-    afterStat: '283 Static DNR Rules + URL Stripping',
+    afterStat: `${STATIC_RULE_FMT} Static DNR Rules + URL Stripping`,
     perfStat: 'Zero-Telemetry Privacy Shield'
   }
 ];
 
 const SETUP_BROWSERS = [
-  { slug: 'google-chrome-manifest-v3', shortName: 'Chrome MV3', name: 'Google Chrome (Manifest V3 Engine)', os: 'Windows, macOS, Linux, ChromeOS', notes: 'Uses declarativeNetRequest static & dynamic rule sets (283 static DNR rules) plus DeepStealth cosmetic scriptlets on Chrome MV3.' },
+  { slug: 'google-chrome-manifest-v3', shortName: 'Chrome MV3', name: 'Google Chrome (Manifest V3 Engine)', os: 'Windows, macOS, Linux, ChromeOS', notes: `Uses declarativeNetRequest static & dynamic rule sets (${STATIC_RULE_FMT} static DNR rules) plus DeepStealth cosmetic scriptlets on Chrome MV3.` },
   { slug: 'microsoft-edge-windows-11', shortName: 'Microsoft Edge', name: 'Microsoft Edge on Windows 11', os: 'Windows 10 & Windows 11', notes: 'Blocks Edge MSN new-tab promoted clutter, YouTube pre-roll ads, and OneTrust/Quantcast cookie consent modals automatically.' },
-  { slug: 'safari-macos-ios-ipad', shortName: 'Safari Alternative (Desktop)', name: 'Safari Alternative on macOS', os: 'macOS (Use Chrome, Brave, Edge, or Firefox)', notes: 'SWEEPR Deepblock supports Chrome, Edge, Brave, Opera, and Firefox on desktop plus Firefox on Android (Safari and iOS are not supported).' },
-  { slug: 'mozilla-firefox-desktop-android', shortName: 'Mozilla Firefox', name: 'Mozilla Firefox (Desktop & Android)', os: 'Windows, macOS, Linux, Android', notes: 'Full network and cosmetic filtering (283 static DNR rules), URL tracking parameter stripping (fbclid, gclid, utm_), and automated cookie banner rejection.' },
+  { slug: 'safari-macos-ios-ipad', shortName: 'Safari Web Extension (macOS & iOS)', name: 'Apple Safari Web Extension (macOS & iOS)', os: 'macOS & iOS Safari', notes: `SWEEPR Deepblock supports Chrome, Edge, Brave, Opera, Firefox (Desktop & Android Gecko 128.0+), and Safari Web Extension (macOS & iOS).` },
+  { slug: 'mozilla-firefox-desktop-android', shortName: 'Mozilla Firefox', name: 'Mozilla Firefox (Desktop & Android)', os: 'Windows, macOS, Linux, Android', notes: `Full network and cosmetic filtering (${STATIC_RULE_FMT} static DNR rules), URL tracking parameter stripping (fbclid, gclid, utm_), and automated cookie banner rejection.` },
   { slug: 'brave-browser-deepstealth', shortName: 'Brave Browser', name: 'Brave Browser + SWEEPR Deepblock Layer', os: 'Windows, macOS, Linux', notes: 'Adds automatic Cookie Consent "Reject All" clicking, URL tracker parameter stripping, cryptominer blocking, and Total Tab & RAM Tamer on top of Brave.' },
   { slug: 'opera-gx-gaming-browser', shortName: 'Opera & Opera GX', name: 'Opera & Opera GX Gaming Browser', os: 'Windows & macOS', notes: 'Replaces weak built-in adblocking with anti-detection YouTube/Twitch protection and Total Tab & RAM Tamer.' },
   { slug: 'arc-browser-windows-mac', shortName: 'Arc Browser', name: 'The Arc Browser (Windows & macOS)', os: 'Windows 11 & macOS', notes: 'Native MV3 dynamic filtering, spaces tab hibernation integration, and instant cookie consent auto-rejection.' },
@@ -408,7 +410,7 @@ const SETUP_BROWSERS = [
   { slug: 'ungoogled-chromium-mv3', shortName: 'Ungoogled Chromium', name: 'Ungoogled Chromium (Manifest V3)', os: 'Windows, macOS & Linux', notes: 'Chromium with all Google background tracking stripped out, paired with SWEEPR Deepblock MV3 declarativeNetRequest dynamic rule sets.' },
   { slug: 'mullvad-browser-privacy', shortName: 'Mullvad Browser', name: 'Mullvad Privacy Browser', os: 'Windows, macOS & Linux', notes: 'Engineered with Tor Project protections plus SWEEPR Deepblock automatic cookie banner auto-rejection and URL tracker parameter stripping.' },
   { slug: 'duckduckgo-desktop-browser', shortName: 'DuckDuckGo Browser', name: 'DuckDuckGo Desktop & Mobile Browser', os: 'Windows, macOS & Android', notes: 'Complements DuckDuckGo built-in tracker protection with SWEEPR DeepStealth video anti-detection, automated cookie auto-rejection, and URL tracking parameter stripping.' },
-  { slug: 'safari-ios-iphone-mv3', shortName: 'Desktop MV3 Alternative', name: 'Desktop Chromium & Firefox Alternatives to Mobile Safari', os: 'Windows, macOS, Linux & Android Firefox', notes: 'SWEEPR Deepblock delivers 283 static MV3 DNR rules, automated cookie banner auto-rejection, and mobile/desktop URL tracking parameter stripping.' },
+  { slug: 'safari-ios-iphone-mv3', shortName: 'Safari iOS Web Extension', name: 'Apple Safari on iOS & iPadOS (MV3)', os: 'iOS, iPadOS, macOS, Windows, Linux & Android Firefox', notes: `SWEEPR Deepblock delivers ${STATIC_RULE_FMT} static MV3 DNR rules, automated cookie banner auto-rejection, and mobile/desktop URL tracking parameter stripping.` },
   { slug: 'raspberry-pi-chromium', shortName: 'Raspberry Pi', name: 'Raspberry Pi Chromium (ARM Linux)', os: 'Raspberry Pi OS (ARM64)', notes: 'Cuts CPU and RAM overhead on low-resource ARM boards by halting heavy ad auction loops and blocking tracking scripts.' },
   { slug: 'brave-android-mobile', shortName: 'Brave Android', name: 'Brave Browser for Android Mobile', os: 'Android 10, 11, 12, 13, 14+', notes: 'Adds instant Cookie Consent "Reject All" clicking and URL tracking parameter stripping to Brave on Android.' },
   { slug: 'sidekick-productivity-browser', shortName: 'Sidekick Work', name: 'Sidekick Work & Productivity Browser', os: 'Windows 10/11 & macOS', notes: 'Tab hibernation integration, automated rule matching, and local-first Manifest V3 filtering for high-performance multitasking.' },
@@ -607,7 +609,7 @@ const GUIDES = [
   { slug: 'how-to-reduce-browser-ram-speed-up-slow-tabs', shortTitle: 'Reduce Browser RAM & Speed Up Tabs', title: 'How to Reduce Browser RAM Usage & Speed Up Slow Tabs', h1: 'How SWEEPR Total Tab & RAM Tamer Reclaims Laptop Memory in Real Time', summary: 'Hibernates inactive background tabs, blocks crypto-miner and ad auction scripts, and preserves session recovery across multi-tab workflows.' },
   { slug: 'how-to-block-sponsored-ads-on-google-search-2026', shortTitle: 'Block Google Sponsored Ads (2026)', title: 'How to Block Sponsored Ads and Shopping Clutter From Google Search (2026)', h1: 'How to Remove Sponsored Ads and Shopping Clutter From Google Search Results', summary: 'Learn how SWEEPR Deepblock filters disguised sponsored search results, shopping ad boxes, and tracking redirect parameters on Google.' },
   { slug: 'how-to-fix-slow-chrome-high-memory-usage', shortTitle: 'Fix Slow Chrome High Memory', title: 'How to Fix Slow Chrome and Stop High Memory Usage on Windows and Mac', h1: 'How to Fix Slow Chrome Performance and Cut High RAM Usage Permanently', summary: 'Step-by-step optimization guide to cut browser RAM bloat by hibernating background tabs and stopping ad auction scripts with SWEEPR Deepblock.' },
-  { slug: 'how-to-stop-crypto-drainer-scam-ads-2026', shortTitle: 'Stop Crypto Malvertising Ads (2026)', title: 'How to Stop Malicious Crypto Ads and Phishing Redirects (2026)', h1: 'How SWEEPR Deepblock Detects and Blocks Malvertising & Cryptominer Scripts', summary: 'Protect your browser from malicious ad network redirects, hidden cryptomining scripts, and tracker beacons with 283 static MV3 DNR rules.' },
+  { slug: 'how-to-stop-crypto-drainer-scam-ads-2026', shortTitle: 'Stop Crypto Malvertising Ads (2026)', title: 'How to Stop Malicious Crypto Ads and Phishing Redirects (2026)', h1: 'How SWEEPR Deepblock Detects and Blocks Malvertising & Cryptominer Scripts', summary: `Protect your browser from malicious ad network redirects, hidden cryptomining scripts, and tracker beacons with ${STATIC_RULE_FMT} static MV3 DNR rules.` },
   { slug: 'how-to-stop-fake-robot-captcha-verification-popups', shortTitle: 'Stop Fake Robot Captchas (2026)', title: 'How to Stop Fake Robot Captcha Verification Popups and Malicious Notification Spam', h1: 'How to Stop Fake Robot Captcha Verification Popups and Malicious Notification Spam', summary: 'Block deceptive Click Allow to confirm you are not a robot notification traps, silent web push spam, and browser hijackers automatically with SWEEPR Deepblock.' },
   { slug: 'how-to-bypass-anti-adblock-inspect-element-blockers', shortTitle: 'Bypass Anti-Adblock Scripts (2026)', title: 'How to Bypass Anti-Adblock Warning Overlays Without Disabling Protection', h1: 'How SWEEPR DeepStealth Bypasses Anti-Adblock Detection Overlays in 2026', summary: 'Learn how SWEEPR DeepStealth neutralizes anti-adblock detection scripts, restores frozen scrollbars, and removes blur overlays on news and media sites.' },
   { slug: 'how-to-block-sponsored-posts-and-crypto-bots-on-x-twitter', shortTitle: 'Block X Promoted Ads & Bots (2026)', title: 'How to Block Promoted Tweets, Crypto Bot Spam, and Disguised Ads on X (Twitter)', h1: 'How to Block Promoted Posts and Ad Trackers on X / Twitter in 2026', summary: 'Clean up your X (Twitter) desktop feed. Remove promoted tweets, tracking beacons, and sponsored feed units with SWEEPR Deepblock.' },
@@ -651,7 +653,7 @@ const GUIDES = [
   { slug: 'how-to-block-sponsored-job-scams-linkedin-indeed', shortTitle: 'Block Sponsored Job Scams', title: 'How to Block Sponsored Job Scams and Disguised Ads on LinkedIn & Indeed', h1: 'How SWEEPR Deepblock Filters Out Sponsored Job Scams and Lead Harvesting Clutter', summary: 'Cut through disguised recruiter ad spam, resume harvesting portals, and promoted job posts. SWEEPR Deepblock keeps your job hunt focused on verified direct employers.' },
   { slug: 'how-to-block-sponsored-ai-citations-perplexity-claude', shortTitle: 'Block AI Sponsored Citations', title: 'How to Detect and Block Sponsored Citations in AI Answers (2026)', h1: 'How to Detect and Block Sponsored Citations & Disguised Affiliate Links in AI Answers', summary: 'As AI search engines monetize via promoted citations and sponsored answer blocks, learn how SWEEPR Deepblock flags disguised commercial mentions and restores objective AI search integrity.' },
   { slug: 'how-to-prevent-webrtc-ip-leak-ad-trackers', shortTitle: 'Stop WebRTC IP Leak Trackers', title: 'How to Prevent WebRTC IP Leaks Used by Ad Tracking Networks in 2026', h1: 'How SWEEPR Deepblock Prevents WebRTC Local and Public IP Address Leakage', summary: 'Aggressive ad networks probe WebRTC STUN/TURN queries to unmask your real IP address behind VPNs. SWEEPR Deepblock neutralizes WebRTC candidate leaks while preserving video calls.' },
-  { slug: 'how-to-block-ai-deepfake-celebrity-investment-scams', shortTitle: 'Block Social Malvertising Ads', title: 'How to Block Deceptive Investment & Phishing Ad Redirects (2026)', h1: 'How SWEEPR Deepblock Blocks Malvertising Ad Scripts & Tracking Redirects', summary: 'Block deceptive sponsored ad redirects, cryptominer scripts, and cross-site tracking pixels with 283 static MV3 DNR rules.' },
+  { slug: 'how-to-block-ai-deepfake-celebrity-investment-scams', shortTitle: 'Block Social Malvertising Ads', title: 'How to Block Deceptive Investment & Phishing Ad Redirects (2026)', h1: 'How SWEEPR Deepblock Blocks Malvertising Ad Scripts & Tracking Redirects', summary: `Block deceptive sponsored ad redirects, cryptominer scripts, and cross-site tracking pixels with ${STATIC_RULE_FMT} static MV3 DNR rules.` },
   { slug: 'how-to-fix-high-chrome-tab-sleeping-crashes', shortTitle: 'Fix Chrome Memory Discards', title: 'How to Stop Chrome From Crashing Inactive Tabs and Losing Form Data (2026)', h1: 'How SWEEPR Tab & RAM Tamer Prevents Unwanted Chrome Tab Discards and Data Loss', summary: 'Chrome aggressive native tab discarding causes lost form drafts and reload loops. SWEEPR Total Tab & RAM Tamer intelligently suspends JS execution while preserving tab DOM state.' },
   { slug: 'how-to-block-browser-extension-hijacking-malware', shortTitle: 'Stop Extension Adware Hijacks', title: 'How to Detect and Stop Web Extension Adware Hijacking in 2026', h1: 'How SWEEPR Deepblock Defends Against Rogue Extension Ad Injections & Affiliate Hijacks', summary: 'Malicious browser extensions silently inject affiliate cookies and redirect search queries. SWEEPR Deepblock monitors DOM mutation hooks to block unauthorized extension script injections.' },
   { slug: 'how-to-block-ai-training-scrapers-in-browser', shortTitle: 'Block AI Training Scrapers (2026)', title: 'How to Block AI Training Data Scrapers & Behavioral Telemetry in 2026', h1: 'How SWEEPR Deepblock Defends Against Covert AI Training Data Scrapers', summary: 'Aggressive AI companies scrape user browsing behavior, form interactions, and search queries. SWEEPR Deepblock terminates unauthorized telemetry beacons.' },
@@ -664,7 +666,7 @@ const GUIDES = [
 ,
   {"slug":"how-to-auto-reject-consentmanager-cookie-walls","shortTitle":"Auto-Reject Consentmanager (2026)","title":"How to Automatically Reject Consentmanager Cookie Walls automatically","h1":"How SWEEPR Deepblock Neutralizes Consentmanager Cookie Consent Overlays","summary":"SWEEPR Deepblock automatically clicks Reject All on Consentmanager CMP banners automatically without freezing page scroll."},
   {"slug":"how-to-block-anime-streaming-popunders-2026","shortTitle":"Block Anime Pop-Unders (2026)","title":"How to Block Anime Streaming Pop-Unders and Deceptive Player Banners","h1":"How SWEEPR Deepblock Eliminates Anime Streaming Pop-Unders and Tab Hijacks","summary":"Watch anime without tab hijacking or fake play buttons. SWEEPR Deepblock blocks pop-under scripts and crypto drainer banners automatically."},
-  {"slug":"how-to-block-deceptive-ai-e-commerce-product-clones","shortTitle":"Block Malicious Ad Redirects","title":"How to Block Deceptive E-Commerce Ad Redirects and Retargeting Pixels","h1":"How SWEEPR Deepblock Blocks Malicious Shopping Ad Redirects & Trackers","summary":"Stop deceptive shopping ad redirects, strip URL tracking codes, and block retargeting beacons with 283 static MV3 DNR rules."},
+  {"slug":"how-to-block-deceptive-ai-e-commerce-product-clones","shortTitle":"Block Malicious Ad Redirects","title":"How to Block Deceptive E-Commerce Ad Redirects and Retargeting Pixels","h1":"How SWEEPR Deepblock Blocks Malicious Shopping Ad Redirects & Trackers","summary":`Stop deceptive shopping ad redirects, strip URL tracking codes, and block retargeting beacons with ${STATIC_RULE_FMT} static MV3 DNR rules.`},
   {"slug":"how-to-block-sponsored-ai-overviews-perplexity-claude","shortTitle":"Block Perplexity Sponsored Citations","title":"How to Detect and Block Sponsored Citations in Perplexity and Claude Answers","h1":"How to Remove Disguised Sponsored Citations From AI Search Result Pages","summary":"As AI search engines monetize via promoted citations and sponsored answers, learn how SWEEPR Deepblock flags disguised commercial mentions."},
   {"slug":"how-to-block-torrent-site-fake-download-buttons","shortTitle":"Block Fake Torrent Buttons","title":"How to Block Deceptive Green Download Buttons and Malware Ads on Torrent Sites","h1":"How SWEEPR Deepblock Strips Deceptive Green Download Buttons From Torrent Sites","summary":"Torrent directories are loaded with deceptive green buttons that bundle malware. SWEEPR Deepblock isolates genuine magnet links and strips ad traps."},
   {"slug":"how-to-fix-high-ram-usage-on-vivaldi-browser","shortTitle":"Fix Vivaldi High RAM Usage","title":"How to Fix High RAM Usage and Speed Up Vivaldi Browser on Windows and Mac","h1":"How SWEEPR Deepblock Cuts Vivaldi Memory Bloat Significantly","summary":"Reclaim gigabytes of RAM on Vivaldi power-user setups by hibernating background tabs and halting intensive ad auction loops."},
@@ -884,7 +886,7 @@ function renderHtml(cand, existingPool = [], existingIdx = 0) {
     ${renderGlassCard({
       title: `Why Standard Ad Blockers Struggle With "${opp.keyword}" in 2026`,
       bodyHtml: `<p class="text-sm text-gray-700 leading-relaxed mb-3">When searching for <strong>${escapeHtml(opp.keyword)}</strong>, most legacy browser extensions fail because static Manifest V2 filter lists or CSS-only hiding rules are flagged by modern client-side anti-adblock scripts, leave <code class="px-1.5 py-0.5 rounded bg-gray-100 text-gray-800 text-xs">body { overflow: hidden }</code> scroll-locks intact, or charge opaque auto-renewal fees.</p>
-      <p class="text-sm text-gray-700 leading-relaxed"><strong>SWEEPR Deepblock v${escapeHtml(MANIFEST_VERSION)}</strong> solves this natively using compiled <code>declarativeNetRequest</code> rules (<strong>${STATIC_RULE_COUNT} static rules</strong>: 264 ads &amp; trackers, 18 cryptomining rules, 1 URL tracking parameter rule) paired with local-first DeepStealth player and CMP sanitization.</p>`
+      <p class="text-sm text-gray-700 leading-relaxed"><strong>SWEEPR Deepblock v${escapeHtml(MANIFEST_VERSION)}</strong> solves this natively using compiled <code>declarativeNetRequest</code> rules (<strong>${STATIC_RULE_FMT} static rules</strong> across 5 rulesets: EasyList, EasyPrivacy, Regional EU, 18 cryptomining rules, 1 URL tracking parameter rule) paired with local-first DeepStealth player and CMP sanitization.</p>`
     })}
 
     ${renderCallout({
@@ -903,7 +905,7 @@ function renderHtml(cand, existingPool = [], existingIdx = 0) {
         rows: [
           [`Primary Outcome (${bp.shortLinkTitle || opp.keyword})`, bp.beforeStat, bp.afterStat],
           ['Manifest V3 Anti-Detection Check', 'Frequently Detected by Anti-Adblock', 'Verified (/test-lab)'],
-          ['GDPR / CMP Cookie Auto-Rejector', 'CSS Hide Only (Breaks Scroll)', 'Automated "Reject All" (150+ CMPs)'],
+          ['GDPR / CMP Cookie Auto-Rejector', 'CSS Hide Only (Breaks Scroll)', `Automated "Reject All" (${CMP_COUNT} CMPs)`],
           ['Annual Pricing & Ecosystem Bundle', 'Up to £99–£119/yr Auto-Renewal', '£29.99/yr Pro or £89.99/yr Complete Suite (5 Devices)']
         ]
       })}
@@ -941,7 +943,7 @@ function renderHtml(cand, existingPool = [], existingIdx = 0) {
     ${renderGlassCard({
       title: `Why Legacy Ad Blockers Fail on ${p.name} in 2026`,
       bodyHtml: `<p class="text-sm text-gray-700 leading-relaxed mb-3">Across <strong>${escapeHtml(p.name)}</strong> (${escapeHtml(p.category)}), visitors encounter ${escapeHtml(p.issue.toLowerCase())}. Standard Manifest V2 or static filter lists are frequently detected by client-side anti-adblock scripts, resulting in playback interruptions, broken page scrollbars, or persistent cookie walls.</p>
-      <p class="text-sm text-gray-700 leading-relaxed"><strong>SWEEPR Deepblock v${escapeHtml(MANIFEST_VERSION)}</strong> combines ${STATIC_RULE_COUNT} static <code>declarativeNetRequest</code> rules (264 ads &amp; trackers, 18 cryptominers, 1 tracking-param rule) with local-first DeepStealth cosmetic scriptlets so pages load cleanly without triggering anti-adblock warnings.</p>`
+      <p class="text-sm text-gray-700 leading-relaxed"><strong>SWEEPR Deepblock v${escapeHtml(MANIFEST_VERSION)}</strong> combines ${STATIC_RULE_FMT} static <code>declarativeNetRequest</code> rules across 5 rulesets (EasyList, EasyPrivacy, Regional EU, 18 cryptominers, 1 tracking-param rule) with local-first DeepStealth cosmetic scriptlets so pages load cleanly without triggering anti-adblock warnings.</p>`
     })}
 
     ${renderGlassCard({
@@ -949,7 +951,7 @@ function renderHtml(cand, existingPool = [], existingIdx = 0) {
       bodyHtml: `<ul class="space-y-2 text-sm text-gray-700 list-disc pl-5">
         <li><strong>Before SWEEPR Deepblock:</strong> ${escapeHtml(prob.beforeStat)} (${escapeHtml(p.issue)}).</li>
         <li><strong>With SWEEPR Deepblock v${escapeHtml(MANIFEST_VERSION)}:</strong> ${escapeHtml(prob.afterStat)} — verified at <strong>${escapeHtml(prob.perfStat)}</strong>.</li>
-        <li><strong>Automatic Cookie Pop-Up Rejector:</strong> Automatically selects "Reject All" on OneTrust, Quantcast, Didomi, TrustArc, and 150+ CMP overlays while keeping page scroll unlocked.</li>
+        <li><strong>Automatic Cookie Pop-Up Rejector:</strong> Automatically selects "Reject All" on OneTrust, Quantcast, Didomi, TrustArc, and ${CMP_COUNT} CMP frameworks while keeping page scroll unlocked.</li>
         <li><strong>Total Tab &amp; RAM Tamer (Included in Pro):</strong> Halts background cryptominers, hibernates idle tabs, and preserves tab session crash recovery across multi-tab sessions.</li>
         <li><strong>Live Anti-Detection Verification:</strong> Audit your browser setup anytime in our <a href="/test-lab" class="text-emerald-700 font-semibold underline">Adblock &amp; Anti-Detection Test Lab</a>.</li>
       </ul>`
@@ -963,7 +965,7 @@ function renderHtml(cand, existingPool = [], existingIdx = 0) {
           [prob.shortTitle.replace(' (2026)', ''), prob.beforeStat, prob.afterStat],
           ['Rule Match & Scriptlet Layer', 'Heavy DOM repaint delay', `${prob.perfStat} (Zero Layout Shift)`],
           ['Cookie Consent Pop-Ups', 'Manual clicks on every visit', '100% Auto-Rejected Cleanly'],
-          ['Static MV3 DNR Rule Engine', 'Limited or MV2 deprecated', `${STATIC_RULE_COUNT} static rules (264 + 18 + 1)`]
+          ['Static MV3 DNR Rule Engine', 'Limited or MV2 deprecated', `${STATIC_RULE_FMT} static rules (5 rulesets)`]
         ]
       })}
     </div>
@@ -978,7 +980,7 @@ function renderHtml(cand, existingPool = [], existingIdx = 0) {
     })}`;
     faqs = [
       { q: `Does SWEEPR Deepblock work on ${p.name} under Manifest V3?`, a: `Yes. SWEEPR Deepblock v${MANIFEST_VERSION} is purpose-built for Manifest V3 across Chrome, Edge, Brave, Opera, Vivaldi, Arc, and Firefox (desktop & Android), passing live anti-detection checks without playback warnings.` },
-      { q: `Will SWEEPR Deepblock automatically reject cookie consent pop-ups on ${p.name}?`, a: `Yes. SWEEPR Deepblock automatically clicks "No / Reject All" on 150+ GDPR and CCPA cookie consent frameworks while preserving smooth page scrolling.` },
+      { q: `Will SWEEPR Deepblock automatically reject cookie consent pop-ups on ${p.name}?`, a: `Yes. SWEEPR Deepblock automatically clicks "No / Reject All" on ${CMP_COUNT} GDPR and CCPA cookie consent frameworks while preserving smooth page scrolling.` },
       { q: `How does SWEEPR Deepblock reduce CPU and memory overhead on ${p.name}?`, a: `By blocking ad trackers and 18 cryptominer patterns at the browser DNR layer before scripts execute — and hibernating idle tabs with Total Tab & RAM Tamer — browser CPU spikes and memory bloat drop significantly.` }
     ];
   } else if (cand.cluster === 'setup') {
@@ -988,14 +990,14 @@ function renderHtml(cand, existingPool = [], existingIdx = 0) {
     desc = fitMetaDescription([
       `Install SWEEPR Deepblock on ${b.name} (${b.os}). Block video ads with MV3 anti-detection and auto-reject cookie banners cleanly.`,
       `Install SWEEPR Deepblock on ${b.name}. Block YouTube & Twitch video ads, auto-reject cookie pop-ups, and strip URL trackers.`,
-      `Best ad blocker for ${shortB}: 283 static MV3 DNR rules, DeepStealth anti-detection, automated cookie banner auto-rejection, and URL tracker stripping.`
+      `Best ad blocker for ${shortB}: ${STATIC_RULE_FMT} static MV3 DNR rules, DeepStealth anti-detection, automated cookie banner auto-rejection, and URL tracker stripping.`
     ], shortB);
     h1 = `Best Ad Blocker for ${b.name}: 2026 Setup & Verification Guide`;
-    lead = `${b.notes} Configure SWEEPR Deepblock v${MANIFEST_VERSION} on ${b.name} (${b.os}) for anti-detection video ad blocking, automated cookie consent rejection, and ${STATIC_RULE_COUNT} static DNR rules.`;
+    lead = `${b.notes} Configure SWEEPR Deepblock v${MANIFEST_VERSION} on ${b.name} (${b.os}) for anti-detection video ad blocking, automated cookie consent rejection, and ${STATIC_RULE_FMT} static DNR rules.`;
     body = `
     ${renderGlassCard({
       title: `Does ${b.name} Need a Dedicated Ad Blocker in 2026?`,
-      bodyHtml: `<p class="text-sm text-gray-700 leading-relaxed">While <strong>${escapeHtml(b.name)}</strong> (${escapeHtml(b.os)}) is popular among performance and privacy-minded users, default browser filters rarely neutralize anti-adblock detection scripts on video portals, 150+ CMP cookie consent banners, or cross-site URL tracking beacons. Adding <strong>SWEEPR Deepblock v${escapeHtml(MANIFEST_VERSION)}</strong> equips ${escapeHtml(shortB)} with ${STATIC_RULE_COUNT} static DNR rules and local-first DeepStealth scriptlets.</p>`
+      bodyHtml: `<p class="text-sm text-gray-700 leading-relaxed">While <strong>${escapeHtml(b.name)}</strong> (${escapeHtml(b.os)}) is popular among performance and privacy-minded users, default browser filters rarely neutralize anti-adblock detection scripts on video portals, ${CMP_COUNT} CMP cookie consent banners, or cross-site URL tracking beacons. Adding <strong>SWEEPR Deepblock v${escapeHtml(MANIFEST_VERSION)}</strong> equips ${escapeHtml(shortB)} with ${STATIC_RULE_FMT} static DNR rules and local-first DeepStealth scriptlets.</p>`
     })}
 
     ${renderGlassCard({
@@ -1004,7 +1006,7 @@ function renderHtml(cand, existingPool = [], existingIdx = 0) {
         <li><strong>Anti-Detection Video &amp; Banner Blocking:</strong> Eliminates pre-roll and mid-roll video ads on YouTube, Twitch, and media portals without triggering anti-adblock walls.</li>
         <li><strong>Automated Cookie Pop-Up Rejector:</strong> Silently rejects OneTrust, Quantcast, Didomi, Cookiebot, and TrustArc banners without breaking page scroll or layout.</li>
         <li><strong>URL Tracking Parameter Stripping:</strong> Automatically removes <code>utm_*</code>, <code>fbclid</code>, <code>gclid</code>, <code>msclkid</code>, and redirect tracking tokens before navigation.</li>
-        <li><strong>Cryptominer &amp; Telemetry Shield:</strong> Blocks 18 known browser cryptomining domains and 264 ad/tracker domains at the C++ network layer.</li>
+        <li><strong>Cryptominer &amp; Telemetry Shield:</strong> Blocks 18 known browser cryptomining domains and 36,000+ ad/tracker/regional rules at the C++ network layer.</li>
         <li><strong>Total Tab &amp; RAM Tamer (Included in Pro):</strong> Hibernates dormant background tabs and adds crash-safe cloud tab session recovery across up to 5 devices.</li>
       </ul>`
     })}
@@ -1024,14 +1026,14 @@ function renderHtml(cand, existingPool = [], existingIdx = 0) {
         headers: ['Capability', `Default ${shortB} Setup`, `${shortB} + SWEEPR Deepblock`],
         rows: [
           ['YouTube & Twitch Anti-Detection', 'Partial / Often Detected', 'Verified (MV3 DeepStealth)'],
-          ['GDPR / CMP Cookie Auto-Reject', 'Manual or CSS Hide Only', 'Auto-Rejects 150+ CMPs Cleanly'],
+          ['GDPR / CMP Cookie Auto-Reject', 'Manual or CSS Hide Only', `Auto-Rejects ${CMP_COUNT} CMPs Cleanly`],
           ['URL Tracker Parameter Stripping', 'Not Included by Default', 'Strips fbclid, gclid, utm_*, msclkid'],
           ['Background Tab Hibernation', 'Standard Browser Memory Footprint', 'Total Tab & RAM Tamer + Session Recovery']
         ]
       })}
     </div>`;
     faqs = [
-      { q: `What makes SWEEPR Deepblock effective on ${b.name} in 2026?`, a: `SWEEPR Deepblock v${MANIFEST_VERSION} pairs ${STATIC_RULE_COUNT} static Manifest V3 declarativeNetRequest rules with DeepStealth anti-detection scriptlets, automated cookie banner rejection, and URL tracker stripping on ${b.os}.` },
+      { q: `What makes SWEEPR Deepblock effective on ${b.name} in 2026?`, a: `SWEEPR Deepblock v${MANIFEST_VERSION} pairs ${STATIC_RULE_FMT} static Manifest V3 declarativeNetRequest rules with DeepStealth anti-detection scriptlets, automated cookie banner rejection, and URL tracker stripping on ${b.os}.` },
       { q: `How many devices does one SWEEPR Deepblock license cover on ${b.name}?`, a: `A single SWEEPR Deepblock Pro license (£29.99/yr) covers up to 5 browsers/devices, while the Sweepr Complete Security Suite (£89.99/yr) covers up to 5 devices across Windows, macOS, Linux, and Android Firefox.` },
       { q: `How can I test if my ad blocker is working properly on ${b.name}?`, a: `Visit https://sweeprdeepblock.com/test-lab on ${b.name} to run live verification checks covering video ad scripts, tracker beacons, cookie walls, URL parameter stripping, and anti-adblock stealth.` }
     ];
@@ -1052,8 +1054,8 @@ function renderHtml(cand, existingPool = [], existingIdx = 0) {
         headers: ['Feature / Protection Layer', `SWEEPR Deepblock v${MANIFEST_VERSION}`, c.name],
         rows: [
           ['YouTube & Video Anti-Detection (Live Test Lab)', 'Yes (MV3 DeepStealth Engine)', 'Partial / Frequently Flagged'],
-          ['Automatic Cookie Pop-Up Rejector', 'Included (150+ CMP Frameworks)', c.cookieReject || 'Limited / Manual'],
-          ['Static MV3 DNR Rule Engine', `${STATIC_RULE_COUNT} Static Rules (264 + 18 + 1)`, 'Varies / MV2 or DNS-only limits'],
+          ['Automatic Cookie Pop-Up Rejector', `Included (${CMP_COUNT} CMP Frameworks)`, c.cookieReject || 'Limited / Manual'],
+          ['Static MV3 DNR Rule Engine', `${STATIC_RULE_FMT} Static Rules (5 Rulesets)`, 'Varies / MV2 or DNS-only limits'],
           ['URL Tracker Parameter Stripping', 'Automatic (fbclid, gclid, utm_*)', 'Limited or Not Included'],
           ['Total Tab & RAM Tamer', 'Included Free in Pro (5 Devices)', c.ramTamer || 'Not Included'],
           ['Pricing & Renewal Transparency', '£29.99/yr Pro (5 Devices) or £89.99/yr Suite (5 Devices)', c.price]
@@ -1105,7 +1107,7 @@ function renderHtml(cand, existingPool = [], existingIdx = 0) {
     ${renderGlassCard({
       title: 'Key Performance & Privacy Metrics',
       bodyHtml: `<ul class="space-y-2 text-sm text-gray-700 list-disc pl-5">
-        <li><strong>Rule Engine &amp; Latency:</strong> ${STATIC_RULE_COUNT} static MV3 DNR rules (264 ads &amp; trackers, 18 cryptominers, 1 URL parameter rule) with automated cookie consent rejection and zero scroll-lock breakage.</li>
+        <li><strong>Rule Engine &amp; Latency:</strong> ${STATIC_RULE_FMT} static MV3 DNR rules across 5 rulesets (EasyList, EasyPrivacy, Regional EU, 18 cryptominers, 1 URL parameter rule) with automated cookie consent rejection and zero scroll-lock breakage.</li>
         <li><strong>Tab &amp; Resource Optimization:</strong> Halts background cryptominer and ad auction scripts and pairs with Total Tab &amp; RAM Tamer for idle tab hibernation.</li>
         <li><strong>Local-First Privacy Architecture:</strong> 100% on-device rule execution — zero browsing history or visited URLs ever leave your device.</li>
       </ul>`

@@ -14,9 +14,9 @@ const LIVE_REVIEWS_PATH = path.join(DATA_DIR, 'live-competitor-reviews.json');
 
 const MANIFEST_VERSION = (() => {
   try {
-    return JSON.parse(fs.readFileSync(path.join(ROOT_DIR, 'extension', 'manifest.json'), 'utf8')).version || '1.3.1';
+    return JSON.parse(fs.readFileSync(path.join(ROOT_DIR, 'extension', 'manifest.json'), 'utf8')).version || '1.4.0';
   } catch {
-    return '1.3.1';
+    return '1.4.0';
   }
 })();
 
@@ -24,6 +24,8 @@ const STATIC_RULE_COUNT = (() => {
   let total = 0;
   for (const rel of [
     'extension/rules/static_ads_and_trackers.json',
+    'extension/rules/easyprivacy_trackers.json',
+    'extension/rules/regional_eu_filters.json',
     'extension/rules/cryptominers.json',
     'extension/rules/tracker_params.json'
   ]) {
@@ -33,7 +35,7 @@ const STATIC_RULE_COUNT = (() => {
       total += arr.length;
     } catch {}
   }
-  return total || 283;
+  return total || 36019;
 })();
 
 const DELTA_RULE_COUNT = (() => {
@@ -239,7 +241,7 @@ if (fs.existsSync(KEYWORD_MATRIX_PATH)) {
   } catch {}
 }
 
-// Audit existing /vs/* pages for v1.3.1 coverage & removed-feature drift
+// Audit existing /vs/* pages for current version coverage & removed-feature drift
 const vsFiles = fs.existsSync(VS_DIR) ? fs.readdirSync(VS_DIR).filter((f) => f.endsWith('.html')) : [];
 const vsCoverage = vsFiles.map((file) => {
   const html = fs.readFileSync(path.join(VS_DIR, file), 'utf8');
@@ -248,9 +250,9 @@ const vsCoverage = vsFiles.map((file) => {
     mentionsRenewalPricing: /£29\.99|£89\.99|£99|renewal/i.test(html),
     mentionsMv3Engine: /Manifest V3|declarativeNetRequest|DeepStealth/i.test(html),
     mentionsCookieRejector: /cookie/i.test(html),
-    mentionsV131: /v?1\.3\.1/i.test(html),
-    mentions283Rules: /\b283\b/.test(html),
-    hasRemovedFeatureDrift: /Fake Online Shop|fakeShopAlerts|AI Slop|hideSearchSpam|Safari.*iOS/i.test(html)
+    mentionsCurrentVersion: html.includes(MANIFEST_VERSION),
+    mentionsStaticRuleCount: html.includes(String(STATIC_RULE_COUNT)) || html.includes(STATIC_RULE_COUNT.toLocaleString('en-US')),
+    hasRemovedFeatureDrift: /Fake Online Shop|fakeShopAlerts|AI Slop|hideSearchSpam/i.test(html)
   };
 });
 const scamDetectorDriftCount = vsCoverage.filter((v) => v.hasRemovedFeatureDrift).length;

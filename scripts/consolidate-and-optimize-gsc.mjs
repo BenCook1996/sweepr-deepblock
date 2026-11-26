@@ -302,147 +302,147 @@ const RAW_PILLAR_PATHS = [
 const EXACT_QUERY_SURGERY = {
   '/setup/thorium-chromium-browser': {
     title: 'Thorium AdBlock (2026): Best Ad Blocker for Thorium Browser',
-    desc: 'Looking for Thorium AdBlock? Install SWEEPR Deepblock v1.3.1 on Thorium Browser (AVX2) to block YouTube pre-roll ads, popunders, and cookie banners.',
+    desc: 'Looking for Thorium AdBlock? Install SWEEPR Deepblock v1.4.0 on Thorium Browser (AVX2) to block YouTube pre-roll ads, popunders, and cookie banners.',
     h1: 'Thorium AdBlock (2026): Best MV3 Ad Blocker for Thorium Browser (AVX2)',
-    lead: 'Searching for the best Thorium AdBlock setup? Pair Thorium Fast Chromium Browser (AVX2/SSE4) on Windows and Linux with SWEEPR Deepblock v1.3.1 for anti-detection YouTube ad blocking, automatic cookie pop-up rejection, and tab RAM hibernation.'
+    lead: 'Searching for the best Thorium AdBlock setup? Pair Thorium Fast Chromium Browser (AVX2/SSE4) on Windows and Linux with SWEEPR Deepblock v1.4.0 for anti-detection YouTube ad blocking, automatic cookie pop-up rejection, and tab RAM hibernation.'
   },
   '/setup/orion-browser-macos-ios': {
     title: 'Orion Browser Ad Blocker (macOS): Block YouTube Ads',
-    desc: 'Need an Orion browser ad blocker on macOS? SWEEPR Deepblock v1.3.1 supports Chrome & Firefox extensions on Orion macOS for video ads and cookie banners.',
+    desc: 'Need an Orion browser ad blocker on macOS? SWEEPR Deepblock v1.4.0 supports Chrome & Firefox extensions on Orion macOS for video ads and cookie banners.',
     h1: 'Orion Browser Ad Blocker (macOS): 2026 Setup & WebExtension Guide',
-    lead: 'Orion Browser on macOS supports Chrome and Firefox WebExtensions alongside built-in filtering. Adding SWEEPR Deepblock v1.3.1 gives Orion macOS video ad blocking and automatic GDPR cookie rejection.'
+    lead: 'Orion Browser on macOS supports Chrome and Firefox WebExtensions alongside built-in filtering. Adding SWEEPR Deepblock v1.4.0 gives Orion macOS video ad blocking and automatic GDPR cookie rejection.'
   },
   '/setup/floorp-browser-firefox-fork': {
     title: 'Floorp AdBlock (2026): Best Ad Blocker for Floorp Browser',
-    desc: 'Set up Floorp AdBlock in 30 seconds. SWEEPR Deepblock v1.3.1 adds anti-detection YouTube ad blocking, cookie auto-rejection, and tab RAM hibernation.',
+    desc: 'Set up Floorp AdBlock in 30 seconds. SWEEPR Deepblock v1.4.0 adds anti-detection YouTube ad blocking, cookie auto-rejection, and tab RAM hibernation.',
     h1: 'Floorp AdBlock Setup (2026): Best Ad & Tracker Blocker for Floorp Browser',
-    lead: 'Upgrade Floorp Browser (Firefox-based workspaces & vertical tabs) with SWEEPR Deepblock v1.3.1. Block unskippable YouTube and Crunchyroll video commercials, auto-decline GDPR cookie walls, and hibernate background workspace tabs.'
+    lead: 'Upgrade Floorp Browser (Firefox-based workspaces & vertical tabs) with SWEEPR Deepblock v1.4.0. Block unskippable YouTube and Crunchyroll video commercials, auto-decline GDPR cookie walls, and hibernate background workspace tabs.'
   },
   '/setup/arc-browser-windows-mac': {
     title: 'Arc Browser Ad Blocker (2026): Best Arc AdBlocker (Win & Mac)',
     desc: 'Install the best Arc browser ad blocker for Windows 11 and macOS. Block YouTube mid-roll ads, auto-reject cookie banners, and tame Arc tab RAM.',
     h1: 'Arc Browser Ad Blocker (Windows & Mac): Best Arc AdBlocker Setup (2026)',
-    lead: 'Looking for an Arc browser ad blocker that also fixes Arc high memory usage? SWEEPR Deepblock v1.3.1 installs in 30 seconds on Arc for Windows 11 and macOS, blocking YouTube pre-roll ads, auto-rejecting cookie pop-ups, and hibernating inactive tabs.'
+    lead: 'Looking for an Arc browser ad blocker that also fixes Arc high memory usage? SWEEPR Deepblock v1.4.0 installs in 30 seconds on Arc for Windows 11 and macOS, blocking YouTube pre-roll ads, auto-rejecting cookie pop-ups, and hibernating inactive tabs.'
   },
   '/setup/zen-browser-privacy-tabs': {
     title: 'Zen Browser Ad Blocker (2026): Block YouTube Ads & Tame RAM',
-    desc: 'Upgrade Zen Browser with SWEEPR Deepblock v1.3.1: anti-detection YouTube ad blocking, automatic cookie pop-up rejection, and URL tracker stripping.',
+    desc: 'Upgrade Zen Browser with SWEEPR Deepblock v1.4.0: anti-detection YouTube ad blocking, automatic cookie pop-up rejection, and URL tracker stripping.',
     h1: 'Zen Browser Ad Blocker (2026): Zero-Lag YouTube Blocking & Tab RAM Tamer',
-    lead: 'Zen Browser delivers a clean Firefox-based vertical tab experience. Pairing Zen Browser with SWEEPR Deepblock v1.3.1 adds anti-detection video ad blocking on YouTube and Twitch, automatic cookie banner rejection, and Total Tab & RAM Tamer.'
+    lead: 'Zen Browser delivers a clean Firefox-based vertical tab experience. Pairing Zen Browser with SWEEPR Deepblock v1.4.0 adds anti-detection video ad blocking on YouTube and Twitch, automatic cookie banner rejection, and Total Tab & RAM Tamer.'
   },
   '/setup/kiwi-browser-android': {
     title: 'Kiwi Browser Archived: Android AdBlock Migration Guide (2026)',
-    desc: 'Kiwi Browser was archived in January 2025. Migrate to Mozilla Firefox for Android or Edge Android with SWEEPR Deepblock v1.3.1 for MV3 ad & cookie blocking.',
+    desc: 'Kiwi Browser was archived in January 2025. Migrate to Mozilla Firefox for Android or Edge Android with SWEEPR Deepblock v1.4.0 for MV3 ad & cookie blocking.',
     h1: 'Kiwi Browser Archived (Jan 2025): Recommended Android Ad Blocker Setup',
-    lead: 'Kiwi Browser was archived in January 2025 and no longer receives Chromium security updates. Install SWEEPR Deepblock v1.3.1 on Mozilla Firefox for Android (.xpi) or Microsoft Edge Android to block mobile video ads, pop-unders, and GDPR cookie walls.'
+    lead: 'Kiwi Browser was archived in January 2025 and no longer receives Chromium security updates. Install SWEEPR Deepblock v1.4.0 on Mozilla Firefox for Android (.xpi) or Microsoft Edge Android to block mobile video ads, pop-unders, and GDPR cookie walls.'
   },
   '/setup/ungoogled-chromium-mv3': {
     title: 'Ungoogled Chromium Ad Blocker (MV3): Setup Without Web Store',
-    desc: 'Install SWEEPR Deepblock v1.3.1 on Ungoogled Chromium (MV3) without Google sync. Block YouTube video ads, trackers, and cookie walls.',
+    desc: 'Install SWEEPR Deepblock v1.4.0 on Ungoogled Chromium (MV3) without Google sync. Block YouTube video ads, trackers, and cookie walls.',
     h1: 'Ungoogled Chromium MV3 Ad Blocker (2026): Direct Setup & Anti-Detection Guide',
-    lead: 'Running Ungoogled Chromium on Linux, Windows, or macOS? Load SWEEPR Deepblock v1.3.1 directly without a Google account to enforce anti-detection video ad blocking, URL tracker stripping, and cookie wall rejection.'
+    lead: 'Running Ungoogled Chromium on Linux, Windows, or macOS? Load SWEEPR Deepblock v1.4.0 directly without a Google account to enforce anti-detection video ad blocking, URL tracker stripping, and cookie wall rejection.'
   },
   '/setup/brave-macos-apple-silicon': {
     title: 'Brave Mac Ad Blocker (Apple Silicon M1–M4): Stop YouTube Lag',
-    desc: 'Boost Brave Browser on macOS Apple Silicon (M1–M4) with SWEEPR Deepblock v1.3.1: auto-reject GDPR cookie walls, strip URL trackers, and hibernate tabs.',
+    desc: 'Boost Brave Browser on macOS Apple Silicon (M1–M4) with SWEEPR Deepblock v1.4.0: auto-reject GDPR cookie walls, strip URL trackers, and hibernate tabs.',
     h1: 'Brave Browser on Mac (Apple Silicon M1/M2/M3/M4): SWEEPR Deepblock Setup',
-    lead: 'Even with Brave Shields enabled on macOS, GDPR cookie consent banners and YouTube anti-adblock prompts can still interrupt browsing. Add SWEEPR Deepblock v1.3.1 on Apple Silicon Macs for automated cookie auto-rejection, URL tracker stripping, and Total Tab & RAM Tamer.'
+    lead: 'Even with Brave Shields enabled on macOS, GDPR cookie consent banners and YouTube anti-adblock prompts can still interrupt browsing. Add SWEEPR Deepblock v1.4.0 on Apple Silicon Macs for automated cookie auto-rejection, URL tracker stripping, and Total Tab & RAM Tamer.'
   },
   '/setup/librewolf-hardened-firefox': {
     title: 'LibreWolf Ad Blocker (2026): Hardened Privacy & RAM Tamer',
-    desc: 'Configure SWEEPR Deepblock v1.3.1 on LibreWolf Hardened Firefox. Add automatic cookie banner rejection, Element Zapper, and tab RAM hibernation.',
+    desc: 'Configure SWEEPR Deepblock v1.4.0 on LibreWolf Hardened Firefox. Add automatic cookie banner rejection, Element Zapper, and tab RAM hibernation.',
     h1: 'LibreWolf Ad Blocker Setup (2026): Hardened Anti-Detection & Cookie Auto-Reject',
-    lead: 'LibreWolf clears cookies on exit, causing websites to bombard you with repeated GDPR cookie walls on every visit. SWEEPR Deepblock v1.3.1 automatically clicks Reject All while blocking video ads and stripping URL trackers.'
+    lead: 'LibreWolf clears cookies on exit, causing websites to bombard you with repeated GDPR cookie walls on every visit. SWEEPR Deepblock v1.4.0 automatically clicks Reject All while blocking video ads and stripping URL trackers.'
   },
   '/solutions/crunchyroll-anime-streams-block-video-ads': {
     title: 'How to Get No Ads on Crunchyroll PC (Best Crunchyroll AdBlock)',
     desc: 'Learn how to get no ads on Crunchyroll PC in 2026. Block unskippable Crunchyroll pre-roll and mid-roll video commercials without black screens.',
     h1: 'How to Get No Ads on Crunchyroll PC (2026 Best AdBlocker for Crunchyroll)',
-    lead: 'Tired of unskippable commercials when watching anime on Crunchyroll on PC? Discover how SWEEPR Deepblock v1.3.1 neutralizes Crunchyroll VAST/VMAP pre-roll and mid-roll video ad pods in Chrome, Firefox, Edge, and Brave without black-screen freezes.'
+    lead: 'Tired of unskippable commercials when watching anime on Crunchyroll on PC? Discover how SWEEPR Deepblock v1.4.0 neutralizes Crunchyroll VAST/VMAP pre-roll and mid-roll video ad pods in Chrome, Firefox, Edge, and Brave without black-screen freezes.'
   },
   '/solutions/fandom-game-wikis-reduce-browser-ram-usage': {
     title: 'Why Does Fandom Use So Much RAM? Fix Fandom Memory & Video Ads',
-    desc: 'Why does Fandom use so much memory and RAM? Fandom loads autoplay videos and dozens of ad auction scripts. Block Fandom bloat with SWEEPR Deepblock v1.3.1.',
+    desc: 'Why does Fandom use so much memory and RAM? Fandom loads autoplay videos and dozens of ad auction scripts. Block Fandom bloat with SWEEPR Deepblock v1.4.0.',
     h1: 'Why Does Fandom Use So Much Memory & RAM? (Fix Fandom Wiki Lag in 2026)',
-    lead: 'Wondering why Fandom uses so much memory when you open a few gaming wiki tabs? A single Fandom page executes dozens of real-time ad bidding scripts and sticky autoplay video players. SWEEPR Deepblock v1.3.1 blocks those scripts before execution and hibernates inactive wiki tabs.'
+    lead: 'Wondering why Fandom uses so much memory when you open a few gaming wiki tabs? A single Fandom page executes dozens of real-time ad bidding scripts and sticky autoplay video players. SWEEPR Deepblock v1.4.0 blocks those scripts before execution and hibernates inactive wiki tabs.'
   },
   '/solutions/webtoon-manhwa-readers-block-video-ads': {
     title: 'Webtoon Ad Blocker (2026): Block Popunders, Banners & Video Ads',
     desc: 'Webtoon ad blocker for desktop and Firefox Android. Stop full-screen manhwa redirect popunders, sticky banners, and video ads automatically.',
     h1: 'Webtoon Ad Blocker (2026): Stop Manhwa Redirect Pop-Unders & Sticky Banners',
-    lead: 'Reading Webtoons or manhwa online shouldn’t trigger full-screen tab redirects or sticky banners that block vertical scrolling. SWEEPR Deepblock v1.3.1 intercepts click-jacking pop-under scripts and banner overlays cleanly.'
+    lead: 'Reading Webtoons or manhwa online shouldn’t trigger full-screen tab redirects or sticky banners that block vertical scrolling. SWEEPR Deepblock v1.4.0 intercepts click-jacking pop-under scripts and banner overlays cleanly.'
   },
   '/solutions/manga-comic-readers-block-video-ads': {
     title: 'How to Block Ads on Manga Sites (2026 Manga Reader AdBlocker)',
     desc: 'Learn how to block ads on manga sites without breaking chapter images. Stop click-jacking redirects, pop-unders, and sticky banners.',
     h1: 'How to Block Ads on Manga Sites (Stop Pop-Unders & Redirects on Manga Readers)',
-    lead: 'Searching for how to block ads on manga sites without breaking chapter image loaders? SWEEPR Deepblock v1.3.1 neutralizes deceptive overlay click-traps, new-tab pop-unders, and floating banners across manga and comic readers.'
+    lead: 'Searching for how to block ads on manga sites without breaking chapter image loaders? SWEEPR Deepblock v1.4.0 neutralizes deceptive overlay click-traps, new-tab pop-unders, and floating banners across manga and comic readers.'
   },
   '/solutions/linkedin-feed-ads-block-video-ads': {
     title: 'LinkedIn Ad Blocker Chrome Extension: Block Promoted Feed Ads',
     desc: 'Need a Chrome extension that stops LinkedIn ads? Hide promoted posts, sponsored video ads, and tracking beacons in your LinkedIn feed.',
     h1: 'LinkedIn Ad Blocker Extension for Chrome & Firefox: Hide Promoted Feed Ads',
-    lead: 'Looking for a Chrome extension that stops LinkedIn ads and promoted posts from cluttering your professional feed? SWEEPR Deepblock v1.3.1 hides Promoted feed cards, autoplay video ads, and strips outbound tracking parameters.'
+    lead: 'Looking for a Chrome extension that stops LinkedIn ads and promoted posts from cluttering your professional feed? SWEEPR Deepblock v1.4.0 hides Promoted feed cards, autoplay video ads, and strips outbound tracking parameters.'
   },
   '/solutions/soundcloud-audio-player-block-video-ads': {
     title: 'SoundCloud Ad Blocker Extension: How to Block SoundCloud Ads',
-    desc: 'Learn how to block ads on SoundCloud Web Player. Silence between-track audio commercials and banner clutter with SWEEPR Deepblock v1.3.1.',
+    desc: 'Learn how to block ads on SoundCloud Web Player. Silence between-track audio commercials and banner clutter with SWEEPR Deepblock v1.4.0.',
     h1: 'SoundCloud Ad Blocker Extension (2026): How to Block Audio Ads on SoundCloud',
-    lead: 'Want to know how to block ads on SoundCloud without interruptions between tracks? SWEEPR Deepblock v1.3.1 intercepts third-party audio ad streams, visual takeover banners, and telemetry beacons.'
+    lead: 'Want to know how to block ads on SoundCloud without interruptions between tracks? SWEEPR Deepblock v1.4.0 intercepts third-party audio ad streams, visual takeover banners, and telemetry beacons.'
   },
   '/solutions/dex-token-screeners-block-video-ads': {
     title: 'DEXScreener Ad Blocker: Block Token Banners & Malvertising Ads',
-    desc: 'Block intrusive DEXScreener ads and high-CPU banner clutter while keeping live crypto charts fast with SWEEPR Deepblock v1.3.1.',
+    desc: 'Block intrusive DEXScreener ads and high-CPU banner clutter while keeping live crypto charts fast with SWEEPR Deepblock v1.4.0.',
     h1: 'DEXScreener Ad Blocker (2026): Stop Intrusive Banners & Chart Lag',
-    lead: 'Trading on DEXScreener or token price trackers exposes your browser to high-CPU banner ads and malvertising pop-ups. SWEEPR Deepblock v1.3.1 strips DEXScreener ad slots and blocks cryptominer scripts natively.'
+    lead: 'Trading on DEXScreener or token price trackers exposes your browser to high-CPU banner ads and malvertising pop-ups. SWEEPR Deepblock v1.4.0 strips DEXScreener ad slots and blocks cryptominer scripts natively.'
   },
   '/solutions/geeksforgeeks-dev-portals-block-video-ads': {
     title: 'GeeksforGeeks Ad Blocker: Stop Login Popups & Video Banners',
-    desc: 'Block intrusive GeeksforGeeks video ads, sticky course banners, and overlay clutter while reading coding tutorials with SWEEPR Deepblock v1.3.1.',
+    desc: 'Block intrusive GeeksforGeeks video ads, sticky course banners, and overlay clutter while reading coding tutorials with SWEEPR Deepblock v1.4.0.',
     h1: 'GeeksforGeeks Ad Blocker (2026): Remove Floating Videos & Overlay Clutter',
-    lead: 'Reading algorithms and coding articles on GeeksforGeeks shouldn’t mean fighting floating video players and expanding header banners. SWEEPR Deepblock v1.3.1 cleans developer documentation portals automatically.'
+    lead: 'Reading algorithms and coding articles on GeeksforGeeks shouldn’t mean fighting floating video players and expanding header banners. SWEEPR Deepblock v1.4.0 cleans developer documentation portals automatically.'
   },
   '/solutions/roblox-web-community-filter-ai-slop-and-scams': {
     title: 'Roblox Web Ad & Pop-Up Blocker: Clean Wikis & Community Sites',
-    desc: 'Clean up Roblox community wikis and accessory portals with SWEEPR Deepblock v1.3.1. Block banner ads, pop-under redirects, and tracking beacons.',
+    desc: 'Clean up Roblox community wikis and accessory portals with SWEEPR Deepblock v1.4.0. Block banner ads, pop-under redirects, and tracking beacons.',
     h1: 'Roblox Web Community Ad & Pop-Up Blocker (2026 Guide)',
-    lead: 'Roblox community wikis, value lists, and accessory portals are overloaded with intrusive display banners and pop-under redirects. SWEEPR Deepblock v1.3.1 blocks third-party ad networks and strips tracking links.'
+    lead: 'Roblox community wikis, value lists, and accessory portals are overloaded with intrusive display banners and pop-under redirects. SWEEPR Deepblock v1.4.0 blocks third-party ad networks and strips tracking links.'
   },
   '/solutions/rumble-video-streams-block-video-ads': {
     title: 'Rumble Ad Blocker (2026): Block Pre-Roll & Mid-Roll Video Ads',
-    desc: 'Block unskippable pre-roll and mid-roll commercials on Rumble video streams. SWEEPR Deepblock v1.3.1 stops Rumble ads cleanly.',
+    desc: 'Block unskippable pre-roll and mid-roll commercials on Rumble video streams. SWEEPR Deepblock v1.4.0 stops Rumble ads cleanly.',
     h1: 'Rumble Ad Blocker (2026): Block Pre-Roll & Livestream Ads Without Playback Lag',
-    lead: 'Watching videos or livestreams on Rumble? SWEEPR Deepblock v1.3.1 intercepts Rumble’s VAST pre-roll ad requests and collapses sidebar display banners so videos start immediately.'
+    lead: 'Watching videos or livestreams on Rumble? SWEEPR Deepblock v1.4.0 intercepts Rumble’s VAST pre-roll ad requests and collapses sidebar display banners so videos start immediately.'
   },
   '/solutions/tumblr-blog-feeds-block-video-ads': {
     title: 'Tumblr Ad Blocker (2026): Hide Sponsored Posts & Video Ads',
-    desc: 'Clean up your Tumblr dashboard with SWEEPR Deepblock v1.3.1. Block Tumblr sponsored posts, Blaze promotions, and autoplay video ads.',
+    desc: 'Clean up your Tumblr dashboard with SWEEPR Deepblock v1.4.0. Block Tumblr sponsored posts, Blaze promotions, and autoplay video ads.',
     h1: 'Tumblr Ad Blocker: Hide Dashboard Sponsored Posts & Autoplay Video Ads',
-    lead: 'Stop sponsored posts, Blaze promotions, and sticky video widgets from interrupting your Tumblr dashboard. SWEEPR Deepblock v1.3.1 hides Tumblr feed ads and strips outbound tracking parameters.'
+    lead: 'Stop sponsored posts, Blaze promotions, and sticky video widgets from interrupting your Tumblr dashboard. SWEEPR Deepblock v1.4.0 hides Tumblr feed ads and strips outbound tracking parameters.'
   },
   '/guides/how-to-automatically-reject-cookie-banners-uk': {
     title: 'Automatically Reject Cookies (2026): Auto-Decline Popups',
-    desc: 'Automatically reject cookies across UK, EU, and US websites without breaking page scroll. SWEEPR Deepblock v1.3.1 clicks Reject All on OneTrust & 150+ CMPs.',
+    desc: 'Automatically reject cookies across UK, EU, and US websites without breaking page scroll. SWEEPR Deepblock v1.4.0 clicks Reject All on OneTrust & 160 CMPs.',
     h1: 'How to Automatically Reject Cookies & GDPR Pop-Ups Without Scroll Lock (2026)',
-    lead: 'Tired of clicking "Manage Preferences" and "Reject All" on every website you visit? SWEEPR Deepblock v1.3.1 automatically rejects non-essential cookies across OneTrust, Quantcast, Didomi, Cookiebot, TrustArc, and major CMP frameworks without breaking page scroll.'
+    lead: 'Tired of clicking "Manage Preferences" and "Reject All" on every website you visit? SWEEPR Deepblock v1.4.0 automatically rejects non-essential cookies across OneTrust, Quantcast, Didomi, Cookiebot, TrustArc, and 160 CMP frameworks without breaking page scroll.'
   },
   '/guides/how-to-block-twitch-midroll-commercials-without-black-screen': {
     title: 'Blocking Mid-Roll Ads on Twitch & YouTube Without Black Screen',
-    desc: 'Master blocking mid-roll ads on Twitch and YouTube in 2026 without black screens or purple playback errors using SWEEPR Deepblock v1.3.1.',
+    desc: 'Master blocking mid-roll ads on Twitch and YouTube in 2026 without black screens or purple playback errors using SWEEPR Deepblock v1.4.0.',
     h1: 'Blocking Mid-Roll Ads on Twitch & YouTube Without Black Screens (2026 Guide)',
-    lead: 'Legacy ad blockers frequently trigger black screens, infinite buffering spinners, or Twitch’s purple error screen when blocking mid-roll ads. Learn how SWEEPR Deepblock v1.3.1 neutralizes mid-roll video commercials cleanly.'
+    lead: 'Legacy ad blockers frequently trigger black screens, infinite buffering spinners, or Twitch’s purple error screen when blocking mid-roll ads. Learn how SWEEPR Deepblock v1.4.0 neutralizes mid-roll video commercials cleanly.'
   },
   '/guides/how-to-block-sponsored-posts-and-crypto-bots-on-x-twitter': {
     title: 'How to Stop Spam Ads on Twitter / X (Block Promoted Tweets)',
     desc: 'Learn how to stop spam ads on Twitter (X) in 2026. Automatically hide promoted tweets, crypto scam replies, and tracking pixels.',
     h1: 'How to Stop Spam Ads on Twitter / X (Block Promoted Posts & Crypto Scam Bots)',
-    lead: 'Searching for how to stop spam ads on Twitter (X)? SWEEPR Deepblock v1.3.1 strips disguised "Ad" and "Promoted" posts from your timeline while blocking known malvertising links.'
+    lead: 'Searching for how to stop spam ads on Twitter (X)? SWEEPR Deepblock v1.4.0 strips disguised "Ad" and "Promoted" posts from your timeline while blocking known malvertising links.'
   },
   '/guides/how-to-block-reddit-sponsored-promoted-posts-in-feed': {
     title: 'Reddit Promoted Ad Blocker: Hide Sponsored Posts in Feed (2026)',
     desc: 'Looking for a Reddit promoted ad blocker? Automatically hide disguised "Promoted" posts in feeds and comment threads on Reddit Web.',
     h1: 'Reddit Promoted Ad Blocker: How to Hide Sponsored Posts in Feeds & Comments',
-    lead: 'Reddit disguises promoted advertisements as genuine user posts and top comments. SWEEPR Deepblock v1.3.1 hides `<shreddit-ad-post>` and promoted comment units before they clutter your screen.'
+    lead: 'Reddit disguises promoted advertisements as genuine user posts and top comments. SWEEPR Deepblock v1.4.0 hides `<shreddit-ad-post>` and promoted comment units before they clutter your screen.'
   },
   '/vs/total-adblock': {
     title: 'SWEEPR Deepblock vs Total Adblock (2026 Pricing & Test Lab)',

@@ -19,7 +19,7 @@ Built natively on Chromium, Gecko, and Safari WebKit Manifest V3 `declarativeNet
 - **Zero-CLS Cosmetic Sanitization & Element Zapper**: Collapses empty ad slots, sticky footer banners, and user-selected clutter without triggering Cumulative Layout Shift or `adsbox` bait honeypots.
 
 ### B. Automated Cookie Consent "Reject All" Engine & Scroll Unlock
-- **Automated Execution**: Evaluates incoming DOM nodes against 160 verified Consent Management Platforms (OneTrust, Didomi, Usercentrics, Quantcast, Sourcepoint, Cookiebot, TrustArc, Axeptio, Civic UK, Complianz, and 150+ additional frameworks) with 9-locale reject matching.
+- **Automated Execution**: Evaluates incoming DOM nodes against 160 verified Consent Management Platforms (OneTrust, Didomi, Usercentrics, Quantcast, Sourcepoint, Cookiebot, TrustArc, Axeptio, Civic UK, Complianz, and all 160 verified CMP frameworks) with 9-locale reject matching.
 - **Genuine Opt-Out Signal**: Triggers the strict "Reject All / Necessary Only" API/button path rather than merely hiding the banner with CSS.
 - **Scroll-Lock Restoration**: Automatically strips residual `overflow: hidden`, `position: fixed`, and backdrop pointer locks from `<html>` and `<body>`.
 

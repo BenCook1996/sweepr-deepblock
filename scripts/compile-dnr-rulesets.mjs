@@ -552,6 +552,13 @@ function parseAbpLineToDnr(rawLine) {
   if (excludedInitiatorDomains.length > 0) {
     condition.excludedInitiatorDomains = [...new Set(excludedInitiatorDomains)].sort();
   }
+  if (
+    !isAllow &&
+    initiatorDomains.length === 0 &&
+    /(?:^|[.|])(?:google-analytics\.com|googletagmanager\.com)(?:[^a-z0-9.-]|$)/i.test(pattern)
+  ) {
+    condition.excludedInitiatorDomains = [...new Set([...(condition.excludedInitiatorDomains || []), ...SWEEPR_DOMAINS])].sort();
+  }
   if (matchCase) condition.isUrlFilterCaseSensitive = true;
 
   // Priority strictly in 1..5 (never >= 10)

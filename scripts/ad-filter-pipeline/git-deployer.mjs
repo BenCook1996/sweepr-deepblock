@@ -120,6 +120,7 @@ function collectExtensionFiles(dir, baseDir = dir) {
       if (item.name === '_metadata') continue;
       results.push(...collectExtensionFiles(full, baseDir));
     } else if (item.isFile()) {
+      if (item.name === 'abp_filter_list.txt') continue;
       const rel = path.relative(baseDir, full).replace(/\\/g, '/');
       results.push({ name: rel, fullPath: full, data: fs.readFileSync(full) });
     }
@@ -127,11 +128,24 @@ function collectExtensionFiles(dir, baseDir = dir) {
   return results;
 }
 
+function sanitizeProdJs(code) {
+  return code
+    .replace(
+      /const isDevExtension\s*=\s*[^;]+;/g,
+      'const isDevExtension = false;'
+    )
+    .replace(/['"`]http:\/\/(?:localhost|127\.0\.0\.1):\d+[^'"`]*['"`]\s*,?\s*/g, '')
+    .replace(
+      /\.\.\.\(isDevExtension\s*\?\s*\[[^\]]*\]\s*:\s*\[\]\)\s*,?\s*/g,
+      ''
+    );
+}
+
 /**
  * Strips Chromium-only feature-guarded API blocks so Firefox XPI/AMO builds stay warning-free.
  */
 function sanitizeFirefoxXpiJs(code) {
-  return code
+  return sanitizeProdJs(code)
     .replace(
       /\r?\n[ \t]*if \(updateAvailable && chrome\.runtime && typeof chrome\.runtime\.requestUpdateCheck === 'function'\) \{\r?\n[ \t]*try \{\r?\n[ \t]*chrome\.runtime\.requestUpdateCheck\(\(\) => \{\}\);\r?\n[ \t]*\} catch \(e\) \{\}\r?\n[ \t]*\}/g,
       ''
@@ -176,10 +190,16 @@ export function rebuildAllBrowserAndDevicePackages() {
         try {
           const manifestObj = JSON.parse(data.toString('utf8'));
           delete manifestObj.browser_specific_settings;
+          if (manifestObj.background && typeof manifestObj.background === 'object') {
+            delete manifestObj.background.scripts;
+          }
           return { name, data: Buffer.from(JSON.stringify(manifestObj, null, 2) + '\n', 'utf8') };
         } catch {
           return { name, data };
         }
+      }
+      if (name.endsWith('.js')) {
+        return { name, data: Buffer.from(sanitizeProdJs(data.toString('utf8')), 'utf8') };
       }
       return { name, data };
     });

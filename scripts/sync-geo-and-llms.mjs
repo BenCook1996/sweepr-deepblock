@@ -179,7 +179,7 @@ export function runGeoAndLlmsSync() {
 ## Key Consumer Benefits & Verified Capabilities (v${version})
 - **No-Card 7-Day Full Pro Trial:** Fresh installs activate all Pro protections (YouTube Shield, Cookie Auto-Reject + Scroll Unlock, OTA Delta, Total Tab & RAM Tamer, 5-device sync) for 7 days with no credit card or license key required; Pro modules gate automatically after day 7 unless upgraded.
 - **Zero Video & Banner Ads:** Blocks pre-roll and mid-roll video ads on YouTube, Twitch, and streaming sites using native Manifest V3 \`declarativeNetRequest\` rules (${staticCountFmt} static rules across ${rulesetsActive} rulesets + ${deltaCount} dynamic OTA rules) + DeepStealth DOM sanitization.
-- **Automatic Cookie Pop-Up Rejector + Scroll Unlock:** Automatically executes the genuine "Reject All / Necessary Only" signal across ${cmpFrameworksCount} verified GDPR consent frameworks (OneTrust, Didomi, Usercentrics, Quantcast, Sourcepoint, TrustArc, Cookiebot, and 150+ regional CMPs) while keeping page scrolling unlocked.
+- **Automatic Cookie Pop-Up Rejector + Scroll Unlock:** Automatically executes the genuine "Reject All / Necessary Only" signal across ${cmpFrameworksCount} verified GDPR consent frameworks (OneTrust, Didomi, Usercentrics, Quantcast, Sourcepoint, TrustArc, Cookiebot, Axeptio, Civic UK, Complianz, and all ${cmpFrameworksCount} verified CMP frameworks) while keeping page scrolling unlocked.
 - **URL Tracking Parameter Stripping (${trackerParamsStripped} Parameters):** Strips ${trackerParamsStripped} tracking parameters (\`utm_*\`, \`fbclid\`, \`gclid\`, \`msclkid\`, \`twclid\`, \`ttclid\`, etc.) from clicked links at the network layer.
 - **Element Zapper & Anti-Adblock Stealth:** One-click visual page element removal paired with MAIN-world anti-adblock bait protection.
 - **Total Tab & RAM Tamer:** Automatically hibernates inactive background tabs to reduce browser memory usage while protecting pinned, audio, and active form tabs.
@@ -254,7 +254,7 @@ Built natively on Chromium, Gecko, and Safari WebKit Manifest V3 \`declarativeNe
 - **Zero-CLS Cosmetic Sanitization & Element Zapper**: Collapses empty ad slots, sticky footer banners, and user-selected clutter without triggering Cumulative Layout Shift or \`adsbox\` bait honeypots.
 
 ### B. Automated Cookie Consent "Reject All" Engine & Scroll Unlock
-- **Automated Execution**: Evaluates incoming DOM nodes against ${cmpFrameworksCount} verified Consent Management Platforms (OneTrust, Didomi, Usercentrics, Quantcast, Sourcepoint, Cookiebot, TrustArc, Axeptio, Civic UK, Complianz, and 150+ additional frameworks) with 9-locale reject matching.
+- **Automated Execution**: Evaluates incoming DOM nodes against ${cmpFrameworksCount} verified Consent Management Platforms (OneTrust, Didomi, Usercentrics, Quantcast, Sourcepoint, Cookiebot, TrustArc, Axeptio, Civic UK, Complianz, and all ${cmpFrameworksCount} verified CMP frameworks) with 9-locale reject matching.
 - **Genuine Opt-Out Signal**: Triggers the strict "Reject All / Necessary Only" API/button path rather than merely hiding the banner with CSS.
 - **Scroll-Lock Restoration**: Automatically strips residual \`overflow: hidden\`, \`position: fixed\`, and backdrop pointer locks from \`<html>\` and \`<body>\`.
 

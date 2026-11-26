@@ -21,6 +21,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { sculptInternalLinks } from './sculpt-internal-links.mjs';
 import { isNoIndexPrunePath, CONSOLIDATE_301_MAP } from './lib/m1-decisions.mjs';
+import { PRODUCT_FACTS } from './lib/holographic-shell.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = path.resolve(__dirname, '..');
@@ -36,22 +37,22 @@ const COOLDOWN_SAFE_QUERY_ENRICHMENTS = {
   '/solutions/crunchyroll-anime-streams-block-video-ads': {
     heading: 'How to Block Ads on Crunchyroll PC (Chrome & Firefox MV3)',
     bodyHtml:
-      'Crunchyroll streams serve multi-pod VAST/VMAP video commercials that trigger playback errors on basic adblockers. <strong>SWEEPR Deepblock v1.3.1</strong> uses 283 static Manifest V3 declarativeNetRequest rules and MAIN-world player sanitization so you can watch anime on PC cleanly.'
+      `Crunchyroll streams serve multi-pod VAST/VMAP video commercials that trigger playback errors on basic adblockers. <strong>SWEEPR Deepblock v${PRODUCT_FACTS.version}</strong> uses ${PRODUCT_FACTS.staticDnrRules.toLocaleString('en-US')} static Manifest V3 declarativeNetRequest rules and MAIN-world player sanitization so you can watch anime on PC cleanly.`
   },
   '/setup/kiwi-browser-android': {
     heading: 'Kiwi Browser Archived (Jan 2025): Recommended Android Migration Setup',
     bodyHtml:
-      'Kiwi Browser was archived in January 2025 and no longer receives Chromium security updates. For ongoing mobile ad, tracker, and cookie consent protection with <strong>SWEEPR Deepblock v1.3.1</strong> (283 static DNR rules), migrate to <a href="/setup/mozilla-firefox-desktop-android" class="text-emerald-700 hover:underline font-semibold">Mozilla Firefox for Android</a> (signed <code>.xpi</code> GeckoView add-on) or Microsoft Edge Android.'
+      `Kiwi Browser was archived in January 2025 and no longer receives Chromium security updates. For ongoing mobile ad, tracker, and cookie consent protection with <strong>SWEEPR Deepblock v${PRODUCT_FACTS.version}</strong> (${PRODUCT_FACTS.staticDnrRules.toLocaleString('en-US')} static DNR rules), migrate to <a href="/setup/mozilla-firefox-desktop-android" class="text-emerald-700 hover:underline font-semibold">Mozilla Firefox for Android</a> (signed <code>.xpi</code> GeckoView add-on) or Microsoft Edge Android.`
   },
   '/solutions/linkedin-feed-ads-block-video-ads': {
     heading: 'Chrome Extension That Stops LinkedIn Promoted Feed Ads',
     bodyHtml:
-      'Looking for an extension that hides LinkedIn Promoted feed posts without breaking job applications or recruiter messages? <strong>SWEEPR Deepblock v1.3.1</strong> collapses Promoted feed cards and strips outbound tracking parameters locally.'
+      `Looking for an extension that hides LinkedIn Promoted feed posts without breaking job applications or recruiter messages? <strong>SWEEPR Deepblock v${PRODUCT_FACTS.version}</strong> collapses Promoted feed cards and strips outbound tracking parameters locally.`
   },
   '/solutions/fandom-game-wikis-reduce-browser-ram-usage': {
     heading: 'Why Does Fandom Use So Much Memory? Wiki Ad-Load & Tab RAM Calculator',
     bodyHtml:
-      'Wondering <strong>why does Fandom use so much memory</strong>? An unblocked Fandom wiki tab loads dozens of third-party ad auction scripts and sticky video players. <strong>SWEEPR Deepblock v1.3.1</strong> blocks those ad requests via 283 static DNR rules and pairs with Total Tab &amp; RAM Tamer to hibernate idle wiki tabs — estimate your savings in our <a href="/tools/browser-ram-calculator" class="text-emerald-700 hover:underline font-semibold">Interactive Browser RAM Calculator</a>.'
+      `Wondering <strong>why does Fandom use so much memory</strong>? An unblocked Fandom wiki tab loads dozens of third-party ad auction scripts and sticky video players. <strong>SWEEPR Deepblock v${PRODUCT_FACTS.version}</strong> blocks those ad requests via ${PRODUCT_FACTS.staticDnrRules.toLocaleString('en-US')} static DNR rules and pairs with Total Tab &amp; RAM Tamer to hibernate idle wiki tabs — estimate your savings in our <a href="/tools/browser-ram-calculator" class="text-emerald-700 hover:underline font-semibold">Interactive Browser RAM Calculator</a>.`
   }
 };
 

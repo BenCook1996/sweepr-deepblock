@@ -84,8 +84,8 @@ function extractXmlLocs(xmlPath) {
 }
 
 function collectLiveAuditMetrics() {
-  const manifest = readJsonSafe(path.join(ROOT_DIR, 'extension', 'manifest.json'), { version: '1.3.1' });
-  const version = manifest.version || '1.3.1';
+  const manifest = readJsonSafe(path.join(ROOT_DIR, 'extension', 'manifest.json'), { version: '1.4.0' });
+  const version = manifest.version || '1.4.0';
 
   const htmlFiles = walkHtmlFiles(WEBSITE_DIR);
   const coreUrls = extractXmlLocs(path.join(WEBSITE_DIR, 'sitemap.xml'));

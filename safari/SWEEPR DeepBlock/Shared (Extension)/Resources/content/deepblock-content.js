@@ -820,6 +820,8 @@
     } catch (e) {}
   }
 
+  let activeEntitlementSnapshot = null;
+
   function disableContentProtectionsOnExpiry() {
     ytShieldActive = false;
     try {
@@ -872,6 +874,10 @@
 
     function neutralizeYouTubeVideoAd() {
       if (!ytShieldActive) return;
+      if (activeEntitlementSnapshot && !hasActiveProEntitlement(activeEntitlementSnapshot)) {
+        disableContentProtectionsOnExpiry();
+        return;
+      }
       const player = document.querySelector('#movie_player, .html5-video-player');
       if (!player) return;
 
@@ -1566,6 +1572,7 @@
         }
 
         const extraCmpSelectors = Array.isArray(res && res.extraCmpSelectors) ? res.extraCmpSelectors : [];
+        activeEntitlementSnapshot = res;
         const isPaidEntitled = hasActiveProEntitlement(res);
         const isPausedSite = Boolean(currentHost && pausedSites.includes(currentHost));
         if (!isPaidEntitled || isPausedSite) {
@@ -1614,6 +1621,10 @@
         }
 
         function runDomProtectionPass() {
+          if (!hasActiveProEntitlement(activeEntitlementSnapshot || res)) {
+            disableContentProtectionsOnExpiry();
+            return;
+          }
           if (adBlockingEnabled) {
             injectUniversalAdCosmeticStyle();
             countAndReportPageAds('adsBlocked');
@@ -1642,6 +1653,10 @@
         }
 
         const throttledDomPass = createThrottle(() => {
+          if (!hasActiveProEntitlement(activeEntitlementSnapshot || res)) {
+            disableContentProtectionsOnExpiry();
+            return;
+          }
           if (adBlockingEnabled) {
             countAndReportPageAds('adsBlocked');
             if (flags.antiAdblockStealth !== false) {

@@ -1207,6 +1207,78 @@ function listAccountDevices(acc) {
   return items.sort((a, b) => String(b.last_seen).localeCompare(String(a.last_seen)));
 }
 
+function syncTrialAccountDevicesToStore(acc) {
+  if (!acc || (!acc.isTrial7d && acc.plan !== 'trial_7d')) return;
+  const upperKey = String(acc.licenseKey || '').trim().toUpperCase();
+  if (!upperKey) return;
+  const store = loadTrialsStore();
+  const rec = store.trials && store.trials[upperKey];
+  if (!rec) return;
+  rec.devices = acc.devices instanceof Set ? Array.from(acc.devices) : [];
+  saveTrialsStore(store);
+}
+
+function findOrHydrateTrialAccount(candidateKey) {
+  const upperKey = String(candidateKey || '').trim().toUpperCase();
+  if (!upperKey || !HIGH_ENTROPY_LICENSE_KEY_RE.test(upperKey)) return null;
+  const store = loadTrialsStore();
+  const rec = store.trials && store.trials[upperKey];
+  if (!rec) return null;
+  const expMs = Number(rec.trialExpiresAt || Date.parse(rec.expiresAt || ''));
+  if (!Number.isFinite(expMs) || expMs <= Date.now()) {
+    return null;
+  }
+  const existing = licenses.get(upperKey);
+  if (existing && existing.isTrial7d) {
+    if (!(existing.devices instanceof Set)) existing.devices = new Set();
+    if (!(existing.deviceMeta instanceof Map)) existing.deviceMeta = new Map();
+    for (const devId of Array.isArray(rec.devices) ? rec.devices : []) {
+      if (devId && !existing.devices.has(devId)) {
+        existing.devices.add(devId);
+        if (!existing.deviceMeta.has(devId)) {
+          existing.deviceMeta.set(devId, {
+            device_id: devId,
+            device_name: devId.startsWith('ext_') ? 'Desktop Browser Extension' : 'Linked Device',
+            platform: 'browser_extension',
+            first_seen: rec.createdAt || new Date().toISOString(),
+            last_seen: new Date().toISOString()
+          });
+        }
+      }
+    }
+    return existing;
+  }
+  const devicesSet = new Set(Array.isArray(rec.devices) ? rec.devices.filter(Boolean) : []);
+  const deviceMeta = new Map();
+  const createdIso = rec.createdAt || new Date().toISOString();
+  for (const devId of devicesSet) {
+    deviceMeta.set(devId, {
+      device_id: devId,
+      device_name: devId.startsWith('ext_') ? 'Desktop Browser Extension' : 'Linked Device',
+      platform: 'browser_extension',
+      first_seen: createdIso,
+      last_seen: createdIso
+    });
+  }
+  const acc = {
+    id: `trial_${upperKey}`,
+    email: 'trial@sweeprdeepblock.com',
+    plan: rec.plan || 'trial_7d',
+    status: 'trialing',
+    licenseKey: upperKey,
+    ramTamerAddon: true,
+    entitlements: buildDeepblockEntitlements(true, false),
+    expiresAt: rec.expiresAt || new Date(expMs).toISOString(),
+    createdAt: createdIso,
+    devices: devicesSet,
+    deviceMeta,
+    isTrial7d: true
+  };
+  accountsById.set(acc.id, acc);
+  licenses.set(upperKey, acc);
+  return acc;
+}
+
 function registerLocalDeviceForAccount(acc, deviceId, meta = {}) {
   const cleanId = String(deviceId || '').trim().slice(0, 128);
   if (!acc.devices || !(acc.devices instanceof Set)) {
@@ -1250,6 +1322,7 @@ function registerLocalDeviceForAccount(acc, deviceId, meta = {}) {
     first_seen: nowIso,
     last_seen: nowIso
   });
+  syncTrialAccountDevicesToStore(acc);
   return { ok: true, used: acc.devices.size, max: MAX_DEVICES_PER_LICENSE };
 }
 
@@ -1264,6 +1337,7 @@ function removeLocalDeviceForAccount(acc, deviceId) {
   if (acc.deviceMeta instanceof Map) {
     acc.deviceMeta.delete(cleanId);
   }
+  if (removed) syncTrialAccountDevicesToStore(acc);
   return removed;
 }
 
@@ -3669,8 +3743,10 @@ function getCachedDynamicDelta() {
 
   // No-Card 7-Day Full Pro Trial Start (idempotent by installId / deviceFingerprint, zero payment details)
   if (req.method === 'POST' && (pathname === '/api/trial/start' || pathname === '/v1/trial/start')) {
-    if (req.headers.origin && !isSameOriginWriteRequest(req, { allowExtension: true })) {
-      return sendJson(res, 403, { ok: false, error: 'cross_origin_forbidden' }, {}, req);
+    if (req.headers.origin || req.headers['sec-fetch-site'] === 'cross-site' || req.headers.referer) {
+      if (!isSameOriginWriteRequest(req, { allowExtension: true })) {
+        return sendJson(res, 403, { ok: false, error: 'cross_origin_forbidden' }, {}, req);
+      }
     }
     if (!checkRateLimit(req, 'trial_start', 20, 60000)) {
       return sendJson(res, 429, { ok: false, error: 'rate_limit_exceeded' }, {}, req);
@@ -3679,12 +3755,39 @@ function getCachedDynamicDelta() {
     if (body && body.__tooLarge) {
       return sendJson(res, 413, { ok: false, error: 'payload_too_large' }, {}, req);
     }
-    const installId = String(body?.installId || body?.install_id || body?.deviceId || body?.device_id || '')
-      .trim()
-      .slice(0, 128);
-    const deviceFingerprint = String(body?.deviceFingerprint || body?.device_fingerprint || body?.fingerprint || '')
-      .trim()
-      .slice(0, 256);
+    if (!body || typeof body !== 'object' || Array.isArray(body)) {
+      return sendJson(
+        res,
+        400,
+        {
+          ok: false,
+          error: 'invalid_json',
+          message: 'Request body must be a valid JSON object.'
+        },
+        {},
+        req
+      );
+    }
+    const rawInstallId = body.installId ?? body.install_id ?? body.deviceId ?? body.device_id;
+    const rawFp = body.deviceFingerprint ?? body.device_fingerprint ?? body.fingerprint;
+    if (
+      (rawInstallId !== undefined && rawInstallId !== null && typeof rawInstallId !== 'string') ||
+      (rawFp !== undefined && rawFp !== null && typeof rawFp !== 'string')
+    ) {
+      return sendJson(
+        res,
+        400,
+        {
+          ok: false,
+          error: 'invalid_identifier_type',
+          message: 'installId and deviceFingerprint must be strings.'
+        },
+        {},
+        req
+      );
+    }
+    const installId = (rawInstallId || '').trim().slice(0, 128);
+    const deviceFingerprint = (rawFp || '').trim().slice(0, 256);
 
     if (!installId && !deviceFingerprint) {
       return sendJson(
@@ -5908,7 +6011,7 @@ function getCachedDynamicDelta() {
 
     let record = isEmail
       ? accountsByEmail.get(effectiveLookup.toLowerCase())
-      : licenses.get(lookupKey) || licenses.get(lookupKey.toUpperCase());
+      : licenses.get(lookupKey) || licenses.get(lookupKey.toUpperCase()) || findOrHydrateTrialAccount(lookupKey);
 
     if (isEmail && record && !verifyLocalAccountKeyOrCode(record, lookupKey)) {
       record = null;
@@ -6009,7 +6112,7 @@ function getCachedDynamicDelta() {
     }
     let record = isEmail
       ? accountsByEmail.get(effectiveLookup.toLowerCase())
-      : licenses.get(lookupKey) || licenses.get(lookupKey.toUpperCase());
+      : licenses.get(lookupKey) || licenses.get(lookupKey.toUpperCase()) || findOrHydrateTrialAccount(lookupKey);
 
     if (isEmail && record && !verifyLocalAccountKeyOrCode(record, lookupKey)) {
       return sendJson(res, 401, { ok: false, error: 'invalid_credentials' });
@@ -6062,8 +6165,8 @@ function getCachedDynamicDelta() {
         ? 'six_month'
         : 'annual';
     const acc = await resolveAccountFromSessionOrCredentials(req, body || {});
-    if (!acc) {
-      return sendJson(res, 401, { ok: false, error: 'unauthorized', message: 'Valid license key or active portal session required.' });
+    if (!acc || acc.isTrial7d || acc.plan === 'trial_7d' || acc.status === 'trialing') {
+      return sendJson(res, 401, { ok: false, error: 'unauthorized', message: 'Valid paid license key or active portal session required.' });
     }
     acc.plan = targetPlan;
     acc.status = 'active';
@@ -6152,7 +6255,7 @@ function getCachedDynamicDelta() {
     }
     const candidateKey = keyOrCode || rawLookup;
     if (candidateKey && HIGH_ENTROPY_LICENSE_KEY_RE.test(candidateKey)) {
-      let acc = licenses.get(candidateKey) || licenses.get(candidateKey.toUpperCase());
+      let acc = licenses.get(candidateKey) || licenses.get(candidateKey.toUpperCase()) || findOrHydrateTrialAccount(candidateKey);
       if (acc && (acc.status === 'active' || acc.status === 'trialing')) {
         return acc;
       }
