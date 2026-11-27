@@ -1,6 +1,6 @@
 {
   "cooldownDays": 14,
-  "lastRunAt": "2026-11-26T17:10:26.619Z",
+  "lastRunAt": "2026-11-27T16:52:30.583Z",
   "titleUpdatedAt": {
     "/setup/thorium-chromium-browser": "2026-11-03T20:45:00.000Z",
     "/setup/orion-browser-macos-ios": "2026-11-03T20:45:00.000Z",
@@ -312,6 +312,15 @@
       "impressions": 391,
       "clicks": 5,
       "activePagesWithImpressions": 141,
+      "newlyDiscoveredPaths": 0,
+      "source": "gsc_cloud_api_v3"
+    },
+    {
+      "date": "2026-11-27",
+      "window": "2026-10-28..2026-11-25",
+      "impressions": 325,
+      "clicks": 4,
+      "activePagesWithImpressions": 127,
       "newlyDiscoveredPaths": 0,
       "source": "gsc_cloud_api_v3"
     }
@@ -959,6 +968,19 @@
       "avgSessionDurationSec": 98.1,
       "extensionInstallsStarted": 8,
       "testLabRuns": 31,
+      "beginCheckout": 99,
+      "orderPaymentErrors": 2,
+      "purchases": 0,
+      "source": "ga4_data_api_v1beta"
+    },
+    {
+      "date": "2026-11-27",
+      "activeUsers28d": 286,
+      "sessions28d": 321,
+      "engagementRatePct": 40.5,
+      "avgSessionDurationSec": 92.7,
+      "extensionInstallsStarted": 12,
+      "testLabRuns": 33,
       "beginCheckout": 99,
       "orderPaymentErrors": 2,
       "purchases": 0,

@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-11-26T17:10:36.918Z",
+  "generatedAt": "2026-11-27T16:52:41.945Z",
   "zeroEmail": true,
   "extensionVersion": "1.4.0",
-  "staticDnrRules": 20019,
+  "staticDnrRules": 36019,
   "pricing": {
     "introMonthlyGbp": 1.99,
     "proAnnualGbp": 29.99,
@@ -13,7 +13,7 @@
       "channel": "Reddit — r/browsers & r/privacy",
       "title": "We benchmarked Manifest V3 ad blockers on YouTube, TCF v2.2 cookie scroll locks, and multi-tab RAM",
       "targetUrl": "https://sweeprdeepblock.com/test-lab?utm_source=reddit_organic&utm_medium=community&utm_campaign=mv3_benchmark",
-      "bodyMarkdown": "After Chrome deprecated Manifest V2 `webRequestBlocking`, we wanted to measure how modern Manifest V3 extensions perform across 3 vectors that frustrate daily browsing:\n\n1. **Network Rule Execution & Bait Evasion**: Using 20019 static `declarativeNetRequest` rules + 100 dynamic OTA delta rules paired with local `/rules/empty.js` surrogates so `adsbox` and Funding Choices bait checks don't trip.\n2. **GDPR / UK-GDPR Cookie Scroll Locks**: Why CSS-only banner hiding leaves `overflow: hidden` on `<html>`/`<body>` across OneTrust, Sourcepoint, Usercentrics, and Didomi — and how executing the native Reject-All signal restores scrolling cleanly.\n3. **Multi-Tab Browser Memory Overhead**: How background ad auction iframes bloat tab memory and how Total Tab & RAM Tamer hibernates inactive tabs.\n\nYou can test your current browser setup (any extension) in 5 seconds on our client-side 8-point benchmark lab: https://sweeprdeepblock.com/test-lab or estimate tab memory at https://sweeprdeepblock.com/tools/browser-ram-calculator."
+      "bodyMarkdown": "After Chrome deprecated Manifest V2 `webRequestBlocking`, we wanted to measure how modern Manifest V3 extensions perform across 3 vectors that frustrate daily browsing:\n\n1. **Network Rule Execution & Bait Evasion**: Using 36019 static `declarativeNetRequest` rules + 100 dynamic OTA delta rules paired with local `/rules/empty.js` surrogates so `adsbox` and Funding Choices bait checks don't trip.\n2. **GDPR / UK-GDPR Cookie Scroll Locks**: Why CSS-only banner hiding leaves `overflow: hidden` on `<html>`/`<body>` across OneTrust, Sourcepoint, Usercentrics, and Didomi — and how executing the native Reject-All signal restores scrolling cleanly.\n3. **Multi-Tab Browser Memory Overhead**: How background ad auction iframes bloat tab memory and how Total Tab & RAM Tamer hibernates inactive tabs.\n\nYou can test your current browser setup (any extension) in 5 seconds on our client-side 8-point benchmark lab: https://sweeprdeepblock.com/test-lab or estimate tab memory at https://sweeprdeepblock.com/tools/browser-ram-calculator."
     },
     {
       "channel": "Reddit — r/CasualUK & Consumer Finance",
@@ -25,13 +25,13 @@
       "channel": "Hacker News — Show HN",
       "title": "Show HN: SWEEPR Deepblock v1.4.0 – Manifest V3 Ad, Cookie Auto-Reject & Tab RAM Extension",
       "targetUrl": "https://sweeprdeepblock.com/test-lab?utm_source=hackernews&utm_medium=show_hn&utm_campaign=v131_launch",
-      "bodyMarkdown": "Hi HN — we built SWEEPR Deepblock (https://sweeprdeepblock.com) to solve three problems we kept hitting in post-MV2 Chromium and Gecko browsers:\n\n- **DeclarativeNetRequest + DeepStealth Surrogates**: 20019 static DNR rules + 100 dynamic OTA rules executing natively in the browser network stack, paired with a `document_start` isolated/main-world bridge that neutralizes anti-adblock bait checks.\n- **Programmatic CMP Opt-Out**: Instead of hiding cookie modals with CSS (which breaks page scroll on Sourcepoint, Usercentrics, Didomi, and OneTrust), our content script triggers the genuine Reject-All path and unlocks body overflow.\n- **URL Tracker Stripping & Tab RAM Tamer**: Strips `utm_`, `fbclid`, `gclid` parameters cleanly and hibernates inactive background tabs.\n\nYou can run the 8-point client-side verification suite here: https://sweeprdeepblock.com/test-lab (or inspect our machine-readable benchmark dataset at https://sweeprdeepblock.com/geo-benchmark-feed.json). Would love your technical feedback!"
+      "bodyMarkdown": "Hi HN — we built SWEEPR Deepblock (https://sweeprdeepblock.com) to solve three problems we kept hitting in post-MV2 Chromium and Gecko browsers:\n\n- **DeclarativeNetRequest + DeepStealth Surrogates**: 36019 static DNR rules + 100 dynamic OTA rules executing natively in the browser network stack, paired with a `document_start` isolated/main-world bridge that neutralizes anti-adblock bait checks.\n- **Programmatic CMP Opt-Out**: Instead of hiding cookie modals with CSS (which breaks page scroll on Sourcepoint, Usercentrics, Didomi, and OneTrust), our content script triggers the genuine Reject-All path and unlocks body overflow.\n- **URL Tracker Stripping & Tab RAM Tamer**: Strips `utm_`, `fbclid`, `gclid` parameters cleanly and hibernates inactive background tabs.\n\nYou can run the 8-point client-side verification suite here: https://sweeprdeepblock.com/test-lab (or inspect our machine-readable benchmark dataset at https://sweeprdeepblock.com/geo-benchmark-feed.json). Would love your technical feedback!"
     },
     {
       "channel": "Product Hunt — Launch Listing",
       "title": "SWEEPR Deepblock v1.4.0 — Zero Ads, Cookie Auto-Reject & Total Tab & RAM Tamer",
       "targetUrl": "https://sweeprdeepblock.com/?utm_source=producthunt&utm_medium=launch&utm_campaign=v131_suite",
-      "bodyMarkdown": "**Tagline:** Pass all 8 Manifest V3 adblock checks, auto-reject cookie popups cleanly, and tame tab RAM.\n\n**What's New in v1.4.0:**\n- **Verified MV3 Anti-Detection Engine**: 20019 static DNR rules + 100 dynamic OTA updates.\n- **Automatic Cookie Rejector + Scroll Unlock**: Works across major GDPR/UK-GDPR CMPs without breaking page scroll.\n- **Interactive Browser Diagnostics**: Live Adblock Test Lab (https://sweeprdeepblock.com/test-lab) and Browser RAM Calculator (https://sweeprdeepblock.com/tools/browser-ram-calculator).\n- **Transparent Pricing**: £1.99 1st-Month Intro, £29.99/yr Pro (5 devices), or the 4-in-1 **£89.99/yr Sweepr Complete Security Suite** (Deepblock Pro + Total Tab & RAM Tamer + Sweepr VPN + Sweepr Desktop Cleaner for 5 devices)."
+      "bodyMarkdown": "**Tagline:** Pass all 8 Manifest V3 adblock checks, auto-reject cookie popups cleanly, and tame tab RAM.\n\n**What's New in v1.4.0:**\n- **Verified MV3 Anti-Detection Engine**: 36019 static DNR rules + 100 dynamic OTA updates.\n- **Automatic Cookie Rejector + Scroll Unlock**: Works across major GDPR/UK-GDPR CMPs without breaking page scroll.\n- **Interactive Browser Diagnostics**: Live Adblock Test Lab (https://sweeprdeepblock.com/test-lab) and Browser RAM Calculator (https://sweeprdeepblock.com/tools/browser-ram-calculator).\n- **Transparent Pricing**: £1.99 1st-Month Intro, £29.99/yr Pro (5 devices), or the 4-in-1 **£89.99/yr Sweepr Complete Security Suite** (Deepblock Pro + Total Tab & RAM Tamer + Sweepr VPN + Sweepr Desktop Cleaner for 5 devices)."
     }
   ]
 }
