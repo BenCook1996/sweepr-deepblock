@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-27T16:52:29.831Z",
-  "durationMs": 52752,
+  "generatedAt": "2026-11-28T15:44:04.520Z",
+  "durationMs": 56269,
   "mode": "live_google_cloud_service_account_api",
   "serviceAccountConfigured": true,
   "serviceAccountEmail": "sweepr-seo-bot@sweepr-514223.iam.gserviceaccount.com",
@@ -8,19 +8,11 @@
   "ga4PropertyId": "559863555",
   "trackedDiscoveredGscPathsCount": 64,
   "latestGscSnapshot": {
-    "totalImpressions": 325,
-    "totalClicks": 4,
-    "activePagesWithImpressions": 127,
+    "totalImpressions": 189,
+    "totalClicks": 3,
+    "activePagesWithImpressions": 95,
     "newlyDiscoveredPaths": [],
     "strikeZoneCandidates": [
-      {
-        "urlPath": "/guides/how-to-fix-high-cpu-usage-from-youtube-anti-adblock",
-        "impressions": 3,
-        "clicks": 0,
-        "ctrPct": 0,
-        "position": 8.7,
-        "topQueries": []
-      },
       {
         "urlPath": "/guides/how-to-fix-high-ram-usage-on-vivaldi-browser",
         "impressions": 3,
@@ -31,18 +23,18 @@
       },
       {
         "urlPath": "/guides/how-to-stop-temu-shein-scam-popups-and-tracking",
-        "impressions": 4,
+        "impressions": 3,
         "clicks": 0,
         "ctrPct": 0,
-        "position": 6,
+        "position": 7,
         "topQueries": []
       },
       {
         "urlPath": "/setup/floorp-browser-firefox-fork",
-        "impressions": 14,
+        "impressions": 8,
         "clicks": 0,
         "ctrPct": 0,
-        "position": 5.6,
+        "position": 5.5,
         "topQueries": [
           {
             "query": "floorp adblock",
@@ -54,10 +46,10 @@
       },
       {
         "urlPath": "/setup/kiwi-browser-android",
-        "impressions": 9,
+        "impressions": 6,
         "clicks": 0,
         "ctrPct": 0,
-        "position": 15.8,
+        "position": 19.8,
         "topQueries": [
           {
             "query": "kiwi browser ad blocker",
@@ -66,56 +58,41 @@
             "position": 9.5
           },
           {
-            "query": "kiwi unblocker",
-            "impressions": 2,
-            "clicks": 0,
-            "position": 17.5
-          },
-          {
             "query": "kiwi browser adblock extension",
             "impressions": 1,
             "clicks": 0,
             "position": 8
+          },
+          {
+            "query": "kiwi unblocker",
+            "impressions": 1,
+            "clicks": 0,
+            "position": 23
           }
         ]
-      },
-      {
-        "urlPath": "/setup/librewolf-hardened-firefox",
-        "impressions": 3,
-        "clicks": 0,
-        "ctrPct": 0,
-        "position": 6.7,
-        "topQueries": []
       },
       {
         "urlPath": "/setup/orion-browser-macos-ios",
-        "impressions": 13,
+        "impressions": 7,
         "clicks": 0,
         "ctrPct": 0,
-        "position": 7,
-        "topQueries": [
-          {
-            "query": "orion browser ad blocker",
-            "impressions": 1,
-            "clicks": 0,
-            "position": 7
-          }
-        ]
+        "position": 7.6,
+        "topQueries": []
       },
       {
-        "urlPath": "/setup/ungoogled-chromium-mv3",
-        "impressions": 4,
+        "urlPath": "/setup/thorium-chromium-browser",
+        "impressions": 11,
         "clicks": 0,
         "ctrPct": 0,
-        "position": 3.5,
+        "position": 4.4,
         "topQueries": []
       },
       {
         "urlPath": "/setup/zen-browser-privacy-tabs",
-        "impressions": 11,
+        "impressions": 3,
         "clicks": 0,
         "ctrPct": 0,
-        "position": 9.8,
+        "position": 8,
         "topQueries": []
       },
       {
@@ -135,14 +112,6 @@
         "topQueries": []
       },
       {
-        "urlPath": "/solutions/crunchyroll-anime-streams-reduce-browser-ram-usage",
-        "impressions": 3,
-        "clicks": 0,
-        "ctrPct": 0,
-        "position": 5.3,
-        "topQueries": []
-      },
-      {
         "urlPath": "/solutions/fandom-game-wikis-stop-malvertising-popunders",
         "impressions": 3,
         "clicks": 0,
@@ -151,20 +120,51 @@
         "topQueries": []
       },
       {
-        "urlPath": "/solutions/fextralife-game-wikis-stop-malvertising-popunders",
-        "impressions": 3,
+        "urlPath": "/solutions/geeksforgeeks-dev-portals-stop-malvertising-popunders",
+        "impressions": 4,
         "clicks": 0,
         "ctrPct": 0,
-        "position": 8.3,
+        "position": 7.8,
         "topQueries": []
       },
       {
-        "urlPath": "/solutions/geeksforgeeks-dev-portals-stop-malvertising-popunders",
-        "impressions": 6,
+        "urlPath": "/solutions/github-copilot-dev-portals-reduce-browser-ram-usage",
+        "impressions": 3,
         "clicks": 0,
         "ctrPct": 0,
-        "position": 6.2,
+        "position": 9.7,
         "topQueries": []
+      },
+      {
+        "urlPath": "/solutions/manga-comic-readers-stop-malvertising-popunders",
+        "impressions": 3,
+        "clicks": 0,
+        "ctrPct": 0,
+        "position": 15.7,
+        "topQueries": []
+      },
+      {
+        "urlPath": "/solutions/roblox-web-community-filter-ai-slop-and-scams",
+        "impressions": 5,
+        "clicks": 0,
+        "ctrPct": 0,
+        "position": 8.2,
+        "topQueries": []
+      },
+      {
+        "urlPath": "/solutions/rumble-video-streams-block-video-ads",
+        "impressions": 4,
+        "clicks": 0,
+        "ctrPct": 0,
+        "position": 9.5,
+        "topQueries": [
+          {
+            "query": "rumble ad blocker",
+            "impressions": 1,
+            "clicks": 0,
+            "position": 9
+          }
+        ]
       }
     ],
     "sitemapStatuses": {
@@ -198,8 +198,8 @@
       },
       {
         "url": "https://sweeprdeepblock.com/guides/how-to-reduce-browser-ram-speed-up-slow-tabs",
-        "verdict": "PASS",
-        "coverageState": "Submitted and indexed"
+        "verdict": "NEUTRAL",
+        "coverageState": "Crawled - currently not indexed"
       },
       {
         "url": "https://sweeprdeepblock.com/pricing",
@@ -214,11 +214,11 @@
     ]
   },
   "latestGa4Snapshot": {
-    "date": "2026-11-27",
-    "activeUsers28d": 286,
-    "sessions28d": 321,
-    "engagementRatePct": 40.5,
-    "avgSessionDurationSec": 92.7,
+    "date": "2026-11-28",
+    "activeUsers28d": 290,
+    "sessions28d": 325,
+    "engagementRatePct": 41.2,
+    "avgSessionDurationSec": 94.8,
     "extensionInstallsStarted": 12,
     "testLabRuns": 33,
     "beginCheckout": 99,
@@ -228,12 +228,12 @@
   },
   "warnings": [],
   "crmSync": {
-    "syncedAt": "2026-11-27T16:52:29.831Z",
+    "syncedAt": "2026-11-28T15:44:04.520Z",
     "cloudSync": {
       "url": "https://sweepr-crm-production.up.railway.app/api/crm/seo/gsc/cloud-sync",
       "status": 200,
       "ok": true,
-      "body": "{\"ok\":true,\"mode\":\"cloud_ingest\",\"project_id\":\"deepblock\",\"ingested\":40,\"keywords_added\":25,\"total_rows\":476,\"latest_date\":\"2026-11-25\"}"
+      "body": "{\"ok\":true,\"mode\":\"cloud_ingest\",\"project_id\":\"deepblock\",\"ingested\":18,\"keywords_added\":25,\"total_rows\":494,\"latest_date\":\"2026-11-26\"}"
     },
     "telemetry": {
       "url": "https://sweepr-crm-production.up.railway.app/v1/telemetry/event",
